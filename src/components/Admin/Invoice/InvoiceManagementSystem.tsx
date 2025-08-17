@@ -6,7 +6,6 @@ import { useInvoiceData } from '@/hooks/useInvoiceData';
 import { useInvoiceOperations } from '@/hooks/useInvoiceOperations';
 
 import StatsCards from './StatsCards';
-//import FiltersSection from './components/FiltersSection';
 import InvoicesTable from './InvoicesTable';
 import CreateInvoiceModal from './CreateInvoiceModal';
 import InvoiceModal from './InvoiceModal';

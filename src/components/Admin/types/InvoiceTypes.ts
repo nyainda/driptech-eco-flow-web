@@ -1,4 +1,3 @@
-// types/InvoiceTypes.ts
 
 export interface Invoice {
   id: string;

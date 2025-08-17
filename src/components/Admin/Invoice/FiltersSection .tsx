@@ -1,4 +1,3 @@
-// components/FiltersSection.tsx
 import React from 'react';
 import { Search, RefreshCw } from 'lucide-react';
 
