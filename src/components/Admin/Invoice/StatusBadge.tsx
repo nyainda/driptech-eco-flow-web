@@ -1,15 +1,13 @@
+// components/StatusBadge.tsx
 import React from 'react';
-import { 
-  Edit, 
-  Send, 
-  CheckCircle, 
-  AlertCircle, 
-  XCircle, 
-  Clock 
-} from 'lucide-react';
+import { Edit, Send, CheckCircle, AlertCircle, XCircle, Clock } from 'lucide-react';
 
-const StatusBadge = ({ status }) => {
-  const getStatusConfig = (status) => {
+interface StatusBadgeProps {
+  status: string;
+}
+
+const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+  const getStatusConfig = (status: string) => {
     switch (status) {
       case 'draft':
         return { color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300', icon: Edit, label: 'Draft' };

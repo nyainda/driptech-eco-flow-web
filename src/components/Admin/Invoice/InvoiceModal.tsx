@@ -1,38 +1,44 @@
+// components/InvoiceModal.tsx
 import React from 'react';
-import { 
-  X, 
-  Download, 
-  Printer, 
-  Send, 
-  CheckCircle, 
-  Copy 
-} from 'lucide-react';
+import { X, Printer, Send, CheckCircle, Copy } from 'lucide-react';
+import { Invoice } from '../types/InvoiceTypes';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import StatusBadge from './StatusBadge';
-import InvoiceItemsDisplay from './InvoiceItems/InvoiceItemsDisplay';
-import { formatCurrency, formatDate } from '../utils/invoiceHelpers';
 
-const InvoiceDetailsModal = ({ 
-  invoice, 
-  isOpen, 
-  onClose, 
-  onDownloadPDF, 
-  onPrint, 
-  onUpdateStatus 
+interface InvoiceModalProps {
+  invoice: Invoice;
+  onClose: () => void;
+  onDownloadPDF: (invoice: Invoice) => void;
+  onUpdateStatus: (invoiceId: string, status: string) => void;
+}
+
+// Water Droplet Logo Component
+const WaterDropletIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2.5c-4.97 0-9 4.03-9 9 0 4.97 4.03 9 9 9s9-4.03 9-9c0-4.97-4.03-9-9-9zm0 15.5c-3.86 0-7-3.14-7-7 0-1.85.72-3.53 1.89-4.78L12 2.5l5.11 3.72c1.17 1.25 1.89 2.93 1.89 4.78 0 3.86-3.14 7-7 7z"/>
+    <path d="M12 6.5c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" opacity="0.7"/>
+  </svg>
+);
+
+const InvoiceModal: React.FC<InvoiceModalProps> = ({
+  invoice,
+  onClose,
+  onDownloadPDF,
+  onUpdateStatus
 }) => {
-  if (!isOpen || !invoice) return null;
-
-  const handleCopyInvoiceNumber = () => {
-    navigator.clipboard.writeText(invoice.invoice_number);
-    alert('Invoice number copied to clipboard!');
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors">
         <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
-            Invoice {invoice.invoice_number}
-          </h2>
+          <div className="flex items-center gap-3">
+            <WaterDropletIcon className="w-6 h-6 text-blue-600" />
+            <div>
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+                Invoice {invoice.invoice_number}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">DripTech Solutions</p>
+            </div>
+          </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -80,7 +86,47 @@ const InvoiceDetailsModal = ({
           {/* Invoice Items */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Items</h3>
-            <InvoiceItemsDisplay items={invoice.invoice_items} />
+            <div className="overflow-x-auto">
+              <table className="w-full border border-gray-200 dark:border-gray-700 rounded-lg">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">Description</th>
+                    <th className="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">Qty</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">Unit Price</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {invoice.invoice_items?.map((item, index) => (
+                    <tr key={index}>
+                      <td className="px-4 py-3">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</p>
+                          {item.description && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-center text-sm text-gray-900 dark:text-white">
+                        {item.quantity} {item.unit}
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm text-gray-900 dark:text-white">
+                        {formatCurrency(item.unit_price)}
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm text-gray-900 dark:text-white">
+                        {formatCurrency(item.total)}
+                      </td>
+                    </tr>
+                  )) || (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                        No items found for this invoice
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Totals */}
@@ -123,15 +169,28 @@ const InvoiceDetailsModal = ({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+            {/* Enhanced Download Button with DripTech Branding */}
             <button
               onClick={() => onDownloadPDF(invoice)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-700 to-cyan-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl hover:from-blue-700 hover:via-blue-800 hover:to-cyan-700 transform hover:scale-105 transition-all duration-200 group overflow-hidden"
             >
-              <Download className="w-4 h-4" />
-              Download PDF
+              {/* Animated background effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-all duration-700 ease-out"></div>
+              
+              {/* Water droplet logo */}
+              <WaterDropletIcon className="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-200" />
+              
+              {/* Button text */}
+              <span className="relative z-10 text-sm font-semibold tracking-wide">
+                Download PDF
+              </span>
+              
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 group-hover:opacity-30 blur transition-opacity duration-200"></div>
             </button>
+
             <button
-              onClick={() => onPrint(invoice)}
+              onClick={() => console.log('Print invoice:', invoice.id)}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Printer className="w-4 h-4" />
@@ -162,7 +221,10 @@ const InvoiceDetailsModal = ({
               </button>
             )}
             <button
-              onClick={handleCopyInvoiceNumber}
+              onClick={() => {
+                navigator.clipboard.writeText(invoice.invoice_number);
+                alert('Invoice number copied to clipboard!');
+              }}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Copy className="w-4 h-4" />
@@ -175,4 +237,4 @@ const InvoiceDetailsModal = ({
   );
 };
 
-export default InvoiceDetailsModal;
+export default InvoiceModal;
