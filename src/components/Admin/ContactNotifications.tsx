@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Check, Trash2, Mail, Phone, Building, MapPin, Calendar, DollarSign, Filter, Search, MoreVertical, Archive, Star, Reply, Clock, User, Eye, EyeOff, ArrowUpDown, ChevronDown, MessageSquare } from "lucide-react";
+import { Bell, Check, Trash2, Mail, Phone, Building, MapPin, Calendar, DollarSign, Filter, Search, MoreVertical, Archive, Star, Reply, Clock, User, Eye, EyeOff, ArrowUpDown, ChevronDown, MessageSquare, Menu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -32,6 +32,7 @@ const ContactNotifications = () => {
   const [sortBy, setSortBy] = useState<'created_at' | 'name' | 'status'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
 
   // Fetch contact submissions
   const { data: submissions = [], isLoading } = useQuery({
@@ -211,66 +212,261 @@ const ContactNotifications = () => {
     setExpandedRow(expandedRow === submissionId ? null : submissionId);
   };
 
-  return (
-    <div className="min-h-screen  p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className=" rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
-                  <Bell className="h-6 w-6 text-white" />
+  // Auto-switch to card view on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setViewMode('cards');
+      } else {
+        setViewMode('table');
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Card View Component for Mobile
+  const CardView = () => (
+    <div className="space-y-4">
+      {sortedAndFilteredSubmissions.map((submission) => {
+        const statusConfig = getStatusConfig(submission.status);
+        const isExpanded = expandedRow === submission.id;
+        
+        return (
+          <Card key={submission.id} className={`${
+            !submission.read ? 'border-l-4 border-l-blue-500 bg-blue-50/30 dark:bg-blue-950/20' : ''
+          } transition-all duration-200 hover:shadow-md`}>
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 ${
+                    !submission.read ? 'bg-blue-500' : 'bg-slate-400'
+                  }`}>
+                    {submission.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <CardTitle className="text-base truncate">{submission.name}</CardTitle>
+                      {!submission.read && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm text-slate-600 dark:text-slate-400 truncate flex items-center gap-1">
+                        <Mail className="h-3 w-3 flex-shrink-0" />
+                        {submission.email}
+                      </span>
+                      {submission.phone && (
+                        <span className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                          <Phone className="h-3 w-3 flex-shrink-0" />
+                          {submission.phone}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                {unreadCount > 0 && (
-                  <div className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">{unreadCount}</span>
+                <Badge className={`${statusConfig.color} text-white px-2 py-1 flex-shrink-0`}>
+                  {statusConfig.label}
+                </Badge>
+              </div>
+              
+              {submission.company && (
+                <div className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mt-2">
+                  <Building className="h-3 w-3" />
+                  {submission.company}
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2 mt-3">
+                {submission.project_type && (
+                  <div className="flex items-center gap-1 text-xs bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-full">
+                    <MapPin className="h-3 w-3" />
+                    {submission.project_type}
+                  </div>
+                )}
+                {submission.budget_range && (
+                  <div className="flex items-center gap-1 text-xs bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-full">
+                    <DollarSign className="h-3 w-3" />
+                    {submission.budget_range}
+                  </div>
+                )}
+                {submission.area_size && (
+                  <div className="text-xs bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-full">
+                    {submission.area_size}
                   </div>
                 )}
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Contact Messages</h1>
-                <p className="text-slate-600 dark:text-slate-400">{submissions.length} total • {unreadCount} unread</p>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Search messages..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-full sm:w-80 bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Filter Tabs */}
-          <div className="flex gap-2 mt-4 pt-4 border-t border-slate-200 dark:border-gray-700">
-            {[
-              { key: 'all', label: 'All', count: submissions.length },
-              { key: 'unread', label: 'Unread', count: unreadCount },
-              { key: 'read', label: 'Read', count: submissions.length - unreadCount }
-            ].map(({ key, label, count }) => (
-              <button
-                key={key}
-                onClick={() => setFilter(key as any)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === key
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                {label} ({count})
-              </button>
-            ))}
+              <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
+                  <Calendar className="h-3 w-3" />
+                  {formatDate(submission.created_at)}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => toggleRowExpansion(submission.id)}
+                    className="p-2"
+                  >
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  </Button>
+                  {!submission.read && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleMarkAsRead(submission.id)}
+                      disabled={markAsReadMutation.isPending}
+                      className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50"
+                    >
+                      <Check className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleDelete(submission.id)}
+                    disabled={deleteSubmissionMutation.isPending}
+                    className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+
+            {isExpanded && (
+              <CardContent className="pt-0">
+                <div className="bg-slate-50 dark:bg-gray-800 p-4 rounded-lg">
+                  <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 text-sm mb-3">
+                    <MessageSquare className="h-4 w-4 text-blue-500" />
+                    Message Details
+                  </h4>
+                  <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-slate-200 dark:border-gray-600">
+                    {parseMessage(submission.message).map((item, index) => {
+                      if (item.type === 'field') {
+                        return (
+                          <div key={index} className="flex flex-col gap-1 py-2 border-b border-slate-100 dark:border-gray-700 last:border-b-0">
+                            <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                              {item.field}
+                            </span>
+                            <span className="text-sm text-slate-700 dark:text-gray-300">
+                              {item.value === '' || item.value === 'Not specified' ? (
+                                <span className="text-slate-400 dark:text-gray-500 italic">Not specified</span>
+                              ) : (
+                                item.value
+                              )}
+                            </span>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div key={index} className="py-2">
+                            <p className="text-sm text-slate-700 dark:text-gray-300 leading-relaxed">
+                              {item.content}
+                            </p>
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-slate-500 dark:text-gray-400 pt-3 mt-3 border-t border-slate-200 dark:border-gray-700">
+                    <span>ID: {submission.id.slice(-8)}</span>
+                    <span>{new Date(submission.created_at).toLocaleString()}</span>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen p-3 sm:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+        {/* Header */}
+        <div className=" rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-4 sm:p-6">
+          <div className="flex flex-col space-y-4">
+            {/* Title and Stats */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+                    <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
+                  {unreadCount > 0 && (
+                    <div className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 bg-red-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">{unreadCount}</span>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Contact Messages</h1>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{submissions.length} total • {unreadCount} unread</p>
+                </div>
+              </div>
+              
+              {/* View Toggle for Desktop */}
+              <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-gray-700 rounded-lg p-1">
+                <Button
+                  size="sm"
+                  variant={viewMode === 'table' ? 'default' : 'ghost'}
+                  onClick={() => setViewMode('table')}
+                  className="px-3 py-1 text-sm"
+                >
+                  Table
+                </Button>
+                <Button
+                  size="sm"
+                  variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                  onClick={() => setViewMode('cards')}
+                  className="px-3 py-1 text-sm"
+                >
+                  Cards
+                </Button>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+              <input
+                type="text"
+                placeholder="Search messages..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              />
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
+              {[
+                { key: 'all', label: 'All', count: submissions.length },
+                { key: 'unread', label: 'Unread', count: unreadCount },
+                { key: 'read', label: 'Read', count: submissions.length - unreadCount }
+              ].map(({ key, label, count }) => (
+                <button
+                  key={key}
+                  onClick={() => setFilter(key as any)}
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                    filter === key
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {label} ({count})
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Table */}
+        {/* Content */}
         <div className=" rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
@@ -278,7 +474,7 @@ const ContactNotifications = () => {
               <span className="ml-3 text-slate-600 dark:text-slate-400">Loading...</span>
             </div>
           ) : sortedAndFilteredSubmissions.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-12 px-4">
               <MessageSquare className="h-12 w-12 text-slate-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No messages found</h3>
               <p className="text-slate-600 dark:text-slate-400">
@@ -286,226 +482,233 @@ const ContactNotifications = () => {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-slate-50 dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700">
-                  <tr>
-                    <th className="px-6 py-4 text-left">
-                      <button 
-                        onClick={() => handleSort('name')}
-                        className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
-                      >
-                        Contact
-                        <ArrowUpDown className="h-4 w-4" />
-                      </button>
-                    </th>
-                    <th className="px-6 py-4 text-left">
-                      <button 
-                        onClick={() => handleSort('status')}
-                        className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
-                      >
-                        Status
-                        <ArrowUpDown className="h-4 w-4" />
-                      </button>
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-slate-700 dark:text-gray-300">Project Details</th>
-                    <th className="px-6 py-4 text-left">
-                      <button 
-                        onClick={() => handleSort('created_at')}
-                        className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
-                      >
-                        Date
-                        <ArrowUpDown className="h-4 w-4" />
-                      </button>
-                    </th>
-                    <th className="px-6 py-4 text-right text-sm font-medium text-slate-700 dark:text-gray-300">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-gray-700">
-                  {sortedAndFilteredSubmissions.map((submission) => {
-                    const statusConfig = getStatusConfig(submission.status);
-                    const isExpanded = expandedRow === submission.id;
-                    
-                    return (
-                      <>
-                        <tr 
-                          key={submission.id}
-                          className={`hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors ${
-                            !submission.read ? 'bg-blue-50/50 dark:bg-blue-950/20 border-l-4 border-l-blue-500' : ''
-                          }`}
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-50 dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700">
+                    <tr>
+                      <th className="px-6 py-4 text-left">
+                        <button 
+                          onClick={() => handleSort('name')}
+                          className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
                         >
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
-                                !submission.read ? 'bg-blue-500' : 'bg-slate-400'
-                              }`}>
-                                {submission.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <p className="font-medium text-slate-900 dark:text-white truncate">
-                                    {submission.name}
-                                  </p>
-                                  {!submission.read && (
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                  )}
+                          Contact
+                          <ArrowUpDown className="h-4 w-4" />
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left">
+                        <button 
+                          onClick={() => handleSort('status')}
+                          className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
+                        >
+                          Status
+                          <ArrowUpDown className="h-4 w-4" />
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-slate-700 dark:text-gray-300">Project Details</th>
+                      <th className="px-6 py-4 text-left">
+                        <button 
+                          onClick={() => handleSort('created_at')}
+                          className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
+                        >
+                          Date
+                          <ArrowUpDown className="h-4 w-4" />
+                        </button>
+                      </th>
+                      <th className="px-6 py-4 text-right text-sm font-medium text-slate-700 dark:text-gray-300">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200 dark:divide-gray-700">
+                    {sortedAndFilteredSubmissions.map((submission) => {
+                      const statusConfig = getStatusConfig(submission.status);
+                      const isExpanded = expandedRow === submission.id;
+                      
+                      return (
+                        <>
+                          <tr 
+                            key={submission.id}
+                            className={`hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors ${
+                              !submission.read ? 'bg-blue-50/50 dark:bg-blue-950/20 border-l-4 border-l-blue-500' : ''
+                            }`}
+                          >
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
+                                  !submission.read ? 'bg-blue-500' : 'bg-slate-400'
+                                }`}>
+                                  {submission.name.charAt(0).toUpperCase()}
                                 </div>
-                                <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
-                                  <span className="flex items-center gap-1">
-                                    <Mail className="h-3 w-3" />
-                                    {submission.email}
-                                  </span>
-                                  {submission.phone && (
-                                    <span className="flex items-center gap-1">
-                                      <Phone className="h-3 w-3" />
-                                      {submission.phone}
-                                    </span>
-                                  )}
-                                </div>
-                                {submission.company && (
-                                  <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-1">
-                                    <Building className="h-3 w-3" />
-                                    {submission.company}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          
-                          <td className="px-6 py-4">
-                            <Badge className={`${statusConfig.color} text-white px-2 py-1`}>
-                              {statusConfig.label}
-                            </Badge>
-                          </td>
-                          
-                          <td className="px-6 py-4">
-                            <div className="space-y-1 text-sm">
-                              {submission.project_type && (
-                                <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
-                                  <MapPin className="h-3 w-3" />
-                                  {submission.project_type}
-                                </div>
-                              )}
-                              {submission.budget_range && (
-                                <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
-                                  <DollarSign className="h-3 w-3" />
-                                  {submission.budget_range}
-                                </div>
-                              )}
-                              {submission.area_size && (
-                                <div className="text-slate-500 dark:text-slate-500 text-xs">
-                                  Area: {submission.area_size}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                              <Calendar className="h-3 w-3" />
-                              {formatDate(submission.created_at)}
-                            </div>
-                          </td>
-                          
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => toggleRowExpansion(submission.id)}
-                                className="p-2"
-                              >
-                                <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                              </Button>
-                              {!submission.read && (
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleMarkAsRead(submission.id)}
-                                  disabled={markAsReadMutation.isPending}
-                                  className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                >
-                                  <Check className="h-4 w-4" />
-                                </Button>
-                              )}
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleDelete(submission.id)}
-                                disabled={deleteSubmissionMutation.isPending}
-                                className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                        
-                        {/* Expanded Row */}
-                        {isExpanded && (
-                          <tr>
-                            <td colSpan={5} className="px-6 py-0">
-                              <div className="bg-slate-50 dark:bg-gray-800 -mx-6 px-6 py-6 border-t border-slate-200 dark:border-gray-700">
-                                <div className="space-y-4">
-                                  <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 text-lg">
-                                    <MessageSquare className="h-5 w-5 text-blue-500" />
-                                    Message Details
-                                  </h4>
-                                  <div className="bg-white dark:bg-gray-900 p-5 rounded-xl border border-slate-200 dark:border-gray-600 shadow-sm">
-                                    {parseMessage(submission.message).map((item, index) => {
-                                      if (item.type === 'field') {
-                                        return (
-                                          <div key={index} className="flex flex-col sm:flex-row sm:items-start gap-2 py-2 border-b border-slate-100 dark:border-gray-700 last:border-b-0">
-                                            <div className="sm:w-1/3">
-                                              <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium rounded-full">
-                                                {item.field}
-                                              </span>
-                                            </div>
-                                            <div className="sm:w-2/3">
-                                              <span className="text-slate-700 dark:text-gray-300 text-sm leading-relaxed">
-                                                {item.value === '' || item.value === 'Not specified' ? (
-                                                  <span className="text-slate-400 dark:text-gray-500 italic">Not specified</span>
-                                                ) : (
-                                                  item.value
-                                                )}
-                                              </span>
-                                            </div>
-                                          </div>
-                                        );
-                                      } else {
-                                        return (
-                                          <div key={index} className="py-2">
-                                            <p className="text-slate-700 dark:text-gray-300 text-sm leading-relaxed">
-                                              {item.content}
-                                            </p>
-                                          </div>
-                                        );
-                                      }
-                                    })}
-                                  </div>
-                                  <div className="flex justify-between items-center text-xs text-slate-500 dark:text-gray-400 pt-3 border-t border-slate-200 dark:border-gray-700">
-                                    <span className="flex items-center gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-medium text-slate-900 dark:text-white truncate">
+                                      {submission.name}
+                                    </p>
+                                    {!submission.read && (
                                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                      Message ID: <code className="bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">{submission.id.slice(-8)}</code>
-                                    </span>
-                                    <span>Received: {new Date(submission.created_at).toLocaleString()}</span>
+                                    )}
                                   </div>
+                                  <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+                                    <span className="flex items-center gap-1">
+                                      <Mail className="h-3 w-3" />
+                                      {submission.email}
+                                    </span>
+                                    {submission.phone && (
+                                      <span className="flex items-center gap-1">
+                                        <Phone className="h-3 w-3" />
+                                        {submission.phone}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {submission.company && (
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-1">
+                                      <Building className="h-3 w-3" />
+                                      {submission.company}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                             </td>
+                            
+                            <td className="px-6 py-4">
+                              <Badge className={`${statusConfig.color} text-white px-2 py-1`}>
+                                {statusConfig.label}
+                              </Badge>
+                            </td>
+                            
+                            <td className="px-6 py-4">
+                              <div className="space-y-1 text-sm">
+                                {submission.project_type && (
+                                  <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                                    <MapPin className="h-3 w-3" />
+                                    {submission.project_type}
+                                  </div>
+                                )}
+                                {submission.budget_range && (
+                                  <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                                    <DollarSign className="h-3 w-3" />
+                                    {submission.budget_range}
+                                  </div>
+                                )}
+                                {submission.area_size && (
+                                  <div className="text-slate-500 dark:text-slate-500 text-xs">
+                                    Area: {submission.area_size}
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                            
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
+                                <Calendar className="h-3 w-3" />
+                                {formatDate(submission.created_at)}
+                              </div>
+                            </td>
+                            
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => toggleRowExpansion(submission.id)}
+                                  className="p-2"
+                                >
+                                  <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                                </Button>
+                                {!submission.read && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleMarkAsRead(submission.id)}
+                                    disabled={markAsReadMutation.isPending}
+                                    className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+                                )}
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleDelete(submission.id)}
+                                  disabled={deleteSubmissionMutation.isPending}
+                                  className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </td>
                           </tr>
-                        )}
-                      </>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          
+                          {/* Expanded Row */}
+                          {isExpanded && (
+                            <tr>
+                              <td colSpan={5} className="px-6 py-0">
+                                <div className="bg-slate-50 dark:bg-gray-800 -mx-6 px-6 py-6 border-t border-slate-200 dark:border-gray-700">
+                                  <div className="space-y-4">
+                                    <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 text-lg">
+                                      <MessageSquare className="h-5 w-5 text-blue-500" />
+                                      Message Details
+                                    </h4>
+                                    <div className="bg-white dark:bg-gray-900 p-5 rounded-xl border border-slate-200 dark:border-gray-600 shadow-sm">
+                                      {parseMessage(submission.message).map((item, index) => {
+                                        if (item.type === 'field') {
+                                          return (
+                                            <div key={index} className="flex flex-col sm:flex-row sm:items-start gap-2 py-2 border-b border-slate-100 dark:border-gray-700 last:border-b-0">
+                                              <div className="sm:w-1/3">
+                                                <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium rounded-full">
+                                                  {item.field}
+                                                </span>
+                                              </div>
+                                              <div className="sm:w-2/3">
+                                                <span className="text-slate-700 dark:text-gray-300 text-sm leading-relaxed">
+                                                  {item.value === '' || item.value === 'Not specified' ? (
+                                                    <span className="text-slate-400 dark:text-gray-500 italic">Not specified</span>
+                                                  ) : (
+                                                    item.value
+                                                  )}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          );
+                                        } else {
+                                          return (
+                                            <div key={index} className="py-2">
+                                              <p className="text-slate-700 dark:text-gray-300 text-sm leading-relaxed">
+                                                {item.content}
+                                              </p>
+                                            </div>
+                                          );
+                                        }
+                                      })}
+                                    </div>
+                                    <div className="flex justify-between items-center text-xs text-slate-500 dark:text-gray-400 pt-3 border-t border-slate-200 dark:border-gray-700">
+                                      <span className="flex items-center gap-2">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        Message ID: <code className="bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">{submission.id.slice(-8)}</code>
+                                      </span>
+                                      <span>Received: {new Date(submission.created_at).toLocaleString()}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="block md:hidden p-4">
+                <CardView />
+              </div>
+            </>
           )}
         </div>
       </div>
     </div>
   );
-};
-
+}
 export default ContactNotifications;
