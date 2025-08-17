@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   CreditCard, 
   TrendingUp, 
@@ -22,11 +23,16 @@ import {
 } from "lucide-react";
 
 interface MpesaConfig {
-  consumer_key: string;
-  consumer_secret: string;
-  business_short_code: string;
-  pass_key: string;
-  callback_url: string;
+  businessName: string;
+  consumerKey: string;
+  consumerSecret: string;
+  environment: 'sandbox' | 'production';
+  passkey: string;
+  paybillNumber: string;
+  tillNumber: string;
+  shortcode: string;
+  callbackUrl: string;
+  accountType?: 'paybill' | 'till';
 }
 
 interface MpesaTransaction {
@@ -44,11 +50,16 @@ const MpesaIntegration = () => {
   const queryClient = useQueryClient();
   
   const [config, setConfig] = useState<MpesaConfig>({
-    consumer_key: '',
-    consumer_secret: '',
-    business_short_code: '',
-    pass_key: '',
-    callback_url: ''
+    businessName: '',
+    consumerKey: '',
+    consumerSecret: '',
+    environment: 'sandbox',
+    passkey: '',
+    paybillNumber: '',
+    tillNumber: '',
+    shortcode: '',
+    callbackUrl: 'https://driptech-eco-flow-web.vercel.app/api/mpesa/callback',
+    accountType: 'paybill'
   });
   
   const [isEnabled, setIsEnabled] = useState(false);
@@ -108,17 +119,35 @@ const MpesaIntegration = () => {
     };
   }, [transactions]);
 
-  // Update configuration
+  // Update configuration mutation - FIXED VERSION
   const updateConfigMutation = useMutation({
     mutationFn: async (newConfig: MpesaConfig) => {
-      const { error } = await supabase
+      // First, check if the setting exists
+      const { data: existing } = await supabase
         .from('system_settings')
-        .upsert({
-          setting_key: 'mpesa_config',
-          setting_value: newConfig as any
-        });
+        .select('setting_key')
+        .eq('setting_key', 'mpesa_config')
+        .single();
       
-      if (error) throw error;
+      let result;
+      
+      if (existing) {
+        // Update existing record
+        result = await supabase
+          .from('system_settings')
+          .update({ setting_value: newConfig as any })
+          .eq('setting_key', 'mpesa_config');
+      } else {
+        // Insert new record
+        result = await supabase
+          .from('system_settings')
+          .insert({
+            setting_key: 'mpesa_config',
+            setting_value: newConfig as any
+          });
+      }
+      
+      if (result.error) throw result.error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mpesa-config'] });
@@ -181,10 +210,24 @@ const MpesaIntegration = () => {
     }
   });
 
-  // Load config on mount
+  // Load config on mount with backward compatibility
   useEffect(() => {
     if (mpesaConfig) {
-      setConfig(mpesaConfig);
+      // Handle both old and new config formats
+      const updatedConfig = {
+        businessName: mpesaConfig.businessName || '',
+        consumerKey: mpesaConfig.consumerKey || mpesaConfig.consumer_key || '',
+        consumerSecret: mpesaConfig.consumerSecret || mpesaConfig.consumer_secret || '',
+        environment: mpesaConfig.environment || 'sandbox',
+        passkey: mpesaConfig.passkey || mpesaConfig.pass_key || '',
+        paybillNumber: mpesaConfig.paybillNumber || mpesaConfig.business_short_code || '174379',
+        tillNumber: mpesaConfig.tillNumber?.includes('@') ? '' : (mpesaConfig.tillNumber || ''),
+        shortcode: mpesaConfig.shortcode || mpesaConfig.business_short_code || '174379',
+        callbackUrl: mpesaConfig.callbackUrl || mpesaConfig.callback_url || 'https://driptech-eco-flow-web.vercel.app/api/mpesa/callback',
+        accountType: mpesaConfig.accountType || 'paybill'
+      } as MpesaConfig;
+      
+      setConfig(updatedConfig);
       setIsEnabled(true);
     }
   }, [mpesaConfig]);
@@ -379,54 +422,146 @@ const MpesaIntegration = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="consumer_key">Consumer Key</Label>
+                  <Label htmlFor="businessName">Business Name</Label>
                   <Input
-                    id="consumer_key"
+                    id="businessName"
+                    value={config.businessName}
+                    onChange={(e) => setConfig(prev => ({ ...prev, businessName: e.target.value }))}
+                    placeholder="Enter business name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="environment">Environment</Label>
+                  <Select 
+                    value={config.environment} 
+                    onValueChange={(value: 'sandbox' | 'production') => 
+                      setConfig(prev => ({ ...prev, environment: value }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sandbox">Sandbox (Testing)</SelectItem>
+                      <SelectItem value="production">Production (Live)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="consumerKey">Consumer Key</Label>
+                  <Input
+                    id="consumerKey"
                     type="password"
-                    value={config.consumer_key}
-                    onChange={(e) => setConfig(prev => ({ ...prev, consumer_key: e.target.value }))}
+                    value={config.consumerKey}
+                    onChange={(e) => setConfig(prev => ({ ...prev, consumerKey: e.target.value }))}
                     placeholder="Enter consumer key"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="consumer_secret">Consumer Secret</Label>
+                  <Label htmlFor="consumerSecret">Consumer Secret</Label>
                   <Input
-                    id="consumer_secret"
+                    id="consumerSecret"
                     type="password"
-                    value={config.consumer_secret}
-                    onChange={(e) => setConfig(prev => ({ ...prev, consumer_secret: e.target.value }))}
+                    value={config.consumerSecret}
+                    onChange={(e) => setConfig(prev => ({ ...prev, consumerSecret: e.target.value }))}
                     placeholder="Enter consumer secret"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="business_short_code">Business Short Code</Label>
+                  <Label htmlFor="accountType">Account Type</Label>
+                  <Select 
+                    value={config.accountType} 
+                    onValueChange={(value: 'paybill' | 'till') => 
+                      setConfig(prev => ({ 
+                        ...prev, 
+                        accountType: value,
+                        // Clear the other field when switching types
+                        paybillNumber: value === 'paybill' ? prev.paybillNumber : '',
+                        tillNumber: value === 'till' ? prev.tillNumber : '',
+                        shortcode: value === 'paybill' ? prev.paybillNumber : prev.tillNumber
+                      }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="paybill">Paybill (Business)</SelectItem>
+                      <SelectItem value="till">Till Number (Merchant)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {config.accountType === 'paybill' ? (
+                  <div className="space-y-2">
+                    <Label htmlFor="paybillNumber">Paybill Number</Label>
+                    <Input
+                      id="paybillNumber"
+                      value={config.paybillNumber}
+                      onChange={(e) => setConfig(prev => ({ 
+                        ...prev, 
+                        paybillNumber: e.target.value,
+                        shortcode: e.target.value // Auto-sync shortcode
+                      }))}
+                      placeholder="Enter paybill number (e.g., 174379)"
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label htmlFor="tillNumber">Till Number</Label>
+                    <Input
+                      id="tillNumber"
+                      value={config.tillNumber}
+                      onChange={(e) => setConfig(prev => ({ 
+                        ...prev, 
+                        tillNumber: e.target.value,
+                        shortcode: e.target.value // Auto-sync shortcode
+                      }))}
+                      placeholder="Enter till number (e.g., 123456)"
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label htmlFor="shortcode">Short Code</Label>
                   <Input
-                    id="business_short_code"
-                    value={config.business_short_code}
-                    onChange={(e) => setConfig(prev => ({ ...prev, business_short_code: e.target.value }))}
-                    placeholder="Enter business short code"
+                    id="shortcode"
+                    value={config.shortcode}
+                    onChange={(e) => setConfig(prev => ({ ...prev, shortcode: e.target.value }))}
+                    placeholder="Auto-filled from paybill/till number"
+                    disabled
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="pass_key">Pass Key</Label>
+                  <Label htmlFor="passkey">Pass Key</Label>
                   <Input
-                    id="pass_key"
+                    id="passkey"
                     type="password"
-                    value={config.pass_key}
-                    onChange={(e) => setConfig(prev => ({ ...prev, pass_key: e.target.value }))}
+                    value={config.passkey}
+                    onChange={(e) => setConfig(prev => ({ ...prev, passkey: e.target.value }))}
                     placeholder="Enter pass key"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="callback_url">Callback URL</Label>
+                <Label htmlFor="callbackUrl">Callback URL</Label>
                 <Input
-                  id="callback_url"
-                  value={config.callback_url}
-                  onChange={(e) => setConfig(prev => ({ ...prev, callback_url: e.target.value }))}
-                  placeholder="https://yourdomain.com/api/mpesa/callback"
+                  id="callbackUrl"
+                  value={config.callbackUrl}
+                  onChange={(e) => setConfig(prev => ({ ...prev, callbackUrl: e.target.value }))}
+                  placeholder="https://driptech-eco-flow-web.vercel.app/api/mpesa/callback"
                 />
               </div>
+              
+              {/* Configuration Help */}
+              <div className="p-4 border rounded-lg bg-muted/50">
+                <h4 className="font-medium mb-2">Configuration Notes:</h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• <strong>Sandbox:</strong> Use paybill 174379 for testing</li>
+                  <li>• <strong>Paybill:</strong> For business accounts (5-7 digits)</li>
+                  <li>• <strong>Till:</strong> For merchant/retail accounts (5-6 digits)</li>
+                  <li>• <strong>Callback URL:</strong> Must be publicly accessible HTTPS endpoint</li>
+                </ul>
+              </div>
+              
               <Button onClick={handleSaveConfig} disabled={updateConfigMutation.isPending}>
                 {updateConfigMutation.isPending ? 'Saving...' : 'Save Configuration'}
               </Button>
@@ -447,16 +582,24 @@ const MpesaIntegration = () => {
                 <h4 className="font-medium mb-2">Test Configuration Status</h4>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    {config.consumer_key ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
+                    {config.consumerKey ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
                     <span className="text-sm">Consumer Key</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {config.consumer_secret ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
+                    {config.consumerSecret ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
                     <span className="text-sm">Consumer Secret</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {config.business_short_code ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
-                    <span className="text-sm">Business Short Code</span>
+                    {config.shortcode ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
+                    <span className="text-sm">Short Code ({config.accountType})</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {config.passkey ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
+                    <span className="text-sm">Pass Key</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {config.callbackUrl ? <CheckCircle className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4 text-red-500" />}
+                    <span className="text-sm">Callback URL</span>
                   </div>
                 </div>
               </div>

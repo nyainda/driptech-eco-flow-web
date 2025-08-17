@@ -18,7 +18,6 @@ import {
   CheckCircle,
   AlertTriangle,
   Play,
-  ExternalLink,
   Archive,
   Image,
   Users,
@@ -765,12 +764,6 @@ const InstallationGuides = () => {
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download Video
-                </Button>
-                <Button
-                  onClick={() => window.open(videoModal.url, '_blank')}
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Open in New Tab
                 </Button>
               </div>
             </div>
