@@ -1,11 +1,11 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, User, LogOut, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Lock, User, LogOut, Eye, EyeOff, AlertCircle, Clock } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface AdminUser {
@@ -22,10 +22,19 @@ interface AdminAuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   sessionExpired: boolean;
+  idleWarning: boolean;
+  timeUntilExpiry: number;
   refreshSession: () => Promise<boolean>;
+  resetIdleTimer: () => void;
+  extendSession: () => void;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | null>(null);
+
+// Configuration constants
+const IDLE_TIMEOUT = 30 * 60 * 1000; 
+const WARNING_TIME = 5 * 60 * 1000; 
+const ACTIVITY_EVENTS = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
 
 export const useAdminAuth = () => {
   const context = useContext(AdminAuthContext);
@@ -40,7 +49,16 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [idleWarning, setIdleWarning] = useState(false);
+  const [timeUntilExpiry, setTimeUntilExpiry] = useState(0);
+  
   const { toast } = useToast();
+  
+  // Refs for timers
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const warningTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastActivityRef = useRef<number>(Date.now());
 
   // Check if user is admin by checking their email domain or specific emails
   const checkAdminRole = async (supabaseUser: SupabaseUser): Promise<AdminUser | null> => {
@@ -74,6 +92,122 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     }
   };
 
+  // Clear all timers
+  const clearAllTimers = useCallback(() => {
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = null;
+    }
+    if (warningTimerRef.current) {
+      clearTimeout(warningTimerRef.current);
+      warningTimerRef.current = null;
+    }
+    if (countdownTimerRef.current) {
+      clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
+    }
+  }, []);
+
+  // Handle idle timeout
+  const handleIdleTimeout = useCallback(async () => {
+    console.log('Session expired due to inactivity');
+    clearAllTimers();
+    setIdleWarning(false);
+    setSessionExpired(true);
+    setIsAuthenticated(false);
+    setUser(null);
+    
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Session Expired",
+        description: "You've been logged out due to inactivity",
+        variant: "destructive"
+      });
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  }, [toast, clearAllTimers]);
+
+  // Show warning before timeout
+  const showIdleWarning = useCallback(() => {
+    setIdleWarning(true);
+    setTimeUntilExpiry(WARNING_TIME / 1000); 
+    
+    // Start countdown
+    countdownTimerRef.current = setInterval(() => {
+      setTimeUntilExpiry((prev) => {
+        if (prev <= 1) {
+          handleIdleTimeout();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    // Set timer for actual timeout
+    idleTimerRef.current = setTimeout(handleIdleTimeout, WARNING_TIME);
+  }, [handleIdleTimeout]);
+
+  // Reset idle timer
+  const resetIdleTimer = useCallback(() => {
+    if (!isAuthenticated) return;
+    
+    lastActivityRef.current = Date.now();
+    clearAllTimers();
+    setIdleWarning(false);
+    setTimeUntilExpiry(0);
+    
+    // Set warning timer (show warning 5 minutes before timeout)
+    warningTimerRef.current = setTimeout(showIdleWarning, IDLE_TIMEOUT - WARNING_TIME);
+  }, [isAuthenticated, showIdleWarning, clearAllTimers]);
+
+  // Extend session (called from warning dialog)
+  const extendSession = useCallback(() => {
+    setIdleWarning(false);
+    clearAllTimers();
+    resetIdleTimer();
+    toast({
+      title: "Session Extended",
+      description: "Your session has been extended",
+    });
+  }, [resetIdleTimer, clearAllTimers, toast]);
+
+  // Activity event handler
+  const handleActivity = useCallback(() => {
+    const now = Date.now();
+    const timeSinceLastActivity = now - lastActivityRef.current;
+    
+    // Only reset timer if significant time has passed (throttle)
+    if (timeSinceLastActivity > 30000) { 
+      resetIdleTimer();
+    }
+  }, [resetIdleTimer]);
+
+  // Set up activity listeners
+  useEffect(() => {
+    if (!isAuthenticated) {
+      clearAllTimers();
+      return;
+    }
+
+    // Add activity event listeners
+    ACTIVITY_EVENTS.forEach(event => {
+      document.addEventListener(event, handleActivity, true);
+    });
+
+    // Start idle timer
+    resetIdleTimer();
+
+    return () => {
+      // Clean up event listeners
+      ACTIVITY_EVENTS.forEach(event => {
+        document.removeEventListener(event, handleActivity, true);
+      });
+      clearAllTimers();
+    };
+  }, [isAuthenticated, handleActivity, resetIdleTimer, clearAllTimers]);
+
   // Function to refresh session manually
   const refreshSession = async (): Promise<boolean> => {
     try {
@@ -93,6 +227,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         setUser(adminUser);
         setIsAuthenticated(true);
         setSessionExpired(false);
+        resetIdleTimer(); 
         return true;
       }
       
@@ -191,6 +326,8 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
             setUser(null);
             setIsAuthenticated(false);
             setSessionExpired(false);
+            setIdleWarning(false);
+            clearAllTimers();
             break;
             
           case 'TOKEN_REFRESHED':
@@ -201,6 +338,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
                 setUser(adminUser);
                 setIsAuthenticated(true);
                 setSessionExpired(false);
+                resetIdleTimer(); 
               }
             }
             break;
@@ -220,7 +358,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     );
 
     return () => subscription.unsubscribe();
-  }, [toast]);
+  }, [toast, resetIdleTimer, clearAllTimers]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -277,6 +415,9 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
 
   const logout = async () => {
     try {
+      clearAllTimers();
+      setIdleWarning(false);
+      
       const { error } = await supabase.auth.signOut();
       if (error) {
         toast({
@@ -310,10 +451,64 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
       isAuthenticated, 
       loading, 
       sessionExpired,
-      refreshSession 
+      idleWarning,
+      timeUntilExpiry,
+      refreshSession,
+      resetIdleTimer,
+      extendSession
     }}>
       {children}
     </AdminAuthContext.Provider>
+  );
+};
+
+// Format time in MM:SS
+const formatTime = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+// Idle Warning Dialog Component
+const IdleWarningDialog = () => {
+  const { idleWarning, timeUntilExpiry, extendSession, logout } = useAdminAuth();
+
+  if (!idleWarning) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <Card className="w-full max-w-md border-warning">
+        <CardHeader className="text-center">
+          <div className="mx-auto w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-4">
+            <Clock className="h-6 w-6 text-warning" />
+          </div>
+          <CardTitle className="text-xl">Session Expiring Soon</CardTitle>
+          <CardDescription>
+            Your session will expire in {formatTime(timeUntilExpiry)} due to inactivity
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              className="flex-1" 
+              onClick={logout}
+            >
+              Logout Now
+            </Button>
+            <Button 
+              className="flex-1 bg-warning hover:bg-warning/90 text-warning-foreground" 
+              onClick={extendSession}
+            >
+              Stay Logged In
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground text-center mt-3">
+            Click "Stay Logged In" to extend your session for another 30 minutes
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
@@ -456,17 +651,27 @@ export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
         <AdminLogin />
         <SessionExpiredWarning 
           onRefresh={refreshSession}
-          onLogin={logout} // This will trigger logout and show login
+          onLogin={logout} 
         />
       </>
     );
   }
   
   if (!isAuthenticated) {
-    return <AdminLogin />;
+    return (
+      <>
+        <AdminLogin />
+        <IdleWarningDialog />
+      </>
+    );
   }
   
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <IdleWarningDialog />
+    </>
+  );
 };
 
 export const AdminHeader = () => {
