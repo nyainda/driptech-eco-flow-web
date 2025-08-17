@@ -630,6 +630,8 @@ export type Database = {
           },
         ]
       }
+
+      
       quote_items: {
         Row: {
           created_at: string | null
