@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { AdminAuthProvider, AdminAuthGuard, AdminHeader } from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
+import NotificationSystem from "@/components/Admin/NotificationSystem";
 import AdminDashboard from "@/components/Admin/AdminDashboard";
 import ProductManagement from "@/components/Admin/ProductManagement";
 import BlogManagement from "@/components/Admin/BlogManagement";
@@ -136,6 +137,7 @@ const AdminContent = () => {
               <p className="text-muted-foreground">Manage your irrigation business</p>
             </div>
             <div className="flex items-center gap-4">
+              <NotificationSystem />
               <ThemeToggle />
               <AdminHeader />
             </div>
