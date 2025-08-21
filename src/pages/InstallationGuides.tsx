@@ -59,6 +59,9 @@ const InstallationGuides = () => {
   const [pdfModal, setPdfModal] = useState({ isOpen: false, url: "", title: "" });
   const [imageModal, setImageModal] = useState({ isOpen: false, url: "", title: "" });
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [currentManagedPage, setCurrentManagedPage] = useState(1);
+  const [currentProductPage, setCurrentProductPage] = useState(1);
+  const itemsPerPage = 9;
   const { toast } = useToast();
 
   useEffect(() => {
@@ -75,6 +78,11 @@ const InstallationGuides = () => {
 
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  useEffect(() => {
+    setCurrentManagedPage(1);
+    setCurrentProductPage(1);
+  }, [searchTerm, selectedCategory, selectedDocumentType]);
 
   const fetchInstallationResources = async () => {
     try {
@@ -365,6 +373,20 @@ const InstallationGuides = () => {
     }
   ];
 
+  // Pagination for managed documents
+  const totalManagedPages = Math.ceil(filteredManagedDocuments.length / itemsPerPage);
+  const currentManagedDocs = filteredManagedDocuments.slice(
+    (currentManagedPage - 1) * itemsPerPage,
+    currentManagedPage * itemsPerPage
+  );
+
+  // Pagination for products
+  const totalProductPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const currentProducts = filteredProducts.slice(
+    (currentProductPage - 1) * itemsPerPage,
+    currentProductPage * itemsPerPage
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -472,7 +494,7 @@ const InstallationGuides = () => {
                     </Badge>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredManagedDocuments.map((doc) => {
+                    {currentManagedDocs.map((doc) => {
                       const IconComponent = getDocumentIcon(doc.file_type);
                       const categoryColor = getDocumentCategoryColor(doc.category);
                       const canView = canViewInModal(doc.file_type);
@@ -568,6 +590,25 @@ const InstallationGuides = () => {
                       );
                     })}
                   </div>
+                  <div className="flex justify-center items-center mt-6 gap-4">
+                    <Button
+                      variant="outline"
+                      disabled={currentManagedPage === 1}
+                      onClick={() => setCurrentManagedPage(prev => Math.max(prev - 1, 1))}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-muted-foreground">
+                      Page {currentManagedPage} of {totalManagedPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      disabled={currentManagedPage === totalManagedPages}
+                      onClick={() => setCurrentManagedPage(prev => Math.min(prev + 1, totalManagedPages))}
+                    >
+                      Next
+                    </Button>
+                  </div>
                 </div>
               )}
 
@@ -576,7 +617,7 @@ const InstallationGuides = () => {
                 <div className="mb-12">
                   <h2 className="text-2xl font-bold text-foreground mb-6">Product-Specific Installation Guides</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredProducts.map((product) => {
+                    {currentProducts.map((product) => {
                       const IconComponent = getCategoryIcon(product.category);
                       const categoryColor = getCategoryColor(product.category);
                       const categoryName = product.category?.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase()) || 'Product';
@@ -700,6 +741,25 @@ const InstallationGuides = () => {
                         </Card>
                       );
                     })}
+                  </div>
+                  <div className="flex justify-center items-center mt-6 gap-4">
+                    <Button
+                      variant="outline"
+                      disabled={currentProductPage === 1}
+                      onClick={() => setCurrentProductPage(prev => Math.max(prev - 1, 1))}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-muted-foreground">
+                      Page {currentProductPage} of {totalProductPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      disabled={currentProductPage === totalProductPages}
+                      onClick={() => setCurrentProductPage(prev => Math.min(prev + 1, totalProductPages))}
+                    >
+                      Next
+                    </Button>
                   </div>
                 </div>
               )}
