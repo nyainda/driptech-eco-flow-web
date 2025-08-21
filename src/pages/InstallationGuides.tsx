@@ -24,12 +24,28 @@ import {
   Calendar,
   Star,
   Eye,
-  X
+  X,
+  Maximize2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { useToast } from "@/hooks/use-toast";
+
+const documentCategories = [
+  "Product Brochures",
+  "Technical Specifications",
+  "Installation Guides",
+  "Maintenance Manuals",
+  "Case Studies",
+  "White Papers",
+  "Certifications",
+  "Training Materials",
+  "Marketing Materials",
+  "User Manuals",
+  "Safety Guidelines",
+  "Warranty Information"
+];
 
 const InstallationGuides = () => {
   const [products, setProducts] = useState([]);
@@ -41,6 +57,7 @@ const InstallationGuides = () => {
   const [selectedDocumentType, setSelectedDocumentType] = useState("all");
   const [videoModal, setVideoModal] = useState({ isOpen: false, url: "", title: "" });
   const [pdfModal, setPdfModal] = useState({ isOpen: false, url: "", title: "" });
+  const [imageModal, setImageModal] = useState({ isOpen: false, url: "", title: "" });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -49,7 +66,6 @@ const InstallationGuides = () => {
 
   const fetchInstallationResources = async () => {
     try {
-     
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('*')
@@ -57,7 +73,6 @@ const InstallationGuides = () => {
 
       if (productsError) throw productsError;
 
-     
       const { data: documentsData, error: documentsError } = await supabase
         .from('documents')
         .select('*')
@@ -66,18 +81,10 @@ const InstallationGuides = () => {
 
       if (documentsError) throw documentsError;
 
-     
       const { data: managedDocsData, error: managedDocsError } = await supabase
         .from('documents')
         .select('*')
-        .in('category', [
-          'Installation Guides',
-          'Technical Specifications',
-          'User Manuals',
-          'Training Materials',
-          'Safety Guidelines',
-          'Maintenance Manuals'
-        ])
+        .in('category', documentCategories)
         .order('created_at', { ascending: false });
 
       if (managedDocsError) throw managedDocsError;
@@ -148,22 +155,22 @@ const InstallationGuides = () => {
   };
 
   const getDocumentCategoryColor = (category) => {
-    switch (category) {
-      case 'Installation Guides':
-        return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
-      case 'Technical Specifications':
-        return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
-      case 'User Manuals':
-        return 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800';
-      case 'Training Materials':
-        return 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800';
-      case 'Safety Guidelines':
-        return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
-      case 'Maintenance Manuals':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800';
-      default:
-        return 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
-    }
+    const colorMap = {
+      'Installation Guides': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800',
+      'Technical Specifications': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800',
+      'User Manuals': 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800',
+      'Training Materials': 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800',
+      'Safety Guidelines': 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800',
+      'Maintenance Manuals': 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800',
+      'Product Brochures': 'bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:text-pink-300 dark:border-pink-800',
+      'Case Studies': 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800',
+      'White Papers': 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800',
+      'Certifications': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800',
+      'Marketing Materials': 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800',
+      'Warranty Information': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800'
+    };
+    
+    return colorMap[category] || 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800';
   };
 
   const isVideoFile = (fileType) => {
@@ -176,11 +183,27 @@ const InstallationGuides = () => {
     return imageTypes.includes(fileType?.toLowerCase());
   };
 
-  const handleFileAction = async (url, filename, fileType, documentId, action = 'download') => {
+  const isPdfFile = (fileType) => {
+    return fileType?.toLowerCase() === 'pdf';
+  };
+
+  const handleViewDocument = (url, title, fileType) => {
+    if (isVideoFile(fileType)) {
+      setVideoModal({ isOpen: true, url, title });
+    } else if (isPdfFile(fileType)) {
+      setPdfModal({ isOpen: true, url, title });
+    } else if (isImageFile(fileType)) {
+      setImageModal({ isOpen: true, url, title });
+    } else {
+      // For other file types that can't be viewed in modal, download them
+      handleDownloadDocument(url, title, null);
+    }
+  };
+
+  const handleDownloadDocument = async (url, filename, documentId) => {
     try {
-     
-      if (documentId && action === 'download') {
-        
+      // Update download count if documentId is provided
+      if (documentId) {
         const { data, error: fetchError } = await supabase
           .from('documents')
           .select('download_count')
@@ -197,33 +220,16 @@ const InstallationGuides = () => {
             .eq('id', documentId);
 
           if (updateError) console.error('Error updating download count:', updateError);
-        } else if (fetchError) {
-          console.error('Error fetching current download count:', fetchError);
         }
       }
 
-      if (action === 'view') {
-        if (isVideoFile(fileType)) {
-          setVideoModal({ isOpen: true, url, title: filename });
-          return;
-        } else if (fileType?.toLowerCase() === 'pdf') {
-          setPdfModal({ isOpen: true, url, title: filename });
-          return;
-        } else if (isImageFile(fileType)) {
-          window.open(url, '_blank');
-          return;
-        }
-      }
-
-    
+      // Try to download the file
       try {
-        
         const response = await fetch(url, { method: 'HEAD' });
         if (!response.ok) {
           throw new Error(`File not found: ${response.status}`);
         }
 
-       
         const downloadResponse = await fetch(url);
         if (!downloadResponse.ok) throw new Error('Network response was not ok');
         
@@ -237,7 +243,6 @@ const InstallationGuides = () => {
         link.click();
         document.body.removeChild(link);
         
-        
         window.URL.revokeObjectURL(downloadUrl);
         
         toast({
@@ -247,7 +252,6 @@ const InstallationGuides = () => {
       } catch (fetchError) {
         console.error('Fetch error:', fetchError);
         
-       
         if (fetchError.message.includes('404') || fetchError.message.includes('File not found')) {
           toast({
             title: "File Not Found",
@@ -257,7 +261,7 @@ const InstallationGuides = () => {
           return;
         }
         
-        
+        // Fallback to direct link
         try {
           const link = document.createElement('a');
           link.href = url;
@@ -280,10 +284,10 @@ const InstallationGuides = () => {
         }
       }
     } catch (error) {
-      console.error('Error handling file:', error);
+      console.error('Error handling download:', error);
       toast({
-        title: "Action Failed",
-        description: "Unable to process the file",
+        title: "Download Failed",
+        description: "Unable to download the file",
         variant: "destructive"
       });
     }
@@ -295,6 +299,10 @@ const InstallationGuides = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const canViewInModal = (fileType) => {
+    return isVideoFile(fileType) || isImageFile(fileType) || isPdfFile(fileType);
   };
 
   const filteredProducts = products.filter(product =>
@@ -456,7 +464,7 @@ const InstallationGuides = () => {
                     {filteredManagedDocuments.map((doc) => {
                       const IconComponent = getDocumentIcon(doc.file_type);
                       const categoryColor = getDocumentCategoryColor(doc.category);
-                      const canView = isVideoFile(doc.file_type) || isImageFile(doc.file_type) || doc.file_type?.toLowerCase() === 'pdf';
+                      const canView = canViewInModal(doc.file_type);
                       
                       return (
                         <Card key={doc.id} className="hover:shadow-lg transition-shadow group">
@@ -529,7 +537,7 @@ const InstallationGuides = () => {
                                   <Button
                                     variant="outline"
                                     className="flex-1"
-                                    onClick={() => handleFileAction(doc.file_url, doc.title, doc.file_type, doc.id, 'view')}
+                                    onClick={() => handleViewDocument(doc.file_url, doc.title, doc.file_type)}
                                   >
                                     <Eye className="h-4 w-4 mr-2" />
                                     {isVideoFile(doc.file_type) ? 'Play' : 'View'}
@@ -537,7 +545,7 @@ const InstallationGuides = () => {
                                 )}
                                 <Button
                                   className={canView ? "flex-1" : "w-full"}
-                                  onClick={() => handleFileAction(doc.file_url, doc.title, doc.file_type, doc.id, 'download')}
+                                  onClick={() => handleDownloadDocument(doc.file_url, doc.title, doc.id)}
                                 >
                                   <Download className="h-4 w-4 mr-2" />
                                   Download
@@ -586,15 +594,23 @@ const InstallationGuides = () => {
                           <CardContent>
                             <div className="space-y-3">
                               {product.installation_guide_url && (
-                                <Button
-                                  variant="outline"
-                                  className="w-full justify-start"
-                                  onClick={() => handleFileAction(product.installation_guide_url, `${product.name}-installation-guide.pdf`, 'pdf', null)}
-                                >
-                                  <FileText className="h-4 w-4 mr-2" />
-                                  Installation Guide (PDF)
-                                  <Download className="h-4 w-4 ml-auto" />
-                                </Button>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    className="flex-1 justify-start"
+                                    onClick={() => handleViewDocument(product.installation_guide_url, `${product.name} Installation Guide`, 'pdf')}
+                                  >
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    View Guide
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleDownloadDocument(product.installation_guide_url, `${product.name}-installation-guide.pdf`, null)}
+                                  >
+                                    <Download className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               )}
                               
                               {product.video_url && (
@@ -602,7 +618,7 @@ const InstallationGuides = () => {
                                   <Button
                                     variant="outline"
                                     className="flex-1 justify-start"
-                                    onClick={() => handleFileAction(product.video_url, `${product.name}-installation-video.mp4`, 'mp4', null, 'view')}
+                                    onClick={() => handleViewDocument(product.video_url, `${product.name} Installation Video`, 'mp4')}
                                   >
                                     <Play className="h-4 w-4 mr-2" />
                                     Play Video
@@ -610,7 +626,7 @@ const InstallationGuides = () => {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() => handleFileAction(product.video_url, `${product.name}-installation-video.mp4`, 'mp4', null)}
+                                    onClick={() => handleDownloadDocument(product.video_url, `${product.name}-installation-video.mp4`, null)}
                                   >
                                     <Download className="h-4 w-4" />
                                   </Button>
@@ -622,10 +638,10 @@ const InstallationGuides = () => {
                                   variant="ghost"
                                   size="sm"
                                   className="w-full justify-start text-xs"
-                                  onClick={() => handleFileAction(product.maintenance_manual_url, `${product.name}-maintenance-manual.pdf`, 'pdf', null)}
+                                  onClick={() => handleViewDocument(product.maintenance_manual_url, `${product.name} Maintenance Manual`, 'pdf')}
                                 >
-                                  <Download className="h-3 w-3 mr-2" />
-                                  Maintenance Manual
+                                  <Eye className="h-3 w-3 mr-2" />
+                                  View Maintenance Manual
                                 </Button>
                               )}
                             </div>
@@ -688,18 +704,27 @@ const InstallationGuides = () => {
 
       {/* PDF Modal */}
       {pdfModal.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-6xl w-full max-h-[95vh] overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-lg font-semibold text-foreground truncate">{pdfModal.title}</h3>
-              <div className="flex gap-2">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-7xl h-full max-h-[95vh] overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-3 sm:p-4 border-b flex-shrink-0">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground truncate pr-4">{pdfModal.title}</h3>
+              <div className="flex gap-2 flex-shrink-0">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleFileAction(pdfModal.url, pdfModal.title, 'pdf', null)}
+                  onClick={() => handleDownloadDocument(pdfModal.url, pdfModal.title, null)}
+                  className="hidden sm:flex"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownloadDocument(pdfModal.url, pdfModal.title, null)}
+                  className="sm:hidden"
+                >
+                  <Download className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
@@ -710,24 +735,22 @@ const InstallationGuides = () => {
                 </Button>
               </div>
             </div>
-            <div className="h-[calc(95vh-80px)]">
+            <div className="flex-1 min-h-0">
               <iframe
                 src={`${pdfModal.url}#view=FitH&toolbar=1&navpanes=1&scrollbar=1`}
                 className="w-full h-full border-0"
                 title={pdfModal.title}
                 loading="lazy"
               >
-                <p className="p-4 text-center">
-                  Your browser does not support PDFs. 
-                  <a 
-                    href={pdfModal.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary underline ml-1"
+                <div className="p-4 text-center">
+                  <p className="mb-4">Your browser does not support PDFs.</p>
+                  <Button
+                    onClick={() => handleDownloadDocument(pdfModal.url, pdfModal.title, null)}
                   >
+                    <Download className="h-4 w-4 mr-2" />
                     Download the PDF
-                  </a>
-                </p>
+                  </Button>
+                </div>
               </iframe>
             </div>
           </div>
@@ -736,34 +759,111 @@ const InstallationGuides = () => {
 
       {/* Video Modal */}
       {videoModal.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-lg font-semibold text-foreground truncate">{videoModal.title}</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setVideoModal({ isOpen: false, url: "", title: "" })}
-              >
-                <X className="h-4 w-4" />
-              </Button>
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-3 sm:p-4 border-b flex-shrink-0">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground truncate pr-4">{videoModal.title}</h3>
+              <div className="flex gap-2 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownloadDocument(videoModal.url, videoModal.title, null)}
+                  className="hidden sm:flex"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownloadDocument(videoModal.url, videoModal.title, null)}
+                  className="sm:hidden"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setVideoModal({ isOpen: false, url: "", title: "" })}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-            <div className="p-4">
+            <div className="p-3 sm:p-4 flex-1">
               <video
-                className="w-full h-auto max-h-[70vh]"
+                className="w-full h-auto max-h-[75vh] rounded"
                 controls
                 preload="metadata"
                 src={videoModal.url}
+                controlsList="nodownload"
               >
-                Your browser does not support the video tag.
+                <p className="text-center p-4">
+                  Your browser does not support the video tag.
+                  <Button
+                    className="ml-4"
+                    onClick={() => handleDownloadDocument(videoModal.url, videoModal.title, null)}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Video
+                  </Button>
+                </p>
               </video>
-              <div className="flex gap-2 mt-4 justify-end">
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {imageModal.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-3 sm:p-4 border-b flex-shrink-0">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground truncate pr-4">{imageModal.title}</h3>
+              <div className="flex gap-2 flex-shrink-0">
                 <Button
                   variant="outline"
-                  onClick={() => handleFileAction(videoModal.url, videoModal.title, 'mp4', null)}
+                  size="sm"
+                  onClick={() => handleDownloadDocument(imageModal.url, imageModal.title, null)}
+                  className="hidden sm:flex"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download Video
+                  Download
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownloadDocument(imageModal.url, imageModal.title, null)}
+                  className="sm:hidden"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setImageModal({ isOpen: false, url: "", title: "" })}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="p-3 sm:p-4 flex-1 flex items-center justify-center overflow-auto">
+              <img
+                src={imageModal.url}
+                alt={imageModal.title}
+                className="max-w-full max-h-full object-contain rounded"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <div className="text-center p-4 hidden">
+                <p className="mb-4">Unable to load image.</p>
+                <Button
+                  onClick={() => handleDownloadDocument(imageModal.url, imageModal.title, null)}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Image
                 </Button>
               </div>
             </div>
