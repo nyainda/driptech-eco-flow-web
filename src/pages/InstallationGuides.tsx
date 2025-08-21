@@ -58,10 +58,22 @@ const InstallationGuides = () => {
   const [videoModal, setVideoModal] = useState({ isOpen: false, url: "", title: "" });
   const [pdfModal, setPdfModal] = useState({ isOpen: false, url: "", title: "" });
   const [imageModal, setImageModal] = useState({ isOpen: false, url: "", title: "" });
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchInstallationResources();
+  }, []);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
   const fetchInstallationResources = async () => {
@@ -149,8 +161,7 @@ const InstallationGuides = () => {
       case 'zip':
       case 'rar':
         return Archive;
-      default:
-        return FileText;
+      default: return FileText;
     }
   };
 
@@ -533,7 +544,7 @@ const InstallationGuides = () => {
                               
                               {/* Action Buttons */}
                               <div className="flex gap-2 pt-2">
-                                {canView && (
+                                {canView && !isSmallScreen && (
                                   <Button
                                     variant="outline"
                                     className="flex-1"
@@ -544,7 +555,7 @@ const InstallationGuides = () => {
                                   </Button>
                                 )}
                                 <Button
-                                  className={canView ? "flex-1" : "w-full"}
+                                  className={(canView && !isSmallScreen) ? "flex-1" : "w-full"}
                                   onClick={() => handleDownloadDocument(doc.file_url, doc.title, doc.id)}
                                 >
                                   <Download className="h-4 w-4 mr-2" />
@@ -595,54 +606,94 @@ const InstallationGuides = () => {
                             <div className="space-y-3">
                               {product.installation_guide_url && (
                                 <div className="flex gap-2">
-                                  <Button
-                                    variant="outline"
-                                    className="flex-1 justify-start"
-                                    onClick={() => handleViewDocument(product.installation_guide_url, `${product.name} Installation Guide`, 'pdf')}
-                                  >
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    View Guide
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleDownloadDocument(product.installation_guide_url, `${product.name}-installation-guide.pdf`, null)}
-                                  >
-                                    <Download className="h-4 w-4" />
-                                  </Button>
+                                  {!isSmallScreen ? (
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1 justify-start"
+                                      onClick={() => handleViewDocument(product.installation_guide_url, `${product.name} Installation Guide`, 'pdf')}
+                                    >
+                                      <Eye className="h-4 w-4 mr-2" />
+                                      View Guide
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1 justify-start"
+                                      onClick={() => handleDownloadDocument(product.installation_guide_url, `${product.name}-installation-guide.pdf`, null)}
+                                    >
+                                      <Download className="h-4 w-4 mr-2" />
+                                      Download Guide
+                                    </Button>
+                                  )}
+                                  {!isSmallScreen && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleDownloadDocument(product.installation_guide_url, `${product.name}-installation-guide.pdf`, null)}
+                                    >
+                                      <Download className="h-4 w-4" />
+                                    </Button>
+                                  )}
                                 </div>
                               )}
                               
                               {product.video_url && (
                                 <div className="flex gap-2">
-                                  <Button
-                                    variant="outline"
-                                    className="flex-1 justify-start"
-                                    onClick={() => handleViewDocument(product.video_url, `${product.name} Installation Video`, 'mp4')}
-                                  >
-                                    <Play className="h-4 w-4 mr-2" />
-                                    Play Video
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleDownloadDocument(product.video_url, `${product.name}-installation-video.mp4`, null)}
-                                  >
-                                    <Download className="h-4 w-4" />
-                                  </Button>
+                                  {!isSmallScreen ? (
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1 justify-start"
+                                      onClick={() => handleViewDocument(product.video_url, `${product.name} Installation Video`, 'mp4')}
+                                    >
+                                      <Play className="h-4 w-4 mr-2" />
+                                      Play Video
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1 justify-start"
+                                      onClick={() => handleDownloadDocument(product.video_url, `${product.name}-installation-video.mp4`, null)}
+                                    >
+                                      <Download className="h-4 w-4 mr-2" />
+                                      Download Video
+                                    </Button>
+                                  )}
+                                  {!isSmallScreen && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleDownloadDocument(product.video_url, `${product.name}-installation-video.mp4`, null)}
+                                    >
+                                      <Download className="h-4 w-4" />
+                                    </Button>
+                                  )}
                                 </div>
                               )}
 
                               {product.maintenance_manual_url && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="w-full justify-start text-xs"
-                                  onClick={() => handleViewDocument(product.maintenance_manual_url, `${product.name} Maintenance Manual`, 'pdf')}
-                                >
-                                  <Eye className="h-3 w-3 mr-2" />
-                                  View Maintenance Manual
-                                </Button>
+                                <>
+                                  {!isSmallScreen ? (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="w-full justify-start text-xs"
+                                      onClick={() => handleViewDocument(product.maintenance_manual_url, `${product.name} Maintenance Manual`, 'pdf')}
+                                    >
+                                      <Eye className="h-3 w-3 mr-2" />
+                                      View Maintenance Manual
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="w-full justify-start text-xs"
+                                      onClick={() => handleDownloadDocument(product.maintenance_manual_url, `${product.name}-maintenance-manual.pdf`, null)}
+                                    >
+                                      <Download className="h-3 w-3 mr-2" />
+                                      Download Maintenance Manual
+                                    </Button>
+                                  )}
+                                </>
                               )}
                             </div>
                           </CardContent>
@@ -853,8 +904,12 @@ const InstallationGuides = () => {
                 alt={imageModal.title}
                 className="max-w-full max-h-full object-contain rounded"
                 onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'block';
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const next = target.nextSibling as HTMLElement | null;
+                  if (next) {
+                    next.style.display = 'block';
+                  }
                 }}
               />
               <div className="text-center p-4 hidden">

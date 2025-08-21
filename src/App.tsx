@@ -19,12 +19,8 @@ import Contact from "./pages/Contact";
 import TechnicalSupport from "./pages/TechnicalSupport";
 import CaseStudies from "./pages/CaseStudies";
 import InstallationGuides from "./pages/InstallationGuides";
-
-// Blog components
-import BlogPage from "@/components/Home/BlogPage"; // Full blog page with filters
-import BlogPostPage from "@/components/Home/BlogPostPage"; // Individual post detail
-
-// Other components
+import BlogPage from "@/components/Home/BlogPage"; 
+import BlogPostPage from "@/components/Home/BlogPostPage"; 
 import VideoSection from "./components/Home/VideoSection";
 
 const queryClient = new QueryClient();
@@ -64,8 +60,8 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             
             {/* Blog routes */}
-            <Route path="/blog" element={<BlogPage />} /> {/* Full blog with filters & pagination */}
-            <Route path="/blog/:slug" element={<BlogPostPage />} /> {/* Individual blog post */}
+            <Route path="/blog" element={<BlogPage />} /> 
+            <Route path="/blog/:slug" element={<BlogPostPage />} /> 
             
             {/* Video section */}
             <Route path="/video" element={<VideoSection />} />
