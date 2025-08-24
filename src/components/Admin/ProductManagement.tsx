@@ -17,11 +17,22 @@ import {
   X,
   Star,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  Layers,
+  CheckCircle2,
+  XCircle,
+  Tag,
+  Palette
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ProductSeeder from "./ProductSeeder";
+
+interface Variant {
+  name: string;
+  price: number;
+  in_stock: boolean;
+}
 
 interface Product {
   id: string;
@@ -36,6 +47,7 @@ interface Product {
   in_stock: boolean;
   featured: boolean;
   created_at: string;
+  variants?: Variant[];
 }
 
 const ProductManagement = () => {
@@ -62,12 +74,14 @@ const ProductManagement = () => {
     images: [] as string[],
     features: [] as string[],
     applications: [] as string[],
-    specifications: [] as { name: string; value: string; unit?: string }[]
+    specifications: [] as { name: string; value: string; unit?: string }[],
+    variants: [] as { name: string; price: string; in_stock: boolean }[]
   });
 
   const [newFeature, setNewFeature] = useState("");
   const [newApplication, setNewApplication] = useState("");
   const [newSpec, setNewSpec] = useState({ name: "", value: "", unit: "" });
+  const [newVariant, setNewVariant] = useState({ name: "", price: "", in_stock: true });
 
   const categories = [
     { value: "drip_irrigation", label: "Drip Irrigation" },
@@ -235,21 +249,35 @@ const ProductManagement = () => {
     e.preventDefault();
     
     try {
+      let priceToSave = formData.price ? parseFloat(formData.price) : null;
+      const variantsToSave = formData.variants.map(v => ({
+        name: v.name,
+        price: parseFloat(v.price),
+        in_stock: v.in_stock
+      }));
+      let inStockToSave = formData.in_stock;
+
+      if (variantsToSave.length > 0) {
+        const variantPrices = variantsToSave.map(v => v.price);
+        priceToSave = Math.min(...variantPrices);
+        inStockToSave = variantsToSave.some(v => v.in_stock);
+      }
+
       const productData = {
         name: formData.name,
         model_number: formData.model_number,
         category: formData.category as "drip_irrigation" | "sprinkler_systems" | "filtration_systems" | "control_systems" | "accessories",
         subcategory: formData.subcategory,
         description: formData.description,
-        price: formData.price ? parseFloat(formData.price) : null,
-        in_stock: formData.in_stock,
+        price: priceToSave,
+        in_stock: inStockToSave,
         featured: formData.featured,
         images: formData.images,
         features: formData.features,
         applications: formData.applications,
         specifications: formData.specifications.reduce((acc, spec) => {
           if (spec.name && spec.value) {
-            acc[spec.name] = spec.unit ? `KSH{spec.value} KSH{spec.unit}` : spec.value;
+            acc[spec.name] = spec.unit ? `${spec.value} ${spec.unit}` : spec.value;
           }
           return acc;
         }, {} as any),
@@ -261,7 +289,8 @@ const ProductManagement = () => {
             };
           }
           return acc;
-        }, {} as any)
+        }, {} as any),
+        variants: variantsToSave.length > 0 ? variantsToSave : null
       };
 
       if (editingProduct) {
@@ -348,7 +377,8 @@ const ProductManagement = () => {
       images: product.images || [],
       features: (product as any).features || [],
       applications: (product as any).applications || [],
-      specifications: specs
+      specifications: specs,
+      variants: product.variants?.map(v => ({ name: v.name, price: v.price.toString(), in_stock: v.in_stock })) || []
     });
     setShowAddForm(true);
   };
@@ -404,6 +434,23 @@ const ProductManagement = () => {
     }));
   };
 
+  const addVariant = () => {
+    if (newVariant.name.trim() && newVariant.price.trim()) {
+      setFormData(prev => ({
+        ...prev,
+        variants: [...prev.variants, { ...newVariant }]
+      }));
+      setNewVariant({ name: "", price: "", in_stock: true });
+    }
+  };
+
+  const removeVariant = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
+    }));
+  };
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -417,11 +464,13 @@ const ProductManagement = () => {
       images: [],
       features: [],
       applications: [],
-      specifications: []
+      specifications: [],
+      variants: []
     });
     setNewFeature("");
     setNewApplication("");
     setNewSpec({ name: "", value: "", unit: "" });
+    setNewVariant({ name: "", price: "", in_stock: true });
     setEditingProduct(null);
     setShowAddForm(false);
   };
@@ -600,36 +649,36 @@ const ProductManagement = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-4 sm:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 sm:p-6">
         <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-2">
-              <div className="h-8 bg-muted rounded w-48 sm:w-64 animate-pulse"></div>
-              <div className="h-4 bg-muted rounded w-32 sm:w-48 animate-pulse"></div>
+              <div className="h-8 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded-lg w-48 sm:w-64 animate-pulse"></div>
+              <div className="h-4 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded-lg w-32 sm:w-48 animate-pulse"></div>
             </div>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="border-0 bg-card shadow-lg animate-pulse">
+              <Card key={i} className="border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl animate-pulse">
                 <CardHeader className="p-4 sm:p-6">
                   <div className="flex justify-between items-start">
                     <div className="flex-1 space-y-2">
-                      <div className="h-5 bg-muted rounded w-3/4"></div>
-                      <div className="h-4 bg-muted rounded w-1/2"></div>
+                      <div className="h-5 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded w-3/4"></div>
+                      <div className="h-4 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded w-1/2"></div>
                     </div>
-                    <div className="h-4 w-4 bg-muted rounded-full"></div>
+                    <div className="h-4 w-4 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded-full"></div>
                   </div>
                   <div className="flex space-x-2 mt-2">
-                    <div className="h-5 bg-muted rounded w-20"></div>
-                    <div className="h-5 bg-muted rounded w-24"></div>
+                    <div className="h-5 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded w-20"></div>
+                    <div className="h-5 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded w-24"></div>
                   </div>
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6">
-                  <div className="h-32 bg-muted rounded mb-4"></div>
-                  <div className="h-4 bg-muted rounded w-full mb-2"></div>
-                  <div className="h-4 bg-muted rounded w-3/4 mb-4"></div>
-                  <div className="h-6 bg-muted rounded w-16"></div>
+                  <div className="h-32 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded mb-4"></div>
+                  <div className="h-4 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded w-3/4 mb-4"></div>
+                  <div className="h-6 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-700 dark:to-gray-600 rounded w-16"></div>
                 </CardContent>
               </Card>
             ))}
@@ -640,22 +689,22 @@ const ProductManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
+    <div className="min-h-screen  p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-gray-400 dark:to-gray-200">
               Product Management
             </h2>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              Manage your irrigation product catalog
+            <p className="text-sm sm:text-base text-slate-600 dark:text-gray-400">
+              Manage your irrigation product catalog with style
             </p>
           </div>
           <Button 
             onClick={() => setShowAddForm(true)}
             size="sm"
-            className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-gray-600 dark:to-gray-500 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Product
@@ -667,12 +716,12 @@ const ProductManagement = () => {
 
         {/* Add/Edit Form */}
         {showAddForm && (
-          <Card className="border-0 bg-card shadow-lg">
-            <CardHeader className="p-4 sm:p-6 bg-gradient-to-r from-primary/5 to-transparent">
-              <CardTitle className="text-xl sm:text-2xl">
+          <Card className="border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-2xl">
+            <CardHeader className="p-4 sm:p-6 rounded-t-lg">
+              <CardTitle className="text-xl sm:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-gray-400 dark:to-gray-200">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </CardTitle>
-              <CardDescription className="text-sm sm:text-base">
+              <CardDescription className="text-sm sm:text-base text-slate-600 dark:text-gray-400">
                 {editingProduct ? "Update product information" : "Enter product details below"}
               </CardDescription>
             </CardHeader>
@@ -680,33 +729,33 @@ const ProductManagement = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <Label htmlFor="name" className="text-sm sm:text-base font-medium">Product Name *</Label>
+                    <Label htmlFor="name" className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Product Name *</Label>
                     <Input
                       id="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Enter product name"
                       required
-                      className="mt-2 h-10 sm:h-11 text-sm sm:text-base"
+                      className="mt-2 h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="model" className="text-sm sm:text-base font-medium">Model Number</Label>
+                    <Label htmlFor="model" className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Model Number</Label>
                     <Input
                       id="model"
                       value={formData.model_number}
                       onChange={(e) => setFormData({ ...formData, model_number: e.target.value })}
                       placeholder="Enter model number"
-                      className="mt-2 h-10 sm:h-11 text-sm sm:text-base"
+                      className="mt-2 h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <Label htmlFor="category" className="text-sm sm:text-base font-medium">Category *</Label>
+                    <Label htmlFor="category" className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Category *</Label>
                     <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                      <SelectTrigger className="mt-2 h-10 sm:h-11 text-sm sm:text-base">
+                      <SelectTrigger className="mt-2 h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -719,31 +768,31 @@ const ProductManagement = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="subcategory" className="text-sm sm:text-base font-medium">Subcategory</Label>
+                    <Label htmlFor="subcategory" className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Subcategory</Label>
                     <Input
                       id="subcategory"
                       value={formData.subcategory}
                       onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
                       placeholder="Enter subcategory"
-                      className="mt-2 h-10 sm:h-11 text-sm sm:text-base"
+                      className="mt-2 h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="description" className="text-sm sm:text-base font-medium">Description</Label>
+                  <Label htmlFor="description" className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Description</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Enter product description"
                     rows={3}
-                    className="mt-2 text-sm sm:text-base resize-none"
+                    className="mt-2 text-sm sm:text-base resize-none border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="price" className="text-sm sm:text-base font-medium">Price (KSH)</Label>
+                  <Label htmlFor="price" className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Price (KSH)</Label>
                   <Input
                     id="price"
                     type="number"
@@ -751,12 +800,12 @@ const ProductManagement = () => {
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     placeholder="Enter price"
-                    className="mt-2 h-10 sm:h-11 text-sm sm:text-base"
+                    className="mt-2 h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                   />
                 </div>
 
                 <div className="space-y-4">
-                <Label>Product Images</Label>
+                <Label className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Product Images</Label>
                 <div className="flex items-center gap-4">
                   <Input
                     type="file"
@@ -769,7 +818,7 @@ const ProductManagement = () => {
                   />
                   <Label htmlFor="image-upload" className="cursor-pointer">
                     <Button type="button" variant="outline" disabled={uploading} asChild>
-                      <div>
+                      <div className="border-2 border-dashed border-blue-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-gray-500 bg-blue-50 dark:bg-gray-900/50 hover:bg-blue-100 dark:hover:bg-gray-800 transition-colors">
                         <Upload className="mr-2 h-4 w-4" />
                         {uploading ? "Uploading..." : "Upload Images"}
                       </div>
@@ -783,14 +832,14 @@ const ProductManagement = () => {
                       <div key={index} className="relative group">
                         <img
                           src={imageUrl}
-                          alt={`Product image KSH{index + 1}`}
-                          className="w-full h-24 object-cover rounded-lg border"
+                          alt={`Product image ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-lg border-2 border-slate-200 dark:border-gray-700 shadow-sm group-hover:shadow-md transition-shadow"
                         />
                         <Button
                           type="button"
                           variant="destructive"
                           size="sm"
-                          className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                           onClick={() => removeImage(index)}
                         >
                           <X className="h-3 w-3" />
@@ -802,26 +851,26 @@ const ProductManagement = () => {
               </div>
 
                 <div className="space-y-4">
-                  <Label className="text-sm sm:text-base font-medium">Features</Label>
+                  <Label className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Features</Label>
                   <div className="flex gap-2">
                     <Input
                       value={newFeature}
                       onChange={(e) => setNewFeature(e.target.value)}
                       placeholder="Enter feature"
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
-                    <Button type="button" onClick={addFeature} size="sm" className="h-10 sm:h-11">
+                    <Button type="button" onClick={addFeature} size="sm" className="h-10 sm:h-11 bg-blue-600 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-500">
                       <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </div>
                   {formData.features.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {formData.features.map((feature, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
+                        <Badge key={index} variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors">
                           {feature}
                           <X 
-                            className="h-3 w-3 sm:h-4 sm:w-4 cursor-pointer" 
+                            className="h-3 w-3 sm:h-4 sm:w-4 cursor-pointer hover:text-blue-600 dark:hover:text-gray-300" 
                             onClick={() => removeFeature(index)}
                           />
                         </Badge>
@@ -831,26 +880,26 @@ const ProductManagement = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-sm sm:text-base font-medium">Applications</Label>
+                  <Label className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Applications</Label>
                   <div className="flex gap-2">
                     <Input
                       value={newApplication}
                       onChange={(e) => setNewApplication(e.target.value)}
                       placeholder="Enter application"
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addApplication())}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
-                    <Button type="button" onClick={addApplication} size="sm" className="h-10 sm:h-11">
+                    <Button type="button" onClick={addApplication} size="sm" className="h-10 sm:h-11 bg-indigo-600 hover:bg-indigo-700 dark:bg-gray-600 dark:hover:bg-gray-500">
                       <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </div>
                   {formData.applications.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {formData.applications.map((application, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
+                        <Badge key={index} variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm bg-indigo-100 dark:bg-gray-700 text-indigo-800 dark:text-gray-200 hover:bg-indigo-200 dark:hover:bg-gray-600 transition-colors">
                           {application}
                           <X 
-                            className="h-3 w-3 sm:h-4 sm:w-4 cursor-pointer" 
+                            className="h-3 w-3 sm:h-4 sm:w-4 cursor-pointer hover:text-indigo-600 dark:hover:text-gray-300" 
                             onClick={() => removeApplication(index)}
                           />
                         </Badge>
@@ -860,36 +909,36 @@ const ProductManagement = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-sm sm:text-base font-medium">Technical Specifications</Label>
+                  <Label className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Technical Specifications</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
                     <Input
                       value={newSpec.name}
                       onChange={(e) => setNewSpec({ ...newSpec, name: e.target.value })}
                       placeholder="Specification name (e.g., Flow Rate)"
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
                     <Input
                       value={newSpec.value}
                       onChange={(e) => setNewSpec({ ...newSpec, value: e.target.value })}
                       placeholder="Value (e.g., 2-4)"
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
                     <Input
                       value={newSpec.unit}
                       onChange={(e) => setNewSpec({ ...newSpec, unit: e.target.value })}
                       placeholder="Unit (e.g., L/h)"
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 sm:h-11 text-sm sm:text-base border-slate-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400"
                     />
-                    <Button type="button" onClick={addSpecification} size="sm" className="h-10 sm:h-11">
+                    <Button type="button" onClick={addSpecification} size="sm" className="h-10 sm:h-11 bg-purple-600 hover:bg-purple-700 dark:bg-gray-600 dark:hover:bg-gray-500">
                       <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </Button>
                   </div>
                   {formData.specifications.length > 0 && (
                     <div className="space-y-2">
                       {formData.specifications.map((spec, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 border rounded text-sm sm:text-base">
+                        <div key={index} className="flex items-center justify-between p-3 border-2 border-slate-200 dark:border-gray-700 rounded-lg bg-slate-50 dark:bg-gray-800 text-sm sm:text-base hover:bg-slate-100 dark:hover:bg-gray-700 transition-colors">
                           <span>
-                            <strong>{spec.name}:</strong> {spec.value} {spec.unit}
+                            <strong className="text-slate-700 dark:text-gray-300">{spec.name}:</strong> <span className="text-slate-600 dark:text-gray-400">{spec.value} {spec.unit}</span>
                           </span>
                           <Button
                             type="button"
@@ -906,14 +955,120 @@ const ProductManagement = () => {
                   )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0">
+                {/* Enhanced Variants Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Palette className="h-5 w-5 text-purple-600 dark:text-gray-400" />
+                    <Label className="text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300">Product Variants</Label>
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg border-2 border-purple-200 dark:border-gray-600">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      <div className="space-y-2">
+                        <Label className="text-xs text-purple-700 dark:text-gray-300 font-medium">Variant Name</Label>
+                        <Input
+                          value={newVariant.name}
+                          onChange={(e) => setNewVariant({ ...newVariant, name: e.target.value })}
+                          placeholder="e.g., Small, Medium, Large"
+                          className="h-9 text-sm border-purple-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500 dark:focus:border-gray-400 dark:focus:ring-gray-400 bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs text-purple-700 dark:text-gray-300 font-medium">Price (KSH)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={newVariant.price}
+                          onChange={(e) => setNewVariant({ ...newVariant, price: e.target.value })}
+                          placeholder="0.00"
+                          className="h-9 text-sm border-purple-300 dark:border-gray-600 focus:border-purple-500 focus:ring-purple-500 dark:focus:border-gray-400 dark:focus:ring-gray-400 bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div className="flex items-center justify-center space-x-2 pt-6">
+                        <Switch
+                          id="variant_stock"
+                          checked={newVariant.in_stock}
+                          onCheckedChange={(checked) => setNewVariant({ ...newVariant, in_stock: checked })}
+                        />
+                        <Label htmlFor="variant_stock" className="text-xs text-purple-700 dark:text-gray-300 font-medium">In Stock</Label>
+                      </div>
+                      <div className="flex items-end">
+                        <Button 
+                          type="button" 
+                          onClick={addVariant} 
+                          size="sm" 
+                          className="h-9 w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 dark:from-gray-600 dark:to-gray-500 dark:hover:from-gray-700 dark:hover:to-gray-600"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {formData.variants.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Layers className="h-4 w-4 text-slate-600 dark:text-gray-400" />
+                        <span className="text-sm font-medium text-slate-600 dark:text-gray-400">
+                          {formData.variants.length} Variant{formData.variants.length > 1 ? 's' : ''} Added
+                        </span>
+                      </div>
+                      <div className="grid gap-3">
+                        {formData.variants.map((variant, index) => (
+                          <div 
+                            key={index} 
+                            className="group relative bg-white dark:bg-gray-800 rounded-lg border-2 border-slate-200 dark:border-gray-700 p-4 hover:border-purple-300 dark:hover:border-gray-500 hover:shadow-md transition-all duration-200"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 dark:from-gray-600 dark:to-gray-500 rounded-full flex items-center justify-center">
+                                    <Tag className="h-4 w-4 text-white dark:text-gray-200" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold text-slate-800 dark:text-gray-200">{variant.name}</h4>
+                                    <p className="text-sm text-slate-600 dark:text-gray-400">KSH {parseFloat(variant.price).toLocaleString()}</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {variant.in_stock ? (
+                                    <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                                      <CheckCircle2 className="h-4 w-4" />
+                                      <span className="text-sm font-medium">In Stock</span>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                                      <XCircle className="h-4 w-4" />
+                                      <span className="text-sm font-medium">Out of Stock</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removeVariant(index)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0 p-4 bg-slate-50 dark:bg-gray-800 rounded-lg">
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="in_stock"
                       checked={formData.in_stock}
                       onCheckedChange={(checked) => setFormData({ ...formData, in_stock: checked })}
                     />
-                    <Label htmlFor="in_stock" className="text-sm sm:text-base">In Stock</Label>
+                    <Label htmlFor="in_stock" className="text-sm sm:text-base text-slate-700 dark:text-gray-300">In Stock</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -921,15 +1076,15 @@ const ProductManagement = () => {
                       checked={formData.featured}
                       onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
                     />
-                    <Label htmlFor="featured" className="text-sm sm:text-base">Featured Product</Label>
+                    <Label htmlFor="featured" className="text-sm sm:text-base text-slate-700 dark:text-gray-300">Featured Product</Label>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-4 sm:pt-6 border-t">
-                  <Button type="button" variant="outline" onClick={resetForm} size="sm" className="h-10 sm:h-11 px-6 sm:px-8">
+                <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-6 border-t border-slate-200 dark:border-gray-700">
+                  <Button type="button" variant="outline" onClick={resetForm} size="sm" className="h-10 sm:h-11 px-6 sm:px-8 border-slate-300 dark:border-gray-600 hover:bg-slate-50 dark:hover:bg-gray-800">
                     Cancel
                   </Button>
-                  <Button type="submit" size="sm" className="h-10 sm:h-11 px-6 sm:px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Button type="submit" size="sm" className="h-10 sm:h-11 px-6 sm:px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-gray-600 dark:to-gray-500 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                     {editingProduct ? "Update Product" : "Add Product"}
                   </Button>
                 </div>
@@ -941,18 +1096,18 @@ const ProductManagement = () => {
         {/* Search and Filter Bar */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 sm:h-5 sm:w-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-gray-500 h-4 w-4 sm:h-5 sm:w-5" />
             <Input
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-10 sm:h-11 text-sm sm:text-base"
+              className="pl-10 h-10 sm:h-11 text-sm sm:text-base bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-slate-300 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400 shadow-sm"
             />
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Search className="h-4 w-4 text-muted-foreground" />
+            <Search className="h-4 w-4 text-slate-400 dark:text-gray-500" />
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base w-full sm:w-[200px]">
+              <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base w-full sm:w-[200px] bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-slate-300 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:focus:border-gray-400 dark:focus:ring-gray-400 shadow-sm">
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
@@ -969,76 +1124,138 @@ const ProductManagement = () => {
 
         {/* Product List */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {currentProducts.map((product, index) => (
-            <Card 
-              key={product.id} 
-              className="hover:shadow-xl transition-all duration-300 border-0 bg-card shadow-lg"
-              style={{ animationDelay: `KSH{index * 100}ms` }}
-            >
-              <CardHeader className="p-4 sm:p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <CardTitle className="text-base sm:text-lg lg:text-xl line-clamp-2">{product.name}</CardTitle>
-                    {product.model_number && (
-                      <CardDescription className="text-xs sm:text-sm">Model: {product.model_number}</CardDescription>
+          {currentProducts.map((product, index) => {
+            let displayPrice = '';
+            if (product.variants?.length > 0) {
+              const prices = product.variants.map(v => v.price);
+              const min = Math.min(...prices);
+              const max = Math.max(...prices);
+              displayPrice = min === max ? `KSH ${min.toLocaleString()}` : `KSH ${min.toLocaleString()} - ${max.toLocaleString()}`;
+            } else if (product.price) {
+              displayPrice = `KSH ${product.price.toLocaleString()}`;
+            }
+
+            return (
+              <Card 
+                key={product.id} 
+                className="hover:shadow-2xl transition-all duration-300 border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg group transform hover:-translate-y-1"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardHeader className="p-4 sm:p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <CardTitle className="text-base sm:text-lg lg:text-xl line-clamp-2 bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600 dark:from-gray-200 dark:to-gray-400">
+                        {product.name}
+                      </CardTitle>
+                      {product.model_number && (
+                        <CardDescription className="text-xs sm:text-sm text-slate-500 dark:text-gray-400">
+                          Model: {product.model_number}
+                        </CardDescription>
+                      )}
+                    </div>
+                    {product.featured && (
+                      <div className="relative">
+                        <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 dark:text-yellow-400 fill-current animate-pulse" />
+                        <div className="absolute -inset-1 bg-yellow-400 dark:bg-yellow-800 rounded-full opacity-20 animate-ping"></div>
+                      </div>
                     )}
                   </div>
-                  {product.featured && (
-                    <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <Badge variant="secondary" className="text-xs sm:text-sm">
-                    {categories.find(c => c.value === product.category)?.label}
-                  </Badge>
-                  <Badge 
-                    variant={product.in_stock ? "default" : "destructive"}
-                    className="text-xs sm:text-sm"
-                  >
-                    {product.in_stock ? "In Stock" : "Out of Stock"}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
-                {product.images && product.images.length > 0 && (
-                  <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-3 sm:mb-4">
-                    <img 
-                      src={product.images[0]} 
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <Badge variant="secondary" className="text-xs sm:text-sm bg-blue-100 dark:bg-gray-700 text-blue-800 dark:text-gray-200 hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors">
+                      {categories.find(c => c.value === product.category)?.label}
+                    </Badge>
+                    <Badge 
+                      variant={product.in_stock ? "default" : "destructive"}
+                      className={`text-xs sm:text-sm ${
+                        product.in_stock 
+                          ? 'bg-green-100 dark:bg-gray-700 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-gray-600' 
+                          : 'bg-red-100 dark:bg-gray-700 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-gray-600'
+                      } transition-colors`}
+                    >
+                      {product.in_stock ? "In Stock" : "Out of Stock"}
+                    </Badge>
                   </div>
-                )}
-                
-                <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 line-clamp-3">
-                  {product.description || "No description available"}
-                </p>
-                
-                {product.price && (
-                  <p className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">KSH{product.price}</p>
-                )}
+                </CardHeader>
+                <CardContent className="p-4 sm:p-6 pt-0">
+                  {product.images && product.images.length > 0 && (
+                    <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-800 dark:to-gray-700 rounded-xl overflow-hidden mb-3 sm:mb-4 shadow-inner">
+                      <img 
+                        src={product.images[0]} 
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-gray-400 mb-3 sm:mb-4 line-clamp-3">
+                    {product.description || "No description available"}
+                  </p>
+                  
+                  {displayPrice && (
+                    <div className="mb-3 sm:mb-4">
+                      <p className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400">
+                        {displayPrice}
+                      </p>
+                    </div>
+                  )}
 
-                <div className="flex justify-end gap-1 sm:gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="h-8 w-8 sm:h-9 sm:w-9 p-0"
-                    onClick={() => handleEdit(product)}
-                  >
-                    <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="h-8 w-8 sm:h-9 sm:w-9 p-0 text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  {/* Enhanced Variants Display */}
+                  {product.variants && product.variants.length > 0 && (
+                    <div className="mb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Layers className="h-3 w-3 text-slate-500 dark:text-gray-400" />
+                        <span className="text-xs text-slate-500 dark:text-gray-400 font-medium">
+                          {product.variants.length} Variant{product.variants.length > 1 ? 's' : ''}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {product.variants.slice(0, 3).map((variant, vIndex) => (
+                          <div 
+                            key={vIndex}
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
+                              variant.in_stock 
+                                ? 'bg-emerald-100 dark:bg-gray-700 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-gray-600' 
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600'
+                            }`}
+                          >
+                            <Tag className="h-2 w-2" />
+                            <span>{variant.name}</span>
+                            <span className="text-xs opacity-75">
+                              KSH {variant.price.toLocaleString()}
+                            </span>
+                          </div>
+                        ))}
+                        {product.variants.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{product.variants.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-1 sm:gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="h-8 w-8 sm:h-9 sm:w-9 p-0 border-blue-300 dark:border-gray-600 text-blue-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-gray-800 hover:border-blue-500 dark:hover:border-gray-500 transition-colors"
+                      onClick={() => handleEdit(product)}
+                    >
+                      <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="h-8 w-8 sm:h-9 sm:w-9 p-0 border-red-300 dark:border-gray-600 text-red-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-gray-800 hover:border-red-500 dark:hover:border-gray-500 transition-colors"
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Pagination */}
@@ -1055,15 +1272,15 @@ const ProductManagement = () => {
 
         {/* Empty State */}
         {filteredProducts.length === 0 && (
-          <Card className="border-0 bg-card shadow-lg">
+          <Card className="border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
             <CardContent className="flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-8">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary/10 rounded-full flex items-center justify-center mb-4 sm:mb-6">
-                <Package className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg">
+                <Package className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600 dark:text-gray-400" />
               </div>
-              <h3 className="text-lg sm:text-2xl font-semibold mb-2 sm:mb-3">
+              <h3 className="text-lg sm:text-2xl font-semibold mb-2 sm:mb-3 bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600 dark:from-gray-200 dark:to-gray-400">
                 {searchTerm || selectedCategory !== "all" ? "No products found" : "No products yet"}
               </h3>
-              <p className="text-sm sm:text-base text-muted-foreground text-center mb-4 sm:mb-6 max-w-md leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-gray-400 text-center mb-4 sm:mb-6 max-w-md leading-relaxed">
                 {searchTerm || selectedCategory !== "all" 
                   ? "Try adjusting your search or filter criteria" 
                   : "Get started by adding your first product"}
@@ -1072,7 +1289,7 @@ const ProductManagement = () => {
                 <Button 
                   onClick={() => setShowAddForm(true)}
                   size="sm"
-                  className="h-10 sm:h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="h-10 sm:h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-gray-600 dark:to-gray-500 dark:hover:from-gray-700 dark:hover:to-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   Add Your First Product

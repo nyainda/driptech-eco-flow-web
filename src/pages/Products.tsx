@@ -32,10 +32,19 @@ import {
   Wrench,
   FileText,
   Video,
-  X
+  X,
+  ChevronDown,
+  ChevronUp,
+  Layers
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+
+interface Variant {
+  name: string;
+  price: number;
+  in_stock: boolean;
+}
 
 interface Product {
   id: string;
@@ -57,6 +66,7 @@ interface Product {
   video_url: string | null;
   created_at: string | null;
   updated_at: string | null;
+   variants?: Variant[];
 }
 
 const Products = () => {
@@ -76,9 +86,7 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    return JSON.parse(localStorage.getItem('favorites') || '[]');
-  });
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -112,10 +120,6 @@ const Products = () => {
 
     fetchProducts();
   }, [category]);
-
-  useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
 
   useEffect(() => {
     let filtered = [...products];
@@ -276,248 +280,380 @@ const Products = () => {
     }
   };
 
-  const ProductCard = ({ product }: { product: Product }) => (
-    <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg hover:shadow-primary/20 dark:bg-gray-800/50 dark:border-gray-700 hover:-translate-y-1">
-      <CardHeader className="p-0">
-        <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-t-lg overflow-hidden">
-          {product.images && product.images[0] ? (
-            <img 
-              src={product.images[0]} 
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Package className="h-12 w-12 text-gray-400" />
-            </div>
-          )}
-          
-          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1 sm:gap-2">
-            {product.featured && (
-              <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 shadow-lg text-xs">
-                <Star className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
-                Featured
-              </Badge>
-            )}
-            {product.in_stock && (
-              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg text-xs">
-                <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
-                In Stock
-              </Badge>
-            )}
-          </div>
+  // Helper function to get price range for variants
+  const getVariantPriceRange = (variants: Variant[]) => {
+    if (!variants || variants.length === 0) return null;
+    const prices = variants.map(v => v.price);
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    return { min, max };
+  };
 
-          <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Button 
-              size="sm" 
-              variant="secondary" 
-              className="w-7 h-7 sm:w-8 sm:h-8 p-0 rounded-full shadow-lg"
-              onClick={() => toggleFavorite(product.id)}
-            >
-              <Heart 
-                className={`h-3 w-3 sm:h-4 sm:w-4 ${favorites.includes(product.id) ? 'fill-current text-red-500' : ''}`} 
-              />
-            </Button>
-            <Button 
-              size="sm" 
-              variant="secondary" 
-              className="w-7 h-7 sm:w-8 sm:h-8 p-0 rounded-full shadow-lg"
-              onClick={() => shareProduct(product)}
-            >
-              <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="secondary" className="w-7 h-7 sm:w-8 sm:h-8 p-0 rounded-full shadow-lg">
-                  <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-lg sm:text-2xl pr-8">{product.name}</DialogTitle>
-                </DialogHeader>
-                <ProductDetailModal product={product} />
-              </DialogContent>
-            </Dialog>
+  // Helper function to check if any variant is in stock
+  const hasInStockVariant = (variants: Variant[]) => {
+    return variants && variants.some(v => v.in_stock);
+  };
+
+  const VariantSelector = ({ variants, selectedVariant, onVariantChange }: {
+    variants: Variant[];
+    selectedVariant: Variant | null;
+    onVariantChange: (variant: Variant) => void;
+  }) => (
+    <div className="space-y-3">
+      <h4 className="text-sm font-semibold flex items-center gap-2">
+        <Layers className="h-4 w-4" />
+        Available Variants
+      </h4>
+      <div className="grid grid-cols-1 gap-2">
+        {variants.map((variant, index) => (
+          <div
+            key={index}
+            className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
+              selectedVariant === variant
+                ? 'border-primary bg-primary/5 shadow-sm'
+                : 'border-border hover:border-primary/50 hover:bg-muted/50'
+            }`}
+            onClick={() => onVariantChange(variant)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="font-medium text-sm">{variant.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {formatPrice(variant.price)}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant={variant.in_stock ? "default" : "secondary"} 
+                  className={`text-xs ${variant.in_stock ? 'bg-green-100 text-green-800 hover:bg-green-100' : 'bg-orange-100 text-orange-800'}`}
+                >
+                  {variant.in_stock ? 'In Stock' : 'Out of Stock'}
+                </Badge>
+              </div>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="p-3 sm:p-6">
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-              <Badge variant="outline" className="capitalize text-xs">
-                {product.category.replace('_', ' ')}
-              </Badge>
-              {product.subcategory && (
-                <Badge variant="secondary" className="text-xs capitalize">
-                  {product.subcategory.replace('_', ' ')}
+        ))}
+      </div>
+    </div>
+  );
+
+  const ProductCard = ({ product }: { product: Product }) => {
+    const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
+      product.variants && product.variants.length > 0 ? product.variants[0] : null
+    );
+    const [showVariants, setShowVariants] = useState(false);
+
+    const hasVariants = product.variants && product.variants.length > 0;
+    const variantPriceRange = hasVariants ? getVariantPriceRange(product.variants!) : null;
+    const displayPrice = hasVariants && selectedVariant ? selectedVariant.price : product.price;
+    const isInStock = hasVariants 
+      ? (selectedVariant ? selectedVariant.in_stock : hasInStockVariant(product.variants!))
+      : product.in_stock;
+
+    return (
+      <Card className="group hover:shadow-2xl transition-all duration-500 border-0 shadow-lg hover:shadow-primary/20 dark:bg-gray-800/50 dark:border-gray-700 hover:-translate-y-1">
+        <CardHeader className="p-0">
+          <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-t-lg overflow-hidden">
+            {product.images && product.images[0] ? (
+              <img 
+                src={product.images[0]} 
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Package className="h-12 w-12 text-gray-400" />
+              </div>
+            )}
+            
+            <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1 sm:gap-2">
+              {product.featured && (
+                <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 shadow-lg text-xs">
+                  <Star className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
+                  Featured
+                </Badge>
+              )}
+              {isInStock && (
+                <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg text-xs">
+                  <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
+                  In Stock
+                </Badge>
+              )}
+              {hasVariants && (
+                <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 shadow-lg text-xs">
+                  <Layers className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
+                  {product.variants!.length} Variants
                 </Badge>
               )}
             </div>
-            {product.model_number && (
-              <span className="text-xs sm:text-sm text-muted-foreground font-mono">
-                {product.model_number}
-              </span>
-            )}
+
+            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="w-7 h-7 sm:w-8 sm:h-8 p-0 rounded-full shadow-lg"
+                onClick={() => toggleFavorite(product.id)}
+              >
+                <Heart 
+                  className={`h-3 w-3 sm:h-4 sm:w-4 ${favorites.includes(product.id) ? 'fill-current text-red-500' : ''}`} 
+                />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="w-7 h-7 sm:w-8 sm:h-8 p-0 rounded-full shadow-lg"
+                onClick={() => shareProduct(product)}
+              >
+                <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
+              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant="secondary" className="w-7 h-7 sm:w-8 sm:h-8 p-0 rounded-full shadow-lg">
+                    <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg sm:text-2xl pr-8">{product.name}</DialogTitle>
+                  </DialogHeader>
+                  <ProductDetailModal product={product} />
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
-          
-          <h3 className="text-lg sm:text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-tight">
-            {product.name}
-          </h3>
-          
-          <div className="text-muted-foreground text-sm leading-relaxed">
-            {product.description ? (
+        </CardHeader>
+        
+        <CardContent className="p-3 sm:p-6">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                <Badge variant="outline" className="capitalize text-xs">
+                  {product.category.replace('_', ' ')}
+                </Badge>
+                {product.subcategory && (
+                  <Badge variant="secondary" className="text-xs capitalize">
+                    {product.subcategory.replace('_', ' ')}
+                  </Badge>
+                )}
+              </div>
+              {product.model_number && (
+                <span className="text-xs sm:text-sm text-muted-foreground font-mono">
+                  {product.model_number}
+                </span>
+              )}
+            </div>
+            
+            <h3 className="text-lg sm:text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+              {product.name}
+            </h3>
+
+            {/* Variant Selection */}
+            {hasVariants && (
+              <div className="space-y-2 p-3 bg-muted/30 rounded-lg">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowVariants(!showVariants)}
+                  className="w-full justify-between text-xs h-auto p-2"
+                >
+                  <span className="flex items-center gap-2">
+                    <Layers className="h-3 w-3" />
+                    {selectedVariant ? selectedVariant.name : `${product.variants!.length} Variants Available`}
+                  </span>
+                  {showVariants ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                </Button>
+                
+                {showVariants && (
+                  <div className="space-y-1">
+                    {product.variants!.map((variant, index) => (
+                      <div
+                        key={index}
+                        className={`p-2 rounded cursor-pointer text-xs transition-colors ${
+                          selectedVariant === variant
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-muted'
+                        }`}
+                        onClick={() => setSelectedVariant(variant)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span>{variant.name}</span>
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{formatPrice(variant.price)}</span>
+                            <Badge 
+                              variant={variant.in_stock ? "default" : "secondary"} 
+                              className="text-xs scale-75"
+                            >
+                              {variant.in_stock ? '✓' : '✗'}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <div className="text-muted-foreground text-sm leading-relaxed">
+              {product.description ? (
+                <div className="space-y-2">
+                  <p className="line-clamp-2 sm:line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+                    {product.description}
+                  </p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-primary hover:text-primary/80">
+                        Read more...
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="pr-8">{product.name} - Description</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <p className="text-muted-foreground leading-relaxed">
+                          {product.description}
+                        </p>
+                        
+                        {product.applications && product.applications.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-2 text-sm">Applications</h4>
+                            <ul className="list-none space-y-1 text-sm text-muted-foreground">
+                              {product.applications.map((app, index) => (
+                                <li key={index} className="flex items-center gap-2">
+                                  <CheckCircle className="h-4 w-4 text-green-500" />
+                                  {app}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {product.features && product.features.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-2 text-sm">Key Features</h4>
+                            <ul className="list-none space-y-1 text-sm text-muted-foreground">
+                              {product.features.map((feature, index) => (
+                                <li key={index} className="flex items-center gap-2">
+                                  <CheckCircle className="h-4 w-4 text-primary" />
+                                  {feature}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              ) : (
+                <p className="text-muted-foreground/60 italic">No description available.</p>
+              )}
+            </div>
+
+            {product.applications && product.applications.length > 0 && (
               <div className="space-y-2">
-                <p className="line-clamp-2 sm:line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
-                  {product.description}
-                </p>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-primary hover:text-primary/80">
-                      Read more...
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle className="pr-8">{product.name} - Description</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <p className="text-muted-foreground leading-relaxed">
-                        {product.description}
-                      </p>
-                      
-                      {product.applications && product.applications.length > 0 && (
-                        <div>
-                          <h4 className="font-semibold mb-2 text-sm">Applications</h4>
-                          <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                            {product.applications.map((app, index) => (
-                              <li key={index} className="flex items-center gap-2">
-                                <CheckCircle className="h-4 w-4 text-green-500" />
-                                {app}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {product.features && product.features.length > 0 && (
-                        <div>
-                          <h4 className="font-semibold mb-2 text-sm">Key Features</h4>
-                          <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                            {product.features.map((feature, index) => (
-                              <li key={index} className="flex items-center gap-2">
-                                <CheckCircle className="h-4 w-4 text-primary" />
-                                {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            ) : (
-              <p className="text-muted-foreground/60 italic">No description available.</p>
-            )}
-          </div>
-
-          {product.applications && product.applications.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">Applications:</h4>
-              <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                {product.applications.slice(0, 2).map((app, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    {app}
-                  </li>
-                ))}
-                {product.applications.length > 2 && (
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    +{product.applications.length - 2} more
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
-
-          {product.features && product.features.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">Key Features:</h4>
-              <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                {product.features.slice(0, 3).map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    {feature}
-                  </li>
-                ))}
-                {product.features.length > 3 && (
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    +{product.features.length - 3} more
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
-            <div className="text-lg sm:text-xl font-bold text-primary">
-              {formatPrice(product.price)}
-            </div>
-            {product.in_stock ? (
-              <div className="flex items-center text-green-600 text-xs sm:text-sm">
-                <Truck className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                Ready to ship
-              </div>
-            ) : (
-              <div className="flex items-center text-orange-600 text-xs sm:text-sm">
-                <Package className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                Contact for availability
+                <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">Applications:</h4>
+                <ul className="list-none space-y-1 text-sm text-muted-foreground">
+                  {product.applications.slice(0, 2).map((app, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      {app}
+                    </li>
+                  ))}
+                  {product.applications.length > 2 && (
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      +{product.applications.length - 2} more
+                    </li>
+                  )}
+                </ul>
               </div>
             )}
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 pt-2">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="flex-1 group text-sm">
-                  View Details
-                  <Eye className="h-4 w-4 ml-2 group-hover:scale-110 transition-transform" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-lg sm:text-2xl pr-8">{product.name}</DialogTitle>
-                </DialogHeader>
-                <ProductDetailModal product={product} />
-              </DialogContent>
-            </Dialog>
-            <div className="flex gap-1 justify-center sm:justify-start">
-              {product.brochure_url && (
-                <Button variant="outline" size="sm" className="p-2" title="Download Brochure">
-                  <Download className="h-4 w-4" />
-                </Button>
-              )}
-              {product.video_url && (
-                <Button variant="outline" size="sm" className="p-2" title="Watch Video">
-                  <Play className="h-4 w-4" />
-                </Button>
-              )}
-              {product.installation_guide_url && (
-                <Button variant="outline" size="sm" className="p-2" title="Installation Guide">
-                  <Wrench className="h-4 w-4" />
-                </Button>
+            {product.features && product.features.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">Key Features:</h4>
+                <ul className="list-none space-y-1 text-sm text-muted-foreground">
+                  {product.features.slice(0, 3).map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                  {product.features.length > 3 && (
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                      +{product.features.length - 3} more
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
+              <div className="text-lg sm:text-xl font-bold text-primary">
+                {hasVariants && variantPriceRange && variantPriceRange.min !== variantPriceRange.max ? 
+                  `${formatPrice(variantPriceRange.min)} - ${formatPrice(variantPriceRange.max)}` : 
+                  formatPrice(displayPrice)
+                }
+                {hasVariants && selectedVariant && (
+                  <div className="text-xs text-muted-foreground font-normal">
+                    {selectedVariant.name}
+                  </div>
+                )}
+              </div>
+              {isInStock ? (
+                <div className="flex items-center text-green-600 text-xs sm:text-sm">
+                  <Truck className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  Ready to ship
+                </div>
+              ) : (
+                <div className="flex items-center text-orange-600 text-xs sm:text-sm">
+                  <Package className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  Contact for availability
+                </div>
               )}
             </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="flex-1 group text-sm">
+                    View Details
+                    <Eye className="h-4 w-4 ml-2 group-hover:scale-110 transition-transform" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg sm:text-2xl pr-8">{product.name}</DialogTitle>
+                  </DialogHeader>
+                  <ProductDetailModal product={product} />
+                </DialogContent>
+              </Dialog>
+              <div className="flex gap-1 justify-center sm:justify-start">
+                {product.brochure_url && (
+                  <Button variant="outline" size="sm" className="p-2" title="Download Brochure">
+                    <Download className="h-4 w-4" />
+                  </Button>
+                )}
+                {product.video_url && (
+                  <Button variant="outline" size="sm" className="p-2" title="Watch Video">
+                    <Play className="h-4 w-4" />
+                  </Button>
+                )}
+                {product.installation_guide_url && (
+                  <Button variant="outline" size="sm" className="p-2" title="Installation Guide">
+                    <Wrench className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
   const formatSpecValue = (value: any): string => {
     if (value === null || value === undefined) return 'N/A';
@@ -528,194 +664,265 @@ const Products = () => {
     return String(value);
   };
 
-  const ProductDetailModal = ({ product }: { product: Product }) => (
-    <div className="space-y-6 sm:space-y-8">
-      {product.images && product.images.length > 0 && (
-        <div className="space-y-4">
-          <h4 className="text-base sm:text-lg font-semibold">Product Images</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {product.images.map((image, index) => (
-              <img 
-                key={index}
-                src={image} 
-                alt={`${product.name} - ${index + 1}`}
-                className="w-full h-32 sm:h-48 object-cover rounded-lg border hover:shadow-lg transition-shadow cursor-pointer"
-              />
-            ))}
-          </div>
-        </div>
-      )}
+  const ProductDetailModal = ({ product }: { product: Product }) => {
+    const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
+      product.variants && product.variants.length > 0 ? product.variants[0] : null
+    );
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-        <div className="space-y-4 sm:space-y-6">
-          <div>
-            <h4 className="text-base sm:text-lg font-semibold mb-3">Product Description</h4>
-            <div className="prose prose-sm max-w-none text-muted-foreground">
-              {product.description ? (
-                <p className="leading-relaxed text-sm sm:text-base">{product.description}</p>
-              ) : (
-                <p className="italic text-muted-foreground/60">No description available.</p>
-              )}
+    const hasVariants = product.variants && product.variants.length > 0;
+    const displayPrice = hasVariants && selectedVariant ? selectedVariant.price : product.price;
+    const isInStock = hasVariants 
+      ? (selectedVariant ? selectedVariant.in_stock : hasInStockVariant(product.variants!))
+      : product.in_stock;
+
+    return (
+      <div className="space-y-6 sm:space-y-8">
+        {product.images && product.images.length > 0 && (
+          <div className="space-y-4">
+            <h4 className="text-base sm:text-lg font-semibold">Product Images</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+              {product.images.map((image, index) => (
+                <img 
+                  key={index}
+                  src={image} 
+                  alt={`${product.name} - ${index + 1}`}
+                  className="w-full h-32 sm:h-48 object-cover rounded-lg border hover:shadow-lg transition-shadow cursor-pointer"
+                />
+              ))}
             </div>
           </div>
+        )}
 
-          {product.applications && product.applications.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+          <div className="space-y-4 sm:space-y-6">
             <div>
-              <h4 className="text-base sm:text-lg font-semibold mb-3">Applications</h4>
-              <ul className="list-none space-y-2">
-                {product.applications.map((app, index) => (
-                  <li key={index} className="flex items-center gap-2 p-2 bg-secondary/20 rounded-lg">
-                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                    <span className="text-sm">{app}</span>
-                  </li>
-                ))}
-              </ul>
+              <h4 className="text-base sm:text-lg font-semibold mb-3">Product Description</h4>
+              <div className="prose prose-sm max-w-none text-muted-foreground">
+                {product.description ? (
+                  <p className="leading-relaxed text-sm sm:text-base">{product.description}</p>
+                ) : (
+                  <p className="italic text-muted-foreground/60">No description available.</p>
+                )}
+              </div>
             </div>
-          )}
 
-          {product.features && product.features.length > 0 && (
+            {/* Variants Section */}
+            {hasVariants && (
+              <div>
+                <VariantSelector 
+                  variants={product.variants!}
+                  selectedVariant={selectedVariant}
+                  onVariantChange={setSelectedVariant}
+                />
+              </div>
+            )}
+
+            {product.applications && product.applications.length > 0 && (
+              <div>
+                <h4 className="text-base sm:text-lg font-semibold mb-3">Applications</h4>
+                <ul className="list-none space-y-2">
+                  {product.applications.map((app, index) => (
+                    <li key={index} className="flex items-center gap-2 p-2 bg-secondary/20 rounded-lg">
+                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span className="text-sm">{app}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {product.features && product.features.length > 0 && (
+              <div>
+                <h4 className="text-base sm:text-lg font-semibold mb-3">Key Features</h4>
+                <ul className="list-none space-y-2">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2 p-2 bg-primary/5 rounded-lg">
+                      <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4 sm:space-y-6">
             <div>
-              <h4 className="text-base sm:text-lg font-semibold mb-3">Key Features</h4>
-              <ul className="list-none space-y-2">
-                {product.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2 p-2 bg-primary/5 rounded-lg">
-                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-4 sm:space-y-6">
-          <div>
-            <h4 className="text-base sm:text-lg font-semibold mb-3">Product Details</h4>
-            <div className="space-y-2 sm:space-y-3 text-sm">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
-                <span className="font-medium">Model Number:</span>
-                <span className="font-mono text-xs sm:text-sm">{product.model_number || 'N/A'}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
-                <span className="font-medium">Category:</span>
-                <span className="capitalize text-xs sm:text-sm">{product.category.replace('_', ' ')}</span>
-              </div>
-              {product.subcategory && (
+              <h4 className="text-base sm:text-lg font-semibold mb-3">Product Details</h4>
+              <div className="space-y-2 sm:space-y-3 text-sm">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
-                  <span className="font-medium">Subcategory:</span>
-                  <span className="capitalize text-xs sm:text-sm">{product.subcategory.replace('_', ' ')}</span>
+                  <span className="font-medium">Model Number:</span>
+                  <span className="font-mono text-xs sm:text-sm">{product.model_number || 'N/A'}</span>
                 </div>
-              )}
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
-                <span className="font-medium">Price:</span>
-                <span className="font-bold text-primary text-sm sm:text-base">{formatPrice(product.price)}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
-                <span className="font-medium">Availability:</span>
-                <span className={`flex items-center gap-1 text-xs sm:text-sm ${product.in_stock ? 'text-green-600' : 'text-orange-600'}`}>
-                  {product.in_stock ? (
-                    <>
-                      <CheckCircle className="h-4 w-4" />
-                      In Stock
-                    </>
-                  ) : (
-                    <>
-                      <Package className="h-4 w-4" />
-                      Contact for availability
-                    </>
-                  )}
-                </span>
-              </div>
-              {product.created_at && (
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
-                  <span className="font-medium">Added:</span>
-                  <span className="text-xs sm:text-sm">{new Date(product.created_at).toLocaleDateString()}</span>
+                  <span className="font-medium">Category:</span>
+                  <span className="capitalize text-xs sm:text-sm">{product.category.replace('_', ' ')}</span>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {product.specifications && (
-            <div>
-              <h4 className="text-base sm:text-lg font-semibold mb-3">Specifications</h4>
-              <div className="space-y-2 text-sm">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
-                    <span className="font-medium capitalize">{key.replace('_', ' ')}:</span>
-                    <span className="text-xs sm:text-sm">{formatSpecValue(value)}</span>
+                {product.subcategory && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
+                    <span className="font-medium">Subcategory:</span>
+                    <span className="capitalize text-xs sm:text-sm">{product.subcategory.replace('_', ' ')}</span>
                   </div>
-                ))}
+                )}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
+                  <span className="font-medium">Price:</span>
+                  <div className="text-right">
+                    <span className="font-bold text-primary text-sm sm:text-base">{formatPrice(displayPrice)}</span>
+                    {hasVariants && selectedVariant && (
+                      <div className="text-xs text-muted-foreground">
+                        {selectedVariant.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
+                  <span className="font-medium">Availability:</span>
+                  <span className={`flex items-center gap-1 text-xs sm:text-sm ${isInStock ? 'text-green-600' : 'text-orange-600'}`}>
+                    {isInStock ? (
+                      <>
+                        <CheckCircle className="h-4 w-4" />
+                        In Stock
+                      </>
+                    ) : (
+                      <>
+                        <Package className="h-4 w-4" />
+                        Contact for availability
+                      </>
+                    )}
+                  </span>
+                </div>
+                {hasVariants && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
+                    <span className="font-medium">Variants Available:</span>
+                    <span className="text-xs sm:text-sm font-medium">{product.variants!.length}</span>
+                  </div>
+                )}
+                {product.created_at && (
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
+                    <span className="font-medium">Added:</span>
+                    <span className="text-xs sm:text-sm">{new Date(product.created_at).toLocaleDateString()}</span>
+                  </div>
+                )}
               </div>
             </div>
-          )}
+
+            {product.specifications && (
+              <div>
+                <h4 className="text-base sm:text-lg font-semibold mb-3">Specifications</h4>
+                <div className="space-y-2 text-sm">
+                  {Object.entries(product.specifications).map(([key, value]) => (
+                    <div key={key} className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 bg-secondary/10 rounded-lg gap-1">
+                      <span className="font-medium capitalize">{key.replace('_', ' ')}:</span>
+                      <span className="text-xs sm:text-sm">{formatSpecValue(value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Variant Details Table */}
+            {hasVariants && (
+              <div>
+                <h4 className="text-base sm:text-lg font-semibold mb-3">All Variants</h4>
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="bg-muted/50 p-3 border-b">
+                    <div className="grid grid-cols-3 gap-4 text-xs font-semibold">
+                      <span>Variant Name</span>
+                      <span>Price</span>
+                      <span>Stock Status</span>
+                    </div>
+                  </div>
+                  <div className="divide-y">
+                    {product.variants!.map((variant, index) => (
+                      <div key={index} className={`p-3 hover:bg-muted/30 transition-colors ${selectedVariant === variant ? 'bg-primary/5' : ''}`}>
+                        <div className="grid grid-cols-3 gap-4 items-center text-sm">
+                          <span className="font-medium">{variant.name}</span>
+                          <span className="text-primary font-semibold">{formatPrice(variant.price)}</span>
+                          <Badge 
+                            variant={variant.in_stock ? "default" : "secondary"} 
+                            className={`w-fit text-xs ${variant.in_stock ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
+                          >
+                            {variant.in_stock ? 'In Stock' : 'Out of Stock'}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <h4 className="text-base sm:text-lg font-semibold mb-4">Resources & Downloads</h4>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            {product.brochure_url && (
+              <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
+                <a href={product.brochure_url} target="_blank" rel="noopener noreferrer">
+                  <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <span>Product Brochure</span>
+                </a>
+              </Button>
+            )}
+            {product.installation_guide_url && (
+              <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
+                <a href={product.installation_guide_url} target="_blank" rel="noopener noreferrer">
+                  <Wrench className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <span>Installation Guide</span>
+                </a>
+              </Button>
+            )}
+            {product.maintenance_manual_url && (
+              <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
+                <a href={product.maintenance_manual_url} target="_blank" rel="noopener noreferrer">
+                  <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <span>Maintenance Manual</span>
+                </a>
+              </Button>
+            )}
+            {product.video_url && (
+              <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
+                <a href={product.video_url} target="_blank" rel="noopener noreferrer">
+                  <Video className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <span>Product Video</span>
+                </a>
+              </Button>
+            )}
+            {!product.brochure_url && !product.installation_guide_url && !product.maintenance_manual_url && !product.video_url && (
+              <p className="text-sm text-muted-foreground col-span-2 sm:col-span-4">No resources available.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t">
+          <Button className="flex-1 text-sm">
+            Request Quote
+            {hasVariants && selectedVariant && (
+              <span className="ml-2 text-xs opacity-75">({selectedVariant.name})</span>
+            )}
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+          <Button 
+            variant={favorites.includes(product.id) ? 'default' : 'outline'} 
+            className="flex-1 text-sm"
+            onClick={() => toggleFavorite(product.id)}
+          >
+            {favorites.includes(product.id) ? 'Remove from Favorites' : 'Add to Favorites'}
+            <Heart className={`h-4 w-4 ml-2 ${favorites.includes(product.id) ? 'fill-current' : ''}`} />
+          </Button>
+          <Button 
+            variant="outline" 
+            className="text-sm"
+            onClick={() => shareProduct(product)}
+          >
+            Share
+            <Share2 className="h-4 w-4 ml-2" />
+          </Button>
         </div>
       </div>
-
-      <div>
-        <h4 className="text-base sm:text-lg font-semibold mb-4">Resources & Downloads</h4>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          {product.brochure_url && (
-            <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
-              <a href={product.brochure_url} target="_blank" rel="noopener noreferrer">
-                <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
-                <span>Product Brochure</span>
-              </a>
-            </Button>
-          )}
-          {product.installation_guide_url && (
-            <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
-              <a href={product.installation_guide_url} target="_blank" rel="noopener noreferrer">
-                <Wrench className="h-5 w-5 sm:h-6 sm:w-6" />
-                <span>Installation Guide</span>
-              </a>
-            </Button>
-          )}
-          {product.maintenance_manual_url && (
-            <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
-              <a href={product.maintenance_manual_url} target="_blank" rel="noopener noreferrer">
-                <FileText className="h-5 w-5 sm:h-6 sm:w-6" />
-                <span>Maintenance Manual</span>
-              </a>
-            </Button>
-          )}
-          {product.video_url && (
-            <Button variant="outline" className="h-auto p-3 sm:p-4 flex flex-col gap-2 text-xs" asChild>
-              <a href={product.video_url} target="_blank" rel="noopener noreferrer">
-                <Video className="h-5 w-5 sm:h-6 sm:w-6" />
-                <span>Product Video</span>
-              </a>
-            </Button>
-          )}
-          {!product.brochure_url && !product.installation_guide_url && !product.maintenance_manual_url && !product.video_url && (
-            <p className="text-sm text-muted-foreground col-span-2 sm:col-span-4">No resources available.</p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t">
-        <Button className="flex-1 text-sm">
-          Request Quote
-          <ArrowRight className="h-4 w-4 ml-2" />
-        </Button>
-        <Button 
-          variant={favorites.includes(product.id) ? 'default' : 'outline'} 
-          className="flex-1 text-sm"
-          onClick={() => toggleFavorite(product.id)}
-        >
-          {favorites.includes(product.id) ? 'Remove from Favorites' : 'Add to Favorites'}
-          <Heart className={`h-4 w-4 ml-2 ${favorites.includes(product.id) ? 'fill-current' : ''}`} />
-        </Button>
-        <Button 
-          variant="outline" 
-          className="text-sm"
-          onClick={() => shareProduct(product)}
-        >
-          Share
-          <Share2 className="h-4 w-4 ml-2" />
-        </Button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const MobilePagination = () => (
     <div className="flex flex-col items-center gap-4 mt-8">
