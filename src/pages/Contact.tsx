@@ -3,69 +3,9 @@ import Footer from "@/components/Layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe } from "lucide-react";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { Send } from "lucide-react";
+import QuoteForm from "@/components/Home/QuoteForm";
 
 const Contact = () => {
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: ""
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert([{
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          subject: formData.subject,
-          message: formData.message
-        }]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Message Sent!",
-        description: "Thank you for contacting us. We'll get back to you soon.",
-      });
-
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: ""
-      });
-
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const contactInfo = [
     {
       icon: Phone,
@@ -80,7 +20,7 @@ const Contact = () => {
       title: "WhatsApp",
       subtitle: "Quick responses & support",
       details: ["0111 409 454", "0114 575 401"],
-      action: "https://wa.me/0114575401",
+      action: "https://wa.me/0114 575 401",
       actionText: "Chat on WhatsApp"
     },
     {
@@ -150,77 +90,7 @@ const Contact = () => {
                 <h2 className="text-3xl font-bold mb-6">Send us a Message</h2>
                 <Card>
                   <CardContent className="p-8">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="name">Name *</Label>
-                          <Input
-                            id="name"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="email">Email *</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            required
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="phone">Phone</Label>
-                          <Input
-                            id="phone"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="subject">Subject</Label>
-                          <Input
-                            id="subject"
-                            value={formData.subject}
-                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="message">Message *</Label>
-                        <Textarea
-                          id="message"
-                          value={formData.message}
-                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                          rows={6}
-                          required
-                        />
-                      </div>
-
-                      <Button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300"
-                      >
-                        {loading ? (
-                          <div className="flex items-center gap-2">
-                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                            Sending...
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Send className="h-5 w-5" />
-                            Send Message
-                          </div>
-                        )}
-                      </Button>
-                    </form>
+                    <QuoteForm />
                   </CardContent>
                 </Card>
               </div>
@@ -302,7 +172,7 @@ const Contact = () => {
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
-                      allowFullScreen={true}
+                      allowFullScreen=""
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                       title="DripTech Kenya Location - Nairobi, Kenya"
