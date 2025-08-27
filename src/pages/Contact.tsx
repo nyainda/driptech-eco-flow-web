@@ -1,312 +1,226 @@
-
-import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Phone, Mail, Clock } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import Header from "@/components/Layout/Header";
+import Footer from "@/components/Layout/Footer";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe } from "lucide-react";
+import QuoteForm from "@/components/Home/QuoteForm";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    project_type: '',
-    area_size: '',
-    budget_range: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      console.log('Submitting contact form:', formData);
-      
-      const { data, error } = await supabase
-        .from('contact_submissions')
-        .insert([{
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || null,
-          company: formData.company || null,
-          project_type: formData.project_type || null,
-          area_size: formData.area_size || null,
-          budget_range: formData.budget_range || null,
-          message: formData.message,
-          status: 'new',
-          read: false
-        }])
-        .select();
-
-      if (error) {
-        console.error('Error submitting contact form:', error);
-        throw error;
-      }
-
-      console.log('Contact form submitted successfully:', data);
-
-      toast({
-        title: "Message Sent Successfully!",
-        description: "We'll get back to you within 24 hours.",
-      });
-
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        project_type: '',
-        area_size: '',
-        budget_range: '',
-        message: ''
-      });
-
-    } catch (error) {
-      console.error('Contact form submission error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+  const contactInfo = [
+    {
+      icon: Phone,
+      title: "Call Us",
+      subtitle: "Speak with our irrigation experts",
+      details: ["0111 409 454", "0114 575 401"],
+      action: "tel:+254111409454",
+      actionText: "Call Now"
+    },
+    {
+      icon: MessageCircle,
+      title: "WhatsApp",
+      subtitle: "Quick responses & support",
+      details: ["0111 409 454", "0114 575 401"],
+      action: "https://wa.me/0114 575 401",
+      actionText: "Chat on WhatsApp"
+    },
+    {
+      icon: Mail,
+      title: "Email Us",
+      subtitle: "Get detailed information",
+      details: ["driptech2025@gmail.com", "driptechs.info@gmail.com"],
+      action: "mailto:driptech2025@gmail.com",
+      actionText: "Send Email"
+    },
+    {
+      icon: MapPin,
+      title: "Visit Us",
+      subtitle: "Our office location",
+      details: ["Nairobi, Kenya", "East Africa"],
+      action: "https://goo.gl/maps/nairobi-kenya",
+      actionText: "Get Directions"
     }
-  };
+  ];
+
+  const businessHours = [
+    { day: "Monday - Friday", hours: "8:00 AM - 6:00 PM" },
+    { day: "Saturday", hours: "9:00 AM - 12:00 PM" },
+    { day: "Sunday", hours: "Closed" }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-          <p className="text-xl text-gray-600">Get in touch with our irrigation experts</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Information */}
-          <div className="space-y-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <MapPin className="h-6 w-6 text-blue-600" />
-                  Our Location
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  123 Agriculture Street<br />
-                  Nairobi, Kenya<br />
-                  P.O. Box 12345-00100
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Phone className="h-6 w-6 text-green-600" />
-                  Phone Numbers
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Main Office: +254 700 000 000<br />
-                  Technical Support: +254 700 000 001<br />
-                  Emergency: +254 700 000 002
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Mail className="h-6 w-6 text-purple-600" />
-                  Email Addresses
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  General Inquiries: info@driptech.co.ke<br />
-                  Technical Support: support@driptech.co.ke<br />
-                  Sales: sales@driptech.co.ke
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Clock className="h-6 w-6 text-orange-600" />
-                  Business Hours
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Monday - Friday: 8:00 AM - 6:00 PM<br />
-                  Saturday: 9:00 AM - 4:00 PM<br />
-                  Sunday: Emergency calls only
-                </p>
-              </CardContent>
-            </Card>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main>
+        {/* Hero Section */}
+        <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
+          <div className="container mx-auto px-4 text-center">
+            <Badge variant="secondary" className="mb-4">
+              🇰🇪 Contact Us - Kenya
+            </Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              Get in
+              <span className="text-primary"> Touch</span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              Ready to transform your irrigation system? Contact our experts for a free consultation and custom quote.
+            </p>
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span>50+ Projects Completed</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                <span>Serving All of Kenya</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span>Quick Response Time</span>
+              </div>
+            </div>
           </div>
+        </section>
 
-          {/* Contact Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Send us a Message</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="john@example.com"
-                    />
-                  </div>
+        {/* Contact Content */}
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Contact Form */}
+              <div>
+                <h2 className="text-3xl font-bold mb-6">Send us a Message</h2>
+                <Card>
+                  <CardContent className="p-8">
+                    <QuoteForm />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Contact Information */}
+              <div>
+                <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
+                <div className="space-y-6">
+                  {contactInfo.map((info, index) => (
+                    <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                      <CardContent className="p-6">
+                        <div className="flex items-start gap-4">
+                          <div className="p-3 bg-primary/10 rounded-xl transition-all duration-300 group-hover:bg-primary/20">
+                            <info.icon className="h-6 w-6 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg mb-1">{info.title}</h3>
+                            <p className="text-sm text-muted-foreground mb-3">{info.subtitle}</p>
+                            <div className="space-y-1 mb-4">
+                              {info.details.map((detail, idx) => (
+                                <p key={idx} className="text-muted-foreground font-medium">
+                                  {detail}
+                                </p>
+                              ))}
+                            </div>
+                            {info.action && (
+                              <a 
+                                href={info.action}
+                                target={info.action.startsWith('http') ? '_blank' : '_self'}
+                                rel={info.action.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                              >
+                                {info.actionText} →
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+254 700 000 000"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="company">Company/Farm Name</Label>
-                    <Input
-                      id="company"
-                      name="company"
-                      type="text"
-                      value={formData.company}
-                      onChange={handleInputChange}
-                      placeholder="Green Valley Farm"
-                    />
-                  </div>
-                </div>
+                {/* Business Hours Card */}
+                <Card className="mt-6">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 bg-primary/10 rounded-xl">
+                        <Clock className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-semibold text-lg">Business Hours</h3>
+                    </div>
+                    <div className="space-y-2">
+                      {businessHours.map((schedule, idx) => (
+                        <div key={idx} className="flex justify-between items-center">
+                          <span className="text-muted-foreground">{schedule.day}</span>
+                          <span className="font-medium">{schedule.hours}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="project_type">Project Type</Label>
-                    <Select onValueChange={(value) => handleSelectChange('project_type', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select project type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="drip_irrigation">Drip Irrigation</SelectItem>
-                        <SelectItem value="sprinkler_system">Sprinkler System</SelectItem>
-                        <SelectItem value="greenhouse">Greenhouse Irrigation</SelectItem>
-                        <SelectItem value="landscaping">Landscaping</SelectItem>
-                        <SelectItem value="maintenance">Maintenance</SelectItem>
-                        <SelectItem value="consultation">Consultation</SelectItem>
-                      </SelectContent>
-                    </Select>
+            {/* Map Section */}
+            <div className="mt-16">
+              <div className="mb-8 text-center">
+                <h2 className="text-3xl font-bold mb-4">Find Us in Kenya</h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Located in Nairobi, Kenya's capital city. We serve irrigation projects across Kenya.
+                </p>
+              </div>
+              
+              <Card className="overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="aspect-video relative">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255282.35864512736!2d36.70730046250002!3d-1.3028617999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172d84d49a7%3A0xf7cf0254b297924c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2ske!4v1642678890123"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="DripTech Kenya Location - Nairobi, Kenya"
+                      className="rounded-lg"
+                    ></iframe>
+                    
+                    {/* Map Overlay */}
+                    <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-sm border">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <MapPin className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold">DripTech Kenya</h4>
+                          <p className="text-sm text-muted-foreground">Irrigation Solutions</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Nairobi, Kenya<br />
+                        East Africa
+                      </p>
+                      <div className="flex gap-2">
+                        <a 
+                          href="https://goo.gl/maps/nairobi-kenya" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full hover:bg-primary/90 transition-colors"
+                        >
+                          Get Directions
+                        </a>
+                        <a 
+                          href="https://wa.me/254111409454?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
+                          target="_blank"
+                          rel="noopener noreferrer" 
+                          className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full hover:bg-secondary/90 transition-colors"
+                        >
+                          WhatsApp Us
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="area_size">Area Size</Label>
-                    <Select onValueChange={(value) => handleSelectChange('area_size', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select area size" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="under_1_acre">Under 1 Acre</SelectItem>
-                        <SelectItem value="1_5_acres">1-5 Acres</SelectItem>
-                        <SelectItem value="5_10_acres">5-10 Acres</SelectItem>
-                        <SelectItem value="10_50_acres">10-50 Acres</SelectItem>
-                        <SelectItem value="over_50_acres">Over 50 Acres</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="budget_range">Budget Range (KES)</Label>
-                  <Select onValueChange={(value) => handleSelectChange('budget_range', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select budget range" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="under_100k">Under 100,000</SelectItem>
-                      <SelectItem value="100k_500k">100,000 - 500,000</SelectItem>
-                      <SelectItem value="500k_1m">500,000 - 1,000,000</SelectItem>
-                      <SelectItem value="1m_5m">1,000,000 - 5,000,000</SelectItem>
-                      <SelectItem value="over_5m">Over 5,000,000</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="message">Message *</Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    required
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder="Tell us about your irrigation needs..."
-                    rows={4}
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
     </div>
   );
 };
