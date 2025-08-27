@@ -1,93 +1,79 @@
-
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/Layout/ThemeProvider";
-import { Helmet, HelmetProvider } from 'react-helmet-async';
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
-import VisitorTracker from "@/components/Analytics/VisitorTracker";
 import Index from "./pages/Index";
-import Home from "./pages/Home";
-import About from "./pages/About";
+import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
 import Products from "./pages/Products";
 import Services from "./pages/Services";
 import Projects from "./pages/Projects";
-import Contact from "./pages/Contact";
 import Team from "./pages/Team";
-import Admin from "./pages/Admin";
-import ProductCatalog from "./pages/ProductCatalog";
-import CaseStudies from "./pages/CaseStudies";
-import SuccessStories from "./pages/SuccessStories";
-import TechnicalSupport from "./pages/TechnicalSupport";
-import InstallationGuides from "./pages/InstallationGuides";
-import Technicians from "./pages/Technicians";
-import TeamGrid from "./pages/TeamGrid";
 import VideosPage from "./pages/VideosPage";
-import NotFound from "./pages/NotFound";
-import BlogPage from "./components/Home/BlogPage";
-import BlogPostPage from "./components/Home/BlogPostPage";
-import "./App.css";
+import About from "./pages/About";
+import Technicians from "./pages/Technicians";
+import SuccessStories from "./pages/SuccessStories";
+import Contact from "./pages/Contact";
+import TechnicalSupport from "./pages/TechnicalSupport";
+import CaseStudies from "./pages/CaseStudies";
+import InstallationGuides from "./pages/InstallationGuides";
+import BlogPage from "@/components/Home/BlogPage"; 
+import BlogPostPage from "@/components/Home/BlogPostPage"; 
+import VideoSection from "./components/Home/VideoSection";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <TooltipProvider>
-            <Toaster />
-            <BrowserRouter>
-              <VisitorTracker />
-              <div className="min-h-screen flex flex-col bg-background">
-                <Routes>
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="*" element={
-                    <>
-                      <Header />
-                      <main className="flex-1">
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/home" element={<Home />} />
-                          <Route path="/about" element={<About />} />
-                          <Route path="/products" element={<Products />} />
-                          <Route path="/products/:category" element={<ProductCatalog />} />
-                          <Route path="/services" element={<Services />} />
-                          <Route path="/projects" element={<Projects />} />
-                          <Route path="/case-studies" element={<CaseStudies />} />
-                          <Route path="/success-stories" element={<SuccessStories />} />
-                          <Route path="/contact" element={<Contact />} />
-                          <Route path="/team" element={<Team />} />
-                          <Route path="/team-grid" element={<TeamGrid />} />
-                          <Route path="/technical-support" element={<TechnicalSupport />} />
-                          <Route path="/installation-guides" element={<InstallationGuides />} />
-                          <Route path="/technicians" element={<Technicians />} />
-                          <Route path="/videos" element={<VideosPage />} />
-                          <Route path="/blog" element={<BlogPage />} />
-                          <Route path="/blog/:slug" element={<BlogPostPage />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </main>
-                      <Footer />
-                    </>
-                  } />
-                </Routes>
-              </div>
-            </BrowserRouter>
-          </TooltipProvider>
-        </ThemeProvider>
-      </HelmetProvider>
-    </QueryClientProvider>
-  );
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Main pages */}
+            <Route path="/" element={<Index />} />
+            <Route path="/admin" element={<Admin />} />
+            
+            {/* Product routes */}
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/:category" element={<Products />} />
+            <Route path="/products/:category/:product" element={<Products />} />
+            
+            {/* Service routes */}
+            <Route path="/services" element={<Services />} />
+            <Route path="/services/:service" element={<Services />} />
+            
+            {/* Support and info pages */}
+            <Route path="/installation-guides" element={<InstallationGuides />} />
+            <Route path="/case-studies" element={<CaseStudies />} />
+            <Route path="/technical-support" element={<TechnicalSupport />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/success-stories" element={<SuccessStories />} />
+            
+            {/* Team and company */}
+            <Route path="/team" element={<Team />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/technicians" element={<Technicians />} />
+            <Route path="/contact" element={<Contact />} />
+            
+            {/* Blog routes */}
+            <Route path="/blog" element={<BlogPage />} /> 
+            <Route path="/blog/:slug" element={<BlogPostPage />} /> 
+            
+            {/* Video section */}
+            <Route path="/video" element={<VideoSection />} />
+            <Route path="/videos" element={<VideosPage />} />
+            
+            {/* Catch-all route for 404 */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
+);
 
 export default App;
