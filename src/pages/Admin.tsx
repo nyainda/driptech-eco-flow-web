@@ -43,7 +43,7 @@ const AdminContent = () => {
       id: "dashboard",
       label: "Dashboard",
       icon: LayoutDashboard,
-      description: "Overview and analytics"
+      description: "Analytics and business overview"
     },
     {
       id: "products",

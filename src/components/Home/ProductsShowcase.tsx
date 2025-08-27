@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import ProductTracker from "@/components/Analytics/ProductTracker";
 import { 
   Droplets, 
   Gauge, 
@@ -217,238 +218,247 @@ const ProductsShowcase = () => {
     const categoryRoute = getCategoryRoute(product.category);
     
     return (
-      <Card className="group relative hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-3 border-0 shadow-lg overflow-hidden bg-gradient-to-br from-card to-card/80 backdrop-blur-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        <CardContent className="p-0 relative">
-          {/* Product Image */}
-          <div className="relative overflow-hidden">
-            {product.images && product.images.length > 0 ? (
-              <div className="aspect-[4/3] bg-gradient-to-br from-muted to-muted/60 overflow-hidden">
-                <img 
-                  src={product.images[0]} 
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-              </div>
-            ) : (
-              <div className={`aspect-[4/3] ${colors.bgColor} flex items-center justify-center relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                <IconComponent className={`h-20 w-20 ${colors.color} opacity-70 relative z-10`} />
-              </div>
-            )}
-            
-            {/* Floating badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
-              {product.featured && (
-                <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 shadow-lg backdrop-blur-sm">
-                  <Star className="h-3 w-3 mr-1" fill="currentColor" />
-                  Featured
-                </Badge>
-              )}
-              <Badge variant="secondary" className="text-xs backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-gray-100 shadow-lg">
-                {categoryName}
-              </Badge>
-            </div>
-
-            {/* Stock status with animated dot */}
-            <div className="absolute top-4 right-4">
-              {product.in_stock ? (
-                <Badge className="bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 shadow-lg backdrop-blur-sm">
-                  <div className="h-2 w-2 bg-white rounded-full mr-2 animate-pulse" />
-                  In Stock
-                </Badge>
+      <ProductTracker
+        productName={product.name}
+        productId={product.id}
+        productCategory={product.category}
+        productPrice={product.price}
+        trackOnView={true}
+        trackOnClick={true}
+      >
+        <Card className="group relative hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-3 border-0 shadow-lg overflow-hidden bg-gradient-to-br from-card to-card/80 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <CardContent className="p-0 relative">
+            {/* Product Image */}
+            <div className="relative overflow-hidden">
+              {product.images && product.images.length > 0 ? (
+                <div className="aspect-[4/3] bg-gradient-to-br from-muted to-muted/60 overflow-hidden">
+                  <img 
+                    src={product.images[0]} 
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                </div>
               ) : (
-                <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-lg backdrop-blur-sm">
-                  <div className="h-2 w-2 bg-white rounded-full mr-2" />
-                  Out of Stock
-                </Badge>
-              )}
-            </div>
-
-            {/* Video indicator with glow effect */}
-            {product.video_url && (
-              <div className="absolute bottom-4 right-4">
-                <div className="bg-black/80 backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-white/25 transition-shadow duration-300">
-                  <Play className="h-4 w-4 text-white" fill="currentColor" />
+                <div className={`aspect-[4/3] ${colors.bgColor} flex items-center justify-center relative overflow-hidden`}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+                  <IconComponent className={`h-20 w-20 ${colors.color} opacity-70 relative z-10`} />
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Content with optimized spacing */}
-          <div className="p-6 space-y-4">
-            {/* Header with improved typography */}
-            <div className="space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-xl font-bold text-foreground line-clamp-2 leading-tight">
-                  {product.name}
-                </h3>
-                <div className={`p-3 rounded-xl ${colors.accent} flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className={`h-5 w-5 ${colors.color}`} />
-                </div>
-              </div>
-              
-              {product.model_number && (
-                <p className="text-sm text-muted-foreground font-medium">
-                  Model: <span className="text-foreground">{product.model_number}</span>
-                </p>
               )}
               
-              {product.subcategory && (
-                <Badge variant="outline" className="text-xs font-medium">
-                  {product.subcategory}
+              {/* Floating badges */}
+              <div className="absolute top-4 left-4 flex flex-col gap-2">
+                {product.featured && (
+                  <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 shadow-lg backdrop-blur-sm">
+                    <Star className="h-3 w-3 mr-1" fill="currentColor" />
+                    Featured
+                  </Badge>
+                )}
+                <Badge variant="secondary" className="text-xs backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-gray-100 shadow-lg">
+                  {categoryName}
                 </Badge>
+              </div>
+
+              {/* Stock status with animated dot */}
+              <div className="absolute top-4 right-4">
+                {product.in_stock ? (
+                  <Badge className="bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 shadow-lg backdrop-blur-sm">
+                    <div className="h-2 w-2 bg-white rounded-full mr-2 animate-pulse" />
+                    In Stock
+                  </Badge>
+                ) : (
+                  <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-lg backdrop-blur-sm">
+                    <div className="h-2 w-2 bg-white rounded-full mr-2" />
+                    Out of Stock
+                  </Badge>
+                )}
+              </div>
+
+              {/* Video indicator with glow effect */}
+              {product.video_url && (
+                <div className="absolute bottom-4 right-4">
+                  <div className="bg-black/80 backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-white/25 transition-shadow duration-300">
+                    <Play className="h-4 w-4 text-white" fill="currentColor" />
+                  </div>
+                </div>
               )}
             </div>
 
-            {/* Enhanced description */}
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-              {product.description || "Advanced irrigation solution designed for modern agriculture and efficient water management."}
-            </p>
-
-            {/* Compact Features with icons */}
-            {product.features && product.features.length > 0 && (
+            {/* Content with optimized spacing */}
+            <div className="p-6 space-y-4">
+              {/* Header with improved typography */}
               <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-emerald-500 to-green-500">
-                    <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-xl font-bold text-foreground line-clamp-2 leading-tight">
+                    {product.name}
+                  </h3>
+                  <div className={`p-3 rounded-xl ${colors.accent} flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                    <IconComponent className={`h-5 w-5 ${colors.color}`} />
                   </div>
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Key Features
-                  </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {product.features.slice(0, 2).map((feature, idx) => {
-                    const FeatureIcon = getFeatureIcon(feature);
-                    return (
-                      <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors duration-200 group">
-                        <FeatureIcon className="h-3 w-3 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-200" strokeWidth={2.5} />
-                        <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300 truncate max-w-[120px]">
-                          {feature}
+                
+                {product.model_number && (
+                  <p className="text-sm text-muted-foreground font-medium">
+                    Model: <span className="text-foreground">{product.model_number}</span>
+                  </p>
+                )}
+                
+                {product.subcategory && (
+                  <Badge variant="outline" className="text-xs font-medium">
+                    {product.subcategory}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Enhanced description */}
+              <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                {product.description || "Advanced irrigation solution designed for modern agriculture and efficient water management."}
+              </p>
+
+              {/* Compact Features with icons */}
+              {product.features && product.features.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-emerald-500 to-green-500">
+                      <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                    </div>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                      Key Features
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {product.features.slice(0, 2).map((feature, idx) => {
+                      const FeatureIcon = getFeatureIcon(feature);
+                      return (
+                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors duration-200 group">
+                          <FeatureIcon className="h-3 w-3 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-200" strokeWidth={2.5} />
+                          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300 truncate max-w-[120px]">
+                            {feature}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {product.features.length > 2 && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-muted">
+                        <Sparkles className="h-3 w-3 text-muted-foreground" strokeWidth={2.5} />
+                        <span className="text-xs font-medium text-muted-foreground">
+                          +{product.features.length - 2} more
                         </span>
                       </div>
-                    );
-                  })}
-                  {product.features.length > 2 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-muted">
-                      <Sparkles className="h-3 w-3 text-muted-foreground" strokeWidth={2.5} />
-                      <span className="text-xs font-medium text-muted-foreground">
-                        +{product.features.length - 2} more
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Compact Applications with smart display */}
-            {product.applications && product.applications.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500">
-                    <Target className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                    )}
                   </div>
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Applications
-                  </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {product.applications.slice(0, 2).map((app, idx) => {
-                    const AppIcon = getApplicationIcon(app);
-                    return (
-                      <div key={idx} className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.accent} border ${colors.borderColor} hover:scale-105 transition-all duration-200 group`}>
-                        <AppIcon className={`h-3 w-3 ${colors.color}`} strokeWidth={2} />
-                        <span className={`text-xs font-medium ${colors.color} truncate max-w-[100px]`}>
-                          {app}
+              )}
+
+              {/* Compact Applications with smart display */}
+              {product.applications && product.applications.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500">
+                      <Target className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                    </div>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                      Applications
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {product.applications.slice(0, 2).map((app, idx) => {
+                      const AppIcon = getApplicationIcon(app);
+                      return (
+                        <div key={idx} className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.accent} border ${colors.borderColor} hover:scale-105 transition-all duration-200 group`}>
+                          <AppIcon className={`h-3 w-3 ${colors.color}`} strokeWidth={2} />
+                          <span className={`text-xs font-medium ${colors.color} truncate max-w-[100px]`}>
+                            {app}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {product.applications.length > 2 && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-muted hover:bg-muted/50 transition-colors duration-200">
+                        <Globe className="h-3 w-3 text-muted-foreground" strokeWidth={2} />
+                        <span className="text-xs font-medium text-muted-foreground">
+                          +{product.applications.length - 2} more
                         </span>
                       </div>
-                    );
-                  })}
-                  {product.applications.length > 2 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-muted hover:bg-muted/50 transition-colors duration-200">
-                      <Globe className="h-3 w-3 text-muted-foreground" strokeWidth={2} />
-                      <span className="text-xs font-medium text-muted-foreground">
-                        +{product.applications.length - 2} more
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Enhanced price section */}
+              {product.price && (
+                <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-xl p-4 border border-primary/10">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                        KSh {product.price.toLocaleString()}
                       </span>
+                      <p className="text-xs text-muted-foreground mt-1">Price may vary</p>
                     </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Enhanced price section */}
-            {product.price && (
-              <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-xl p-4 border border-primary/10">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                      KSh {product.price.toLocaleString()}
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-1">Price may vary</p>
-                  </div>
-                  <div className={`p-2 rounded-lg ${colors.accent}`}>
-                    <ShoppingCart className={`h-4 w-4 ${colors.color}`} />
+                    <div className={`p-2 rounded-lg ${colors.accent}`}>
+                      <ShoppingCart className={`h-4 w-4 ${colors.color}`} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Resource Links with better icons */}
-            <div className="flex flex-wrap gap-2">
-              {product.brochure_url && (
-                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
-                  <Download className="h-3 w-3 mr-2" />
-                  Brochure
-                </Button>
-              )}
-              {product.installation_guide_url && (
-                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
-                  <Wrench className="h-3 w-3 mr-2" />
-                  Install Guide
-                </Button>
-              )}
-              {product.maintenance_manual_url && (
-                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
-                  <Settings className="h-3 w-3 mr-2" />
-                  Manual
-                </Button>
+              {/* Resource Links with better icons */}
+              <div className="flex flex-wrap gap-2">
+                {product.brochure_url && (
+                  <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
+                    <Download className="h-3 w-3 mr-2" />
+                    Brochure
+                  </Button>
+                )}
+                {product.installation_guide_url && (
+                  <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
+                    <Wrench className="h-3 w-3 mr-2" />
+                    Install Guide
+                  </Button>
+                )}
+                {product.maintenance_manual_url && (
+                  <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
+                    <Settings className="h-3 w-3 mr-2" />
+                    Manual
+                  </Button>
+                )}
+              </div>
+
+              {/* Enhanced action buttons */}
+              <div className="flex gap-3 pt-2">
+                <Link to={`/products/${categoryRoute}`} className="flex-1">
+                  <Button 
+                    variant="ghost" 
+                    className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-primary/90 group-hover:text-primary-foreground transition-all duration-300 rounded-xl"
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    View Details
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <QuoteModal>
+                  <Button variant="outline" className="rounded-xl hover:shadow-lg transition-shadow duration-300">
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Quote
+                  </Button>
+                </QuoteModal>
+              </div>
+
+              {/* Creation date with better styling */}
+              {product.created_at && (
+                <div className="flex items-center justify-center pt-4 border-t border-muted/30">
+                  <Calendar className="h-3 w-3 mr-2 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    Added {new Date(product.created_at).toLocaleDateString()}
+                  </span>
+                </div>
               )}
             </div>
-
-            {/* Enhanced action buttons */}
-            <div className="flex gap-3 pt-2">
-              <Link to={`/products/${categoryRoute}`} className="flex-1">
-                <Button 
-                  variant="ghost" 
-                  className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-primary/90 group-hover:text-primary-foreground transition-all duration-300 rounded-xl"
-                >
-                  <Eye className="mr-2 h-4 w-4" />
-                  View Details
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <QuoteModal>
-                <Button variant="outline" className="rounded-xl hover:shadow-lg transition-shadow duration-300">
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  Quote
-                </Button>
-              </QuoteModal>
-            </div>
-
-            {/* Creation date with better styling */}
-            {product.created_at && (
-              <div className="flex items-center justify-center pt-4 border-t border-muted/30">
-                <Calendar className="h-3 w-3 mr-2 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  Added {new Date(product.created_at).toLocaleDateString()}
-                </span>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </ProductTracker>
     );
   };
 
