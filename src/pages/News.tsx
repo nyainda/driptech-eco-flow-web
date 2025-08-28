@@ -1,6 +1,6 @@
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, cardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, ArrowRight, Newspaper, TrendingUp, Users, Lightbulb } from "lucide-react";
 import Header from "@/components/Layout/Header";
