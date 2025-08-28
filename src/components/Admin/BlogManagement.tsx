@@ -1,33 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  FileText,
-  Eye,
-  Calendar,
-  Tag,
-  Upload,
-  X,
-  Clock,
-  Globe,
-  BookOpen,
-  TrendingUp,
-  Filter,
-  ArrowLeft,
-  ArrowRight
-} from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import BlogEditor from "./BlogEditor";
 import BlogStats from "./Blog/BlogStats";
 import BlogFilters from "./Blog/BlogFilters";
@@ -56,6 +32,8 @@ interface BlogPost {
   seo_description?: string;
   author_id?: string;
   reading_time?: number;
+  category_id?: string;
+  featured_image_url?: string;
 }
 
 interface BlogCategory {
@@ -65,7 +43,6 @@ interface BlogCategory {
   description: string;
 }
 
-
 const ITEMS_PER_PAGE = 10;
 
 const BlogManagement = () => {
@@ -74,13 +51,10 @@ const BlogManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [showAddForm, setShowAddForm] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const { toast } = useToast();
-  const editorRef = useRef<any>(null);
   const viewedPosts = useRef<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
@@ -93,6 +67,11 @@ const BlogManagement = () => {
     totalComments: 0
   });
 
+  useEffect(() => {
+    fetchPosts();
+    fetchCategories();
+    fetchStats();
+  }, [currentPage, searchQuery, selectedCategory, statusFilter, sortBy]);
 
   const fetchStats = async () => {
     try {
@@ -117,7 +96,6 @@ const BlogManagement = () => {
       console.error("Error fetching stats:", error);
     }
   };
-
 
   const fetchPosts = async () => {
     try {
@@ -144,7 +122,6 @@ const BlogManagement = () => {
         query = query.eq("published", statusFilter === "published");
       }
 
-
       // Apply sorting
       switch (sortBy) {
         case "newest":
@@ -165,7 +142,6 @@ const BlogManagement = () => {
       const from = (currentPage - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
       query = query.range(from, to);
-
 
       const { data, error, count } = await query;
 
@@ -204,32 +180,6 @@ const BlogManagement = () => {
     }
   };
 
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-  };
-
-  const calculateReadingTime = (content: string) => {
-    const wordsPerMinute = 200;
-    const images = content.match(/<img[^>]+>/gi)?.length || 0;
-    const words = content
-      .replace(/<[^>]+>/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .split(/\s+/).length;
-    
-    const imageTimeSeconds = images > 0 
-      ? Array.from({ length: images }, (_, i) => Math.max(12 - i, 3)).reduce((a, b) => a + b, 0)
-      : 0;
-    
-    const wordTimeMinutes = words / wordsPerMinute;
-    const totalTimeMinutes = wordTimeMinutes + (imageTimeSeconds / 60);
-    
-    return Math.ceil(totalTimeMinutes);
-  };
-
   const incrementViewCount = async (postId: string) => {
     if (viewedPosts.current.has(postId)) return;
 
@@ -252,7 +202,7 @@ const BlogManagement = () => {
       if (updateError) throw updateError;
 
       viewedPosts.current.add(postId);
-      
+
       setPosts(prevPosts => 
         prevPosts.map(post => 
           post.id === postId ? { ...post, views: newViews } : post
@@ -260,102 +210,6 @@ const BlogManagement = () => {
       );
     } catch (error) {
       console.error('Error incrementing view count:', error);
-    }
-  };
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `blog/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
-
-      setFormData(prev => ({
-        ...prev,
-        featured_image_url: data.publicUrl
-      }));
-
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully"
-      });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive"
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const slug = formData.slug || generateSlug(formData.title);
-      const content = editorRef.current?.getContent() || formData.content;
-      const readingTime = calculateReadingTime(content);
-      
-      const postData = {
-        ...formData,
-        content,
-        slug,
-        tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        reading_time: readingTime,
-        views: editingPost ? editingPost.views : 0,
-        published_at: formData.published ? new Date().toISOString() : null
-      };
-
-      if (editingPost) {
-        const { error } = await supabase
-          .from('blog_posts')
-          .update(postData)
-          .eq('id', editingPost.id);
-
-        if (error) throw error;
-        toast({
-          title: "Success",
-          description: "Blog post updated successfully"
-        });
-      } else {
-        const { error } = await supabase
-          .from('blog_posts')
-          .insert([postData]);
-
-        if (error) throw error;
-        toast({
-          title: "Success",
-          description: "Blog post created successfully"
-        });
-      }
-
-      resetForm();
-      fetchPosts();
-      fetchStats();
-    } catch (error) {
-      console.error('Error saving post:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save blog post",
-        variant: "destructive"
-      });
     }
   };
 
@@ -387,219 +241,9 @@ const BlogManagement = () => {
 
   const handleEditPost = (post: BlogPost) => {
     setEditingPost(post);
-    setFormData({
-      title: post.title,
-      slug: post.slug,
-      excerpt: post.excerpt || "",
-      content: post.content || "",
-      category_id: post.category_id || "",
-      tags: post.tags?.join(', ') || "",
-      published: post.published,
-      seo_title: post.seo_title || "",
-      seo_description: post.seo_description || "",
-      featured_image_url: post.featured_image_url || ""
-    });
-    setShowAddForm(true);
+    setShowEditor(true);
     incrementViewCount(post.id);
   };
-
-  const resetForm = () => {
-    setFormData({
-      title: "",
-      slug: "",
-      excerpt: "",
-      content: "",
-      category_id: "",
-      tags: "",
-      published: false,
-      seo_title: "",
-      seo_description: "",
-      featured_image_url: ""
-    });
-    setEditingPost(null);
-    setShowAddForm(false);
-    if (editorRef.current) {
-      editorRef.current.setContent('');
-    }
-  };
-
-  const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || post.blog_categories?.name === selectedCategory;
-    const matchesStatus = statusFilter === "all" || (statusFilter === "published" ? post.published : !post.published);
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
-
-  const totalPostsCount = posts.length;
-  const publishedPosts = posts.filter(p => p.published).length;
-  const draftPosts = posts.filter(p => !p.published).length;
-  const totalViews = posts.reduce((acc, post) => acc + post.views, 0);
-
-  // Pagination Logic
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
-  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
-
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const nextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const MobilePagination = () => (
-    <div className="flex flex-col items-center gap-4 mt-6">
-      <div className="text-sm text-muted-foreground text-center">
-        Showing {indexOfFirstPost + 1} to {Math.min(indexOfLastPost, filteredPosts.length)} of {filteredPosts.length} posts
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={prevPage}
-          disabled={currentPage === 1}
-          className="disabled:opacity-50 h-8"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          <span className="hidden xs:inline">Previous</span>
-        </Button>
-        
-        <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
-          {totalPages > 1 && (
-            <Button
-              variant={currentPage === 1 ? "default" : "outline"}
-              size="sm"
-              onClick={() => paginate(1)}
-              className="w-8 h-8 flex-shrink-0"
-            >
-              1
-            </Button>
-          )}
-          
-          {currentPage > 3 && totalPages > 5 && (
-            <span className="px-2 text-muted-foreground">...</span>
-          )}
-          
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(page => {
-              if (totalPages <= 5) return page > 1 && page < totalPages;
-              return page > 1 && page < totalPages && Math.abs(page - currentPage) <= 1;
-            })
-            .map(page => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
-                onClick={() => paginate(page)}
-                className="w-8 h-8 flex-shrink-0"
-              >
-                {page}
-              </Button>
-            ))}
-          
-          {currentPage < totalPages - 2 && totalPages > 5 && (
-            <span className="px-2 text-muted-foreground">...</span>
-          )}
-          
-          {totalPages > 1 && (
-            <Button
-              variant={currentPage === totalPages ? "default" : "outline"}
-              size="sm"
-              onClick={() => paginate(totalPages)}
-              className="w-8 h-8 flex-shrink-0"
-            >
-              {totalPages}
-            </Button>
-          )}
-        </div>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={nextPage}
-          disabled={currentPage === totalPages}
-          className="disabled:opacity-50 h-8"
-        >
-          <span className="hidden xs:inline">Next</span>
-          <ArrowRight className="h-4 w-4 ml-1" />
-        </Button>
-      </div>
-    </div>
-  );
-
-  const DesktopPagination = () => (
-    <div className="flex items-center justify-between mt-6">
-      <div className="text-sm text-muted-foreground">
-        Showing {indexOfFirstPost + 1} to {Math.min(indexOfLastPost, filteredPosts.length)} of {filteredPosts.length} posts
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={prevPage}
-          disabled={currentPage === 1}
-          className="disabled:opacity-50 h-9"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Previous
-        </Button>
-        
-        <div className="flex items-center gap-1">
-          {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-            let pageNumber;
-            if (totalPages <= 7) {
-              pageNumber = i + 1;
-            } else if (currentPage <= 4) {
-              pageNumber = i + 1;
-            } else if (currentPage >= totalPages - 3) {
-              pageNumber = totalPages - 6 + i;
-            } else {
-              pageNumber = currentPage - 3 + i;
-            }
-            
-            return (
-              <Button
-                key={pageNumber}
-                variant={currentPage === pageNumber ? "default" : "outline"}
-                size="sm"
-                onClick={() => paginate(pageNumber)}
-                className="w-9 h-9"
-              >
-                {pageNumber}
-              </Button>
-            );
-          })}
-        </div>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={nextPage}
-          disabled={currentPage === totalPages}
-          className="disabled:opacity-50 h-9"
-        >
-          Next
-          <ArrowRight className="h-4 w-4 ml-2" />
-        </Button>
-      </div>
-    </div>
-  );
 
   const handleCreatePost = () => {
     setEditingPost(null);
@@ -613,8 +257,16 @@ const BlogManagement = () => {
     fetchStats();
   };
 
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || post.blog_categories?.name === selectedCategory;
+    const matchesStatus = statusFilter === "all" || (statusFilter === "published" ? post.published : !post.published);
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
 
   const totalPagesCalculated = Math.ceil(totalPosts / ITEMS_PER_PAGE);
+  const currentPosts = posts; // Already paginated from the query
 
   if (showEditor) {
     return (
@@ -646,8 +298,8 @@ const BlogManagement = () => {
 
         {/* Search and Filter Bar */}
         <BlogFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
+          searchTerm={searchQuery}
+          setSearchTerm={setSearchQuery}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           statusFilter={statusFilter}
@@ -668,14 +320,13 @@ const BlogManagement = () => {
 
         {/* Pagination */}
         {currentPosts.length > 0 && (
-          <div>
-            <div className="block sm:hidden">
-              <MobilePagination />
-            </div>
-            <div className="hidden sm:block">
-              <DesktopPagination />
-            </div>
-          </div>
+          <BlogPagination
+            currentPage={currentPage}
+            totalPages={totalPagesCalculated}
+            onPageChange={setCurrentPage}
+            totalPosts={totalPosts}
+            postsPerPage={ITEMS_PER_PAGE}
+          />
         )}
 
         {/* Empty State */}
@@ -686,16 +337,16 @@ const BlogManagement = () => {
                 <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
               </div>
               <h3 className="text-lg sm:text-2xl font-semibold mb-2 sm:mb-3">
-                {searchTerm || selectedCategory !== "all" || statusFilter !== "all" ? "No posts found" : "No blog posts yet"}
+                {searchQuery || selectedCategory !== "all" || statusFilter !== "all" ? "No posts found" : "No blog posts yet"}
               </h3>
               <p className="text-sm sm:text-base text-muted-foreground text-center mb-4 sm:mb-6 max-w-md leading-relaxed">
-                {searchTerm || selectedCategory !== "all" || statusFilter !== "all"
+                {searchQuery || selectedCategory !== "all" || statusFilter !== "all"
                   ? "Try adjusting your search criteria or filters to find what you're looking for" 
                   : "Start creating engaging content for your audience. Your first blog post is just a click away!"}
               </p>
-              {(!searchTerm && selectedCategory === "all" && statusFilter === "all") && (
+              {(!searchQuery && selectedCategory === "all" && statusFilter === "all") && (
                 <Button 
-                  onClick={() => setShowAddForm(true)}
+                  onClick={handleCreatePost}
                   size="sm"
                   className="h-10 sm:h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
