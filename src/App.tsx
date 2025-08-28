@@ -19,6 +19,8 @@ import Contact from "./pages/Contact";
 import TechnicalSupport from "./pages/TechnicalSupport";
 import CaseStudies from "./pages/CaseStudies";
 import InstallationGuides from "./pages/InstallationGuides";
+import News from "./pages/News";
+import Certifications from "./pages/Certifications";
 import BlogPage from "@/components/Home/BlogPage"; 
 import BlogPostPage from "@/components/Home/BlogPostPage"; 
 import VideoSection from "./components/Home/VideoSection";
@@ -60,6 +62,10 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/technicians" element={<Technicians />} />
             <Route path="/contact" element={<Contact />} />
+            
+            {/* News and certifications */}
+            <Route path="/news" element={<News />} />
+            <Route path="/certifications" element={<Certifications />} />
             
             {/* Blog routes */}
             <Route path="/blog" element={<BlogPage />} /> 
