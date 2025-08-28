@@ -1,18 +1,12 @@
 import { useState, useRef } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Edit, Plus, Play, X, Upload, FileVideo, Link, Image } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import VideoForm from "./Video/VideoForm";
+import VideoList from "./Video/VideoList";
+import VideoStats from "./Video/VideoStats";
 
 interface Video {
   id: string;
@@ -443,252 +437,36 @@ const VideoManagement = () => {
     }
   };
 
+  // Calculate stats for VideoStats component
+  const videoStats = {
+    totalVideos: videos.length,
+    totalViews: videos.reduce((sum, video) => sum + (video.views || 0), 0),
+    totalLikes: videos.reduce((sum, video) => sum + (video.featured ? 1 : 0), 0), // Using featured as likes
+    totalDuration: Math.floor(videos.reduce((sum, video) => sum + (video.duration || 0), 0) / 60)
+  };
+
   if (showForm) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold">
-            {editingVideo ? 'Edit Video' : 'Add New Video'}
-          </h3>
-          <Button variant="outline" onClick={resetForm} disabled={isUploading}>
-            <X className="h-4 w-4 mr-2" />
-            Cancel
-          </Button>
-        </div>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-6">
-              {/* Upload Progress */}
-              {isUploading && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>Upload Progress</Label>
-                    <span className="text-sm text-muted-foreground">{uploadProgress}%</span>
-                  </div>
-                  <Progress value={uploadProgress} className="h-2" />
-                </div>
-              )}
-
-              {/* Video Source Selection */}
-              <div>
-                <Label>Video Source</Label>
-                <Tabs value={uploadMode} onValueChange={(value) => setUploadMode(value as 'file' | 'url')} className="mt-2">
-                  <TabsList>
-                    <TabsTrigger value="file" disabled={isUploading}>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload File
-                    </TabsTrigger>
-                    <TabsTrigger value="url" disabled={isUploading}>
-                      <Link className="h-4 w-4 mr-2" />
-                      Video URL
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="file" className="space-y-4">
-                    <div>
-                      <Label htmlFor="video_file">Select Video File *</Label>
-                      <Input
-                        id="video_file"
-                        type="file"
-                        accept="video/*"
-                        onChange={handleVideoFileChange}
-                        ref={videoFileRef}
-                        disabled={isUploading}
-                        className="cursor-pointer"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Supported formats: MP4, WebM, AVI, MOV (Max: 100MB)
-                      </p>
-                      {formData.video_file && (
-                        <div className="mt-2 p-2 bg-muted rounded-md">
-                          <div className="flex items-center gap-2">
-                            <FileVideo className="h-4 w-4" />
-                            <span className="text-sm">{formData.video_file.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              ({formatFileSize(formData.video_file.size)})
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="url" className="space-y-4">
-                    <div>
-                      <Label htmlFor="video_url">Video URL *</Label>
-                      <Input
-                        id="video_url"
-                        value={formData.video_url}
-                        onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
-                        placeholder="https://youtube.com/watch?v=... or direct video URL"
-                        disabled={isUploading}
-                      />
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </div>
-
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="title">Title *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Video title"
-                    disabled={isUploading}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-                    disabled={isUploading}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="irrigation">Irrigation</SelectItem>
-                      <SelectItem value="installation">Installation</SelectItem>
-                      <SelectItem value="maintenance">Maintenance</SelectItem>
-                      <SelectItem value="testimonial">Testimonial</SelectItem>
-                      <SelectItem value="tutorial">Tutorial</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Video description"
-                  rows={3}
-                  disabled={isUploading}
-                />
-              </div>
-
-              {/* Thumbnail Section */}
-              <div>
-                <Label>Thumbnail</Label>
-                <Tabs defaultValue="file" className="mt-2">
-                  <TabsList>
-                    <TabsTrigger value="file" disabled={isUploading}>
-                      <Image className="h-4 w-4 mr-2" />
-                      Upload Image
-                    </TabsTrigger>
-                    <TabsTrigger value="url" disabled={isUploading}>
-                      <Link className="h-4 w-4 mr-2" />
-                      Image URL
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="file" className="space-y-2">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleThumbnailFileChange}
-                      ref={thumbnailFileRef}
-                      disabled={isUploading}
-                      className="cursor-pointer"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Supported formats: JPG, PNG, WebP (Max: 5MB)
-                    </p>
-                    {formData.thumbnail_file && (
-                      <div className="mt-2 p-2 bg-muted rounded-md">
-                        <div className="flex items-center gap-2">
-                          <Image className="h-4 w-4" />
-                          <span className="text-sm">{formData.thumbnail_file.name}</span>
-                        </div>
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="url">
-                    <Input
-                      value={formData.thumbnail_url}
-                      onChange={(e) => setFormData(prev => ({ ...prev, thumbnail_url: e.target.value }))}
-                      placeholder="https://example.com/thumbnail.jpg"
-                      disabled={isUploading}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </div>
-
-              <div>
-                <Label htmlFor="duration">Duration (seconds)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  value={formData.duration}
-                  onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) || 0 }))}
-                  placeholder="Video duration in seconds (auto-detected for uploads)"
-                  disabled={isUploading}
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Leave empty for auto-detection when uploading files
-                </p>
-              </div>
-
-              {/* Tags */}
-              <div>
-                <Label>Tags</Label>
-                <div className="flex gap-2 mb-2">
-                  <Input
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    placeholder="Add a tag"
-                    disabled={isUploading}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                  />
-                  <Button type="button" onClick={addTag} disabled={isUploading}>Add</Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {formData.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => !isUploading && removeTag(tag)}>
-                      {tag} <X className="h-3 w-3 ml-1" />
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Publish Settings */}
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="published"
-                    checked={formData.published}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, published: checked }))}
-                    disabled={isUploading}
-                  />
-                  <Label htmlFor="published">Published</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="featured"
-                    checked={formData.featured}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, featured: checked }))}
-                    disabled={isUploading}
-                  />
-                  <Label htmlFor="featured">Featured</Label>
-                </div>
-              </div>
-
-              <Button type="button" onClick={handleSubmit} disabled={saveVideoMutation.isPending || isUploading}>
-                {isUploading ? 'Uploading...' : (saveVideoMutation.isPending ? 'Saving...' : 'Save Video')}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <VideoForm
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleSubmit}
+        onCancel={resetForm}
+        editingVideo={editingVideo}
+        isUploading={isUploading}
+        uploadProgress={uploadProgress}
+        uploadMode={uploadMode}
+        setUploadMode={setUploadMode}
+        videoFileRef={videoFileRef}
+        thumbnailFileRef={thumbnailFileRef}
+        onVideoFileChange={handleVideoFileChange}
+        onThumbnailFileChange={handleThumbnailFileChange}
+        newTag={newTag}
+        setNewTag={setNewTag}
+        addTag={addTag}
+        removeTag={removeTag}
+        isSaving={saveVideoMutation.isPending}
+      />
     );
   }
 
@@ -705,100 +483,16 @@ const VideoManagement = () => {
         </Button>
       </div>
 
-      <div className="grid gap-6">
-        {isLoading ? (
-          <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <p className="mt-2 text-muted-foreground">Loading videos...</p>
-          </div>
-        ) : videos.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-8">
-              <FileVideo className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No videos yet</h3>
-              <p className="text-muted-foreground mb-4">Start by adding your first irrigation video</p>
-              <Button onClick={() => setShowForm(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Your First Video
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          videos.map((video) => (
-            <Card key={video.id}>
-              <CardContent className="p-6">
-                <div className="flex gap-4">
-                  {video.thumbnail_url && (
-                    <div className="flex-shrink-0">
-                      <img
-                        src={video.thumbnail_url}
-                        alt={video.title}
-                        className="w-32 h-20 object-cover rounded"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold">{video.title}</h3>
-                        {video.description && (
-                          <p className="text-muted-foreground mt-1 line-clamp-2">{video.description}</p>
-                        )}
-                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                          <span>Views: {video.views?.toLocaleString() || 0}</span>
-                          {video.duration && <span>Duration: {formatDuration(video.duration)}</span>}
-                          {video.file_size && <span>Size: {formatFileSize(video.file_size)}</span>}
-                          <span>Category: {video.category}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {video.tags?.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={video.published ? "default" : "secondary"}>
-                          {video.published ? "Published" : "Draft"}
-                        </Badge>
-                        {video.featured && (
-                          <Badge variant="outline">Featured</Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-4">
-                      <Button size="sm" variant="outline" asChild>
-                        <a href={video.video_url} target="_blank" rel="noopener noreferrer">
-                          <Play className="h-4 w-4 mr-1" />
-                          Watch
-                        </a>
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleEdit(video)}>
-                        <Edit className="h-4 w-4 mr-1" />
-                        Edit
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => handleDelete(video)}
-                        disabled={deleteVideoMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        {deleteVideoMutation.isPending ? 'Deleting...' : 'Delete'}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+      <VideoStats stats={videoStats} />
+      
+      <VideoList
+        videos={videos}
+        isLoading={isLoading}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onShowForm={() => setShowForm(true)}
+        isDeleting={deleteVideoMutation.isPending}
+      />
     </div>
   );
 };
