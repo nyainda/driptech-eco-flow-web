@@ -1,18 +1,171 @@
+
 import React, { useState, useEffect } from 'react';
-import { Bell, X, Check, AlertCircle, Users, FileText, ShoppingCart, Calendar, Mail, Settings } from 'lucide-react';
-import { supabase } from "@/integrations/supabase/client";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Bell, 
+  Mail, 
+  FileText, 
+  ShoppingCart, 
+  Users, 
+  Calendar, 
+  Settings,
+  AlertCircle,
+  X,
+  MarkAsUnreadIcon,
+  Trash2
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  data?: any;
+}
 
 const NotificationSystem = () => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const { toast } = useToast();
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  // Real-time subscription setup
+  // Initialize notifications from existing data
+  const initializeNotifications = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch recent contact submissions
+      const { data: contacts, error: contactsError } = await supabase
+        .from('contact_submissions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (contactsError && !contactsError.message.includes('relation "contact_submissions" does not exist')) {
+        console.error('Error fetching contacts:', contactsError);
+      }
+
+      // Fetch recent quotes
+      const { data: quotes, error: quotesError } = await supabase
+        .from('quotes')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (quotesError && !quotesError.message.includes('relation "quotes" does not exist')) {
+        console.error('Error fetching quotes:', quotesError);
+      }
+
+      // Fetch recent projects
+      const { data: projects, error: projectsError } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (projectsError && !projectsError.message.includes('relation "projects" does not exist')) {
+        console.error('Error fetching projects:', projectsError);
+      }
+
+      // Fetch recent blog posts
+      const { data: blogs, error: blogsError } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (blogsError && !blogsError.message.includes('relation "blog_posts" does not exist')) {
+        console.error('Error fetching blogs:', blogsError);
+      }
+
+      // Convert data to notifications
+      const allNotifications: Notification[] = [];
+
+      // Add contact submission notifications
+      (contacts || []).forEach(contact => {
+        allNotifications.push({
+          id: `contact_${contact.id}`,
+          type: 'contact_submission',
+          title: 'New Contact Submission',
+          message: `${contact.name || 'Someone'} submitted a contact form: ${contact.subject || 'No subject'}`,
+          timestamp: new Date(contact.created_at),
+          read: false,
+          data: contact
+        });
+      });
+
+      // Add quote notifications
+      (quotes || []).forEach(quote => {
+        allNotifications.push({
+          id: `quote_${quote.id}`,
+          type: 'quote',
+          title: 'New Quote Request',
+          message: `Quote #${quote.quote_number} for ${quote.customer_name || 'Unknown customer'} - ${quote.project_type || 'General'}`,
+          timestamp: new Date(quote.created_at),
+          read: false,
+          data: quote
+        });
+      });
+
+      // Add project notifications
+      (projects || []).forEach(project => {
+        allNotifications.push({
+          id: `project_${project.id}`,
+          type: 'project',
+          title: 'Project Update',
+          message: `Project "${project.name}" status: ${project.status || 'Active'}`,
+          timestamp: new Date(project.created_at),
+          read: false,
+          data: project
+        });
+      });
+
+      // Add blog notifications
+      (blogs || []).forEach(blog => {
+        allNotifications.push({
+          id: `blog_${blog.id}`,
+          type: 'blog_post',
+          title: 'New Blog Post',
+          message: `New blog post published: "${blog.title}"`,
+          timestamp: new Date(blog.created_at),
+          read: false,
+          data: blog
+        });
+      });
+
+      // Sort by timestamp and limit to 50
+      const sortedNotifications = allNotifications
+        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+        .slice(0, 50);
+
+      setNotifications(sortedNotifications);
+      
+    } catch (error) {
+      console.error('Error initializing notifications:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load notifications",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Set up real-time subscriptions
   useEffect(() => {
-    const channels = [];
+    const channels: any[] = [];
     
     console.log('Setting up notification subscriptions...');
 
@@ -26,7 +179,7 @@ const NotificationSystem = () => {
             try {
               addNotification('contact_submission', {
                 title: 'New Contact Submission',
-                message: `${payload.new.name || 'Someone'} submitted a contact form`,
+                message: `${payload.new.name || 'Someone'} submitted a contact form: ${payload.new.subject || 'No subject'}`,
                 data: payload.new
               });
             } catch (error) {
@@ -36,6 +189,8 @@ const NotificationSystem = () => {
         )
         .subscribe();
 
+      channels.push(contactChannel);
+
       // Subscribe to quotes
       const quoteChannel = supabase
         .channel('quotes')
@@ -44,147 +199,43 @@ const NotificationSystem = () => {
           (payload) => {
             try {
               addNotification('quote', {
-                title: 'New Quote Created',
-                message: `Quote ${payload.new.quote_number || 'New Quote'} has been created`,
+                title: 'New Quote Request',
+                message: `Quote #${payload.new.quote_number} for ${payload.new.customer_name || 'Unknown customer'}`,
                 data: payload.new
               });
             } catch (error) {
-              console.error('Error processing quote creation notification:', error);
-            }
-          }
-        )
-        .on('postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'quotes' },
-          (payload) => {
-            try {
-              if (payload.new.status !== payload.old.status) {
-                addNotification('quote', {
-                  title: 'Quote Status Updated',
-                  message: `Quote ${payload.new.quote_number || 'Quote'} status changed to ${payload.new.status}`,
-                  data: payload.new
-                });
-              }
-            } catch (error) {
-              console.error('Error processing quote update notification:', error);
+              console.error('Error processing quote notification:', error);
             }
           }
         )
         .subscribe();
 
-      // Subscribe to M-Pesa transactions
-      const mpesaChannel = supabase
-        .channel('mpesa_transactions')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'mpesa_transactions' },
-          (payload) => {
-            try {
-              const amount = payload.new.amount || 0;
-              addNotification('mpesa_transaction', {
-                title: 'Payment Received',
-                message: `M-Pesa payment of KES ${amount.toLocaleString()} received`,
-                data: payload.new
-              });
-            } catch (error) {
-              console.error('Error processing M-Pesa transaction notification:', error);
-            }
-          }
-        )
-        .subscribe();
-
-      // Subscribe to invoices
-      const invoiceChannel = supabase
-        .channel('invoices')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'invoices' },
-          (payload) => {
-            console.log('Invoice INSERT received:', payload);
-            try {
-              addNotification('invoice', {
-                title: 'New Invoice Created',
-                message: `Invoice ${payload.new.invoice_number || 'New Invoice'} has been created`,
-                data: payload.new
-              });
-            } catch (error) {
-              console.error('Error processing invoice creation notification:', error);
-            }
-          }
-        )
-        .on('postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'invoices' },
-          (payload) => {
-            console.log('Invoice UPDATE received:', payload);
-            try {
-              if (payload.new.status === 'paid' && payload.old.status !== 'paid') {
-                addNotification('invoice', {
-                  title: 'Invoice Paid',
-                  message: `Invoice ${payload.new.invoice_number || 'Invoice'} has been paid`,
-                  data: payload.new
-                });
-              }
-            } catch (error) {
-              console.error('Error processing invoice payment notification:', error);
-            }
-          }
-        )
-        .subscribe((status, err) => {
-          console.log('Invoice subscription status:', status, err);
-        });
-
-      // Subscribe to customers
-      const customerChannel = supabase
-        .channel('customers')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'customers' },
-          (payload) => {
-            try {
-              const customerName = payload.new.contact_person || 'New Customer';
-              const companyName = payload.new.company_name || 'Individual';
-              addNotification('customer', {
-                title: 'New Customer Registered',
-                message: `${customerName} from ${companyName} registered`,
-                data: payload.new
-              });
-            } catch (error) {
-              console.error('Error processing customer registration notification:', error);
-            }
-          }
-        )
-        .subscribe();
+      channels.push(quoteChannel);
 
       // Subscribe to projects
       const projectChannel = supabase
         .channel('projects')
         .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'projects' },
+          { event: '*', schema: 'public', table: 'projects' },
           (payload) => {
             try {
+              const eventType = payload.eventType;
+              const title = eventType === 'INSERT' ? 'New Project Created' : 'Project Updated';
+              const message = `Project "${payload.new.name}" ${eventType === 'INSERT' ? 'created' : 'updated'}`;
+              
               addNotification('project', {
-                title: 'New Project Created',
-                message: `Project "${payload.new.name || 'Unnamed Project'}" has been created`,
+                title,
+                message,
                 data: payload.new
               });
             } catch (error) {
-              console.error('Error processing project creation notification:', error);
-            }
-          }
-        )
-        .on('postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'projects' },
-          (payload) => {
-            try {
-              if (payload.new.status !== payload.old.status) {
-                addNotification('project', {
-                  title: 'Project Status Updated',
-                  message: `Project "${payload.new.name || 'Project'}" status changed to ${payload.new.status}`,
-                  data: payload.new
-                });
-              }
-            } catch (error) {
-              console.error('Error processing project update notification:', error);
+              console.error('Error processing project notification:', error);
             }
           }
         )
         .subscribe();
+
+      channels.push(projectChannel);
 
       // Subscribe to blog posts
       const blogChannel = supabase
@@ -193,127 +244,46 @@ const NotificationSystem = () => {
           { event: 'INSERT', schema: 'public', table: 'blog_posts' },
           (payload) => {
             try {
-              if (payload.new.published) {
-                addNotification('blog_post', {
-                  title: 'New Blog Post Published',
-                  message: `"${payload.new.title || 'New Post'}" has been published`,
-                  data: payload.new
-                });
-              }
-            } catch (error) {
-              console.error('Error processing blog post notification:', error);
-            }
-          }
-        )
-        .on('postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'blog_posts' },
-          (payload) => {
-            try {
-              if (payload.new.published && !payload.old.published) {
-                addNotification('blog_post', {
-                  title: 'Blog Post Published',
-                  message: `"${payload.new.title || 'Blog Post'}" has been published`,
-                  data: payload.new
-                });
-              }
-            } catch (error) {
-              console.error('Error processing blog post publish notification:', error);
-            }
-          }
-        )
-        .subscribe();
-
-      // Subscribe to success stories
-      const successStoriesChannel = supabase
-        .channel('success_stories')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'success_stories' },
-          (payload) => {
-            try {
-              addNotification('success_story', {
-                title: 'New Success Story Added',
-                message: `Success story "${payload.new.title || 'New Story'}" has been added`,
+              addNotification('blog_post', {
+                title: 'New Blog Post',
+                message: `New blog post published: "${payload.new.title}"`,
                 data: payload.new
               });
             } catch (error) {
-              console.error('Error processing success story notification:', error);
+              console.error('Error processing blog notification:', error);
             }
           }
         )
         .subscribe();
 
-      // Subscribe to videos
-      const videosChannel = supabase
-        .channel('videos')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'videos' },
-          (payload) => {
-            try {
-              if (payload.new.published) {
-                addNotification('video', {
-                  title: 'New Video Published',
-                  message: `Video "${payload.new.title || 'New Video'}" has been published`,
-                  data: payload.new
-                });
-              }
-            } catch (error) {
-              console.error('Error processing video notification:', error);
-            }
-          }
-        )
-        .subscribe();
+      channels.push(blogChannel);
 
-      // Subscribe to documents
-      const documentsChannel = supabase
-        .channel('documents')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'documents' },
-          (payload) => {
-            try {
-              addNotification('document', {
-                title: 'New Document Added',
-                message: `Document "${payload.new.title || 'New Document'}" has been added`,
-                data: payload.new
-              });
-            } catch (error) {
-              console.error('Error processing document notification:', error);
-            }
-          }
-        )
-        .subscribe();
+      console.log(`Set up ${channels.length} notification channels`);
 
-      channels.push(
-        contactChannel, 
-        quoteChannel, 
-        mpesaChannel, 
-        invoiceChannel, 
-        customerChannel, 
-        projectChannel, 
-        blogChannel, 
-        successStoriesChannel, 
-        videosChannel, 
-        documentsChannel
-      );
-
-      setLoading(false);
     } catch (error) {
-      console.error('Error setting up real-time subscriptions:', error);
-      setLoading(false);
+      console.error('Error setting up subscriptions:', error);
     }
 
+    // Initialize notifications
+    initializeNotifications();
+
+    // Cleanup subscriptions
     return () => {
-      try {
-        channels.forEach(channel => supabase.removeChannel(channel));
-      } catch (error) {
-        console.error('Error cleaning up subscriptions:', error);
-      }
+      console.log('Cleaning up notification subscriptions...');
+      channels.forEach(channel => {
+        try {
+          supabase.removeChannel(channel);
+        } catch (error) {
+          console.error('Error removing channel:', error);
+        }
+      });
     };
   }, []);
 
-  const addNotification = (type, { title, message, data }) => {
+  const addNotification = (type: string, { title, message, data }: { title: string; message: string; data?: any }) => {
     console.log('Adding notification:', { type, title, message });
-    const newNotification = {
-      id: Date.now().toString(),
+    const newNotification: Notification = {
+      id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type,
       title,
       message,
@@ -327,9 +297,16 @@ const NotificationSystem = () => {
       console.log('Updated notifications:', updated.length);
       return updated;
     });
+
+    // Show toast notification
+    toast({
+      title: title,
+      description: message,
+      duration: 5000
+    });
   };
 
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = (type: string) => {
     const iconMap = {
       contact_submission: Mail,
       quote: FileText,
@@ -343,30 +320,30 @@ const NotificationSystem = () => {
       document: Settings
     };
     
-    const IconComponent = iconMap[type] || AlertCircle;
+    const IconComponent = iconMap[type as keyof typeof iconMap] || AlertCircle;
     return <IconComponent className="w-5 h-5" />;
   };
 
-  const getNotificationColor = (type) => {
+  const getNotificationColor = (type: string) => {
     const colorMap = {
-      contact_submission: 'bg-blue-100 text-blue-600',
-      quote: 'bg-purple-100 text-purple-600',
-      mpesa_transaction: 'bg-green-100 text-green-600',
-      invoice: 'bg-orange-100 text-orange-600',
-      customer: 'bg-indigo-100 text-indigo-600',
-      project: 'bg-yellow-100 text-yellow-600',
-      blog_post: 'bg-gray-100 text-gray-600',
-      success_story: 'bg-emerald-100 text-emerald-600',
-      video: 'bg-red-100 text-red-600',
-      document: 'bg-cyan-100 text-cyan-600'
+      contact_submission: 'bg-blue-100 text-blue-800',
+      quote: 'bg-green-100 text-green-800',
+      mpesa_transaction: 'bg-yellow-100 text-yellow-800',
+      invoice: 'bg-purple-100 text-purple-800',
+      customer: 'bg-indigo-100 text-indigo-800',
+      project: 'bg-orange-100 text-orange-800',
+      blog_post: 'bg-pink-100 text-pink-800',
+      success_story: 'bg-teal-100 text-teal-800',
+      video: 'bg-red-100 text-red-800',
+      document: 'bg-gray-100 text-gray-800'
     };
     
-    return colorMap[type] || 'bg-gray-100 text-gray-600';
+    return colorMap[type as keyof typeof colorMap] || 'bg-gray-100 text-gray-800';
   };
 
-  const markAsRead = (notificationId) => {
-    setNotifications(prev =>
-      prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+  const markAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(n => n.id === id ? { ...n, read: true } : n)
     );
   };
 
@@ -374,17 +351,13 @@ const NotificationSystem = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
-  const deleteNotification = (notificationId) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
-  // Test function to manually add a notification (remove in production)
-  const testNotification = () => {
-    addNotification('invoice', {
-      title: 'Test Notification',
-      message: 'This is a test notification to verify the system is working',
-      data: { test: true }
-    });
+  const clearAllNotifications = () => {
+    setNotifications([]);
+    setShowDropdown(false);
   };
 
   const filteredNotifications = notifications.filter(n => {
@@ -393,152 +366,181 @@ const NotificationSystem = () => {
     return true;
   });
 
-  const formatTimeAgo = (timestamp) => {
+  const formatTimestamp = (timestamp: Date) => {
     const now = new Date();
-    const timestampDate = new Date(timestamp);
-    const diff = now.getTime() - timestampDate.getTime();
+    const diff = now.getTime() - timestamp.getTime();
     const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
 
     if (minutes < 1) return 'Just now';
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
+    if (days < 7) return `${days}d ago`;
+    return timestamp.toLocaleDateString();
   };
+
+  if (loading) {
+    return (
+      <div className="relative">
+        <Button variant="ghost" size="sm" disabled>
+          <Bell className="h-4 w-4 animate-pulse" />
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
-      {/* Notification Bell */}
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="relative"
       >
-        <Bell className="w-6 h-6 text-gray-600" />
+        <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+          <Badge 
+            variant="destructive" 
+            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs p-0 min-w-[20px]"
+          >
             {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
+          </Badge>
         )}
-      </button>
+      </Button>
 
-      {/* Notification Dropdown */}
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200">
+        <Card className="absolute right-0 top-full mt-2 w-96 max-h-[500px] z-50 shadow-lg">
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
-              <button
-                onClick={() => setShowDropdown(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <CardTitle className="text-sm font-medium">
+                Notifications ({notifications.length})
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={markAllAsRead}
+                  disabled={unreadCount === 0}
+                  className="text-xs"
+                >
+                  Mark all read
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDropdown(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             
-            {/* Filter buttons */}
-            <div className="flex space-x-2 mt-3">
-              {['all', 'unread', 'read'].map((filterOption) => (
-                <button
-                  key={filterOption}
-                  onClick={() => setFilter(filterOption)}
-                  className={`px-3 py-1 text-sm rounded-full capitalize ${
-                    filter === filterOption
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
+            <div className="flex gap-2 mt-2">
+              {['all', 'unread', 'read'].map(filterType => (
+                <Button
+                  key={filterType}
+                  variant={filter === filterType ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setFilter(filterType)}
+                  className="text-xs capitalize"
                 >
-                  {filterOption}
-                </button>
+                  {filterType}
+                  {filterType === 'unread' && unreadCount > 0 && (
+                    <Badge variant="secondary" className="ml-1">
+                      {unreadCount}
+                    </Badge>
+                  )}
+                </Button>
               ))}
             </div>
+          </CardHeader>
 
-            {unreadCount > 0 && (
-              <button
-                onClick={markAllAsRead}
-                className="mt-2 text-sm text-blue-600 hover:text-blue-700"
-              >
-                Mark all as read
-              </button>
-            )}
+          <CardContent className="p-0">
+            <ScrollArea className="h-[400px]">
+              {filteredNotifications.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>No notifications</p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {filteredNotifications.map((notification, index) => (
+                    <div key={notification.id}>
+                      <div
+                        className={`p-3 hover:bg-muted/50 cursor-pointer transition-colors ${
+                          !notification.read ? 'bg-muted/30' : ''
+                        }`}
+                        onClick={() => markAsRead(notification.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`p-1 rounded-full ${getNotificationColor(notification.type)}`}>
+                            {getNotificationIcon(notification.type)}
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <h4 className="text-sm font-medium truncate">
+                                {notification.title}
+                              </h4>
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                  {formatTimestamp(notification.timestamp)}
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteNotification(notification.id);
+                                  }}
+                                  className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                            
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                              {notification.message}
+                            </p>
 
-            {/* Test button - remove in production */}
-            <button
-              onClick={testNotification}
-              className="mt-2 text-sm text-green-600 hover:text-green-700 bg-green-50 px-2 py-1 rounded"
-            >
-              Test Notification
-            </button>
-          </div>
-
-          {/* Notifications List */}
-          <div className="max-h-96 overflow-y-auto">
-            {filteredNotifications.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">
-                {loading ? 'Loading notifications...' : 'No notifications found'}
-              </div>
-            ) : (
-              filteredNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                    !notification.read ? 'bg-blue-50' : ''
-                  }`}
-                >
-                  <div className="flex items-start space-x-3">
-                    <div className={`p-2 rounded-full ${getNotificationColor(notification.type)}`}>
-                      {getNotificationIcon(notification.type)}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium text-gray-900">
-                          {notification.title}
-                        </h4>
-                        <div className="flex items-center space-x-2">
-                          {!notification.read && (
-                            <button
-                              onClick={() => markAsRead(notification.id)}
-                              className="text-blue-600 hover:text-blue-700"
-                              title="Mark as read"
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => deleteNotification(notification.id)}
-                            className="text-gray-400 hover:text-gray-600"
-                            title="Delete notification"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
+                            <div className="flex items-center justify-between mt-2">
+                              <Badge variant="outline" className="text-xs">
+                                {notification.type.replace('_', ' ')}
+                              </Badge>
+                              
+                              {!notification.read && (
+                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
-                      <p className="text-sm text-gray-600 mt-1">
-                        {notification.message}
-                      </p>
-                      
-                      <p className="text-xs text-gray-500 mt-2">
-                        {formatTimeAgo(notification.timestamp)}
-                      </p>
+                      {index < filteredNotifications.length - 1 && <Separator />}
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))
+              )}
+            </ScrollArea>
+            
+            {notifications.length > 0 && (
+              <>
+                <Separator />
+                <div className="p-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearAllNotifications}
+                    className="w-full text-xs"
+                  >
+                    Clear all notifications
+                  </Button>
+                </div>
+              </>
             )}
-          </div>
-
-          {/* Footer */}
-          {filteredNotifications.length > 0 && (
-            <div className="p-4 border-t border-gray-200">
-              <button className="w-full text-center text-sm text-blue-600 hover:text-blue-700">
-                View all notifications
-              </button>
-            </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

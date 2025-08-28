@@ -74,8 +74,29 @@ export const useVisitorTracking = () => {
           location: getLocationFromTimezone(),
         };
 
-        // For now, just log the session data since tables are being set up
-        console.log('Visitor tracking session:', sessionData);
+        // Save session to database
+        try {
+          const { data: existingSession, error: checkError } = await supabase
+            .from('visitor_sessions')
+            .select('id')
+            .eq('visitor_id', visitorId)
+            .is('session_end', null)
+            .single();
+
+          if (checkError && checkError.code !== 'PGRST116') {
+            throw checkError;
+          }
+
+          if (!existingSession) {
+            const { error: insertError } = await supabase
+              .from('visitor_sessions')
+              .insert(sessionData);
+            
+            if (insertError) throw insertError;
+          }
+        } catch (error) {
+          console.log('Session tracking not available yet, logging instead:', sessionData);
+        }
       } catch (error) {
         console.error('Error initializing session:', error);
       }
@@ -136,8 +157,16 @@ export const useVisitorTracking = () => {
         referrer: currentPagePath.current || document.referrer || undefined,
       };
 
-      // For now, just log the page view since tables are being set up
-      console.log('Page view tracked:', pageViewData);
+      // Save page view to database
+      try {
+        const { error: insertError } = await supabase
+          .from('page_views')
+          .insert(pageViewData);
+        
+        if (insertError) throw insertError;
+      } catch (error) {
+        console.log('Page view tracking not available yet, logging instead:', pageViewData);
+      }
 
       // Update current page tracking
       currentPagePath.current = path;
@@ -175,8 +204,16 @@ export const useVisitorTracking = () => {
         additional_data: additionalData,
       };
 
-      // For now, just log the interaction since tables are being set up
-      console.log('Product interaction tracked:', interactionData);
+      // Save product interaction to database
+      try {
+        const { error: insertError } = await supabase
+          .from('product_interactions')
+          .insert(interactionData);
+        
+        if (insertError) throw insertError;
+      } catch (error) {
+        console.log('Product interaction tracking not available yet, logging instead:', interactionData);
+      }
     } catch (error) {
       console.error('Error tracking product interaction:', error);
     }
