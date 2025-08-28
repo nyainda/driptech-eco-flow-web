@@ -17,7 +17,8 @@ import {
   CreditCard,
   Receipt,
   BarChart3,
-  Mail // Import Mail icon
+  Mail, // Import Mail icon
+  Gift
 } from "lucide-react";
 import { AdminAuthProvider, AdminAuthGuard, AdminHeader } from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
@@ -37,6 +38,7 @@ import VideoManagement from "@/components/Admin/VideoManagement";
 import MpesaIntegration from "@/components/Admin/MpesaIntegration";
 import InvoiceManagementSystem from "@/components/Admin/Invoice/InvoiceManagementSystem";
 import VisitorTrackingDashboard from "@/components/Admin/VisitorTrackingDashboard";
+import DiscountManagement from "@/components/Admin/DiscountManagement";
 import { Button } from "@/components/ui/button"; // Import Button
 import { Badge } from "@/components/ui/badge"; // Import Badge
 
@@ -122,6 +124,12 @@ const AdminContent = () => {
       label: "Documents",
       icon: Download,
       description: "Document download center"
+    },
+    {
+      id: "discounts",
+      label: "Discount Banners",
+      icon: Gift,
+      description: "Promotional banner management"
     },
     {
       id: "mpesa",
@@ -230,6 +238,10 @@ const AdminContent = () => {
 
           <TabsContent value="documents" className="space-y-6">
             <DocumentManagement />
+          </TabsContent>
+
+          <TabsContent value="discounts" className="space-y-6">
+            <DiscountManagement />
           </TabsContent>
 
           <TabsContent value="mpesa" className="space-y-6">

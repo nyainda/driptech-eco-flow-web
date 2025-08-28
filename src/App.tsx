@@ -81,12 +81,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ScrollToTop />
-          <DiscountBanner
-            discount="20%"
-            title="New Year Special!"
-            description="Get 20% off on all drip irrigation systems for new installations"
-            validUntil="March 31, 2025"
-          />
+          <DiscountBanner />
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
