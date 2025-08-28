@@ -3,7 +3,7 @@ import Footer from "@/components/Layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe } from "lucide-react";
-import QuoteForm from "@/components/Home/QuoteForm";
+import SimpleContactForm from "@/components/common/SimpleContactForm";
 
 const Contact = () => {
   const contactInfo = [
@@ -88,11 +88,7 @@ const Contact = () => {
               {/* Contact Form */}
               <div>
                 <h2 className="text-3xl font-bold mb-6">Send us a Message</h2>
-                <Card>
-                  <CardContent className="p-8">
-                    <QuoteForm />
-                  </CardContent>
-                </Card>
+                <SimpleContactForm />
               </div>
 
               {/* Contact Information */}

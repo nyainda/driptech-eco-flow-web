@@ -87,9 +87,10 @@ const ScheduleConsultation = ({ children }: ScheduleConsultationProps) => {
 
     try {
       const consultationData = {
-        ...formData,
-        consultation_date: selectedDate.toISOString().split('T')[0],
-        status: 'pending',
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
         message: `Consultation Request:
         
 Type: ${formData.consultation_type}
@@ -98,7 +99,12 @@ Preferred Time: ${formData.preferred_time}
 Project Details: ${formData.project_details}
 Area Size: ${formData.area_size}
 Budget Range: ${formData.budget_range}
-Location: ${formData.location}`
+Location: ${formData.location}`,
+        project_type: formData.consultation_type,
+        area_size: formData.area_size,
+        budget_range: formData.budget_range,
+        status: 'pending',
+        read: false
       };
 
       const { error } = await supabase

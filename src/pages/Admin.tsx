@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  LayoutDashboard, 
-  Package, 
-  FileText, 
-  Quote, 
-  Users, 
-  FolderOpen, 
+import {
+  LayoutDashboard,
+  Package,
+  FileText,
+  Quote,
+  Users,
+  FolderOpen,
   Settings,
   TrendingUp,
   Download,
@@ -16,7 +16,8 @@ import {
   Video,
   CreditCard,
   Receipt,
-  BarChart3
+  BarChart3,
+  Mail // Import Mail icon
 } from "lucide-react";
 import { AdminAuthProvider, AdminAuthGuard, AdminHeader } from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
@@ -36,9 +37,12 @@ import VideoManagement from "@/components/Admin/VideoManagement";
 import MpesaIntegration from "@/components/Admin/MpesaIntegration";
 import InvoiceManagementSystem from "@/components/Admin/Invoice/InvoiceManagementSystem";
 import VisitorTrackingDashboard from "@/components/Admin/VisitorTrackingDashboard";
+import { Button } from "@/components/ui/button"; // Import Button
+import { Badge } from "@/components/ui/badge"; // Import Badge
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const unreadCount = 0; // Placeholder for unread count
 
   const adminSections = [
     {
@@ -91,8 +95,8 @@ const AdminContent = () => {
     },
     {
       id: "contact-notifications",
-      label: "Contact Notifications",
-      icon: Bell,
+      label: "Contact Messages", // Changed label
+      icon: Mail, // Changed icon to Mail
       description: "Manage contact form submissions"
     },
     {
@@ -159,18 +163,19 @@ const AdminContent = () => {
             {adminSections.map((section) => {
               const Icon = section.icon;
               return (
-                <button
+                <Button
                   key={section.id}
+                  variant={activeTab === section.id ? "secondary" : "ghost"}
                   onClick={() => setActiveTab(section.id)}
                   className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-all hover:shadow-md ${
-                    activeTab === section.id 
-                      ? 'bg-primary text-primary-foreground shadow-lg' 
+                    activeTab === section.id
+                      ? 'bg-primary text-primary-foreground shadow-lg'
                       : 'bg-card hover:bg-muted/50'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
                   <span className="text-xs font-medium text-center leading-tight">{section.label}</span>
-                </button>
+                </Button>
               );
             })}
           </div>

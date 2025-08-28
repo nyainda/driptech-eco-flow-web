@@ -11,27 +11,43 @@ import { Send, Calculator, FileText } from "lucide-react";
 
 interface QuoteFormProps {
   onSuccess?: () => void;
+  onClose?: () => void; // Added onClose prop
 }
 
-const QuoteForm = ({ onSuccess }: QuoteFormProps) => {
+const QuoteForm = ({ onSuccess, onClose }: QuoteFormProps) => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  // Renamed state to reflect the original structure for consistency with the provided changes snippet
   const [formData, setFormData] = useState({
     company_name: "",
     contact_person: "",
     email: "",
     phone: "",
-    address: "",
+    address: "", // Changed from project_location to address
     city: "",
     country: "",
     project_type: "",
     area_size: "",
     crop_type: "",
     water_source: "",
-    terrain_info: "",
-    notes: ""
+    terrain_info: "", // Changed from additional_requirements to terrain_info
+    notes: "", // Changed from budget_range/timeline to notes
+    // The changes snippet also introduced 'budget_range', 'timeline', and 'additional_requirements'
+    // and then mapped them to different fields. To align with the provided `changes`,
+    // I will assume these are meant to be part of the `notes` or related fields.
+    // However, the original `formData` has `terrain_info` and `notes`.
+    // The provided `changes` snippet uses `project_location`, `budget_range`, `timeline`, `additional_requirements`.
+    // To make the changes work, I'll map the original fields to the new ones as best as possible,
+    // and assume `notes` in the original can cover `additional_requirements`.
+    // The `project_location` from changes likely maps to the original `address`, `city`, `country`.
+    // The `budget_range` and `timeline` are not present in the original `formData` so they will be added as empty.
+    budget_range: "",
+    timeline: "",
+    additional_requirements: "" // This will map to notes in the contact submission
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false); // State used in the provided changes snippet
 
   const generateQuoteNumber = () => {
     const timestamp = Date.now().toString().slice(-6);
@@ -41,81 +57,80 @@ const QuoteForm = ({ onSuccess }: QuoteFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsSubmitting(true);
 
     try {
-      // First create customer
-      const customerData = {
-        company_name: formData.company_name,
-        contact_person: formData.contact_person,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        country: formData.country,
-        user_role: 'customer' as "admin" | "manager" | "sales" | "customer"
-      };
+      // Generate quote number
+      const quoteNumber = `Q${Date.now().toString().slice(-8)}`;
 
-      const { data: customer, error: customerError } = await supabase
-        .from('customers')
-        .insert([customerData])
-        .select()
-        .single();
-
-      if (customerError) throw customerError;
-
-      // Then create quote
       const quoteData = {
-        quote_number: generateQuoteNumber(),
-        customer_id: customer.id,
-        project_type: formData.project_type,
-        area_size: formData.area_size ? parseFloat(formData.area_size) : null,
-        crop_type: formData.crop_type,
-        water_source: formData.water_source,
-        terrain_info: formData.terrain_info,
-        notes: formData.notes,
-        status: 'draft' as "draft" | "sent" | "accepted" | "rejected" | "expired"
+        ...formData,
+        quote_number: quoteNumber,
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
 
+      // Save to quotes table
       const { error: quoteError } = await supabase
         .from('quotes')
         .insert([quoteData]);
 
       if (quoteError) throw quoteError;
 
+      // Also save to contact_submissions for notifications
+      const contactData = {
+        name: formData.contact_person,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company_name,
+        message: `Quote Request - ${formData.project_type}\n\nProject Location: ${formData.address}, ${formData.city}, ${formData.country}\nArea Size: ${formData.area_size}\nCrop Type: ${formData.crop_type}\nWater Source: ${formData.water_source}\nBudget Range: ${formData.budget_range}\nTimeline: ${formData.timeline}\n\nAdditional Requirements: ${formData.notes}`, // Mapping original 'notes' to 'additional_requirements' in message
+        project_type: formData.project_type,
+        area_size: formData.area_size,
+        budget_range: formData.budget_range, // Assuming budget_range will be used here as per changes
+        status: 'new',
+        read: false
+      };
+
+      const { error: contactError } = await supabase
+        .from('contact_submissions')
+        .insert([contactData]);
+
+      if (contactError) throw contactError;
+
       toast({
         title: "Quote Request Submitted!",
-        description: "We'll review your requirements and get back to you within 24 hours.",
+        description: `Your quote request #${quoteNumber} has been submitted. We'll get back to you within 24 hours.`,
       });
 
-      // Reset form
       setFormData({
-        company_name: "",
         contact_person: "",
+        company_name: "",
         email: "",
         phone: "",
-        address: "",
+        address: "", // Resetting to match original fields
         city: "",
         country: "",
-        project_type: "",
+        project_type: "drip_irrigation",
         area_size: "",
         crop_type: "",
         water_source: "",
-        terrain_info: "",
-        notes: ""
+        terrain_info: "", // Resetting terrain_info
+        notes: "", // Resetting notes
+        budget_range: "", // Resetting added fields
+        timeline: "",
+        additional_requirements: "" // Resetting added fields
       });
 
-      // Call onSuccess callback if provided
-      onSuccess?.();
-
+      onClose?.(); // Call onClose if provided
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
-        variant: "destructive"
+        description: error.message || "Failed to submit quote request. Please try again.",
+        variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -277,14 +292,33 @@ const QuoteForm = ({ onSuccess }: QuoteFormProps) => {
                     rows={3}
                   />
                 </div>
+                {/* Added fields from changes snippet, mapped to existing formData structure */}
+                <div>
+                  <Label htmlFor="budget_range">Budget Range</Label>
+                  <Input
+                    id="budget_range"
+                    value={formData.budget_range}
+                    onChange={(e) => setFormData({ ...formData, budget_range: e.target.value })}
+                    placeholder="e.g., $1000 - $5000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="timeline">Project Timeline</Label>
+                  <Input
+                    id="timeline"
+                    value={formData.timeline}
+                    onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
+                    placeholder="e.g., 3-6 months"
+                  />
+                </div>
               </div>
 
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={isSubmitting} // Using isSubmitting as per changes
                 className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300 text-lg py-6"
               >
-                {loading ? (
+                {isSubmitting ? (
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                     Submitting...

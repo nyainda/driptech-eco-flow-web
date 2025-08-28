@@ -43,9 +43,14 @@ const ContactNotifications = () => {
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching contact submissions:', error);
+        return [];
+      }
       return data as ContactSubmission[];
-    }
+    },
+    retry: 3,
+    retryDelay: 1000
   });
 
   // Mark as read mutation
