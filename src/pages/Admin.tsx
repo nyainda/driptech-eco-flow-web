@@ -15,7 +15,8 @@ import {
   Bell,
   Video,
   CreditCard,
-  Receipt
+  Receipt,
+  BarChart3
 } from "lucide-react";
 import { AdminAuthProvider, AdminAuthGuard, AdminHeader } from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
@@ -34,6 +35,7 @@ import SuccessStoriesManagement from "@/components/Admin/SuccessStoriesManagemen
 import VideoManagement from "@/components/Admin/VideoManagement";
 import MpesaIntegration from "@/components/Admin/MpesaIntegration";
 import InvoiceManagementSystem from "@/components/Admin/Invoice/InvoiceManagementSystem";
+import VisitorTrackingDashboard from "@/components/Admin/VisitorTrackingDashboard";
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -74,6 +76,12 @@ const AdminContent = () => {
       label: "Invoices",
       icon: Receipt,
       description: "Invoice management system"
+    },
+    {
+      id: "analytics",
+      label: "Analytics",
+      icon: BarChart3,
+      description: "Visitor tracking and website analytics"
     },
     {
       id: "customers",
@@ -189,6 +197,10 @@ const AdminContent = () => {
 
           <TabsContent value="invoices" className="space-y-6">
             <InvoiceManagementSystem />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <VisitorTrackingDashboard />
           </TabsContent>
 
           <TabsContent value="customers" className="space-y-6">

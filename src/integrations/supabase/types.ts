@@ -47,6 +47,57 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_summary: {
+        Row: {
+          average_session_duration: number | null
+          bounce_rate: number | null
+          created_at: string | null
+          date_range: string
+          device_breakdown: Json | null
+          hourly_activity: Json | null
+          id: string
+          summary_date: string
+          top_pages: Json | null
+          top_products: Json | null
+          total_page_views: number | null
+          total_sessions: number | null
+          total_visitors: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          average_session_duration?: number | null
+          bounce_rate?: number | null
+          created_at?: string | null
+          date_range: string
+          device_breakdown?: Json | null
+          hourly_activity?: Json | null
+          id?: string
+          summary_date?: string
+          top_pages?: Json | null
+          top_products?: Json | null
+          total_page_views?: number | null
+          total_sessions?: number | null
+          total_visitors?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          average_session_duration?: number | null
+          bounce_rate?: number | null
+          created_at?: string | null
+          date_range?: string
+          device_breakdown?: Json | null
+          hourly_activity?: Json | null
+          id?: string
+          summary_date?: string
+          top_pages?: Json | null
+          top_products?: Json | null
+          total_page_views?: number | null
+          total_sessions?: number | null
+          total_visitors?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           created_at: string | null
@@ -480,6 +531,151 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          data: Json | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      page_views: {
+        Row: {
+          created_at: string | null
+          exit_page: boolean | null
+          id: string
+          page_path: string
+          page_title: string
+          query_params: Json | null
+          referrer: string | null
+          scroll_depth: number | null
+          session_id: string | null
+          time_spent: number | null
+          timestamp: string
+          visitor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          exit_page?: boolean | null
+          id?: string
+          page_path: string
+          page_title: string
+          query_params?: Json | null
+          referrer?: string | null
+          scroll_depth?: number | null
+          session_id?: string | null
+          time_spent?: number | null
+          timestamp?: string
+          visitor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          exit_page?: boolean | null
+          id?: string
+          page_path?: string
+          page_title?: string
+          query_params?: Json | null
+          referrer?: string | null
+          scroll_depth?: number | null
+          session_id?: string | null
+          time_spent?: number | null
+          timestamp?: string
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_views_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_interactions: {
+        Row: {
+          additional_data: Json | null
+          created_at: string | null
+          element_selector: string | null
+          id: string
+          interaction_type: string
+          page_path: string
+          product_category: string | null
+          product_id: string | null
+          product_name: string
+          product_price: number | null
+          session_id: string | null
+          timestamp: string
+          visitor_id: string
+        }
+        Insert: {
+          additional_data?: Json | null
+          created_at?: string | null
+          element_selector?: string | null
+          id?: string
+          interaction_type: string
+          page_path: string
+          product_category?: string | null
+          product_id?: string | null
+          product_name: string
+          product_price?: number | null
+          session_id?: string | null
+          timestamp?: string
+          visitor_id: string
+        }
+        Update: {
+          additional_data?: Json | null
+          created_at?: string | null
+          element_selector?: string | null
+          id?: string
+          interaction_type?: string
+          page_path?: string
+          product_category?: string | null
+          product_id?: string | null
+          product_name?: string
+          product_price?: number | null
+          session_id?: string | null
+          timestamp?: string
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_interactions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "visitor_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           applications: string[] | null
@@ -501,6 +697,7 @@ export type Database = {
           subcategory: string | null
           technical_specs: Json | null
           updated_at: string | null
+          variants: Json | null
           video_url: string | null
         }
         Insert: {
@@ -523,6 +720,7 @@ export type Database = {
           subcategory?: string | null
           technical_specs?: Json | null
           updated_at?: string | null
+          variants?: Json | null
           video_url?: string | null
         }
         Update: {
@@ -545,6 +743,7 @@ export type Database = {
           subcategory?: string | null
           technical_specs?: Json | null
           updated_at?: string | null
+          variants?: Json | null
           video_url?: string | null
         }
         Relationships: []
@@ -630,8 +829,6 @@ export type Database = {
           },
         ]
       }
-
-      
       quote_items: {
         Row: {
           created_at: string | null
@@ -855,6 +1052,59 @@ export type Database = {
         }
         Relationships: []
       }
+      variants: {
+        Row: {
+          attributes: Json | null
+          created_at: string | null
+          id: string
+          images: string[] | null
+          name: string
+          price: number | null
+          product_id: string
+          sku: string
+          stock: number | null
+          stock_quantity: number | null
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          attributes?: Json | null
+          created_at?: string | null
+          id?: string
+          images?: string[] | null
+          name: string
+          price?: number | null
+          product_id: string
+          sku?: string
+          stock?: number | null
+          stock_quantity?: number | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          attributes?: Json | null
+          created_at?: string | null
+          id?: string
+          images?: string[] | null
+          name?: string
+          price?: number | null
+          product_id?: string
+          sku?: string
+          stock?: number | null
+          stock_quantity?: number | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       videos: {
         Row: {
           category: string | null
@@ -906,14 +1156,125 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_sessions: {
+        Row: {
+          browser: string | null
+          created_at: string | null
+          device_type: string | null
+          id: string
+          ip_address: unknown | null
+          location: string | null
+          page_views: number | null
+          referrer: string | null
+          session_end: string | null
+          session_start: string
+          total_duration: number | null
+          updated_at: string | null
+          user_agent: string | null
+          visitor_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: unknown | null
+          location?: string | null
+          page_views?: number | null
+          referrer?: string | null
+          session_end?: string | null
+          session_start?: string
+          total_duration?: number | null
+          updated_at?: string | null
+          user_agent?: string | null
+          visitor_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: unknown | null
+          location?: string | null
+          page_views?: number | null
+          referrer?: string | null
+          session_end?: string | null
+          session_start?: string
+          total_duration?: number | null
+          updated_at?: string | null
+          user_agent?: string | null
+          visitor_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      analytics_popular_pages: {
+        Row: {
+          avg_time_spent_ms: number | null
+          page_path: string | null
+          page_title: string | null
+          total_views: number | null
+          unique_visitors: number | null
+          view_date: string | null
+        }
+        Relationships: []
+      }
+      analytics_product_summary: {
+        Row: {
+          interaction_count: number | null
+          interaction_date: string | null
+          interaction_type: string | null
+          product_category: string | null
+          product_name: string | null
+          unique_visitors: number | null
+        }
+        Relationships: []
+      }
+      analytics_session_summary: {
+        Row: {
+          avg_duration_ms: number | null
+          avg_page_views: number | null
+          bounce_rate: number | null
+          browser: string | null
+          device_type: string | null
+          session_date: string | null
+          total_sessions: number | null
+          unique_visitors: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      calculate_bounce_rate: {
+        Args: { end_date?: string; start_date?: string }
+        Returns: number
+      }
+      clean_old_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       generate_invoice_number: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_top_pages: {
+        Args: { end_date?: string; limit_count?: number; start_date?: string }
+        Returns: {
+          avg_time_spent: number
+          page_path: string
+          page_title: string
+          total_views: number
+          unique_visitors: number
+        }[]
+      }
+      increment_page_views: {
+        Args: { visitor_id_param: string }
+        Returns: undefined
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
       keep_database_active: {
         Args: Record<PropertyKey, never>

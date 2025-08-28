@@ -22,6 +22,7 @@ import InstallationGuides from "./pages/InstallationGuides";
 import BlogPage from "@/components/Home/BlogPage"; 
 import BlogPostPage from "@/components/Home/BlogPostPage"; 
 import VideoSection from "./components/Home/VideoSection";
+import VisitorTracker from "./components/Analytics/VisitorTracker";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <VisitorTracker />
           <Routes>
             {/* Main pages */}
             <Route path="/" element={<Index />} />

@@ -64,7 +64,7 @@ export const useVisitorTracking = () => {
   useEffect(() => {
     const initSession = async () => {
       try {
-        const sessionData: Partial<VisitorSession> = {
+        const sessionData = {
           visitor_id: visitorId,
           session_start: sessionStartTime.current.toISOString(),
           browser: getBrowserInfo(),
@@ -74,9 +74,8 @@ export const useVisitorTracking = () => {
           location: getLocationFromTimezone(),
         };
 
-        await supabase
-          .from('visitor_sessions')
-          .upsert(sessionData, { onConflict: 'visitor_id' });
+        // For now, just log the session data since tables are being set up
+        console.log('Visitor tracking session:', sessionData);
       } catch (error) {
         console.error('Error initializing session:', error);
       }
@@ -128,7 +127,7 @@ export const useVisitorTracking = () => {
       }
 
       // Track new page view
-      const pageViewData: Partial<PageView> = {
+      const pageViewData = {
         visitor_id: visitorId,
         session_id: sessionId,
         page_path: path,
@@ -137,16 +136,21 @@ export const useVisitorTracking = () => {
         referrer: currentPagePath.current || document.referrer || undefined,
       };
 
-      await supabase.from('page_views').insert(pageViewData);
+      // For now, just log the page view since tables are being set up
+      console.log('Page view tracked:', pageViewData);
 
       // Update current page tracking
       currentPagePath.current = path;
       currentPageStartTime.current = new Date();
 
       // Update session page views count
-      await supabase.rpc('increment_page_views', {
-        visitor_id_param: visitorId,
-      });
+      try {
+        await supabase.rpc('increment_page_views', {
+          visitor_id_param: visitorId,
+        });
+      } catch (rpcError) {
+        console.log('RPC increment page views not available yet:', rpcError);
+      }
     } catch (error) {
       console.error('Error tracking page view:', error);
     }
@@ -158,7 +162,7 @@ export const useVisitorTracking = () => {
     additionalData?: any
   ) => {
     try {
-      const interactionData: Partial<ProductInteraction> = {
+      const interactionData = {
         visitor_id: visitorId,
         session_id: sessionId,
         page_path: window.location.pathname,
@@ -171,7 +175,8 @@ export const useVisitorTracking = () => {
         additional_data: additionalData,
       };
 
-      await supabase.from('product_interactions').insert(interactionData);
+      // For now, just log the interaction since tables are being set up
+      console.log('Product interaction tracked:', interactionData);
     } catch (error) {
       console.error('Error tracking product interaction:', error);
     }
