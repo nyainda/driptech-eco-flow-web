@@ -37,16 +37,47 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({ quote, items, customer, onEd
 
       {/* Screen content */}
       <div className="print:hidden py-12">
-        <Card className="max-w-4xl mx-auto border-none shadow-xl bg-white dark:bg-gray-800">
-          <CardContent className="p-8">
-            <CompanyHeader quote={quote} />
-            <AddressSection customer={customer} />
-            <ProjectDetails quote={quote} />
-            <BOQTable items={items} onEdit={onEdit} />
-            <TotalsSection quote={quote} items={items} />
-            <NotesSection notes={quote.notes} />
+        <Card className="max-w-4xl mx-auto border-none shadow-2xl bg-white dark:bg-gray-800 overflow-hidden">
+          <CardContent className="p-0">
+            {/* Enhanced Header */}
+            <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-8 text-white relative overflow-hidden">
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-4 left-4 w-2 h-2 bg-white rounded-full"></div>
+                <div className="absolute top-8 right-12 w-1 h-1 bg-white rounded-full"></div>
+                <div className="absolute bottom-6 left-8 w-1 h-1 bg-white rounded-full"></div>
+                <div className="absolute bottom-12 right-6 w-3 h-3 bg-white rounded-full"></div>
+              </div>
+              <div className="relative z-10">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-2xl font-black border-2 border-white border-opacity-30">
+                      DT
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-black mb-1">DripTech Solutions</h1>
+                      <p className="text-white text-opacity-90 font-medium">Smart Irrigation Systems</p>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <h2 className="text-3xl font-black mb-2">QUOTATION</h2>
+                    <div className="bg-white bg-opacity-15 backdrop-blur-md p-3 rounded-lg border border-white border-opacity-20">
+                      <div className="text-sm font-semibold">Quote #: {quote.quote_number}</div>
+                      <div className="text-sm">Date: {new Date(quote.created_at).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            <Footer />
+            <div className="p-8">
+              <AddressSection customer={customer} />
+              <ProjectDetails quote={quote} />
+              <BOQTable items={items} onEdit={onEdit} />
+              <TotalsSection quote={quote} items={items} />
+              <NotesSection notes={quote.notes} />
+              
+              <Footer />
+            </div>
           </CardContent>
         </Card>
 
@@ -74,7 +105,7 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({ quote, items, customer, onEd
 
         {/* Additional Info */}
         <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400 px-8">
-          <p>💡 <strong>Tip:</strong> For PDF download, select "Save as PDF" in the print dialog</p>
+          <p>💡 <strong>Tip:</strong> Download generates a professional PDF file directly to your computer</p>
         </div>
       </div>
     </div>

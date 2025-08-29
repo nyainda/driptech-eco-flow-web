@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Quote, QuoteItem, Customer } from '@/components/Admin/Quote/types';
 import { generatePrintContent } from '@/components/Admin/Quote/PrintActions';
+import html2pdf from 'html2pdf.js';
 export const usePrintHandlers = () => {
   const { toast } = useToast();
   const [isPrinting, setIsPrinting] = useState(false);
@@ -38,38 +39,52 @@ export const usePrintHandlers = () => {
   const handleDownloadPDF = async (quote: Quote, items: QuoteItem[], customer?: Customer) => {
     setIsDownloading(true);
     try {
-      // Create a temporary iframe for PDF generation
-      const iframe = document.createElement('iframe');
-      iframe.style.position = 'absolute';
-      iframe.style.left = '-9999px';
-      iframe.style.width = '210mm';
-      iframe.style.height = '297mm';
-      document.body.appendChild(iframe);
+      // Create a temporary container for PDF generation
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '0';
+      tempContainer.style.width = '210mm';
+      tempContainer.style.minHeight = '297mm';
+      document.body.appendChild(tempContainer);
 
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!iframeDoc) throw new Error('Failed to access iframe document');
-
-      // Write the print content to iframe
+      // Generate the print content
       const printContent = generatePrintContent(quote, items, customer);
-      iframeDoc.write(printContent);
-      iframeDoc.close();
+      tempContainer.innerHTML = printContent;
 
-      // Wait for content to load
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Wait for content to render
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Focus iframe and trigger print dialog with save as PDF option
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
+      // Configure html2pdf options for optimal output
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: `Quote-${quote.quote_number}-DripTech.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          scrollX: 0,
+          scrollY: 0
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait',
+          compress: true
+        }
+      };
 
+      // Generate and download the PDF
+      await html2pdf().set(opt).from(tempContainer).save();
+      
       // Clean up
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-        setIsDownloading(false);
-      }, 500);
+      document.body.removeChild(tempContainer);
+      setIsDownloading(false);
 
       toast({
-        title: "PDF Download Initiated",
-        description: "Please save the PDF from the print dialog.",
+        title: "PDF Downloaded Successfully",
+        description: `Quote ${quote.quote_number} has been downloaded as PDF.`,
       });
 
     } catch (error) {

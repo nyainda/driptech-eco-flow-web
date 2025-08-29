@@ -117,10 +117,13 @@ export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
       <style>
         body { 
-          font-family: 'Inter', sans-serif; 
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
           background: white !important;
           margin: 0;
-          padding: 8px;
+          padding: 12px;
+          font-size: 13px;
+          line-height: 1.4;
+          color: #1f2937;
         }
         
         @keyframes shine {
@@ -139,20 +142,23 @@ export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?
           animation: shine 3s infinite;
         }
         
-        /* Force print-friendly layout */
+        /* Enhanced print-friendly layout */
         @media print {
           @page { 
-            margin: 0.5cm; 
+            margin: 0.8cm; 
             size: A4 portrait; 
           }
           body { 
             background: white !important; 
             padding: 0 !important;
+            font-size: 12px !important;
           }
           * { 
             -webkit-print-color-adjust: exact !important; 
             color-adjust: exact !important; 
           }
+          .no-print { display: none !important; }
+          .page-break { page-break-before: always; }
         }
         
         /* Ensure consistent table display across all devices */

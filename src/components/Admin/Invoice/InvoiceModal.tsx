@@ -29,14 +29,16 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors">
-        <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <WaterDropletIcon className="w-6 h-6 text-blue-600" />
+        <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
+              <WaterDropletIcon className="w-6 h-6 text-white" />
+            </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
                 Invoice {invoice.invoice_number}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">DripTech Solutions</p>
+              <p className="text-sm font-medium text-blue-600 dark:text-blue-400">DripTech Solutions</p>
             </div>
           </div>
           <button
@@ -87,13 +89,13 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Items</h3>
             <div className="overflow-x-auto">
-              <table className="w-full border border-gray-200 dark:border-gray-700 rounded-lg">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+              <table className="w-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+                <thead className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">Description</th>
-                    <th className="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">Qty</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">Unit Price</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">Total</th>
+                    <th className="px-4 py-4 text-left text-sm font-semibold tracking-wide">Description</th>
+                    <th className="px-4 py-4 text-center text-sm font-semibold tracking-wide">Qty</th>
+                    <th className="px-4 py-4 text-right text-sm font-semibold tracking-wide">Unit Price</th>
+                    <th className="px-4 py-4 text-right text-sm font-semibold tracking-wide">Total</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -132,27 +134,27 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
           {/* Totals */}
           <div className="flex justify-end mb-8">
             <div className="w-full sm:w-80">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
-                  <span className="text-gray-900 dark:text-white">{formatCurrency(invoice.subtotal)}</span>
+              <div className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-700 dark:to-blue-900/30 p-4 rounded-lg border border-gray-200 dark:border-gray-600 space-y-3">
+                <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
+                  <span className="font-medium text-gray-600 dark:text-gray-400">Subtotal:</span>
+                  <span className="font-mono font-semibold text-gray-900 dark:text-white">{formatCurrency(invoice.subtotal)}</span>
                 </div>
                 {invoice.discount_amount && invoice.discount_amount > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Discount:</span>
-                    <span className="text-gray-900 dark:text-white">-{formatCurrency(invoice.discount_amount)}</span>
+                  <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
+                    <span className="font-medium text-gray-600 dark:text-gray-400">Discount:</span>
+                    <span className="font-mono font-semibold text-red-600 dark:text-red-400">-{formatCurrency(invoice.discount_amount)}</span>
                   </div>
                 )}
                 {invoice.tax_amount && invoice.tax_amount > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Tax ({invoice.tax_rate}%):</span>
-                    <span className="text-gray-900 dark:text-white">{formatCurrency(invoice.tax_amount)}</span>
+                  <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
+                    <span className="font-medium text-gray-600 dark:text-gray-400">Tax ({invoice.tax_rate}%):</span>
+                    <span className="font-mono font-semibold text-gray-900 dark:text-white">{formatCurrency(invoice.tax_amount)}</span>
                   </div>
                 )}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span className="text-gray-900 dark:text-white">Total:</span>
-                    <span className="text-gray-900 dark:text-white">{formatCurrency(invoice.total_amount)}</span>
+                <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-3 rounded-lg mt-2">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total:</span>
+                    <span className="font-mono">{formatCurrency(invoice.total_amount)}</span>
                   </div>
                 </div>
               </div>
