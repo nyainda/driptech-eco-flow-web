@@ -418,24 +418,33 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <NavigationMenu className="hidden lg:flex">
-            <NavigationMenuList>
+            <NavigationMenuList className="gap-1">
               {navigation.map((item) => (
                 <NavigationMenuItem key={item.title}>
                   {item.items ? (
                     <>
-                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-colors">
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-4 py-2 font-medium">
                         {item.title}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        <div className="grid w-[400px] gap-3 p-4">
+                        <div className="grid w-[420px] gap-2 p-5 bg-background/95 backdrop-blur-xl border shadow-xl rounded-xl">
+                          <div className="mb-3">
+                            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                              {item.title}
+                            </h4>
+                            <div className="w-12 h-0.5 bg-gradient-to-r from-primary to-accent rounded-full mt-1"></div>
+                          </div>
                           {item.items.map((subItem) => (
                             <NavigationMenuLink key={subItem.href} asChild>
                               <Link
                                 to={subItem.href}
-                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground group"
+                                className="block select-none rounded-xl p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30 hover:shadow-md group border border-transparent hover:border-muted"
                               >
-                                <div className="text-sm font-medium leading-none group-hover:text-primary transition-colors">
-                                  {subItem.title}
+                                <div className="flex items-center justify-between">
+                                  <div className="font-medium leading-tight group-hover:text-primary transition-colors duration-200">
+                                    {subItem.title}
+                                  </div>
+                                  <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 text-primary" />
                                 </div>
                               </Link>
                             </NavigationMenuLink>
@@ -447,7 +456,7 @@ const Header = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         to={item.href}
-                        className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-muted/50 hover:text-primary focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        className="group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 font-medium transition-all duration-200 hover:bg-muted/50 hover:text-primary hover:shadow-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
                       >
                         {item.title}
                       </Link>
@@ -475,114 +484,189 @@ const Header = () => {
             {/* Mobile Menu Button */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden hover:bg-muted/50">
+                <Button variant="ghost" size="icon" className="lg:hidden hover:bg-muted/50 h-10 w-10 rounded-xl">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80">
-                <div className="flex flex-col gap-6 py-6">
-                  {/* Enhanced Mobile Banner with navigation */}
-                  {visibleBanners.length > 0 && (
-                    <div className="space-y-3">
-                      {hasMultipleBanners && (
-                        <div className="flex items-center justify-between text-sm text-muted-foreground">
-                          <span>Current Offers ({visibleBanners.length})</span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={handlePrevBanner}
-                              className="p-1 rounded hover:bg-muted"
-                            >
-                              <ChevronLeft className="h-4 w-4" />
-                            </button>
-                            <span className="text-xs">{currentBannerIndex + 1}/{visibleBanners.length}</span>
-                            <button
-                              onClick={handleNextBanner}
-                              className="p-1 rounded hover:bg-muted"
-                            >
-                              <ChevronRight className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className={`p-4 rounded-lg transition-all duration-500 ${
-                        isExpiringSoon(currentBanner?.valid_until)
-                          ? 'bg-gradient-to-r from-orange-500 to-red-500'
-                          : 'bg-gradient-to-r from-primary to-primary/80'
-                      } text-primary-foreground`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Gift className="h-4 w-4" />
-                          <Badge variant="secondary" className="bg-white text-primary font-bold text-xs">
-                            {currentBanner?.discount} OFF
-                          </Badge>
-                        </div>
-                        <h4 className="font-semibold text-sm mb-1">{currentBanner?.title}</h4>
-                        <p className="text-xs opacity-90">{currentBanner?.description}</p>
-                        {currentBanner?.valid_until && (
-                          <p className="text-xs opacity-80 mt-2">
-                            <Clock className="h-3 w-3 inline mr-1" />
-                            {formatDate(currentBanner.valid_until)}
-                          </p>
-                        )}
+              <SheetContent side="right" className="w-[85vw] max-w-sm p-0 bg-background/95 backdrop-blur-xl border-l">
+                <div className="flex flex-col h-full">
+                  {/* Mobile Header */}
+                  <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm">
+                        <Droplets className="h-4 w-4 text-white" />
                       </div>
-                      
-                      {hasMultipleBanners && (
-                        <div className="flex justify-center gap-1">
-                          {visibleBanners.map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() => handleManualNavigation(index)}
-                              className={`w-2 h-2 rounded-full transition-all ${
-                                index === currentBannerIndex 
-                                  ? 'bg-primary' 
-                                  : 'bg-muted-foreground/40 hover:bg-muted-foreground/60'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      )}
+                      <div>
+                        <span className="font-bold text-foreground text-lg">DripTech</span>
+                        <p className="text-xs text-muted-foreground">Irrigation Solutions</p>
+                      </div>
                     </div>
-                  )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="h-8 w-8 rounded-lg hover:bg-muted/50"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
 
-                  {navigation.map((item) => (
-                    <div key={item.title} className="space-y-3">
-                      <h3 className="font-semibold text-foreground">{item.title}</h3>
-                      {item.items ? (
-                        <div className="space-y-2 pl-4">
-                          {item.items.map((subItem) => (
-                            <Link
-                              key={subItem.href}
-                              to={subItem.href}
-                              className="block text-sm text-muted-foreground hover:text-primary transition-colors"
-                              onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                              {subItem.title}
-                            </Link>
-                          ))}
+                  {/* Scrollable Content */}
+                  <div className="flex-1 overflow-y-auto">
+                    <div className="p-6 space-y-8">
+                      {/* Enhanced Mobile Banner with navigation */}
+                      {visibleBanners.length > 0 && (
+                        <div className="space-y-4">
+                          {hasMultipleBanners && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-muted-foreground">
+                                Active Offers ({visibleBanners.length})
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={handlePrevBanner}
+                                  className="p-2 rounded-lg hover:bg-muted/50 transition-colors touch-target"
+                                >
+                                  <ChevronLeft className="h-4 w-4" />
+                                </button>
+                                <span className="text-xs px-2 py-1 bg-muted rounded-md font-medium">
+                                  {currentBannerIndex + 1}/{visibleBanners.length}
+                                </span>
+                                <button
+                                  onClick={handleNextBanner}
+                                  className="p-2 rounded-lg hover:bg-muted/50 transition-colors touch-target"
+                                >
+                                  <ChevronRight className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          
+                          <div className={`p-5 rounded-xl transition-all duration-500 shadow-lg ${
+                            isExpiringSoon(currentBanner?.valid_until)
+                              ? 'bg-gradient-to-br from-orange-500 via-red-500 to-red-600'
+                              : 'bg-gradient-to-br from-primary via-primary to-primary/80'
+                          } text-primary-foreground relative overflow-hidden`}>
+                            {/* Decorative elements */}
+                            <div className="absolute top-2 right-2 w-2 h-2 bg-white/20 rounded-full animate-pulse"></div>
+                            <div className="absolute bottom-3 left-3 w-1 h-1 bg-white/30 rounded-full animate-pulse delay-100"></div>
+                            
+                            <div className="relative z-10">
+                              <div className="flex items-center gap-3 mb-3">
+                                <Gift className="h-5 w-5 animate-bounce" />
+                                <Badge variant="secondary" className="bg-white text-primary font-bold text-sm px-3 py-1">
+                                  {currentBanner?.discount} OFF
+                                </Badge>
+                              </div>
+                              <h4 className="font-bold text-base mb-2 leading-tight">{currentBanner?.title}</h4>
+                              <p className="text-sm opacity-95 leading-relaxed mb-3">{currentBanner?.description}</p>
+                              {currentBanner?.valid_until && (
+                                <div className={`flex items-center gap-2 text-sm ${
+                                  isExpiringSoon(currentBanner.valid_until) ? 'animate-pulse font-semibold' : 'opacity-90'
+                                }`}>
+                                  <Clock className="h-4 w-4" />
+                                  <span>{formatDate(currentBanner.valid_until)}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {hasMultipleBanners && (
+                            <div className="flex justify-center gap-2">
+                              {visibleBanners.map((_, index) => (
+                                <button
+                                  key={index}
+                                  onClick={() => handleManualNavigation(index)}
+                                  className={`w-3 h-3 rounded-full transition-all duration-300 touch-target ${
+                                    index === currentBannerIndex 
+                                      ? 'bg-primary scale-110 shadow-md' 
+                                      : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      ) : (
-                        <Link
-                          to={item.href}
-                          className="block text-sm text-muted-foreground hover:text-primary transition-colors pl-4"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {item.title}
-                        </Link>
                       )}
+
+                      {/* Navigation Menu */}
+                      <nav className="space-y-6">
+                        {navigation.map((item, index) => (
+                          <div key={item.title} className="space-y-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+                              <h3 className="font-bold text-foreground text-lg tracking-tight">{item.title}</h3>
+                            </div>
+                            {item.items ? (
+                              <div className="space-y-1 ml-4 pl-3 border-l border-muted">
+                                {item.items.map((subItem) => (
+                                  <Link
+                                    key={subItem.href}
+                                    to={subItem.href}
+                                    className="block py-3 px-4 text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-xl transition-all duration-200 text-base font-medium touch-target group"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                                        {subItem.title}
+                                      </span>
+                                      <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                                    </div>
+                                  </Link>
+                                ))}
+                              </div>
+                            ) : (
+                              <Link
+                                to={item.href}
+                                className="block py-3 px-4 ml-4 text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-xl transition-all duration-200 text-base font-medium touch-target group"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="group-hover:translate-x-1 transition-transform duration-200">
+                                    {item.title}
+                                  </span>
+                                  <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                                </div>
+                              </Link>
+                            )}
+                          </div>
+                        ))}
+                      </nav>
                     </div>
-                  ))}
-                  
-                  <div className="space-y-3 pt-6 border-t">
-                    <QuoteModal>
-                      <Button variant="outline" className="w-full">
-                        Get Quote
-                      </Button>
-                    </QuoteModal>
-                    <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="premium" className="w-full">
-                        Contact Us
-                      </Button>
-                    </Link>
+                  </div>
+
+                  {/* Fixed Bottom Actions */}
+                  <div className="p-6 space-y-4 border-t bg-gradient-to-r from-muted/30 to-muted/10">
+                    <div className="grid grid-cols-2 gap-3">
+                      <QuoteModal>
+                        <Button variant="outline" className="h-12 text-sm font-medium rounded-xl border-2 hover:border-primary hover:bg-primary/5 transition-all duration-200 touch-target">
+                          <span>Get Quote</span>
+                        </Button>
+                      </QuoteModal>
+                      <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Button variant="premium" className="w-full h-12 text-sm font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 touch-target">
+                          <span>Contact Us</span>
+                        </Button>
+                      </Link>
+                    </div>
+                    
+                    {/* Contact Info */}
+                    <div className="flex items-center justify-center gap-6 pt-3 border-t border-muted/50">
+                      <a 
+                        href="tel:0114575401" 
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors touch-target"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span className="font-medium">Call Us</span>
+                      </a>
+                      <a 
+                        href="mailto:driptech2025@gmail.com" 
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors touch-target"
+                      >
+                        <Mail className="h-4 w-4" />
+                        <span className="font-medium">Email</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </SheetContent>
