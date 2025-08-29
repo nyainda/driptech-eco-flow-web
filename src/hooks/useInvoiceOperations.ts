@@ -1,11 +1,10 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Invoice } from '@/components/Admin/types/InvoiceTypes';
 import { formatCurrency, formatDate } from '@/components/Admin/utils/formatters';
 import html2pdf from 'html2pdf.js';
 
 export const useInvoiceOperations = (onSuccess?: () => void) => {
-  
+
   // Handle status update
   const updateInvoiceStatus = async (invoiceId: string, newStatus: string) => {
     try {
@@ -43,7 +42,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
     if (!confirm('Are you sure you want to delete this invoice? This action cannot be undone.')) {
       return;
     }
-    
+
     try {
       const { error } = await supabase
         .from('invoices')
@@ -180,7 +179,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
               </div>
             </div>
           </div>
-          
+
           <div class="billing-section">
             <div class="billing-box">
               <h3>From:</h3>
@@ -293,7 +292,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
 
       // Generate and download PDF
       await html2pdf().set(opt).from(tempContainer).save();
-      
+
       // Clean up
       document.body.removeChild(tempContainer);
 
@@ -368,38 +367,38 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             }
             .items-table thead { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
             .items-table th { 
-              color: white; padding: 15px; text-align: left; font-weight: 700;
-              text-transform: uppercase; font-size: 12px; letter-spacing: 1px;
+              color: white; padding: 6px 4px; text-align: left; font-weight: 600; font-size: 10px;
+              border-bottom: 1px solid rgba(255,255,255,0.2);
             }
-            .items-table td { 
-              padding: 15px; border-bottom: 1px solid #e5e7eb; 
-              color: #374151; font-size: 14px;
+            .items-table td {
+              padding: 4px; border-bottom: 1px solid #e5e7eb; font-size: 10px;
             }
-            .items-table tr:nth-child(even) { background: #f9fafb; }
+            .items-table tbody tr:nth-child(even) { background: #f9fafb; }
             .items-table tr:last-child td { border-bottom: none; }
             .totals-section { 
-              max-width: 400px; margin: 30px 0 0 auto;
-              background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-              border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;
+              text-align: right; margin: 15px 0;
             }
-            .totals-row { 
-              display: flex; justify-content: space-between; padding: 12px 20px;
-              border-bottom: 1px solid #e5e7eb;
+            .totals-box { 
+              background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+              border: 1px solid #0284c7; border-radius: 6px; padding: 10px;
+              display: inline-block; min-width: 200px;
             }
-            .totals-row:last-child { 
-              background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-              color: white; font-weight: 700; border-bottom: none;
+            .total-row { 
+              display: flex; justify-content: space-between; margin: 3px 0;
+              padding: 2px 0; font-size: 10px;
             }
-            .totals-label { flex: 1; font-weight: 500; }
-            .totals-value { font-weight: 600; text-align: right; }
+            .total-row.final { 
+              border-top: 2px solid #0284c7; margin-top: 6px; padding-top: 6px;
+              font-weight: 700; font-size: 12px; color: #0284c7;
+            }
             .notes-section { 
-              background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
-              border: 1px solid #f59e0b; border-radius: 12px; padding: 20px; margin: 30px 0;
+              background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+              border: 1px solid #f59e0b; border-radius: 6px; padding: 8px; margin: 10px 0;
             }
             .notes-section h3 { 
-              color: #92400e; margin: 0 0 10px 0; font-weight: 700;
+              color: #92400e; margin: 0 0 5px 0; font-weight: 700; font-size: 11px;
             }
-            .notes-section p { color: #92400e; margin: 0; line-height: 1.6; }
+            .notes-section p { color: #92400e; margin: 0; line-height: 1.4; font-size: 9px; }
           </style>
         </head>
         <body>
@@ -407,7 +406,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             <div class="header-content">
               <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div class="company-info">
-                  <div class="logo">DT</div>
+                  <div class="logo">💧</div>
                   <div class="company-details">
                     <h1>DripTech Solutions</h1>
                     <p>Smart Irrigation Systems</p>
@@ -476,25 +475,27 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
           </table>
 
           <div class="totals-section">
-            <div class="totals-row">
-              <span class="totals-label">Subtotal:</span>
-              <span class="totals-value">KES ${(invoice.total_amount - (invoice.total_amount * (invoice.tax_rate / 100)) + (invoice.discount_amount || 0)).toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
-            </div>
-            ${invoice.discount_amount ? `
-            <div class="totals-row">
-              <span class="totals-label">Discount:</span>
-              <span class="totals-value">-KES ${invoice.discount_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
-            </div>
-            ` : ''}
-            ${invoice.tax_rate ? `
-            <div class="totals-row">
-              <span class="totals-label">Tax (${invoice.tax_rate}%):</span>
-              <span class="totals-value">KES ${(invoice.total_amount * (invoice.tax_rate / 100)).toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
-            </div>
-            ` : ''}
-            <div class="totals-row">
-              <span class="totals-label">Total Amount:</span>
-              <span class="totals-value">KES ${invoice.total_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+            <div class="totals-box">
+              <div class="total-row">
+                <span class="totals-label">Subtotal:</span>
+                <span class="totals-value">KES ${(invoice.total_amount - (invoice.total_amount * (invoice.tax_rate / 100)) + (invoice.discount_amount || 0)).toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+              </div>
+              ${invoice.discount_amount ? `
+              <div class="total-row">
+                <span class="totals-label">Discount:</span>
+                <span class="totals-value">-KES ${invoice.discount_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+              </div>
+              ` : ''}
+              ${invoice.tax_rate ? `
+              <div class="total-row">
+                <span class="totals-label">Tax (${invoice.tax_rate}%):</span>
+                <span class="totals-value">KES ${(invoice.total_amount * (invoice.tax_rate / 100)).toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+              </div>
+              ` : ''}
+              <div class="total-row final">
+                <span class="totals-label">Total Amount:</span>
+                <span class="totals-value">KES ${invoice.total_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+              </div>
             </div>
           </div>
 
@@ -522,7 +523,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
       // Write content and print
       printWindow.document.write(content);
       printWindow.document.close();
-      
+
       // Wait for content to load then print
       printWindow.onload = () => {
         printWindow.print();
