@@ -80,7 +80,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             }
             .header { 
               background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
-              color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px;
+              color: white; padding: 20px; border-radius: 8px; margin: 8px 4px 20px 4px;
               position: relative; overflow: hidden;
             }
             .header::before {
@@ -105,8 +105,8 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             .invoice-info h2 { margin: 0 0 15px 0; font-size: 28px; font-weight: 900; }
             .invoice-info div { margin: 8px 0; font-weight: 500; }
             .billing-section { 
-              display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
-              margin-bottom: 30px;
+              display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+              margin: 8px 4px 20px 4px;
             }
             .billing-box { 
               background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -324,7 +324,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             }
             .header { 
               background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
-              color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px;
+              color: white; padding: 20px; border-radius: 8px; margin: 8px 4px 20px 4px;
               position: relative; overflow: hidden;
             }
             .header::before {
@@ -349,8 +349,8 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             .invoice-info h2 { margin: 0 0 15px 0; font-size: 28px; font-weight: 900; }
             .invoice-info div { margin: 8px 0; font-weight: 500; }
             .billing-section { 
-              display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
-              margin-bottom: 30px;
+              display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+              margin: 8px 4px 20px 4px;
             }
             .billing-box { 
               background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
