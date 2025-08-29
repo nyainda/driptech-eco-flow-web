@@ -110,46 +110,51 @@ const SystemSettings = () => {
   };
 
  const updateSetting = async (key: string, value: any) => {
-  try {
-    // First, check if the setting exists
-    const { data: existing, error: fetchError } = await supabase
-      .from('system_settings')
-      .select('id')
-      .eq('setting_key', key)
-      .single();
-
-    if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means no rows found
-      throw fetchError;
-    }
-
-    if (existing) {
-      // Update existing setting
-      const { error } = await supabase
+    try {
+      // First, check if the setting exists
+      const { data: existing, error: fetchError } = await supabase
         .from('system_settings')
-        .update({
-          setting_value: value,
-          description: getSettingDescription(key)
-        })
-        .eq('setting_key', key);
+        .select('id')
+        .eq('setting_key', key)
+        .maybeSingle();
 
-      if (error) throw error;
-    } else {
-      // Insert new setting
-      const { error } = await supabase
-        .from('system_settings')
-        .insert({
-          setting_key: key,
-          setting_value: value,
-          description: getSettingDescription(key)
-        });
+      if (fetchError) {
+        throw fetchError;
+      }
 
-      if (error) throw error;
+      if (existing) {
+        // Update existing setting
+        const { error } = await supabase
+          .from('system_settings')
+          .update({
+            setting_value: value,
+            description: getSettingDescription(key),
+            updated_at: new Date().toISOString()
+          })
+          .eq('setting_key', key);
+
+        if (error) throw error;
+      } else {
+        // Insert new setting
+        const { error } = await supabase
+          .from('system_settings')
+          .insert({
+            setting_key: key,
+            setting_value: value,
+            description: getSettingDescription(key)
+          });
+
+        if (error) throw error;
+      }
+      
+      // Update local state
+      setSettings(prev => ({ ...prev, [key]: value }));
+      
+    } catch (error) {
+      console.error('Error updating setting:', error);
+      throw error;
     }
-  } catch (error) {
-    console.error('Error updating setting:', error);
-    throw error;
-  }
-};
+  };
 
   const getSettingDescription = (key: string) => {
     const descriptions: Record<string, string> = {
@@ -260,8 +265,10 @@ const SystemSettings = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold">System Settings</h2>
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+          System Settings
+        </h2>
         <p className="text-muted-foreground">
           Configure your system preferences and website settings
         </p>
@@ -288,10 +295,10 @@ const SystemSettings = () => {
         </TabsList>
 
         <TabsContent value="company">
-          <Card>
+          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
+                <Building className="h-5 w-5 text-primary" />
                 Company Information
               </CardTitle>
               <CardDescription>
@@ -353,9 +360,9 @@ const SystemSettings = () => {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveCompanyInfo} disabled={saving}>
+                <Button onClick={handleSaveCompanyInfo} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
                   <Save className="mr-2 h-4 w-4" />
-                  Save Company Info
+                  {saving ? 'Saving...' : 'Save Company Info'}
                 </Button>
               </div>
             </CardContent>
@@ -363,10 +370,10 @@ const SystemSettings = () => {
         </TabsContent>
 
         <TabsContent value="contact">
-          <Card>
+          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
+                <Mail className="h-5 w-5 text-primary" />
                 Contact Information
               </CardTitle>
               <CardDescription>
@@ -437,9 +444,9 @@ const SystemSettings = () => {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveContactInfo} disabled={saving}>
+                <Button onClick={handleSaveContactInfo} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
                   <Save className="mr-2 h-4 w-4" />
-                  Save Contact Info
+                  {saving ? 'Saving...' : 'Save Contact Info'}
                 </Button>
               </div>
             </CardContent>
@@ -447,10 +454,10 @@ const SystemSettings = () => {
         </TabsContent>
 
         <TabsContent value="social">
-          <Card>
+          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
+                <Globe className="h-5 w-5 text-primary" />
                 Social Media Links
               </CardTitle>
               <CardDescription>
@@ -511,9 +518,9 @@ const SystemSettings = () => {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveSocialMedia} disabled={saving}>
+                <Button onClick={handleSaveSocialMedia} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
                   <Save className="mr-2 h-4 w-4" />
-                  Save Social Media
+                  {saving ? 'Saving...' : 'Save Social Media'}
                 </Button>
               </div>
             </CardContent>
@@ -521,10 +528,10 @@ const SystemSettings = () => {
         </TabsContent>
 
         <TabsContent value="seo">
-          <Card>
+          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Search className="h-5 w-5" />
+                <Search className="h-5 w-5 text-primary" />
                 SEO Settings
               </CardTitle>
               <CardDescription>
@@ -585,9 +592,9 @@ const SystemSettings = () => {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveSeoSettings} disabled={saving}>
+                <Button onClick={handleSaveSeoSettings} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
                   <Save className="mr-2 h-4 w-4" />
-                  Save SEO Settings
+                  {saving ? 'Saving...' : 'Save SEO Settings'}
                 </Button>
               </div>
             </CardContent>

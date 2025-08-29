@@ -219,14 +219,16 @@ const CustomerManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold">Customer Management</h2>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Customer Management
+          </h2>
           <p className="text-muted-foreground">
             Manage your customer relationships and contacts
           </p>
         </div>
-        <Button onClick={() => setShowAddForm(true)}>
+        <Button onClick={() => setShowAddForm(true)} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
           <Plus className="mr-2 h-4 w-4" />
           Add Customer
         </Button>
@@ -376,7 +378,7 @@ const CustomerManagement = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCustomers.map((customer) => (
-          <Card key={customer.id} className="hover:shadow-md transition-shadow">
+          <Card key={customer.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex-1">

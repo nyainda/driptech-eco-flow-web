@@ -351,14 +351,16 @@ const ProjectManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold">Project Management</h2>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Project Management
+          </h2>
           <p className="text-muted-foreground">
             Manage your irrigation project portfolio and case studies
           </p>
         </div>
-        <Button onClick={() => setShowAddForm(true)}>
+        <Button onClick={() => setShowAddForm(true)} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
@@ -614,7 +616,7 @@ const ProjectManagement = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredProjects.map((project) => (
-          <Card key={project.id} className="hover:shadow-md transition-shadow">
+          <Card key={project.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex-1">

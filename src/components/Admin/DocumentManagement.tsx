@@ -573,21 +573,23 @@ const DocumentManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold">Document Management</h2>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Document Management
+          </h2>
           <p className="text-muted-foreground">
             Manage your document download center and resources
           </p>
         </div>
         <div className="flex gap-2">
           {selectedDocuments.size > 0 && (
-            <Button variant="destructive" onClick={handleBulkDelete}>
+            <Button variant="destructive" onClick={handleBulkDelete} className="shadow-lg">
               <Trash2 className="mr-2 h-4 w-4" />
               Delete Selected ({selectedDocuments.size})
             </Button>
           )}
-          <Button onClick={() => setShowAddForm(true)}>
+          <Button onClick={() => setShowAddForm(true)} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
             <Plus className="mr-2 h-4 w-4" />
             Add Document
           </Button>
@@ -936,7 +938,7 @@ const DocumentManagement = () => {
           const isSelected = selectedDocuments.has(document.id);
           
           return (
-            <Card key={document.id} className={`hover:shadow-md transition-all duration-200 ${isSelected ? 'ring-2 ring-primary' : ''}`}>
+            <Card key={document.id} className={`hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10 ${isSelected ? 'ring-2 ring-primary shadow-primary/20' : ''}`}>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3 flex-1">

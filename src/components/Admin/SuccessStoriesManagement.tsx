@@ -367,7 +367,7 @@ const SuccessStoriesManagement = () => {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {stories.map((story) => (
-          <Card key={story.id} className="hover:shadow-lg transition-shadow">
+          <Card key={story.id} className="hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-primary/20">
             <CardHeader>
               {story.image_url && (
                 <img
