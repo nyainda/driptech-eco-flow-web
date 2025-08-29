@@ -72,20 +72,22 @@ export const TotalsSection: React.FC<TotalsSectionProps> = ({ quote, items }) =>
       <div className="hidden print:block">
         <div className="float-right w-80 mt-6 mb-6">
           <table className="w-full border-collapse bg-gray-50 rounded-lg overflow-hidden">
-            <tr>
-              <td className="px-4 py-3 font-medium">Subtotal:</td>
-              <td className="px-4 py-3 text-right font-mono">KES {subtotal.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
-            </tr>
-            {totalVat > 0 && (
+            <tbody>
               <tr>
-                <td className="px-4 py-3 font-medium">VAT ({displayVatRate}%):</td>
-                <td className="px-4 py-3 text-right font-mono">KES {totalVat.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+                <td className="px-4 py-3 font-medium">Subtotal:</td>
+                <td className="px-4 py-3 text-right font-mono">KES {subtotal.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
               </tr>
-            )}
-            <tr className="bg-blue-600 text-white font-bold">
-              <td className="px-4 py-3">Total:</td>
-              <td className="px-4 py-3 text-right font-mono">KES {total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
-            </tr>
+              {totalVat > 0 && (
+                <tr>
+                  <td className="px-4 py-3 font-medium">VAT ({displayVatRate}%):</td>
+                  <td className="px-4 py-3 text-right font-mono">KES {totalVat.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+                </tr>
+              )}
+              <tr className="bg-blue-600 text-white font-bold">
+                <td className="px-4 py-3">Total:</td>
+                <td className="px-4 py-3 text-right font-mono">KES {total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+              </tr>
+            </tbody>
           </table>
         </div>
         <div className="clear-both"></div>

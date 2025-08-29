@@ -23,15 +23,46 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({ quote, items, customer, onEd
     <div className="bg-gray-50 dark:bg-gray-900 print:bg-white min-h-screen">
       {/* Print-only content - Hidden duplicate for printing */}
       <div className="hidden print:block">
-        <div className="max-w-4xl mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
-          <CompanyHeader quote={quote} />
-          <AddressSection customer={customer} />
-          <ProjectDetails quote={quote} />
-          <BOQTable items={items} />
-          <TotalsSection quote={quote} items={items} />
-          <NotesSection notes={quote.notes} />
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
+          {/* Enhanced Header for Print */}
+          <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-6 text-white relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-4 left-4 w-2 h-2 bg-white rounded-full"></div>
+              <div className="absolute top-8 right-12 w-1 h-1 bg-white rounded-full"></div>
+              <div className="absolute bottom-6 left-8 w-1 h-1 bg-white rounded-full"></div>
+              <div className="absolute bottom-12 right-6 w-3 h-3 bg-white rounded-full"></div>
+            </div>
+            <div className="relative z-10">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-2xl font-black border-2 border-white border-opacity-30">
+                    DT
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-black mb-1">DripTech Solutions</h1>
+                    <p className="text-white text-opacity-90 font-medium">Smart Irrigation Systems</p>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <h2 className="text-3xl font-black mb-2">QUOTATION</h2>
+                  <div className="bg-white bg-opacity-15 backdrop-blur-md p-3 rounded-lg border border-white border-opacity-20">
+                    <div className="text-sm font-semibold">Quote #: {quote.quote_number}</div>
+                    <div className="text-sm">Date: {new Date(quote.created_at).toLocaleDateString()}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <Footer />
+          <div className="p-8">
+            <AddressSection customer={customer} />
+            <ProjectDetails quote={quote} />
+            <BOQTable items={items} />
+            <TotalsSection quote={quote} items={items} />
+            <NotesSection notes={quote.notes} />
+            
+            <Footer />
+          </div>
         </div>
       </div>
 

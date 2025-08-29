@@ -39,6 +39,15 @@ export const usePrintHandlers = () => {
   const handleDownloadPDF = async (quote: Quote, items: QuoteItem[], customer?: Customer) => {
     setIsDownloading(true);
     try {
+      // Find the print-only content from the current page
+      const printContent = document.querySelector('.print\\:block');
+      if (!printContent) {
+        throw new Error('Print content not found');
+      }
+
+      // Clone the print content
+      const contentClone = printContent.cloneNode(true) as HTMLElement;
+      
       // Create a temporary container for PDF generation
       const tempContainer = document.createElement('div');
       tempContainer.style.position = 'absolute';
@@ -46,11 +55,15 @@ export const usePrintHandlers = () => {
       tempContainer.style.top = '0';
       tempContainer.style.width = '210mm';
       tempContainer.style.minHeight = '297mm';
+      tempContainer.style.backgroundColor = 'white';
+      tempContainer.style.padding = '20px';
+      
+      // Make the cloned content visible for PDF generation
+      contentClone.classList.remove('hidden');
+      contentClone.classList.add('block');
+      
+      tempContainer.appendChild(contentClone);
       document.body.appendChild(tempContainer);
-
-      // Generate the print content
-      const printContent = generatePrintContent(quote, items, customer);
-      tempContainer.innerHTML = printContent;
 
       // Wait for content to render
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -65,7 +78,8 @@ export const usePrintHandlers = () => {
           useCORS: true,
           letterRendering: true,
           scrollX: 0,
-          scrollY: 0
+          scrollY: 0,
+          backgroundColor: 'white'
         },
         jsPDF: {
           unit: 'mm',
