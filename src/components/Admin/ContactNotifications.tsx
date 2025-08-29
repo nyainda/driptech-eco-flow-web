@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Check, Trash2, Mail, Phone, Building, MapPin, Calendar, DollarSign, Filter, Search, MoreVertical, Archive, Star, Reply, Clock, User, Eye, EyeOff, ArrowUpDown, ChevronDown, MessageSquare, Menu } from "lucide-react";
+import { Bell, Check, Trash2, Mail, Phone, Building, MapPin, Calendar, DollarSign, Filter, Search, MoreVertical, Archive, Star, Reply, Clock, User, Eye, EyeOff, ArrowUpDown, ChevronDown, MessageSquare, Menu, UserPlus, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,6 +23,16 @@ interface ContactSubmission {
   read: boolean;
 }
 
+interface Customer {
+  id: string;
+  contact_person: string;
+  email: string;
+  phone?: string;
+  company_name?: string;
+  user_role: string;
+  created_at: string;
+}
+
 const ContactNotifications = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -33,6 +43,7 @@ const ContactNotifications = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [showConvertBatchModal, setShowConvertBatchModal] = useState(false);
 
   // Fetch contact submissions
   const { data: submissions = [], isLoading } = useQuery({
@@ -51,6 +62,167 @@ const ContactNotifications = () => {
     },
     retry: 3,
     retryDelay: 1000
+  });
+
+  // Fetch existing customers to check for duplicates
+  const { data: existingCustomers = [] } = useQuery({
+    queryKey: ['customers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('customers')
+        .select('email, contact_person, id')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching customers:', error);
+        return [];
+      }
+      return data as Customer[];
+    }
+  });
+
+  // Convert to customer mutation
+  const convertToCustomerMutation = useMutation({
+    mutationFn: async (submission: ContactSubmission) => {
+      // Check if customer already exists with this email
+      const existingCustomer = existingCustomers.find(
+        customer => customer.email.toLowerCase() === submission.email.toLowerCase()
+      );
+
+      if (existingCustomer) {
+        throw new Error(`Customer with email ${submission.email} already exists`);
+      }
+
+      const customerData = {
+        contact_person: submission.name,
+        email: submission.email,
+        phone: submission.phone || '',
+        company_name: submission.company || '',
+        address: '', // Not available in contact form
+        city: '', // Not available in contact form
+        country: '', // Not available in contact form
+        user_role: 'customer'
+      };
+
+      const { data, error } = await supabase
+        .from('customers')
+        .insert([customerData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Optionally, mark the contact submission as processed
+      await supabase
+        .from('contact_submissions')
+        .update({ 
+          status: 'resolved',
+          read: true 
+        })
+        .eq('id', submission.id);
+
+      return data;
+    },
+    onSuccess: (data, submission) => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['contact-submissions'] });
+      toast({
+        title: "Success",
+        description: `Customer "${submission.name}" created successfully`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Batch convert to customers mutation
+  const batchConvertMutation = useMutation({
+    mutationFn: async (submissions: ContactSubmission[]) => {
+      const results = {
+        created: 0,
+        skipped: 0,
+        errors: [] as string[]
+      };
+
+      for (const submission of submissions) {
+        try {
+          // Check if customer already exists
+          const existingCustomer = existingCustomers.find(
+            customer => customer.email.toLowerCase() === submission.email.toLowerCase()
+          );
+
+          if (existingCustomer) {
+            results.skipped++;
+            continue;
+          }
+
+          const customerData = {
+            contact_person: submission.name,
+            email: submission.email,
+            phone: submission.phone || '',
+            company_name: submission.company || '',
+            address: '',
+            city: '',
+            country: '',
+            user_role: 'customer'
+          };
+
+          const { error } = await supabase
+            .from('customers')
+            .insert([customerData]);
+
+          if (error) throw error;
+
+          // Mark submission as processed
+          await supabase
+            .from('contact_submissions')
+            .update({ 
+              status: 'resolved',
+              read: true 
+            })
+            .eq('id', submission.id);
+
+          results.created++;
+
+        } catch (error: any) {
+          results.errors.push(`${submission.name}: ${error.message}`);
+        }
+      }
+
+      return results;
+    },
+    onSuccess: (results) => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['contact-submissions'] });
+      
+      let message = `Created ${results.created} customers`;
+      if (results.skipped > 0) {
+        message += `, skipped ${results.skipped} duplicates`;
+      }
+      if (results.errors.length > 0) {
+        message += `, ${results.errors.length} failed`;
+      }
+
+      toast({
+        title: "Batch Conversion Complete",
+        description: message,
+      });
+
+      setSelectedSubmissions([]);
+      setShowConvertBatchModal(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   });
 
   // Mark as read mutation
@@ -115,6 +287,15 @@ const ContactNotifications = () => {
     }
   };
 
+  const handleConvertToCustomer = (submission: ContactSubmission) => {
+    convertToCustomerMutation.mutate(submission);
+  };
+
+  const handleBatchConvert = () => {
+    const selectedSubs = submissions.filter(sub => selectedSubmissions.includes(sub.id));
+    batchConvertMutation.mutate(selectedSubs);
+  };
+
   const handleSort = (column: 'created_at' | 'name' | 'status') => {
     if (sortBy === column) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -122,6 +303,20 @@ const ContactNotifications = () => {
       setSortBy(column);
       setSortOrder('desc');
     }
+  };
+
+  const toggleSubmissionSelection = (submissionId: string) => {
+    setSelectedSubmissions(prev => 
+      prev.includes(submissionId) 
+        ? prev.filter(id => id !== submissionId)
+        : [...prev, submissionId]
+    );
+  };
+
+  const isCustomerExists = (email: string) => {
+    return existingCustomers.some(customer => 
+      customer.email.toLowerCase() === email.toLowerCase()
+    );
   };
 
   const sortedAndFilteredSubmissions = submissions
@@ -161,6 +356,9 @@ const ContactNotifications = () => {
     });
 
   const unreadCount = submissions.filter(s => !s.read).length;
+  const eligibleForConversion = sortedAndFilteredSubmissions.filter(
+    sub => !isCustomerExists(sub.email)
+  ).length;
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -184,7 +382,6 @@ const ContactNotifications = () => {
   };
 
   const parseMessage = (message: string) => {
-    // Split message by common patterns like "Field:" or "Field :"
     const lines = message.split(/\n/).filter(line => line.trim());
     const parsed = [];
     
@@ -192,7 +389,6 @@ const ContactNotifications = () => {
       const trimmedLine = line.trim();
       if (!trimmedLine) continue;
       
-      // Check if line contains a field pattern like "Field:" or "Field :"
       const fieldMatch = trimmedLine.match(/^([^:]+):\s*(.*)$/);
       if (fieldMatch) {
         const [, field, value] = fieldMatch;
@@ -202,7 +398,6 @@ const ContactNotifications = () => {
           value: value.trim() || 'Not specified'
         });
       } else {
-        // Regular text line
         parsed.push({
           type: 'text',
           content: trimmedLine
@@ -238,6 +433,7 @@ const ContactNotifications = () => {
       {sortedAndFilteredSubmissions.map((submission) => {
         const statusConfig = getStatusConfig(submission.status);
         const isExpanded = expandedRow === submission.id;
+        const customerExists = isCustomerExists(submission.email);
         
         return (
           <Card key={submission.id} className={`${
@@ -256,6 +452,11 @@ const ContactNotifications = () => {
                       <CardTitle className="text-base truncate">{submission.name}</CardTitle>
                       {!submission.read && (
                         <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                      )}
+                      {customerExists && (
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
+                          Customer Exists
+                        </Badge>
                       )}
                     </div>
                     <div className="flex flex-col gap-1">
@@ -310,6 +511,17 @@ const ContactNotifications = () => {
                   {formatDate(submission.created_at)}
                 </div>
                 <div className="flex items-center gap-2">
+                  {!customerExists && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleConvertToCustomer(submission)}
+                      disabled={convertToCustomerMutation.isPending}
+                      className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="ghost"
@@ -394,7 +606,7 @@ const ContactNotifications = () => {
     <div className="min-h-screen p-3 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className=" rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-4 sm:p-6">
           <div className="flex flex-col space-y-4">
             {/* Title and Stats */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -411,30 +623,94 @@ const ContactNotifications = () => {
                 </div>
                 <div>
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Contact Messages</h1>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">{submissions.length} total • {unreadCount} unread</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {submissions.length} total • {unreadCount} unread • {eligibleForConversion} can convert to customers
+                  </p>
                 </div>
               </div>
               
-              {/* View Toggle for Desktop */}
-              <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-gray-700 rounded-lg p-1">
-                <Button
-                  size="sm"
-                  variant={viewMode === 'table' ? 'default' : 'ghost'}
-                  onClick={() => setViewMode('table')}
-                  className="px-3 py-1 text-sm"
-                >
-                  Table
-                </Button>
-                <Button
-                  size="sm"
-                  variant={viewMode === 'cards' ? 'default' : 'ghost'}
-                  onClick={() => setViewMode('cards')}
-                  className="px-3 py-1 text-sm"
-                >
-                  Cards
-                </Button>
+              <div className="flex items-center gap-2">
+                {/* Batch Convert Button */}
+                {eligibleForConversion > 0 && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowConvertBatchModal(true)}
+                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Convert {eligibleForConversion}
+                  </Button>
+                )}
+                
+                {/* View Toggle for Desktop */}
+                <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-gray-700 rounded-lg p-1">
+                  <Button
+                    size="sm"
+                    variant={viewMode === 'table' ? 'default' : 'ghost'}
+                    onClick={() => setViewMode('table')}
+                    className="px-3 py-1 text-sm"
+                  >
+                    Table
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                    onClick={() => setViewMode('cards')}
+                    className="px-3 py-1 text-sm"
+                  >
+                    Cards
+                  </Button>
+                </div>
               </div>
             </div>
+
+            {/* Batch Convert Modal */}
+            {showConvertBatchModal && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <Card className="w-full max-w-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <UserPlus className="h-5 w-5" />
+                      Convert to Customers
+                    </CardTitle>
+                    <CardDescription>
+                      Convert {eligibleForConversion} contact submissions to customer records
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5" />
+                          <div>
+                            <p className="text-sm text-blue-800 dark:text-blue-200">
+                              This will create customer records for contacts that don't already exist as customers.
+                              Existing customers will be skipped.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowConvertBatchModal(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleBatchConvert}
+                          disabled={batchConvertMutation.isPending}
+                        >
+                          {batchConvertMutation.isPending ? 'Converting...' : 'Convert All'}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
 
             {/* Search */}
             <div className="relative">
@@ -472,7 +748,7 @@ const ContactNotifications = () => {
         </div>
 
         {/* Content */}
-        <div className=" rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
@@ -528,6 +804,7 @@ const ContactNotifications = () => {
                     {sortedAndFilteredSubmissions.map((submission) => {
                       const statusConfig = getStatusConfig(submission.status);
                       const isExpanded = expandedRow === submission.id;
+                      const customerExists = isCustomerExists(submission.email);
                       
                       return (
                         <>
@@ -551,6 +828,11 @@ const ContactNotifications = () => {
                                     </p>
                                     {!submission.read && (
                                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    )}
+                                    {customerExists && (
+                                      <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
+                                        Customer Exists
+                                      </Badge>
                                     )}
                                   </div>
                                   <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
@@ -612,6 +894,17 @@ const ContactNotifications = () => {
                             
                             <td className="px-6 py-4 text-right">
                               <div className="flex items-center justify-end gap-2">
+                                {!customerExists && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleConvertToCustomer(submission)}
+                                    disabled={convertToCustomerMutation.isPending}
+                                    className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                  >
+                                    <UserPlus className="h-4 w-4" />
+                                  </Button>
+                                )}
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -716,4 +1009,5 @@ const ContactNotifications = () => {
     </div>
   );
 }
+
 export default ContactNotifications;

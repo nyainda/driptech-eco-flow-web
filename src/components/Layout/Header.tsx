@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Menu, X, Phone, Mail, ChevronDown, Droplets, Gift, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Menu, X, Phone, Mail, ChevronDown, Droplets, Gift, Clock, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Link } from "react-router-dom";
 import QuoteModal from "@/components/Home/QuoteModal";
@@ -33,6 +33,8 @@ const Header = () => {
   const [dismissedBanners, setDismissedBanners] = useState<string[]>([]);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [showBanner, setShowBanner] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Fetch active banners
   const { data: banners = [] } = useQuery({
@@ -62,19 +64,25 @@ const Header = () => {
     setDismissedBanners(dismissed);
   }, []);
 
-  // Auto-rotate banners
+  // Auto-rotate banners with smooth transitions
   useEffect(() => {
     const visibleBanners = getVisibleBanners();
-    if (visibleBanners.length <= 1) return;
+    if (visibleBanners.length <= 1 || isPaused) return;
 
     const interval = setInterval(() => {
-      setCurrentBannerIndex((prevIndex) => 
-        (prevIndex + 1) % visibleBanners.length
-      );
-    }, 6000);
+      setIsTransitioning(true);
+      
+      setTimeout(() => {
+        setCurrentBannerIndex((prevIndex) => 
+          (prevIndex + 1) % visibleBanners.length
+        );
+        setIsTransitioning(false);
+      }, 300); // Half of transition duration
+      
+    }, 5000); // 5 seconds per banner
 
     return () => clearInterval(interval);
-  }, [banners, dismissedBanners]);
+  }, [banners, dismissedBanners, isPaused]);
 
   const getDismissedBanners = (): string[] => {
     if (typeof window === 'undefined') return [];
@@ -107,7 +115,39 @@ const Header = () => {
     const remainingBanners = getVisibleBanners().filter(b => b.id !== bannerId);
     if (remainingBanners.length === 0) {
       setShowBanner(false);
+    } else {
+      // Adjust current index if needed
+      const newIndex = currentBannerIndex >= remainingBanners.length ? 0 : currentBannerIndex;
+      setCurrentBannerIndex(newIndex);
     }
+  };
+
+  const handleManualNavigation = (index: number) => {
+    if (index === currentBannerIndex) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentBannerIndex(index);
+      setIsTransitioning(false);
+    }, 300);
+  };
+
+  const handlePrevBanner = () => {
+    const visibleBanners = getVisibleBanners();
+    const newIndex = currentBannerIndex === 0 
+      ? visibleBanners.length - 1 
+      : currentBannerIndex - 1;
+    handleManualNavigation(newIndex);
+  };
+
+  const handleNextBanner = () => {
+    const visibleBanners = getVisibleBanners();
+    const newIndex = (currentBannerIndex + 1) % visibleBanners.length;
+    handleManualNavigation(newIndex);
+  };
+
+  const togglePause = () => {
+    setIsPaused(!isPaused);
   };
 
   const formatDate = (dateString: string) => {
@@ -176,20 +216,48 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl">
-      {/* Discount Banner - Option 1: Above top bar */}
+      {/* Enhanced Discount Banner with Smooth Transitions */}
       {showBanner && currentBanner && (
-        <div className={`relative overflow-hidden transition-all duration-300 ${
+        <div className={`relative overflow-hidden transition-all duration-600 ${
           isExpiringSoon(currentBanner.valid_until)
             ? 'bg-gradient-to-r from-orange-500 to-red-500'
             : 'bg-gradient-to-r from-primary to-primary/80'
         } text-primary-foreground`}>
+          
+          {/* Animated background */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent animate-pulse" />
           </div>
           
-          <div className="relative py-2 px-4">
+          {/* Progress bar for auto-rotation */}
+          {hasMultipleBanners && !isPaused && (
+            <div className="absolute bottom-0 left-0 h-0.5 bg-primary-foreground/30 w-full">
+              <div 
+                className="h-full bg-primary-foreground transition-all duration-5000 ease-linear"
+                style={{ 
+                  width: isTransitioning ? '100%' : '0%',
+                  animation: isTransitioning ? 'none' : 'progressBar 5s linear forwards'
+                }}
+              />
+            </div>
+          )}
+          
+          <div className={`relative py-2 px-4 transition-all duration-600 ${
+            isTransitioning ? 'opacity-0 transform translate-x-2' : 'opacity-100 transform translate-x-0'
+          }`}>
             <div className="container mx-auto flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1 min-w-0">
+                {/* Navigation arrows for multiple banners */}
+                {hasMultipleBanners && (
+                  <button
+                    onClick={handlePrevBanner}
+                    className="flex-shrink-0 p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
+                    aria-label="Previous offer"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                )}
+
                 <Gift className="h-4 w-4 animate-bounce flex-shrink-0" />
                 <Badge 
                   variant="secondary" 
@@ -216,24 +284,55 @@ const Header = () => {
                     isExpiringSoon(currentBanner.valid_until) ? 'animate-pulse font-semibold' : ''
                   }`}>
                     <Clock className="h-3 w-3" />
-                    <span>{formatDate(currentBanner.valid_until)}</span>
+                    <span className="hidden sm:inline">{formatDate(currentBanner.valid_until)}</span>
+                    <span className="sm:hidden">Limited time</span>
                   </div>
+                )}
+
+                {/* Next arrow */}
+                {hasMultipleBanners && (
+                  <button
+                    onClick={handleNextBanner}
+                    className="flex-shrink-0 p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
+                    aria-label="Next offer"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
                 )}
               </div>
               
-              <div className="flex items-center gap-1 ml-3 flex-shrink-0">
+              <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                {/* Banner counter */}
+                {hasMultipleBanners && (
+                  <span className="text-xs opacity-75 hidden sm:inline">
+                    {currentBannerIndex + 1} / {visibleBanners.length}
+                  </span>
+                )}
+
+                {/* Pause/Play button */}
+                {hasMultipleBanners && (
+                  <button
+                    onClick={togglePause}
+                    className="p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
+                    aria-label={isPaused ? "Resume auto-rotation" : "Pause auto-rotation"}
+                  >
+                    {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
+                  </button>
+                )}
+
+                {/* Banner indicators */}
                 {hasMultipleBanners && (
                   <div className="flex gap-1">
                     {visibleBanners.map((_, index) => (
                       <button
                         key={index}
-                        onClick={() => setCurrentBannerIndex(index)}
-                        className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
+                        onClick={() => handleManualNavigation(index)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
                           index === currentBannerIndex 
-                            ? 'bg-primary-foreground' 
+                            ? 'bg-primary-foreground scale-110' 
                             : 'bg-primary-foreground/40 hover:bg-primary-foreground/60'
                         }`}
-                        aria-label={`Go to banner ${index + 1}`}
+                        aria-label={`Go to offer ${index + 1}`}
                       />
                     ))}
                   </div>
@@ -244,12 +343,21 @@ const Header = () => {
                   size="sm"
                   onClick={() => handleCloseBanner(currentBanner.id)}
                   className="text-primary-foreground hover:bg-primary-foreground/20 h-6 w-6 p-0 ml-2"
+                  aria-label="Close banner"
                 >
                   <X className="h-3 w-3" />
                 </Button>
               </div>
             </div>
           </div>
+
+          {/* Custom CSS for progress animation */}
+          <style>{`
+            @keyframes progressBar {
+              from { width: 0%; }
+              to { width: 100%; }
+            }
+          `}</style>
         </div>
       )}
 
@@ -277,14 +385,13 @@ const Header = () => {
               </div>
             </div>
             
-            {/* Alternative: Compact banner in top bar */}
-            {!showBanner && currentBanner && (
+            {/* Compact banner indicator in top bar when main banner is hidden */}
+            {!showBanner && hasMultipleBanners && (
               <div className="hidden lg:flex items-center gap-2 text-xs">
                 <Gift className="h-3 w-3 text-primary" />
-                <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
-                  {currentBanner.discount} OFF
-                </Badge>
-                <span className="text-primary font-medium">{currentBanner.title}</span>
+                <span className="text-primary font-medium">
+                  {visibleBanners.length} Active Offers
+                </span>
               </div>
             )}
             
@@ -295,7 +402,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Main Header */}
+      {/* Main Header - Rest of the component remains the same */}
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -374,26 +481,65 @@ const Header = () => {
               </SheetTrigger>
               <SheetContent side="right" className="w-80">
                 <div className="flex flex-col gap-6 py-6">
-                  {/* Mobile Banner */}
-                  {currentBanner && (
-                    <div className={`p-4 rounded-lg ${
-                      isExpiringSoon(currentBanner.valid_until)
-                        ? 'bg-gradient-to-r from-orange-500 to-red-500'
-                        : 'bg-gradient-to-r from-primary to-primary/80'
-                    } text-primary-foreground`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Gift className="h-4 w-4" />
-                        <Badge variant="secondary" className="bg-white text-primary font-bold text-xs">
-                          {currentBanner.discount} OFF
-                        </Badge>
+                  {/* Enhanced Mobile Banner with navigation */}
+                  {visibleBanners.length > 0 && (
+                    <div className="space-y-3">
+                      {hasMultipleBanners && (
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                          <span>Current Offers ({visibleBanners.length})</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={handlePrevBanner}
+                              className="p-1 rounded hover:bg-muted"
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </button>
+                            <span className="text-xs">{currentBannerIndex + 1}/{visibleBanners.length}</span>
+                            <button
+                              onClick={handleNextBanner}
+                              className="p-1 rounded hover:bg-muted"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className={`p-4 rounded-lg transition-all duration-500 ${
+                        isExpiringSoon(currentBanner?.valid_until)
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500'
+                          : 'bg-gradient-to-r from-primary to-primary/80'
+                      } text-primary-foreground`}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Gift className="h-4 w-4" />
+                          <Badge variant="secondary" className="bg-white text-primary font-bold text-xs">
+                            {currentBanner?.discount} OFF
+                          </Badge>
+                        </div>
+                        <h4 className="font-semibold text-sm mb-1">{currentBanner?.title}</h4>
+                        <p className="text-xs opacity-90">{currentBanner?.description}</p>
+                        {currentBanner?.valid_until && (
+                          <p className="text-xs opacity-80 mt-2">
+                            <Clock className="h-3 w-3 inline mr-1" />
+                            {formatDate(currentBanner.valid_until)}
+                          </p>
+                        )}
                       </div>
-                      <h4 className="font-semibold text-sm mb-1">{currentBanner.title}</h4>
-                      <p className="text-xs opacity-90">{currentBanner.description}</p>
-                      {currentBanner.valid_until && (
-                        <p className="text-xs opacity-80 mt-2">
-                          <Clock className="h-3 w-3 inline mr-1" />
-                          {formatDate(currentBanner.valid_until)}
-                        </p>
+                      
+                      {hasMultipleBanners && (
+                        <div className="flex justify-center gap-1">
+                          {visibleBanners.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => handleManualNavigation(index)}
+                              className={`w-2 h-2 rounded-full transition-all ${
+                                index === currentBannerIndex 
+                                  ? 'bg-primary' 
+                                  : 'bg-muted-foreground/40 hover:bg-muted-foreground/60'
+                              }`}
+                            />
+                          ))}
+                        </div>
                       )}
                     </div>
                   )}

@@ -38,13 +38,44 @@ import {
   Building,
   TreePine,
   Wheat,
-  Factory
+  Factory,
+  ChevronDown,
+  Layers
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import QuoteModal from "./QuoteModal";
 
+interface Variant {
+  name: string;
+  price: number;
+  in_stock: boolean;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number | null;
+  category: string;
+  subcategory: string | null;
+  model_number: string | null;
+  images: string[] | null;
+  featured: boolean | null;
+  in_stock: boolean | null;
+  applications: string[] | null;
+  features: string[] | null;
+  specifications: any | null;
+  brochure_url: string | null;
+  installation_guide_url: string | null;
+  maintenance_manual_url: string | null;
+  video_url: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  variants?: Variant[];
+}
+
 const ProductsShowcase = () => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -210,11 +241,32 @@ const ProductsShowcase = () => {
     }
   ];
 
-  const ProductCard = ({ product }: { product: any }) => {
+  const ProductCard = ({ product }: { product: Product }) => {
+    const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
+      product.variants && product.variants.length > 0 ? product.variants[0] : null
+    );
+    const [showVariants, setShowVariants] = useState(false);
+    
     const IconComponent = getCategoryIcon(product.category);
     const colors = getCategoryColor(product.category);
     const categoryName = formatCategoryName(product.category);
     const categoryRoute = getCategoryRoute(product.category);
+    
+    // Determine pricing display
+    const hasVariants = product.variants && product.variants.length > 0;
+    const displayPrice = hasVariants && selectedVariant ? selectedVariant.price : product.price;
+    const displayStock = hasVariants && selectedVariant ? selectedVariant.in_stock : product.in_stock;
+    
+    // Get price range for variants
+    const getPriceRange = () => {
+      if (!hasVariants || !product.variants) return null;
+      const prices = product.variants.map(v => v.price);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      return min === max ? null : { min, max };
+    };
+    
+    const priceRange = getPriceRange();
     
     return (
       <Card className="group relative hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-3 border-0 shadow-lg overflow-hidden bg-gradient-to-br from-card to-card/80 backdrop-blur-sm">
@@ -250,11 +302,17 @@ const ProductsShowcase = () => {
               <Badge variant="secondary" className="text-xs backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-gray-100 shadow-lg">
                 {categoryName}
               </Badge>
+              {hasVariants && (
+                <Badge className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-0 shadow-lg backdrop-blur-sm">
+                  <Layers className="h-3 w-3 mr-1" />
+                  {product.variants!.length} Options
+                </Badge>
+              )}
             </div>
 
             {/* Stock status with animated dot */}
             <div className="absolute top-4 right-4">
-              {product.in_stock ? (
+              {displayStock ? (
                 <Badge className="bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 shadow-lg backdrop-blur-sm">
                   <div className="h-2 w-2 bg-white rounded-full mr-2 animate-pulse" />
                   In Stock
@@ -307,6 +365,78 @@ const ProductsShowcase = () => {
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
               {product.description || "Advanced irrigation solution designed for modern agriculture and efficient water management."}
             </p>
+
+            {/* Variants Section */}
+            {hasVariants && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500">
+                      <Layers className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                    </div>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                      Variants
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowVariants(!showVariants)}
+                    className="h-6 px-2 text-xs"
+                  >
+                    <ChevronDown 
+                      className={`h-3 w-3 transition-transform ${showVariants ? 'rotate-180' : ''}`} 
+                    />
+                  </Button>
+                </div>
+                
+                {showVariants ? (
+                  <div className="space-y-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                    {product.variants!.map((variant, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => setSelectedVariant(variant)}
+                        className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
+                          selectedVariant?.name === variant.name
+                            ? `${colors.bgColor} ${colors.borderColor} scale-[1.02]`
+                            : 'border-muted hover:border-muted-foreground/30 hover:bg-muted/30'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            variant.in_stock ? 'bg-emerald-500' : 'bg-red-500'
+                          }`} />
+                          <span className={`text-xs font-medium truncate max-w-[80px] ${
+                            selectedVariant?.name === variant.name ? colors.color : 'text-foreground'
+                          }`}>
+                            {variant.name}
+                          </span>
+                        </div>
+                        <span className={`text-xs font-bold ${
+                          selectedVariant?.name === variant.name ? colors.color : 'text-muted-foreground'
+                        }`}>
+                          KSh {variant.price.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : selectedVariant && (
+                  <div className={`flex items-center justify-between p-3 rounded-lg ${colors.bgColor} ${colors.borderColor} border`}>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${
+                        selectedVariant.in_stock ? 'bg-emerald-500' : 'bg-red-500'
+                      }`} />
+                      <span className={`text-xs font-medium ${colors.color} truncate max-w-[100px]`}>
+                        {selectedVariant.name}
+                      </span>
+                    </div>
+                    <span className={`text-xs font-bold ${colors.color}`}>
+                      KSh {selectedVariant.price.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Compact Features with icons */}
             {product.features && product.features.length > 0 && (
@@ -379,14 +509,27 @@ const ProductsShowcase = () => {
             )}
 
             {/* Enhanced price section */}
-            {product.price && (
+            {displayPrice && (
               <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-xl p-4 border border-primary/10">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                      KSh {product.price.toLocaleString()}
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-1">Price may vary</p>
+                    {priceRange && !selectedVariant ? (
+                      <div className="space-y-1">
+                        <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                          KSh {priceRange.min.toLocaleString()} - {priceRange.max.toLocaleString()}
+                        </span>
+                        <p className="text-xs text-muted-foreground">Price varies by option</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                          KSh {displayPrice.toLocaleString()}
+                        </span>
+                        <p className="text-xs text-muted-foreground">
+                          {hasVariants && selectedVariant ? `${selectedVariant.name} variant` : 'Base price'}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <div className={`p-2 rounded-lg ${colors.accent}`}>
                     <ShoppingCart className={`h-4 w-4 ${colors.color}`} />
@@ -593,6 +736,27 @@ const ProductsShowcase = () => {
           </div>
         </div>
       </div>
+      
+      {/* Custom scrollbar styles */}
+      <style >{`
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgb(156 163 175) transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background-color: rgb(156 163 175);
+          border-radius: 2px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background-color: rgb(107 114 128);
+        }
+      `}</style>
     </section>
   );
 };
