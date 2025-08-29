@@ -68,15 +68,15 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 dark:from-slate-900 dark:via-blue-950 dark:to-emerald-950">
-      {/* Enhanced Background with Multiple Layers */}
+      {/* Enhanced Background with Professional Irrigation Photo */}
       <div className="absolute inset-0">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 dark:opacity-10"
-          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 dark:opacity-15"
+          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1574943320219-553eb213f72d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)` }}
         />
-        {/* Improved gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-blue-50/90 to-emerald-50/95 dark:from-slate-900/95 dark:via-blue-950/90 dark:to-emerald-950/95" />
-        <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent dark:from-slate-900/80" />
+        {/* Professional overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-800/80 to-emerald-900/85 dark:from-slate-900/90 dark:via-slate-800/85 dark:to-emerald-950/90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
         
         {/* Animated gradient mesh */}
         <div 
@@ -86,27 +86,37 @@ const HeroSection = () => {
           }}
         />
         
-        {/* Floating particles */}
-        {[...Array(15)].map((_, i) => (
+        {/* Enhanced floating particles with water droplet effect */}
+        {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-green-400 rounded-full animate-pulse"
+            className={`absolute rounded-full animate-pulse ${
+              i % 3 === 0 ? 'w-2 h-2 bg-blue-400/60' : 
+              i % 3 === 1 ? 'w-1.5 h-1.5 bg-emerald-400/70' : 
+              'w-1 h-1 bg-cyan-400/80'
+            }`}
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`
+              animationDelay: `${Math.random() * 4}s`,
+              animationDuration: `${2 + Math.random() * 3}s`
             }}
           />
         ))}
 
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-5" style={{
+        {/* Professional irrigation pattern overlay */}
+        <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: `
-            linear-gradient(rgba(34, 197, 94, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(34, 197, 94, 0.3) 1px, transparent 1px)
+            linear-gradient(rgba(34, 197, 94, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(34, 197, 94, 0.4) 1px, transparent 1px)
           `,
-          backgroundSize: '60px 60px'
+          backgroundSize: '80px 80px'
+        }} />
+        
+        {/* Additional water pattern */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.3) 2px, transparent 2px)`,
+          backgroundSize: '100px 100px'
         }} />
       </div>
 
@@ -117,116 +127,120 @@ const HeroSection = () => {
           {/* Left Column - Main Content */}
           <div className="lg:col-span-7 space-y-8 text-white">
             
-            {/* Company Badge */}
-            <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 px-4 py-2 text-sm font-semibold rounded-full">
-                🌱 Kenya's Fastest Growing Irrigation Specialists
+            {/* Enhanced Company Badge */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
+              <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-blue-500 text-white border-0 px-6 py-3 text-sm font-bold rounded-full shadow-2xl backdrop-blur-sm border border-white/20">
+                💧 Kenya's #1 Smart Irrigation Specialists
               </div>
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                ))}
-                <span className="text-sm text-gray-300 ml-2">4.8/5 (32 reviews)</span>
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-sm text-yellow-100 font-semibold">4.9/5</span>
+                <span className="text-xs text-gray-300">(47 reviews)</span>
               </div>
             </div>
 
-            {/* Enhanced Main Headline */}
-            <div className="space-y-8">
+            {/* Revolutionary Main Headline */}
+            <div className="space-y-6">
               <div className="relative">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight">
-                  <span className="block text-slate-900 dark:text-white mb-2">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.85] tracking-tight">
+                  <span className="block text-white mb-3 drop-shadow-2xl">
                     Transform Your
                   </span>
-                  <span className="block bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+                  <span className="block bg-gradient-to-r from-emerald-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-3 filter drop-shadow-lg">
                     Agriculture
                   </span>
-                  <span className="block text-slate-700 dark:text-slate-300 text-4xl md:text-5xl lg:text-6xl">
+                  <span className="block text-emerald-100 text-4xl md:text-5xl lg:text-6xl font-bold drop-shadow-xl">
                     With Smart Irrigation
                   </span>
                 </h1>
                 
-                {/* Decorative elements */}
-                <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-br from-emerald-400/20 to-blue-400/20 rounded-full blur-xl dark:from-emerald-400/10 dark:to-blue-400/10"></div>
-                <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-lg dark:from-blue-400/10 dark:to-cyan-400/10"></div>
+                {/* Enhanced decorative elements */}
+                <div className="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-emerald-400/30 to-blue-400/30 rounded-full blur-2xl animate-pulse"></div>
+                <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-gradient-to-br from-blue-400/25 to-cyan-400/25 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/2 -right-12 w-16 h-16 bg-gradient-to-br from-cyan-400/20 to-emerald-400/20 rounded-full blur-lg animate-pulse" style={{ animationDelay: '2s' }}></div>
               </div>
               
-              <p className="text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl font-medium">
+              <p className="text-lg md:text-xl lg:text-2xl text-gray-100 leading-relaxed max-w-3xl font-medium drop-shadow-lg">
                 Revolutionary drip irrigation technology that increases yields by 
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold"> 40-60%</span> while reducing water usage by 
-                <span className="text-blue-600 dark:text-blue-400 font-bold"> up to 50%</span>. 
+                <span className="text-emerald-300 font-bold bg-emerald-900/30 px-2 py-1 rounded-lg"> 40-60%</span> while reducing water usage by 
+                <span className="text-blue-300 font-bold bg-blue-900/30 px-2 py-1 rounded-lg"> up to 50%</span>. 
                 Professional installation and nationwide support across Kenya.
               </p>
             </div>
 
-            {/* Key Benefits */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Enhanced Key Benefits */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {features.map((feature, index) => (
-                <div key={index} className="group bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 hover:bg-white/10 hover:border-green-400/50 transition-all duration-300 hover:scale-105">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-gradient-to-br from-green-400/20 to-green-600/20 rounded-xl border border-green-400/30">
-                      <feature.icon className="h-5 w-5 text-green-400" />
+                <div key={index} className="group bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 hover:bg-white/15 hover:border-emerald-400/60 transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-2xl">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-gradient-to-br from-emerald-400/30 to-blue-500/30 rounded-xl border border-emerald-400/40 shadow-lg">
+                      <feature.icon className="h-6 w-6 text-emerald-300" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-white text-sm mb-1">{feature.text}</h3>
-                      <p className="text-gray-400 text-xs">{feature.desc}</p>
+                      <h3 className="font-bold text-white text-base mb-2 drop-shadow-sm">{feature.text}</h3>
+                      <p className="text-gray-200 text-sm leading-relaxed">{feature.desc}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Enhanced CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+            {/* Revolutionary CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-6 pt-8">
               <button 
                 onClick={() => makePhoneCall(whatsappNumbers.primary)}
-                className="group relative bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-bold px-10 py-5 rounded-2xl shadow-2xl hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-105 hover:-translate-y-1 text-lg flex items-center justify-center cursor-pointer overflow-hidden"
+                className="group relative bg-gradient-to-r from-emerald-500 via-green-500 to-blue-500 hover:from-emerald-600 hover:via-green-600 hover:to-blue-600 text-white font-bold px-12 py-6 rounded-3xl shadow-2xl hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105 hover:-translate-y-2 text-xl flex items-center justify-center cursor-pointer overflow-hidden border border-white/20"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <Phone className="mr-3 h-5 w-5 relative z-10" />
-                <span className="relative z-10">Call: 0111 409 454</span>
-                <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform relative z-10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Phone className="mr-4 h-6 w-6 relative z-10" />
+                <span className="relative z-10 font-black">Call: 0111 409 454</span>
+                <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform relative z-10" />
               </button>
               
               <button 
                 onClick={() => openWhatsApp(whatsappNumbers.primary)}
-                className="group relative bg-white/10 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-emerald-600/30 dark:border-emerald-400/30 text-slate-800 dark:text-white hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:border-emerald-600 dark:hover:border-emerald-400 px-10 py-5 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer"
+                className="group relative bg-white/15 backdrop-blur-md border-2 border-emerald-400/40 text-white hover:bg-white/20 hover:border-emerald-400/70 px-12 py-6 rounded-3xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:-translate-y-2 cursor-pointer shadow-2xl"
               >
-                <span className="mr-3 text-2xl">💬</span>
-                WhatsApp Us
+                <span className="mr-4 text-3xl">💬</span>
+                <span className="font-black">WhatsApp Us</span>
               </button>
             </div>
 
-            {/* Contact Info */}
-            <div className="flex flex-col sm:flex-row gap-6 pt-4 text-sm text-gray-300">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-green-400" />
-                <a href="mailto:driptech2025@gmail.com" className="hover:text-green-400 transition-colors">
+            {/* Enhanced Contact Info */}
+            <div className="flex flex-col sm:flex-row gap-6 pt-6 text-base text-gray-100">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                <Mail className="h-5 w-5 text-emerald-400" />
+                <a href="mailto:driptech2025@gmail.com" className="hover:text-emerald-300 transition-colors font-medium">
                   driptech2025@gmail.com
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-green-400" />
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                <Phone className="h-5 w-5 text-emerald-400" />
                 <button 
                   onClick={() => makePhoneCall(whatsappNumbers.secondary)}
-                  className="hover:text-green-400 transition-colors cursor-pointer"
+                  className="hover:text-emerald-300 transition-colors cursor-pointer font-medium"
                 >
                   0114 575 401
                 </button>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-400" />
-                <span>Free Site Visit</span>
+              <div className="flex items-center gap-3 bg-emerald-500/20 backdrop-blur-sm rounded-full px-4 py-2 border border-emerald-400/30">
+                <CheckCircle className="h-5 w-5 text-emerald-300" />
+                <span className="font-semibold text-emerald-100">Free Site Visit</span>
               </div>
             </div>
 
-            {/* Company Strengths */}
-            <div className="pt-6 border-t border-white/10">
-              <p className="text-gray-400 text-sm mb-3">Why Choose DripTech:</p>
-              <div className="grid grid-cols-2 gap-2">
+            {/* Enhanced Company Strengths */}
+            <div className="pt-8 border-t border-white/20">
+              <p className="text-emerald-300 text-base mb-4 font-semibold">Why Choose DripTech:</p>
+              <div className="grid grid-cols-2 gap-3">
                 {certifications.map((cert, index) => (
-                  <div key={index} className="flex items-center gap-2 text-xs">
-                    <CheckCircle className="h-3 w-3 text-green-400 flex-shrink-0" />
-                    <span className="text-gray-300">{cert}</span>
+                  <div key={index} className="flex items-center gap-3 text-sm bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10">
+                    <CheckCircle className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                    <span className="text-gray-100 font-medium">{cert}</span>
                   </div>
                 ))}
               </div>
