@@ -2,7 +2,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe, ArrowRight, CheckCircle, Star } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe, ArrowRight, CheckCircle, Star, Zap } from "lucide-react";
 import SimpleContactForm from "@/components/common/SimpleContactForm";
 
 const Contact = () => {
@@ -182,7 +182,7 @@ const Contact = () => {
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
-                      allowFullScreen=""
+                      allowFullScreen
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                       title="DripTech Kenya Location - Nairobi, Kenya"

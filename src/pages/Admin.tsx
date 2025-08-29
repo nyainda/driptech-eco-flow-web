@@ -18,7 +18,8 @@ import {
   Receipt,
   BarChart3,
   Mail, // Import Mail icon
-  Gift
+  Gift,
+  Newspaper
 } from "lucide-react";
 import { AdminAuthProvider, AdminAuthGuard, AdminHeader } from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
@@ -39,6 +40,7 @@ import MpesaIntegration from "@/components/Admin/MpesaIntegration";
 import InvoiceManagementSystem from "@/components/Admin/Invoice/InvoiceManagementSystem";
 import VisitorTrackingDashboard from "@/components/Admin/VisitorTrackingDashboard";
 import DiscountManagement from "@/components/Admin/DiscountManagement";
+import NewsManagement from "@/components/Admin/NewsManagement";
 import { Button } from "@/components/ui/button"; // Import Button
 import { Badge } from "@/components/ui/badge"; // Import Badge
 
@@ -64,6 +66,12 @@ const AdminContent = () => {
       label: "Blog & Content",
       icon: FileText,
       description: "Content management system"
+    },
+    {
+      id: "news",
+      label: "News",
+      icon: Newspaper,
+      description: "News articles and announcements"
     },
     {
       id: "videos",
@@ -198,6 +206,10 @@ const AdminContent = () => {
 
           <TabsContent value="blog" className="space-y-6">
             <BlogManagement />
+          </TabsContent>
+
+          <TabsContent value="news" className="space-y-6">
+            <NewsManagement />
           </TabsContent>
 
           <TabsContent value="videos" className="space-y-6">

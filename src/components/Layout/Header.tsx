@@ -423,7 +423,7 @@ const Header = () => {
                 <NavigationMenuItem key={item.title}>
                   {item.items ? (
                     <>
-                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-4 py-2 font-medium">
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-4 py-2 font-medium text-foreground hover:text-primary">
                         {item.title}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
@@ -456,7 +456,7 @@ const Header = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         to={item.href}
-                        className="group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 font-medium transition-all duration-200 hover:bg-muted/50 hover:text-primary hover:shadow-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        className="group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 font-medium transition-all duration-200 hover:bg-muted/50 text-foreground hover:text-primary hover:shadow-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
                       >
                         {item.title}
                       </Link>
