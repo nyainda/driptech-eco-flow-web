@@ -121,19 +121,18 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[calc(100vh-8rem)]">
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           {/* Left Column - Main Content */}
-          <div className="lg:col-span-7 space-y-10 text-white pt-8 lg:pt-0">
+          <div className="lg:col-span-7 space-y-8 text-white">
             
-            {/* Enhanced Company Badge with Better Spacing */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
-              <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-blue-500 text-white border-0 px-8 py-4 text-sm font-bold rounded-full shadow-2xl backdrop-blur-sm border border-white/20 hover:scale-105 transition-all duration-300">
-                <span className="text-lg mr-3">💧</span>
-                <span>Kenya's #1 Smart Irrigation Specialists</span>
+            {/* Enhanced Company Badge */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
+              <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-blue-500 text-white border-0 px-6 py-3 text-sm font-bold rounded-full shadow-2xl backdrop-blur-sm border border-white/20">
+                💧 Kenya's #1 Smart Irrigation Specialists
               </div>
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-5 py-3 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -145,13 +144,13 @@ const HeroSection = () => {
             </div>
 
             {/* Revolutionary Main Headline */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div className="relative">
                 <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.85] tracking-tight">
-                  <span className="block text-white mb-4 drop-shadow-2xl">
+                  <span className="block text-white mb-3 drop-shadow-2xl">
                     Transform Your
                   </span>
-                  <span className="block bg-gradient-to-r from-emerald-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-4 filter drop-shadow-lg">
+                  <span className="block bg-gradient-to-r from-emerald-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-3 filter drop-shadow-lg">
                     Agriculture
                   </span>
                   <span className="block text-emerald-100 text-4xl md:text-5xl lg:text-6xl font-bold drop-shadow-xl">
