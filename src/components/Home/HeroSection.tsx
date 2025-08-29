@@ -67,16 +67,16 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 dark:from-slate-900 dark:via-blue-950 dark:to-emerald-950">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-100 via-blue-100 to-emerald-100 dark:from-slate-900 dark:via-blue-950 dark:to-emerald-950">
       {/* Enhanced Background with Professional Irrigation Photo */}
       <div className="absolute inset-0">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 dark:opacity-15"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50 dark:opacity-25"
           style={{ backgroundImage: `url(https://images.unsplash.com/photo-1574943320219-553eb213f72d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)` }}
         />
         {/* Professional overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-800/80 to-emerald-900/85 dark:from-slate-900/90 dark:via-slate-800/85 dark:to-emerald-950/90" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/75 via-slate-800/70 to-emerald-900/75 dark:from-slate-900/90 dark:via-slate-800/85 dark:to-emerald-950/90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
         
         {/* Animated gradient mesh */}
         <div 
