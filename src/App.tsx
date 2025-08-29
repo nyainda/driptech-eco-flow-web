@@ -27,6 +27,9 @@ import VideoSection from "./components/Home/VideoSection";
 import VisitorTracker from "./components/Analytics/VisitorTracker";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import DiscountBanner from "@/components/common/DiscountBanner";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Cookies from "./pages/Cookies";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +79,11 @@ const App = () => (
             {/* Video section */}
             <Route path="/video" element={<VideoSection />} />
             <Route path="/videos" element={<VideosPage />} />
+
+            {/* Legal pages */}
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/cookies" element={<Cookies />} />
 
             {/* Catch-all route for 404 */}
             <Route path="*" element={<NotFound />} />
