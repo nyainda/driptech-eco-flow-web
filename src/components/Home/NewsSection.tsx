@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Calendar, Clock, ArrowRight, Newspaper, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
-import SectionHeader from "@/components/common/SectionHeader";
+import { SectionHeader } from "@/components/common/SectionHeader";
 
 interface NewsArticle {
   id: string;
