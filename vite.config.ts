@@ -19,8 +19,11 @@ export default defineConfig(async ({ mode }) => {
   
   return {
     server: {
-      host: "::",
-      port: 8080,
+      host: "0.0.0.0",
+      port: 5000,
+      hmr: {
+        clientPort: 443
+      }
     },
     plugins,
     resolve: {
