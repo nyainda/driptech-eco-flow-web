@@ -71,14 +71,26 @@ const ServicesSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <Badge variant="secondary" className="mb-4">
-            🚀 Our Services
-          </Badge>
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
-            Complete Irrigation Solutions
+    <section className="py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-blue-950/50 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-emerald-500/5 to-blue-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-full blur-3xl"></div>
+      </div>
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 mb-6">
+            <Badge variant="secondary" className="px-4 py-2 text-sm font-medium bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+              <Droplets className="w-4 h-4 mr-2" />
+              Our Services
+            </Badge>
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-slate-900 dark:text-white leading-tight">
+            Complete 
+            <span className="block bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Irrigation Solutions
+            </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             From initial consultation to ongoing maintenance, we provide end-to-end irrigation services 

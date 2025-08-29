@@ -596,23 +596,29 @@ const ProductsShowcase = () => {
   };
 
   return (
-    <section className="py-24 bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
-      {/* Background decorative elements */}
+    <section className="py-32 bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-emerald-950/30 relative overflow-hidden">
+      {/* Enhanced Background decorative elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-violet-500/3 to-cyan-500/3 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_49%,rgba(59,130,246,0.03)_49%,rgba(59,130,246,0.03)_51%,transparent_51%)] bg-[length:40px_40px]"></div>
+        <div className="absolute top-32 left-16 w-80 h-80 bg-gradient-to-br from-emerald-500/8 to-blue-500/8 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-32 right-16 w-96 h-96 bg-gradient-to-br from-blue-500/8 to-cyan-500/8 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-gradient-to-br from-violet-500/5 to-pink-500/5 rounded-full blur-2xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        {/* Enhanced Header */}
-        <div className="text-center max-w-4xl mx-auto mb-20">
-          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium bg-primary/10 text-primary border-primary/20">
-            🚀 Product Innovation
-          </Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-tight">
-            Complete Irrigation
-            <span className="bg-gradient-to-r from-primary via-blue-600 to-emerald-600 bg-clip-text text-transparent"> Solutions</span>
+        {/* Enhanced Header with Better Typography */}
+        <div className="text-center max-w-5xl mx-auto mb-24">
+          <div className="inline-flex items-center gap-2 mb-8">
+            <Badge variant="secondary" className="px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-950 dark:to-blue-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 rounded-full">
+              <Package className="w-4 h-4 mr-2" />
+              Product Innovation
+            </Badge>
+          </div>
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-8 leading-[0.9] tracking-tight">
+            <span className="block mb-2">Complete</span>
+            <span className="block bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Irrigation Solutions
+            </span>
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             From precision drip systems to intelligent controls, we provide everything you need for efficient, sustainable irrigation that transforms agriculture.

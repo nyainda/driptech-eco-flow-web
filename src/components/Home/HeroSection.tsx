@@ -67,16 +67,16 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background Image */}
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 dark:from-slate-900 dark:via-blue-950 dark:to-emerald-950">
+      {/* Enhanced Background with Multiple Layers */}
       <div className="absolute inset-0">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 dark:opacity-10"
           style={{ backgroundImage: `url(https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)` }}
         />
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/70" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
+        {/* Improved gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-blue-50/90 to-emerald-50/95 dark:from-slate-900/95 dark:via-blue-950/90 dark:to-emerald-950/95" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent dark:from-slate-900/80" />
         
         {/* Animated gradient mesh */}
         <div 
@@ -130,24 +130,31 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Main Headline */}
-            <div className="space-y-6">
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
-                <span className="bg-gradient-to-r from-white via-green-200 to-green-400 bg-clip-text text-transparent">
-                  Transform
-                </span>
-                <br />
-                <span className="text-white">Your Farm</span>
-                <br />
-                <span className="bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">
-                  Today
-                </span>
-              </h1>
+            {/* Enhanced Main Headline */}
+            <div className="space-y-8">
+              <div className="relative">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight">
+                  <span className="block text-slate-900 dark:text-white mb-2">
+                    Transform Your
+                  </span>
+                  <span className="block bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+                    Agriculture
+                  </span>
+                  <span className="block text-slate-700 dark:text-slate-300 text-4xl md:text-5xl lg:text-6xl">
+                    With Smart Irrigation
+                  </span>
+                </h1>
+                
+                {/* Decorative elements */}
+                <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-br from-emerald-400/20 to-blue-400/20 rounded-full blur-xl dark:from-emerald-400/10 dark:to-blue-400/10"></div>
+                <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-lg dark:from-blue-400/10 dark:to-cyan-400/10"></div>
+              </div>
               
-              <p className="text-xl md:text-2xl text-gray-200 leading-relaxed max-w-2xl font-light">
-                Modern drip irrigation systems that boost your yields while cutting water costs. 
-                <span className="text-green-400 font-bold"> Fast installation</span>, 
-                <span className="text-blue-400 font-bold"> affordable prices</span>, and reliable service across Kenya.
+              <p className="text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl font-medium">
+                Revolutionary drip irrigation technology that increases yields by 
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold"> 40-60%</span> while reducing water usage by 
+                <span className="text-blue-600 dark:text-blue-400 font-bold"> up to 50%</span>. 
+                Professional installation and nationwide support across Kenya.
               </p>
             </div>
 
@@ -168,22 +175,24 @@ const HeroSection = () => {
               ))}
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            {/* Enhanced CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <button 
                 onClick={() => makePhoneCall(whatsappNumbers.primary)}
-                className="group bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold px-8 py-6 rounded-2xl shadow-2xl hover:shadow-green-500/25 transition-all duration-300 hover:scale-105 text-lg flex items-center justify-center cursor-pointer"
+                className="group relative bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-bold px-10 py-5 rounded-2xl shadow-2xl hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-105 hover:-translate-y-1 text-lg flex items-center justify-center cursor-pointer overflow-hidden"
               >
-                <Phone className="mr-3 h-5 w-5" />
-                Call: 0111 409 454
-                <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Phone className="mr-3 h-5 w-5 relative z-10" />
+                <span className="relative z-10">Call: 0111 409 454</span>
+                <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform relative z-10" />
               </button>
               
               <button 
                 onClick={() => openWhatsApp(whatsappNumbers.primary)}
-                className="bg-gradient-to-r from-green-600 to-green-700 border-green-500 text-white hover:bg-green-500 hover:text-white backdrop-blur-sm px-8 py-6 rounded-2xl font-semibold text-lg border hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="group relative bg-white/10 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-emerald-600/30 dark:border-emerald-400/30 text-slate-800 dark:text-white hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:border-emerald-600 dark:hover:border-emerald-400 px-10 py-5 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer"
               >
-                💬 WhatsApp Us
+                <span className="mr-3 text-2xl">💬</span>
+                WhatsApp Us
               </button>
             </div>
 

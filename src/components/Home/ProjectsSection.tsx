@@ -149,19 +149,27 @@ const ProjectsSection = () => {
   }
 
   return (
-    <section className="py-24 bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge 
-            variant="secondary" 
-            className="mb-4 px-4 py-1.5 text-sm font-medium bg-primary/10 text-primary border-primary/20"
-          >
-            🏗️ Featured Projects
-          </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight">
-            Empowering Kenyan Farms,
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60"> Transforming Global Agriculture</span>
+    <section className="py-32 bg-gradient-to-br from-slate-50 via-blue-50/30 to-emerald-50/50 dark:from-slate-900 dark:via-blue-950/30 dark:to-emerald-950/50 relative">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.1),transparent_70%)] dark:bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.05),transparent_70%)]"></div>
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Enhanced Header */}
+        <div className="text-center max-w-4xl mx-auto mb-20">
+          <div className="inline-flex items-center gap-2 mb-8">
+            <Badge 
+              variant="secondary" 
+              className="px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-blue-100 to-emerald-100 dark:from-blue-950 dark:to-emerald-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 rounded-full"
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Featured Projects
+            </Badge>
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-8 leading-tight tracking-tight">
+            <span className="block mb-2">Empowering Kenyan Farms,</span>
+            <span className="block bg-gradient-to-r from-blue-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">
+              Transforming Agriculture
+            </span>
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             Discover how our innovative irrigation solutions, rooted in Kenyan expertise, enable farmers and businesses to thrive sustainably.

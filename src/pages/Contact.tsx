@@ -2,7 +2,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe, ArrowRight, CheckCircle, Star } from "lucide-react";
 import SimpleContactForm from "@/components/common/SimpleContactForm";
 
 const Contact = () => {
@@ -48,34 +48,48 @@ const Contact = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-blue-950/30">
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
-          <div className="container mx-auto px-4 text-center">
-            <Badge variant="secondary" className="mb-4">
-              🇰🇪 Contact Us - Kenya
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Get in
-              <span className="text-primary"> Touch</span>
+        {/* Enhanced Hero Section */}
+        <section className="py-32 bg-gradient-to-br from-emerald-50 via-blue-50/50 to-cyan-50/30 dark:from-emerald-950/20 dark:via-blue-950/30 dark:to-cyan-950/20 relative overflow-hidden">
+          {/* Background decorations */}
+          <div className="absolute inset-0">
+            <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-emerald-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl"></div>
+          </div>
+
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <div className="inline-flex items-center gap-2 mb-8">
+              <Badge variant="secondary" className="px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-950 dark:to-blue-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 rounded-full">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Get In Touch
+              </Badge>
+            </div>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-8 leading-tight tracking-tight">
+              <span className="block mb-2">Contact Our</span>
+              <span className="block bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                Irrigation Experts
+              </span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Ready to transform your irrigation system? Contact our experts for a free consultation and custom quote.
+            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed">
+              Ready to transform your farm with modern irrigation? Our team is here to help you design,
+              install, and maintain the perfect irrigation solution for your needs.
             </p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span>50+ Projects Completed</span>
+
+            {/* Quick stats */}
+            <div className="flex flex-wrap justify-center gap-8 mt-12">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                <CheckCircle className="w-5 h-5 text-emerald-600" />
+                <span className="font-medium">24/7 Support</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                <span>Serving All of Kenya</span>
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                <Star className="w-5 h-5 text-yellow-500" />
+                <span className="font-medium">500+ Happy Customers</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                <span>Quick Response Time</span>
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                <Zap className="w-5 h-5 text-blue-600" />
+                <span className="font-medium">Fast Response Time</span>
               </div>
             </div>
           </div>
@@ -87,23 +101,23 @@ const Contact = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Form */}
               <div>
-                <h2 className="text-3xl font-bold mb-6">Send us a Message</h2>
+                <h2 className="text-3xl font-bold mb-6 text-slate-800 dark:text-white">Send us a Message</h2>
                 <SimpleContactForm />
               </div>
 
               {/* Contact Information */}
               <div>
-                <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
+                <h2 className="text-3xl font-bold mb-6 text-slate-800 dark:text-white">Contact Information</h2>
                 <div className="space-y-6">
                   {contactInfo.map((info, index) => (
-                    <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                    <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-transparent hover:border-primary/30">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
                           <div className="p-3 bg-primary/10 rounded-xl transition-all duration-300 group-hover:bg-primary/20">
                             <info.icon className="h-6 w-6 text-primary" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg mb-1">{info.title}</h3>
+                            <h3 className="font-semibold text-lg mb-1 text-slate-800 dark:text-slate-200">{info.title}</h3>
                             <p className="text-sm text-muted-foreground mb-3">{info.subtitle}</p>
                             <div className="space-y-1 mb-4">
                               {info.details.map((detail, idx) => (
@@ -113,13 +127,13 @@ const Contact = () => {
                               ))}
                             </div>
                             {info.action && (
-                              <a 
+                              <a
                                 href={info.action}
                                 target={info.action.startsWith('http') ? '_blank' : '_self'}
                                 rel={info.action.startsWith('http') ? 'noopener noreferrer' : undefined}
                                 className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
                               >
-                                {info.actionText} →
+                                {info.actionText} <ArrowRight className="h-4 w-4 ml-1" />
                               </a>
                             )}
                           </div>
@@ -130,19 +144,19 @@ const Contact = () => {
                 </div>
 
                 {/* Business Hours Card */}
-                <Card className="mt-6">
+                <Card className="mt-6 border-transparent hover:border-primary/30">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-3 bg-primary/10 rounded-xl">
                         <Clock className="h-6 w-6 text-primary" />
                       </div>
-                      <h3 className="font-semibold text-lg">Business Hours</h3>
+                      <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-200">Business Hours</h3>
                     </div>
                     <div className="space-y-2">
                       {businessHours.map((schedule, idx) => (
-                        <div key={idx} className="flex justify-between items-center">
-                          <span className="text-muted-foreground">{schedule.day}</span>
-                          <span className="font-medium">{schedule.hours}</span>
+                        <div key={idx} className="flex justify-between items-center text-muted-foreground">
+                          <span>{schedule.day}</span>
+                          <span className="font-medium text-slate-700 dark:text-slate-300">{schedule.hours}</span>
                         </div>
                       ))}
                     </div>
@@ -154,13 +168,13 @@ const Contact = () => {
             {/* Map Section */}
             <div className="mt-16">
               <div className="mb-8 text-center">
-                <h2 className="text-3xl font-bold mb-4">Find Us in Kenya</h2>
+                <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">Find Us in Kenya</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Located in Nairobi, Kenya's capital city. We serve irrigation projects across Kenya.
                 </p>
               </div>
-              
-              <Card className="overflow-hidden">
+
+              <Card className="overflow-hidden border-primary/20">
                 <CardContent className="p-0">
                   <div className="aspect-video relative">
                     <iframe
@@ -174,15 +188,15 @@ const Contact = () => {
                       title="DripTech Kenya Location - Nairobi, Kenya"
                       className="rounded-lg"
                     ></iframe>
-                    
+
                     {/* Map Overlay */}
-                    <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-sm border">
+                    <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-sm border border-primary/10">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-primary/10 rounded-lg">
                           <MapPin className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <h4 className="font-bold">DripTech Kenya</h4>
+                          <h4 className="font-bold text-slate-800 dark:text-slate-200">DripTech Kenya</h4>
                           <p className="text-sm text-muted-foreground">Irrigation Solutions</p>
                         </div>
                       </div>
@@ -191,21 +205,21 @@ const Contact = () => {
                         East Africa
                       </p>
                       <div className="flex gap-2">
-                        <a 
-                          href="https://goo.gl/maps/nairobi-kenya" 
-                          target="_blank" 
+                        <a
+                          href="https://goo.gl/maps/nairobi-kenya"
+                          target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full hover:bg-primary/90 transition-colors"
+                          className="inline-flex items-center text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full hover:bg-primary/90 transition-colors"
                         >
-                          Get Directions
+                          Get Directions <ArrowRight className="h-3 w-3 ml-1" />
                         </a>
-                        <a 
+                        <a
                           href="https://wa.me/254111409454?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
                           target="_blank"
-                          rel="noopener noreferrer" 
-                          className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full hover:bg-secondary/90 transition-colors"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full hover:bg-secondary/90 transition-colors"
                         >
-                          WhatsApp Us
+                          WhatsApp Us <ArrowRight className="h-3 w-3 ml-1" />
                         </a>
                       </div>
                     </div>
