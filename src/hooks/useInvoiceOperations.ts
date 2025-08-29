@@ -302,9 +302,242 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
     }
   };
 
+  // Print invoice function
+  const printInvoice = async (invoice: Invoice) => {
+    try {
+      // Create enhanced invoice content with modern design (same as PDF but for printing)
+      const content = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Invoice ${invoice.invoice_number}</title>
+          <style>
+            * { box-sizing: border-box; }
+            body { 
+              font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+              margin: 0; padding: 20px; background: white;
+              font-size: 14px; line-height: 1.4; color: #1f2937;
+            }
+            @media print {
+              body { padding: 0; }
+              @page { margin: 15mm; }
+            }
+            .header { 
+              background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+              color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px;
+              position: relative; overflow: hidden;
+            }
+            .header::before {
+              content: ''; position: absolute; top: -50%; right: -50%;
+              width: 200%; height: 200%; opacity: 0.1;
+              background: radial-gradient(circle, white 0%, transparent 70%);
+            }
+            .header-content { position: relative; z-index: 1; }
+            .company-info { display: flex; align-items: center; gap: 15px; }
+            .logo { 
+              width: 60px; height: 60px; background: rgba(255,255,255,0.2);
+              border: 2px solid rgba(255,255,255,0.3); border-radius: 12px;
+              display: flex; align-items: center; justify-content: center;
+              font-weight: 900; font-size: 20px;
+            }
+            .company-details h1 { margin: 0 0 5px 0; font-size: 24px; font-weight: 800; }
+            .company-details p { margin: 2px 0; opacity: 0.9; font-size: 12px; }
+            .invoice-info { 
+              text-align: right; background: rgba(255,255,255,0.15);
+              padding: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+            }
+            .invoice-info h2 { margin: 0 0 15px 0; font-size: 28px; font-weight: 900; }
+            .invoice-info div { margin: 8px 0; font-weight: 500; }
+            .billing-section { 
+              display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+              margin-bottom: 30px;
+            }
+            .billing-box { 
+              background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+              border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px;
+            }
+            .billing-box h3 { 
+              color: #1e40af; margin: 0 0 15px 0; font-weight: 700;
+              border-bottom: 2px solid #3b82f6; padding-bottom: 8px; display: inline-block;
+            }
+            .items-table { 
+              width: 100%; border-collapse: collapse; margin: 20px 0;
+              background: white; border-radius: 12px; overflow: hidden;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .items-table thead { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
+            .items-table th { 
+              color: white; padding: 15px; text-align: left; font-weight: 700;
+              text-transform: uppercase; font-size: 12px; letter-spacing: 1px;
+            }
+            .items-table td { 
+              padding: 15px; border-bottom: 1px solid #e5e7eb; 
+              color: #374151; font-size: 14px;
+            }
+            .items-table tr:nth-child(even) { background: #f9fafb; }
+            .items-table tr:last-child td { border-bottom: none; }
+            .totals-section { 
+              max-width: 400px; margin: 30px 0 0 auto;
+              background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+              border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;
+            }
+            .totals-row { 
+              display: flex; justify-content: space-between; padding: 12px 20px;
+              border-bottom: 1px solid #e5e7eb;
+            }
+            .totals-row:last-child { 
+              background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+              color: white; font-weight: 700; border-bottom: none;
+            }
+            .totals-label { flex: 1; font-weight: 500; }
+            .totals-value { font-weight: 600; text-align: right; }
+            .notes-section { 
+              background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+              border: 1px solid #f59e0b; border-radius: 12px; padding: 20px; margin: 30px 0;
+            }
+            .notes-section h3 { 
+              color: #92400e; margin: 0 0 10px 0; font-weight: 700;
+            }
+            .notes-section p { color: #92400e; margin: 0; line-height: 1.6; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="header-content">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div class="company-info">
+                  <div class="logo">DT</div>
+                  <div class="company-details">
+                    <h1>DripTech Solutions</h1>
+                    <p>Smart Irrigation Systems</p>
+                    <p>📍 P.O. Box 12345, Nairobi, Kenya</p>
+                    <p>📞 0111409454 / 0114575401</p>
+                    <p>✉️ driptech2025@gmail.com</p>
+                  </div>
+                </div>
+                <div class="invoice-info">
+                  <h2>INVOICE</h2>
+                  <div><strong>Invoice #:</strong> ${invoice.invoice_number}</div>
+                  <div><strong>Issue Date:</strong> ${new Date(invoice.issue_date).toLocaleDateString('en-GB')}</div>
+                  <div><strong>Due Date:</strong> ${new Date(invoice.due_date).toLocaleDateString('en-GB')}</div>
+                  ${invoice.payment_terms ? `<div><strong>Terms:</strong> ${invoice.payment_terms}</div>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="billing-section">
+            <div class="billing-box">
+              <h3>📍 Bill From</h3>
+              <div>
+                <strong>DripTech Solutions</strong><br>
+                P.O. Box 12345, Nairobi, Kenya<br>
+                📞 0111409454 / 0114575401<br>
+                ✉️ driptech2025@gmail.com
+              </div>
+            </div>
+            <div class="billing-box">
+              <h3>👤 Bill To</h3>
+              <div>
+                ${invoice.customer?.company_name ? `<strong>${invoice.customer.company_name}</strong><br>` : ''}
+                ${invoice.customer?.contact_person || 'N/A'}<br>
+                ${invoice.customer?.address || 'N/A'}<br>
+                ${invoice.customer?.city || 'N/A'}, ${invoice.customer?.country || 'N/A'}<br>
+                📞 ${invoice.customer?.phone || 'N/A'}<br>
+                ✉️ ${invoice.customer?.email || 'N/A'}
+              </div>
+            </div>
+          </div>
+
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th style="width: 5%">#</th>
+                <th style="width: 25%">Item/Service</th>
+                <th style="width: 35%">Description</th>
+                <th style="width: 8%">Qty</th>
+                <th style="width: 12%">Unit Price</th>
+                <th style="width: 15%">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${invoice.invoice_items?.map((item, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td><strong>${item.name}</strong></td>
+                  <td>${item.description || 'N/A'}</td>
+                  <td>${item.quantity}</td>
+                  <td>KES ${item.unit_price.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+                  <td><strong>KES ${item.total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</strong></td>
+                </tr>
+              `).join('') || '<tr><td colspan="6">No items found</td></tr>'}
+            </tbody>
+          </table>
+
+          <div class="totals-section">
+            <div class="totals-row">
+              <span class="totals-label">Subtotal:</span>
+              <span class="totals-value">KES ${(invoice.total_amount - (invoice.total_amount * (invoice.tax_rate / 100)) + (invoice.discount_amount || 0)).toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+            </div>
+            ${invoice.discount_amount ? `
+            <div class="totals-row">
+              <span class="totals-label">Discount:</span>
+              <span class="totals-value">-KES ${invoice.discount_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+            </div>
+            ` : ''}
+            ${invoice.tax_rate ? `
+            <div class="totals-row">
+              <span class="totals-label">Tax (${invoice.tax_rate}%):</span>
+              <span class="totals-value">KES ${(invoice.total_amount * (invoice.tax_rate / 100)).toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+            </div>
+            ` : ''}
+            <div class="totals-row">
+              <span class="totals-label">Total Amount:</span>
+              <span class="totals-value">KES ${invoice.total_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+
+          ${invoice.notes ? `
+          <div class="notes-section">
+            <h3>📝 Additional Notes</h3>
+            <p>${invoice.notes}</p>
+          </div>
+          ` : ''}
+
+          <div style="margin-top: 40px; text-align: center; color: #6b7280; font-size: 12px;">
+            <p><strong>Thank you for your business!</strong></p>
+            <p>For any questions regarding this invoice, please contact us at driptech2025@gmail.com</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Open print window
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        throw new Error('Failed to open print window');
+      }
+
+      // Write content and print
+      printWindow.document.write(content);
+      printWindow.document.close();
+      
+      // Wait for content to load then print
+      printWindow.onload = () => {
+        printWindow.print();
+        printWindow.close();
+      };
+
+    } catch (error) {
+      console.error('Error printing invoice:', error);
+    }
+  };
+
   return {
     updateInvoiceStatus,
     deleteInvoice,
-    downloadInvoicePDF
+    downloadInvoicePDF,
+    printInvoice
   };
 };

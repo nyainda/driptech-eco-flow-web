@@ -1,6 +1,7 @@
 // InvoiceManagementSystem.tsx
 import React, { useState, useEffect } from 'react';
 import { Plus, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Invoice } from '../types/InvoiceTypes';
 import { useInvoiceData } from '@/hooks/useInvoiceData';
 import { useInvoiceOperations } from '@/hooks/useInvoiceOperations';
@@ -33,7 +34,8 @@ const InvoiceManagementSystem = () => {
   const {
     updateInvoiceStatus,
     deleteInvoice,
-    downloadInvoicePDF
+    downloadInvoicePDF,
+    printInvoice
   } = useInvoiceOperations(loadInvoices);
 
   useEffect(() => {
@@ -92,33 +94,45 @@ const InvoiceManagementSystem = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Invoice Management
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Manage your customer invoices and payments
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg flex items-center gap-2 transition-colors text-sm sm:text-base"
-              >
-                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Create Invoice</span>
-                <span className="sm:hidden">Create</span>
-              </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-purple-950/20 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Enhanced Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 via-violet-500 to-indigo-500 p-8 text-white shadow-2xl">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-4 left-4 w-3 h-3 bg-white rounded-full animate-pulse"></div>
+            <div className="absolute top-12 right-16 w-2 h-2 bg-white rounded-full animate-pulse delay-100"></div>
+            <div className="absolute bottom-8 left-12 w-2 h-2 bg-white rounded-full animate-pulse delay-200"></div>
+            <div className="absolute bottom-16 right-8 w-4 h-4 bg-white rounded-full animate-pulse delay-300"></div>
+          </div>
+          <div className="relative z-10">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div className="flex items-center gap-6">
+                <div className="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-3xl font-black border-2 border-white border-opacity-30 shadow-lg">
+                  📋
+                </div>
+                <div>
+                  <h1 className="text-4xl font-black mb-2 tracking-tight">Invoice Management</h1>
+                  <p className="text-purple-100 text-lg font-medium opacity-90">Manage customer invoices and payments</p>
+                  <div className="flex items-center gap-4 mt-3 text-purple-200">
+                    <span className="text-sm">📊 Total Invoices: {stats.totalInvoices}</span>
+                    <span className="text-sm">💰 Outstanding: KES {stats.totalOutstanding.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={() => setShowCreateModal(true)}
+                  className="bg-white bg-opacity-20 backdrop-blur-sm hover:bg-opacity-30 text-white border-2 border-white border-opacity-30 hover:border-opacity-50 px-8 py-4 rounded-xl font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <Plus className="h-5 w-5 mr-3" />
+                  Create New Invoice
+                </Button>
+              </div>
             </div>
           </div>
-
-          <StatsCards stats={stats} />
         </div>
+
+        <StatsCards stats={stats} />
 
         <FiltersSection
           searchTerm={searchTerm}
@@ -147,6 +161,7 @@ const InvoiceManagementSystem = () => {
             invoice={selectedInvoice}
             onClose={() => setShowInvoiceModal(false)}
             onDownloadPDF={downloadInvoicePDF}
+            onPrintInvoice={printInvoice}
             onUpdateStatus={updateInvoiceStatus}
           />
         )}

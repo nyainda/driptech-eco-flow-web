@@ -9,6 +9,7 @@ interface InvoiceModalProps {
   invoice: Invoice;
   onClose: () => void;
   onDownloadPDF: (invoice: Invoice) => void;
+  onPrintInvoice?: (invoice: Invoice) => void;
   onUpdateStatus: (invoiceId: string, status: string) => void;
 }
 
@@ -24,6 +25,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
   invoice,
   onClose,
   onDownloadPDF,
+  onPrintInvoice,
   onUpdateStatus
 }) => {
   return (
@@ -192,11 +194,22 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
             </button>
 
             <button
-              onClick={() => console.log('Print invoice:', invoice.id)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => onPrintInvoice?.(invoice)}
+              className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-gray-600 via-gray-700 to-slate-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl hover:from-gray-700 hover:via-gray-800 hover:to-slate-700 transform hover:scale-105 transition-all duration-200 group overflow-hidden"
             >
-              <Printer className="w-4 h-4" />
-              Print
+              {/* Animated background effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-all duration-700 ease-out"></div>
+              
+              {/* Printer icon */}
+              <Printer className="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-200" />
+              
+              {/* Button text */}
+              <span className="relative z-10 text-sm font-semibold tracking-wide">
+                Print Invoice
+              </span>
+              
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gray-400 to-slate-400 opacity-0 group-hover:opacity-30 blur transition-opacity duration-200"></div>
             </button>
             {invoice.status === 'draft' && (
               <button

@@ -1017,71 +1017,193 @@ const QuoteManagement = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Quote Management</h2>
-          <p className="text-muted-foreground">Create and manage quotes</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/20 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Enhanced Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-8 text-white shadow-2xl">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-4 left-4 w-3 h-3 bg-white rounded-full animate-pulse"></div>
+            <div className="absolute top-12 right-16 w-2 h-2 bg-white rounded-full animate-pulse delay-100"></div>
+            <div className="absolute bottom-8 left-12 w-2 h-2 bg-white rounded-full animate-pulse delay-200"></div>
+            <div className="absolute bottom-16 right-8 w-4 h-4 bg-white rounded-full animate-pulse delay-300"></div>
+          </div>
+          <div className="relative z-10">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div className="flex items-center gap-6">
+                <div className="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-3xl font-black border-2 border-white border-opacity-30 shadow-lg">
+                  📄
+                </div>
+                <div>
+                  <h1 className="text-4xl font-black mb-2 tracking-tight">Quote Management</h1>
+                  <p className="text-blue-100 text-lg font-medium opacity-90">Create and manage professional quotes</p>
+                  <div className="flex items-center gap-4 mt-3 text-blue-200">
+                    <span className="text-sm">📊 Total Quotes: {quotes.length}</span>
+                    <span className="text-sm">⚡ Active System</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  onClick={handleNewQuote}
+                  className="bg-white bg-opacity-20 backdrop-blur-sm hover:bg-opacity-30 text-white border-2 border-white border-opacity-30 hover:border-opacity-50 px-8 py-4 rounded-xl font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <Plus className="h-5 w-5 mr-3" />
+                  Create New Quote
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
-        <Button onClick={handleNewQuote}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Quote
-        </Button>
-      </div>
 
-      <div className="grid gap-6">
-        {quotesLoading ? (
-          <div>Loading quotes...</div>
-        ) : (
-          quotes.map((quote) => (
-            <Card key={quote.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{quote.quote_number}</CardTitle>
-                    <CardDescription className="mt-2">
-                      Project Type: {quote.project_type || 'N/A'} | Crop Type: {quote.crop_type || 'N/A'}
-                    </CardDescription>
-                    {quote.total_amount && (
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="text-lg font-semibold text-green-600">
-                          KES {quote.total_amount.toLocaleString()}
-                        </span>
-                        <Badge variant="outline" className="text-xs">
-                          {quote.include_vat ? `Incl. VAT (${quote.vat_rate || 16}%)` : 'Excl. VAT'}
-                        </Badge>
+        {/* Enhanced Quote Cards Grid */}
+        <div className="grid gap-8">
+          {quotesLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-center">
+                <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">Loading quotes...</p>
+              </div>
+            </div>
+          ) : quotes.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Plus className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No quotes yet</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">Create your first quote to get started</p>
+              <Button onClick={handleNewQuote} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Create First Quote
+              </Button>
+            </div>
+          ) : (
+            quotes.map((quote) => (
+              <Card key={quote.id} className="group relative overflow-hidden border-0 bg-gradient-to-br from-white via-gray-50/50 to-blue-50/30 dark:from-gray-800 dark:via-gray-700/50 dark:to-blue-900/20 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <CardHeader className="relative z-10 pb-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                        {quote.quote_number.split('-')[1] || 'Q'}
                       </div>
-                    )}
-                    <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-                      <span>Created: {new Date(quote.created_at).toLocaleDateString()}</span>
-                      <span>Valid Until: {quote.valid_until ? new Date(quote.valid_until).toLocaleDateString() : 'N/A'}</span>
-                      {quote.customer_id && (
-                        <span>Customer: {customers.find(c => c.id === quote.customer_id)?.company_name || 'Unknown'}</span>
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+                            {quote.quote_number}
+                          </CardTitle>
+                          <Badge 
+                            variant="secondary" 
+                            className={`px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                              quote.status === 'draft' 
+                                ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' 
+                                : quote.status === 'sent'
+                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                                : quote.status === 'accepted'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                                : quote.status === 'rejected'
+                                ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
+                            }`}
+                          >
+                            {quote.status}
+                          </Badge>
+                        </div>
+                        
+                        {/* Project Details */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                          {quote.project_type && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-blue-600 font-medium">🚿 Project:</span>
+                              <span className="text-gray-700 dark:text-gray-300 font-medium">{quote.project_type}</span>
+                            </div>
+                          )}
+                          {quote.crop_type && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-green-600 font-medium">🌱 Crop:</span>
+                              <span className="text-gray-700 dark:text-gray-300 font-medium">{quote.crop_type}</span>
+                            </div>
+                          )}
+                          {quote.area_size && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-orange-600 font-medium">📏 Area:</span>
+                              <span className="text-gray-700 dark:text-gray-300 font-medium">{quote.area_size} acres</span>
+                            </div>
+                          )}
+                          {quote.customer_id && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-purple-600 font-medium">👤 Customer:</span>
+                              <span className="text-gray-700 dark:text-gray-300 font-medium truncate">
+                                {customers.find(c => c.id === quote.customer_id)?.company_name || 'Unknown'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Amount and VAT */}
+                        {quote.total_amount && (
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 px-4 py-2 rounded-lg border border-green-200 dark:border-green-800">
+                              <span className="text-2xl font-black text-green-700 dark:text-green-400">
+                                KES {quote.total_amount.toLocaleString()}
+                              </span>
+                            </div>
+                            <Badge variant="outline" className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-xs font-semibold">
+                              {quote.include_vat ? `Incl. VAT (${quote.vat_rate || 16}%)` : 'Excl. VAT'}
+                            </Badge>
+                          </div>
+                        )}
+
+                        {/* Dates */}
+                        <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center gap-2">
+                            <span className="opacity-70">📅</span>
+                            <span>Created: {new Date(quote.created_at).toLocaleDateString('en-GB')}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="opacity-70">⏰</span>
+                            <span>Valid Until: {quote.valid_until ? new Date(quote.valid_until).toLocaleDateString('en-GB') : 'N/A'}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <Badge variant="secondary">{quote.status}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-end gap-2">
-                  <Button size="sm" variant="outline" onClick={() => handleViewPDF(quote)}>
-                    <Eye className="h-4 w-4 mr-1" />
-                    View
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleEditQuote(quote)}>
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleDeleteQuote(quote.id)} disabled={deleteQuoteMutation.isPending}>
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
+                </CardHeader>
+                <CardContent className="relative z-10 pt-0">
+                  <div className="flex flex-wrap justify-end gap-3">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleViewPDF(quote)}
+                      className="bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:border-blue-300 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400 font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View PDF
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleEditQuote(quote)}
+                      className="bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-700 hover:border-amber-300 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400 font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleDeleteQuote(quote.id)} 
+                      disabled={deleteQuoteMutation.isPending}
+                      className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:border-red-300 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:border-red-800 dark:text-red-400 font-semibold shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      {deleteQuoteMutation.isPending ? 'Deleting...' : 'Delete'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
