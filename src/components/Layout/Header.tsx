@@ -488,16 +488,16 @@ const Header = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[85vw] max-w-sm p-0 bg-background/95 backdrop-blur-xl border-l">
+              <SheetContent side="right" className="w-[90vw] max-w-md p-0 bg-background/98 backdrop-blur-xl border-l shadow-2xl">
                 <div className="flex flex-col h-full">
                   {/* Mobile Header */}
-                  <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5">
+                  <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm">
-                        <Droplets className="h-4 w-4 text-white" />
+                      <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                        <Droplets className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <span className="font-bold text-foreground text-lg">DripTech</span>
+                        <span className="font-bold text-foreground text-xl">DripTech</span>
                         <p className="text-xs text-muted-foreground">Irrigation Solutions</p>
                       </div>
                     </div>
@@ -505,66 +505,67 @@ const Header = () => {
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="h-8 w-8 rounded-lg hover:bg-muted/50"
+                      className="h-9 w-9 rounded-xl hover:bg-muted/50 transition-colors"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-5 w-5" />
                     </Button>
                   </div>
 
                   {/* Scrollable Content */}
-                  <div className="flex-1 overflow-y-auto">
-                    <div className="p-6 space-y-8">
+                  <div className="flex-1 overflow-y-auto scrollbar-thin">
+                    <div className="p-4 space-y-6">
                       {/* Enhanced Mobile Banner with navigation */}
                       {visibleBanners.length > 0 && (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           {hasMultipleBanners && (
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between px-1">
                               <span className="text-sm font-medium text-muted-foreground">
                                 Active Offers ({visibleBanners.length})
                               </span>
-                              <div className="flex items-center gap-2">
-                                <button
+                              <div className="flex items-center gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
                                   onClick={handlePrevBanner}
-                                  className="p-2 rounded-lg hover:bg-muted/50 transition-colors touch-target"
+                                  className="h-8 w-8 p-0 rounded-lg hover:bg-muted/50"
                                 >
                                   <ChevronLeft className="h-4 w-4" />
-                                </button>
-                                <span className="text-xs px-2 py-1 bg-muted rounded-md font-medium">
+                                </Button>
+                                <span className="text-xs px-2 py-1 bg-muted rounded-md font-medium min-w-[3rem] text-center">
                                   {currentBannerIndex + 1}/{visibleBanners.length}
                                 </span>
-                                <button
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
                                   onClick={handleNextBanner}
-                                  className="p-2 rounded-lg hover:bg-muted/50 transition-colors touch-target"
+                                  className="h-8 w-8 p-0 rounded-lg hover:bg-muted/50"
                                 >
                                   <ChevronRight className="h-4 w-4" />
-                                </button>
+                                </Button>
                               </div>
                             </div>
                           )}
                           
-                          <div className={`p-5 rounded-xl transition-all duration-500 shadow-lg ${
+                          <div className={`p-4 rounded-xl transition-all duration-500 shadow-lg border ${
                             isExpiringSoon(currentBanner?.valid_until)
-                              ? 'bg-gradient-to-br from-orange-500 via-red-500 to-red-600'
-                              : 'bg-gradient-to-br from-primary via-primary to-primary/80'
+                              ? 'bg-gradient-to-br from-orange-500/90 via-red-500/90 to-red-600/90 border-red-400/20'
+                              : 'bg-gradient-to-br from-primary/90 via-primary/90 to-primary/80 border-primary/20'
                           } text-primary-foreground relative overflow-hidden`}>
-                            {/* Decorative elements */}
-                            <div className="absolute top-2 right-2 w-2 h-2 bg-white/20 rounded-full animate-pulse"></div>
-                            <div className="absolute bottom-3 left-3 w-1 h-1 bg-white/30 rounded-full animate-pulse delay-100"></div>
                             
                             <div className="relative z-10">
-                              <div className="flex items-center gap-3 mb-3">
-                                <Gift className="h-5 w-5 animate-bounce" />
-                                <Badge variant="secondary" className="bg-white text-primary font-bold text-sm px-3 py-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Gift className="h-4 w-4" />
+                                <Badge variant="secondary" className="bg-white text-primary font-bold text-xs px-2 py-0.5">
                                   {currentBanner?.discount} OFF
                                 </Badge>
                               </div>
-                              <h4 className="font-bold text-base mb-2 leading-tight">{currentBanner?.title}</h4>
-                              <p className="text-sm opacity-95 leading-relaxed mb-3">{currentBanner?.description}</p>
+                              <h4 className="font-bold text-sm mb-1.5 leading-tight">{currentBanner?.title}</h4>
+                              <p className="text-xs opacity-95 leading-relaxed mb-2">{currentBanner?.description}</p>
                               {currentBanner?.valid_until && (
-                                <div className={`flex items-center gap-2 text-sm ${
+                                <div className={`flex items-center gap-1.5 text-xs ${
                                   isExpiringSoon(currentBanner.valid_until) ? 'animate-pulse font-semibold' : 'opacity-90'
                                 }`}>
-                                  <Clock className="h-4 w-4" />
+                                  <Clock className="h-3 w-3" />
                                   <span>{formatDate(currentBanner.valid_until)}</span>
                                 </div>
                               )}
@@ -572,14 +573,16 @@ const Header = () => {
                           </div>
                           
                           {hasMultipleBanners && (
-                            <div className="flex justify-center gap-2">
+                            <div className="flex justify-center gap-1.5">
                               {visibleBanners.map((_, index) => (
-                                <button
+                                <Button
                                   key={index}
+                                  variant="ghost"
+                                  size="sm"
                                   onClick={() => handleManualNavigation(index)}
-                                  className={`w-3 h-3 rounded-full transition-all duration-300 touch-target ${
+                                  className={`w-2 h-2 p-0 rounded-full transition-all duration-300 ${
                                     index === currentBannerIndex 
-                                      ? 'bg-primary scale-110 shadow-md' 
+                                      ? 'bg-primary scale-125' 
                                       : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
                                   }`}
                                 />
@@ -590,43 +593,39 @@ const Header = () => {
                       )}
 
                       {/* Navigation Menu */}
-                      <nav className="space-y-6">
-                        {navigation.map((item, index) => (
-                          <div key={item.title} className="space-y-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"></div>
-                              <h3 className="font-bold text-foreground text-lg tracking-tight">{item.title}</h3>
+                      <nav className="space-y-4">
+                        {navigation.map((item) => (
+                          <div key={item.title} className="space-y-2">
+                            <div className="flex items-center gap-2.5 px-1">
+                              <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+                              <h3 className="font-semibold text-foreground text-base tracking-tight">{item.title}</h3>
                             </div>
                             {item.items ? (
-                              <div className="space-y-1 ml-4 pl-3 border-l border-muted">
+                              <div className="space-y-0.5 ml-3 pl-2 border-l border-border/50">
                                 {item.items.map((subItem) => (
                                   <Link
                                     key={subItem.href}
                                     to={subItem.href}
-                                    className="block py-3 px-4 text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-xl transition-all duration-200 text-base font-medium touch-target group"
+                                    className="flex items-center justify-between py-2.5 px-3 text-muted-foreground hover:text-primary hover:bg-muted/40 rounded-lg transition-all duration-200 text-sm font-medium group min-h-[44px]"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                   >
-                                    <div className="flex items-center justify-between">
-                                      <span className="group-hover:translate-x-1 transition-transform duration-200">
-                                        {subItem.title}
-                                      </span>
-                                      <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
-                                    </div>
+                                    <span className="group-hover:translate-x-0.5 transition-transform duration-200">
+                                      {subItem.title}
+                                    </span>
+                                    <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0" />
                                   </Link>
                                 ))}
                               </div>
                             ) : (
                               <Link
                                 to={item.href}
-                                className="block py-3 px-4 ml-4 text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-xl transition-all duration-200 text-base font-medium touch-target group"
+                                className="flex items-center justify-between py-2.5 px-3 ml-3 text-muted-foreground hover:text-primary hover:bg-muted/40 rounded-lg transition-all duration-200 text-sm font-medium group min-h-[44px]"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
-                                <div className="flex items-center justify-between">
-                                  <span className="group-hover:translate-x-1 transition-transform duration-200">
-                                    {item.title}
-                                  </span>
-                                  <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
-                                </div>
+                                <span className="group-hover:translate-x-0.5 transition-transform duration-200">
+                                  {item.title}
+                                </span>
+                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0" />
                               </Link>
                             )}
                           </div>
@@ -636,34 +635,42 @@ const Header = () => {
                   </div>
 
                   {/* Fixed Bottom Actions */}
-                  <div className="p-6 space-y-4 border-t bg-gradient-to-r from-muted/30 to-muted/10">
-                    <div className="grid grid-cols-2 gap-3">
-                      <QuoteModal>
-                        <Button variant="outline" className="h-12 text-sm font-medium rounded-xl border-2 hover:border-primary hover:bg-primary/5 transition-all duration-200 touch-target">
-                          <span>Get Quote</span>
-                        </Button>
-                      </QuoteModal>
-                      <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Button variant="premium" className="w-full h-12 text-sm font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 touch-target">
-                          <span>Contact Us</span>
-                        </Button>
-                      </Link>
+                  <div className="p-4 space-y-3 border-t border-border/50 bg-gradient-to-r from-muted/20 to-muted/10 backdrop-blur-sm">
+                    <div className="grid grid-cols-1 gap-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <QuoteModal>
+                          <Button 
+                            variant="outline" 
+                            className="h-11 text-sm font-medium rounded-xl border hover:border-primary hover:bg-primary/5 transition-all duration-200 min-h-[44px]"
+                          >
+                            Get Quote
+                          </Button>
+                        </QuoteModal>
+                        <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                          <Button 
+                            variant="premium" 
+                            className="w-full h-11 text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200 min-h-[44px]"
+                          >
+                            Contact Us
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                     
                     {/* Contact Info */}
-                    <div className="flex items-center justify-center gap-6 pt-3 border-t border-muted/50">
+                    <div className="flex items-center justify-center gap-6 pt-2 border-t border-border/30">
                       <a 
                         href="tel:0114575401" 
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors touch-target"
+                        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors min-h-[44px] py-2"
                       >
-                        <Phone className="h-4 w-4" />
+                        <Phone className="h-3.5 w-3.5" />
                         <span className="font-medium">Call Us</span>
                       </a>
                       <a 
                         href="mailto:driptech2025@gmail.com" 
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors touch-target"
+                        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors min-h-[44px] py-2"
                       >
-                        <Mail className="h-4 w-4" />
+                        <Mail className="h-3.5 w-3.5" />
                         <span className="font-medium">Email</span>
                       </a>
                     </div>
