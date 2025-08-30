@@ -13,6 +13,7 @@ import Projects from "./pages/Projects";
 import Team from "./pages/Team";
 import VideosPage from "./pages/VideosPage";
 import About from "./pages/About";
+import NewsArticle from "./pages/NewsArticle";
 import Technicians from "./pages/Technicians";
 import SuccessStories from "./pages/SuccessStories";
 import Contact from "./pages/Contact";
@@ -27,6 +28,7 @@ import VideoSection from "./components/Home/VideoSection";
 import VisitorTracker from "./components/Analytics/VisitorTracker";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import DiscountBanner from "@/components/common/DiscountBanner";
+import PWAInstallPrompt from "@/components/PWA/PWAInstallPrompt";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
@@ -70,6 +72,7 @@ const App = () => (
 
             {/* News and certifications */}
             <Route path="/news" element={<News />} />
+            <Route path="/news/:slug" element={<NewsArticle />} />
             <Route path="/certifications" element={<Certifications />} />
 
             {/* Blog routes */}
@@ -90,6 +93,7 @@ const App = () => (
           </Routes>
           <ScrollToTop />
           <DiscountBanner />
+          <PWAInstallPrompt />
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
