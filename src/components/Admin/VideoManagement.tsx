@@ -447,52 +447,73 @@ const VideoManagement = () => {
 
   if (showForm) {
     return (
-      <VideoForm
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={handleSubmit}
-        onCancel={resetForm}
-        editingVideo={editingVideo}
-        isUploading={isUploading}
-        uploadProgress={uploadProgress}
-        uploadMode={uploadMode}
-        setUploadMode={setUploadMode}
-        videoFileRef={videoFileRef}
-        thumbnailFileRef={thumbnailFileRef}
-        onVideoFileChange={handleVideoFileChange}
-        onThumbnailFileChange={handleThumbnailFileChange}
-        newTag={newTag}
-        setNewTag={setNewTag}
-        addTag={addTag}
-        removeTag={removeTag}
-        isSaving={saveVideoMutation.isPending}
-      />
+      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
+        <VideoForm
+          formData={formData}
+          setFormData={setFormData}
+          onSubmit={handleSubmit}
+          onCancel={resetForm}
+          editingVideo={editingVideo}
+          isUploading={isUploading}
+          uploadProgress={uploadProgress}
+          uploadMode={uploadMode}
+          setUploadMode={setUploadMode}
+          videoFileRef={videoFileRef}
+          thumbnailFileRef={thumbnailFileRef}
+          onVideoFileChange={handleVideoFileChange}
+          onThumbnailFileChange={handleThumbnailFileChange}
+          newTag={newTag}
+          setNewTag={setNewTag}
+          addTag={addTag}
+          removeTag={removeTag}
+          isSaving={saveVideoMutation.isPending}
+        />
+      </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Video Management</h2>
-          <p className="text-muted-foreground">Manage irrigation videos and tutorials</p>
+    <div className="w-full min-h-screen">
+      {/* Container with responsive padding */}
+      <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+        {/* Header Section - Responsive flex layout */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="space-y-1 sm:space-y-2">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+              Video Management
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Manage irrigation videos and tutorials
+            </p>
+          </div>
+          
+          {/* Add Video Button - Full width on mobile, auto on larger screens */}
+          <Button 
+            onClick={() => setShowForm(true)}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base"
+          >
+            <Plus className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">Add Video</span>
+          </Button>
         </div>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Video
-        </Button>
-      </div>
 
-      <VideoStats stats={videoStats} />
-      
-      <VideoList
-        videos={videos}
-        isLoading={isLoading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onShowForm={() => setShowForm(true)}
-        isDeleting={deleteVideoMutation.isPending}
-      />
+        {/* Video Stats Section - Responsive grid */}
+        <div className="w-full">
+          <VideoStats stats={videoStats} />
+        </div>
+        
+        {/* Video List Section - Full width with responsive layout */}
+        <div className="w-full">
+          <VideoList
+            videos={videos}
+            isLoading={isLoading}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onShowForm={() => setShowForm(true)}
+            isDeleting={deleteVideoMutation.isPending}
+          />
+        </div>
+      </div>
     </div>
   );
 };
