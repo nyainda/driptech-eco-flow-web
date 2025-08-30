@@ -27,7 +27,6 @@ import BlogPostPage from "@/components/Home/BlogPostPage";
 import VideoSection from "./components/Home/VideoSection";
 import VisitorTracker from "./components/Analytics/VisitorTracker";
 import ScrollToTop from "@/components/common/ScrollToTop";
-import DiscountBanner from "@/components/common/DiscountBanner";
 import PWAInstallPrompt from "@/components/PWA/PWAInstallPrompt";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -92,7 +91,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ScrollToTop />
-          <DiscountBanner />
+         
           <PWAInstallPrompt />
         </BrowserRouter>
       </TooltipProvider>
