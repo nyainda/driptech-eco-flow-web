@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,14 +72,14 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
     <div className="grid gap-6">
       {videos.map((video) => (
         <Card key={video.id}>
-          <CardContent className="p-6">
-            <div className="flex gap-4">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row gap-4">
               {video.thumbnail_url && (
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 w-full sm:w-32">
                   <img
                     src={video.thumbnail_url}
                     alt={video.title}
-                    className="w-32 h-20 object-cover rounded"
+                    className="w-full sm:w-32 h-20 object-cover rounded"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
@@ -88,17 +87,17 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
                   />
                 </div>
               )}
-              <div className="flex-1">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold">{video.title}</h3>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold break-words">{video.title}</h3>
                     {video.description && (
-                      <p className="text-muted-foreground mt-1 line-clamp-2">{video.description}</p>
+                      <p className="text-muted-foreground mt-1 line-clamp-2 break-words">{video.description}</p>
                     )}
-                    <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 text-sm text-muted-foreground">
                       <span>Views: {video.views?.toLocaleString() || 0}</span>
                       {video.duration && <span>Duration: {formatDuration(video.duration)}</span>}
-                      {video.file_size && <span>Size: {formatFileSize(video.file_size)}</span>}
+                      {video.file_size && <span className="hidden sm:inline">Size: {formatFileSize(video.file_size)}</span>}
                       <span>Category: {video.category}</span>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
@@ -109,7 +108,7 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge variant={video.published ? "default" : "secondary"}>
                       {video.published ? "Published" : "Draft"}
                     </Badge>
@@ -118,14 +117,14 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 mt-4">
-                  <Button size="sm" variant="outline" asChild>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4">
+                  <Button size="sm" variant="outline" asChild className="flex-1 sm:flex-none">
                     <a href={video.video_url} target="_blank" rel="noopener noreferrer">
                       <Play className="h-4 w-4 mr-1" />
                       Watch
                     </a>
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => onEdit(video)}>
+                  <Button size="sm" variant="outline" onClick={() => onEdit(video)} className="flex-1 sm:flex-none">
                     <Edit className="h-4 w-4 mr-1" />
                     Edit
                   </Button>
@@ -134,6 +133,7 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
                     variant="outline" 
                     onClick={() => onDelete(video)}
                     disabled={isDeleting}
+                    className="flex-1 sm:flex-none"
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
                     {isDeleting ? 'Deleting...' : 'Delete'}
