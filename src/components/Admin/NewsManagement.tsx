@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { FileText, Plus, Search, Filter, Calendar, TrendingUp, Users, Eye, MessageSquare, MoreHorizontal, Edit, Trash2, Clock, Tag } from "lucide-react";
+import { FileText, Plus, Search, Filter, Calendar, TrendingUp, Users, Eye, MessageSquare, MoreHorizontal, Edit, Trash2, Clock, Tag, Upload, Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -27,6 +28,8 @@ interface NewsArticle {
   created_at: string;
   updated_at: string;
   reading_time: number;
+  author?: string;
+  slug: string;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -41,7 +44,9 @@ const NewsManagement = () => {
   const [totalArticles, setTotalArticles] = useState(0);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingArticle, setEditingArticle] = useState<NewsArticle | null>(null);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [newArticle, setNewArticle] = useState({
     title: "",
@@ -50,6 +55,7 @@ const NewsManagement = () => {
     published: false,
     featured_image_url: "",
     tags: [] as string[],
+    author: "",
   });
   const [newTag, setNewTag] = useState("");
 
@@ -65,19 +71,71 @@ const NewsManagement = () => {
     fetchStats();
   }, [currentPage, searchQuery, statusFilter, sortBy]);
 
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `news/${Date.now()}.${fileExt}`;
+
+      // Upload to Supabase storage
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(fileName);
+
+      setNewArticle(prev => ({
+        ...prev,
+        featured_image_url: publicUrl
+      }));
+
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully"
+      });
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to upload image",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const fetchStats = async () => {
     try {
       const { data, error } = await supabase
-        .from("blog_posts")
-        .select("views, likes, published, title")
-        .or("tags.cs.{\"news\"},category_id.in.(select id from blog_categories where name ilike '%news%')");
+        .from("news_articles")
+        .select("views, likes, published, title");
 
       if (error) throw error;
 
       const total = data?.length || 0;
-      const published = data?.filter(post => post.published).length || 0;
-      const totalViews = data?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
-      const totalLikes = data?.reduce((sum, post) => sum + (post.likes || 0), 0) || 0;
+      const published = data?.filter(article => article.published).length || 0;
+      const totalViews = data?.reduce((sum, article) => sum + (article.views || 0), 0) || 0;
+      const totalLikes = data?.reduce((sum, article) => sum + (article.likes || 0), 0) || 0;
 
       setStats({
         totalArticles: total,
@@ -95,9 +153,8 @@ const NewsManagement = () => {
       setLoading(true);
 
       let query = supabase
-        .from('blog_posts')
-        .select('*', { count: "exact" })
-        .or("tags.cs.{\"news\"},category_id.in.(select id from blog_categories where name ilike '%news%')");
+        .from('news_articles')
+        .select('*', { count: "exact" });
 
       // Apply filters
       if (searchQuery) {
@@ -162,16 +219,20 @@ const NewsManagement = () => {
       const wordCount = newArticle.content.split(/\s+/).length;
       const readingTime = Math.ceil(wordCount / 200);
 
+      const slug = generateSlug(newArticle.title);
+
       const { error } = await supabase
-        .from('blog_posts')
+        .from('news_articles')
         .insert({
           title: newArticle.title,
           content: newArticle.content,
           excerpt: newArticle.excerpt || newArticle.content.substring(0, 200),
           published: newArticle.published,
           featured_image_url: newArticle.featured_image_url,
-          tags: [...newArticle.tags, "news"], // Always include "news" tag
+          tags: newArticle.tags,
           reading_time: readingTime,
+          author: newArticle.author || "Admin",
+          slug: slug,
           views: 0,
           likes: 0,
           comments_count: 0
@@ -192,6 +253,7 @@ const NewsManagement = () => {
         published: false,
         featured_image_url: "",
         tags: [],
+        author: "",
       });
       fetchArticles();
       fetchStats();
@@ -208,7 +270,7 @@ const NewsManagement = () => {
   const handleDeleteArticle = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('blog_posts')
+        .from('news_articles')
         .delete()
         .eq('id', id);
 
@@ -251,39 +313,102 @@ const NewsManagement = () => {
   const totalPages = Math.ceil(totalArticles / ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+    <div className="min-h-screen bg-background p-2 sm:p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
               News Management
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">
+            <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
               Create and manage news articles and announcements
             </p>
           </div>
           <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
             <DialogTrigger asChild>
-              <Button className="gap-2">
+              <Button className="gap-2 text-sm sm:text-base">
                 <Plus className="h-4 w-4" />
-                Create News Article
+                <span className="hidden sm:inline">Create News Article</span>
+                <span className="sm:hidden">Create</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create News Article</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={newArticle.title}
-                    onChange={(e) => setNewArticle(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Enter article title"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      value={newArticle.title}
+                      onChange={(e) => setNewArticle(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Enter article title"
+                    />
+                  </div>
+                  
+                  <div className="sm:col-span-1">
+                    <Label htmlFor="author">Author</Label>
+                    <Input
+                      id="author"
+                      value={newArticle.author}
+                      onChange={(e) => setNewArticle(prev => ({ ...prev, author: e.target.value }))}
+                      placeholder="Author name"
+                    />
+                  </div>
+                  
+                  <div className="sm:col-span-1">
+                    <Label>Featured Image</Label>
+                    <div className="space-y-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="w-full"
+                      >
+                        {uploading ? (
+                          <>
+                            <div className="animate-spin h-4 w-4 border-b-2 border-primary mr-2"></div>
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="h-4 w-4 mr-2" />
+                            Upload Image
+                          </>
+                        )}
+                      </Button>
+                      {newArticle.featured_image_url && (
+                        <div className="relative">
+                          <img 
+                            src={newArticle.featured_image_url} 
+                            alt="Preview" 
+                            className="w-full h-32 object-cover rounded border"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setNewArticle(prev => ({ ...prev, featured_image_url: "" }))}
+                            className="absolute top-2 right-2"
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
+                
                 <div>
                   <Label htmlFor="excerpt">Excerpt</Label>
                   <Textarea
@@ -294,6 +419,7 @@ const NewsManagement = () => {
                     rows={3}
                   />
                 </div>
+                
                 <div>
                   <Label htmlFor="content">Content</Label>
                   <Textarea
@@ -301,18 +427,10 @@ const NewsManagement = () => {
                     value={newArticle.content}
                     onChange={(e) => setNewArticle(prev => ({ ...prev, content: e.target.value }))}
                     placeholder="Write your news content here..."
-                    rows={10}
+                    rows={8}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="featured_image">Featured Image URL</Label>
-                  <Input
-                    id="featured_image"
-                    value={newArticle.featured_image_url}
-                    onChange={(e) => setNewArticle(prev => ({ ...prev, featured_image_url: e.target.value }))}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
+                
                 <div>
                   <Label>Tags</Label>
                   <div className="flex gap-2 mb-2">
@@ -340,6 +458,7 @@ const NewsManagement = () => {
                     ))}
                   </div>
                 </div>
+                
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="published"
@@ -348,7 +467,8 @@ const NewsManagement = () => {
                   />
                   <Label htmlFor="published">Published</Label>
                 </div>
-                <div className="flex justify-end gap-2">
+                
+                <div className="flex flex-col sm:flex-row justify-end gap-2">
                   <Button variant="outline" onClick={() => setShowCreateModal(false)}>
                     Cancel
                   </Button>
@@ -362,49 +482,49 @@ const NewsManagement = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <Card className="p-3 sm:p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Articles</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Total Articles</CardTitle>
+              <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalArticles}</div>
+            <CardContent className="p-0">
+              <div className="text-lg sm:text-2xl font-bold">{stats.totalArticles}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="p-3 sm:p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Published</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Published</CardTitle>
+              <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.publishedArticles}</div>
+            <CardContent className="p-0">
+              <div className="text-lg sm:text-2xl font-bold">{stats.publishedArticles}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="p-3 sm:p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-              <Eye className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Total Views</CardTitle>
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
+            <CardContent className="p-0">
+              <div className="text-lg sm:text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="p-3 sm:p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs sm:text-sm font-medium">Total Likes</CardTitle>
+              <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalLikes}</div>
+            <CardContent className="p-0">
+              <div className="text-lg sm:text-2xl font-bold">{stats.totalLikes}</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Filters */}
         <Card>
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
               <div className="flex-1">
                 <Input
                   placeholder="Search articles..."
@@ -451,7 +571,7 @@ const NewsManagement = () => {
             </Card>
           ) : articles.length === 0 ? (
             <Card>
-              <CardContent className="p-12 text-center">
+              <CardContent className="p-8 sm:p-12 text-center">
                 <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No articles found</h3>
                 <p className="text-muted-foreground mb-4">
@@ -470,27 +590,27 @@ const NewsManagement = () => {
           ) : (
             articles.map((article) => (
               <Card key={article.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold">{article.title}</h3>
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                    <div className="flex-1 space-y-2 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-base sm:text-lg font-semibold truncate">{article.title}</h3>
                         <Badge variant={article.published ? "default" : "secondary"}>
                           {article.published ? "Published" : "Draft"}
                         </Badge>
                       </div>
-                      <p className="text-muted-foreground line-clamp-2">{article.excerpt}</p>
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                      <p className="text-muted-foreground line-clamp-2 text-sm sm:text-base">{article.excerpt}</p>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
+                          <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                           {formatDistanceToNow(new Date(article.created_at))} ago
                         </span>
                         <span className="flex items-center gap-1">
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
                           {article.views} views
                         </span>
                         <span className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
+                          <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
                           {article.reading_time} min read
                         </span>
                       </div>
@@ -502,7 +622,7 @@ const NewsManagement = () => {
                         ))}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -529,16 +649,18 @@ const NewsManagement = () => {
               variant="outline"
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
+              size="sm"
             >
               Previous
             </Button>
-            <span className="px-4 py-2 text-sm text-muted-foreground">
+            <span className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-muted-foreground">
               Page {currentPage} of {totalPages}
             </span>
             <Button
               variant="outline"
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
+              size="sm"
             >
               Next
             </Button>
