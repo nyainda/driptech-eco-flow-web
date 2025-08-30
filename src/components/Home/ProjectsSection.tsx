@@ -165,8 +165,8 @@ const ProjectsSection = () => {
               Featured Projects
             </Badge>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-8 leading-tight tracking-tight">
-            <span className="block mb-2">Empowering Kenyan Farms,</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-slate-900 dark:text-white mb-6 lg:mb-8 leading-tight tracking-tight">
+            <span className="block mb-1 sm:mb-2">Empowering Kenyan Farms,</span>
             <span className="block bg-gradient-to-r from-blue-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">
               Transforming Agriculture
             </span>

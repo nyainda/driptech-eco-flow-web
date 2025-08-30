@@ -188,11 +188,11 @@ const VideoSection = () => {
     <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header - Responsive */}
-        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+        <div className="text-center mb-6 sm:mb-8 lg:mb-12 xl:mb-16">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 lg:mb-4 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent px-4">
             Irrigation Videos & Tutorials
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+          <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Learn from our expert irrigation tutorials and see our systems in action
           </p>
         </div>

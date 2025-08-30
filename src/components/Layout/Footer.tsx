@@ -85,18 +85,18 @@ const Footer = () => {
               Get the latest irrigation technology updates, maintenance tips, and industry best practices delivered to your inbox.
             </p>
             
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-md mx-auto">
               <Input 
                 type="email" 
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1"
+                className="flex-1 h-9 sm:h-10 text-sm"
                 required
               />
               <Button 
                 type="submit" 
-                className="sm:w-auto w-full"
+                className="sm:w-auto w-full h-9 sm:h-10 text-sm"
                 disabled={isSubscribed}
               >
                 {isSubscribed ? (
@@ -117,8 +117,8 @@ const Footer = () => {
       </div>
 
       {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+      <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 lg:gap-8">
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="mb-6">

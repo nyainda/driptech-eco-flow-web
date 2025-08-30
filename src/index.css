@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import responsive utilities */
+@import './styles/responsive.css';
+
 /* Enhanced global styles and animations */
 @layer base {
   :root {
@@ -139,14 +142,22 @@
     @apply min-h-[44px] min-w-[44px] flex items-center;
   }
 
+  /* Enhanced responsive breakpoints */
+  @media (max-width: 475px) {
+    .xs-text-xs { font-size: 0.75rem; }
+    .xs-text-sm { font-size: 0.875rem; }
+    .xs-p-2 { padding: 0.5rem; }
+    .xs-gap-2 { gap: 0.5rem; }
+  }
+
   /* Mobile navigation improvements */
   @media (max-width: 1024px) {
     .navigation-item {
-      @apply py-3 px-4 text-base;
+      @apply py-2.5 sm:py-3 px-3 sm:px-4 text-sm sm:text-base;
     }
 
     .navigation-subitem {
-      @apply py-2.5 px-3 text-sm;
+      @apply py-2 sm:py-2.5 px-2 sm:px-3 text-xs sm:text-sm;
     }
   }
 
@@ -157,18 +168,40 @@
   }
 
   /* Enhanced mobile typography */
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     .mobile-heading {
-      @apply text-lg font-bold tracking-tight;
+      @apply text-base sm:text-lg font-bold tracking-tight;
     }
 
     .mobile-subheading {
-      @apply text-base font-medium;
+      @apply text-sm sm:text-base font-medium;
     }
 
     .mobile-body {
-      @apply text-sm leading-relaxed;
+      @apply text-xs sm:text-sm leading-relaxed;
     }
+  }
+
+  /* Admin dashboard responsive improvements */
+  .admin-card {
+    @apply p-3 sm:p-4 lg:p-6;
+  }
+
+  .admin-table {
+    @apply text-xs sm:text-sm;
+  }
+
+  /* Form responsive improvements */
+  .responsive-form {
+    @apply space-y-3 sm:space-y-4 lg:space-y-6;
+  }
+
+  .responsive-input {
+    @apply text-sm sm:text-base h-9 sm:h-10;
+  }
+
+  .responsive-button {
+    @apply text-xs sm:text-sm h-8 sm:h-9 lg:h-10 px-3 sm:px-4 lg:px-6;
   }
 }
 

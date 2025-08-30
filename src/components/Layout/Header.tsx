@@ -246,35 +246,36 @@ const Header = () => {
             isTransitioning ? 'opacity-0 transform translate-x-2' : 'opacity-100 transform translate-x-0'
           }`}>
             <div className="container mx-auto flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="flex items-center gap-1 sm:gap-3 flex-1 min-w-0">
                 {/* Navigation arrows for multiple banners */}
                 {hasMultipleBanners && (
                   <button
                     onClick={handlePrevBanner}
-                    className="flex-shrink-0 p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
+                    className="flex-shrink-0 p-0.5 sm:p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
                     aria-label="Previous offer"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
                   </button>
                 )}
 
-                <Gift className="h-4 w-4 animate-bounce flex-shrink-0" />
+                <Gift className="h-3 w-3 sm:h-4 sm:w-4 animate-bounce flex-shrink-0" />
                 <Badge 
                   variant="secondary" 
-                  className={`font-bold text-xs px-2 py-0.5 flex-shrink-0 ${
+                  className={`font-bold text-xs px-1.5 sm:px-2 py-0.5 flex-shrink-0 ${
                     isExpiringSoon(currentBanner.valid_until)
                       ? 'bg-white text-red-600 animate-pulse' 
                       : 'bg-white text-primary'
                   }`}
                 >
-                  {currentBanner.discount} OFF
+                  <span className="hidden xs:inline">{currentBanner.discount} OFF</span>
+                  <span className="xs:hidden">{currentBanner.discount}</span>
                 </Badge>
                 
                 <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-sm mr-2">
+                  <span className="font-semibold text-xs sm:text-sm mr-1 sm:mr-2 truncate block">
                     {currentBanner.title}
                   </span>
-                  <span className="opacity-90 text-sm hidden sm:inline">
+                  <span className="opacity-90 text-xs sm:text-sm hidden md:inline">
                     {currentBanner.description}
                   </span>
                 </div>
@@ -363,21 +364,25 @@ const Header = () => {
 
       {/* Top Bar with Enhanced Contact Info */}
       <div className="border-b border-border/50 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="flex h-10 items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 hover:text-foreground transition-colors">
+        <div className="container mx-auto px-2 sm:px-4">
+          <div className="flex h-8 sm:h-10 items-center justify-between text-xs sm:text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
+              <div className="flex items-center gap-1 sm:gap-2 hover:text-foreground transition-colors">
                 <Phone className="h-3 w-3" />
-                <a href="tel:0114575401" className="hover:underline">0114575401</a>
-              </div>
-              <div className="flex items-center gap-2 hover:text-foreground transition-colors">
-                <Mail className="h-3 w-3" />
-                <a href="mailto:driptech2025@gmail.com" className="hover:underline">
-                  <span className="hidden sm:inline">driptech2025@gmail.com</span>
-                  <span className="sm:hidden">Contact</span>
+                <a href="tel:0114575401" className="hover:underline">
+                  <span className="hidden xs:inline">0114575401</span>
+                  <span className="xs:hidden">Call</span>
                 </a>
               </div>
-              <div className="hidden md:flex items-center gap-2 hover:text-foreground transition-colors">
+              <div className="flex items-center gap-1 sm:gap-2 hover:text-foreground transition-colors">
+                <Mail className="h-3 w-3" />
+                <a href="mailto:driptech2025@gmail.com" className="hover:underline">
+                  <span className="hidden md:inline">driptech2025@gmail.com</span>
+                  <span className="hidden sm:inline md:hidden">Email</span>
+                  <span className="sm:hidden">Mail</span>
+                </a>
+              </div>
+              <div className="hidden lg:flex items-center gap-2 hover:text-foreground transition-colors">
                 <Mail className="h-3 w-3" />
                 <a href="mailto:driptechs.info@gmail.com" className="hover:underline">
                   driptechs.info@gmail.com

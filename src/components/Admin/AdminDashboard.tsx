@@ -1,4 +1,3 @@
-
 import RealDataDashboard from "./RealDataDashboard";
 
 const AdminDashboard = () => {

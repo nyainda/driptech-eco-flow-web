@@ -1017,8 +1017,8 @@ const QuoteManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/20 p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-950/20 p-3 sm:p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Enhanced Header */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-8 text-white shadow-2xl">
           <div className="absolute inset-0 opacity-10">

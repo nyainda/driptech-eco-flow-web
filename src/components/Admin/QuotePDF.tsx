@@ -67,7 +67,7 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({ quote, items, customer, onEd
       </div>
 
       {/* Screen content */}
-      <div className="print:hidden py-12">
+      <div className="print:hidden py-4 sm:py-8 lg:py-12 px-2 sm:px-4">
         <Card className="max-w-4xl mx-auto border-none shadow-2xl bg-white dark:bg-gray-800 overflow-hidden">
           <CardContent className="p-0">
             {/* Enhanced Header */}

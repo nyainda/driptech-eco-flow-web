@@ -175,7 +175,7 @@ const AdminContent = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="grid grid-cols-2 md:grid-cols-6 lg:grid-cols-14 gap-2 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-8 gap-2 mb-6 lg:mb-8">
             {adminSections.map((section) => {
               const Icon = section.icon;
               return (
@@ -183,14 +183,14 @@ const AdminContent = () => {
                   key={section.id}
                   variant={activeTab === section.id ? "secondary" : "ghost"}
                   onClick={() => setActiveTab(section.id)}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-all hover:shadow-md ${
+                  className={`flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-3 lg:p-4 rounded-lg border transition-all hover:shadow-md min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] ${
                     activeTab === section.id
                       ? 'bg-primary text-primary-foreground shadow-lg'
                       : 'bg-card hover:bg-muted/50'
                   }`}
                 >
-                  <Icon className="h-5 w-5" />
-                  <span className="text-xs font-medium text-center leading-tight">{section.label}</span>
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight px-1">{section.label}</span>
                 </Button>
               );
             })}

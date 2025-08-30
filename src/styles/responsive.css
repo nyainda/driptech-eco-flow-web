@@ -1,0 +1,106 @@
+
+/* Responsive Utilities for DripTech */
+
+/* Container sizes */
+.container-responsive {
+  @apply max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8;
+}
+
+/* Spacing utilities */
+.section-padding-responsive {
+  @apply py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24;
+}
+
+.card-padding-responsive {
+  @apply p-3 sm:p-4 md:p-6 lg:p-8;
+}
+
+/* Typography responsive */
+.heading-responsive {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl;
+}
+
+.subheading-responsive {
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+}
+
+.body-responsive {
+  @apply text-sm sm:text-base lg:text-lg;
+}
+
+/* Grid responsive */
+.grid-responsive-2 {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6;
+}
+
+.grid-responsive-3 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6;
+}
+
+.grid-responsive-4 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6;
+}
+
+/* Button responsive */
+.btn-responsive {
+  @apply h-8 sm:h-9 lg:h-10 px-3 sm:px-4 lg:px-6 text-xs sm:text-sm lg:text-base;
+}
+
+/* Input responsive */
+.input-responsive {
+  @apply h-8 sm:h-9 lg:h-10 text-xs sm:text-sm lg:text-base;
+}
+
+/* Admin specific responsive */
+.admin-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6;
+}
+
+.admin-table-container {
+  @apply overflow-x-auto -mx-3 sm:mx-0;
+}
+
+.admin-table {
+  @apply min-w-full text-xs sm:text-sm;
+}
+
+/* Mobile first approach for touch targets */
+.touch-friendly {
+  @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+}
+
+/* Responsive flexbox utilities */
+.flex-responsive {
+  @apply flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6;
+}
+
+.flex-responsive-center {
+  @apply flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 lg:gap-6;
+}
+
+/* Hide/show at different breakpoints */
+.mobile-only {
+  @apply block sm:hidden;
+}
+
+.tablet-up {
+  @apply hidden sm:block;
+}
+
+.desktop-only {
+  @apply hidden lg:block;
+}
+
+/* Responsive modals */
+.modal-responsive {
+  @apply w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-2xl lg:max-w-4xl xl:max-w-6xl;
+}
+
+/* Navigation responsive */
+.nav-responsive {
+  @apply flex flex-col lg:flex-row gap-2 lg:gap-4;
+}
+
+.nav-item-responsive {
+  @apply w-full lg:w-auto text-center lg:text-left py-2 lg:py-0;
+}
