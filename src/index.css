@@ -1,9 +1,9 @@
+/* Import responsive utilities FIRST */
+@import './styles/responsive.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import responsive utilities */
-@import './styles/responsive.css';
 
 /* Enhanced global styles and animations */
 @layer base {
@@ -193,7 +193,7 @@
 
   /* Form responsive improvements */
   .responsive-form {
-    @apply space-y-3 sm:space-y-4 lg:space-y-6;
+    @apply space-y-3 sm:space-4 lg:space-y-6;
   }
 
   .responsive-input {

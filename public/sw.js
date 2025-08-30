@@ -1,4 +1,3 @@
-
 const CACHE_NAME = 'driptech-v1';
 const urlsToCache = [
   '/',
@@ -11,13 +10,19 @@ const urlsToCache = [
 
 // Install service worker
 self.addEventListener('install', (event) => {
+  console.log('Service Worker installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
+      .catch((error) => {
+        console.error('Failed to cache resources:', error);
+      })
   );
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting();
 });
 
 // Fetch event
@@ -52,7 +57,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() => {
         // Return offline page for navigation requests
         if (event.request.destination === 'document') {
-          return caches.match('/offline.html');
+          return caches.match('/') || new Response('Offline', { status: 503 });
         }
       })
   );
@@ -60,16 +65,21 @@ self.addEventListener('fetch', (event) => {
 
 // Activate service worker
 self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...');
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(() => {
+      // Ensure the new service worker takes control immediately
+      return self.clients.claim();
     })
   );
 });
@@ -84,6 +94,7 @@ self.addEventListener('sync', (event) => {
 function doBackgroundSync() {
   // Handle background sync tasks
   console.log('Background sync triggered');
+  // Add your background sync logic here
 }
 
 // Push notifications
