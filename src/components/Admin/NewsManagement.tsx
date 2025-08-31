@@ -352,7 +352,7 @@ const NewsManagement = () => {
   const totalPages = Math.ceil(totalArticles / ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
+    <div className="min-h-screen ">
       {/* Main container with responsive padding */}
       <div className="p-2 sm:p-4 lg:p-6 xl:p-8">
         <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
@@ -572,7 +572,7 @@ const NewsManagement = () => {
 
           {/* Statistics Cards - Responsive grid */}
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-950/50 border-0 shadow-lg">
+            <Card className="relative overflow-hidden  border-0 shadow-lg">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-indigo-600/10"></div>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative p-3 sm:p-4">
                 <CardTitle className="text-xs sm:text-sm font-medium truncate">Total Articles</CardTitle>
@@ -626,7 +626,7 @@ const NewsManagement = () => {
           </div>
 
           {/* Filters - Responsive layout */}
-          <Card className="border-0 shadow-lg bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
+          <Card className="border-0 shadow-lg ">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col gap-4 sm:flex-row">
                 <div className="flex-1 relative">
@@ -675,7 +675,7 @@ const NewsManagement = () => {
                 </CardContent>
               </Card>
             ) : articles.length === 0 ? (
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950/50">
+              <Card className="border-0 shadow-lg">
                 <CardContent className="p-8 sm:p-12 text-center">
                   <div className="p-4 rounded-full bg-blue-100 dark:bg-blue-900/50 w-fit mx-auto mb-4">
                     <FileText className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600" />
