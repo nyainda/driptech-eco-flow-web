@@ -27,7 +27,6 @@ import BlogPostPage from "@/components/Home/BlogPostPage";
 import VideoSection from "./components/Home/VideoSection";
 import VisitorTracker from "./components/Analytics/VisitorTracker";
 import ScrollToTop from "@/components/common/ScrollToTop";
-import PWAInstallPrompt from "@/components/PWA/PWAInstallPrompt";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
@@ -91,8 +90,6 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ScrollToTop />
-         
-          <PWAInstallPrompt />
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
