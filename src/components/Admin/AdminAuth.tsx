@@ -69,6 +69,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
       const adminEmails = [
         'admin@driptech.com',
         'support@driptech.com',
+        'driptechs.info@gmail.com',
         // Add more admin emails as needed
       ];
       
