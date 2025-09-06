@@ -40,139 +40,70 @@ export const usePrintHandlers = () => {
   const handleDownloadPDF = async (quote: Quote, items: QuoteItem[], customer?: Customer) => {
     setIsDownloading(true);
     try {
-      // Generate the HTML content
-      const htmlContent = generatePrintContent(quote, items, customer);
-      
-      // Create a new window for PDF generation (same as print but for PDF)
+      // Use the exact same approach as your working print function
+      // This gives crisp text, not scanned images
       const pdfWindow = window.open('', '_blank');
       if (!pdfWindow) throw new Error('Failed to open PDF window');
       
-      // Write the HTML content
-      pdfWindow.document.write(htmlContent);
+      const printContent = generatePrintContent(quote, items, customer);
+      pdfWindow.document.write(printContent);
       pdfWindow.document.close();
       
-      // Wait for content to load
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Add PDF-specific styles and trigger print to PDF
-      const style = pdfWindow.document.createElement('style');
-      style.textContent = `
-        @media print {
-          @page { 
-            margin: 0.5cm; 
-            size: A4 portrait; 
-          }
-          body { 
-            background: white !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            font-size: 12px !important;
-          }
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-        }
-      `;
-      pdfWindow.document.head.appendChild(style);
+      // Add a simple instruction banner for mobile users
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
-      // Show instructions to user for saving as PDF
-      const instructionDiv = pdfWindow.document.createElement('div');
-      instructionDiv.innerHTML = `
-        <div style="
-          position: fixed; 
-          top: 10px; 
-          right: 10px; 
-          background: #1e40af; 
-          color: white; 
-          padding: 10px 15px; 
-          border-radius: 8px; 
-          font-family: Arial, sans-serif; 
-          font-size: 14px;
-          z-index: 9999;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        " class="no-print">
-          📄 Press Ctrl+P (Cmd+P on Mac) and select "Save as PDF"
-          <button onclick="this.parentElement.remove()" style="
-            background: rgba(255,255,255,0.2); 
-            border: none; 
+      if (isMobile) {
+        const banner = pdfWindow.document.createElement('div');
+        banner.innerHTML = `
+          <div style="
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            background: #1e40af; 
             color: white; 
-            margin-left: 10px; 
-            padding: 2px 8px; 
-            border-radius: 4px;
-            cursor: pointer;
-          ">×</button>
-        </div>
-      `;
-      pdfWindow.document.body.appendChild(instructionDiv);
+            padding: 12px; 
+            text-align: center; 
+            font-family: Arial, sans-serif; 
+            font-size: 14px;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+          " class="no-print">
+            📱 Tap the menu (⋮) → Print → Save as PDF
+            <button onclick="this.parentElement.parentElement.remove()" style="
+              background: rgba(255,255,255,0.2); 
+              border: none; 
+              color: white; 
+              margin-left: 15px; 
+              padding: 4px 12px; 
+              border-radius: 4px;
+              cursor: pointer;
+            ">Got it</button>
+          </div>
+        `;
+        pdfWindow.document.body.insertBefore(banner, pdfWindow.document.body.firstChild);
+      }
       
-      // Trigger print dialog automatically
+      // Trigger print dialog (works on both mobile and desktop)
       setTimeout(() => {
         pdfWindow.print();
-        
-        // Close the window after a delay (user can cancel if needed)
-        setTimeout(() => {
-          try {
-            pdfWindow.close();
-          } catch (e) {
-            // Window might already be closed by user
-          }
-        }, 1000);
       }, 500);
       
       setIsDownloading(false);
       
       toast({
-        title: "PDF Generation Ready",
+        title: "PDF Ready",
         description: `Quote ${quote.quote_number} is ready to save as PDF.`,
       });
       
     } catch (error) {
-      console.error('PDF Generation Error:', error);
+      console.error('PDF Error:', error);
       setIsDownloading(false);
       toast({
-        title: "PDF Generation Error",
-        description: "Failed to generate PDF. Please try printing instead.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Alternative method using browser's built-in PDF generation
-  const handleDownloadPDFAlternative = async (quote: Quote, items: QuoteItem[], customer?: Customer) => {
-    setIsDownloading(true);
-    try {
-      const htmlContent = generatePrintContent(quote, items, customer);
-      
-      // Create blob with HTML content
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      
-      // Create a temporary link
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Quote-${quote.quote_number}-DripTech.html`;
-      
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up
-      URL.revokeObjectURL(url);
-      setIsDownloading(false);
-      
-      toast({
-        title: "HTML File Downloaded",
-        description: `Quote ${quote.quote_number} downloaded as HTML. You can open it and print to PDF.`,
-      });
-      
-    } catch (error) {
-      console.error('Download Error:', error);
-      setIsDownloading(false);
-      toast({
-        title: "Download Error",
-        description: "Failed to download file.",
+        title: "PDF Error",
+        description: "Failed to generate PDF. Please try again.",
         variant: "destructive",
       });
     }
@@ -181,7 +112,6 @@ export const usePrintHandlers = () => {
   return {
     handlePrint,
     handleDownloadPDF,
-    handleDownloadPDFAlternative, // Alternative method if needed
     isPrinting,
     isDownloading
   };
