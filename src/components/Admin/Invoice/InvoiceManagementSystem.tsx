@@ -1,4 +1,3 @@
-// InvoiceManagementSystem.tsx
 import React, { useState, useEffect } from 'react';
 import { Plus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,8 +9,10 @@ import StatsCards from './StatsCards';
 import InvoicesTable from './InvoicesTable';
 import CreateInvoiceModal from './CreateInvoiceModal';
 import InvoiceModal from './InvoiceModal';
+//import FiltersSection from './FiltersSection';
 import FiltersSection from './FiltersSection ';
 import EditInvoiceModal from './EditInvoiceModal';
+
 const InvoiceManagementSystem = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -44,7 +45,6 @@ const InvoiceManagementSystem = () => {
     loadQuotes();
   }, []);
 
-  // Filter invoices
   const filteredInvoices = invoices.filter(invoice => {
     const matchesSearch = 
       invoice.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -56,7 +56,6 @@ const InvoiceManagementSystem = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Calculate days overdue
   const getDaysOverdue = (dueDate: string, status: string) => {
     if (status === 'paid') return 0;
     const due = new Date(dueDate);
@@ -66,7 +65,6 @@ const InvoiceManagementSystem = () => {
     return diffDays > 0 ? diffDays : 0;
   };
 
-  // Calculate stats
   const stats = {
     totalInvoices: invoices.length,
     totalOutstanding: invoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled').reduce((sum, i) => sum + i.total_amount, 0),
@@ -84,51 +82,40 @@ const InvoiceManagementSystem = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
-          <Loader2 className="w-16 h-16 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Loading invoices...</p>
+          <Loader2 className="w-16 h-16 text-primary animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading invoices...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-purple-950/20 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Enhanced Header */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 via-violet-500 to-indigo-500 p-8 text-white shadow-2xl">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-4 left-4 w-3 h-3 bg-white rounded-full animate-pulse"></div>
-            <div className="absolute top-12 right-16 w-2 h-2 bg-white rounded-full animate-pulse delay-100"></div>
-            <div className="absolute bottom-8 left-12 w-2 h-2 bg-white rounded-full animate-pulse delay-200"></div>
-            <div className="absolute bottom-16 right-8 w-4 h-4 bg-white rounded-full animate-pulse delay-300"></div>
-          </div>
-          <div className="relative z-10">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-center gap-6">
-                <div className="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-3xl font-black border-2 border-white border-opacity-30 shadow-lg">
-                  📋
-                </div>
-                <div>
-                  <h1 className="text-4xl font-black mb-2 tracking-tight">Invoice Management</h1>
-                  <p className="text-purple-100 text-lg font-medium opacity-90">Manage customer invoices and payments</p>
-                  <div className="flex items-center gap-4 mt-3 text-purple-200">
-                    <span className="text-sm">📊 Total Invoices: {stats.totalInvoices}</span>
-                    <span className="text-sm">💰 Outstanding: KES {stats.totalOutstanding.toLocaleString()}</span>
-                  </div>
-                </div>
+        <div className="bg-background border-border shadow-lg rounded-2xl p-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="flex items-center gap-6">
+              <div className="p-2 rounded-xl bg-muted border border-border w-fit">
+                <span className="text-2xl">📋</span>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={() => setShowCreateModal(true)}
-                  className="bg-white bg-opacity-20 backdrop-blur-sm hover:bg-opacity-30 text-white border-2 border-white border-opacity-30 hover:border-opacity-50 px-8 py-4 rounded-xl font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
-                >
-                  <Plus className="h-5 w-5 mr-3" />
-                  Create New Invoice
-                </Button>
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">Invoice Management</h1>
+                <p className="text-sm text-muted-foreground mt-1">Manage customer invoices and payments</p>
+                <div className="flex items-center gap-4 mt-3 text-muted-foreground">
+                  <span className="text-sm">Total Invoices: {stats.totalInvoices}</span>
+                  <span className="text-sm">Outstanding: KES {stats.totalOutstanding.toLocaleString()}</span>
+                </div>
               </div>
             </div>
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all duration-200 transform hover:scale-105"
+            >
+              <Plus className="h-5 w-5 mr-3" />
+              Create New Invoice
+            </Button>
           </div>
         </div>
 
@@ -155,7 +142,6 @@ const InvoiceManagementSystem = () => {
           getDaysOverdue={getDaysOverdue}
         />
 
-        {/* Modals */}
         {showInvoiceModal && selectedInvoice && (
           <InvoiceModal
             invoice={selectedInvoice}

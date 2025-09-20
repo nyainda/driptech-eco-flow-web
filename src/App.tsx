@@ -30,6 +30,7 @@ import ScrollToTop from "@/components/common/ScrollToTop";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
+import IrrigationKits from "@/pages/IrrigationKits";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,9 @@ const App = () => (
             <Route path="/news" element={<News />} />
             <Route path="/news/:slug" element={<NewsArticle />} />
             <Route path="/certifications" element={<Certifications />} />
+
+            {/* Irrigation Kits */}
+            <Route path="/irrigation-kits" element={<IrrigationKits />} />
 
             {/* Blog routes */}
             <Route path="/blog" element={<BlogPage />} />

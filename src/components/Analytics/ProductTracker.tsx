@@ -19,6 +19,7 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
   const elementRef = useRef<HTMLDivElement>(null);
   const { trackProductInteraction } = useVisitorTracking();
   const hasTrackedView = useRef(false);
+  const interactionCooldown = useRef<{ [key: string]: number }>({});
 
   useEffect(() => {
     const element = elementRef.current;
@@ -29,12 +30,15 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasTrackedView.current) {
-            trackProductInteraction(productName, 'view', {
-              productId,
-              category,
-              elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
-            });
-            hasTrackedView.current = true;
+            // Add a small delay to ensure session is ready
+            setTimeout(() => {
+              trackProductInteraction(productName, 'view', {
+                productId,
+                category,
+                elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
+              });
+              hasTrackedView.current = true;
+            }, 200);
           }
         });
       },
@@ -51,21 +55,38 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
     };
   }, [productName, productId, category, trackProductInteraction]);
 
+  // Add cooldown to prevent spam interactions
+  const shouldTrackInteraction = (interactionType: string): boolean => {
+    const now = Date.now();
+    const lastInteraction = interactionCooldown.current[interactionType] || 0;
+    const cooldownPeriod = interactionType === 'click' ? 1000 : 5000; // 1s for clicks, 5s for hovers
+    
+    if (now - lastInteraction > cooldownPeriod) {
+      interactionCooldown.current[interactionType] = now;
+      return true;
+    }
+    return false;
+  };
+
   const handleClick = (event: React.MouseEvent) => {
-    trackProductInteraction(productName, 'click', {
-      productId,
-      category,
-      elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
-      clickTarget: (event.target as HTMLElement).tagName,
-    });
+    if (shouldTrackInteraction('click')) {
+      trackProductInteraction(productName, 'click', {
+        productId,
+        category,
+        elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
+        clickTarget: (event.target as HTMLElement).tagName,
+      });
+    }
   };
 
   const handleHover = () => {
-    trackProductInteraction(productName, 'hover', {
-      productId,
-      category,
-      elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
-    });
+    if (shouldTrackInteraction('hover')) {
+      trackProductInteraction(productName, 'hover', {
+        productId,
+        category,
+        elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
+      });
+    }
   };
 
   return (

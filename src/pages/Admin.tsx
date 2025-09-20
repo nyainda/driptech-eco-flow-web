@@ -17,7 +17,7 @@ import {
   CreditCard,
   Receipt,
   BarChart3,
-  Mail, // Import Mail icon
+  Mail, 
   Gift,
   Newspaper
 } from "lucide-react";
@@ -41,12 +41,13 @@ import InvoiceManagementSystem from "@/components/Admin/Invoice/InvoiceManagemen
 import VisitorTrackingDashboard from "@/components/Admin/VisitorTrackingDashboard";
 import DiscountManagement from "@/components/Admin/DiscountManagement";
 import NewsManagement from "@/components/Admin/NewsManagement";
-import { Button } from "@/components/ui/button"; // Import Button
-import { Badge } from "@/components/ui/badge"; // Import Badge
+import { Button } from "@/components/ui/button"; 
+import { Badge } from "@/components/ui/badge"; 
+import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagement"; 
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const unreadCount = 0; // Placeholder for unread count
+  const unreadCount = 0; 
 
   const adminSections = [
     {
@@ -60,6 +61,12 @@ const AdminContent = () => {
       label: "Products",
       icon: Package,
       description: "Manage irrigation products"
+    },
+    {
+      id: "kits",
+      label: "Irrigation Kits",
+      icon: Package,
+      description: "Manage irrigation kits"
     },
     {
       id: "blog",
@@ -238,6 +245,10 @@ const AdminContent = () => {
 
           <TabsContent value="projects" className="space-y-6">
             <ProjectManagement />
+          </TabsContent>
+
+          <TabsContent value="kits" className="space-y-6">
+            <IrrigationKitsManagement />
           </TabsContent>
 
           <TabsContent value="team" className="space-y-6">

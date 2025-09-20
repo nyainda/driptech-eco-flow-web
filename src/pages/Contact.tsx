@@ -2,7 +2,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Users, Globe, ArrowRight, CheckCircle, Star, Zap } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, ArrowRight, CheckCircle, Star, Zap } from "lucide-react";
 import SimpleContactForm from "@/components/common/SimpleContactForm";
 
 const Contact = () => {
@@ -20,7 +20,7 @@ const Contact = () => {
       title: "WhatsApp",
       subtitle: "Quick responses & support",
       details: ["0111 409 454", "0114 575 401"],
-      action: "https://wa.me/0114 575 401",
+      action: "https://wa.me/0114575401",
       actionText: "Chat on WhatsApp"
     },
     {
@@ -48,47 +48,39 @@ const Contact = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-blue-950/30">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       <main>
-        {/* Enhanced Hero Section */}
-        <section className="py-32 bg-gradient-to-br from-emerald-50 via-blue-50/50 to-cyan-50/30 dark:from-emerald-950/20 dark:via-blue-950/30 dark:to-cyan-950/20 relative overflow-hidden">
-          {/* Background decorations */}
-          <div className="absolute inset-0">
-            <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-emerald-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl"></div>
-          </div>
-
-          <div className="container mx-auto px-4 text-center relative z-10">
+        {/* Hero Section */}
+        <section className="py-12 sm:py-16 lg:py-20 bg-muted/30 border-b border-border">
+          <div className="container mx-auto px-4 text-center">
             <div className="inline-flex items-center gap-2 mb-8">
-              <Badge variant="secondary" className="px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-950 dark:to-blue-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 rounded-full">
+              <Badge className="px-5 py-2.5 text-sm font-semibold bg-muted text-muted-foreground border-border rounded-full">
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Get In Touch
               </Badge>
             </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-8 leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-tight tracking-tight">
               <span className="block mb-2">Contact Our</span>
-              <span className="block bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                Irrigation Experts
-              </span>
+              <span className="block text-primary">Irrigation Experts</span>
             </h1>
-            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
               Ready to transform your farm with modern irrigation? Our team is here to help you design,
               install, and maintain the perfect irrigation solution for your needs.
             </p>
 
             {/* Quick stats */}
             <div className="flex flex-wrap justify-center gap-8 mt-12">
-              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                <CheckCircle className="w-5 h-5 text-emerald-600" />
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <CheckCircle className="w-5 h-5 text-primary" />
                 <span className="font-medium">24/7 Support</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                <Star className="w-5 h-5 text-yellow-500" />
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Star className="w-5 h-5 text-primary" />
                 <span className="font-medium">500+ Happy Customers</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                <Zap className="w-5 h-5 text-blue-600" />
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Zap className="w-5 h-5 text-primary" />
                 <span className="font-medium">Fast Response Time</span>
               </div>
             </div>
@@ -96,28 +88,28 @@ const Contact = () => {
         </section>
 
         {/* Contact Content */}
-        <section className="py-20">
+        <section className="py-12 sm:py-16 lg:py-20">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Contact Form */}
               <div>
-                <h2 className="text-3xl font-bold mb-6 text-slate-800 dark:text-white">Send us a Message</h2>
+                <h2 className="text-3xl font-bold mb-6 text-foreground">Send us a Message</h2>
                 <SimpleContactForm />
               </div>
 
               {/* Contact Information */}
               <div>
-                <h2 className="text-3xl font-bold mb-6 text-slate-800 dark:text-white">Contact Information</h2>
+                <h2 className="text-3xl font-bold mb-6 text-foreground">Contact Information</h2>
                 <div className="space-y-6">
                   {contactInfo.map((info, index) => (
-                    <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-transparent hover:border-primary/30">
+                    <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-background border-border">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
-                          <div className="p-3 bg-primary/10 rounded-xl transition-all duration-300 group-hover:bg-primary/20">
+                          <div className="p-3 bg-muted rounded-xl transition-all duration-300 group-hover:bg-muted/50">
                             <info.icon className="h-6 w-6 text-primary" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg mb-1 text-slate-800 dark:text-slate-200">{info.title}</h3>
+                            <h3 className="font-semibold text-lg mb-1 text-foreground">{info.title}</h3>
                             <p className="text-sm text-muted-foreground mb-3">{info.subtitle}</p>
                             <div className="space-y-1 mb-4">
                               {info.details.map((detail, idx) => (
@@ -144,19 +136,19 @@ const Contact = () => {
                 </div>
 
                 {/* Business Hours Card */}
-                <Card className="mt-6 border-transparent hover:border-primary/30">
+                <Card className="mt-6 bg-background border-border">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 bg-primary/10 rounded-xl">
+                      <div className="p-3 bg-muted rounded-xl">
                         <Clock className="h-6 w-6 text-primary" />
                       </div>
-                      <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-200">Business Hours</h3>
+                      <h3 className="font-semibold text-lg text-foreground">Business Hours</h3>
                     </div>
                     <div className="space-y-2">
                       {businessHours.map((schedule, idx) => (
                         <div key={idx} className="flex justify-between items-center text-muted-foreground">
                           <span>{schedule.day}</span>
-                          <span className="font-medium text-slate-700 dark:text-slate-300">{schedule.hours}</span>
+                          <span className="font-medium text-foreground">{schedule.hours}</span>
                         </div>
                       ))}
                     </div>
@@ -166,15 +158,15 @@ const Contact = () => {
             </div>
 
             {/* Map Section */}
-            <div className="mt-16">
+            <div className="mt-12 lg:mt-16">
               <div className="mb-8 text-center">
-                <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">Find Us in Kenya</h2>
+                <h2 className="text-3xl font-bold text-foreground mb-4">Find Us in Kenya</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Located in Nairobi, Kenya's capital city. We serve irrigation projects across Kenya.
                 </p>
               </div>
 
-              <Card className="overflow-hidden border-primary/20">
+              <Card className="overflow-hidden border-border">
                 <CardContent className="p-0">
                   <div className="aspect-video relative">
                     <iframe
@@ -190,13 +182,13 @@ const Contact = () => {
                     ></iframe>
 
                     {/* Map Overlay */}
-                    <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-sm border border-primary/10">
+                    <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-sm border border-border">
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-primary/10 rounded-lg">
+                        <div className="p-2 bg-muted rounded-lg">
                           <MapPin className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-slate-800 dark:text-slate-200">DripTech Kenya</h4>
+                          <h4 className="font-bold text-foreground">DripTech Kenya</h4>
                           <p className="text-sm text-muted-foreground">Irrigation Solutions</p>
                         </div>
                       </div>
@@ -217,7 +209,7 @@ const Contact = () => {
                           href="https://wa.me/254111409454?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full hover:bg-secondary/90 transition-colors"
+                          className="inline-flex items-center text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full hover:bg-muted/50 transition-colors"
                         >
                           WhatsApp Us <ArrowRight className="h-3 w-3 ml-1" />
                         </a>

@@ -183,6 +183,7 @@ const Header = () => {
         { title: "Filtration Systems", href: "/products/filtration" },
         { title: "Control Systems", href: "/products/controls" },
         { title: "Accessories", href: "/products/accessories" },
+        { title: "Irrigation Kits", href: "/irrigation-kits" },
       ]
     },
     {

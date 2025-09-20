@@ -261,7 +261,7 @@ const AnalyticsDashboard: React.FC = () => {
     }));
 
     // Daily activity
-    const dailyGroups = {};
+    const dailyGroups: { [date: string]: { date: string; visitors: number; page_views: number; sessions: number } } = {};
     const dateRange = 7; // Last 7 days
     for (let i = 0; i < dateRange; i++) {
       const date = new Date();
@@ -279,7 +279,7 @@ const AnalyticsDashboard: React.FC = () => {
       };
     }
 
-    const dailyActivity = Object.values(dailyGroups).reverse();
+    const dailyActivity: { date: string; visitors: number; page_views: number; sessions: number }[] = Object.values(dailyGroups).reverse();
 
     return {
       totalVisitors,

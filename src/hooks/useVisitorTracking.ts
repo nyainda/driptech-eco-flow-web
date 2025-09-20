@@ -59,129 +59,146 @@ export const useVisitorTracking = () => {
   const sessionStartTime = useRef<Date>(new Date());
   const currentPageStartTime = useRef<Date>(new Date());
   const currentPagePath = useRef<string>('');
+  const isSessionInitialized = useRef<boolean>(false);
+  const sessionInitPromise = useRef<Promise<void> | null>(null);
 
-  // Initialize session
+  // Initialize session with better error handling
   useEffect(() => {
     const initSession = async () => {
-      try {
-        const sessionData = {
-          visitor_id: visitorId,
-          session_start: sessionStartTime.current.toISOString(),
-          browser: getBrowserInfo(),
-          device_type: getDeviceType(),
-          user_agent: navigator.userAgent,
-          referrer: document.referrer || undefined,
-          location: getLocationFromTimezone(),
-        };
-
-        // Save session to database
+      if (isSessionInitialized.current || sessionInitPromise.current) return;
+      
+      // Create a promise that resolves when session is ready
+      sessionInitPromise.current = (async () => {
         try {
-          const { data: existingSession, error: checkError } = await supabase
+          const sessionData = {
+            id: sessionId,
+            visitor_id: visitorId,
+            session_start: sessionStartTime.current.toISOString(),
+            browser: getBrowserInfo(),
+            device_type: getDeviceType(), // This now returns lowercase
+            user_agent: navigator.userAgent?.substring(0, 500) || null,
+            referrer: document.referrer?.substring(0, 500) || null,
+            location: getLocationFromTimezone(),
+            created_at: new Date().toISOString(),
+          };
+
+          // Direct insert with conflict handling
+          const { error } = await supabase
             .from('visitor_sessions')
-            .select('id')
-            .eq('visitor_id', visitorId)
-            .is('session_end', null)
-            .single();
-
-          if (checkError && checkError.code !== 'PGRST116') {
-            throw checkError;
+            .insert(sessionData);
+          
+          if (error) {
+            // If duplicate key error, session already exists - that's fine
+            if (error.code === '23505' || error.message?.includes('duplicate key')) {
+              console.log('Session already exists, continuing...');
+            } else {
+              throw error;
+            }
           }
-
-          if (!existingSession) {
-            const { error: insertError } = await supabase
-              .from('visitor_sessions')
-              .insert(sessionData);
-            
-            if (insertError) throw insertError;
-          }
+          
+          isSessionInitialized.current = true;
         } catch (error) {
-          console.log('Session tracking not available yet, logging instead:', sessionData);
+          console.log('Session initialization error:', error);
+          // Mark as initialized anyway to prevent infinite retries
+          isSessionInitialized.current = true;
         }
-      } catch (error) {
-        console.error('Error initializing session:', error);
-      }
+      })();
+      
+      await sessionInitPromise.current;
     };
 
-    initSession();
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(initSession, 100);
+    return () => clearTimeout(timer);
+  }, [visitorId, sessionId]);
 
-    // Update session on page unload
-    const handleBeforeUnload = async () => {
-      try {
-        const sessionEnd = new Date();
-        const totalDuration = Math.floor(
-          (sessionEnd.getTime() - sessionStartTime.current.getTime()) / 1000
-        );
+  // Clean session end handling
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const sessionEnd = new Date();
+      const totalDuration = Math.floor(
+        (sessionEnd.getTime() - sessionStartTime.current.getTime()) / 1000
+      );
 
-        await supabase
-          .from('visitor_sessions')
-          .update({
-            session_end: sessionEnd.toISOString(),
-            total_duration: totalDuration,
-          })
-          .eq('visitor_id', visitorId);
-      } catch (error) {
-        console.error('Error updating session end:', error);
+      // Use sendBeacon for better reliability
+      if (navigator.sendBeacon && totalDuration > 0) {
+        const data = JSON.stringify({
+          session_end: sessionEnd.toISOString(),
+          total_duration: totalDuration,
+        });
+        
+        const supabaseRestUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+        navigator.sendBeacon(`${supabaseRestUrl}/rest/v1/visitor_sessions?id=eq.${sessionId}`, data);
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [visitorId]);
+  }, [sessionId]);
 
   const trackPageView = async (path: string, title: string) => {
     try {
-      // Track time spent on previous page
+      // Wait for session to be initialized
+      if (sessionInitPromise.current) {
+        await sessionInitPromise.current;
+      }
+
+      // Update time spent on previous page
       if (currentPagePath.current && currentPagePath.current !== path) {
         const timeSpent = Math.floor(
           (new Date().getTime() - currentPageStartTime.current.getTime()) / 1000
         );
 
-        if (timeSpent > 0) {
-          await supabase
-            .from('page_views')
-            .update({ time_spent: timeSpent })
-            .eq('visitor_id', visitorId)
-            .eq('page_path', currentPagePath.current)
-            .order('timestamp', { ascending: false })
-            .limit(1);
+        if (timeSpent > 0 && timeSpent < 3600) {
+          try {
+            await supabase
+              .from('page_views')
+              .update({ time_spent: timeSpent })
+              .eq('visitor_id', visitorId)
+              .eq('session_id', sessionId)
+              .eq('page_path', currentPagePath.current)
+              .order('timestamp', { ascending: false })
+              .limit(1);
+          } catch (updateError) {
+            // Ignore time spent update errors
+          }
         }
       }
 
-      // Track new page view
+      // Create new page view record
       const pageViewData = {
+        id: uuidv4(),
         visitor_id: visitorId,
         session_id: sessionId,
         page_path: path,
-        page_title: title,
+        page_title: title?.substring(0, 200) || path,
         timestamp: new Date().toISOString(),
-        referrer: currentPagePath.current || document.referrer || undefined,
+        referrer: (currentPagePath.current || document.referrer)?.substring(0, 500) || null,
+        created_at: new Date().toISOString(),
       };
 
-      // Save page view to database
-      try {
-        const { error: insertError } = await supabase
-          .from('page_views')
-          .insert(pageViewData);
-        
-        if (insertError) throw insertError;
-      } catch (error) {
-        console.log('Page view tracking not available yet, logging instead:', pageViewData);
+      const { error } = await supabase
+        .from('page_views')
+        .insert(pageViewData);
+      
+      if (error) {
+        console.log('Page view tracking error:', error);
       }
 
       // Update current page tracking
       currentPagePath.current = path;
       currentPageStartTime.current = new Date();
 
-      // Update session page views count
+      // Try to increment page views count (ignore if RPC doesn't exist)
       try {
         await supabase.rpc('increment_page_views', {
           visitor_id_param: visitorId,
         });
       } catch (rpcError) {
-        console.log('RPC increment page views not available yet:', rpcError);
+        // Ignore RPC errors
       }
     } catch (error) {
-      console.error('Error tracking page view:', error);
+      console.log('Page view tracking failed:', error);
     }
   };
 
@@ -191,31 +208,35 @@ export const useVisitorTracking = () => {
     additionalData?: any
   ) => {
     try {
+      // Wait for session to be initialized
+      if (sessionInitPromise.current) {
+        await sessionInitPromise.current;
+      }
+
       const interactionData = {
+        id: uuidv4(),
         visitor_id: visitorId,
         session_id: sessionId,
         page_path: window.location.pathname,
-        product_name: productName,
-        product_id: additionalData?.productId,
-        product_category: additionalData?.category,
+        product_name: productName?.substring(0, 100) || 'Unknown',
+        product_id: additionalData?.productId?.substring(0, 50) || null,
+        product_category: additionalData?.category?.substring(0, 50) || null,
         interaction_type: interactionType,
         timestamp: new Date().toISOString(),
-        element_selector: additionalData?.elementSelector,
-        additional_data: additionalData,
+        element_selector: additionalData?.elementSelector?.substring(0, 200) || null,
+        additional_data: additionalData || null,
+        created_at: new Date().toISOString(),
       };
 
-      // Save product interaction to database
-      try {
-        const { error: insertError } = await supabase
-          .from('product_interactions')
-          .insert(interactionData);
-        
-        if (insertError) throw insertError;
-      } catch (error) {
-        console.log('Product interaction tracking not available yet, logging instead:', interactionData);
+      const { error } = await supabase
+        .from('product_interactions')
+        .insert(interactionData);
+      
+      if (error) {
+        console.log('Product interaction tracking error:', error);
       }
     } catch (error) {
-      console.error('Error tracking product interaction:', error);
+      console.log('Product interaction tracking failed:', error);
     }
   };
 
@@ -230,24 +251,27 @@ export const useVisitorTracking = () => {
 // Helper functions
 const getBrowserInfo = (): string => {
   const userAgent = navigator.userAgent;
-  if (userAgent.includes('Chrome')) return 'Chrome';
+  if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) return 'Chrome';
   if (userAgent.includes('Firefox')) return 'Firefox';
-  if (userAgent.includes('Safari')) return 'Safari';
-  if (userAgent.includes('Edge')) return 'Edge';
+  if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari';
+  if (userAgent.includes('Edg')) return 'Edge';
+  if (userAgent.includes('Opera') || userAgent.includes('OPR')) return 'Opera';
   return 'Other';
 };
 
+// FIXED: Now returns lowercase values to match database constraint
 const getDeviceType = (): string => {
-  const userAgent = navigator.userAgent;
-  if (/tablet|ipad|playbook|silk/i.test(userAgent)) return 'Tablet';
-  if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) return 'Mobile';
-  return 'Desktop';
+  const userAgent = navigator.userAgent.toLowerCase();
+  if (/tablet|ipad|playbook|silk/i.test(userAgent)) return 'tablet';   // lowercase
+  if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) return 'mobile';   // lowercase
+  return 'desktop';   // lowercase
 };
 
 const getLocationFromTimezone = (): string => {
   try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
-  } catch {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return timezone || 'Unknown';
+  } catch (error) {
     return 'Unknown';
   }
 };

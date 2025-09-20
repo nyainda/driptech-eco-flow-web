@@ -86,18 +86,15 @@ const NewsManagement = () => {
     try {
       setUploading(true);
       
-      // Generate unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `news/${Date.now()}.${fileExt}`;
 
-      // Upload to Supabase storage
       const { data, error } = await supabase.storage
         .from('images')
         .upload(fileName, file);
 
       if (error) throw error;
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('images')
         .getPublicUrl(fileName);
@@ -126,22 +123,40 @@ const NewsManagement = () => {
   const fetchStats = async () => {
     try {
       const { data, error } = await supabase
-        .from("news_articles")
+        .from("news_articles" as any)
         .select("views, likes, published, title");
 
       if (error) throw error;
 
-      const total = data?.length || 0;
-      const published = data?.filter(article => article.published).length || 0;
-      const totalViews = data?.reduce((sum, article) => sum + (article.views || 0), 0) || 0;
-      const totalLikes = data?.reduce((sum, article) => sum + (article.likes || 0), 0) || 0;
+        if (!error && Array.isArray(data)) {
+        const articlesArray = data.filter(
+          (item: any) =>
+            typeof item === "object" &&
+            item !== null &&
+            "published" in item &&
+            "views" in item &&
+            "likes" in item &&
+            "title" in item
+        ) as NewsArticle[];
+        const total = articlesArray.length;
+        const published = articlesArray.filter(article => article.published).length;
+        const totalViews = articlesArray.reduce((sum, article) => sum + (article.views || 0), 0);
+        const totalLikes = articlesArray.reduce((sum, article) => sum + (article.likes || 0), 0);
 
-      setStats({
-        totalArticles: total,
-        publishedArticles: published,
-        totalViews,
-        totalLikes,
-      });
+        setStats({
+          totalArticles: total,
+          publishedArticles: published,
+          totalViews,
+          totalLikes,
+        });
+      } else {
+        setStats({
+          totalArticles: 0,
+          publishedArticles: 0,
+          totalViews: 0,
+          totalLikes: 0,
+        });
+      }
     } catch (error) {
       console.error("Error fetching stats:", error);
     }
@@ -152,10 +167,9 @@ const NewsManagement = () => {
       setLoading(true);
 
       let query = supabase
-        .from('news_articles')
+        .from('news_articles' as any)
         .select('*', { count: "exact" });
 
-      // Apply filters
       if (searchQuery) {
         query = query.or(`title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%`);
       }
@@ -164,7 +178,6 @@ const NewsManagement = () => {
         query = query.eq("published", statusFilter === "published");
       }
 
-      // Apply sorting
       switch (sortBy) {
         case "newest":
           query = query.order('created_at', { ascending: false });
@@ -180,7 +193,6 @@ const NewsManagement = () => {
           break;
       }
 
-      // Apply pagination
       const from = (currentPage - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
       query = query.range(from, to);
@@ -214,7 +226,6 @@ const NewsManagement = () => {
         return;
       }
 
-      // Calculate reading time
       const wordCount = newArticle.content.split(/\s+/).length;
       const readingTime = Math.ceil(wordCount / 200);
 
@@ -233,7 +244,6 @@ const NewsManagement = () => {
       };
 
       if (editingArticle) {
-        // Update existing article
         const { error } = await supabase
           .from('news_articles')
           .update(articleData)
@@ -246,7 +256,6 @@ const NewsManagement = () => {
           description: "News article updated successfully"
         });
       } else {
-        // Create new article
         const { error } = await supabase
           .from('news_articles')
           .insert({
@@ -352,20 +361,17 @@ const NewsManagement = () => {
   const totalPages = Math.ceil(totalArticles / ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen ">
-      {/* Main container with responsive padding */}
+    <div className="min-h-screen bg-background">
       <div className="p-2 sm:p-4 lg:p-6 xl:p-8">
         <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
-          
-          {/* Header - Fully responsive */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-2">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div className="p-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white w-fit">
-                  <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
+                <div className="p-2 rounded-xl bg-muted border border-border w-fit">
+                  <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground">
                     News Management
                   </h1>
                   <p className="text-xs sm:text-sm text-muted-foreground">
@@ -375,7 +381,6 @@ const NewsManagement = () => {
               </div>
             </div>
             
-            {/* Create Article Button - Responsive */}
             <Dialog open={showCreateModal} onOpenChange={(open) => {
               setShowCreateModal(open);
               if (!open) {
@@ -384,52 +389,48 @@ const NewsManagement = () => {
               }
             }}>
               <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto gap-2 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg transition-all duration-300 transform hover:scale-105">
+                <Button className="w-full sm:w-auto gap-2 text-sm sm:text-base bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all duration-300 transform hover:scale-105">
                   <Plus className="h-4 w-4" />
                   <span className="hidden sm:inline">Create Article</span>
                   <span className="sm:hidden">Create</span>
                 </Button>
               </DialogTrigger>
               
-              {/* Responsive Modal Dialog */}
-              <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-hidden p-0">
+              <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-hidden p-0 bg-background border-border">
                 <div className="flex flex-col max-h-[90vh]">
-                  <DialogHeader className="p-4 sm:p-6 border-b flex-shrink-0">
+                  <DialogHeader className="p-4 sm:p-6 border-b border-border flex-shrink-0">
                     <DialogTitle className="text-lg sm:text-xl font-semibold text-foreground">
                       {editingArticle ? "Edit Article" : "Create New Article"}
                     </DialogTitle>
                   </DialogHeader>
                   
-                  {/* Scrollable form content */}
                   <div className="overflow-y-auto flex-1 p-4 sm:p-6">
                     <div className="space-y-4 sm:space-y-6">
-                      {/* Form fields - Responsive grid */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                         <div className="lg:col-span-2">
-                          <Label htmlFor="title" className="text-sm font-medium">Title</Label>
+                          <Label htmlFor="title" className="text-sm font-medium text-foreground">Title</Label>
                           <Input
                             id="title"
                             value={newArticle.title}
                             onChange={(e) => setNewArticle(prev => ({ ...prev, title: e.target.value }))}
                             placeholder="Enter article title"
-                            className="mt-1"
+                            className="mt-1 bg-background border-border text-foreground placeholder-muted-foreground"
                           />
                         </div>
                         
                         <div>
-                          <Label htmlFor="author" className="text-sm font-medium">Author</Label>
+                          <Label htmlFor="author" className="text-sm font-medium text-foreground">Author</Label>
                           <Input
                             id="author"
                             value={newArticle.author}
                             onChange={(e) => setNewArticle(prev => ({ ...prev, author: e.target.value }))}
                             placeholder="Author name"
-                            className="mt-1"
+                            className="mt-1 bg-background border-border text-foreground placeholder-muted-foreground"
                           />
                         </div>
                         
-                        {/* Featured Image Upload - Responsive */}
                         <div>
-                          <Label className="text-sm font-medium">Featured Image</Label>
+                          <Label className="text-sm font-medium text-foreground">Featured Image</Label>
                           <div className="space-y-3 mt-1">
                             <input
                               ref={fileInputRef}
@@ -443,7 +444,7 @@ const NewsManagement = () => {
                               variant="outline" 
                               onClick={() => fileInputRef.current?.click()}
                               disabled={uploading}
-                              className="w-full border-dashed border-2 h-12"
+                              className="w-full border-dashed border-2 border-border h-12 text-muted-foreground hover:bg-muted"
                             >
                               {uploading ? (
                                 <>
@@ -460,7 +461,7 @@ const NewsManagement = () => {
                               )}
                             </Button>
                             {newArticle.featured_image_url && (
-                              <div className="relative rounded-lg overflow-hidden border">
+                              <div className="relative rounded-lg overflow-hidden border border-border">
                                 <img 
                                   src={newArticle.featured_image_url} 
                                   alt="Preview" 
@@ -484,51 +485,48 @@ const NewsManagement = () => {
                         </div>
                       </div>
                       
-                      {/* Excerpt */}
                       <div>
-                        <Label htmlFor="excerpt" className="text-sm font-medium">Excerpt</Label>
+                        <Label htmlFor="excerpt" className="text-sm font-medium text-foreground">Excerpt</Label>
                         <Textarea
                           id="excerpt"
                           value={newArticle.excerpt}
                           onChange={(e) => setNewArticle(prev => ({ ...prev, excerpt: e.target.value }))}
                           placeholder="Brief description of the article"
                           rows={3}
-                          className="mt-1 resize-none"
+                          className="mt-1 resize-none bg-background border-border text-foreground placeholder-muted-foreground"
                         />
                       </div>
                       
-                      {/* Content */}
                       <div>
-                        <Label htmlFor="content" className="text-sm font-medium">Content</Label>
+                        <Label htmlFor="content" className="text-sm font-medium text-foreground">Content</Label>
                         <Textarea
                           id="content"
                           value={newArticle.content}
                           onChange={(e) => setNewArticle(prev => ({ ...prev, content: e.target.value }))}
                           placeholder="Write your news content here..."
                           rows={6}
-                          className="mt-1 resize-none"
+                          className="mt-1 resize-none bg-background border-border text-foreground placeholder-muted-foreground"
                         />
                       </div>
                       
-                      {/* Tags - Responsive */}
                       <div>
-                        <Label className="text-sm font-medium">Tags</Label>
+                        <Label className="text-sm font-medium text-foreground">Tags</Label>
                         <div className="flex flex-col sm:flex-row gap-2 mt-1 mb-3">
                           <Input
                             value={newTag}
                             onChange={(e) => setNewTag(e.target.value)}
                             placeholder="Add a tag"
                             onKeyPress={(e) => e.key === 'Enter' && addTag()}
-                            className="flex-1"
+                            className="flex-1 bg-background border-border text-foreground placeholder-muted-foreground"
                           />
-                          <Button type="button" onClick={addTag} variant="outline" className="w-full sm:w-auto">
+                          <Button type="button" onClick={addTag} variant="outline" className="w-full sm:w-auto border-border text-muted-foreground hover:bg-muted">
                             <Tag className="h-4 w-4 sm:mr-2" />
                             <span className="hidden sm:inline">Add</span>
                           </Button>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {newArticle.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="px-3 py-1">
+                            <Badge key={tag} variant="secondary" className="px-3 py-1 bg-muted text-muted-foreground">
                               <span className="text-xs">{tag}</span>
                               <button
                                 onClick={() => removeTag(tag)}
@@ -541,27 +539,25 @@ const NewsManagement = () => {
                         </div>
                       </div>
                       
-                      {/* Published Switch */}
-                      <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg">
+                      <div className="flex items-center space-x-3 p-4 bg-muted/30 rounded-lg border border-border">
                         <Switch
                           id="published"
                           checked={newArticle.published}
                           onCheckedChange={(checked) => setNewArticle(prev => ({ ...prev, published: checked }))}
                         />
                         <div className="flex-1">
-                          <Label htmlFor="published" className="text-sm font-medium">Published</Label>
+                          <Label htmlFor="published" className="text-sm font-medium text-foreground">Published</Label>
                           <p className="text-xs text-muted-foreground">Make this article visible to readers</p>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Modal Footer - Responsive buttons */}
-                  <div className="flex flex-col sm:flex-row justify-end gap-3 p-4 sm:p-6 border-t flex-shrink-0">
-                    <Button variant="outline" onClick={() => setShowCreateModal(false)} className="order-2 sm:order-1">
+                  <div className="flex flex-col sm:flex-row justify-end gap-3 p-4 sm:p-6 border-t border-border flex-shrink-0">
+                    <Button variant="outline" onClick={() => setShowCreateModal(false)} className="order-2 sm:order-1 border-border text-muted-foreground hover:bg-muted">
                       Cancel
                     </Button>
-                    <Button onClick={handleCreateOrUpdateArticle} className="order-1 sm:order-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                    <Button onClick={handleCreateOrUpdateArticle} className="order-1 sm:order-2 bg-primary hover:bg-primary/90 text-primary-foreground">
                       {editingArticle ? "Update Article" : "Create Article"}
                     </Button>
                   </div>
@@ -570,63 +566,57 @@ const NewsManagement = () => {
             </Dialog>
           </div>
 
-          {/* Statistics Cards - Responsive grid */}
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <Card className="relative overflow-hidden  border-0 shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-indigo-600/10"></div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative p-3 sm:p-4">
-                <CardTitle className="text-xs sm:text-sm font-medium truncate">Total Articles</CardTitle>
-                <div className="p-1.5 sm:p-2 rounded-lg bg-blue-600/10 flex-shrink-0">
-                  <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
+            <Card className="relative overflow-hidden bg-background border-border shadow-lg">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 sm:p-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate">Total Articles</CardTitle>
+                <div className="p-1.5 sm:p-2 rounded-lg bg-muted flex-shrink-0">
+                  <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                 </div>
               </CardHeader>
-              <CardContent className="relative p-3 sm:p-4 pt-0">
-                <div className="text-lg sm:text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.totalArticles}</div>
+              <CardContent className="p-3 sm:p-4 pt-0">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">{stats.totalArticles}</div>
               </CardContent>
             </Card>
             
-            <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950/50 dark:to-emerald-950/50 border-0 shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 to-emerald-600/10"></div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative p-3 sm:p-4">
-                <CardTitle className="text-xs sm:text-sm font-medium truncate">Published</CardTitle>
-                <div className="p-1.5 sm:p-2 rounded-lg bg-green-600/10 flex-shrink-0">
-                  <Globe className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
+            <Card className="relative overflow-hidden bg-background border-border shadow-lg">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 sm:p-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate">Published</CardTitle>
+                <div className="p-1.5 sm:p-2 rounded-lg bg-muted flex-shrink-0">
+                  <Globe className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                 </div>
               </CardHeader>
-              <CardContent className="relative p-3 sm:p-4 pt-0">
-                <div className="text-lg sm:text-2xl font-bold text-green-700 dark:text-green-400">{stats.publishedArticles}</div>
+              <CardContent className="p-3 sm:p-4 pt-0">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">{stats.publishedArticles}</div>
               </CardContent>
             </Card>
             
-            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-100 dark:from-purple-950/50 dark:to-violet-950/50 border-0 shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-violet-600/10"></div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative p-3 sm:p-4">
-                <CardTitle className="text-xs sm:text-sm font-medium truncate">Total Views</CardTitle>
-                <div className="p-1.5 sm:p-2 rounded-lg bg-purple-600/10 flex-shrink-0">
-                  <Eye className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600" />
+            <Card className="relative overflow-hidden bg-background border-border shadow-lg">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 sm:p-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate">Total Views</CardTitle>
+                <div className="p-1.5 sm:p-2 rounded-lg bg-muted flex-shrink-0">
+                  <Eye className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                 </div>
               </CardHeader>
-              <CardContent className="relative p-3 sm:p-4 pt-0">
-                <div className="text-lg sm:text-2xl font-bold text-purple-700 dark:text-purple-400">{stats.totalViews.toLocaleString()}</div>
+              <CardContent className="p-3 sm:p-4 pt-0">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">{stats.totalViews.toLocaleString()}</div>
               </CardContent>
             </Card>
             
-            <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-950/50 dark:to-red-950/50 border-0 shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-600/10 to-red-600/10"></div>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative p-3 sm:p-4">
-                <CardTitle className="text-xs sm:text-sm font-medium truncate">Total Likes</CardTitle>
-                <div className="p-1.5 sm:p-2 rounded-lg bg-orange-600/10 flex-shrink-0">
-                  <Star className="h-3 w-3 sm:h-4 sm:w-4 text-orange-600" />
+            <Card className="relative overflow-hidden bg-background border-border shadow-lg">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 sm:p-4">
+                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate">Total Likes</CardTitle>
+                <div className="p-1.5 sm:p-2 rounded-lg bg-muted flex-shrink-0">
+                  <Star className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                 </div>
               </CardHeader>
-              <CardContent className="relative p-3 sm:p-4 pt-0">
-                <div className="text-lg sm:text-2xl font-bold text-orange-700 dark:text-orange-400">{stats.totalLikes}</div>
+              <CardContent className="p-3 sm:p-4 pt-0">
+                <div className="text-lg sm:text-2xl font-bold text-foreground">{stats.totalLikes}</div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Filters - Responsive layout */}
-          <Card className="border-0 shadow-lg ">
+          <Card className="bg-background border-border shadow-lg">
             <CardContent className="p-4 sm:p-6">
               <div className="flex flex-col gap-4 sm:flex-row">
                 <div className="flex-1 relative">
@@ -635,25 +625,25 @@ const NewsManagement = () => {
                     placeholder="Search articles..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-background/50"
+                    className="pl-10 bg-background border-border text-foreground placeholder-muted-foreground"
                   />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-36 bg-background/50">
+                    <SelectTrigger className="w-full sm:w-36 bg-background border-border text-foreground">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border-border text-foreground">
                       <SelectItem value="all">All Status</SelectItem>
                       <SelectItem value="published">Published</SelectItem>
                       <SelectItem value="draft">Draft</SelectItem>
                     </SelectContent>
                   </Select>
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-full sm:w-36 bg-background/50">
+                    <SelectTrigger className="w-full sm:w-36 bg-background border-border text-foreground">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border-border text-foreground">
                       <SelectItem value="newest">Newest First</SelectItem>
                       <SelectItem value="oldest">Oldest First</SelectItem>
                       <SelectItem value="title">By Title</SelectItem>
@@ -665,22 +655,21 @@ const NewsManagement = () => {
             </CardContent>
           </Card>
 
-          {/* Articles List - Responsive cards */}
           <div className="space-y-4">
             {loading ? (
-              <Card className="border-0 shadow-lg">
+              <Card className="bg-background border-border shadow-lg">
                 <CardContent className="p-8 sm:p-12 text-center">
-                  <div className="animate-spin h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <div className="animate-spin h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                   <p className="text-muted-foreground">Loading articles...</p>
                 </CardContent>
               </Card>
             ) : articles.length === 0 ? (
-              <Card className="border-0 shadow-lg">
+              <Card className="bg-background border-border shadow-lg">
                 <CardContent className="p-8 sm:p-12 text-center">
-                  <div className="p-4 rounded-full bg-blue-100 dark:bg-blue-900/50 w-fit mx-auto mb-4">
-                    <FileText className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600" />
+                  <div className="p-4 rounded-full bg-muted w-fit mx-auto mb-4">
+                    <FileText className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">No articles found</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">No articles found</h3>
                   <p className="text-muted-foreground mb-6 text-sm sm:text-base">
                     {searchQuery || statusFilter !== "all" 
                       ? "Try adjusting your search criteria" 
@@ -689,7 +678,7 @@ const NewsManagement = () => {
                   {(!searchQuery && statusFilter === "all") && (
                     <Button 
                       onClick={() => setShowCreateModal(true)}
-                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Create First Article
@@ -699,27 +688,25 @@ const NewsManagement = () => {
               </Card>
             ) : (
               articles.map((article, index) => (
-                <Card key={article.id} className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                <Card key={article.id} className="bg-background border-border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex flex-col space-y-4">
-                      {/* Article Header - Responsive */}
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                         <div className="flex-1 space-y-3 min-w-0">
                           <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                            <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-blue-600 transition-colors line-clamp-2 flex-1">
+                            <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 flex-1">
                               {article.title}
                             </h3>
                             <Badge 
-                              variant={article.published ? "default" : "secondary"} 
-                              className={`w-fit flex-shrink-0 ${article.published ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-400" : ""}`}
+                              variant={article.published ? "default" : "outline"} 
+                              className={`w-fit flex-shrink-0 border-border text-muted-foreground ${article.published ? "bg-primary text-primary-foreground" : ""}`}
                             >
                               {article.published ? "Published" : "Draft"}
                             </Badge>
                           </div>
                           
-                          {/* Featured Image - Responsive with error handling */}
                           {article.featured_image_url && (
-                            <div className="w-full sm:max-w-xs h-32 sm:h-28 rounded-lg overflow-hidden bg-muted">
+                            <div className="w-full sm:max-w-xs h-32 sm:h-28 rounded-lg overflow-hidden bg-muted border border-border">
                               <img 
                                 src={article.featured_image_url} 
                                 alt={article.title} 
@@ -736,7 +723,6 @@ const NewsManagement = () => {
                           
                           <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">{article.excerpt}</p>
                           
-                          {/* Article Meta - Responsive layout */}
                           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -756,48 +742,46 @@ const NewsManagement = () => {
                             </span>
                           </div>
                           
-                          {/* Tags - Responsive */}
                           <div className="flex flex-wrap gap-1 sm:gap-2">
                             {article.tags.slice(0, 3).map((tag) => (
-                              <Badge key={tag} variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400">
+                              <Badge key={tag} variant="outline" className="text-xs bg-muted text-muted-foreground border-border">
                                 #{tag}
                               </Badge>
                             ))}
                             {article.tags.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs bg-muted text-muted-foreground border-border">
                                 +{article.tags.length - 3}
                               </Badge>
                             )}
                           </div>
                         </div>
                         
-                        {/* Action buttons - Responsive */}
                         <div className="flex items-center gap-2 flex-shrink-0 sm:flex-col sm:items-end">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => {
-                                console.log('Editing article:', article);
-                                handleEditArticle(article);
-                              }}
-                              className="hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/50 w-full sm:w-auto"
-                            >
-                              <Edit className="h-4 w-4 sm:mr-0 mr-2" />
-                              <span className="sm:hidden">Edit</span>
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => {
-                                if (window.confirm('Are you sure you want to delete this article?')) {
-                                  handleDeleteArticle(article.id);
-                                }
-                              }}
-                              className="hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/50 text-muted-foreground w-full sm:w-auto"
-                            >
-                              <Trash2 className="h-4 w-4 sm:mr-0 mr-2" />
-                              <span className="sm:hidden">Delete</span>
-                            </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                              console.log('Editing article:', article);
+                              handleEditArticle(article);
+                            }}
+                            className="hover:bg-muted hover:text-primary w-full sm:w-auto"
+                          >
+                            <Edit className="h-4 w-4 sm:mr-0 mr-2" />
+                            <span className="sm:hidden">Edit</span>
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to delete this article?')) {
+                                handleDeleteArticle(article.id);
+                              }
+                            }}
+                            className="hover:bg-muted hover:text-destructive text-muted-foreground w-full sm:w-auto"
+                          >
+                            <Trash2 className="h-4 w-4 sm:mr-0 mr-2" />
+                            <span className="sm:hidden">Delete</span>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -807,17 +791,15 @@ const NewsManagement = () => {
             )}
           </div>
 
-          {/* Pagination - Responsive */}
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              {/* Previous/Next buttons */}
               <div className="flex gap-2 order-2 sm:order-1">
                 <Button
                   variant="outline"
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                   size="sm"
-                  className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm"
+                  className="bg-background border-border text-muted-foreground hover:bg-muted"
                 >
                   Previous
                 </Button>
@@ -826,13 +808,12 @@ const NewsManagement = () => {
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                   size="sm"
-                  className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm"
+                  className="bg-background border-border text-muted-foreground hover:bg-muted"
                 >
                   Next
                 </Button>
               </div>
               
-              {/* Page numbers - Hide on very small screens */}
               <div className="hidden sm:flex items-center gap-2 order-1 sm:order-2">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNum;
@@ -853,8 +834,8 @@ const NewsManagement = () => {
                       onClick={() => setCurrentPage(pageNum)}
                       size="sm"
                       className={currentPage === pageNum 
-                        ? "bg-gradient-to-r from-blue-600 to-indigo-600" 
-                        : "bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm"
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-background border-border text-muted-foreground hover:bg-muted"
                       }
                     >
                       {pageNum}
@@ -863,14 +844,12 @@ const NewsManagement = () => {
                 })}
               </div>
               
-              {/* Page indicator for mobile */}
               <div className="sm:hidden text-sm text-muted-foreground order-1">
                 Page {currentPage} of {totalPages}
               </div>
             </div>
           )}
 
-          {/* Footer Info */}
           <div className="text-center text-xs sm:text-sm text-muted-foreground py-4">
             <p>Showing {articles.length} of {totalArticles} articles</p>
           </div>
