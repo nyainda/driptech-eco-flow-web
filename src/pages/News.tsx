@@ -43,22 +43,20 @@ const News = () => {
       console.log('Fetching news articles...');
       
       let query = supabase
-        .from('news_articles') // Changed from 'blog_posts' to 'news_articles'
+        .from('news_articles')
         .select('*', { count: 'exact' })
-        .eq('published', true); // Changed from status = 'published' to published = true
+        .eq('published', true);
 
-      // Apply search filter
       if (searchQuery) {
         query = query.or(`title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
       }
 
-      // Apply sorting
       switch (sortBy) {
         case "newest":
-          query = query.order('created_at', { ascending: false }); // Changed from published_at
+          query = query.order('created_at', { ascending: false });
           break;
         case "oldest":
-          query = query.order('created_at', { ascending: true }); // Changed from published_at
+          query = query.order('created_at', { ascending: true });
           break;
         case "popular":
           query = query.order('views', { ascending: false });
@@ -68,7 +66,6 @@ const News = () => {
           break;
       }
 
-      // Apply pagination
       const from = (currentPage - 1) * ARTICLES_PER_PAGE;
       const to = from + ARTICLES_PER_PAGE - 1;
       query = query.range(from, to);
@@ -87,7 +84,7 @@ const News = () => {
         total: count || 0
       };
     },
-    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    refetchInterval: 5 * 60 * 1000,
   });
 
   const totalPages = Math.ceil(newsData.total / ARTICLES_PER_PAGE);
@@ -102,16 +99,16 @@ const News = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5"></div>
           <div className="container mx-auto px-4 relative">
             <div className="max-w-4xl mx-auto text-center">
-              <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 text-sm px-4 py-2">
+              <Badge variant="secondary" className="mb-6 text-sm font-semibold">
                 <Newspaper className="w-4 h-4 mr-2" />
                 Latest News & Insights
               </Badge>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 tracking-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 tracking-tight text-foreground">
                 Stay <span className="text-primary">Informed</span>
               </h1>
               
-              <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
                 Discover the latest in irrigation technology, sustainable farming practices, and industry innovations.
               </p>
               
@@ -124,11 +121,11 @@ const News = () => {
                       placeholder="Search articles..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 h-14 text-lg bg-card/50 border-0 shadow-lg backdrop-blur-sm"
+                      className="pl-12 h-14 text-lg bg-background border-2 border-border/20 shadow-md hover:border-primary/20 transition-all duration-300"
                     />
                   </div>
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-full sm:w-48 h-14 bg-card/50 border-0 shadow-lg backdrop-blur-sm">
+                    <SelectTrigger className="w-full sm:w-48 h-14 bg-background border-2 border-border/20 shadow-md hover:border-primary/20 transition-all duration-300">
                       <Filter className="h-4 w-4 mr-2" />
                       <SelectValue />
                     </SelectTrigger>
@@ -167,7 +164,7 @@ const News = () => {
           {isLoading ? (
             <div className="space-y-8">
               {/* Featured article skeleton */}
-              <Card className="overflow-hidden">
+              <Card className="overflow-hidden border-2 border-border/20 shadow-md">
                 <div className="aspect-[21/9] bg-muted animate-pulse"></div>
                 <CardContent className="p-8">
                   <div className="space-y-4">
@@ -181,7 +178,7 @@ const News = () => {
               {/* Grid skeletons */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="overflow-hidden">
+                  <Card key={i} className="overflow-hidden border-2 border-border/20 shadow-md">
                     <div className="aspect-video bg-muted animate-pulse"></div>
                     <CardContent className="p-6">
                       <div className="space-y-3">
@@ -195,28 +192,28 @@ const News = () => {
             </div>
           ) : newsData.articles.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                <Newspaper className="h-12 w-12 text-muted-foreground" />
+              <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Newspaper className="h-12 w-12 text-primary" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4">No Articles Found</h3>
-              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+              <h3 className="text-2xl font-semibold mb-4 text-foreground">No Articles Found</h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
                 {searchQuery 
                   ? "Try adjusting your search terms or explore our latest content." 
                   : "We're working on bringing you the latest news. Check back soon!"}
               </p>
               {searchQuery && (
-                <Button variant="outline" onClick={() => setSearchQuery("")}>
+                <Button variant="outline" className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300">
                   Clear Search
                 </Button>
               )}
               
               {/* Debug info */}
-              <div className="mt-8 p-4 bg-muted rounded-lg max-w-md mx-auto text-left">
-                <p className="text-sm font-medium mb-2">Debug Information:</p>
-                <p className="text-xs">Total articles: {newsData.total}</p>
-                <p className="text-xs">Search query: {searchQuery || 'None'}</p>
-                <p className="text-xs">Sort by: {sortBy}</p>
-                <p className="text-xs">Current page: {currentPage}</p>
+              <div className="mt-8 p-4 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl border-2 border-border/20 max-w-md mx-auto text-left">
+                <p className="text-sm font-medium mb-2 text-foreground">Debug Information:</p>
+                <p className="text-xs text-muted-foreground">Total articles: {newsData.total}</p>
+                <p className="text-xs text-muted-foreground">Search query: {searchQuery || 'None'}</p>
+                <p className="text-xs text-muted-foreground">Sort by: {sortBy}</p>
+                <p className="text-xs text-muted-foreground">Current page: {currentPage}</p>
               </div>
             </div>
           ) : (
@@ -224,7 +221,7 @@ const News = () => {
               {/* Featured Article - Large Hero Style */}
               {newsData.articles.length > 0 && (
                 <article className="group">
-                  <Card className="overflow-hidden border-0 shadow-2xl bg-card">
+                  <Card className="overflow-hidden border-2 border-border/20 shadow-md hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500">
                     <div className="relative">
                       {/* Large Hero Image */}
                       <div className="relative aspect-[21/9] overflow-hidden">
@@ -232,63 +229,63 @@ const News = () => {
                           <img
                             src={newsData.articles[0].featured_image_url}
                             alt={newsData.articles[0].title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                            <Newspaper className="h-16 w-16 text-primary/50" />
+                          <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                            <Newspaper className="h-16 w-16 text-primary" />
                           </div>
                         )}
                         
                         {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent"></div>
                         
                         {/* Featured Badge */}
                         <div className="absolute top-6 left-6">
-                          <Badge className="bg-red-500 text-white px-4 py-2 text-sm font-medium">
+                          <Badge className="bg-red-500/20 text-red-700 border-red-500/50 text-sm font-semibold px-4 py-2">
                             <Star className="h-4 w-4 mr-2" />
                             FEATURED
                           </Badge>
                         </div>
                         
                         {/* Article Info Overlay */}
-                        <div className="absolute bottom-6 left-6 right-6 text-white">
-                          <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
-                            <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1">
+                        <div className="absolute bottom-6 left-6 right-6">
+                          <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-foreground">
+                            <div className="flex items-center gap-2 bg-primary/20 rounded-full px-3 py-1">
                               <Calendar className="h-4 w-4" />
                               {formatDistanceToNow(new Date(newsData.articles[0].created_at), { addSuffix: true })}
                             </div>
                             {newsData.articles[0].reading_time && (
-                              <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1">
+                              <div className="flex items-center gap-2 bg-primary/20 rounded-full px-3 py-1">
                                 <Clock className="h-4 w-4" />
                                 {newsData.articles[0].reading_time} min read
                               </div>
                             )}
-                            <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1">
+                            <div className="flex items-center gap-2 bg-primary/20 rounded-full px-3 py-1">
                               <Eye className="h-4 w-4" />
                               {newsData.articles[0].views.toLocaleString()} views
                             </div>
-                            <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1">
+                            <div className="flex items-center gap-2 bg-primary/20 rounded-full px-3 py-1">
                               <Heart className="h-4 w-4" />
                               {newsData.articles[0].likes} likes
                             </div>
                           </div>
                           
-                          <div className="text-sm text-gray-300 mb-2">
+                          <div className="text-sm text-muted-foreground mb-2">
                             By {newsData.articles[0].author}
                           </div>
                           
-                          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
+                          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight text-foreground group-hover:text-primary transition-colors">
                             {newsData.articles[0].title}
                           </h2>
                           
-                          <p className="text-lg text-gray-200 mb-6 max-w-2xl">
+                          <p className="text-lg text-muted-foreground mb-6 max-w-2xl leading-relaxed">
                             {newsData.articles[0].excerpt || 
                              newsData.articles[0].content.replace(/<[^>]*>/g, '').substring(0, 200) + '...'}
                           </p>
                           
                           <Link to={`/news/${newsData.articles[0].slug}`}>
-                            <Button className="bg-white text-black hover:bg-gray-100 px-6 py-3 text-base font-medium">
+                            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 px-6 py-3 text-base font-medium">
                               Read Full Article
                               <ArrowRight className="h-5 w-5 ml-2" />
                             </Button>
@@ -306,7 +303,7 @@ const News = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {newsData.articles.slice(1, 3).map((article, index) => (
                       <article key={article.id} className="group">
-                        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <Card className="overflow-hidden border-2 border-border/20 shadow-md hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500">
                           <div className="relative aspect-[4/3] overflow-hidden">
                             {article.featured_image_url ? (
                               <img
@@ -315,24 +312,24 @@ const News = () => {
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                               />
                             ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-primary/15 to-secondary/15 flex items-center justify-center">
-                                <Newspaper className="h-12 w-12 text-primary/40" />
+                              <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                                <Newspaper className="h-12 w-12 text-primary" />
                               </div>
                             )}
                             
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent"></div>
                             
                             <div className="absolute top-4 left-4">
-                              <Badge className={`${index === 0 ? 'bg-blue-500' : 'bg-green-500'} text-white px-3 py-1 text-xs`}>
+                              <Badge variant="secondary" className="text-sm font-semibold">
                                 {index === 0 ? 'TRENDING' : 'LATEST'}
                               </Badge>
                             </div>
                             
-                            <div className="absolute bottom-4 left-4 right-4 text-white">
-                              <h3 className="text-xl font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                            <div className="absolute bottom-4 left-4 right-4">
+                              <h3 className="text-xl font-bold mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                                 {article.title}
                               </h3>
-                              <div className="flex items-center gap-3 text-sm text-gray-300">
+                              <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                   <Calendar className="h-3 w-3" />
                                   {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
@@ -354,21 +351,21 @@ const News = () => {
                               By {article.author}
                             </div>
                             
-                            <p className="text-muted-foreground mb-4 line-clamp-3">
+                            <p className="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
                               {article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'}
                             </p>
                             
                             <div className="flex items-center justify-between">
                               <div className="flex flex-wrap gap-2">
                                 {article.tags.slice(0, 2).map((tag, tagIndex) => (
-                                  <Badge key={`${tag}-${tagIndex}`} variant="secondary" className="text-xs">
+                                  <Badge key={`${tag}-${tagIndex}`} variant="secondary" className="text-xs font-semibold">
                                     {tag}
                                   </Badge>
                                 ))}
                               </div>
                               
                               <Link to={`/news/${article.slug}`}>
-                                <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
+                                <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-xl p-0 h-auto font-medium">
                                   Read More
                                   <ArrowRight className="h-4 w-4 ml-1" />
                                 </Button>
@@ -386,29 +383,29 @@ const News = () => {
               {newsData.articles.length > 3 && (
                 <section>
                   <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold">More Stories</h2>
+                    <h2 className="text-3xl font-bold text-foreground">More Stories</h2>
                     <div className="h-px bg-border flex-1 ml-6"></div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {newsData.articles.slice(3).map((article) => (
                       <article key={article.id} className="group">
-                        <Card className="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all duration-300 h-full">
+                        <Card className="overflow-hidden border-2 border-border/20 shadow-md hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500 h-full">
                           <div className="relative aspect-video overflow-hidden">
                             {article.featured_image_url ? (
                               <img
                                 src={article.featured_image_url}
                                 alt={article.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               />
                             ) : (
                               <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                                <Newspaper className="h-8 w-8 text-primary/30" />
+                                <Newspaper className="h-8 w-8 text-primary" />
                               </div>
                             )}
                             
                             <div className="absolute top-3 left-3">
-                              <Badge className="bg-purple-500 text-white px-2 py-1 text-xs">
+                              <Badge variant="secondary" className="text-xs font-semibold">
                                 NEWS
                               </Badge>
                             </div>
@@ -428,11 +425,11 @@ const News = () => {
                               )}
                             </div>
                             
-                            <h3 className="text-xl font-semibold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                            <h3 className="text-xl font-semibold mb-3 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                               {article.title}
                             </h3>
                             
-                            <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
+                            <p className="text-muted-foreground mb-4 line-clamp-3 flex-1 leading-relaxed">
                               {article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 120) + '...'}
                             </p>
                             
@@ -440,7 +437,7 @@ const News = () => {
                               By {article.author}
                             </div>
                             
-                            <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <div className="flex items-center justify-between pt-4 border-t border-border/20">
                               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                   <Eye className="h-3 w-3" />
@@ -452,8 +449,8 @@ const News = () => {
                                 </div>
                               </div>
                               
-                              <Link to={`/news/${article.slug}`}> {/* Fixed: changed from /blog/ to /news/ */}
-                                <Button variant="ghost" size="sm" className="text-primary p-0 h-auto font-medium">
+                              <Link to={`/news/${article.slug}`}>
+                                <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10 rounded-xl p-0 h-auto font-medium">
                                   Read Article
                                   <ArrowRight className="h-4 w-4 ml-1" />
                                 </Button>
@@ -472,6 +469,7 @@ const News = () => {
                 <div className="flex justify-center items-center gap-2 pt-8">
                   <Button
                     variant="outline"
+                    className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300"
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
                   >
@@ -489,7 +487,7 @@ const News = () => {
                           variant={currentPage === page ? "default" : "outline"}
                           size="sm"
                           onClick={() => setCurrentPage(page)}
-                          className="w-10 h-10"
+                          className="w-10 h-10 rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300"
                         >
                           {page}
                         </Button>
@@ -499,6 +497,7 @@ const News = () => {
                   
                   <Button
                     variant="outline"
+                    className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300"
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages}
                   >
@@ -509,28 +508,7 @@ const News = () => {
             </div>
           )}
 
-          {/* Newsletter Section */}
-          <section className="mt-16">
-            <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border-0">
-              <CardContent className="p-8 text-center">
-                <div className="max-w-2xl mx-auto">
-                  <Lightbulb className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-2xl font-bold mb-4">Stay in the Loop</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Get weekly updates on the latest irrigation technology, farming tips, and industry news delivered straight to your inbox.
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                    <Input placeholder="Enter your email" className="flex-1" />
-                    <Button>
-                      Subscribe
-                      <Sparkles className="h-4 w-4 ml-2" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
+        
         </div>
       </main>
 

@@ -41,12 +41,11 @@ const NewsArticle = () => {
       }
       
       try {
-        // Query the correct table: news_articles instead of blog_posts
         const { data, error } = await supabase
           .from('news_articles')
           .select('*')
           .eq('slug', slug)
-          .eq('published', true) // Use 'published' boolean instead of status
+          .eq('published', true)
           .single();
 
         console.log('Supabase query result:', { data, error });
@@ -61,7 +60,6 @@ const NewsArticle = () => {
           throw new Error('Article not found');
         }
 
-        // Increment view count
         const { error: updateError } = await supabase
           .from('news_articles')
           .update({ views: (data.views || 0) + 1 })
@@ -78,10 +76,9 @@ const NewsArticle = () => {
       }
     },
     retry: false,
-    enabled: !!slug, // Only run query if slug exists
+    enabled: !!slug,
   });
 
-  // Query for related articles
   const { data: relatedArticles = [] } = useQuery({
     queryKey: ['related-news-articles', article?.id],
     queryFn: async () => {
@@ -100,7 +97,6 @@ const NewsArticle = () => {
     enabled: !!article
   });
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -109,13 +105,17 @@ const NewsArticle = () => {
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="animate-pulse">
               <div className="h-4 bg-muted rounded w-32 mb-4"></div>
-              <div className="h-10 bg-muted rounded mb-6"></div>
-              <div className="aspect-video bg-muted rounded mb-8"></div>
-              <div className="space-y-4">
-                <div className="h-4 bg-muted rounded"></div>
-                <div className="h-4 bg-muted rounded w-5/6"></div>
-                <div className="h-4 bg-muted rounded w-4/6"></div>
-              </div>
+              <Card className="border-2 border-border/20 shadow-md">
+                <div className="aspect-video bg-muted rounded mb-8"></div>
+                <CardContent className="p-8">
+                  <div className="space-y-4">
+                    <div className="h-10 bg-muted rounded mb-6"></div>
+                    <div className="h-4 bg-muted rounded"></div>
+                    <div className="h-4 bg-muted rounded w-5/6"></div>
+                    <div className="h-4 bg-muted rounded w-4/6"></div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </main>
@@ -124,32 +124,31 @@ const NewsArticle = () => {
     );
   }
 
-  // Show error state
   if (error || !article) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <main className="pt-16 sm:pt-20 pb-8">
           <div className="container mx-auto px-4 max-w-4xl text-center py-16">
-            <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-              <Newspaper className="h-12 w-12 text-muted-foreground" />
+            <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Newspaper className="h-12 w-12 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold mb-4">News Article Not Found</h1>
-            <p className="text-muted-foreground mb-4">
+            <h1 className="text-3xl font-bold mb-4 text-foreground">News Article Not Found</h1>
+            <p className="text-muted-foreground mb-4 leading-relaxed">
               The news article you're looking for doesn't exist or hasn't been published yet.
             </p>
-            <div className="bg-muted p-4 rounded-lg mb-6 text-left max-w-md mx-auto">
-              <p className="text-sm"><strong>Debug Info:</strong></p>
-              <p className="text-sm">Slug: {slug || 'No slug provided'}</p>
-              <p className="text-sm">Error: {error?.message || 'Article not found'}</p>
-              <p className="text-sm">URL: {window.location.pathname}</p>
+            <div className="mt-8 p-4 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl border-2 border-border/20 max-w-md mx-auto text-left">
+              <p className="text-sm font-medium mb-2 text-foreground">Debug Information:</p>
+              <p className="text-xs text-muted-foreground">Slug: {slug || 'No slug provided'}</p>
+              <p className="text-xs text-muted-foreground">Error: {error?.message || 'Article not found'}</p>
+              <p className="text-xs text-muted-foreground">URL: {window.location.pathname}</p>
             </div>
-            <div className="space-y-2">
-              <Button onClick={() => navigate('/news')} className="mr-2">
+            <div className="mt-6 space-y-2 sm:space-y-0 sm:space-x-2 flex flex-col sm:flex-row justify-center">
+              <Button className="rounded-xl hover:bg-primary/90 hover:shadow-lg hover:scale-105 transition-all duration-300">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to News
               </Button>
-              <Button variant="outline" onClick={() => window.location.reload()}>
+              <Button variant="outline" className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300" onClick={() => window.location.reload()}>
                 Reload Page
               </Button>
             </div>
@@ -167,7 +166,7 @@ const NewsArticle = () => {
       <main className="pt-16 sm:pt-20 pb-8">
         <div className="container mx-auto px-4">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8 max-w-4xl mx-auto">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8 max-w-4xl mx-auto leading-relaxed">
             <Link to="/" className="hover:text-foreground transition-colors">
               Home
             </Link>
@@ -187,14 +186,14 @@ const NewsArticle = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => navigate('/news')}
-                  className="shrink-0"
+                  className="shrink-0 rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to News
                 </Button>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-foreground">
                 {article.title}
               </h1>
 
@@ -205,7 +204,7 @@ const NewsArticle = () => {
               )}
 
               {/* Article Meta */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8 leading-relaxed">
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   <span>By {article.author}</span>
@@ -231,7 +230,7 @@ const NewsArticle = () => {
 
               {/* Featured Image */}
               {article.featured_image_url && (
-                <div className="relative aspect-video rounded-lg overflow-hidden mb-8 shadow-lg">
+                <div className="relative aspect-video rounded-xl overflow-hidden mb-8 border-2 border-border/20 shadow-md hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
                   <img
                     src={article.featured_image_url}
                     alt={article.title}
@@ -258,10 +257,10 @@ const NewsArticle = () => {
             {/* Tags */}
             {article.tags && article.tags.length > 0 && (
               <div className="mb-12">
-                <h3 className="text-lg font-semibold mb-4">Tags</h3>
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {article.tags.map((tag, index) => (
-                    <Badge key={`${tag}-${index}`} variant="secondary" className="px-3 py-1">
+                    <Badge key={`${tag}-${index}`} variant="secondary" className="px-3 py-1 text-sm font-semibold">
                       <Tag className="h-3 w-3 mr-1" />
                       {tag}
                     </Badge>
@@ -272,33 +271,33 @@ const NewsArticle = () => {
 
             {/* Related Articles */}
             {relatedArticles.length > 0 && (
-              <section className="border-t border-border pt-12">
-                <h2 className="text-2xl font-bold mb-8">Related News</h2>
+              <section className="border-t border-border/20 pt-12">
+                <h2 className="text-2xl font-bold mb-8 text-foreground">Related News</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {relatedArticles.map((relatedArticle) => (
-                    <Card key={relatedArticle.id} className="group hover:shadow-lg transition-shadow">
-                      <div className="relative aspect-video overflow-hidden rounded-t-lg">
+                    <Card key={relatedArticle.id} className="group border-2 border-border/20 shadow-md hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500 h-full">
+                      <div className="relative aspect-video overflow-hidden rounded-t-xl">
                         {relatedArticle.featured_image_url ? (
                           <img
                             src={relatedArticle.featured_image_url}
                             alt={relatedArticle.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                            <Newspaper className="h-8 w-8 text-primary/30" />
+                            <Newspaper className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
                           </div>
                         )}
                       </div>
                       
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                      <CardContent className="p-4 flex flex-col flex-1">
+                        <h3 className="font-semibold mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                           {relatedArticle.title}
                         </h3>
                         
                         {relatedArticle.excerpt && (
-                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2 leading-relaxed">
                             {relatedArticle.excerpt}
                           </p>
                         )}
@@ -320,7 +319,7 @@ const NewsArticle = () => {
                         </div>
                         
                         <Link to={`/news/${relatedArticle.slug}`}>
-                          <Button variant="ghost" size="sm" className="w-full text-primary">
+                          <Button variant="ghost" size="sm" className="w-full text-primary hover:text-primary/80 hover:bg-primary/10 rounded-xl p-0 h-auto font-medium">
                             Read Article
                           </Button>
                         </Link>

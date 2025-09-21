@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -101,9 +100,9 @@ const Certifications = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "text-green-600 bg-green-50 border-green-200";
-      case "medium": return "text-blue-600 bg-blue-50 border-blue-200";
-      default: return "text-gray-600 bg-gray-50 border-gray-200";
+      case "high": return "border-l-green-600";
+      case "medium": return "border-l-blue-600";
+      default: return "border-l-gray-600";
     }
   };
 
@@ -122,13 +121,13 @@ const Certifications = () => {
         <div className="container mx-auto px-4">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <Badge variant="secondary" className="mb-4">
+            <Badge variant="secondary" className="mb-4 text-sm font-semibold">
               🏆 Certified Excellence
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
               Our <span className="text-primary">Certifications</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               DripTech maintains the highest industry standards through continuous certification and professional development. Our credentials ensure quality, safety, and expertise in every project.
             </p>
           </div>
@@ -136,11 +135,13 @@ const Certifications = () => {
           {/* Achievements Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {achievements.map((achievement, index) => (
-              <Card key={index} className="text-center p-6">
+              <Card key={index} className="text-center p-6 bg-background border-2 border-border/20 hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500 group">
                 <CardContent className="p-0">
-                  <achievement.icon className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-bold mb-2">{achievement.title}</h3>
-                  <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                  <div className="p-4 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <achievement.icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="font-bold mb-2 text-foreground group-hover:text-primary transition-colors">{achievement.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{achievement.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -149,36 +150,32 @@ const Certifications = () => {
           {/* Certifications Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {certifications.map((cert) => (
-              <Card key={cert.id} className={`border-l-4 ${getPriorityColor(cert.priority)}`}>
+              <Card key={cert.id} className={`bg-background border-2 border-border/20 hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500 border-l-4 ${getPriorityColor(cert.priority)}`}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <cert.icon className="h-8 w-8 text-primary flex-shrink-0" />
-                    <Badge className={getStatusColor(cert.status)}>
-                      {cert.status}
-                    </Badge>
+                    <div className="p-4 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                      <cert.icon className="h-8 w-8 text-primary flex-shrink-0" />
+                    </div>
+                    <Badge className={`text-sm font-semibold ${getStatusColor(cert.status)}`}>{cert.status}</Badge>
                   </div>
-                  <CardTitle className="text-lg">{cert.title}</CardTitle>
-                  <CardDescription className="font-medium text-primary">
-                    {cert.issuer}
-                  </CardDescription>
+                  <CardTitle className="text-lg text-foreground">{cert.title}</CardTitle>
+                  <CardDescription className="font-medium text-primary">{cert.issuer}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {cert.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{cert.description}</p>
                   
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Category:</span>
-                      <Badge variant="outline">{cert.category}</Badge>
+                      <Badge variant="secondary" className="text-sm font-semibold">{cert.category}</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Valid Until:</span>
-                      <span className="font-medium">{new Date(cert.validUntil).toLocaleDateString()}</span>
+                      <span className="font-medium text-foreground">{new Date(cert.validUntil).toLocaleDateString()}</span>
                     </div>
                   </div>
 
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300">
                     <Download className="h-4 w-4 mr-2" />
                     View Certificate
                   </Button>
@@ -188,59 +185,53 @@ const Certifications = () => {
           </div>
 
           {/* Quality Assurance Section */}
-          <Card className="mb-16">
+          <Card className="mb-16 bg-background border-2 border-border/20 hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl mb-4">Our Quality Commitment</CardTitle>
-              <CardDescription className="text-lg max-w-3xl mx-auto">
+              <CardTitle className="text-2xl mb-4 text-foreground">Our Quality Commitment</CardTitle>
+              <CardDescription className="text-lg max-w-3xl mx-auto text-muted-foreground leading-relaxed">
                 Every certification represents our dedication to excellence, continuous improvement, and customer satisfaction. We invest in training and development to stay ahead of industry standards.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     <Shield className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="font-bold mb-2">Quality Standards</h3>
-                  <p className="text-sm text-muted-foreground">
-                    ISO certified processes ensure consistent quality in every project delivery.
-                  </p>
+                  <h3 className="font-bold mb-2 text-foreground group-hover:text-primary transition-colors">Quality Standards</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">ISO certified processes ensure consistent quality in every project delivery.</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     <Users className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="font-bold mb-2">Expert Team</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Certified professionals with ongoing training and development programs.
-                  </p>
+                  <h3 className="font-bold mb-2 text-foreground group-hover:text-primary transition-colors">Expert Team</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Certified professionals with ongoing training and development programs.</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     <CheckCircle className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="font-bold mb-2">Compliance</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Full compliance with industry regulations and environmental standards.
-                  </p>
+                  <h3 className="font-bold mb-2 text-foreground group-hover:text-primary transition-colors">Compliance</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Full compliance with industry regulations and environmental standards.</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Contact Section */}
-          <Card>
-            <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">Need Verification?</h3>
-              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+          <Card className="bg-background border-2 border-border/20 hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500">
+            <CardContent className="p-8 text-center bg-gradient-to-br from-primary/5 to-secondary/5">
+              <h3 className="text-2xl font-bold mb-4 text-foreground">Need Verification?</h3>
+              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto leading-relaxed">
                 For verification of our certifications or to request official documentation, please contact our certification department.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button>
+                <Button className="rounded-xl hover:bg-primary/90 hover:shadow-lg hover:scale-105 transition-all duration-300">
                   <Calendar className="h-4 w-4 mr-2" />
                   Request Verification
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300">
                   <Download className="h-4 w-4 mr-2" />
                   Download Certificate Pack
                 </Button>
