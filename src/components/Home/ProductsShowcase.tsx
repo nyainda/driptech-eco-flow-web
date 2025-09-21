@@ -110,46 +110,6 @@ const ProductsShowcase = () => {
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'drip_irrigation': return { 
-        color: "text-blue-600 dark:text-blue-400", 
-        bgColor: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20", 
-        borderColor: "border-blue-200 dark:border-blue-800",
-        gradient: "from-blue-500 to-cyan-500",
-        accent: "bg-blue-500/10 dark:bg-blue-400/10"
-      };
-      case 'sprinkler_systems': return { 
-        color: "text-emerald-600 dark:text-emerald-400", 
-        bgColor: "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/30 dark:to-emerald-900/20", 
-        borderColor: "border-emerald-200 dark:border-emerald-800",
-        gradient: "from-emerald-500 to-teal-500",
-        accent: "bg-emerald-500/10 dark:bg-emerald-400/10"
-      };
-      case 'filtration_systems': return { 
-        color: "text-violet-600 dark:text-violet-400", 
-        bgColor: "bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950/30 dark:to-violet-900/20", 
-        borderColor: "border-violet-200 dark:border-violet-800",
-        gradient: "from-violet-500 to-purple-500",
-        accent: "bg-violet-500/10 dark:bg-violet-400/10"
-      };
-      case 'control_systems': return { 
-        color: "text-amber-600 dark:text-amber-400", 
-        bgColor: "bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/20", 
-        borderColor: "border-amber-200 dark:border-amber-800",
-        gradient: "from-amber-500 to-orange-500",
-        accent: "bg-amber-500/10 dark:bg-amber-400/10"
-      };
-      default: return { 
-        color: "text-blue-600 dark:text-blue-400", 
-        bgColor: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20", 
-        borderColor: "border-blue-200 dark:border-blue-800",
-        gradient: "from-blue-500 to-cyan-500",
-        accent: "bg-blue-500/10 dark:bg-blue-400/10"
-      };
-    }
-  };
-
   const getCategoryRoute = (category: string) => {
     switch (category) {
       case 'drip_irrigation': return 'drip';
@@ -196,21 +156,18 @@ const ProductsShowcase = () => {
       title: "50% Energy Savings",
       description: "Reduce operational costs with our energy-efficient systems",
       stat: "50%",
-      gradient: "from-yellow-500 to-orange-500"
     },
     {
       icon: Leaf,
       title: "40% Water Conservation",
       description: "Minimize water waste while maximizing crop yields",
       stat: "40%",
-      gradient: "from-green-500 to-emerald-500"
     },
     {
       icon: Shield,
       title: "10-Year Warranty",
       description: "Industry-leading warranty on all premium products",
       stat: "10Y",
-      gradient: "from-blue-500 to-indigo-500"
     },
   ];
 
@@ -219,25 +176,21 @@ const ProductsShowcase = () => {
       icon: Users,
       number: "500+",
       label: "Happy Customers",
-      color: "text-blue-600 dark:text-blue-400"
     },
     {
       icon: Globe,
       number: "50+",
       label: "Projects Completed",
-      color: "text-emerald-600 dark:text-emerald-400"
     },
     {
       icon: TrendingUp,
       number: "99%",
       label: "Customer Satisfaction",
-      color: "text-violet-600 dark:text-violet-400"
     },
     {
       icon: CheckCircle,
       number: "24/7",
       label: "Technical Support",
-      color: "text-amber-600 dark:text-amber-400"
     }
   ];
 
@@ -248,7 +201,6 @@ const ProductsShowcase = () => {
     const [showVariants, setShowVariants] = useState(false);
     
     const IconComponent = getCategoryIcon(product.category);
-    const colors = getCategoryColor(product.category);
     const categoryName = formatCategoryName(product.category);
     const categoryRoute = getCategoryRoute(product.category);
     
@@ -269,82 +221,79 @@ const ProductsShowcase = () => {
     const priceRange = getPriceRange();
     
     return (
-      <Card className="group relative hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-3 border-0 shadow-lg overflow-hidden bg-gradient-to-br from-card to-card/80 backdrop-blur-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
+      <Card className="group relative hover:shadow-xl transition-all duration-300 bg-background border-border">
         <CardContent className="p-0 relative">
           {/* Product Image */}
           <div className="relative overflow-hidden">
             {product.images && product.images.length > 0 ? (
-              <div className="aspect-[4/3] bg-gradient-to-br from-muted to-muted/60 overflow-hidden">
+              <div className="aspect-[4/3] bg-muted overflow-hidden">
                 <img 
                   src={product.images[0]} 
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
               </div>
             ) : (
-              <div className={`aspect-[4/3] ${colors.bgColor} flex items-center justify-center relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                <IconComponent className={`h-20 w-20 ${colors.color} opacity-70 relative z-10`} />
+              <div className="aspect-[4/3] bg-muted flex items-center justify-center relative overflow-hidden">
+                <IconComponent className="h-20 w-20 text-primary opacity-70 relative z-10" />
               </div>
             )}
             
             {/* Floating badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {product.featured && (
-                <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 shadow-lg backdrop-blur-sm">
+                <Badge className="bg-muted text-foreground border-border">
                   <Star className="h-3 w-3 mr-1" fill="currentColor" />
                   Featured
                 </Badge>
               )}
-              <Badge variant="secondary" className="text-xs backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-gray-100 shadow-lg">
+              <Badge variant="secondary" className="text-xs bg-muted text-foreground border-border">
                 {categoryName}
               </Badge>
               {hasVariants && (
-                <Badge className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-0 shadow-lg backdrop-blur-sm">
+                <Badge className="bg-muted text-foreground border-border">
                   <Layers className="h-3 w-3 mr-1" />
                   {product.variants!.length} Options
                 </Badge>
               )}
             </div>
 
-            {/* Stock status with animated dot */}
+            {/* Stock status */}
             <div className="absolute top-4 right-4">
               {displayStock ? (
-                <Badge className="bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 shadow-lg backdrop-blur-sm">
-                  <div className="h-2 w-2 bg-white rounded-full mr-2 animate-pulse" />
+                <Badge className="bg-muted text-foreground border-border">
+                  <div className="h-2 w-2 bg-primary rounded-full mr-2 animate-pulse" />
                   In Stock
                 </Badge>
               ) : (
-                <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-lg backdrop-blur-sm">
-                  <div className="h-2 w-2 bg-white rounded-full mr-2" />
+                <Badge className="bg-muted text-foreground border-border">
+                  <div className="h-2 w-2 bg-red-500 rounded-full mr-2" />
                   Out of Stock
                 </Badge>
               )}
             </div>
 
-            {/* Video indicator with glow effect */}
+            {/* Video indicator */}
             {product.video_url && (
               <div className="absolute bottom-4 right-4">
-                <div className="bg-black/80 backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-white/25 transition-shadow duration-300">
-                  <Play className="h-4 w-4 text-white" fill="currentColor" />
+                <div className="bg-muted rounded-full p-3">
+                  <Play className="h-4 w-4 text-primary" fill="currentColor" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Content with optimized spacing */}
+          {/* Content */}
           <div className="p-6 space-y-4">
-            {/* Header with improved typography */}
+            {/* Header */}
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-xl font-bold text-foreground line-clamp-2 leading-tight">
                   {product.name}
                 </h3>
-                <div className={`p-3 rounded-xl ${colors.accent} flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className={`h-5 w-5 ${colors.color}`} />
+                <div className="p-3 rounded-xl bg-muted group-hover:scale-105 transition-transform duration-300">
+                  <IconComponent className="h-5 w-5 text-primary" />
                 </div>
               </div>
               
@@ -355,13 +304,13 @@ const ProductsShowcase = () => {
               )}
               
               {product.subcategory && (
-                <Badge variant="outline" className="text-xs font-medium">
+                <Badge variant="outline" className="text-xs font-medium border-border">
                   {product.subcategory}
                 </Badge>
               )}
             </div>
 
-            {/* Enhanced description */}
+            {/* Description */}
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
               {product.description || "Advanced irrigation solution designed for modern agriculture and efficient water management."}
             </p>
@@ -371,8 +320,8 @@ const ProductsShowcase = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500">
-                      <Layers className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                    <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary">
+                      <Layers className="h-2.5 w-2.5 text-primary-foreground" strokeWidth={3} />
                     </div>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       Variants
@@ -398,22 +347,22 @@ const ProductsShowcase = () => {
                         onClick={() => setSelectedVariant(variant)}
                         className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
                           selectedVariant?.name === variant.name
-                            ? `${colors.bgColor} ${colors.borderColor} scale-[1.02]`
-                            : 'border-muted hover:border-muted-foreground/30 hover:bg-muted/30'
+                            ? 'bg-muted/30 border-primary'
+                            : 'border-border hover:bg-muted/30 hover:border-primary/20'
                         }`}
                       >
                         <div className="flex items-center gap-2">
                           <div className={`w-2 h-2 rounded-full ${
-                            variant.in_stock ? 'bg-emerald-500' : 'bg-red-500'
+                            variant.in_stock ? 'bg-primary' : 'bg-red-500'
                           }`} />
                           <span className={`text-xs font-medium truncate max-w-[80px] ${
-                            selectedVariant?.name === variant.name ? colors.color : 'text-foreground'
+                            selectedVariant?.name === variant.name ? 'text-primary' : 'text-foreground'
                           }`}>
                             {variant.name}
                           </span>
                         </div>
                         <span className={`text-xs font-bold ${
-                          selectedVariant?.name === variant.name ? colors.color : 'text-muted-foreground'
+                          selectedVariant?.name === variant.name ? 'text-primary' : 'text-muted-foreground'
                         }`}>
                           KSh {variant.price.toLocaleString()}
                         </span>
@@ -421,16 +370,16 @@ const ProductsShowcase = () => {
                     ))}
                   </div>
                 ) : selectedVariant && (
-                  <div className={`flex items-center justify-between p-3 rounded-lg ${colors.bgColor} ${colors.borderColor} border`}>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border">
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${
-                        selectedVariant.in_stock ? 'bg-emerald-500' : 'bg-red-500'
+                        selectedVariant.in_stock ? 'bg-primary' : 'bg-red-500'
                       }`} />
-                      <span className={`text-xs font-medium ${colors.color} truncate max-w-[100px]`}>
+                      <span className="text-xs font-medium text-primary truncate max-w-[100px]">
                         {selectedVariant.name}
                       </span>
                     </div>
-                    <span className={`text-xs font-bold ${colors.color}`}>
+                    <span className="text-xs font-bold text-primary">
                       KSh {selectedVariant.price.toLocaleString()}
                     </span>
                   </div>
@@ -438,12 +387,12 @@ const ProductsShowcase = () => {
               </div>
             )}
 
-            {/* Compact Features with icons */}
+            {/* Features */}
             {product.features && product.features.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-emerald-500 to-green-500">
-                    <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary">
+                    <Check className="h-2.5 w-2.5 text-primary-foreground" strokeWidth={3} />
                   </div>
                   <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Key Features
@@ -453,17 +402,17 @@ const ProductsShowcase = () => {
                   {product.features.slice(0, 2).map((feature, idx) => {
                     const FeatureIcon = getFeatureIcon(feature);
                     return (
-                      <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors duration-200 group">
-                        <FeatureIcon className="h-3 w-3 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-200" strokeWidth={2.5} />
-                        <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300 truncate max-w-[120px]">
+                      <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-border hover:bg-muted transition-colors duration-200 group">
+                        <FeatureIcon className="h-3 w-3 text-primary group-hover:scale-105 transition-transform duration-200" strokeWidth={2.5} />
+                        <span className="text-xs font-medium text-foreground truncate max-w-[120px]">
                           {feature}
                         </span>
                       </div>
                     );
                   })}
                   {product.features.length > 2 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-muted">
-                      <Sparkles className="h-3 w-3 text-muted-foreground" strokeWidth={2.5} />
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-border hover:bg-muted transition-colors duration-200">
+                      <Sparkles className="h-3 w-3 text-primary" strokeWidth={2.5} />
                       <span className="text-xs font-medium text-muted-foreground">
                         +{product.features.length - 2} more
                       </span>
@@ -473,12 +422,12 @@ const ProductsShowcase = () => {
               </div>
             )}
 
-            {/* Compact Applications with smart display */}
+            {/* Applications */}
             {product.applications && product.applications.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500">
-                    <Target className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+                  <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary">
+                    <Target className="h-2.5 w-2.5 text-primary-foreground" strokeWidth={3} />
                   </div>
                   <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Applications
@@ -488,17 +437,17 @@ const ProductsShowcase = () => {
                   {product.applications.slice(0, 2).map((app, idx) => {
                     const AppIcon = getApplicationIcon(app);
                     return (
-                      <div key={idx} className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${colors.accent} border ${colors.borderColor} hover:scale-105 transition-all duration-200 group`}>
-                        <AppIcon className={`h-3 w-3 ${colors.color}`} strokeWidth={2} />
-                        <span className={`text-xs font-medium ${colors.color} truncate max-w-[100px]`}>
+                      <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-border hover:bg-muted transition-all duration-200 group">
+                        <AppIcon className="h-3 w-3 text-primary group-hover:scale-105 transition-transform duration-200" strokeWidth={2} />
+                        <span className="text-xs font-medium text-foreground truncate max-w-[100px]">
                           {app}
                         </span>
                       </div>
                     );
                   })}
                   {product.applications.length > 2 && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-muted hover:bg-muted/50 transition-colors duration-200">
-                      <Globe className="h-3 w-3 text-muted-foreground" strokeWidth={2} />
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 border border-border hover:bg-muted transition-colors duration-200">
+                      <Globe className="h-3 w-3 text-primary" strokeWidth={2} />
                       <span className="text-xs font-medium text-muted-foreground">
                         +{product.applications.length - 2} more
                       </span>
@@ -508,21 +457,21 @@ const ProductsShowcase = () => {
               </div>
             )}
 
-            {/* Enhanced price section */}
+            {/* Price */}
             {displayPrice && (
-              <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-xl p-4 border border-primary/10">
+              <div className="bg-muted/30 rounded-xl p-4 border border-border">
                 <div className="flex items-center justify-between">
                   <div>
                     {priceRange && !selectedVariant ? (
                       <div className="space-y-1">
-                        <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold text-foreground">
                           KSh {priceRange.min.toLocaleString()} - {priceRange.max.toLocaleString()}
                         </span>
                         <p className="text-xs text-muted-foreground">Price varies by option</p>
                       </div>
                     ) : (
                       <div className="space-y-1">
-                        <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold text-foreground">
                           KSh {displayPrice.toLocaleString()}
                         </span>
                         <p className="text-xs text-muted-foreground">
@@ -531,41 +480,41 @@ const ProductsShowcase = () => {
                       </div>
                     )}
                   </div>
-                  <div className={`p-2 rounded-lg ${colors.accent}`}>
-                    <ShoppingCart className={`h-4 w-4 ${colors.color}`} />
+                  <div className="p-2 rounded-lg bg-muted">
+                    <ShoppingCart className="h-4 w-4 text-primary" />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Resource Links with better icons */}
+            {/* Resource Links */}
             <div className="flex flex-wrap gap-2">
               {product.brochure_url && (
-                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
+                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Download className="h-3 w-3 mr-2" />
                   Brochure
                 </Button>
               )}
               {product.installation_guide_url && (
-                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
+                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Wrench className="h-3 w-3 mr-2" />
                   Install Guide
                 </Button>
               )}
               {product.maintenance_manual_url && (
-                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-primary/10 transition-colors">
+                <Button variant="ghost" size="sm" className="text-xs px-3 py-2 h-auto rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Settings className="h-3 w-3 mr-2" />
                   Manual
                 </Button>
               )}
             </div>
 
-            {/* Enhanced action buttons */}
+            {/* Action Buttons */}
             <div className="flex gap-3 pt-2">
               <Link to={`/products/${categoryRoute}`} className="flex-1">
                 <Button 
                   variant="ghost" 
-                  className="w-full group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-primary/90 group-hover:text-primary-foreground transition-all duration-300 rounded-xl"
+                  className="w-full hover:bg-accent hover:text-accent-foreground transition-all duration-300 rounded-xl"
                 >
                   <Eye className="mr-2 h-4 w-4" />
                   View Details
@@ -573,16 +522,16 @@ const ProductsShowcase = () => {
                 </Button>
               </Link>
               <QuoteModal>
-                <Button variant="outline" className="rounded-xl hover:shadow-lg transition-shadow duration-300">
+                <Button variant="outline" className="rounded-xl hover:bg-accent hover:text-accent-foreground border-border transition-all duration-300">
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   Quote
                 </Button>
               </QuoteModal>
             </div>
 
-            {/* Creation date with better styling */}
+            {/* Creation Date */}
             {product.created_at && (
-              <div className="flex items-center justify-center pt-4 border-t border-muted/30">
+              <div className="flex items-center justify-center pt-4 border-t border-border">
                 <Calendar className="h-3 w-3 mr-2 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
                   Added {new Date(product.created_at).toLocaleDateString()}
@@ -596,27 +545,19 @@ const ProductsShowcase = () => {
   };
 
   return (
-    <section className="py-32 bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-emerald-950/30 relative overflow-hidden">
-      {/* Enhanced Background decorative elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_49%,rgba(59,130,246,0.03)_49%,rgba(59,130,246,0.03)_51%,transparent_51%)] bg-[length:40px_40px]"></div>
-        <div className="absolute top-32 left-16 w-80 h-80 bg-gradient-to-br from-emerald-500/8 to-blue-500/8 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-32 right-16 w-96 h-96 bg-gradient-to-br from-blue-500/8 to-cyan-500/8 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-gradient-to-br from-violet-500/5 to-pink-500/5 rounded-full blur-2xl" />
-      </div>
-
+    <section className="py-24 bg-background border-t border-border relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        {/* Enhanced Header with Better Typography */}
-        <div className="text-center max-w-5xl mx-auto mb-24">
+        {/* Header */}
+        <div className="text-center max-w-5xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 mb-8">
-            <Badge variant="secondary" className="px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-950 dark:to-blue-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 rounded-full">
+            <Badge variant="secondary" className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full">
               <Package className="w-4 h-4 mr-2" />
               Product Innovation
             </Badge>
           </div>
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white mb-8 leading-[0.9] tracking-tight">
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-[0.9] tracking-tight">
             <span className="block mb-2">Complete</span>
-            <span className="block bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="block text-primary">
               Irrigation Solutions
             </span>
           </h2>
@@ -628,8 +569,8 @@ const ProductsShowcase = () => {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
           {stats.map((stat, index) => (
-            <div key={index} className="text-center p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-muted/20 hover:border-primary/20 transition-colors duration-300">
-              <stat.icon className={`h-8 w-8 ${stat.color} mx-auto mb-3`} />
+            <div key={index} className="text-center p-6 rounded-2xl bg-background border border-border hover:border-primary/20 transition-colors duration-300">
+              <stat.icon className="h-8 w-8 text-primary mx-auto mb-3" />
               <div className="text-2xl font-bold text-foreground mb-1">{stat.number}</div>
               <div className="text-sm text-muted-foreground">{stat.label}</div>
             </div>
@@ -639,11 +580,10 @@ const ProductsShowcase = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
           {loading ? (
-            // Enhanced loading skeleton
             Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index} className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-card to-card/80">
+              <Card key={index} className="border-border bg-background shadow-lg overflow-hidden">
                 <CardContent className="p-0">
-                  <div className="aspect-[4/3] bg-gradient-to-br from-muted to-muted/60 animate-pulse"></div>
+                  <div className="aspect-[4/3] bg-muted animate-pulse"></div>
                   <div className="p-7 space-y-5">
                     <div className="animate-pulse space-y-4">
                       <div className="flex justify-between items-start">
@@ -675,8 +615,8 @@ const ProductsShowcase = () => {
           ) : (
             <div className="col-span-full text-center py-24">
               <div className="max-w-md mx-auto">
-                <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-full p-8 w-32 h-32 mx-auto mb-8 flex items-center justify-center backdrop-blur-sm">
-                  <Package className="h-16 w-16 text-muted-foreground" />
+                <div className="bg-muted rounded-full p-8 w-32 h-32 mx-auto mb-8 flex items-center justify-center">
+                  <Package className="h-16 w-16 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold text-foreground mb-4">
                   No Featured Products
@@ -692,17 +632,13 @@ const ProductsShowcase = () => {
           )}
         </div>
 
-        {/* Enhanced Benefits Section */}
-        <div className="bg-gradient-to-br from-card via-card/95 to-card/90 backdrop-blur-sm rounded-3xl p-8 md:p-16 border border-muted/20 shadow-2xl relative overflow-hidden">
-          {/* Background decorations */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-l from-primary/5 to-transparent rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-r from-emerald-500/5 to-transparent rounded-full blur-3xl" />
-          
+        {/* Benefits Section */}
+        <div className="bg-muted/30 rounded-3xl p-8 md:p-16 border border-border relative overflow-hidden">
           <div className="relative z-10">
             <div className="text-center mb-16">
               <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
                 Why Choose 
-                <span className="bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent"> DripTech?</span>
+                <span className="text-primary"> DripTech?</span>
               </h3>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                 Proven results that make a difference to your bottom line and environmental impact
@@ -712,11 +648,11 @@ const ProductsShowcase = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {benefits.map((benefit, index) => (
                 <div key={index} className="text-center space-y-6 group">
-                  <div className={`inline-flex p-6 bg-gradient-to-r ${benefit.gradient} rounded-2xl shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500`}>
-                    <benefit.icon className="h-10 w-10 text-white" />
+                  <div className="inline-flex p-6 bg-muted rounded-2xl group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
+                    <benefit.icon className="h-10 w-10 text-primary" />
                   </div>
                   <div>
-                    <div className={`text-4xl font-bold bg-gradient-to-r ${benefit.gradient} bg-clip-text text-transparent mb-2`}>
+                    <div className="text-4xl font-bold text-foreground mb-2">
                       {benefit.stat}
                     </div>
                     <h4 className="text-xl font-bold text-foreground mb-3">
@@ -730,10 +666,10 @@ const ProductsShowcase = () => {
               ))}
             </div>
 
-            {/* Enhanced CTA */}
+            {/* CTA */}
             <div className="text-center mt-16">
               <Link to="/products">
-                <Button size="lg" className="px-8 py-6 text-lg rounded-2xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 group">
+                <Button size="lg" className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300">
                   Explore All Products
                   <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -744,7 +680,7 @@ const ProductsShowcase = () => {
       </div>
       
       {/* Custom scrollbar styles */}
-      <style >{`
+      <style>{`
         .custom-scrollbar {
           scrollbar-width: thin;
           scrollbar-color: rgb(156 163 175) transparent;

@@ -73,17 +73,6 @@ const ProjectsSection = () => {
     return `${area} ha`;
   };
 
-  // Helper function to get status color
-  const getStatusColor = (status: string | null) => {
-    switch (status?.toLowerCase()) {
-      case 'completed': return 'bg-green-500/10 text-green-600 border-green-500/20';
-      case 'in_progress': return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-      case 'planning': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-      case 'on_hold': return 'bg-red-500/10 text-red-600 border-red-500/20';
-      default: return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
-    }
-  };
-
   // Helper function to format status text
   const formatStatus = (status: string | null) => {
     if (!status) return 'Unknown';
@@ -92,7 +81,7 @@ const ProjectsSection = () => {
 
   if (loading) {
     return (
-      <section className="py-24 bg-gradient-to-b from-background to-muted/20">
+      <section className="py-24 bg-background border-t border-border">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="h-6 bg-muted rounded w-32 mx-auto mb-4 animate-pulse"></div>
@@ -101,7 +90,7 @@ const ProjectsSection = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({ length: 3 }).map((_, index) => (
-              <Card key={index} className="animate-pulse overflow-hidden">
+              <Card key={index} className="animate-pulse overflow-hidden bg-background border-border">
                 <CardContent className="p-0">
                   <div className="aspect-[3/2] bg-muted rounded-t-lg"></div>
                   <div className="p-6 space-y-4">
@@ -127,14 +116,14 @@ const ProjectsSection = () => {
 
   if (error) {
     return (
-      <section className="py-24 bg-gradient-to-b from-background to-muted/20">
+      <section className="py-24 bg-background border-t border-border">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-md mx-auto">
-            <div className="text-destructive mb-4 text-lg font-medium">{error}</div>
+            <div className="text-foreground mb-4 text-lg font-medium">{error}</div>
             <Button 
               variant="outline" 
               onClick={() => window.location.reload()}
-              className="border-primary/20 hover:bg-primary/10"
+              className="border-border hover:bg-accent hover:text-accent-foreground"
             >
               Try Again
             </Button>
@@ -149,25 +138,22 @@ const ProjectsSection = () => {
   }
 
   return (
-    <section className="py-32 bg-gradient-to-br from-slate-50 via-blue-50/30 to-emerald-50/50 dark:from-slate-900 dark:via-blue-950/30 dark:to-emerald-950/50 relative">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.1),transparent_70%)] dark:bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.05),transparent_70%)]"></div>
-      
+    <section className="py-24 bg-background border-t border-border relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Enhanced Header */}
+        {/* Header */}
         <div className="text-center max-w-4xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 mb-8">
             <Badge 
               variant="secondary" 
-              className="px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-blue-100 to-emerald-100 dark:from-blue-950 dark:to-emerald-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 rounded-full"
+              className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
               Featured Projects
             </Badge>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-slate-900 dark:text-white mb-6 lg:mb-8 leading-tight tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 lg:mb-8 leading-tight tracking-tight">
             <span className="block mb-1 sm:mb-2">Empowering Kenyan Farms,</span>
-            <span className="block bg-gradient-to-r from-blue-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="block text-primary">
               Transforming Agriculture
             </span>
           </h2>
@@ -185,7 +171,7 @@ const ProjectsSection = () => {
             return (
               <Card 
                 key={project.id} 
-                className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 bg-background/80 backdrop-blur-sm"
+                className="group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 <CardContent className="p-0">
                   {/* Project Image */}
@@ -194,29 +180,29 @@ const ProjectsSection = () => {
                       <img 
                         src={projectImage} 
                         alt={project.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="aspect-[3/2] bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center">
-                        <Droplets className="h-16 w-16 text-primary/50" />
+                      <div className="aspect-[3/2] bg-muted flex items-center justify-center">
+                        <Droplets className="h-16 w-16 text-primary" />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
 
                   <div className="p-6 space-y-4">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge 
                         variant="secondary"
-                        className="bg-primary/10 text-primary border-primary/20 font-medium"
+                        className="bg-muted text-foreground border-border font-medium"
                       >
                         {project.project_type || 'Irrigation Project'}
                       </Badge>
                       {project.status && (
                         <Badge 
                           variant="outline" 
-                          className={`font-medium ${getStatusColor(project.status)}`}
+                          className="font-medium bg-muted text-foreground border-border"
                         >
                           {formatStatus(project.status)}
                         </Badge>
@@ -229,14 +215,14 @@ const ProjectsSection = () => {
 
                     {project.location && (
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="h-4 w-4 flex-shrink-0" />
+                        <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
                         <span className="text-sm truncate">{project.location}</span>
                       </div>
                     )}
 
                     {project.completion_date && (
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="h-4 w-4 flex-shrink-0" />
+                        <Calendar className="h-4 w-4 flex-shrink-0 text-primary" />
                         <span className="text-sm">
                           Completed: {new Date(project.completion_date).toLocaleDateString()}
                         </span>
@@ -247,14 +233,14 @@ const ProjectsSection = () => {
                     {(formattedArea || project.water_saved) && (
                       <div className="grid grid-cols-2 gap-3">
                         {formattedArea && (
-                          <div className="text-center p-4 bg-primary/5 rounded-xl border border-primary/10">
-                            <div className="text-lg font-bold text-primary">{formattedArea}</div>
+                          <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
+                            <div className="text-lg font-bold text-foreground">{formattedArea}</div>
                             <div className="text-xs text-muted-foreground">Area Covered</div>
                           </div>
                         )}
                         {project.water_saved && (
-                          <div className="text-center p-4 bg-primary/5 rounded-xl border border-primary/10">
-                            <div className="text-lg font-bold text-primary">{project.water_saved}%</div>
+                          <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
+                            <div className="text-lg font-bold text-foreground">{project.water_saved}%</div>
                             <div className="text-xs text-muted-foreground">Water Saved</div>
                           </div>
                         )}
@@ -262,9 +248,9 @@ const ProjectsSection = () => {
                     )}
 
                     {project.yield_improvement && (
-                      <div className="text-center p-4 bg-green-500/5 rounded-xl border border-green-500/10">
-                        <div className="flex items-center justify-center gap-1 text-lg font-bold text-green-600">
-                          <TrendingUp className="h-4 w-4" />
+                      <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
+                        <div className="flex items-center justify-center gap-1 text-lg font-bold text-foreground">
+                          <TrendingUp className="h-4 w-4 text-primary" />
                           +{project.yield_improvement}%
                         </div>
                         <div className="text-xs text-muted-foreground">Yield Improvement</div>
@@ -272,7 +258,7 @@ const ProjectsSection = () => {
                     )}
 
                     {project.testimonial && (
-                      <blockquote className="text-sm text-muted-foreground italic border-l-4 border-primary/20 pl-3 py-1 line-clamp-3">
+                      <blockquote className="text-sm text-muted-foreground italic border-l-4 border-border pl-3 py-1 line-clamp-3">
                         "{project.testimonial}"
                       </blockquote>
                     )}
@@ -287,14 +273,11 @@ const ProjectsSection = () => {
         <div className="text-center">
           <Link to="/projects">
             <Button 
-              variant="premium" 
               size="lg"
-              className="relative overflow-hidden bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:from-primary/90 hover:to-primary font-medium px-8"
+              className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
             >
-              <span className="relative z-10 flex items-center">
-                View All Projects
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </span>
+              View All Projects
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
         </div>
