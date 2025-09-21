@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Clock, User, ArrowRight, Search, Filter, ChevronLeft, ChevronRight, Grid, List } from "lucide-react";
 import { Link } from "react-router-dom";
+import Header from "@/components/Layout/Header";
+import Footer from "@/components/Layout/Footer";
 
-// Interface definitions remain unchanged
 interface BlogPost {
   id: string;
   title: string;
@@ -43,7 +44,6 @@ const BlogPage = () => {
   const [sortBy, setSortBy] = useState<string>("newest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // Query hooks remain unchanged
   const { data: categories = [] } = useQuery({
     queryKey: ['blog-categories'],
     queryFn: async () => {
@@ -151,7 +151,7 @@ const BlogPage = () => {
   const BlogCard = ({ post }: { post: BlogPost }) => {
     if (viewMode === "list") {
       return (
-        <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-border bg-card">
+        <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 bg-background border-border shadow-md">
           <div className="flex flex-col sm:flex-row">
             {post.featured_image_url && (
               <div className="sm:w-64 md:w-80 aspect-video sm:aspect-square overflow-hidden">
@@ -166,38 +166,38 @@ const BlogPage = () => {
             <div className="flex-1 p-4 sm:p-6">
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
                 {post.blog_categories && (
-                  <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                  <Badge className="bg-muted text-foreground border-border">
                     {post.blog_categories.name}
                   </Badge>
                 )}
                 <div className="flex items-center gap-1">
-                  <Calendar className="h-3 sm:h-4 w-3 sm:w-4" />
+                  <Calendar className="h-3 sm:h-4 w-3 sm:w-4 text-primary" />
                   {formatDate(post.published_at || post.created_at)}
                 </div>
                 {post.reading_time && (
                   <div className="flex items-center gap-1">
-                    <Clock className="h-3 sm:h-4 w-3 sm:w-4" />
+                    <Clock className="h-3 sm:h-4 w-3 sm:w-4 text-primary" />
                     {post.reading_time} min read
                   </div>
                 )}
                 <div className="flex items-center gap-1">
-                  <User className="h-3 sm:h-4 w-3 sm:w-4" />
-                  {post.views} views
+                  <User className="h-3 sm:h-4 w-3 sm:w-4 text-primary" />
+                  {post.views.toLocaleString()} views
                 </div>
               </div>
 
-              <CardTitle className="text-lg sm:text-2xl mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+              <CardTitle className="text-lg sm:text-2xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
                 {post.title}
               </CardTitle>
               
-              <CardDescription className="text-sm sm:text-base line-clamp-3 mb-4">
+              <CardDescription className="text-sm sm:text-base text-muted-foreground line-clamp-3 mb-4">
                 {getExcerpt(post)}
               </CardDescription>
 
               {post.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.tags.slice(0, 4).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
+                    <Badge key={tag} className="text-xs bg-muted/30 border-border text-foreground">
                       {tag}
                     </Badge>
                   ))}
@@ -205,13 +205,12 @@ const BlogPage = () => {
               )}
 
               <Button 
-                variant="ghost" 
-                className="justify-between group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-sm sm:text-base"
+                className="w-full text-sm sm:text-base bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300 rounded-xl shadow-md group"
                 asChild
               >
                 <Link to={`/blog/${post.slug}`}>
                   Read Full Article
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </div>
@@ -221,7 +220,7 @@ const BlogPage = () => {
     }
 
     return (
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col border-border bg-card">
+      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-background border-border shadow-md">
         {post.featured_image_url && (
           <div className="relative aspect-video overflow-hidden">
             <img
@@ -232,7 +231,7 @@ const BlogPage = () => {
             
             {post.blog_categories && (
               <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
-                <Badge variant="secondary" className="bg-white/90 dark:bg-gray-900/90 text-primary text-xs sm:text-sm">
+                <Badge className="bg-muted text-foreground border-border text-xs sm:text-sm">
                   {post.blog_categories.name}
                 </Badge>
               </div>
@@ -243,35 +242,35 @@ const BlogPage = () => {
         <CardHeader className="flex-1 p-4 sm:p-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
             <div className="flex items-center gap-1">
-              <Calendar className="h-3 sm:h-4 w-3 sm:w-4" />
+              <Calendar className="h-3 sm:h-4 w-3 sm:w-4 text-primary" />
               {formatDate(post.published_at || post.created_at)}
             </div>
             
             {post.reading_time && (
               <div className="flex items-center gap-1">
-                <Clock className="h-3 sm:h-4 w-3 sm:w-4" />
+                <Clock className="h-3 sm:h-4 w-3 sm:w-4 text-primary" />
                 {post.reading_time} min read
               </div>
             )}
             
             <div className="flex items-center gap-1">
-              <User className="h-3 sm:h-4 w-3 sm:w-4" />
-              {post.views} views
+              <User className="h-3 sm:h-4 w-3 sm:w-4 text-primary" />
+              {post.views.toLocaleString()} views
             </div>
           </div>
 
-          <CardTitle className="text-lg sm:text-xl mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+          <CardTitle className="text-lg sm:text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </CardTitle>
           
-          <CardDescription className="text-sm sm:text-base line-clamp-3 flex-1">
+          <CardDescription className="text-sm sm:text-base text-muted-foreground line-clamp-3 flex-1">
             {getExcerpt(post)}
           </CardDescription>
 
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
               {post.tags.slice(0, 3).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
+                <Badge key={tag} className="text-xs bg-muted/30 border-border text-foreground">
                   {tag}
                 </Badge>
               ))}
@@ -281,13 +280,12 @@ const BlogPage = () => {
 
         <CardContent className="pt-0 px-4 sm:px-6 pb-4 sm:pb-6">
           <Button 
-            variant="ghost" 
-            className="w-full justify-between group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-sm sm:text-base"
+            className="w-full text-sm sm:text-base bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300 rounded-xl shadow-md group"
             asChild
           >
             <Link to={`/blog/${post.slug}`}>
               Read Full Article
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
         </CardContent>
@@ -296,178 +294,203 @@ const BlogPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-muted/20 to-background">
-      {/* Header */}
-      <div className="bg-background border-b border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-          <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
-              Our Blog
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover insights, tips, and the latest trends in irrigation and agriculture
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
+      <main>
+        <section className="bg-background border-t border-border">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-20">
+            {/* Header */}
+            <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-16">
+              <Badge className="mb-4 bg-muted text-foreground border-border">
+                <User className="w-4 h-4 mr-2" />
+                Our Blog
+              </Badge>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+                Latest <span className="text-primary">Insights</span>
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Discover insights, tips, and the latest trends in irrigation and agriculture from the DripTech team.
+              </p>
+            </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Filters and Search */}
-        <div className="mb-8 sm:mb-12 space-y-6">
-          {/* Search Bar */}
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search articles..."
-              value={searchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-10 bg-background border-border text-sm sm:text-base"
-            />
-          </div>
-
-          {/* Filters and View Toggle */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Filter by:</span>
+            {/* Filters and Search */}
+            <div className="mb-8 sm:mb-12 space-y-6">
+              {/* Search Bar */}
+              <div className="relative max-w-md mx-auto">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
+                <Input
+                  placeholder="Search articles..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pl-10 bg-background border-border hover:bg-muted/30 text-sm sm:text-base transition-colors"
+                />
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-                  <SelectTrigger className="w-full sm:w-48 bg-background border-border text-sm sm:text-base">
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.slug}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              {/* Filters and View Toggle */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Filter by:</span>
+                  </div>
 
-                <Select value={sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className="w-full sm:w-48 bg-background border-border text-sm sm:text-base">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="oldest">Oldest First</SelectItem>
-                    <SelectItem value="popular">Most Popular</SelectItem>
-                    <SelectItem value="alphabetical">Alphabetical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                    <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                      <SelectTrigger className="w-full sm:w-48 bg-background border-border hover:bg-muted/30 text-sm sm:text-base transition-colors">
+                        <SelectValue placeholder="All Categories" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.slug}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-2 bg-muted p-1 rounded-lg">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className="h-8 w-8 p-0"
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className="h-8 w-8 p-0"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Results count */}
-          <div className="text-center text-sm text-muted-foreground">
-            {isLoading ? (
-              "Loading..."
-            ) : (
-              `Showing ${posts.length} of ${blogData?.totalCount || 0} articles`
-            )}
-          </div>
-        </div>
-
-        {/* Blog Posts */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="text-center py-12">
-            <h3 className="text-lg sm:text-xl font-semibold mb-2">No articles found</h3>
-            <p className="text-muted-foreground text-sm sm:text-base">Try adjusting your search or filter criteria</p>
-          </div>
-        ) : (
-          <>
-            <div className={viewMode === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12" 
-              : "space-y-4 sm:space-y-6 mb-8 sm:mb-12"
-            }>
-              {posts.map((post) => (
-                <BlogCard key={post.id} post={post} />
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="flex items-center gap-2 w-full sm:w-auto text-sm sm:text-base"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous
-                </Button>
-
-                <div className="flex items-center gap-1 flex-wrap justify-center">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNumber;
-                    if (totalPages <= 5) {
-                      pageNumber = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNumber = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNumber = totalPages - 4 + i;
-                    } else {
-                      pageNumber = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <Button
-                        key={pageNumber}
-                        variant={currentPage === pageNumber ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setCurrentPage(pageNumber)}
-                        className="w-10 h-10"
-                      >
-                        {pageNumber}
-                      </Button>
-                    );
-                  })}
+                    <Select value={sortBy} onValueChange={handleSortChange}>
+                      <SelectTrigger className="w-full sm:w-48 bg-background border-border hover:bg-muted/30 text-sm sm:text-base transition-colors">
+                        <SelectValue placeholder="Sort by" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="newest">Newest First</SelectItem>
+                        <SelectItem value="oldest">Oldest First</SelectItem>
+                        <SelectItem value="popular">Most Popular</SelectItem>
+                        <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="flex items-center gap-2 w-full sm:w-auto text-sm sm:text-base"
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+                {/* View Mode Toggle */}
+                <div className="flex items-center gap-2 bg-muted/30 border border-border p-1 rounded-xl">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("grid")}
+                    className="h-8 w-8 p-0 bg-muted/30 hover:bg-accent hover:text-accent-foreground rounded-full"
+                  >
+                    <Grid className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className="h-8 w-8 p-0 bg-muted/30 hover:bg-accent hover:text-accent-foreground rounded-full"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
+
+              {/* Results count */}
+              <div className="text-center text-sm text-muted-foreground">
+                {isLoading ? (
+                  "Loading..."
+                ) : (
+                  `Showing ${posts.length} of ${blogData?.totalCount || 0} articles`
+                )}
+              </div>
+            </div>
+
+            {/* Blog Posts */}
+            {isLoading ? (
+              <div className="bg-background shadow-md rounded-xl p-6">
+                <div className={viewMode === "grid" 
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
+                  : "space-y-4 sm:space-y-6"
+                }>
+                  {Array.from({ length: POSTS_PER_PAGE }).map((_, index) => (
+                    <Card key={index} className="animate-pulse bg-background border-border shadow-md">
+                      <div className="aspect-video bg-muted rounded-t-lg"></div>
+                      <CardContent className="p-4 sm:p-6">
+                        <div className="h-4 bg-muted rounded mb-2"></div>
+                        <div className="h-3 bg-muted rounded w-3/4 mb-4"></div>
+                        <div className="h-3 bg-muted rounded w-full"></div>
+                        <div className="h-3 bg-muted rounded w-5/6 mt-2"></div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ) : posts.length === 0 ? (
+              <div className="text-center py-12 bg-background shadow-md rounded-xl p-6">
+                <User className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">No Articles Found</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">Try adjusting your search or filter criteria</p>
+              </div>
+            ) : (
+              <>
+                <div className={viewMode === "grid" 
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12" 
+                  : "space-y-4 sm:space-y-6 mb-8 sm:mb-12"
+                }>
+                  {posts.map((post) => (
+                    <BlogCard key={post.id} post={post} />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-12">
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="flex items-center gap-2 w-full sm:w-auto text-sm sm:text-base bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </Button>
+
+                    <div className="flex items-center gap-1 flex-wrap justify-center">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNumber;
+                        if (totalPages <= 5) {
+                          pageNumber = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNumber = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNumber = totalPages - 4 + i;
+                        } else {
+                          pageNumber = currentPage - 2 + i;
+                        }
+
+                        return (
+                          <Button
+                            key={pageNumber}
+                            variant={currentPage === pageNumber ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(pageNumber)}
+                            className="w-10 h-10 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                          >
+                            {pageNumber}
+                          </Button>
+                        );
+                      })}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className="flex items-center gap-2 w-full sm:w-auto text-sm sm:text-base bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+
+                {/* Divider */}
+                <hr className="border-border w-full max-w-3xl mx-auto mt-12" />
+              </>
             )}
-          </>
-        )}
-      </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
     </div>
   );
 };

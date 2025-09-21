@@ -16,7 +16,6 @@ import {
   Mail,
   Phone
 } from "lucide-react";
-
 import { Link } from "react-router-dom";
 
 const About = () => {
@@ -66,26 +65,26 @@ const About = () => {
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
           <div className="container mx-auto px-4 text-center">
-            <Badge variant="secondary" className="mb-4">
+            <Badge variant="secondary" className="mb-4 text-sm font-semibold">
               🌱 About DripTech
             </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
               Transforming Agriculture
               <span className="text-primary"> Through Innovation</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
               Since 2023, DripTech has been Kenya's most innovative provider of smart irrigation solutions, 
               helping farmers and businesses achieve sustainable growth while conserving precious water resources 
               through cutting-edge technology.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
+              <Button size="lg" asChild className="rounded-xl hover:bg-primary/90 hover:shadow-lg hover:scale-105 transition-all duration-300">
                 <Link to="/contact">
                   Get Started Today
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
+              <Button variant="outline" size="lg" asChild className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300">
                 <Link to="/projects">View Our Work</Link>
               </Button>
             </div>
@@ -99,7 +98,7 @@ const About = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center group">
-                  <div className="p-6 bg-background/80 backdrop-blur-sm rounded-2xl inline-block mb-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-border/20">
+                  <div className="p-6 bg-background border-2 border-border/20 rounded-2xl inline-block mb-4 shadow-md hover:shadow-2xl hover:scale-[1.02] transition-all duration-500">
                     <stat.icon className="h-10 w-10 text-primary mx-auto" />
                   </div>
                   <h3 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{stat.value}</h3>
@@ -115,24 +114,24 @@ const About = () => {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Mission</h2>
-                <p className="text-lg text-muted-foreground mb-6">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">Our Mission</h2>
+                <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
                   To revolutionize agriculture in Kenya and East Africa by providing cutting-edge irrigation 
                   solutions that maximize crop yields, conserve water resources, and empower farmers with 
                   sustainable technology.
                 </p>
-                <p className="text-lg text-muted-foreground">
+                <p className="text-lg text-muted-foreground leading-relaxed">
                   We believe that smart irrigation is the key to food security and environmental sustainability 
                   in our region.
                 </p>
               </div>
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Vision</h2>
-                <p className="text-lg text-muted-foreground mb-6">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">Our Vision</h2>
+                <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
                   To be the leading irrigation technology company in East Africa, recognized for innovation, 
                   sustainability, and exceptional customer service.
                 </p>
-                <p className="text-lg text-muted-foreground">
+                <p className="text-lg text-muted-foreground leading-relaxed">
                   We envision a future where every farm, from smallholder plots to large commercial operations, 
                   has access to efficient, intelligent irrigation systems.
                 </p>
@@ -145,21 +144,21 @@ const About = () => {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Core Values</h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Our Core Values</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 The principles that guide everything we do and every solution we deliver
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {values.map((value, index) => (
-                <Card key={index} className="p-0 hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] group border-2 hover:border-primary/20">
+                <Card key={index} className="p-0 bg-background border-2 border-border/20 hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500 group">
                   <CardContent className="p-8">
                     <div className="flex items-start gap-6">
                       <div className="p-4 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                         <value.icon className="h-8 w-8 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">{value.title}</h3>
+                        <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors">{value.title}</h3>
                         <p className="text-muted-foreground leading-relaxed text-lg">{value.description}</p>
                       </div>
                     </div>
@@ -175,8 +174,8 @@ const About = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5"></div>
           <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Journey</h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Our Journey</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 Key milestones in our mission to transform irrigation in Kenya
               </p>
             </div>
@@ -192,7 +191,7 @@ const About = () => {
                     )}
                   </div>
                   <div className="flex-1 pb-12">
-                    <Card className="p-6 hover:shadow-xl transition-all duration-500 backdrop-blur-sm border-2 hover:border-primary/20">
+                    <Card className="p-6 bg-background border-2 border-border/20 hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500">
                       <div className="flex items-center gap-4 mb-3">
                         <Badge variant="secondary" className="text-sm font-semibold">{milestone.year}</Badge>
                         <h3 className="text-2xl font-bold text-primary">{milestone.title}</h3>
@@ -209,10 +208,10 @@ const About = () => {
         {/* CTA Section */}
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
-            <Card className="overflow-hidden border-2">
+            <Card className="overflow-hidden border-2 border-border/20 hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500">
               <CardContent className="p-12 text-center bg-gradient-to-br from-primary/5 to-secondary/5">
                 <div className="max-w-3xl mx-auto">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">
                     Ready to Transform Your Farm?
                   </h2>
                   <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
@@ -223,14 +222,14 @@ const About = () => {
                   <div className="flex flex-wrap justify-center gap-6">
                     <a 
                       href="/contact" 
-                      className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                      className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 hover:shadow-lg hover:scale-105 transition-all duration-300"
                     >
                       <Mail className="h-5 w-5 mr-2" />
                       Get Free Consultation
                     </a>
                     <a 
                       href="tel:+254111409454" 
-                      className="inline-flex items-center px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-semibold hover:bg-secondary/90 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                      className="inline-flex items-center px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-semibold hover:bg-secondary/90 hover:shadow-lg hover:scale-105 transition-all duration-300"
                     >
                       <Phone className="h-5 w-5 mr-2" />
                       Call Us Today

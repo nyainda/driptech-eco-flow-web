@@ -88,11 +88,11 @@ const BlogSection = () => {
   const hasMorePosts = totalPosts > 6;
 
   return (
-    <section className="py-20 bg-gradient-to-b from-muted/20 to-background">
+    <section className="py-20 bg-background border-t border-border">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-green-600 bg-clip-text text-transparent">
-            Latest Insights & News
+          <h2 className="text-4xl font-bold mb-4 text-foreground">
+            Latest Insights & <span className="text-primary">News</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Stay updated with the latest irrigation trends, tips, and industry insights
@@ -101,7 +101,7 @@ const BlogSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
-            <Card key={post.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+            <Card key={post.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-background border-border">
               {post.featured_image_url && (
                 <div className="relative aspect-video overflow-hidden">
                   <img
@@ -113,7 +113,7 @@ const BlogSection = () => {
                   {/* Category badge */}
                   {post.blog_categories && (
                     <div className="absolute top-4 left-4">
-                      <Badge variant="secondary" className="bg-white/90 text-primary">
+                      <Badge variant="secondary" className="bg-muted text-foreground border-border">
                         {post.blog_categories.name}
                       </Badge>
                     </div>
@@ -124,35 +124,35 @@ const BlogSection = () => {
               <CardHeader className="flex-1">
                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4 text-primary" />
                     {formatDate(post.published_at || post.created_at)}
                   </div>
                   
                   {post.reading_time && (
                     <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
+                      <Clock className="h-4 w-4 text-primary" />
                       {post.reading_time} min read
                     </div>
                   )}
                   
                   <div className="flex items-center gap-1">
-                    <User className="h-4 w-4" />
+                    <User className="h-4 w-4 text-primary" />
                     {post.views} views
                   </div>
                 </div>
 
-                <CardTitle className="text-xl mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                <CardTitle className="text-xl mb-3 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                   {post.title}
                 </CardTitle>
                 
-                <CardDescription className="text-base line-clamp-3 flex-1">
+                <CardDescription className="text-base line-clamp-3 flex-1 text-muted-foreground">
                   {getExcerpt(post)}
                 </CardDescription>
 
                 {post.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
                     {post.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
+                      <Badge key={tag} variant="outline" className="text-xs bg-muted/30 border-border text-foreground">
                         {tag}
                       </Badge>
                     ))}
@@ -163,7 +163,7 @@ const BlogSection = () => {
               <CardContent className="pt-0">
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-between group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                  className="w-full justify-between hover:bg-accent hover:text-accent-foreground transition-colors"
                   asChild
                 >
                   <Link to={`/blog/${post.slug}`}>
@@ -181,7 +181,7 @@ const BlogSection = () => {
           <div className="text-center mt-12">
             <Button 
               size="lg" 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3"
+              className="px-8 py-3 bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
               asChild
             >
               <Link to="/blog">
