@@ -53,17 +53,16 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "https://facebook.com/driptech", label: "Facebook" },
-    { icon: Twitter, href: "https://twitter.com/driptech", label: "Twitter" },
-    { icon: Linkedin, href: "https://linkedin.com/company/driptech", label: "LinkedIn" },
-    { icon: Youtube, href: "https://youtube.com/driptech", label: "YouTube" },
-    { icon: Instagram, href: "https://instagram.com/driptech", label: "Instagram" },
+    { icon: Facebook, href: "https://facebook.com/driptech-eco-flow", label: "Facebook" },
+    { icon: Twitter, href: "https://twitter.com/dripechoflow", label: "Twitter" },
+    { icon: Linkedin, href: "https://linkedin.com/company/driptech-eco-flow", label: "LinkedIn" },
+    { icon: Youtube, href: "https://youtube.com/driptech-eco-flow", label: "YouTube" },
+    { icon: Instagram, href: "https://instagram.com/driptech-eco-flow", label: "Instagram" },
   ];
 
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (email.trim()) {
-      // Simulate API call
       setTimeout(() => {
         setIsSubscribed(true);
         setEmail('');
