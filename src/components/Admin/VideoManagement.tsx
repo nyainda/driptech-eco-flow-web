@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -63,7 +63,38 @@ const VideoManagement = () => {
     duration: 0
   });
 
-  // Fetch videos
+  // Check if storage buckets exist and are accessible
+  useEffect(() => {
+    const checkStorageBuckets = async () => {
+      try {
+        // Check videos bucket
+        const { data: videosBucket, error: videosError } = await supabase.storage
+          .getBucket('videos');
+        
+        if (videosError) {
+          console.warn('Videos bucket not accessible:', videosError);
+          toast({
+            title: "Storage Warning",
+            description: "Videos storage bucket is not configured. Please create 'videos' and 'thumbnails' buckets in Supabase.",
+            variant: "destructive",
+          });
+        }
+
+        // Check thumbnails bucket
+        const { data: thumbnailsBucket, error: thumbnailsError } = await supabase.storage
+          .getBucket('thumbnails');
+        
+        if (thumbnailsError) {
+          console.warn('Thumbnails bucket not accessible:', thumbnailsError);
+        }
+
+      } catch (error) {
+        console.warn('Storage bucket check failed:', error);
+      }
+    };
+
+    checkStorageBuckets();
+  }, [toast]);
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ['videos'],
     queryFn: async () => {
@@ -77,61 +108,53 @@ const VideoManagement = () => {
     }
   });
 
-  // Upload file to Supabase Storage with real progress tracking
+  // Upload file to Supabase Storage with progress tracking
   const uploadFile = async (file: File, bucket: string, path: string, onProgress?: (progress: number) => void) => {
     return new Promise(async (resolve, reject) => {
       try {
-        // Create an XMLHttpRequest to track upload progress
-        const xhr = new XMLHttpRequest();
-        
-        // Track upload progress
-        xhr.upload.addEventListener('progress', (event) => {
-          if (event.lengthComputable && onProgress) {
-            const progress = Math.round((event.loaded / event.total) * 100);
-            onProgress(progress);
+        // Simulate progress for the standard upload since we can't track real progress
+        let currentProgress = 0;
+        const progressInterval = setInterval(() => {
+          currentProgress += Math.random() * 20;
+          if (currentProgress > 95) {
+            currentProgress = 95;
           }
-        });
-
-        // Handle completion
-        xhr.addEventListener('load', async () => {
-          if (xhr.status === 200) {
-            try {
-              // Get public URL after successful upload
-              const { data: { publicUrl } } = supabase.storage
-                .from(bucket)
-                .getPublicUrl(path);
-              
-              resolve(publicUrl);
-            } catch (error) {
-              reject(error);
-            }
-          } else {
-            reject(new Error(`Upload failed with status: ${xhr.status}`));
+          if (onProgress) {
+            onProgress(Math.round(currentProgress));
           }
-        });
+        }, 200);
 
-        // Handle errors
-        xhr.addEventListener('error', () => {
-          reject(new Error('Upload failed'));
-        });
+        try {
+          // Use Supabase's standard upload method
+          const { data, error } = await supabase.storage
+            .from(bucket)
+            .upload(path, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
 
-        // Get signed URL for upload
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from(bucket)
-          .createSignedUploadUrl(path);
+          clearInterval(progressInterval);
+          
+          if (error) {
+            throw error;
+          }
 
-        if (uploadError) {
-          reject(uploadError);
-          return;
+          // Complete progress
+          if (onProgress) {
+            onProgress(100);
+          }
+
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from(bucket)
+            .getPublicUrl(path);
+
+          resolve(publicUrl);
+
+        } catch (uploadError) {
+          clearInterval(progressInterval);
+          throw uploadError;
         }
-
-        // Prepare form data
-        const formData = new FormData();
-        formData.append('file', file);
-
-        // Start upload
-        xhr.open('POST', uploadData.signedUrl);
-        xhr.send(formData);
 
       } catch (error) {
         reject(error);
@@ -139,7 +162,7 @@ const VideoManagement = () => {
     });
   };
 
-  // Alternative simpler approach using Supabase's built-in upload
+  // Simple upload function as fallback
   const uploadFileSimple = async (file: File, bucket: string, path: string) => {
     const { data, error } = await supabase.storage
       .from(bucket)
@@ -177,7 +200,52 @@ const VideoManagement = () => {
     });
   };
 
-  // Updated saveVideoMutation with better progress tracking
+  // Generate thumbnail from video file
+  const generateVideoThumbnail = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      video.addEventListener('loadeddata', () => {
+        // Set canvas dimensions to video dimensions
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Seek to 10% of video duration for a good thumbnail
+        video.currentTime = video.duration * 0.1;
+      });
+      
+      video.addEventListener('seeked', () => {
+        // Draw video frame to canvas
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+          // Convert canvas to blob
+          canvas.toBlob((blob) => {
+            window.URL.revokeObjectURL(video.src);
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Failed to generate thumbnail'));
+            }
+          }, 'image/jpeg', 0.8);
+        } else {
+          reject(new Error('Canvas context not available'));
+        }
+      });
+      
+      video.addEventListener('error', () => {
+        window.URL.revokeObjectURL(video.src);
+        reject(new Error('Failed to load video for thumbnail generation'));
+      });
+      
+      video.src = URL.createObjectURL(file);
+      video.load();
+    });
+  };
+
+  // Updated saveVideoMutation with thumbnail generation
   const saveVideoMutation = useMutation({
     mutationFn: async (video: VideoFormData) => {
       setIsUploading(true);
@@ -197,13 +265,25 @@ const VideoManagement = () => {
           
           console.log(`Starting video upload: ${video.video_file.name} (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
           
-          // Upload video with progress tracking
-          videoUrl = await uploadFile(video.video_file, 'videos', videoPath, (progress) => {
-            // Video upload takes 80% of total progress
-            const adjustedProgress = Math.round(progress * 0.8);
-            setUploadProgress(adjustedProgress);
-            console.log(`Video upload progress: ${progress}% (adjusted: ${adjustedProgress}%)`);
-          });
+          // For large files (>25MB), show a different progress approach
+          if (fileSize > 25 * 1024 * 1024) {
+            console.log('Large file detected, using simulated progress...');
+            
+            // Show initial progress
+            setUploadProgress(5);
+            
+            // Upload with simulated progress
+            videoUrl = await uploadFile(video.video_file, 'videos', videoPath, (progress) => {
+              // Video upload takes 60% of total progress
+              const adjustedProgress = Math.round(progress * 0.6);
+              setUploadProgress(adjustedProgress);
+              console.log(`Video upload progress: ${progress}% (adjusted: ${adjustedProgress}%)`);
+            });
+          } else {
+            // For smaller files, use standard upload
+            videoUrl = await uploadFileSimple(video.video_file, 'videos', videoPath);
+            setUploadProgress(60);
+          }
 
           console.log('Video upload completed, getting duration...');
           
@@ -212,23 +292,49 @@ const VideoManagement = () => {
             duration = await getVideoDuration(video.video_file);
           }
           
-          setUploadProgress(85);
+          setUploadProgress(65);
+
+          // Generate thumbnail if no custom thumbnail provided
+          if (!video.thumbnail_file && !thumbnailUrl) {
+            console.log('Generating thumbnail from video...');
+            try {
+              const thumbnailBlob = await generateVideoThumbnail(video.video_file);
+              const thumbnailPath = `thumbnails/${timestamp}_thumbnail.jpg`;
+              
+              // Create a File object from the blob
+              const thumbnailFile = new File([thumbnailBlob], `${timestamp}_thumbnail.jpg`, { type: 'image/jpeg' });
+              
+              // Upload generated thumbnail
+              thumbnailUrl = await uploadFile(thumbnailFile, 'thumbnails', thumbnailPath, (progress) => {
+                const adjustedProgress = Math.round(65 + (progress * 0.15));
+                setUploadProgress(adjustedProgress);
+              });
+              
+              setUploadProgress(80);
+              console.log('Auto-generated thumbnail uploaded');
+            } catch (error) {
+              console.warn('Failed to generate thumbnail:', error);
+              setUploadProgress(80);
+            }
+          }
         }
 
-        // Handle thumbnail file upload
+        // Handle custom thumbnail file upload
         if (video.thumbnail_file) {
           const timestamp = Date.now();
           const thumbnailPath = `thumbnails/${timestamp}_${video.thumbnail_file.name}`;
           
-          console.log('Starting thumbnail upload...');
+          console.log('Starting custom thumbnail upload...');
           
-          // Upload thumbnail (remaining 10% of progress)
+          // Upload custom thumbnail (remaining progress allocation)
           thumbnailUrl = await uploadFile(video.thumbnail_file, 'thumbnails', thumbnailPath, (progress) => {
-            const adjustedProgress = Math.round(85 + (progress * 0.1));
+            const baseProgress = video.video_file ? 80 : 0;
+            const adjustedProgress = Math.round(baseProgress + (progress * 0.15));
             setUploadProgress(adjustedProgress);
           });
           
           setUploadProgress(95);
+          console.log('Custom thumbnail uploaded');
         }
 
         console.log('Saving to database...');
