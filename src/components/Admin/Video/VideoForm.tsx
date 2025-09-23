@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Upload, Link, Image, FileVideo } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { X, Upload, Link, Image, FileVideo, Trash2 } from "lucide-react";
 
 interface VideoFormProps {
   formData: any;
@@ -45,6 +43,17 @@ const VideoForm = ({
     return `${mb.toFixed(1)} MB`;
   };
 
+  const clearThumbnail = () => {
+    setFormData(prev => ({ 
+      ...prev, 
+      thumbnail_file: undefined, 
+      thumbnail_url: "" 
+    }));
+    if (thumbnailFileRef.current) {
+      thumbnailFileRef.current.value = '';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -68,6 +77,11 @@ const VideoForm = ({
                   <span className="text-sm text-muted-foreground">{uploadProgress}%</span>
                 </div>
                 <Progress value={uploadProgress} className="h-2" />
+                {uploadProgress > 60 && uploadProgress < 80 && (
+                  <p className="text-xs text-muted-foreground">
+                    Generating thumbnail from video...
+                  </p>
+                )}
               </div>
             )}
 
@@ -130,6 +144,112 @@ const VideoForm = ({
               </Tabs>
             </div>
 
+            {/* Thumbnail Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Thumbnail/Cover Image</Label>
+                {(formData.thumbnail_url || formData.thumbnail_file) && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearThumbnail}
+                    disabled={isUploading}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Clear
+                  </Button>
+                )}
+              </div>
+              
+              {/* Current thumbnail preview */}
+              {(formData.thumbnail_url || formData.thumbnail_file) && (
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">Preview</Label>
+                  <div className="relative w-48 h-28 border rounded-md overflow-hidden bg-muted">
+                    {formData.thumbnail_file ? (
+                      <img
+                        src={URL.createObjectURL(formData.thumbnail_file)}
+                        alt="Thumbnail preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : formData.thumbnail_url ? (
+                      <img
+                        src={formData.thumbnail_url}
+                        alt="Thumbnail"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                        }}
+                      />
+                    ) : null}
+                    {/* Fallback icon if image fails to load */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-50 pointer-events-none">
+                      <Image className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Custom thumbnail upload */}
+                <div>
+                  <Label htmlFor="thumbnail_file">Upload Custom Thumbnail</Label>
+                  <Input
+                    id="thumbnail_file"
+                    type="file"
+                    accept="image/*"
+                    onChange={onThumbnailFileChange}
+                    ref={thumbnailFileRef}
+                    disabled={isUploading}
+                    className="cursor-pointer"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Optional. JPG, PNG (Max: 5MB). Auto-generated from video if not provided.
+                  </p>
+                  {formData.thumbnail_file && (
+                    <div className="mt-2 p-2 bg-muted rounded-md">
+                      <div className="flex items-center gap-2">
+                        <Image className="h-4 w-4" />
+                        <span className="text-sm">{formData.thumbnail_file.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          ({formatFileSize(formData.thumbnail_file.size)})
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Thumbnail URL (for URL mode) */}
+                <div>
+                  <Label htmlFor="thumbnail_url">Thumbnail URL</Label>
+                  <Input
+                    id="thumbnail_url"
+                    value={formData.thumbnail_url}
+                    onChange={(e) => setFormData(prev => ({ ...prev, thumbnail_url: e.target.value }))}
+                    placeholder="https://example.com/thumbnail.jpg"
+                    disabled={isUploading}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Optional. Direct link to thumbnail image.
+                  </p>
+                </div>
+              </div>
+
+              {/* Thumbnail generation info */}
+              {uploadMode === 'file' && !formData.thumbnail_file && !formData.thumbnail_url && (
+                <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-md border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center gap-2">
+                    <Image className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      A thumbnail will be automatically generated from your video at the 10% mark.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -187,11 +307,18 @@ const VideoForm = ({
                   disabled={isUploading}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                 />
-                <Button type="button" onClick={addTag} disabled={isUploading}>Add</Button>
+                <Button type="button" onClick={addTag} disabled={isUploading || !newTag.trim()}>
+                  Add
+                </Button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => !isUploading && removeTag(tag)}>
+                  <Badge 
+                    key={tag} 
+                    variant="secondary" 
+                    className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground" 
+                    onClick={() => !isUploading && removeTag(tag)}
+                  >
                     {tag} <X className="h-3 w-3 ml-1" />
                   </Badge>
                 ))}
@@ -220,9 +347,32 @@ const VideoForm = ({
               </div>
             </div>
 
-            <Button type="button" onClick={onSubmit} disabled={isSaving || isUploading}>
-              {isUploading ? 'Uploading...' : (isSaving ? 'Saving...' : 'Save Video')}
-            </Button>
+            {/* Submit Button */}
+            <div className="flex gap-2">
+              <Button 
+                type="button" 
+                onClick={onSubmit} 
+                disabled={isSaving || isUploading}
+                className="flex-1"
+              >
+                {isUploading ? (
+                  <>
+                    <Upload className="h-4 w-4 mr-2 animate-spin" />
+                    Uploading... {uploadProgress}%
+                  </>
+                ) : isSaving ? (
+                  <>
+                    <Upload className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    {editingVideo ? 'Update Video' : 'Save Video'}
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

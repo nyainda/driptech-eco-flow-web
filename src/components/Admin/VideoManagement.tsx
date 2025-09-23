@@ -77,8 +77,70 @@ const VideoManagement = () => {
     }
   });
 
-  // Upload file to Supabase Storage
-  const uploadFile = async (file: File, bucket: string, path: string) => {
+  // Upload file to Supabase Storage with real progress tracking
+  const uploadFile = async (file: File, bucket: string, path: string, onProgress?: (progress: number) => void) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Create an XMLHttpRequest to track upload progress
+        const xhr = new XMLHttpRequest();
+        
+        // Track upload progress
+        xhr.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable && onProgress) {
+            const progress = Math.round((event.loaded / event.total) * 100);
+            onProgress(progress);
+          }
+        });
+
+        // Handle completion
+        xhr.addEventListener('load', async () => {
+          if (xhr.status === 200) {
+            try {
+              // Get public URL after successful upload
+              const { data: { publicUrl } } = supabase.storage
+                .from(bucket)
+                .getPublicUrl(path);
+              
+              resolve(publicUrl);
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            reject(new Error(`Upload failed with status: ${xhr.status}`));
+          }
+        });
+
+        // Handle errors
+        xhr.addEventListener('error', () => {
+          reject(new Error('Upload failed'));
+        });
+
+        // Get signed URL for upload
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from(bucket)
+          .createSignedUploadUrl(path);
+
+        if (uploadError) {
+          reject(uploadError);
+          return;
+        }
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Start upload
+        xhr.open('POST', uploadData.signedUrl);
+        xhr.send(formData);
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
+  // Alternative simpler approach using Supabase's built-in upload
+  const uploadFileSimple = async (file: File, bucket: string, path: string) => {
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(path, file, {
@@ -115,7 +177,7 @@ const VideoManagement = () => {
     });
   };
 
-  // Save video mutation with upload support
+  // Updated saveVideoMutation with better progress tracking
   const saveVideoMutation = useMutation({
     mutationFn: async (video: VideoFormData) => {
       setIsUploading(true);
@@ -131,17 +193,26 @@ const VideoManagement = () => {
         if (video.video_file && uploadMode === 'file') {
           const timestamp = Date.now();
           const videoPath = `videos/${timestamp}_${video.video_file.name}`;
-          
-          setUploadProgress(25);
-          videoUrl = await uploadFile(video.video_file, 'videos', videoPath);
           fileSize = video.video_file.size;
+          
+          console.log(`Starting video upload: ${video.video_file.name} (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
+          
+          // Upload video with progress tracking
+          videoUrl = await uploadFile(video.video_file, 'videos', videoPath, (progress) => {
+            // Video upload takes 80% of total progress
+            const adjustedProgress = Math.round(progress * 0.8);
+            setUploadProgress(adjustedProgress);
+            console.log(`Video upload progress: ${progress}% (adjusted: ${adjustedProgress}%)`);
+          });
+
+          console.log('Video upload completed, getting duration...');
           
           // Get video duration if not provided
           if (!duration) {
             duration = await getVideoDuration(video.video_file);
           }
           
-          setUploadProgress(50);
+          setUploadProgress(85);
         }
 
         // Handle thumbnail file upload
@@ -149,11 +220,18 @@ const VideoManagement = () => {
           const timestamp = Date.now();
           const thumbnailPath = `thumbnails/${timestamp}_${video.thumbnail_file.name}`;
           
-          setUploadProgress(75);
-          thumbnailUrl = await uploadFile(video.thumbnail_file, 'thumbnails', thumbnailPath);
+          console.log('Starting thumbnail upload...');
+          
+          // Upload thumbnail (remaining 10% of progress)
+          thumbnailUrl = await uploadFile(video.thumbnail_file, 'thumbnails', thumbnailPath, (progress) => {
+            const adjustedProgress = Math.round(85 + (progress * 0.1));
+            setUploadProgress(adjustedProgress);
+          });
+          
+          setUploadProgress(95);
         }
 
-        setUploadProgress(90);
+        console.log('Saving to database...');
 
         if (editingVideo) {
           // Update existing video
@@ -178,6 +256,7 @@ const VideoManagement = () => {
           
           if (error) throw error;
           setUploadProgress(100);
+          console.log('Video updated successfully');
           return data;
         } else {
           // Create new video
@@ -201,10 +280,18 @@ const VideoManagement = () => {
           
           if (error) throw error;
           setUploadProgress(100);
+          console.log('Video created successfully');
           return data;
         }
+      } catch (error) {
+        console.error('Upload error:', error);
+        throw error;
       } finally {
-        setIsUploading(false);
+        // Keep the upload state for a moment to show 100% completion
+        setTimeout(() => {
+          setIsUploading(false);
+          setUploadProgress(0);
+        }, 1000);
       }
     },
     onSuccess: () => {
@@ -212,14 +299,16 @@ const VideoManagement = () => {
       resetForm();
       toast({
         title: "Success",
-        description: "Video saved successfully",
+        description: "Video uploaded and saved successfully",
       });
     },
     onError: (error: Error) => {
+      console.error('Save video error:', error);
       setIsUploading(false);
+      setUploadProgress(0);
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Upload Failed",
+        description: error.message || "Failed to upload video. Please try again.",
         variant: "destructive",
       });
     }
@@ -331,6 +420,7 @@ const VideoManagement = () => {
     }));
   };
 
+  // Updated handleSubmit with large file warning
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -359,6 +449,15 @@ const VideoManagement = () => {
         variant: "destructive",
       });
       return;
+    }
+
+    // Show warning for large files
+    if (formData.video_file && formData.video_file.size > 50 * 1024 * 1024) {
+      const fileSizeMB = (formData.video_file.size / 1024 / 1024).toFixed(1);
+      toast({
+        title: "Large File Detected",
+        description: `Uploading ${fileSizeMB}MB file. This may take several minutes. Please don't close the browser.`,
+      });
     }
 
     saveVideoMutation.mutate(formData);
