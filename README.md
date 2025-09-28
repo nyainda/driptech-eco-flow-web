@@ -12,7 +12,7 @@ A modern web application for DripTech EcoFlow, providing innovative smart irriga
 
 ## Live Demo
 
-**URL**: https://driptech-eco-flow-web.vercel.app/
+**URL**: https://driptech.co.ke
 
 ## Tech Stack
 
