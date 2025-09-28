@@ -1,0 +1,63 @@
+
+import { Json } from '../shared';
+
+export type IrrigationKits = {
+  Row: {
+    active: boolean | null;
+    components: Json | null;
+    coverage_area: number | null;
+    created_at: string | null;
+    description: string | null;
+    featured: boolean | null;
+    id: string;
+    images: string[] | null;
+    installation_complexity: string | null;
+    installation_time_hours: number | null;
+    kit_type: string | null;
+    name: string;
+    price: number | null;
+    recommended_crops: string[] | null;
+    updated_at: string | null;
+    warranty_months: number | null;
+    water_efficiency_percentage: number | null;
+  };
+  Insert: {
+    active?: boolean | null;
+    components?: Json | null;
+    coverage_area?: number | null;
+    created_at?: string | null;
+    description?: string | null;
+    featured?: boolean | null;
+    id?: string;
+    images?: string[] | null;
+    installation_complexity?: string | null;
+    installation_time_hours?: number | null;
+    kit_type?: string | null;
+    name: string;
+    price?: number | null;
+    recommended_crops?: string[] | null;
+    updated_at?: string | null;
+    warranty_months?: number | null;
+    water_efficiency_percentage?: number | null;
+  };
+  Update: {
+    active?: boolean | null;
+    components?: Json | null;
+    coverage_area?: number | null;
+    created_at?: string | null;
+    description?: string | null;
+    featured?: boolean | null;
+    id?: string;
+    images?: string[] | null;
+    installation_complexity?: string | null;
+    installation_time_hours?: number | null;
+    kit_type?: string | null;
+    name?: string;
+    price?: number | null;
+    recommended_crops?: string[] | null;
+    updated_at?: string | null;
+    warranty_months?: number | null;
+    water_efficiency_percentage?: number | null;
+  };
+  Relationships: [];
+};

@@ -86,46 +86,65 @@ const Products = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let query = supabase.from('products').select('*');
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      let query = supabase.from('products').select('*');
+      
+      if (category) {
+        const categoryMap: Record<string, Product['category']> = {
+          'drip': 'drip_irrigation',
+          'sprinklers': 'sprinkler_systems',
+          'filtration': 'filtration_systems',
+          'controls': 'control_systems',
+          'accessories': 'accessories'
+        };
         
-        if (category) {
-          const categoryMap: Record<string, Product['category']> = {
-            'drip': 'drip_irrigation',
-            'sprinklers': 'sprinkler_systems',
-            'filtration': 'filtration_systems',
-            'controls': 'control_systems',
-            'accessories': 'accessories'
-          };
-          
-          const dbCategory = categoryMap[category];
-          if (dbCategory) {
-            query = query.eq('category', dbCategory);
-          }
+        const dbCategory = categoryMap[category];
+        if (dbCategory) {
+          query = query.eq('category', dbCategory);
         }
-
-        const { data, error } = await query;
-        if (error) throw error;
-
-        // Transform data to ensure variants match the Variant[] type
-        const transformedData = (data || []).map(item => ({
-          ...item,
-          variants: item.variants ? item.variants as Variant[] : null
-        }));
-
-        setProducts(transformedData);
-      } catch (error: any) {
-        console.error('Error fetching products:', error);
-        setError(error.message || 'Failed to load products. Please try again.');
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchProducts();
-  }, [category]);
+      const { data, error } = await query;
+      if (error) throw error;
+
+      
+      const transformedData = (data || []).map((item: any) => {
+       
+        const variants = item.variants
+          ? Array.isArray(item.variants)
+            ? item.variants.filter((v: any) => 
+                typeof v === 'object' &&
+                v !== null &&
+                typeof v.name === 'string' &&
+                typeof v.price === 'number' &&
+                typeof v.in_stock === 'boolean'
+              ).map((v: any) => ({
+                name: v.name,
+                price: v.price,
+                in_stock: v.in_stock
+              } as Variant))
+            : null
+          : null;
+
+        return {
+          ...item,
+          variants
+        } as Product;
+      });
+
+      setProducts(transformedData);
+    } catch (error: any) {
+      console.error('Error fetching products:', error);
+      setError(error.message || 'Failed to load products. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, [category]);
 
   useEffect(() => {
     let filtered = [...products];
@@ -942,137 +961,137 @@ const Products = () => {
     );
   };
 
-  const MobilePagination = () => (
-    <div className="flex flex-col items-center gap-4 mt-8">
-      <div className="text-sm text-muted-foreground text-center">
-        Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products
+ const MobilePagination = () => (
+  <div className="flex flex-col items-center gap-4 mt-8">
+    <div className="text-sm text-muted-foreground text-center">
+      Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products
+    </div>
+    
+    <div className="flex items-center gap-2">
+      <Button
+        className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground rounded-xl shadow-md"
+        size="sm"
+        onClick={prevPage}
+        disabled={currentPage === 1}
+      >
+        <ChevronLeft className="h-4 w-4 mr-1" />
+        <span className="hidden xs:inline">Previous</span>
+      </Button>
+      
+      <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
+        {totalPages > 1 && (
+          <Button
+            className={`${currentPage === 1 ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground'} rounded-xl shadow-md w-8 h-8 flex-shrink-0`}
+            size="sm"
+            onClick={() => paginate(1)}
+          >
+            1
+          </Button>
+        )}
+        
+        {currentPage > 3 && totalPages > 5 && (
+          <span className="px-2 text-muted-foreground">...</span>
+        )}
+        
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter(page => {
+            if (totalPages <= 5) return page > 1 && page < totalPages;
+            return page > 1 && page < totalPages && Math.abs(page - currentPage) <= 1;
+          })
+          .map(page => (
+            <Button
+              key={page}
+              className={`${currentPage === page ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground'} rounded-xl shadow-md w-8 h-8 flex-shrink-0`}
+              size="sm"
+              onClick={() => paginate(page)}
+            >
+              {page}
+            </Button>
+          ))}
+        
+        {currentPage < totalPages - 2 && totalPages > 5 && (
+          <span className="px-2 text-muted-foreground">...</span>
+        )}
+        
+        {totalPages > 1 && (
+          <Button
+            className={`${currentPage === totalPages ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground'} rounded-xl shadow-md w-8 h-8 flex-shrink-0`}
+            size="sm"
+            onClick={() => paginate(totalPages)}
+          >
+            {totalPages}
+          </Button>
+        )}
       </div>
       
-      <div className="flex items-center gap-2">
-        <Button
-          className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-          size="sm"
-          onClick={prevPage}
-          disabled={currentPage === 1}
-        >
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          <span className="hidden xs:inline">Previous</span>
-        </Button>
-        
-        <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
-          {totalPages > 1 && (
-            <Button
-              className={`${currentPage === 1 ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground'} rounded-xl shadow-md w-8 h-8 flex-shrink-0`}
-              size="sm"
-              onClick={() => paginate(1)}
-            >
-              1
-            </Button>
-          )}
-          
-          {currentPage > 3 && totalPages > 5 && (
-            <span className="px-2 text-muted-foreground">...</span>
-          )}
-          
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(page => {
-              if (totalPages <= 5) return page > 1 && page < totalPages;
-              return page > 1 && page < totalPages && Math.abs(page - currentPage) <= 1;
-            })
-            .map(page => (
-              <Button
-                key={page}
-                className={`${currentPage === page ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground'} rounded-xl shadow-md w-8 h-8 flex-shrink-0`}
-                size="sm"
-                onClick={() => paginate(page)}
-              >
-                {page}
-              </Button>
-            ))}
-          
-          {currentPage < totalPages - 2 && totalPages > 5 && (
-            <span className="px-2 text-muted-foreground">...</span>
-          )}
-          
-          {totalPages > 1 && (
-            <Button
-              className={`${currentPage === totalPages ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground'} rounded-xl shadow-md w-8 h-8 flex-shrink-0`}
-              size="sm"
-              onClick={() => paginate(totalPages)}
-            >
-              {totalPages}
-            </Button>
-          )}
-        </div>
-        
-        <Button
-          className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-          size="sm"
-          onClick={nextPage}
-          disabled={currentPage === totalPages}
-        >
-          <span className="hidden xs:inline">Next</span>
-          <ChevronRight className="h-4 w-4 ml-1" />
-        </Button>
-      </div>
+      <Button
+        className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground rounded-xl shadow-md"
+        size="sm"
+        onClick={nextPage}
+        disabled={currentPage === totalPages}
+      >
+        <span className="hidden xs:inline">Next</span>
+        <ChevronRight className="h-4 w-4 ml-1" />
+      </Button>
     </div>
-  );
+  </div>
+);
 
-  const DesktopPagination = () => (
-    <div className="flex items-center justify-between mt-8">
-      <div className="text-sm text-muted-foreground">
-        Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products
+const DesktopPagination = () => (
+  <div className="flex items-center justify-between mt-8">
+    <div className="text-sm text-muted-foreground">
+      Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products
+    </div>
+    
+    <div className="flex items-center gap-2">
+      <Button
+        className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground rounded-xl shadow-md"
+        size="sm"
+        onClick={prevPage}
+        disabled={currentPage === 1}
+      >
+        <ChevronLeft className="h-4 w-4 mr-2" />
+        Previous
+      </Button>
+      
+      <div className="flex items-center gap-1">
+        {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+          let pageNumber;
+          if (totalPages <= 7) {
+            pageNumber = i + 1;
+          } else if (currentPage <= 4) {
+            pageNumber = i + 1;
+          } else if (currentPage >= totalPages - 3) {
+            pageNumber = totalPages - 6 + i;
+          } else {
+            pageNumber = currentPage - 3 + i;
+          }
+          
+          return (
+            <Button
+              key={pageNumber}
+              className={`${currentPage === pageNumber ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground'} rounded-xl shadow-md w-10 h-10`}
+              size="sm"
+              onClick={() => paginate(pageNumber)}
+            >
+              {pageNumber}
+            </Button>
+          );
+        })}
       </div>
       
-      <div className="flex items-center gap-2">
-        <Button
-          className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-          size="sm"
-          onClick={prevPage}
-          disabled={currentPage === 1}
-        >
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Previous
-        </Button>
-        
-        <div className="flex items-center gap-1">
-          {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-            let pageNumber;
-            if (totalPages <= 7) {
-              pageNumber = i + 1;
-            } else if (currentPage <= 4) {
-              pageNumber = i + 1;
-            } else if (currentPage >= totalPages - 3) {
-              pageNumber = totalPages - 6 + i;
-            } else {
-              pageNumber = currentPage - 3 + i;
-            }
-            
-            return (
-              <Button
-                key={pageNumber}
-                className={`${currentPage === pageNumber ? 'bg-primary text-primary-foreground' : 'bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground'} rounded-xl shadow-md w-10 h-10`}
-                size="sm"
-                onClick={() => paginate(pageNumber)}
-              >
-                {pageNumber}
-              </Button>
-            );
-          })}
-        </div>
-        
-        <Button
-          className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-          size="sm"
-          onClick={nextPage}
-          disabled={currentPage === totalPages}
-        >
-          Next
-          <ChevronRight className="h-4 w-4 ml-2" />
-        </Button>
-      </div>
+      <Button
+        className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground text-foreground rounded-xl shadow-md"
+        size="sm"
+        onClick={nextPage}
+        disabled={currentPage === totalPages}
+      >
+        Next
+        <ChevronRight className="h-4 w-4 ml-2" />
+      </Button>
     </div>
-  );
+  </div>
+);
 
   if (loading) {
     return (

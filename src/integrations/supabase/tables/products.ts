@@ -1,0 +1,75 @@
+
+import { Json, DatabaseWithoutInternals } from '../shared';
+
+export type Products = {
+  Row: {
+    applications: string[] | null;
+    brochure_url: string | null;
+    category: DatabaseWithoutInternals["public"]["Enums"]["product_category"];
+    created_at: string | null;
+    description: string | null;
+    featured: boolean | null;
+    features: string[] | null;
+    id: string;
+    images: string[] | null;
+    in_stock: boolean | null;
+    installation_guide_url: string | null;
+    maintenance_manual_url: string | null;
+    model_number: string | null;
+    name: string;
+    price: number | null;
+    specifications: Json | null;
+    subcategory: string | null;
+    technical_specs: Json | null;
+    updated_at: string | null;
+    variants: Json | null;
+    video_url: string | null;
+  };
+  Insert: {
+    applications?: string[] | null;
+    brochure_url?: string | null;
+    category: DatabaseWithoutInternals["public"]["Enums"]["product_category"];
+    created_at?: string | null;
+    description?: string | null;
+    featured?: boolean | null;
+    features?: string[] | null;
+    id?: string;
+    images?: string[] | null;
+    in_stock?: boolean | null;
+    installation_guide_url?: string | null;
+    maintenance_manual_url?: string | null;
+    model_number?: string | null;
+    name: string;
+    price?: number | null;
+    specifications?: Json | null;
+    subcategory?: string | null;
+    technical_specs?: Json | null;
+    updated_at?: string | null;
+    variants?: Json | null;
+    video_url?: string | null;
+  };
+  Update: {
+    applications?: string[] | null;
+    brochure_url?: string | null;
+    category?: DatabaseWithoutInternals["public"]["Enums"]["product_category"];
+    created_at?: string | null;
+    description?: string | null;
+    featured?: boolean | null;
+    features?: string[] | null;
+    id?: string;
+    images?: string[] | null;
+    in_stock?: boolean | null;
+    installation_guide_url?: string | null;
+    maintenance_manual_url?: string | null;
+    model_number?: string | null;
+    name?: string;
+    price?: number | null;
+    specifications?: Json | null;
+    subcategory?: string | null;
+    technical_specs?: Json | null;
+    updated_at?: string | null;
+    variants?: Json | null;
+    video_url?: string | null;
+  };
+  Relationships: [];
+};
