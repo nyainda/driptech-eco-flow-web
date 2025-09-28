@@ -62,6 +62,7 @@ const AdminContent = () => {
       icon: Package,
       description: "Manage irrigation products"
     },
+
     {
       id: "kits",
       label: "Irrigation Kits",
@@ -226,6 +227,8 @@ const AdminContent = () => {
           <TabsContent value="quotes" className="space-y-6">
             <QuoteManagement />
           </TabsContent>
+
+         
 
           <TabsContent value="invoices" className="space-y-6">
             <InvoiceManagementSystem />

@@ -271,8 +271,8 @@ const Privacy = () => {
                       <Mail className="h-5 w-5 text-primary" />
                       <div>
                         <p className="font-medium">Email</p>
-                        <a href="mailto:privacy@driptech.co.ke" className="text-primary hover:underline">
-                          privacy@driptech.co.ke
+                        <a href="mailto:driptechs.info@gmail.com" className="text-primary hover:underline">
+                          driptechs.info@gmail.com
                         </a>
                       </div>
                     </div>
@@ -280,8 +280,8 @@ const Privacy = () => {
                       <Phone className="h-5 w-5 text-primary" />
                       <div>
                         <p className="font-medium">Phone</p>
-                        <a href="tel:+254700123456" className="text-primary hover:underline">
-                          +254 700 123 456
+                        <a href="tel:+254 111409454" className="text-primary hover:underline">
+                         +254 111409454
                         </a>
                       </div>
                     </div>
@@ -293,7 +293,7 @@ const Privacy = () => {
                         <p className="font-medium">Address</p>
                         <p className="text-muted-foreground">
                           DripTech EcoFlow Ltd<br />
-                          Westlands Office Park<br />
+
                           Nairobi, Kenya
                         </p>
                       </div>

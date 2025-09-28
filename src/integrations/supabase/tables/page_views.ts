@@ -1,48 +1,47 @@
-
 import { Json } from '../shared';
 
 export type PageViews = {
   Row: {
-    created_at: string | null;
-    exit_page: boolean | null;
     id: string;
+    visitor_id: string;
+    session_id: string | null;
     page_path: string;
     page_title: string;
-    query_params: Json | null;
-    referrer: string | null;
-    scroll_depth: number | null;
-    session_id: string | null;
-    time_spent: number | null;
     timestamp: string;
-    visitor_id: string;
+    time_spent: number | null;
+    referrer: string | null;
+    query_params: Json | null;
+    scroll_depth: number | null;
+    exit_page: boolean | null;
+    created_at: string | null;
   };
   Insert: {
-    created_at?: string | null;
-    exit_page?: boolean | null;
     id?: string;
+    visitor_id: string;
+    session_id?: string | null;
     page_path: string;
     page_title: string;
-    query_params?: Json | null;
-    referrer?: string | null;
-    scroll_depth?: number | null;
-    session_id?: string | null;
-    time_spent?: number | null;
     timestamp?: string;
-    visitor_id: string;
+    time_spent?: number | null;
+    referrer?: string | null;
+    query_params?: Json | null;
+    scroll_depth?: number | null;
+    exit_page?: boolean | null;
+    created_at?: string | null;
   };
   Update: {
-    created_at?: string | null;
-    exit_page?: boolean | null;
     id?: string;
+    visitor_id?: string;
+    session_id?: string | null;
     page_path?: string;
     page_title?: string;
-    query_params?: Json | null;
-    referrer?: string | null;
-    scroll_depth?: number | null;
-    session_id?: string | null;
-    time_spent?: number | null;
     timestamp?: string;
-    visitor_id?: string;
+    time_spent?: number | null;
+    referrer?: string | null;
+    query_params?: Json | null;
+    scroll_depth?: number | null;
+    exit_page?: boolean | null;
+    created_at?: string | null;
   };
   Relationships: [
     {
@@ -51,6 +50,6 @@ export type PageViews = {
       isOneToOne: false;
       referencedRelation: "visitor_sessions";
       referencedColumns: ["id"];
-    },
+    }
   ];
 };

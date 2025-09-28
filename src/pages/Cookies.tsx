@@ -347,17 +347,16 @@ const Cookies = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <p>
-                      <strong>Email:</strong> <a href="mailto:privacy@driptech.co.ke" className="text-primary hover:underline">privacy@driptech.co.ke</a>
+                      <strong>Email:</strong> <a href="mailto:driptechs.info@gmail.com" className="text-primary hover:underline">privacy@driptech.co.ke</a>
                     </p>
                     <p>
-                      <strong>Phone:</strong> <a href="tel:+254700123456" className="text-primary hover:underline">+254 700 123 456</a>
+                      <strong>Phone:</strong> <a href="tel:+254111409454" className="text-primary hover:underline">+254 111409454</a>
                     </p>
                   </div>
                   <div>
                     <p><strong>Address:</strong></p>
                     <p className="text-muted-foreground text-sm">
                       DripTech EcoFlow Ltd<br />
-                      Westlands Office Park<br />
                       Nairobi, Kenya
                     </p>
                   </div>
