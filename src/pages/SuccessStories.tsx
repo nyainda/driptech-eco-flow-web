@@ -36,23 +36,23 @@ const SuccessStories = () => {
       <Header />
       <main className="flex-grow">
         {/* Hero */}
-        <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
           <div className="container mx-auto px-4 text-center">
             <Badge variant="secondary" className="mb-4">🏆 Success Stories</Badge>
-            <h1 className="text-5xl font-bold mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
               Real Results from <span className="text-primary">Real Customers</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
               Discover how our irrigation solutions have transformed farms, boosted yields, and improved lives globally.
             </p>
           </div>
         </section>
 
         {/* Success Stories */}
-        <section className="py-20">
+        <section className="py-12 sm:py-16 md:py-20">
           <div className="container mx-auto px-4">
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
                 {Array.from({ length: 6 }).map((_, index) => (
                   <Card key={index} className="animate-pulse">
                     <CardContent className="p-6 space-y-4">
@@ -64,7 +64,7 @@ const SuccessStories = () => {
                 ))}
               </div>
             ) : stories.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
                 {stories.map((story) => (
                   <Card
                     key={story.id}
@@ -86,16 +86,16 @@ const SuccessStories = () => {
                     )}
 
                     {/* Content */}
-                    <CardContent className="p-6 flex flex-col flex-grow">
+                    <CardContent className="p-4 sm:p-6 flex flex-col flex-grow">
                       {story.featured && (
                         <Badge variant="secondary" className="mb-3">⭐ Featured Story</Badge>
                       )}
 
-                      <h3 className="text-xl font-semibold mb-2">{story.title}</h3>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-2">{story.title}</h3>
 
                       <div className="flex items-center gap-2 text-muted-foreground mb-3">
-                        <Building className="h-4 w-4" />
-                        <span className="text-sm">
+                        <Building className="h-4 w-4 flex-shrink-0" />
+                        <span className="text-sm line-clamp-1">
                           {story.client_name}
                           {story.client_company && ` - ${story.client_company}`}
                         </span>
@@ -110,10 +110,10 @@ const SuccessStories = () => {
 
                       {/* Results Achieved */}
                       {story.results && (
-                        <div className="rounded-xl border border-primary/10 bg-gradient-to-br from-primary/5 to-secondary/10 p-5 shadow-sm mb-4">
+                        <div className="rounded-xl border border-primary/10 bg-gradient-to-br from-primary/5 to-secondary/10 p-4 sm:p-5 shadow-sm mb-4">
                           <div className="flex items-center gap-3 mb-3">
-                            <TrendingUp className="h-5 w-5 text-primary" />
-                            <h4 className="text-md font-semibold text-primary tracking-wide">
+                            <TrendingUp className="h-5 w-5 text-primary flex-shrink-0" />
+                            <h4 className="text-sm sm:text-md font-semibold text-primary tracking-wide">
                               Results Achieved
                             </h4>
                           </div>
@@ -129,7 +129,7 @@ const SuccessStories = () => {
                       <div className="mt-auto">
                         <Button
                           variant="outline"
-                          className="w-full transition-all group-hover:bg-primary group-hover:text-primary-foreground"
+                          className="w-full transition-all group-hover:bg-primary group-hover:text-primary-foreground text-sm sm:text-base"
                         >
                           Read Full Story
                           <ArrowRight className="ml-2 h-4 w-4" />
@@ -140,10 +140,10 @@ const SuccessStories = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20">
-                <Award className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No Success Stories Yet</h3>
-                <p className="text-muted-foreground">
+              <div className="text-center py-12 sm:py-16 md:py-20 px-4">
+                <Award className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">No Success Stories Yet</h3>
+                <p className="text-sm sm:text-base text-muted-foreground">
                   Stories will appear here once available from our community.
                 </p>
               </div>
