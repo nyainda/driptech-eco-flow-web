@@ -113,7 +113,7 @@ const ServicesSection = () => {
         .select('id, name, description, kit_type, coverage_area, recommended_crops, price, components, installation_complexity, installation_time_hours, water_efficiency_percentage, warranty_months, featured, images')
         .eq('active', true)
         .eq('featured', true)
-        .limit(3)
+        .limit(6)
         .order('created_at', { ascending: false });
       
       if (error) {

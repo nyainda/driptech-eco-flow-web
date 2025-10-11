@@ -40,28 +40,35 @@ import {
   CheckCircle,
   Star,
   Eye,
-  Loader2
+  Loader2,
+  Upload,
+  X,
+  Image as ImageIcon
 } from "lucide-react";
 
-// Types based on your database schema
+// Updated IrrigationKit interface to match database schema
 interface IrrigationKit {
   id: string;
   name: string;
   description?: string | null;
-  kit_type?: string | null;
+  category?: string | null;
   coverage_area?: number | null;
-  recommended_crops?: string[] | null;
+  target_crop?: string | null;
+  components?: ComponentsData | null;
   price?: number | null;
-  components?: any; // JSON field
-  installation_complexity?: string | null;
-  installation_time_hours?: number | null;
-  water_efficiency_percentage?: number | null;
-  warranty_months?: number | null;
+  in_stock?: boolean | null;
   featured?: boolean | null;
-  active?: boolean | null;
-  images?: string[] | null;
+  maintenance_level?: 'low' | 'medium' | 'high' | null;
   created_at?: string | null;
   updated_at?: string | null;
+  active?: boolean | null;
+  images?: string[] | null;
+  installation_complexity?: string | null;
+  installation_time_hours?: number | null;
+  kit_type?: string | null;
+  recommended_crops?: string[] | null;
+  warranty_months?: number | null;
+  water_efficiency_percentage?: number | null;
 }
 
 interface KitDocument {
@@ -109,6 +116,8 @@ const IrrigationKitsManagement = () => {
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
 
   // Data states
   const [kits, setKits] = useState<IrrigationKit[]>([]);
@@ -119,43 +128,50 @@ const IrrigationKitsManagement = () => {
   const [formData, setFormData] = useState<Partial<IrrigationKit>>({
     name: '',
     description: '',
-    kit_type: '',
+    category: 'general',
     coverage_area: 0,
-    recommended_crops: [],
+    target_crop: '',
     price: 0,
     components: {
       main_components: [],
       pricing_tiers: [],
       included_services: []
     },
+    in_stock: true,
+    featured: false,
+    maintenance_level: 'low',
     installation_complexity: 'medium',
     installation_time_hours: 4,
     water_efficiency_percentage: 70,
     warranty_months: 12,
-    featured: false,
     active: true,
-    images: []
+    images: [],
+    kit_type: '',
+    recommended_crops: []
   });
 
   // Component management states
   const [newComponent, setNewComponent] = useState('');
   const [newPricingTier, setNewPricingTier] = useState({ name: '', price: 0, description: '' });
   const [newService, setNewService] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
 
-  // Load data from Supabase
+  // Load data from Supabase with pagination
   useEffect(() => {
-    loadData();
-  }, []);
+    loadData(page);
+  }, [page]);
 
-  const loadData = async () => {
+  const loadData = async (currentPage: number) => {
     setDataLoading(true);
     setError(null);
     
     try {
-      // Load irrigation kits
+      // Load irrigation kits with pagination
       const { data: kitsData, error: kitsError } = await supabase
         .from('irrigation_kits')
         .select('*')
+        .range((currentPage - 1) * pageSize, currentPage * pageSize - 1)
         .order('created_at', { ascending: false });
 
       if (kitsError) {
@@ -163,7 +179,15 @@ const IrrigationKitsManagement = () => {
         throw new Error(`Failed to load kits: ${kitsError.message}`);
       }
 
-      setKits(kitsData || []);
+      setKits(
+        (kitsData || []).map((kit: any) => ({
+          ...kit,
+          components:
+            typeof kit.components === "string"
+              ? JSON.parse(kit.components)
+              : kit.components || { main_components: [], pricing_tiers: [], included_services: [] },
+        }))
+      );
 
       // Load kit documents
       const { data: documentsData, error: documentsError } = await supabase
@@ -206,8 +230,17 @@ const IrrigationKitsManagement = () => {
   };
 
   const handleSaveKit = async () => {
+    // Enhanced form validation
     if (!formData.name?.trim()) {
-      alert('Kit name is required');
+      setError('Kit name is required');
+      return;
+    }
+    if (!formData.kit_type) {
+      setError('Kit type is required');
+      return;
+    }
+    if (!formData.price || formData.price <= 0) {
+      setError('Valid price is required');
       return;
     }
 
@@ -218,18 +251,22 @@ const IrrigationKitsManagement = () => {
       const kitData = {
         name: formData.name,
         description: formData.description || null,
-        kit_type: formData.kit_type || null,
+        category: formData.category || 'general',
         coverage_area: formData.coverage_area || null,
-        recommended_crops: formData.recommended_crops || null,
+        target_crop: formData.target_crop || null,
         price: formData.price || null,
-        components: formData.components || null,
-        installation_complexity: formData.installation_complexity || null,
-        installation_time_hours: formData.installation_time_hours || null,
-        water_efficiency_percentage: formData.water_efficiency_percentage || null,
-        warranty_months: formData.warranty_months || null,
+        components: formData.components ? JSON.stringify(formData.components) : null,
+        in_stock: formData.in_stock !== false,
         featured: formData.featured || false,
+        maintenance_level: formData.maintenance_level || 'low',
         active: formData.active !== false,
         images: formData.images || null,
+        installation_complexity: formData.installation_complexity || null,
+        installation_time_hours: formData.installation_time_hours || null,
+        kit_type: formData.kit_type || null,
+        recommended_crops: formData.recommended_crops || null,
+        warranty_months: formData.warranty_months || null,
+        water_efficiency_percentage: formData.water_efficiency_percentage || null,
       };
 
       if (selectedKit) {
@@ -247,7 +284,7 @@ const IrrigationKitsManagement = () => {
         if (error) throw new Error(`Failed to create kit: ${error.message}`);
       }
 
-      await loadData();
+      await loadData(page);
       
       setShowForm(false);
       setSelectedKit(null);
@@ -282,7 +319,7 @@ const IrrigationKitsManagement = () => {
 
       if (error) throw new Error(`Failed to delete kit: ${error.message}`);
 
-      await loadData();
+      await loadData(page);
       alert('Kit deleted successfully!');
     } catch (err) {
       console.error('Error deleting kit:', err);
@@ -300,22 +337,26 @@ const IrrigationKitsManagement = () => {
     setFormData({
       name: '',
       description: '',
-      kit_type: '',
+      category: 'general',
       coverage_area: 0,
-      recommended_crops: [],
+      target_crop: '',
       price: 0,
       components: {
         main_components: [],
         pricing_tiers: [],
         included_services: []
       },
+      in_stock: true,
+      featured: false,
+      maintenance_level: 'low',
       installation_complexity: 'medium',
       installation_time_hours: 4,
       water_efficiency_percentage: 70,
       warranty_months: 12,
-      featured: false,
       active: true,
-      images: []
+      images: [],
+      kit_type: '',
+      recommended_crops: []
     });
     setNewComponent('');
     setNewPricingTier({ name: '', price: 0, description: '' });
@@ -382,6 +423,87 @@ const IrrigationKitsManagement = () => {
     setFormData({ ...formData, components: updatedComponents });
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+      setImageError('No file selected');
+      return;
+    }
+
+    setUploadingImage(true);
+    setImageError(null);
+
+    try {
+      const file = files[0];
+
+      if (!file.type.startsWith('image/')) {
+        throw new Error('Please upload a valid image file (e.g., PNG, JPEG)');
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('Image size must be less than 5MB');
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `irrigation-kits/${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('kit-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error('Upload Error Details:', uploadError);
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('kit-images')
+        .getPublicUrl(filePath);
+
+      if (!publicUrl) {
+        throw new Error('Failed to retrieve public URL for the image');
+      }
+
+      const currentImages = formData.images || [];
+      setFormData({
+        ...formData,
+        images: [...currentImages, publicUrl],
+      });
+    } catch (err) {
+      console.error('Error uploading image:', err);
+      setImageError(err instanceof Error ? err.message : 'Failed to upload image');
+    } finally {
+      setUploadingImage(false);
+      event.target.value = '';
+    }
+  };
+
+  const removeImage = async (imageUrl: string, index: number) => {
+    try {
+      const urlParts = imageUrl.split('/kit-images/');
+      if (urlParts.length > 1) {
+        const filePath = `irrigation-kits/${urlParts[1]}`;
+        const { error: deleteError } = await supabase.storage
+          .from('kit-images')
+          .remove([filePath]);
+        if (deleteError) {
+          throw new Error(`Failed to delete image: ${deleteError.message}`);
+        }
+      }
+      const updatedImages = formData.images?.filter((_, i) => i !== index) || [];
+      setFormData({ ...formData, images: updatedImages });
+    } catch (err) {
+      console.error('Error removing image:', err);
+      setImageError(err instanceof Error ? err.message : 'Failed to remove image');
+      const updatedImages = formData.images?.filter((_, i) => i !== index) || [];
+      setFormData({ ...formData, images: updatedImages });
+    }
+  };
+
   const kitStats = {
     totalKits: kits.length,
     activeKits: kits.filter(k => k.active).length,
@@ -413,7 +535,7 @@ const IrrigationKitsManagement = () => {
           <div className="flex flex-col items-center gap-4 text-center">
             <AlertCircle className="h-8 w-8 text-destructive" />
             <p className="text-destructive">{error}</p>
-            <Button onClick={loadData} variant="outline" className="border-border text-muted-foreground hover:bg-muted">
+            <Button onClick={() => loadData(page)} variant="outline" className="border-border text-muted-foreground hover:bg-muted">
               Try Again
             </Button>
           </div>
@@ -453,7 +575,7 @@ const IrrigationKitsManagement = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="kit_type" className="text-foreground">Kit Type</Label>
+                  <Label htmlFor="kit_type" className="text-foreground">Kit Type *</Label>
                   <Select value={formData.kit_type || ''} onValueChange={(value) => setFormData({ ...formData, kit_type: value })}>
                     <SelectTrigger className="bg-background border-border text-foreground">
                       <SelectValue placeholder="Select kit type" />
@@ -465,6 +587,32 @@ const IrrigationKitsManagement = () => {
                       <SelectItem value="greenhouse_kit">Greenhouse Kit</SelectItem>
                       <SelectItem value="hydroponic_kit">Hydroponic Kit</SelectItem>
                       <SelectItem value="smart_irrigation">Smart Irrigation System</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="category" className="text-foreground">Category</Label>
+                  <Input
+                    id="category"
+                    value={formData.category || ''}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    placeholder="Enter category"
+                    className="bg-background border-border text-foreground placeholder-muted-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="maintenance_level" className="text-foreground">Maintenance Level</Label>
+                  <Select value={formData.maintenance_level || 'low'} onValueChange={(value) => setFormData({ ...formData, maintenance_level: value as 'low' | 'medium' | 'high' })}>
+                    <SelectTrigger className="bg-background border-border text-foreground">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border-border text-foreground">
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -642,7 +790,7 @@ const IrrigationKitsManagement = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="price" className="text-foreground">Base Price (KES)</Label>
+                  <Label htmlFor="price" className="text-foreground">Base Price (KES) *</Label>
                   <Input
                     type="number"
                     id="price"
@@ -703,19 +851,103 @@ const IrrigationKitsManagement = () => {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="crops" className="text-foreground">Recommended Crops (comma-separated)</Label>
-                <Input
-                  id="crops"
-                  value={formData.recommended_crops?.join(', ') || ''}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    recommended_crops: e.target.value.split(',').map(crop => crop.trim()).filter(crop => crop) 
-                  })}
-                  placeholder="Tomatoes, Peppers, Lettuce"
-                  className="bg-background border-border text-foreground placeholder-muted-foreground"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="target_crop" className="text-foreground">Target Crop</Label>
+                  <Input
+                    id="target_crop"
+                    value={formData.target_crop || ''}
+                    onChange={(e) => setFormData({ ...formData, target_crop: e.target.value })}
+                    placeholder="e.g., Tomatoes"
+                    className="bg-background border-border text-foreground placeholder-muted-foreground"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="crops" className="text-foreground">Recommended Crops (comma-separated)</Label>
+                  <Input
+                    id="crops"
+                    value={formData.recommended_crops?.join(', ') || ''}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      recommended_crops: e.target.value.split(',').map(crop => crop.trim()).filter(crop => crop) 
+                    })}
+                    placeholder="Tomatoes, Peppers, Lettuce"
+                    className="bg-background border-border text-foreground placeholder-muted-foreground"
+                  />
+                </div>
               </div>
+
+              <Card className="border-border">
+                <CardHeader className="bg-muted/30">
+                  <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                    <ImageIcon className="h-5 w-5 text-primary" />
+                    Kit Images
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">Upload images of your irrigation kit (max 5MB per image)</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 pt-4">
+                  <div className="flex items-center gap-4">
+                    <Label 
+                      htmlFor="image-upload" 
+                      className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg cursor-pointer hover:bg-primary/90 transition-colors"
+                    >
+                      {uploadingImage ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4" />
+                          Upload Image
+                        </>
+                      )}
+                    </Label>
+                    <Input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                      className="hidden"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {formData.images?.length || 0} image(s) uploaded
+                    </span>
+                  </div>
+
+                  {imageError && (
+                    <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="text-sm">{imageError}</span>
+                    </div>
+                  )}
+
+                  {formData.images && formData.images.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {formData.images.map((imageUrl, index) => (
+                        <div key={index} className="relative group">
+                          <div className="aspect-square rounded-lg border-2 border-border overflow-hidden bg-muted">
+                            <img 
+                              src={imageUrl} 
+                              alt={`Kit image ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <Button
+                            onClick={() => removeImage(imageUrl, index)}
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
               <div className="flex items-center space-x-6">
                 <div className="flex items-center space-x-2">
@@ -734,7 +966,22 @@ const IrrigationKitsManagement = () => {
                   />
                   <Label htmlFor="active" className="text-foreground">Active</Label>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="in_stock"
+                    checked={formData.in_stock !== false}
+                    onCheckedChange={(checked) => setFormData({ ...formData, in_stock: checked as boolean })}
+                  />
+                  <Label htmlFor="in_stock" className="text-foreground">In Stock</Label>
+                </div>
               </div>
+
+              {error && (
+                <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg">
+                  <AlertCircle className="h-4 w-4" />
+                  <span className="text-sm">{error}</span>
+                </div>
+              )}
 
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setShowForm(false)} className="border-border text-muted-foreground hover:bg-muted">
@@ -870,6 +1117,7 @@ const IrrigationKitsManagement = () => {
                       <TableRow className="bg-muted/30">
                         <TableHead className="text-foreground">Name</TableHead>
                         <TableHead className="text-foreground">Type</TableHead>
+                        <TableHead className="text-foreground">Category</TableHead>
                         <TableHead className="text-foreground">Pricing</TableHead>
                         <TableHead className="text-foreground">Coverage</TableHead>
                         <TableHead className="text-foreground">Status</TableHead>
@@ -887,6 +1135,7 @@ const IrrigationKitsManagement = () => {
                                 {kit.kit_type?.replace('_', ' ').toUpperCase() || 'N/A'}
                               </Badge>
                             </TableCell>
+                            <TableCell className="text-foreground">{kit.category || 'General'}</TableCell>
                             <TableCell>
                               {components?.pricing_tiers?.length > 0 ? (
                                 <div className="space-y-1">
@@ -907,6 +1156,7 @@ const IrrigationKitsManagement = () => {
                                   {kit.active ? 'Active' : 'Inactive'}
                                 </Badge>
                                 {kit.featured && <Badge variant="outline" className="border-border text-primary">Featured</Badge>}
+                                {kit.in_stock && <Badge variant="outline" className="border-border text-primary">In Stock</Badge>}
                               </div>
                             </TableCell>
                             <TableCell>
@@ -934,13 +1184,29 @@ const IrrigationKitsManagement = () => {
                       })}
                       {kits.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                             No irrigation kits found. Create your first kit to get started.
                           </TableCell>
                         </TableRow>
                       )}
                     </TableBody>
                   </Table>
+                </div>
+                <div className="flex justify-between mt-4">
+                  <Button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={() => setPage(p => p + 1)}
+                    disabled={kits.length < pageSize}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    Next
+                  </Button>
                 </div>
               </CardContent>
             </Card>
