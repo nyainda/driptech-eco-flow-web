@@ -96,27 +96,37 @@ const AnalyticsDashboard: React.FC = () => {
       const startDateStr = startDate.toISOString();
       const endDateStr = endDate.toISOString();
 
-      // Fetch visitor sessions
+      console.log('Fetching analytics from', startDateStr, 'to', endDateStr);
+
+      // Fetch all data without date filtering first to see total counts
+      const { data: allSessions, error: allSessionsError } = await supabase
+        .from('visitor_sessions')
+        .select('*');
+
+      console.log('Total sessions in DB:', allSessions?.length, 'Error:', allSessionsError);
+
+      const { data: allPageViews, error: allPageViewsError } = await supabase
+        .from('page_views')
+        .select('*');
+
+      console.log('Total page views in DB:', allPageViews?.length, 'Error:', allPageViewsError);
+
+      // Now fetch with date filtering
       const { data: sessions, error: sessionsError } = await supabase
         .from('visitor_sessions')
         .select('*')
         .gte('session_start', startDateStr)
         .lte('session_start', endDateStr);
 
-      if (sessionsError) {
-        console.error('Error fetching sessions:', sessionsError);
-      }
+      console.log('Filtered sessions:', sessions?.length, 'Error:', sessionsError);
 
-      // Fetch page views
       const { data: pageViews, error: pageViewsError } = await supabase
         .from('page_views')
         .select('*')
         .gte('timestamp', startDateStr)
         .lte('timestamp', endDateStr);
 
-      if (pageViewsError) {
-        console.error('Error fetching page views:', pageViewsError);
-      }
+      console.log('Filtered page views:', pageViews?.length, 'Error:', pageViewsError);
 
       // Fetch product interactions
       const { data: interactions, error: interactionsError } = await supabase
@@ -125,12 +135,11 @@ const AnalyticsDashboard: React.FC = () => {
         .gte('timestamp', startDateStr)
         .lte('timestamp', endDateStr);
 
-      if (interactionsError) {
-        console.error('Error fetching interactions:', interactionsError);
-      }
+      console.log('Product interactions:', interactions?.length, 'Error:', interactionsError);
 
       // Process real data
       const processedData = processAnalyticsData(sessions || [], pageViews || [], interactions || []);
+      console.log('Processed data:', processedData);
       setData(processedData);
       
     } catch (error) {
