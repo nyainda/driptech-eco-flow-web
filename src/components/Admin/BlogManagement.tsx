@@ -267,7 +267,7 @@ const BlogManagement = () => {
   if (showEditor) {
     return (
       <BlogEditor
-        post={editingPost}
+        post={editingPost as any}
         onClose={handleEditorClose}
         onSave={handleEditorClose}
       />
@@ -293,18 +293,15 @@ const BlogManagement = () => {
         <BlogStats stats={stats} />
 
         {/* Search and Filter Bar */}
-        <BlogFilters
-          searchTerm={searchQuery}
-          setSearchTerm={setSearchQuery}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          onCreatePost={handleCreatePost}
-          categories={categories}
-        />
+          <BlogFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            onCreatePost={handleCreatePost}
+          />
 
         {/* Blog Posts List */}
         <BlogList

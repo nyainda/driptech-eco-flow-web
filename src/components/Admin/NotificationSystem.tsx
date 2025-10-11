@@ -15,7 +15,7 @@ import {
   Settings,
   AlertCircle,
   X,
-  MarkAsUnreadIcon,
+  MailOpen,
   Trash2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -98,7 +98,7 @@ const NotificationSystem = () => {
           id: `contact_${contact.id}`,
           type: 'contact_submission',
           title: 'New Contact Submission',
-          message: `${contact.name || 'Someone'} submitted a contact form: ${contact.subject || 'No subject'}`,
+          message: `${contact.name || 'Someone'} submitted a contact form: ${contact.message ? contact.message.substring(0, 50) + '...' : 'No message'}`,
           timestamp: new Date(contact.created_at),
           read: false,
           data: contact
