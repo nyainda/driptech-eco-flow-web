@@ -101,7 +101,7 @@ const ContactNotifications = () => {
         address: '', // Not available in contact form
         city: '', // Not available in contact form
         country: '', // Not available in contact form
-        user_role: 'customer'
+        user_role: 'customer' as const
       };
 
       const { data, error } = await supabase
@@ -169,7 +169,7 @@ const ContactNotifications = () => {
             address: '',
             city: '',
             country: '',
-            user_role: 'customer'
+            user_role: 'customer' as const
           };
 
           const { error } = await supabase

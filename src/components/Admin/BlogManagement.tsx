@@ -17,15 +17,12 @@ interface BlogPost {
   excerpt: string;
   content: string;
   featured_image: string | null;
-  status: 'draft' | 'published';
   views: number;
   likes: number;
-  comments_count: number;
-  author_name: string;
   created_at: string;
   updated_at: string;
   tags: string[];
-  blog_categories?: { name: string }
+  blog_categories?: { name: string };
   published: boolean;
   published_at: string | null;
   seo_title?: string;
@@ -77,20 +74,19 @@ const BlogManagement = () => {
     try {
       const { data: postsData, error: postsError } = await supabase
         .from("blog_posts")
-        .select("views, likes, comments_count, id, title, status, created_at, excerpt, featured_image_url, reading_time, blog_categories (name)");
+        .select("views, likes, id, title, created_at, excerpt, featured_image_url, reading_time, published, blog_categories (name)");
 
       if (postsError) throw postsError;
 
       const totalPostsCount = postsData?.length || 0;
       const totalViews = postsData?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
       const totalLikes = postsData?.reduce((sum, post) => sum + (post.likes || 0), 0) || 0;
-      const totalComments = postsData?.reduce((sum, post) => sum + (post.comments_count || 0), 0) || 0;
 
       setStats({
         totalPosts: totalPostsCount,
         totalViews,
         totalLikes,
-        totalComments
+        totalComments: 0
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -147,7 +143,7 @@ const BlogManagement = () => {
 
       if (error) throw error;
 
-      setPosts(data || []);
+      setPosts((data || []) as any);
       setTotalPosts(count || 0);
     } catch (error) {
       console.error('Error fetching posts:', error);
