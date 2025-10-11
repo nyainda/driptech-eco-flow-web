@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
 import { 
   MapPin, 
   Phone, 
@@ -15,19 +13,13 @@ import {
   Instagram,
   Send,
   CheckCircle,
-  MessageCircle,
-  AlertCircle,
-  Loader2
+  MessageCircle
 } from "lucide-react";
-
-type SubscriptionStatus = 'idle' | 'loading' | 'success' | 'error';
-type NewsletterSubscriberInsert = Tables<'newsletter_subscribers'>['Insert'];
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [email, setEmail] = useState('');
-  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   const footerLinks = {
     products: [
@@ -68,105 +60,14 @@ const Footer = () => {
     { icon: Instagram, href: "https://instagram.com/driptech-eco-flow", label: "Instagram" },
   ];
 
-  const handleSubscribe = async (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSubscribe = (e) => {
     e.preventDefault();
-    
-    if (!email.trim()) {
-      setErrorMessage('Please enter a valid email address');
-      setSubscriptionStatus('error');
-      return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setErrorMessage('Please enter a valid email address');
-      setSubscriptionStatus('error');
-      return;
-    }
-
-    setSubscriptionStatus('loading');
-    setErrorMessage('');
-
-    try {
-      const subscriberData: NewsletterSubscriberInsert = {
-        email: email.toLowerCase().trim(),
-        status: 'active',
-        source: 'website_footer'
-      };
-
-      const { data, error } = await supabase
-        .from('newsletter_subscribers')
-        .insert([subscriberData]);
-
-      if (error) {
-        console.error('Subscription error:', error);
-        
-        // Check if it's a duplicate email error (PostgreSQL unique constraint violation)
-        if (error.code === '23505' || error.message?.includes('duplicate key') || error.message?.includes('already exists')) {
-          setErrorMessage('This email is already subscribed to our newsletter');
-        } else {
-          setErrorMessage('Failed to subscribe. Please try again.');
-        }
-        setSubscriptionStatus('error');
-        
-        // Reset error state after 5 seconds
-        setTimeout(() => {
-          setSubscriptionStatus('idle');
-          setErrorMessage('');
-        }, 5000);
-      } else {
-        setSubscriptionStatus('success');
-        setEmail('');
-        
-        // Reset success state after 5 seconds
-        setTimeout(() => {
-          setSubscriptionStatus('idle');
-        }, 5000);
-      }
-    } catch (error) {
-      console.error('Subscription error:', error);
-      setErrorMessage('Network error. Please check your connection and try again.');
-      setSubscriptionStatus('error');
-      
-      // Reset error state after 5 seconds
+    if (email.trim()) {
       setTimeout(() => {
-        setSubscriptionStatus('idle');
-        setErrorMessage('');
-      }, 5000);
-    }
-  };
-
-  const getButtonContent = () => {
-    switch (subscriptionStatus) {
-      case 'loading':
-        return (
-          <>
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Subscribing...
-          </>
-        );
-      case 'success':
-        return (
-          <>
-            <CheckCircle className="h-4 w-4 mr-2" />
-            Subscribed!
-          </>
-        );
-      case 'error':
-        return (
-          <>
-            <AlertCircle className="h-4 w-4 mr-2" />
-            Try Again
-          </>
-        );
-      default:
-        return (
-          <>
-            <Send className="h-4 w-4 mr-2" />
-            Subscribe
-          </>
-        );
+        setIsSubscribed(true);
+        setEmail('');
+        setTimeout(() => setIsSubscribed(false), 3000);
+      }, 500);
     }
   };
 
@@ -183,44 +84,33 @@ const Footer = () => {
               Get the latest irrigation technology updates, maintenance tips, and industry best practices delivered to your inbox.
             </p>
             
-            <div className="max-w-md mx-auto">
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <Input 
-                  type="email" 
-                  placeholder="Enter your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 h-9 sm:h-10 text-sm"
-                  disabled={subscriptionStatus === 'loading'}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleSubscribe(e);
-                    }
-                  }}
-                />
-                <Button 
-                  onClick={handleSubscribe}
-                  className="sm:w-auto w-full h-9 sm:h-10 text-sm"
-                  disabled={subscriptionStatus === 'loading' || subscriptionStatus === 'success'}
-                >
-                  {getButtonContent()}
-                </Button>
-              </div>
-              
-              {/* Status Messages */}
-              {subscriptionStatus === 'success' && (
-                <div className="mt-3 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-md border border-green-200">
-                  🎉 Successfully subscribed! Check your email for confirmation.
-                </div>
-              )}
-              
-              {subscriptionStatus === 'error' && errorMessage && (
-                <div className="mt-3 text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md border border-red-200 flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                  {errorMessage}
-                </div>
-              )}
-            </div>
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-md mx-auto">
+              <Input 
+                type="email" 
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 h-9 sm:h-10 text-sm"
+                required
+              />
+              <Button 
+                type="submit" 
+                className="sm:w-auto w-full h-9 sm:h-10 text-sm"
+                disabled={isSubscribed}
+              >
+                {isSubscribed ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Subscribed!
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    Subscribe
+                  </>
+                )}
+              </Button>
+            </form>
           </div>
         </div>
       </div>
