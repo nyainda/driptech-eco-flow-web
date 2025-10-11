@@ -306,7 +306,7 @@ const ServicesSection = () => {
                   >
                     {/* Image Section */}
                     {imageUrl && (
-                      <div className="aspect-[4/3] relative overflow-hidden">
+                      <div className="aspect-[4/3] relative overflow-hidden bg-muted">
                         <img 
                           src={imageUrl}
                           alt={kit.name}
@@ -315,19 +315,19 @@ const ServicesSection = () => {
                             (e.target as HTMLImageElement).style.display = 'none';
                           }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent dark:from-background/70 dark:via-background/20" />
                         {kit.featured && (
                           <div className="absolute top-4 right-4">
-                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800">
+                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800 shadow-sm">
                               <Star className="h-3 w-3 mr-1" />
                               Featured
                             </Badge>
                           </div>
                         )}
                         <div className="absolute bottom-4 left-4 right-4">
-                          <div className="text-foreground">
-                            <h3 className="text-xl font-bold mb-1">{kit.name}</h3>
-                            <Badge className="bg-muted text-muted-foreground border-border">
+                          <div className="text-white dark:text-foreground">
+                            <h3 className="text-xl font-bold mb-1 drop-shadow-md">{kit.name}</h3>
+                            <Badge className="bg-white/90 text-gray-900 border-white/50 dark:bg-muted dark:text-muted-foreground dark:border-border shadow-sm">
                               {kit.kit_type?.replace('_', ' ') || 'Standard Kit'}
                             </Badge>
                           </div>
