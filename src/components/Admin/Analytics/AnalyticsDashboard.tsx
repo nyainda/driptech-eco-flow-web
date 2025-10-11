@@ -105,9 +105,6 @@ const AnalyticsDashboard: React.FC = () => {
 
       if (sessionsError) {
         console.error('Error fetching sessions:', sessionsError);
-        // Fallback to mock data if tables don't exist yet
-        setData(getMockData());
-        return;
       }
 
       // Fetch page views
@@ -138,8 +135,7 @@ const AnalyticsDashboard: React.FC = () => {
       
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      // Fallback to mock data
-      setData(getMockData());
+      setData(null);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -296,54 +292,6 @@ const AnalyticsDashboard: React.FC = () => {
     };
   };
 
-  const getMockData = (): AnalyticsData => {
-    return {
-      totalVisitors: 1247,
-      totalPageViews: 3456,
-      totalSessions: 1891,
-      averageSessionDuration: 185,
-      bounceRate: 34.5,
-      topPages: [
-        { page_path: '/', page_title: 'Home', total_views: 856, unique_visitors: 723, avg_time_spent: 120 },
-        { page_path: '/products', page_title: 'Products', total_views: 445, unique_visitors: 387, avg_time_spent: 95 },
-        { page_path: '/about', page_title: 'About Us', total_views: 234, unique_visitors: 198, avg_time_spent: 78 },
-        { page_path: '/contact', page_title: 'Contact', total_views: 189, unique_visitors: 156, avg_time_spent: 65 }
-      ],
-      topProducts: [
-        { product_name: 'Drip Irrigation System', interaction_count: 89, interaction_type: 'view', unique_visitors: 67 },
-        { product_name: 'Sprinkler System', interaction_count: 56, interaction_type: 'click', unique_visitors: 43 },
-        { product_name: 'Pressure Filter', interaction_count: 32, interaction_type: 'view', unique_visitors: 24 },
-        { product_name: 'Emitter Lines', interaction_count: 28, interaction_type: 'hover', unique_visitors: 20 }
-      ],
-      deviceBreakdown: [
-        { device_type: 'Desktop', total_sessions: 678, unique_visitors: 456 },
-        { device_type: 'Mobile', total_sessions: 534, unique_visitors: 398 },
-        { device_type: 'Tablet', total_sessions: 156, unique_visitors: 123 }
-      ],
-      hourlyActivity: Array.from({ length: 24 }, (_, hour) => ({
-        hour,
-        page_views: Math.floor(Math.random() * 50) + (hour >= 8 && hour <= 18 ? 20 : 5),
-        sessions: Math.floor(Math.random() * 30) + (hour >= 8 && hour <= 18 ? 10 : 2)
-      })),
-      dailyActivity: Array.from({ length: 7 }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (6 - i));
-        return {
-          date: date.toISOString().split('T')[0],
-          visitors: Math.floor(Math.random() * 200) + 100,
-          page_views: Math.floor(Math.random() * 500) + 300,
-          sessions: Math.floor(Math.random() * 300) + 150
-        };
-      }),
-      browserStats: [
-        { browser: 'Chrome', sessions: 789, percentage: 58 },
-        { browser: 'Firefox', sessions: 234, percentage: 17 },
-        { browser: 'Safari', sessions: 178, percentage: 13 },
-        { browser: 'Edge', sessions: 89, percentage: 7 },
-        { browser: 'Other', sessions: 67, percentage: 5 }
-      ]
-    };
-  };
 
   useEffect(() => {
     fetchAnalytics();
@@ -359,9 +307,21 @@ const AnalyticsDashboard: React.FC = () => {
 
   if (!data) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p>No analytics data available</p>
-      </div>
+      <Card className="p-8">
+        <div className="text-center space-y-4">
+          <Activity className="h-12 w-12 mx-auto text-muted-foreground" />
+          <div>
+            <h3 className="text-lg font-semibold">No Analytics Data Yet</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Start browsing your website to see analytics data here. Page views, sessions, and visitor data will appear once users visit your site.
+            </p>
+          </div>
+          <Button onClick={fetchAnalytics} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Check Again
+          </Button>
+        </div>
+      </Card>
     );
   }
 
