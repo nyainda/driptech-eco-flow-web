@@ -163,7 +163,7 @@ const EnhancedRealDataDashboard = () => {
 
       // Calculate derived metrics
       const totalRevenue = quotesData.data?.reduce((sum, quote) => sum + (quote.total_amount || 0), 0) || 0;
-      const totalDownloads = documentsResult.data?.reduce((sum, doc) => sum + (doc.downloads || 0), 0) || 0;
+      const totalDownloads = documentsResult.data?.reduce((sum, doc) => sum + (doc.download_count || 0), 0) || 0;
       const totalBlogViews = blogData.data?.reduce((sum, blog) => sum + (blog.views || 0), 0) || 0;
       const totalVideoViews = videosData.data?.reduce((sum, video) => sum + (video.views || 0), 0) || 0;
       const avgProjectValue = projectsData.data?.length > 0 ? totalRevenue / projectsData.data.length : 0;
@@ -192,7 +192,7 @@ const EnhancedRealDataDashboard = () => {
         totalRevenue,
         avgProjectValue,
         conversionRate,
-        customerSatisfaction: 4.5, // Mock data
+        customerSatisfaction: 0, // No satisfaction data in DB
         analytics
       });
 
@@ -270,11 +270,11 @@ const EnhancedRealDataDashboard = () => {
       };
     });
 
-    // Enhanced recent activity
+    // Recent activity from actual data
     const recentActivity = [
       ...quotes.slice(0, 3).map(q => ({
         type: 'quote',
-        title: `Quote #${q.quote_number} - ${q.customer_name}`,
+        title: `Quote #${q.quote_number}`,
         time: new Date(q.created_at).toLocaleDateString(),
         status: q.status || 'pending'
       })),
@@ -286,53 +286,63 @@ const EnhancedRealDataDashboard = () => {
       }))
     ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5);
 
-    // Top performing products with enhanced metrics
+    // Top products by price (no sales data available)
     const topPerformingProducts = products
+      .filter(p => p.price && p.price > 0)
+      .sort((a, b) => (b.price || 0) - (a.price || 0))
+      .slice(0, 5)
       .map(p => ({
         name: p.name,
-        sales: Math.floor(Math.random() * 50) + 10, // Mock sales data
-        revenue: Math.floor(Math.random() * 100000) + 20000,
-        views: Math.floor(Math.random() * 500) + 100,
-        conversion: (Math.random() * 10 + 2).toFixed(1)
-      }))
-      .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 5);
+        sales: 0,
+        revenue: p.price || 0
+      }));
 
-    // New analytics features
-    const deviceStats = [
-      { device: 'Desktop', sessions: 1250, percentage: 45 },
-      { device: 'Mobile', sessions: 980, percentage: 35 },
-      { device: 'Tablet', sessions: 560, percentage: 20 }
-    ];
+    // Calculate monthly growth from actual data
+    const now = new Date();
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthStr = lastMonth.toISOString().slice(0, 7);
+    const currentMonthStr = now.toISOString().slice(0, 7);
 
-    const trafficSources = [
-      { source: 'Organic Search', visitors: 1890, percentage: 42 },
-      { source: 'Direct', visitors: 1230, percentage: 27 },
-      { source: 'Social Media', visitors: 780, percentage: 17 },
-      { source: 'Referrals', visitors: 630, percentage: 14 }
-    ];
+    const lastMonthCustomers = customers.filter(c => c.created_at?.startsWith(lastMonthStr)).length;
+    const currentMonthCustomers = customers.filter(c => c.created_at?.startsWith(currentMonthStr)).length;
+    const lastMonthProducts = products.filter(p => p.created_at?.startsWith(lastMonthStr)).length;
+    const currentMonthProducts = products.filter(p => p.created_at?.startsWith(currentMonthStr)).length;
+    const lastMonthQuotes = quotes.filter(q => q.created_at?.startsWith(lastMonthStr)).length;
+    const currentMonthQuotes = quotes.filter(q => q.created_at?.startsWith(currentMonthStr)).length;
+    const lastMonthProjects = projects.filter(p => p.created_at?.startsWith(lastMonthStr)).length;
+    const currentMonthProjects = projects.filter(p => p.created_at?.startsWith(currentMonthStr)).length;
+    
+    const lastMonthRevenue = quotes
+      .filter(q => q.created_at?.startsWith(lastMonthStr))
+      .reduce((sum, q) => sum + (q.total_amount || 0), 0);
+    const currentMonthRevenue = quotes
+      .filter(q => q.created_at?.startsWith(currentMonthStr))
+      .reduce((sum, q) => sum + (q.total_amount || 0), 0);
 
-    const conversionFunnel = [
-      { stage: 'Visitors', count: 4530, conversion: 100 },
-      { stage: 'Leads', count: 1359, conversion: 30 },
-      { stage: 'Qualified', count: 543, conversion: 40 },
-      { stage: 'Proposals', count: 217, conversion: 40 },
-      { stage: 'Customers', count: 87, conversion: 40 }
-    ];
+    const calculateGrowth = (current: number, last: number) => {
+      if (last === 0) return current > 0 ? 100 : 0;
+      return ((current - last) / last) * 100;
+    };
 
-    const revenueByCategory = categoryDistribution.map(cat => ({
-      category: cat.category,
-      revenue: Math.floor(Math.random() * 500000) + 100000,
-      growth: Math.floor(Math.random() * 40) - 10
-    }));
+    const revenueByCategory = categoryDistribution.map(cat => {
+      const categoryRevenue = quotes
+        .filter(q => q.total_amount)
+        .reduce((sum, q) => sum + (q.total_amount || 0), 0) / categoryDistribution.length;
+      
+      return {
+        category: cat.category,
+        revenue: categoryRevenue,
+        growth: 0
+      };
+    });
 
     return {
       monthlyGrowth: {
-        customers: 12.5,
-        products: 8.3,
-        quotes: 15.7,
-        projects: 9.2,
-        revenue: 18.4
+        customers: calculateGrowth(currentMonthCustomers, lastMonthCustomers),
+        products: calculateGrowth(currentMonthProducts, lastMonthProducts),
+        quotes: calculateGrowth(currentMonthQuotes, lastMonthQuotes),
+        projects: calculateGrowth(currentMonthProjects, lastMonthProjects),
+        revenue: calculateGrowth(currentMonthRevenue, lastMonthRevenue)
       },
       categoryDistribution,
       quotesStatusDistribution,
@@ -340,13 +350,18 @@ const EnhancedRealDataDashboard = () => {
       monthlyActivity,
       recentActivity,
       topPerformingProducts,
-      upcomingDeadlines: [
-        { type: 'project', title: 'Pipeline Installation - Green Valley', date: '2024-08-02', priority: 'high' },
-        { type: 'quote', title: 'Quote Review - Farm Solutions Ltd', date: '2024-08-05', priority: 'medium' }
-      ],
-      deviceStats,
-      trafficSources,
-      conversionFunnel,
+      upcomingDeadlines: projects
+        .filter(p => p.deadline && new Date(p.deadline) > now)
+        .slice(0, 5)
+        .map(p => ({
+          type: 'project',
+          title: p.name,
+          date: new Date(p.deadline!).toLocaleDateString(),
+          priority: new Date(p.deadline!).getTime() - now.getTime() < 7 * 24 * 60 * 60 * 1000 ? 'high' : 'medium'
+        })),
+      deviceStats: [],
+      trafficSources: [],
+      conversionFunnel: [],
       revenueByCategory
     };
   };
@@ -506,14 +521,14 @@ const EnhancedRealDataDashboard = () => {
         <Card className="shadow-lg border-0 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950/20 dark:to-teal-900/20 hover:shadow-xl transition-all duration-300">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <Star className="h-5 w-5 text-teal-600" />
+              <ShoppingBag className="h-5 w-5 text-teal-600" />
               <Badge variant="secondary" className="text-xs">
-                <Award className="h-3 w-3" />
+                <TrendingUp className="h-3 w-3" />
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold">{stats.customerSatisfaction.toFixed(1)}</p>
-              <p className="text-sm text-muted-foreground">Satisfaction Score</p>
+              <p className="text-2xl font-bold">{stats.totalProducts}</p>
+              <p className="text-sm text-muted-foreground">Total Products</p>
             </div>
           </CardContent>
         </Card>
@@ -694,9 +709,7 @@ const EnhancedRealDataDashboard = () => {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium truncate">{product.name}</h4>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
-                        <span>{product.sales} sales</span>
-                        <span>{product.views} views</span>
-                        <span>{product.conversion}% conversion</span>
+                        <span>Top Product</span>
                       </div>
                     </div>
                     <div className="text-right">
