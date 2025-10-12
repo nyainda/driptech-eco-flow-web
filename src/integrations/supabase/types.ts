@@ -1658,6 +1658,25 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_all_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          rows_deleted: number
+          table_name: string
+        }[]
+      }
+      cleanup_old_page_views: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      cleanup_old_product_interactions: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      cleanup_old_visitor_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       ensure_visitor_session: {
         Args: {
           p_browser?: string
