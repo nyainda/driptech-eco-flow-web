@@ -60,32 +60,37 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
 
-  // Check if user is admin by checking their email domain or specific emails
+  // Check if user is admin using server-side role validation
   const checkAdminRole = async (supabaseUser: SupabaseUser): Promise<AdminUser | null> => {
     try {
-      const email = supabaseUser.email;
-      
-      // Define admin emails or email patterns
-      const adminEmails = [
-        'admin@driptech.com',
-        'support@driptech.com',
-        'driptechs.info@gmail.com',
-        // Add more admin emails as needed
-      ];
-      
-      // Check if user email is in admin list or has admin domain
-      const isAdmin = adminEmails.includes(email || '') || 
-                     email?.endsWith('@driptech.com');
-      
-      if (!isAdmin) {
+      // Query user_roles table to check if user has admin role
+      const { data: userRoles, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', supabaseUser.id)
+        .in('role', ['admin', 'super_admin', 'editor']);
+
+      if (error) {
+        console.error('Error checking user roles:', error);
         return null;
       }
 
+      // User must have at least one admin role
+      if (!userRoles || userRoles.length === 0) {
+        return null;
+      }
+
+      // Get the highest priority role
+      const role = userRoles.find(r => r.role === 'super_admin')?.role || 
+                   userRoles.find(r => r.role === 'admin')?.role ||
+                   userRoles.find(r => r.role === 'editor')?.role ||
+                   'admin';
+
       return {
         id: supabaseUser.id,
-        email: email || '',
+        email: supabaseUser.email || '',
         name: supabaseUser.user_metadata?.name || 'Admin User',
-        role: 'admin'
+        role
       };
     } catch (error) {
       console.error('Error checking admin role:', error);

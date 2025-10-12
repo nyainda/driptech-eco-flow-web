@@ -898,6 +898,54 @@ export type Database = {
           },
         ]
       }
+      page_views_daily_summary: {
+        Row: {
+          avg_scroll_depth: number | null
+          avg_time_spent: number | null
+          bounce_rate: number | null
+          created_at: string | null
+          id: string
+          page_path: string
+          page_title: string
+          top_referrers: Json | null
+          total_exits: number | null
+          total_views: number | null
+          unique_visitors: number | null
+          updated_at: string | null
+          view_date: string
+        }
+        Insert: {
+          avg_scroll_depth?: number | null
+          avg_time_spent?: number | null
+          bounce_rate?: number | null
+          created_at?: string | null
+          id?: string
+          page_path: string
+          page_title: string
+          top_referrers?: Json | null
+          total_exits?: number | null
+          total_views?: number | null
+          unique_visitors?: number | null
+          updated_at?: string | null
+          view_date: string
+        }
+        Update: {
+          avg_scroll_depth?: number | null
+          avg_time_spent?: number | null
+          bounce_rate?: number | null
+          created_at?: string | null
+          id?: string
+          page_path?: string
+          page_title?: string
+          top_referrers?: Json | null
+          total_exits?: number | null
+          total_views?: number | null
+          unique_visitors?: number | null
+          updated_at?: string | null
+          view_date?: string
+        }
+        Relationships: []
+      }
       product_interactions: {
         Row: {
           additional_data: Json | null
@@ -1369,6 +1417,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       variants: {
         Row: {
           attributes: Json | null
@@ -1563,9 +1635,24 @@ export type Database = {
       }
     }
     Functions: {
+      aggregate_and_cleanup_page_views: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          aggregated_days: number
+          rows_aggregated: number
+          rows_deleted: number
+        }[]
+      }
       calculate_bounce_rate: {
         Args: { end_date?: string; start_date?: string }
         Returns: number
+      }
+      check_page_views_status: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          metric: string
+          value: string
+        }[]
       }
       clean_old_notifications: {
         Args: Record<PropertyKey, never>
@@ -1587,22 +1674,44 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      get_top_pages: {
-        Args: { end_date?: string; limit_count?: number; start_date?: string }
+      get_page_views_analytics: {
+        Args: { p_end_date: string; p_page_path?: string; p_start_date: string }
         Returns: {
+          avg_scroll_depth: number
           avg_time_spent: number
+          bounce_rate: number
           page_path: string
           page_title: string
           total_views: number
           unique_visitors: number
+          view_date: string
         }[]
+      }
+      get_top_pages: {
+        Args:
+          | { end_date?: string; limit_count?: number; start_date?: string }
+          | { p_end_date: string; p_limit?: number; p_start_date: string }
+        Returns: {
+          avg_time_spent: number
+          bounce_rate: number
+          page_path: string
+          total_views: number
+          unique_visitors: number
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
       increment_page_views: {
         Args: { visitor_id_param: string } | { visitor_id_param: string }
         Returns: undefined
       }
       is_admin: {
-        Args: Record<PropertyKey, never>
+        Args: Record<PropertyKey, never> | { _user_id: string }
         Returns: boolean
       }
       keep_database_active: {
@@ -1611,6 +1720,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "super_admin" | "editor" | "user"
       product_category:
         | "drip_irrigation"
         | "sprinkler_systems"
@@ -1754,6 +1864,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "super_admin", "editor", "user"],
       product_category: [
         "drip_irrigation",
         "sprinkler_systems",
