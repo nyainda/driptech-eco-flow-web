@@ -149,10 +149,24 @@ const AnalyticsDashboard: React.FC = () => {
     const totalSessions = sessions.length;
     
     // Calculate average session duration
-    const validSessions = sessions.filter(s => s.session_end && s.total_duration);
-    const averageSessionDuration = validSessions.length > 0 
-      ? validSessions.reduce((sum, s) => sum + (s.total_duration || 0), 0) / validSessions.length 
-      : 0;
+    // Since session_end isn't always captured, calculate from current time or use stored duration
+    const validSessions = sessions.filter(s => s.total_duration && s.total_duration > 0);
+    let averageSessionDuration = 0;
+    
+    if (validSessions.length > 0) {
+      averageSessionDuration = validSessions.reduce((sum, s) => sum + (s.total_duration || 0), 0) / validSessions.length;
+    } else {
+      // Fallback: Calculate duration from session_start to now for active sessions
+      const now = new Date();
+      const activeSessions = sessions.filter(s => !s.session_end).slice(0, 50); // Limit to avoid skewing
+      if (activeSessions.length > 0) {
+        averageSessionDuration = activeSessions.reduce((sum, s) => {
+          const start = new Date(s.session_start);
+          const duration = Math.floor((now.getTime() - start.getTime()) / 1000);
+          return sum + (duration > 0 && duration < 3600 ? duration : 0); // Cap at 1 hour
+        }, 0) / activeSessions.length;
+      }
+    }
 
     // Calculate bounce rate (sessions with only 1 page view)
     const sessionPageViewCounts = sessions.map(s => 
@@ -529,6 +543,11 @@ const AnalyticsDashboard: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle>Product Interactions</CardTitle>
+              {data.topProducts.length === 0 && (
+                <CardDescription className="text-amber-600">
+                  No product interactions tracked yet. Make sure ProductTracker components are implemented on product pages.
+                </CardDescription>
+              )}
               <CardDescription>Most interacted with products</CardDescription>
             </CardHeader>
             <CardContent>
