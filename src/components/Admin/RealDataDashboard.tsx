@@ -139,7 +139,11 @@ const EnhancedRealDataDashboard = () => {
         quotesResult,
         videosResult,
         projectsResult,
-        contactSubmissionsResult
+        contactSubmissionsResult,
+        invoicesResult,
+        sessionsResult,
+        pageViewsResult,
+        productInteractionsResult
       ] = await Promise.all([
         supabase.from('customers').select('*', { count: 'exact' }),
         supabase.from('products').select('*', { count: 'exact' }),
@@ -148,17 +152,36 @@ const EnhancedRealDataDashboard = () => {
         supabase.from('quotes').select('*', { count: 'exact' }),
         supabase.from('videos').select('*', { count: 'exact' }),
         supabase.from('projects').select('*', { count: 'exact' }),
-        supabase.from('contact_submissions').select('*', { count: 'exact' })
+        supabase.from('contact_submissions').select('*', { count: 'exact' }),
+        supabase.from('invoices').select('*', { count: 'exact' }),
+        supabase.from('visitor_sessions').select('*', { count: 'exact' }),
+        supabase.from('page_views').select('*', { count: 'exact' }),
+        supabase.from('product_interactions').select('*', { count: 'exact' })
       ]);
 
       // Fetch detailed data for analytics
-      const [quotesData, projectsData, productsData, customersData, videosData, blogData] = await Promise.all([
+      const [
+        quotesData, 
+        projectsData, 
+        productsData, 
+        customersData, 
+        videosData, 
+        blogData,
+        invoicesData,
+        sessionsData,
+        pageViewsData,
+        productInteractionsData
+      ] = await Promise.all([
         supabase.from('quotes').select('*').order('created_at', { ascending: false }),
         supabase.from('projects').select('*').order('created_at', { ascending: false }),
         supabase.from('products').select('*').order('created_at', { ascending: false }),
         supabase.from('customers').select('*').order('created_at', { ascending: false }),
         supabase.from('videos').select('*').order('created_at', { ascending: false }),
-        supabase.from('blog_posts').select('*').order('created_at', { ascending: false })
+        supabase.from('blog_posts').select('*').order('created_at', { ascending: false }),
+        supabase.from('invoices').select('*').order('created_at', { ascending: false }),
+        supabase.from('visitor_sessions').select('*').order('session_start', { ascending: false }).limit(1000),
+        supabase.from('page_views').select('*').order('timestamp', { ascending: false }).limit(1000),
+        supabase.from('product_interactions').select('*').order('timestamp', { ascending: false }).limit(500)
       ]);
 
       // Calculate derived metrics
@@ -209,7 +232,18 @@ const EnhancedRealDataDashboard = () => {
     }
   };
 
-  const calculateAnalytics = (products: any[], quotes: any[], projects: any[], customers: any[], videos: any[], blogs: any[]) => {
+  const calculateAnalytics = (
+    products: any[], 
+    quotes: any[], 
+    projects: any[], 
+    customers: any[], 
+    videos: any[], 
+    blogs: any[],
+    invoices: any[],
+    sessions: any[],
+    pageViews: any[],
+    productInteractions: any[]
+  ) => {
     const colors = [
       'hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 
       'hsl(210 40% 60%)', 'hsl(25 95% 53%)', 'hsl(142 76% 36%)',
@@ -297,6 +331,65 @@ const EnhancedRealDataDashboard = () => {
         revenue: p.price || 0
       }));
 
+    // Calculate analytics from visitor sessions
+    const deviceStats = sessions.reduce((acc: any[], session) => {
+      const device = session.device_type || 'Unknown';
+      const existing = acc.find(d => d.device === device);
+      if (existing) {
+        existing.sessions += 1;
+      } else {
+        acc.push({ device, sessions: 1, percentage: 0 });
+      }
+      return acc;
+    }, []);
+    
+    const totalDeviceSessions = deviceStats.reduce((sum, d) => sum + d.sessions, 0);
+    deviceStats.forEach(d => {
+      d.percentage = totalDeviceSessions > 0 ? Math.round((d.sessions / totalDeviceSessions) * 100) : 0;
+    });
+
+    // Calculate traffic sources from referrer data
+    const trafficSources = sessions.reduce((acc: any[], session) => {
+      const referrer = session.referrer;
+      let source = 'Direct';
+      
+      if (referrer) {
+        if (referrer.includes('google')) source = 'Google Search';
+        else if (referrer.includes('facebook') || referrer.includes('twitter') || referrer.includes('linkedin')) source = 'Social Media';
+        else source = 'Referrals';
+      }
+      
+      const existing = acc.find(s => s.source === source);
+      if (existing) {
+        existing.visitors += 1;
+      } else {
+        acc.push({ source, visitors: 1, percentage: 0 });
+      }
+      return acc;
+    }, []);
+    
+    const totalVisitors = trafficSources.reduce((sum, s) => sum + s.visitors, 0);
+    trafficSources.forEach(s => {
+      s.percentage = totalVisitors > 0 ? Math.round((s.visitors / totalVisitors) * 100) : 0;
+    });
+
+    // Calculate conversion funnel from real data
+    const conversionFunnel = [
+      { stage: 'Visitors', count: sessions.length, conversion: 100 },
+      { stage: 'Engaged', count: sessions.filter(s => (s.page_views || 0) > 1).length, conversion: 0 },
+      { stage: 'Contacts', count: customers.length, conversion: 0 },
+      { stage: 'Quotes', count: quotes.length, conversion: 0 },
+      { stage: 'Projects', count: projects.length, conversion: 0 }
+    ];
+    
+    conversionFunnel.forEach((stage, idx) => {
+      if (idx > 0) {
+        stage.conversion = conversionFunnel[0].count > 0 
+          ? Math.round((stage.count / conversionFunnel[0].count) * 100) 
+          : 0;
+      }
+    });
+
     // Calculate monthly growth from actual data
     const now = new Date();
     const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -312,12 +405,12 @@ const EnhancedRealDataDashboard = () => {
     const lastMonthProjects = projects.filter(p => p.created_at?.startsWith(lastMonthStr)).length;
     const currentMonthProjects = projects.filter(p => p.created_at?.startsWith(currentMonthStr)).length;
     
-    const lastMonthRevenue = quotes
-      .filter(q => q.created_at?.startsWith(lastMonthStr))
-      .reduce((sum, q) => sum + (q.total_amount || 0), 0);
-    const currentMonthRevenue = quotes
-      .filter(q => q.created_at?.startsWith(currentMonthStr))
-      .reduce((sum, q) => sum + (q.total_amount || 0), 0);
+    const lastMonthRevenue = [...quotes, ...invoices]
+      .filter(item => item.created_at?.startsWith(lastMonthStr))
+      .reduce((sum, item) => sum + (item.total_amount || 0), 0);
+    const currentMonthRevenue = [...quotes, ...invoices]
+      .filter(item => item.created_at?.startsWith(currentMonthStr))
+      .reduce((sum, item) => sum + (item.total_amount || 0), 0);
 
     const calculateGrowth = (current: number, last: number) => {
       if (last === 0) return current > 0 ? 100 : 0;
@@ -335,6 +428,41 @@ const EnhancedRealDataDashboard = () => {
         growth: 0
       };
     });
+
+    // Popular pages from page_views
+    const popularPages = pageViews.reduce((acc: any[], pv) => {
+      const existing = acc.find(p => p.path === pv.page_path);
+      if (existing) {
+        existing.views += 1;
+        existing.timeSpent += pv.time_spent || 0;
+      } else {
+        acc.push({
+          path: pv.page_path,
+          title: pv.page_title,
+          views: 1,
+          timeSpent: pv.time_spent || 0
+        });
+      }
+      return acc;
+    }, []).sort((a, b) => b.views - a.views).slice(0, 10);
+
+    // Product interaction summary
+    const productInteractionSummary = productInteractions.reduce((acc: any[], pi) => {
+      const existing = acc.find(p => p.name === pi.product_name);
+      if (existing) {
+        existing.interactions += 1;
+        if (pi.interaction_type === 'view') existing.views += 1;
+        if (pi.interaction_type === 'click') existing.clicks += 1;
+      } else {
+        acc.push({
+          name: pi.product_name,
+          interactions: 1,
+          views: pi.interaction_type === 'view' ? 1 : 0,
+          clicks: pi.interaction_type === 'click' ? 1 : 0
+        });
+      }
+      return acc;
+    }, []).sort((a, b) => b.interactions - a.interactions).slice(0, 10);
 
     return {
       monthlyGrowth: {
@@ -359,10 +487,26 @@ const EnhancedRealDataDashboard = () => {
           date: new Date(p.deadline!).toLocaleDateString(),
           priority: new Date(p.deadline!).getTime() - now.getTime() < 7 * 24 * 60 * 60 * 1000 ? 'high' : 'medium'
         })),
-      deviceStats: [],
-      trafficSources: [],
-      conversionFunnel: [],
-      revenueByCategory
+      deviceStats,
+      trafficSources,
+      conversionFunnel,
+      revenueByCategory,
+      popularPages,
+      productInteractionSummary,
+      invoiceMetrics: {
+        totalInvoices: invoices.length,
+        paidInvoices: invoices.filter(i => i.status === 'paid').length,
+        pendingInvoices: invoices.filter(i => i.status === 'pending' || i.status === 'sent').length,
+        overdueInvoices: invoices.filter(i => i.status === 'overdue').length,
+        totalInvoiceAmount: invoices.reduce((sum, i) => sum + (i.total_amount || 0), 0),
+        paidAmount: invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total_amount || 0), 0)
+      },
+      sessionMetrics: {
+        totalSessions: sessions.length,
+        avgDuration: sessions.reduce((sum, s) => sum + (s.total_duration || 0), 0) / sessions.length || 0,
+        avgPageViews: sessions.reduce((sum, s) => sum + (s.page_views || 0), 0) / sessions.length || 0,
+        bounceRate: sessions.filter(s => (s.page_views || 0) <= 1).length / sessions.length * 100 || 0
+      }
     };
   };
 
