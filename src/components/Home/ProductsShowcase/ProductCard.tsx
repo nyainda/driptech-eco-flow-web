@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Play, Star, Eye, ShoppingCart } from "lucide-react";
+import ProductTracker from "@/components/Analytics/ProductTracker";
 
 interface ProductCardProps {
   product: any;
@@ -22,7 +23,12 @@ export const ProductCard = ({
   onVideoPlay 
 }: ProductCardProps) => {
   return (
-    <Card className="group hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] border-2 hover:border-primary/20 overflow-hidden">
+    <ProductTracker
+      productName={product.name}
+      productId={product.id}
+      category={categoryName}
+    >
+      <Card className="group hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] border-2 hover:border-primary/20 overflow-hidden">
       <CardHeader className="p-0 relative">
         <div className={`h-48 ${colors.bg} flex items-center justify-center relative overflow-hidden`}>
           {product.images && product.images.length > 0 ? (
@@ -115,5 +121,6 @@ export const ProductCard = ({
         </Button>
       </CardFooter>
     </Card>
+    </ProductTracker>
   );
 };

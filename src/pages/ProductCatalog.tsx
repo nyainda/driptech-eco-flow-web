@@ -11,6 +11,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { useToast } from "@/hooks/use-toast";
+import ProductTracker from "@/components/Analytics/ProductTracker";
 
 
 type DatabaseProductCategory = Database["public"]["Enums"]["product_category"];
@@ -50,7 +51,12 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const categoryName = product.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <ProductTracker
+      productName={product.name}
+      productId={product.id}
+      category={categoryName}
+    >
+      <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       <CardContent className="p-0">
         <div className="relative aspect-video bg-muted/50 overflow-hidden rounded-t-lg">
           {product.images && product.images.length > 0 ? (
@@ -184,6 +190,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         </div>
       </CardContent>
     </Card>
+    </ProductTracker>
   );
 };
 
