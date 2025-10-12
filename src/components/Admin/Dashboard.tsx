@@ -79,7 +79,7 @@ interface DashboardStats {
   };
 }
 
-const EnhancedRealDataDashboard = () => {
+const Dashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({
     totalCustomers: 0,
     totalProducts: 0,
@@ -130,7 +130,7 @@ const EnhancedRealDataDashboard = () => {
       setRefreshing(true);
       setLoading(true);
       
-      // Fetch all data in parallel for better performance
+      
       const [
         customersResult,
         productsResult,
@@ -159,7 +159,7 @@ const EnhancedRealDataDashboard = () => {
         supabase.from('product_interactions').select('*', { count: 'exact' })
       ]);
 
-      // Fetch detailed data for analytics
+      
       const [
         quotesData, 
         projectsData, 
@@ -184,7 +184,9 @@ const EnhancedRealDataDashboard = () => {
         supabase.from('product_interactions').select('*').order('timestamp', { ascending: false }).limit(500)
       ]);
 
-      // Calculate derived metrics
+      if (customersResult.error || productsResult.error || blogPostsResult.error || documentsResult.error || quotesResult.error || videosResult.error || projectsResult.error || contactSubmissionsResult.error || invoicesResult.error || sessionsResult.error || pageViewsResult.error || productInteractionsResult.error) {
+        throw new Error('Failed to fetch some data from the database');
+      }
       const totalRevenue = quotesData.data?.reduce((sum, quote) => sum + (quote.total_amount || 0), 0) || 0;
       const totalDownloads = documentsResult.data?.reduce((sum, doc) => sum + (doc.download_count || 0), 0) || 0;
       const totalBlogViews = blogData.data?.reduce((sum, blog) => sum + (blog.views || 0), 0) || 0;
@@ -198,7 +200,11 @@ const EnhancedRealDataDashboard = () => {
         projectsData.data || [], 
         customersData.data || [],
         videosData.data || [],
-        blogData.data || []
+        blogData.data || [],
+        invoicesData.data || [],
+        sessionsData.data || [],
+        pageViewsData.data || [],
+        productInteractionsData.data || []
       );
 
       setStats({
@@ -304,7 +310,7 @@ const EnhancedRealDataDashboard = () => {
       };
     });
 
-    // Recent activity from actual data
+    // Recent activity 
     const recentActivity = [
       ...quotes.slice(0, 3).map(q => ({
         type: 'quote',
@@ -543,7 +549,7 @@ const EnhancedRealDataDashboard = () => {
 
   return (
     <div className="space-y-6 p-4 sm:p-6 bg-gradient-to-br from-background via-muted/5 to-accent/5 min-h-screen">
-      {/* Enhanced Header */}
+      {/* Header */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-8">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
@@ -678,7 +684,7 @@ const EnhancedRealDataDashboard = () => {
         </Card>
       </div>
 
-      {/* Enhanced Analytics Tabs */}
+      {/* Analytics Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid grid-cols-2 lg:grid-cols-6 w-full h-auto p-1 bg-muted/50">
           <TabsTrigger value="overview" className="flex items-center gap-2 py-3">
@@ -1203,4 +1209,4 @@ const EnhancedRealDataDashboard = () => {
   );
 };
 
-export default EnhancedRealDataDashboard;
+export default Dashboard;

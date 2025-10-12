@@ -25,12 +25,12 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
     const element = elementRef.current;
     if (!element) return;
 
-    // Track product view when element comes into viewport
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasTrackedView.current) {
-            // Add a small delay to ensure session is ready
+          
             setTimeout(() => {
               trackProductInteraction(productName, 'view', {
                 productId,
@@ -43,7 +43,7 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
         });
       },
       {
-        threshold: 0.5, // Track when 50% of the element is visible
+        threshold: 0.5, 
         rootMargin: '0px 0px -10% 0px',
       }
     );
@@ -55,11 +55,11 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
     };
   }, [productName, productId, category, trackProductInteraction]);
 
-  // Add cooldown to prevent spam interactions
+  
   const shouldTrackInteraction = (interactionType: string): boolean => {
     const now = Date.now();
     const lastInteraction = interactionCooldown.current[interactionType] || 0;
-    const cooldownPeriod = interactionType === 'click' ? 1000 : 5000; // 1s for clicks, 5s for hovers
+    const cooldownPeriod = interactionType === 'click' ? 1000 : 5000; 
     
     if (now - lastInteraction > cooldownPeriod) {
       interactionCooldown.current[interactionType] = now;

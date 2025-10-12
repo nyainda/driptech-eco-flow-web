@@ -1,4 +1,4 @@
-import RealDataDashboard from "./RealDataDashboard";
+import RealDataDashboard from "./Dashboard";
 
 const AdminDashboard = () => {
   return <RealDataDashboard />;
