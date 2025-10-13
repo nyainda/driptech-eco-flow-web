@@ -643,7 +643,7 @@ const AdminLogin = () => {
 export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, loading, sessionExpired, refreshSession, logout } = useAdminAuth();
   
-  // Security: Removed console.log to prevent auth state exposure
+  console.log('AdminAuthGuard state:', { isAuthenticated, loading, sessionExpired });
   
   if (loading) {
     return (
