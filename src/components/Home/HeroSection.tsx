@@ -181,7 +181,7 @@ const HeroSection = () => {
                       <feature.icon className="h-6 w-6 text-emerald-300" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-white text-base mb-2 drop-shadow-sm">{feature.text}</h3>
+                      <h2 className="font-bold text-white text-base mb-2 drop-shadow-sm">{feature.text}</h2>
                       <p className="text-gray-200 text-sm leading-relaxed">{feature.desc}</p>
                     </div>
                   </div>

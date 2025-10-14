@@ -30,13 +30,6 @@ const formatDuration = (seconds?: number) => {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
-// Utility function to extract YouTube video ID
-const getYouTubeVideoId = (url: string): string => {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : '';
-};
-
 // Skeleton component for loading state
 const VideoSkeleton = () => (
   <Card className="animate-pulse bg-background border-border">
