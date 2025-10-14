@@ -643,15 +643,10 @@ const AdminLogin = () => {
 export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, loading, sessionExpired, refreshSession, logout } = useAdminAuth();
   
-  // Security: Removed console.log to prevent auth state exposure
-  
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-sm text-muted-foreground">Loading admin dashboard...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }

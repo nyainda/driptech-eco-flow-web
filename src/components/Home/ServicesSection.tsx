@@ -250,7 +250,7 @@ const ServicesSection = () => {
                     asChild
                   >
                     <Link to="/services">
-                      Learn More About {service.title}
+                      Learn More
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>

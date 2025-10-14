@@ -268,9 +268,8 @@ const BlogManagement = () => {
     return (
       <BlogEditor
         post={editingPost}
-        categories={categories}
+        onClose={handleEditorClose}
         onSave={handleEditorClose}
-        onCancel={handleEditorClose}
       />
     );
   }
@@ -295,13 +294,16 @@ const BlogManagement = () => {
 
         {/* Search and Filter Bar */}
         <BlogFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          searchTerm={searchQuery}
+          setSearchTerm={setSearchQuery}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
           sortBy={sortBy}
           setSortBy={setSortBy}
           onCreatePost={handleCreatePost}
+          categories={categories}
         />
 
         {/* Blog Posts List */}
@@ -318,8 +320,8 @@ const BlogManagement = () => {
             currentPage={currentPage}
             totalPages={totalPagesCalculated}
             onPageChange={setCurrentPage}
-            totalItems={totalPosts}
-            itemsPerPage={ITEMS_PER_PAGE}
+            totalPosts={totalPosts}
+            postsPerPage={ITEMS_PER_PAGE}
           />
         )}
 

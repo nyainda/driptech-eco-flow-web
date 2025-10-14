@@ -210,21 +210,24 @@ const MpesaIntegration = () => {
     }
   });
 
-  // Load config on mount
+  // Load config on mount with backward compatibility
   useEffect(() => {
     if (mpesaConfig) {
-      setConfig({
+      // Handle both old and new config formats
+      const updatedConfig = {
         businessName: mpesaConfig.businessName || '',
-        consumerKey: mpesaConfig.consumerKey || '',
-        consumerSecret: mpesaConfig.consumerSecret || '',
+        consumerKey: mpesaConfig.consumerKey || mpesaConfig.consumer_key || '',
+        consumerSecret: mpesaConfig.consumerSecret || mpesaConfig.consumer_secret || '',
         environment: mpesaConfig.environment || 'sandbox',
-        passkey: mpesaConfig.passkey || '',
-        paybillNumber: mpesaConfig.paybillNumber || '174379',
-        tillNumber: mpesaConfig.tillNumber || '',
-        shortcode: mpesaConfig.shortcode || '174379',
-        callbackUrl: mpesaConfig.callbackUrl || 'https://driptech-eco-flow-web.vercel.app/api/mpesa/callback',
+        passkey: mpesaConfig.passkey || mpesaConfig.pass_key || '',
+        paybillNumber: mpesaConfig.paybillNumber || mpesaConfig.business_short_code || '174379',
+        tillNumber: mpesaConfig.tillNumber?.includes('@') ? '' : (mpesaConfig.tillNumber || ''),
+        shortcode: mpesaConfig.shortcode || mpesaConfig.business_short_code || '174379',
+        callbackUrl: mpesaConfig.callbackUrl || mpesaConfig.callback_url || 'https://driptech-eco-flow-web.vercel.app/api/mpesa/callback',
         accountType: mpesaConfig.accountType || 'paybill'
-      });
+      } as MpesaConfig;
+      
+      setConfig(updatedConfig);
       setIsEnabled(true);
     }
   }, [mpesaConfig]);
