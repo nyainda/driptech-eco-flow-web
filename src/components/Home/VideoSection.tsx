@@ -22,6 +22,12 @@ interface Video {
   featured?: boolean;
 }
 
+// Utility function to get YouTube video ID
+const getYouTubeVideoId = (url: string) => {
+  const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
+  return url.match(regex)?.[1] || null;
+};
+
 // Utility function to format duration
 const formatDuration = (seconds?: number) => {
   if (!seconds) return "N/A";
@@ -321,10 +327,6 @@ const VideoSection = () => {
     },
   });
 
-  const getYouTubeVideoId = (url: string) => {
-    const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
-    return url.match(regex)?.[1] || null;
-  };
 
   const handleCopyLink = async (video: Video) => {
     try {

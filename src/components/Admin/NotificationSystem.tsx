@@ -15,7 +15,6 @@ import {
   Settings,
   AlertCircle,
   X,
-  MarkAsUnreadIcon,
   Trash2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -98,7 +97,7 @@ const NotificationSystem = () => {
           id: `contact_${contact.id}`,
           type: 'contact_submission',
           title: 'New Contact Submission',
-          message: `${contact.name || 'Someone'} submitted a contact form: ${contact.subject || 'No subject'}`,
+          message: `${contact.name || 'Someone'} submitted a contact form`,
           timestamp: new Date(contact.created_at),
           read: false,
           data: contact
@@ -111,7 +110,7 @@ const NotificationSystem = () => {
           id: `quote_${quote.id}`,
           type: 'quote',
           title: 'New Quote Request',
-          message: `Quote #${quote.quote_number} for ${quote.customer_name || 'Unknown customer'} - ${quote.project_type || 'General'}`,
+          message: `Quote #${quote.quote_number} - ${quote.project_type || 'General'}`,
           timestamp: new Date(quote.created_at),
           read: false,
           data: quote
@@ -179,7 +178,7 @@ const NotificationSystem = () => {
             try {
               addNotification('contact_submission', {
                 title: 'New Contact Submission',
-                message: `${payload.new.name || 'Someone'} submitted a contact form: ${payload.new.subject || 'No subject'}`,
+                message: `${payload.new.name || 'Someone'} submitted a contact form`,
                 data: payload.new
               });
             } catch (error) {
@@ -200,7 +199,7 @@ const NotificationSystem = () => {
             try {
               addNotification('quote', {
                 title: 'New Quote Request',
-                message: `Quote #${payload.new.quote_number} for ${payload.new.customer_name || 'Unknown customer'}`,
+                message: `Quote #${payload.new.quote_number}`,
                 data: payload.new
               });
             } catch (error) {
@@ -221,7 +220,8 @@ const NotificationSystem = () => {
             try {
               const eventType = payload.eventType;
               const title = eventType === 'INSERT' ? 'New Project Created' : 'Project Updated';
-              const message = `Project "${payload.new.name}" ${eventType === 'INSERT' ? 'created' : 'updated'}`;
+              const projectName = payload.new?.name || 'Unknown Project';
+              const message = `Project "${projectName}" ${eventType === 'INSERT' ? 'created' : 'updated'}`;
               
               addNotification('project', {
                 title,
