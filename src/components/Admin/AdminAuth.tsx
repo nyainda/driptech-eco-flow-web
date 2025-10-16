@@ -185,7 +185,8 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     const timeSinceLastActivity = now - lastActivityRef.current;
     
     // Only reset timer if significant time has passed (throttle)
-    if (timeSinceLastActivity > 30000) { 
+    // Increased to 60 seconds to avoid triggering on page load
+    if (timeSinceLastActivity > 60000) { 
       resetIdleTimer();
     }
   }, [resetIdleTimer]);
@@ -197,15 +198,19 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
       return;
     }
 
-    // Add activity event listeners
-    ACTIVITY_EVENTS.forEach(event => {
-      document.addEventListener(event, handleActivity, true);
-    });
+    // Delay idle timer initialization by 5 seconds to allow page to fully load
+    const initTimer = setTimeout(() => {
+      // Add activity event listeners
+      ACTIVITY_EVENTS.forEach(event => {
+        document.addEventListener(event, handleActivity, true);
+      });
 
-    // Start idle timer
-    resetIdleTimer();
+      // Start idle timer
+      resetIdleTimer();
+    }, 5000);
 
     return () => {
+      clearTimeout(initTimer);
       // Clean up event listeners
       ACTIVITY_EVENTS.forEach(event => {
         document.removeEventListener(event, handleActivity, true);
@@ -275,6 +280,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     // Get initial session
     const initializeAuth = async () => {
       try {
+        // First try to get session from storage
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -291,6 +297,16 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
               setUser(adminUser);
               setIsAuthenticated(true);
               setSessionExpired(false);
+              console.log('Admin session restored successfully');
+            } else {
+              // User is not admin, clear session
+              await supabase.auth.signOut();
+            }
+          } else {
+            // Session invalid, try to refresh
+            const refreshed = await refreshSession();
+            if (!refreshed) {
+              setSessionExpired(true);
             }
           }
         }
@@ -306,9 +322,13 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     // Listen for auth changes with enhanced error handling
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event);
+        console.log('Auth state changed:', event, session?.user?.email);
         
         switch (event) {
+          case 'INITIAL_SESSION':
+            // Skip - handled by initializeAuth
+            break;
+            
           case 'SIGNED_IN':
             if (session?.user) {
               const adminUser = await checkAdminRole(session.user);
@@ -344,7 +364,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
                 setUser(adminUser);
                 setIsAuthenticated(true);
                 setSessionExpired(false);
-                resetIdleTimer(); 
+                // Don't reset idle timer on token refresh
               }
             }
             break;

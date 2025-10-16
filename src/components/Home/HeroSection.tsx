@@ -7,8 +7,8 @@ const HeroSection = () => {
 
   // WhatsApp numbers and message
   const whatsappNumbers = {
-    primary: "254111409454", // 0111 409 454 in international format
-    secondary: "254114575401" // 0114 575 401 in international format
+    primary: "254114575401", // 0114575401 in international format
+    secondary: "254114575401" // 0114575401 in international format
   };
 
   const whatsappMessage = encodeURIComponent(
@@ -214,17 +214,17 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-6 pt-6 text-base text-gray-100">
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
                 <Mail className="h-5 w-5 text-emerald-400" />
-                <a href="mailto:driptech2025@gmail.com" className="hover:text-emerald-300 transition-colors font-medium">
-                  driptech2025@gmail.com
+                <a href="mailto:driptechs.info@gmail.com" className="hover:text-emerald-300 transition-colors font-medium">
+                  driptechs.info@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
                 <Phone className="h-5 w-5 text-emerald-400" />
                 <button 
-                  onClick={() => makePhoneCall(whatsappNumbers.secondary)}
+                  onClick={() => makePhoneCall('0114575401')}
                   className="hover:text-emerald-300 transition-colors cursor-pointer font-medium"
                 >
-                  0114 575 401
+                  0114575401
                 </button>
               </div>
               <div className="flex items-center gap-3 bg-emerald-500/20 backdrop-blur-sm rounded-full px-4 py-2 border border-emerald-400/30">
@@ -326,7 +326,7 @@ const HeroSection = () => {
                   </div>
                   <div>
                     <p className="text-green-200 font-semibold text-sm">WhatsApp Direct</p>
-                    <p className="text-green-100 text-xs">0111 409 454</p>
+                    <p className="text-green-100 text-xs">0114575401</p>
                   </div>
                 </div>
               </button>
