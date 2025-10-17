@@ -28,6 +28,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
     tax_rate: 16,
     discount_amount: 0,
     notes: '',
+    payment_details: 'Bank: Equity Bank\nAccount Name: DripTech Solutions\nAccount Number: 1234567890\nBranch: Nairobi\nSwift Code: EQBLKENA\n\nM-Pesa Paybill: 123456\nAccount Number: [Invoice Number]',
     items: [
       {
         name: '',
@@ -199,6 +200,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
         subtotal: totals.subtotal,
         total_amount: totals.total,
         notes: createForm.notes || null,
+        payment_details: createForm.payment_details || null,
         status: sendImmediately ? 'sent' : 'draft',
         ...(sendImmediately && { sent_at: new Date().toISOString() })
       };
@@ -492,6 +494,24 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Payment Details */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Payment Details
+              </label>
+              <textarea
+                rows={6}
+                placeholder="Enter bank details, M-Pesa paybill, or other payment instructions..."
+                value={createForm.payment_details}
+                onChange={(e) => setCreateForm({ ...createForm, payment_details: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
+                disabled={creating}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Include bank account details, M-Pesa paybill, or other payment methods
+              </p>
             </div>
 
             {/* Notes */}

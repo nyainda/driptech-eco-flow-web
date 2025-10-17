@@ -163,6 +163,16 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
             </div>
           </div>
 
+          {/* Payment Details */}
+          {invoice.payment_details && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Payment Details</h3>
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">{invoice.payment_details}</pre>
+              </div>
+            </div>
+          )}
+
           {/* Notes */}
           {invoice.notes && (
             <div className="mb-6">

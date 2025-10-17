@@ -1,11 +1,11 @@
-import { useState, useEffect, createContext, useContext, useCallback, useRef } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, User, LogOut, Eye, EyeOff, AlertCircle, Clock } from "lucide-react";
+import { Lock, User, LogOut, Eye, EyeOff, AlertCircle } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface AdminUser {
@@ -22,19 +22,10 @@ interface AdminAuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   sessionExpired: boolean;
-  idleWarning: boolean;
-  timeUntilExpiry: number;
   refreshSession: () => Promise<boolean>;
-  resetIdleTimer: () => void;
-  extendSession: () => void;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | null>(null);
-
-// Configuration constants
-const IDLE_TIMEOUT = 30 * 60 * 1000; 
-const WARNING_TIME = 5 * 60 * 1000; 
-const ACTIVITY_EVENTS = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
 
 export const useAdminAuth = () => {
   const context = useContext(AdminAuthContext);
@@ -49,175 +40,39 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sessionExpired, setSessionExpired] = useState(false);
-  const [idleWarning, setIdleWarning] = useState(false);
-  const [timeUntilExpiry, setTimeUntilExpiry] = useState(0);
-  
   const { toast } = useToast();
-  
-  // Refs for timers
-  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const warningTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const lastActivityRef = useRef<number>(Date.now());
 
-  // Check if user is admin using server-side role validation
+  // Check if user is admin by checking their email domain or specific emails
   const checkAdminRole = async (supabaseUser: SupabaseUser): Promise<AdminUser | null> => {
     try {
-      // Query user_roles table to check if user has admin role
-      const { data: userRoles, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', supabaseUser.id)
-        .in('role', ['admin', 'super_admin', 'editor']);
-
-      if (error) {
-        console.error('Error checking user roles:', error);
+      const email = supabaseUser.email;
+      
+      // Define admin emails or email patterns
+      const adminEmails = [
+        'admin@driptech.com',
+        'support@driptech.com',
+        // Add more admin emails as needed
+      ];
+      
+      // Check if user email is in admin list or has admin domain
+      const isAdmin = adminEmails.includes(email || '') || 
+                     email?.endsWith('@driptech.com');
+      
+      if (!isAdmin) {
         return null;
       }
-
-      // User must have at least one admin role
-      if (!userRoles || userRoles.length === 0) {
-        return null;
-      }
-
-      // Get the highest priority role
-      const role = userRoles.find(r => r.role === 'super_admin')?.role || 
-                   userRoles.find(r => r.role === 'admin')?.role ||
-                   userRoles.find(r => r.role === 'editor')?.role ||
-                   'admin';
 
       return {
         id: supabaseUser.id,
-        email: supabaseUser.email || '',
+        email: email || '',
         name: supabaseUser.user_metadata?.name || 'Admin User',
-        role
+        role: 'admin'
       };
     } catch (error) {
       console.error('Error checking admin role:', error);
       return null;
     }
   };
-
-  // Clear all timers
-  const clearAllTimers = useCallback(() => {
-    if (idleTimerRef.current) {
-      clearTimeout(idleTimerRef.current);
-      idleTimerRef.current = null;
-    }
-    if (warningTimerRef.current) {
-      clearTimeout(warningTimerRef.current);
-      warningTimerRef.current = null;
-    }
-    if (countdownTimerRef.current) {
-      clearInterval(countdownTimerRef.current);
-      countdownTimerRef.current = null;
-    }
-  }, []);
-
-  // Handle idle timeout
-  const handleIdleTimeout = useCallback(async () => {
-    console.log('Session expired due to inactivity');
-    clearAllTimers();
-    setIdleWarning(false);
-    setSessionExpired(true);
-    setIsAuthenticated(false);
-    setUser(null);
-    
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Session Expired",
-        description: "You've been logged out due to inactivity",
-        variant: "destructive"
-      });
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  }, [toast, clearAllTimers]);
-
-  // Show warning before timeout
-  const showIdleWarning = useCallback(() => {
-    setIdleWarning(true);
-    setTimeUntilExpiry(WARNING_TIME / 1000); 
-    
-    // Start countdown
-    countdownTimerRef.current = setInterval(() => {
-      setTimeUntilExpiry((prev) => {
-        if (prev <= 1) {
-          handleIdleTimeout();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    
-    // Set timer for actual timeout
-    idleTimerRef.current = setTimeout(handleIdleTimeout, WARNING_TIME);
-  }, [handleIdleTimeout]);
-
-  // Reset idle timer
-  const resetIdleTimer = useCallback(() => {
-    if (!isAuthenticated) return;
-    
-    lastActivityRef.current = Date.now();
-    clearAllTimers();
-    setIdleWarning(false);
-    setTimeUntilExpiry(0);
-    
-    // Set warning timer (show warning 5 minutes before timeout)
-    warningTimerRef.current = setTimeout(showIdleWarning, IDLE_TIMEOUT - WARNING_TIME);
-  }, [isAuthenticated, showIdleWarning, clearAllTimers]);
-
-  // Extend session (called from warning dialog)
-  const extendSession = useCallback(() => {
-    setIdleWarning(false);
-    clearAllTimers();
-    resetIdleTimer();
-    toast({
-      title: "Session Extended",
-      description: "Your session has been extended",
-    });
-  }, [resetIdleTimer, clearAllTimers, toast]);
-
-  // Activity event handler
-  const handleActivity = useCallback(() => {
-    const now = Date.now();
-    const timeSinceLastActivity = now - lastActivityRef.current;
-    
-    // Only reset timer if significant time has passed (throttle)
-    // Increased to 60 seconds to avoid triggering on page load
-    if (timeSinceLastActivity > 60000) { 
-      resetIdleTimer();
-    }
-  }, [resetIdleTimer]);
-
-  // Set up activity listeners
-  useEffect(() => {
-    if (!isAuthenticated) {
-      clearAllTimers();
-      return;
-    }
-
-    // Delay idle timer initialization by 5 seconds to allow page to fully load
-    const initTimer = setTimeout(() => {
-      // Add activity event listeners
-      ACTIVITY_EVENTS.forEach(event => {
-        document.addEventListener(event, handleActivity, true);
-      });
-
-      // Start idle timer
-      resetIdleTimer();
-    }, 5000);
-
-    return () => {
-      clearTimeout(initTimer);
-      // Clean up event listeners
-      ACTIVITY_EVENTS.forEach(event => {
-        document.removeEventListener(event, handleActivity, true);
-      });
-      clearAllTimers();
-    };
-  }, [isAuthenticated, handleActivity, resetIdleTimer, clearAllTimers]);
 
   // Function to refresh session manually
   const refreshSession = async (): Promise<boolean> => {
@@ -238,7 +93,6 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         setUser(adminUser);
         setIsAuthenticated(true);
         setSessionExpired(false);
-        resetIdleTimer(); 
         return true;
       }
       
@@ -277,15 +131,10 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   useEffect(() => {
-    let mounted = true;
-    
     // Get initial session
     const initializeAuth = async () => {
       try {
-        // First try to get session from storage
         const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (!mounted) return;
         
         if (error) {
           console.error('Error getting initial session:', error);
@@ -294,43 +143,20 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         }
         
         if (session?.user) {
-          console.log('Found existing session, validating...', session.user.email);
           const isValid = await validateSession(session);
-          
-          if (!mounted) return;
-          
           if (isValid) {
             const adminUser = await checkAdminRole(session.user);
-            
-            if (!mounted) return;
-            
             if (adminUser) {
               setUser(adminUser);
               setIsAuthenticated(true);
               setSessionExpired(false);
-              console.log('Admin session restored successfully');
-            } else {
-              // User is not admin, clear session
-              console.log('User is not admin, clearing session');
-              await supabase.auth.signOut();
-            }
-          } else {
-            // Session invalid, try to refresh
-            console.log('Session invalid, attempting refresh...');
-            const refreshed = await refreshSession();
-            if (!refreshed && mounted) {
-              setSessionExpired(true);
             }
           }
-        } else {
-          console.log('No existing session found');
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
@@ -339,23 +165,17 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     // Listen for auth changes with enhanced error handling
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        
-        if (!mounted) return;
+        console.log('Auth state changed:', event);
         
         switch (event) {
-          case 'INITIAL_SESSION':
-            // Skip - handled by initializeAuth
-            break;
-            
           case 'SIGNED_IN':
             if (session?.user) {
               const adminUser = await checkAdminRole(session.user);
-              if (adminUser && mounted) {
+              if (adminUser) {
                 setUser(adminUser);
                 setIsAuthenticated(true);
                 setSessionExpired(false);
-              } else if (mounted) {
+              } else {
                 // User is not admin, sign them out
                 await supabase.auth.signOut();
                 toast({
@@ -368,24 +188,19 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
             break;
             
           case 'SIGNED_OUT':
-            if (mounted) {
-              setUser(null);
-              setIsAuthenticated(false);
-              setSessionExpired(false);
-              setIdleWarning(false);
-              clearAllTimers();
-            }
+            setUser(null);
+            setIsAuthenticated(false);
+            setSessionExpired(false);
             break;
             
           case 'TOKEN_REFRESHED':
             console.log('Token refreshed successfully');
             if (session?.user) {
               const adminUser = await checkAdminRole(session.user);
-              if (adminUser && mounted) {
+              if (adminUser) {
                 setUser(adminUser);
                 setIsAuthenticated(true);
                 setSessionExpired(false);
-                // Don't reset idle timer on token refresh
               }
             }
             break;
@@ -393,24 +208,19 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
           case 'USER_UPDATED':
             if (session?.user) {
               const adminUser = await checkAdminRole(session.user);
-              if (adminUser && mounted) {
+              if (adminUser) {
                 setUser(adminUser);
               }
             }
             break;
         }
         
-        if (mounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     );
 
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
+    return () => subscription.unsubscribe();
+  }, [toast]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -467,9 +277,6 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
 
   const logout = async () => {
     try {
-      clearAllTimers();
-      setIdleWarning(false);
-      
       const { error } = await supabase.auth.signOut();
       if (error) {
         toast({
@@ -503,64 +310,10 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
       isAuthenticated, 
       loading, 
       sessionExpired,
-      idleWarning,
-      timeUntilExpiry,
-      refreshSession,
-      resetIdleTimer,
-      extendSession
+      refreshSession 
     }}>
       {children}
     </AdminAuthContext.Provider>
-  );
-};
-
-// Format time in MM:SS
-const formatTime = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-};
-
-// Idle Warning Dialog Component
-const IdleWarningDialog = () => {
-  const { idleWarning, timeUntilExpiry, extendSession, logout } = useAdminAuth();
-
-  if (!idleWarning) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <Card className="w-full max-w-md border-warning">
-        <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-4">
-            <Clock className="h-6 w-6 text-warning" />
-          </div>
-          <CardTitle className="text-xl">Session Expiring Soon</CardTitle>
-          <CardDescription>
-            Your session will expire in {formatTime(timeUntilExpiry)} due to inactivity
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              className="flex-1" 
-              onClick={logout}
-            >
-              Logout Now
-            </Button>
-            <Button 
-              className="flex-1 bg-warning hover:bg-warning/90 text-warning-foreground" 
-              onClick={extendSession}
-            >
-              Stay Logged In
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground text-center mt-3">
-            Click "Stay Logged In" to extend your session for another 30 minutes
-          </p>
-        </CardContent>
-      </Card>
-    </div>
   );
 };
 
@@ -703,27 +456,17 @@ export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
         <AdminLogin />
         <SessionExpiredWarning 
           onRefresh={refreshSession}
-          onLogin={logout} 
+          onLogin={logout} // This will trigger logout and show login
         />
       </>
     );
   }
   
   if (!isAuthenticated) {
-    return (
-      <>
-        <AdminLogin />
-        <IdleWarningDialog />
-      </>
-    );
+    return <AdminLogin />;
   }
   
-  return (
-    <>
-      {children}
-      <IdleWarningDialog />
-    </>
-  );
+  return <>{children}</>;
 };
 
 export const AdminHeader = () => {

@@ -1,4 +1,3 @@
-
 export interface Invoice {
   id: string;
   invoice_number: string;
@@ -14,6 +13,7 @@ export interface Invoice {
   total_amount: number;
   payment_terms: string | null;
   notes: string | null;
+  payment_details?: string;
   created_at: string | null;
   updated_at: string | null;
   sent_at: string | null;
@@ -61,6 +61,7 @@ export interface CreateInvoiceForm {
   tax_rate: number;
   discount_amount: number;
   notes: string;
+  payment_details: string;
   items: CreateInvoiceItem[];
 }
 
@@ -82,6 +83,7 @@ export interface EditInvoiceForm {
   tax_rate: number;
   discount_amount: number;
   notes: string;
+  payment_details: string;
   items: EditInvoiceItem[];
 }
 

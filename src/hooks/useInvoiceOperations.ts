@@ -140,6 +140,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                     <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
                     <div>📞 0111409454 / 0114575401</div>
                     <div>✉️ driptech2025@gmail.com</div>
+                    <div>✉️ driptechs.info@gmail.com</div>
                   </div>
                 </div>
               </div>
@@ -185,6 +186,9 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                     </div>
                     <div class="flex items-center gap-1 text-gray-600">
                       <span class="opacity-70">✉️</span> driptech2025@gmail.com
+                    </div>
+                    <div class="flex items-center gap-1 text-gray-600">
+                      <span class="opacity-70">✉️</span> driptechs.info@gmail.com
                     </div>
                   </div>
                 </div>
@@ -282,6 +286,19 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                 </div>
               </div>
             </div>
+
+            <!-- Payment Details Section -->
+            ${invoice.payment_details ? `
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg p-3 border-l-3 border-blue-500 mb-3">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-md flex items-center justify-center text-sm">💳</div>
+                <h3 class="text-blue-800 text-sm font-bold">Payment Details</h3>
+              </div>
+              <div class="bg-white bg-opacity-50 p-2 rounded border border-blue-200">
+                <pre class="text-blue-900 text-xs font-medium break-words whitespace-pre-wrap font-mono">${invoice.payment_details}</pre>
+              </div>
+            </div>
+            ` : ''}
 
             <!-- Notes Section -->
             ${invoice.notes ? `

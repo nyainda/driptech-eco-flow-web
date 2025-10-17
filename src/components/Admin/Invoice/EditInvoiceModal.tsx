@@ -30,6 +30,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
     tax_rate: 16,
     discount_amount: 0,
     notes: '',
+    payment_details: '',
     items: [
       {
         id: '',
@@ -55,6 +56,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         tax_rate: invoice.tax_rate || 16,
         discount_amount: invoice.discount_amount || 0,
         notes: invoice.notes || '',
+        payment_details: invoice.payment_details || '',
         items: invoice.invoice_items?.map(item => ({
           id: item.id,
           name: item.name,
@@ -247,7 +249,8 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         discount_amount: totals.discountAmount,
         subtotal: totals.subtotal,
         total_amount: totals.total,
-        notes: editForm.notes || null
+        notes: editForm.notes || null,
+        payment_details: editForm.payment_details || null
       };
 
       const updatedInvoice = await updateInvoice(invoice.id, invoiceData);
@@ -541,6 +544,24 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Payment Details */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Payment Details
+              </label>
+              <textarea
+                rows={6}
+                placeholder="Enter bank details, M-Pesa paybill, or other payment instructions..."
+                value={editForm.payment_details}
+                onChange={(e) => setEditForm({ ...editForm, payment_details: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
+                disabled={updating}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Include bank account details, M-Pesa paybill, or other payment methods
+              </p>
             </div>
 
             {/* Notes */}
