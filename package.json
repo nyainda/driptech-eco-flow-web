@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0 --port 5000",
     "prepare": "husky",
-     "test": "echo \"No tests yet\" && exit 0"
+    "test": "echo \"No tests yet\" && exit 0"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

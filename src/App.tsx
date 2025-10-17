@@ -1,3 +1,4 @@
+import { HelmetProvider } from 'react-helmet-async'; // Add this import
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -35,72 +36,71 @@ import IrrigationKits from "@/pages/IrrigationKits";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <VisitorTracker />
-          <Routes>
-            {/* Main pages */}
-            <Route path="/" element={<Index />} />
-            <Route path="/admin" element={<Admin />} />
+  <HelmetProvider> {/* Add HelmetProvider here */}
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <VisitorTracker />
+            <Routes>
+              {/* Main pages */}
+              <Route path="/" element={<Index />} />
+              <Route path="/admin" element={<Admin />} />
 
-            {/* Product routes */}
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:category" element={<Products />} />
-            <Route path="/products/:category/:product" element={<Products />} />
+              {/* Product routes */}
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:category" element={<Products />} />
+              <Route path="/products/:category/:product" element={<Products />} />
 
-            {/* Service routes */}
-            <Route path="/services" element={<Services />} />
-            <Route path="/services/:service" element={<Services />} />
+              {/* Service routes */}
+              <Route path="/services" element={<Services />} />
+              <Route path="/services/:service" element={<Services />} />
 
-            {/* Support and info pages */}
-            <Route
-              path="/installation-guides"
-              element={<InstallationGuides />}
-            />
-            <Route path="/case-studies" element={<CaseStudies />} />
-            <Route path="/technical-support" element={<TechnicalSupport />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/success-stories" element={<SuccessStories />} />
+              {/* Support and info pages */}
+              <Route path="/installation-guides" element={<InstallationGuides />} />
+              <Route path="/case-studies" element={<CaseStudies />} />
+              <Route path="/technical-support" element={<TechnicalSupport />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/success-stories" element={<SuccessStories />} />
 
-            {/* Team and company */}
-            <Route path="/team" element={<Team />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/technicians" element={<Technicians />} />
-            <Route path="/contact" element={<Contact />} />
+              {/* Team and company */}
+              <Route path="/team" element={<Team />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/technicians" element={<Technicians />} />
+              <Route path="/contact" element={<Contact />} />
 
-            {/* News and certifications */}
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:slug" element={<NewsArticle />} />
-            <Route path="/certifications" element={<Certifications />} />
+              {/* News and certifications */}
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:slug" element={<NewsArticle />} />
+              <Route path="/certifications" element={<Certifications />} />
 
-            {/* Irrigation Kits */}
-            <Route path="/irrigation-kits" element={<IrrigationKits />} />
+              {/* Irrigation Kits */}
+              <Route path="/irrigation-kits" element={<IrrigationKits />} />
 
-            {/* Blog routes */}
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:slug" element={<BlogPostPage />} />
+              {/* Blog routes */}
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
 
-            {/* Video section */}
-            <Route path="/video" element={<VideoSection />} />
-            <Route path="/videos" element={<VideosPage />} />
+              {/* Video section */}
+              <Route path="/video" element={<VideoSection />} />
+              <Route path="/videos" element={<VideosPage />} />
 
-            {/* Legal pages */}
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/cookies" element={<Cookies />} />
+              {/* Legal pages */}
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/cookies" element={<Cookies />} />
 
-            {/* Catch-all route for 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <ScrollToTop />
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+              {/* Catch-all route for 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <ScrollToTop />
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
