@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -20,7 +19,7 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
   itemsPerPage,
   onPageChange,
   onNextPage,
-  onPrevPage
+  onPrevPage,
 }) => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -28,9 +27,10 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
   const MobilePagination = () => (
     <div className="flex flex-col items-center gap-4 mt-6">
       <div className="text-sm text-muted-foreground text-center">
-        Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, totalItems)} of {totalItems} products
+        Showing {indexOfFirstItem + 1} to{" "}
+        {Math.min(indexOfLastItem, totalItems)} of {totalItems} products
       </div>
-      
+
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
@@ -42,7 +42,7 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
           <ArrowLeft className="h-4 w-4 mr-1" />
           <span className="hidden xs:inline">Previous</span>
         </Button>
-        
+
         <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
           {totalPages > 1 && (
             <Button
@@ -54,17 +54,21 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
               1
             </Button>
           )}
-          
+
           {currentPage > 3 && totalPages > 5 && (
             <span className="px-2 text-muted-foreground">...</span>
           )}
-          
+
           {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(page => {
+            .filter((page) => {
               if (totalPages <= 5) return page > 1 && page < totalPages;
-              return page > 1 && page < totalPages && Math.abs(page - currentPage) <= 1;
+              return (
+                page > 1 &&
+                page < totalPages &&
+                Math.abs(page - currentPage) <= 1
+              );
             })
-            .map(page => (
+            .map((page) => (
               <Button
                 key={page}
                 variant={currentPage === page ? "default" : "outline"}
@@ -75,11 +79,11 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
                 {page}
               </Button>
             ))}
-          
+
           {currentPage < totalPages - 2 && totalPages > 5 && (
             <span className="px-2 text-muted-foreground">...</span>
           )}
-          
+
           {totalPages > 1 && (
             <Button
               variant={currentPage === totalPages ? "default" : "outline"}
@@ -91,7 +95,7 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
             </Button>
           )}
         </div>
-        
+
         <Button
           variant="outline"
           size="sm"
@@ -109,9 +113,10 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
   const DesktopPagination = () => (
     <div className="flex items-center justify-between mt-6">
       <div className="text-sm text-muted-foreground">
-        Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, totalItems)} of {totalItems} products
+        Showing {indexOfFirstItem + 1} to{" "}
+        {Math.min(indexOfLastItem, totalItems)} of {totalItems} products
       </div>
-      
+
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
@@ -123,7 +128,7 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
           <ArrowLeft className="h-4 w-4 mr-2" />
           Previous
         </Button>
-        
+
         <div className="flex items-center gap-1">
           {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
             let pageNumber;
@@ -136,7 +141,7 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
             } else {
               pageNumber = currentPage - 3 + i;
             }
-            
+
             return (
               <Button
                 key={pageNumber}
@@ -150,7 +155,7 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
             );
           })}
         </div>
-        
+
         <Button
           variant="outline"
           size="sm"

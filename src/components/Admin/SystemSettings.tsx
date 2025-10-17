@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
+import {
   Settings,
   Building,
   Mail,
@@ -14,7 +20,7 @@ import {
   Palette,
   Shield,
   Database,
-  Save
+  Save,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -37,7 +43,7 @@ const SystemSettings = () => {
     tagline: "",
     description: "",
     founded: "",
-    employees: ""
+    employees: "",
   });
 
   const [contactInfo, setContactInfo] = useState({
@@ -46,7 +52,7 @@ const SystemSettings = () => {
     address: "",
     city: "",
     country: "",
-    postal_code: ""
+    postal_code: "",
   });
 
   const [socialMedia, setSocialMedia] = useState({
@@ -54,7 +60,7 @@ const SystemSettings = () => {
     twitter: "",
     linkedin: "",
     youtube: "",
-    instagram: ""
+    instagram: "",
   });
 
   const [seoSettings, setSeoSettings] = useState({
@@ -62,7 +68,7 @@ const SystemSettings = () => {
     meta_description: "",
     meta_keywords: "",
     google_analytics: "",
-    google_tag_manager: ""
+    google_tag_manager: "",
   });
 
   useEffect(() => {
@@ -72,8 +78,8 @@ const SystemSettings = () => {
   const fetchSettings = async () => {
     try {
       const { data, error } = await supabase
-        .from('system_settings')
-        .select('*');
+        .from("system_settings")
+        .select("*");
 
       if (error) throw error;
 
@@ -83,7 +89,7 @@ const SystemSettings = () => {
       });
 
       setSettings(settingsMap);
-      
+
       // Populate form data
       if (settingsMap.company_info) {
         setCompanyInfo({ ...companyInfo, ...settingsMap.company_info });
@@ -98,24 +104,24 @@ const SystemSettings = () => {
         setSeoSettings({ ...seoSettings, ...settingsMap.seo_settings });
       }
     } catch (error) {
-      console.error('Error fetching settings:', error);
+      console.error("Error fetching settings:", error);
       toast({
         title: "Error",
         description: "Failed to fetch system settings",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
 
- const updateSetting = async (key: string, value: any) => {
+  const updateSetting = async (key: string, value: any) => {
     try {
       // First, check if the setting exists
       const { data: existing, error: fetchError } = await supabase
-        .from('system_settings')
-        .select('id')
-        .eq('setting_key', key)
+        .from("system_settings")
+        .select("id")
+        .eq("setting_key", key)
         .maybeSingle();
 
       if (fetchError) {
@@ -125,33 +131,30 @@ const SystemSettings = () => {
       if (existing) {
         // Update existing setting
         const { error } = await supabase
-          .from('system_settings')
+          .from("system_settings")
           .update({
             setting_value: value,
             description: getSettingDescription(key),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
-          .eq('setting_key', key);
+          .eq("setting_key", key);
 
         if (error) throw error;
       } else {
         // Insert new setting
-        const { error } = await supabase
-          .from('system_settings')
-          .insert({
-            setting_key: key,
-            setting_value: value,
-            description: getSettingDescription(key)
-          });
+        const { error } = await supabase.from("system_settings").insert({
+          setting_key: key,
+          setting_value: value,
+          description: getSettingDescription(key),
+        });
 
         if (error) throw error;
       }
-      
+
       // Update local state
-      setSettings(prev => ({ ...prev, [key]: value }));
-      
+      setSettings((prev) => ({ ...prev, [key]: value }));
     } catch (error) {
-      console.error('Error updating setting:', error);
+      console.error("Error updating setting:", error);
       throw error;
     }
   };
@@ -161,7 +164,7 @@ const SystemSettings = () => {
       company_info: "Basic company information",
       contact_info: "Contact information",
       social_media: "Social media links",
-      seo_settings: "SEO configuration"
+      seo_settings: "SEO configuration",
     };
     return descriptions[key] || "";
   };
@@ -169,16 +172,16 @@ const SystemSettings = () => {
   const handleSaveCompanyInfo = async () => {
     setSaving(true);
     try {
-      await updateSetting('company_info', companyInfo);
+      await updateSetting("company_info", companyInfo);
       toast({
         title: "Success",
-        description: "Company information updated successfully"
+        description: "Company information updated successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update company information",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setSaving(false);
@@ -188,16 +191,16 @@ const SystemSettings = () => {
   const handleSaveContactInfo = async () => {
     setSaving(true);
     try {
-      await updateSetting('contact_info', contactInfo);
+      await updateSetting("contact_info", contactInfo);
       toast({
         title: "Success",
-        description: "Contact information updated successfully"
+        description: "Contact information updated successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update contact information",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setSaving(false);
@@ -207,16 +210,16 @@ const SystemSettings = () => {
   const handleSaveSocialMedia = async () => {
     setSaving(true);
     try {
-      await updateSetting('social_media', socialMedia);
+      await updateSetting("social_media", socialMedia);
       toast({
         title: "Success",
-        description: "Social media links updated successfully"
+        description: "Social media links updated successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update social media links",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setSaving(false);
@@ -226,16 +229,16 @@ const SystemSettings = () => {
   const handleSaveSeoSettings = async () => {
     setSaving(true);
     try {
-      await updateSetting('seo_settings', seoSettings);
+      await updateSetting("seo_settings", seoSettings);
       toast({
         title: "Success",
-        description: "SEO settings updated successfully"
+        description: "SEO settings updated successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update SEO settings",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setSaving(false);
@@ -312,7 +315,9 @@ const SystemSettings = () => {
                   <Input
                     id="company_name"
                     value={companyInfo.name}
-                    onChange={(e) => setCompanyInfo({ ...companyInfo, name: e.target.value })}
+                    onChange={(e) =>
+                      setCompanyInfo({ ...companyInfo, name: e.target.value })
+                    }
                     placeholder="DripTech"
                   />
                 </div>
@@ -321,7 +326,12 @@ const SystemSettings = () => {
                   <Input
                     id="tagline"
                     value={companyInfo.tagline}
-                    onChange={(e) => setCompanyInfo({ ...companyInfo, tagline: e.target.value })}
+                    onChange={(e) =>
+                      setCompanyInfo({
+                        ...companyInfo,
+                        tagline: e.target.value,
+                      })
+                    }
                     placeholder="Advanced Irrigation Solutions"
                   />
                 </div>
@@ -332,7 +342,12 @@ const SystemSettings = () => {
                 <Textarea
                   id="description"
                   value={companyInfo.description}
-                  onChange={(e) => setCompanyInfo({ ...companyInfo, description: e.target.value })}
+                  onChange={(e) =>
+                    setCompanyInfo({
+                      ...companyInfo,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="Brief description of your company"
                   rows={3}
                 />
@@ -344,7 +359,12 @@ const SystemSettings = () => {
                   <Input
                     id="founded"
                     value={companyInfo.founded}
-                    onChange={(e) => setCompanyInfo({ ...companyInfo, founded: e.target.value })}
+                    onChange={(e) =>
+                      setCompanyInfo({
+                        ...companyInfo,
+                        founded: e.target.value,
+                      })
+                    }
                     placeholder="2020"
                   />
                 </div>
@@ -353,16 +373,25 @@ const SystemSettings = () => {
                   <Input
                     id="employees"
                     value={companyInfo.employees}
-                    onChange={(e) => setCompanyInfo({ ...companyInfo, employees: e.target.value })}
+                    onChange={(e) =>
+                      setCompanyInfo({
+                        ...companyInfo,
+                        employees: e.target.value,
+                      })
+                    }
                     placeholder="50+"
                   />
                 </div>
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveCompanyInfo} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
+                <Button
+                  onClick={handleSaveCompanyInfo}
+                  disabled={saving}
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+                >
                   <Save className="mr-2 h-4 w-4" />
-                  {saving ? 'Saving...' : 'Save Company Info'}
+                  {saving ? "Saving..." : "Save Company Info"}
                 </Button>
               </div>
             </CardContent>
@@ -376,9 +405,7 @@ const SystemSettings = () => {
                 <Mail className="h-5 w-5 text-primary" />
                 Contact Information
               </CardTitle>
-              <CardDescription>
-                How customers can reach you
-              </CardDescription>
+              <CardDescription>How customers can reach you</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -388,7 +415,9 @@ const SystemSettings = () => {
                     id="email"
                     type="email"
                     value={contactInfo.email}
-                    onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                    onChange={(e) =>
+                      setContactInfo({ ...contactInfo, email: e.target.value })
+                    }
                     placeholder="info@driptech.com"
                   />
                 </div>
@@ -397,7 +426,9 @@ const SystemSettings = () => {
                   <Input
                     id="phone"
                     value={contactInfo.phone}
-                    onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                    onChange={(e) =>
+                      setContactInfo({ ...contactInfo, phone: e.target.value })
+                    }
                     placeholder="+1-555-0123"
                   />
                 </div>
@@ -408,7 +439,9 @@ const SystemSettings = () => {
                 <Input
                   id="address"
                   value={contactInfo.address}
-                  onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
+                  onChange={(e) =>
+                    setContactInfo({ ...contactInfo, address: e.target.value })
+                  }
                   placeholder="123 Innovation Drive"
                 />
               </div>
@@ -419,7 +452,9 @@ const SystemSettings = () => {
                   <Input
                     id="city"
                     value={contactInfo.city}
-                    onChange={(e) => setContactInfo({ ...contactInfo, city: e.target.value })}
+                    onChange={(e) =>
+                      setContactInfo({ ...contactInfo, city: e.target.value })
+                    }
                     placeholder="Tech City"
                   />
                 </div>
@@ -428,7 +463,12 @@ const SystemSettings = () => {
                   <Input
                     id="country"
                     value={contactInfo.country}
-                    onChange={(e) => setContactInfo({ ...contactInfo, country: e.target.value })}
+                    onChange={(e) =>
+                      setContactInfo({
+                        ...contactInfo,
+                        country: e.target.value,
+                      })
+                    }
                     placeholder="United States"
                   />
                 </div>
@@ -437,16 +477,25 @@ const SystemSettings = () => {
                   <Input
                     id="postal_code"
                     value={contactInfo.postal_code}
-                    onChange={(e) => setContactInfo({ ...contactInfo, postal_code: e.target.value })}
+                    onChange={(e) =>
+                      setContactInfo({
+                        ...contactInfo,
+                        postal_code: e.target.value,
+                      })
+                    }
                     placeholder="12345"
                   />
                 </div>
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveContactInfo} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
+                <Button
+                  onClick={handleSaveContactInfo}
+                  disabled={saving}
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+                >
                   <Save className="mr-2 h-4 w-4" />
-                  {saving ? 'Saving...' : 'Save Contact Info'}
+                  {saving ? "Saving..." : "Save Contact Info"}
                 </Button>
               </div>
             </CardContent>
@@ -471,7 +520,12 @@ const SystemSettings = () => {
                   <Input
                     id="facebook"
                     value={socialMedia.facebook}
-                    onChange={(e) => setSocialMedia({ ...socialMedia, facebook: e.target.value })}
+                    onChange={(e) =>
+                      setSocialMedia({
+                        ...socialMedia,
+                        facebook: e.target.value,
+                      })
+                    }
                     placeholder="https://facebook.com/driptech"
                   />
                 </div>
@@ -480,7 +534,12 @@ const SystemSettings = () => {
                   <Input
                     id="twitter"
                     value={socialMedia.twitter}
-                    onChange={(e) => setSocialMedia({ ...socialMedia, twitter: e.target.value })}
+                    onChange={(e) =>
+                      setSocialMedia({
+                        ...socialMedia,
+                        twitter: e.target.value,
+                      })
+                    }
                     placeholder="https://twitter.com/driptech"
                   />
                 </div>
@@ -492,7 +551,12 @@ const SystemSettings = () => {
                   <Input
                     id="linkedin"
                     value={socialMedia.linkedin}
-                    onChange={(e) => setSocialMedia({ ...socialMedia, linkedin: e.target.value })}
+                    onChange={(e) =>
+                      setSocialMedia({
+                        ...socialMedia,
+                        linkedin: e.target.value,
+                      })
+                    }
                     placeholder="https://linkedin.com/company/driptech"
                   />
                 </div>
@@ -501,7 +565,12 @@ const SystemSettings = () => {
                   <Input
                     id="youtube"
                     value={socialMedia.youtube}
-                    onChange={(e) => setSocialMedia({ ...socialMedia, youtube: e.target.value })}
+                    onChange={(e) =>
+                      setSocialMedia({
+                        ...socialMedia,
+                        youtube: e.target.value,
+                      })
+                    }
                     placeholder="https://youtube.com/driptech"
                   />
                 </div>
@@ -512,15 +581,24 @@ const SystemSettings = () => {
                 <Input
                   id="instagram"
                   value={socialMedia.instagram}
-                  onChange={(e) => setSocialMedia({ ...socialMedia, instagram: e.target.value })}
+                  onChange={(e) =>
+                    setSocialMedia({
+                      ...socialMedia,
+                      instagram: e.target.value,
+                    })
+                  }
                   placeholder="https://instagram.com/driptech"
                 />
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveSocialMedia} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
+                <Button
+                  onClick={handleSaveSocialMedia}
+                  disabled={saving}
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+                >
                   <Save className="mr-2 h-4 w-4" />
-                  {saving ? 'Saving...' : 'Save Social Media'}
+                  {saving ? "Saving..." : "Save Social Media"}
                 </Button>
               </div>
             </CardContent>
@@ -544,7 +622,12 @@ const SystemSettings = () => {
                 <Input
                   id="meta_title"
                   value={seoSettings.meta_title}
-                  onChange={(e) => setSeoSettings({ ...seoSettings, meta_title: e.target.value })}
+                  onChange={(e) =>
+                    setSeoSettings({
+                      ...seoSettings,
+                      meta_title: e.target.value,
+                    })
+                  }
                   placeholder="DripTech - Advanced Irrigation Solutions"
                 />
               </div>
@@ -554,7 +637,12 @@ const SystemSettings = () => {
                 <Textarea
                   id="meta_description"
                   value={seoSettings.meta_description}
-                  onChange={(e) => setSeoSettings({ ...seoSettings, meta_description: e.target.value })}
+                  onChange={(e) =>
+                    setSeoSettings({
+                      ...seoSettings,
+                      meta_description: e.target.value,
+                    })
+                  }
                   placeholder="Leading provider of smart irrigation systems for modern agriculture"
                   rows={2}
                 />
@@ -565,7 +653,12 @@ const SystemSettings = () => {
                 <Input
                   id="meta_keywords"
                   value={seoSettings.meta_keywords}
-                  onChange={(e) => setSeoSettings({ ...seoSettings, meta_keywords: e.target.value })}
+                  onChange={(e) =>
+                    setSeoSettings({
+                      ...seoSettings,
+                      meta_keywords: e.target.value,
+                    })
+                  }
                   placeholder="irrigation, drip irrigation, smart farming, agriculture"
                 />
               </div>
@@ -576,25 +669,41 @@ const SystemSettings = () => {
                   <Input
                     id="google_analytics"
                     value={seoSettings.google_analytics}
-                    onChange={(e) => setSeoSettings({ ...seoSettings, google_analytics: e.target.value })}
+                    onChange={(e) =>
+                      setSeoSettings({
+                        ...seoSettings,
+                        google_analytics: e.target.value,
+                      })
+                    }
                     placeholder="G-XXXXXXXXXX"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="google_tag_manager">Google Tag Manager ID</Label>
+                  <Label htmlFor="google_tag_manager">
+                    Google Tag Manager ID
+                  </Label>
                   <Input
                     id="google_tag_manager"
                     value={seoSettings.google_tag_manager}
-                    onChange={(e) => setSeoSettings({ ...seoSettings, google_tag_manager: e.target.value })}
+                    onChange={(e) =>
+                      setSeoSettings({
+                        ...seoSettings,
+                        google_tag_manager: e.target.value,
+                      })
+                    }
                     placeholder="GTM-XXXXXXX"
                   />
                 </div>
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveSeoSettings} disabled={saving} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
+                <Button
+                  onClick={handleSaveSeoSettings}
+                  disabled={saving}
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+                >
                   <Save className="mr-2 h-4 w-4" />
-                  {saving ? 'Saving...' : 'Save SEO Settings'}
+                  {saving ? "Saving..." : "Save SEO Settings"}
                 </Button>
               </div>
             </CardContent>

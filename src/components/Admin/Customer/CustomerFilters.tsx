@@ -1,6 +1,11 @@
-
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Plus, Download } from "lucide-react";
 
@@ -23,7 +28,7 @@ const CustomerFilters = ({
   sortBy,
   setSortBy,
   onAddCustomer,
-  onExport
+  onExport,
 }: CustomerFiltersProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">

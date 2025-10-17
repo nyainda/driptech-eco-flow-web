@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, FolderOpen, HardDrive } from "lucide-react";
 
@@ -37,7 +36,9 @@ const DocumentStats = ({ stats }: DocumentStatsProps) => {
           <Download className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.totalDownloads.toLocaleString()}</div>
+          <div className="text-2xl font-bold">
+            {stats.totalDownloads.toLocaleString()}
+          </div>
         </CardContent>
       </Card>
 
@@ -57,7 +58,9 @@ const DocumentStats = ({ stats }: DocumentStatsProps) => {
           <HardDrive className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatStorage(stats.storageUsed)}</div>
+          <div className="text-2xl font-bold">
+            {formatStorage(stats.storageUsed)}
+          </div>
         </CardContent>
       </Card>
     </div>

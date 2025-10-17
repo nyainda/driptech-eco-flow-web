@@ -1,20 +1,26 @@
-import React from 'react';
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Printer } from "lucide-react";
 
-import { CompanyHeader } from './Quote/Header';
-import { AddressSection } from './Quote/AddressSection';
-import { ProjectDetails } from './Quote/ProjectDetails';
-import { BOQTable } from './Quote/BillOfQuantities';
-import { TotalsSection } from './Quote/Totals';
-import { NotesSection } from './Quote/Notes';
-import { Footer } from './Quote/Footer';
-import { QuotePDFProps } from './Quote/types';
-import { usePrintHandlers } from '@/hooks/usePrintHandlers';
+import { CompanyHeader } from "./Quote/Header";
+import { AddressSection } from "./Quote/AddressSection";
+import { ProjectDetails } from "./Quote/ProjectDetails";
+import { BOQTable } from "./Quote/BillOfQuantities";
+import { TotalsSection } from "./Quote/Totals";
+import { NotesSection } from "./Quote/Notes";
+import { Footer } from "./Quote/Footer";
+import { QuotePDFProps } from "./Quote/types";
+import { usePrintHandlers } from "@/hooks/usePrintHandlers";
 
-export const QuotePDF: React.FC<QuotePDFProps> = ({ quote, items, customer, onEdit }) => {
-  const { handlePrint, handleDownloadPDF, isPrinting, isDownloading } = usePrintHandlers();
+export const QuotePDF: React.FC<QuotePDFProps> = ({
+  quote,
+  items,
+  customer,
+  onEdit,
+}) => {
+  const { handlePrint, handleDownloadPDF, isPrinting, isDownloading } =
+    usePrintHandlers();
 
   return (
     <div className="bg-background min-h-screen print:bg-background">
@@ -27,27 +33,37 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({ quote, items, customer, onEd
                   DT
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground mb-1">DripTech Solutions</h1>
-                  <p className="text-muted-foreground font-medium">Smart Irrigation Systems</p>
+                  <h1 className="text-2xl font-bold text-foreground mb-1">
+                    DripTech Solutions
+                  </h1>
+                  <p className="text-muted-foreground font-medium">
+                    Smart Irrigation Systems
+                  </p>
                 </div>
               </div>
               <div className="text-center">
-                <h2 className="text-3xl font-bold text-foreground mb-2">QUOTATION</h2>
+                <h2 className="text-3xl font-bold text-foreground mb-2">
+                  QUOTATION
+                </h2>
                 <div className="bg-background border border-border p-3 rounded-lg">
-                  <div className="text-sm font-semibold text-foreground">Quote #: {quote.quote_number}</div>
-                  <div className="text-sm text-muted-foreground">Date: {new Date(quote.created_at).toLocaleDateString()}</div>
+                  <div className="text-sm font-semibold text-foreground">
+                    Quote #: {quote.quote_number}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Date: {new Date(quote.created_at).toLocaleDateString()}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div className="p-8">
             <AddressSection customer={customer} />
             <ProjectDetails quote={quote} />
             <BOQTable items={items} />
             <TotalsSection quote={quote} items={items} />
             <NotesSection notes={quote.notes} />
-            
+
             <Footer />
           </div>
         </div>
@@ -63,55 +79,68 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({ quote, items, customer, onEd
                     DT
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-foreground mb-1">DripTech Solutions</h1>
-                    <p className="text-muted-foreground font-medium">Smart Irrigation Systems</p>
+                    <h1 className="text-2xl font-bold text-foreground mb-1">
+                      DripTech Solutions
+                    </h1>
+                    <p className="text-muted-foreground font-medium">
+                      Smart Irrigation Systems
+                    </p>
                   </div>
                 </div>
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold text-foreground mb-2">QUOTATION</h2>
+                  <h2 className="text-3xl font-bold text-foreground mb-2">
+                    QUOTATION
+                  </h2>
                   <div className="bg-background border border-border p-3 rounded-lg">
-                    <div className="text-sm font-semibold text-foreground">Quote #: {quote.quote_number}</div>
-                    <div className="text-sm text-muted-foreground">Date: {new Date(quote.created_at).toLocaleDateString()}</div>
+                    <div className="text-sm font-semibold text-foreground">
+                      Quote #: {quote.quote_number}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Date: {new Date(quote.created_at).toLocaleDateString()}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="p-8">
               <AddressSection customer={customer} />
               <ProjectDetails quote={quote} />
               <BOQTable items={items} onEdit={onEdit} />
               <TotalsSection quote={quote} items={items} />
               <NotesSection notes={quote.notes} />
-              
+
               <Footer />
             </div>
           </CardContent>
         </Card>
 
         <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4 px-8">
-          <Button 
-            onClick={() => handlePrint(quote, items, customer)} 
+          <Button
+            onClick={() => handlePrint(quote, items, customer)}
             className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
             disabled={isPrinting}
           >
             <Printer className="h-5 w-5" />
-            {isPrinting ? 'Printing...' : 'Print Quote'}
+            {isPrinting ? "Printing..." : "Print Quote"}
           </Button>
-          
-          <Button 
-            onClick={() => handleDownloadPDF(quote, items, customer)} 
-            variant="outline" 
+
+          <Button
+            onClick={() => handleDownloadPDF(quote, items, customer)}
+            variant="outline"
             className="border-border text-muted-foreground hover:bg-muted flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
             disabled={isDownloading}
           >
             <Download className="h-5 w-5" />
-            {isDownloading ? 'Generating PDF...' : 'Download PDF'}
+            {isDownloading ? "Generating PDF..." : "Download PDF"}
           </Button>
         </div>
 
         <div className="mt-6 text-center text-sm text-muted-foreground px-8">
-          <p>💡 <strong>Tip:</strong> Download generates a professional PDF file directly to your computer</p>
+          <p>
+            💡 <strong>Tip:</strong> Download generates a professional PDF file
+            directly to your computer
+          </p>
         </div>
       </div>
     </div>

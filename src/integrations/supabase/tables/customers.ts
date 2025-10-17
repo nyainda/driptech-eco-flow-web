@@ -1,5 +1,4 @@
-
-import { Json, DatabaseWithoutInternals } from '../shared';
+import { Json, DatabaseWithoutInternals } from "../shared";
 
 export type Customers = {
   Row: {

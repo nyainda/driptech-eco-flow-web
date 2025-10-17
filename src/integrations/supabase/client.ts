@@ -1,49 +1,55 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './types';
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "./types";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  throw new Error('Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.');
+  throw new Error(
+    "Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.",
+  );
 }
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true, // For OAuth flows
-    flowType: 'pkce', // More secure auth flow
-  },
-  // Optional: Add global settings
-  global: {
-    headers: {
-      'x-my-custom-header': 'my-app-name',
+export const supabase = createClient<Database>(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      storage: localStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true, // For OAuth flows
+      flowType: "pkce", // More secure auth flow
+    },
+    // Optional: Add global settings
+    global: {
+      headers: {
+        "x-my-custom-header": "my-app-name",
+      },
     },
   },
-});
+);
 
 // Global auth state listener for handling token events
 supabase.auth.onAuthStateChange((event, session) => {
-  console.log('Auth event:', event, session?.user?.email);
-  
+  console.log("Auth event:", event, session?.user?.email);
+
   switch (event) {
-    case 'SIGNED_IN':
-      console.log('User signed in successfully');
+    case "SIGNED_IN":
+      console.log("User signed in successfully");
       break;
-    case 'SIGNED_OUT':
-      console.log('User signed out');
+    case "SIGNED_OUT":
+      console.log("User signed out");
       // Clear any app-specific cached data here if needed
       break;
-    case 'TOKEN_REFRESHED':
-      console.log('Token refreshed successfully');
+    case "TOKEN_REFRESHED":
+      console.log("Token refreshed successfully");
       break;
-    case 'USER_UPDATED':
-      console.log('User updated');
+    case "USER_UPDATED":
+      console.log("User updated");
       break;
-    case 'PASSWORD_RECOVERY':
-      console.log('Password recovery initiated');
+    case "PASSWORD_RECOVERY":
+      console.log("Password recovery initiated");
       break;
   }
 });
@@ -51,7 +57,10 @@ supabase.auth.onAuthStateChange((event, session) => {
 // Helper function to check if user is authenticated
 export const isAuthenticated = async (): Promise<boolean> => {
   try {
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
     return !error && !!session;
   } catch {
     return false;
@@ -61,7 +70,10 @@ export const isAuthenticated = async (): Promise<boolean> => {
 // Helper function to get current user
 export const getCurrentUser = async () => {
   try {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
     return error ? null : user;
   } catch {
     return null;
@@ -71,26 +83,29 @@ export const getCurrentUser = async () => {
 // Helper function for handling API calls with automatic retry on token refresh
 export const withRetry = async <T>(
   apiCall: () => Promise<T>,
-  maxRetries: number = 1
+  maxRetries: number = 1,
 ): Promise<T> => {
   try {
     return await apiCall();
   } catch (error: any) {
     // If JWT expired and we haven't exhausted retries
-    if (error?.code === 'PGRST301' && maxRetries > 0) {
-      console.log('JWT expired, attempting to refresh session...');
-      
+    if (error?.code === "PGRST301" && maxRetries > 0) {
+      console.log("JWT expired, attempting to refresh session...");
+
       // Force a session refresh
-      const { data: { session }, error: refreshError } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+        error: refreshError,
+      } = await supabase.auth.getSession();
+
       if (refreshError || !session) {
-        throw new Error('Unable to refresh session');
+        throw new Error("Unable to refresh session");
       }
-      
+
       // Retry the API call
       return withRetry(apiCall, maxRetries - 1);
     }
-    
+
     throw error;
   }
 };

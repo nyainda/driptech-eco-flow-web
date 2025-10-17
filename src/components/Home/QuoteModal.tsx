@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import QuoteForm from "./QuoteForm";
 
@@ -16,14 +23,13 @@ const QuoteModal = ({ children }: QuoteModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Get Your Custom Quote</DialogTitle>
           <DialogDescription>
-            Fill out the form below and we'll provide a detailed quote tailored to your irrigation needs.
+            Fill out the form below and we'll provide a detailed quote tailored
+            to your irrigation needs.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">

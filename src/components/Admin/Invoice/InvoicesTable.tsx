@@ -1,8 +1,18 @@
-import React from 'react';
-import { FileText, Eye, Edit, Download, Printer, Send, CheckCircle, Trash2, Clock } from 'lucide-react';
-import { Invoice } from '../types/InvoiceTypes';
-import { formatCurrency, formatDate } from '../utils/formatters';
-import StatusBadge from './StatusBadge';
+import React from "react";
+import {
+  FileText,
+  Eye,
+  Edit,
+  Download,
+  Printer,
+  Send,
+  CheckCircle,
+  Trash2,
+  Clock,
+} from "lucide-react";
+import { Invoice } from "../types/InvoiceTypes";
+import { formatCurrency, formatDate } from "../utils/formatters";
+import StatusBadge from "./StatusBadge";
 
 interface InvoicesTableProps {
   invoices: Invoice[];
@@ -21,13 +31,13 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
   onDownloadPDF,
   onUpdateStatus,
   onDeleteInvoice,
-  getDaysOverdue
+  getDaysOverdue,
 }) => {
   const formatCompactDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -36,7 +46,9 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
       <div className="bg-background rounded-xl shadow-lg border border-border">
         <div className="text-center py-12">
           <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-foreground mb-2">No invoices found</h3>
+          <h3 className="text-lg font-bold text-foreground mb-2">
+            No invoices found
+          </h3>
           <p className="text-muted-foreground text-sm">
             Try adjusting your search or filter criteria
           </p>
@@ -71,14 +83,17 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
               </th>
             </tr>
           </thead>
-          
+
           <tbody className="divide-y divide-border">
             {invoices.map((invoice, index) => {
-              const daysOverdue = getDaysOverdue(invoice.due_date, invoice.status || 'draft');
-              const isOverdue = daysOverdue > 0 && invoice.status !== 'paid';
-              
+              const daysOverdue = getDaysOverdue(
+                invoice.due_date,
+                invoice.status || "draft",
+              );
+              const isOverdue = daysOverdue > 0 && invoice.status !== "paid";
+
               return (
-                <tr 
+                <tr
                   key={invoice.id}
                   className="group hover:bg-muted transition-colors duration-200"
                 >
@@ -92,7 +107,17 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
                           {invoice.invoice_number}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {formatCompactDate(invoice.created_at || new Date().toISOString())} • {new Date(invoice.created_at || new Date().toISOString()).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                          {formatCompactDate(
+                            invoice.created_at || new Date().toISOString(),
+                          )}{" "}
+                          •{" "}
+                          {new Date(
+                            invoice.created_at || new Date().toISOString(),
+                          ).toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
                         </div>
                       </div>
                     </div>
@@ -101,7 +126,7 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
                   <td className="px-3 py-3">
                     <div className="min-w-0">
                       <div className="text-sm font-medium text-foreground truncate">
-                        {invoice.customer?.company_name || 'Unknown Company'}
+                        {invoice.customer?.company_name || "Unknown Company"}
                       </div>
                       {invoice.customer?.contact_person && (
                         <div className="text-xs text-muted-foreground truncate">
@@ -123,7 +148,7 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
                   </td>
 
                   <td className="px-3 py-3 text-center">
-                    <StatusBadge status={invoice.status || 'draft'} />
+                    <StatusBadge status={invoice.status || "draft"} />
                     {isOverdue && (
                       <div className="text-xs text-destructive font-medium mt-1">
                         {daysOverdue}d overdue
@@ -132,11 +157,11 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
                   </td>
 
                   <td className="px-3 py-3 text-center">
-                    <div className={`text-sm font-medium ${
-                      isOverdue 
-                        ? 'text-destructive' 
-                        : 'text-foreground'
-                    }`}>
+                    <div
+                      className={`text-sm font-medium ${
+                        isOverdue ? "text-destructive" : "text-foreground"
+                      }`}
+                    >
                       {formatCompactDate(invoice.due_date)}
                     </div>
                     {isOverdue && (
@@ -153,16 +178,16 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
                       >
                         <Eye className="w-3.5 h-3.5" />
                       </button>
-                      
+
                       <button
                         onClick={() => onEditInvoice(invoice)}
                         className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Edit"
-                        disabled={invoice.status === 'paid'}
+                        disabled={invoice.status === "paid"}
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
-                      
+
                       <button
                         onClick={() => onDownloadPDF(invoice)}
                         className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200"
@@ -170,40 +195,46 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
                       >
                         <Download className="w-3.5 h-3.5" />
                       </button>
-                      
-                      {invoice.status === 'draft' && (
+
+                      {invoice.status === "draft" && (
                         <button
-                          onClick={() => onUpdateStatus(invoice.id, 'sent')}
+                          onClick={() => onUpdateStatus(invoice.id, "sent")}
                           className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200"
                           title="Send"
                         >
                           <Send className="w-3.5 h-3.5" />
                         </button>
                       )}
-                      
-                      {invoice.status === 'sent' && (
+
+                      {invoice.status === "sent" && (
                         <button
-                          onClick={() => onUpdateStatus(invoice.id, 'paid')}
+                          onClick={() => onUpdateStatus(invoice.id, "paid")}
                           className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200"
                           title="Mark Paid"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
                         </button>
                       )}
-                      
+
                       <div className="relative group">
                         <button
                           className="p-1.5 text-muted-foreground hover:bg-muted rounded-lg transition-colors duration-200"
                           title="More actions"
                         >
-                          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                          <svg
+                            className="w-3.5 h-3.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
                             <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                           </svg>
                         </button>
-                        
+
                         <div className="absolute right-0 top-full mt-1 w-32 bg-background rounded-lg shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-20">
                           <button
-                            onClick={() => console.log('Print invoice:', invoice.id)}
+                            onClick={() =>
+                              console.log("Print invoice:", invoice.id)
+                            }
                             className="w-full px-3 py-2 text-left text-xs text-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"
                           >
                             <Printer className="w-3 h-3" />
@@ -229,10 +260,18 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
 
       <div className="bg-muted px-4 py-2 border-t border-border">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>{invoices.length} invoice{invoices.length !== 1 ? 's' : ''}</span>
+          <span>
+            {invoices.length} invoice{invoices.length !== 1 ? "s" : ""}
+          </span>
           <div className="flex items-center gap-4">
             <span className="font-medium text-foreground">
-              Total: {formatCurrency(invoices.reduce((sum, invoice) => sum + invoice.total_amount, 0))}
+              Total:{" "}
+              {formatCurrency(
+                invoices.reduce(
+                  (sum, invoice) => sum + invoice.total_amount,
+                  0,
+                ),
+              )}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="w-3 h-3" />

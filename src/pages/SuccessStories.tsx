@@ -38,12 +38,16 @@ const SuccessStories = () => {
         {/* Hero */}
         <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
           <div className="container mx-auto px-4 text-center">
-            <Badge variant="secondary" className="mb-4">🏆 Success Stories</Badge>
+            <Badge variant="secondary" className="mb-4">
+              🏆 Success Stories
+            </Badge>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Real Results from <span className="text-primary">Real Customers</span>
+              Real Results from{" "}
+              <span className="text-primary">Real Customers</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-              Discover how our irrigation solutions have transformed farms, boosted yields, and improved lives globally.
+              Discover how our irrigation solutions have transformed farms,
+              boosted yields, and improved lives globally.
             </p>
           </div>
         </section>
@@ -88,10 +92,14 @@ const SuccessStories = () => {
                     {/* Content */}
                     <CardContent className="p-4 sm:p-6 flex flex-col flex-grow">
                       {story.featured && (
-                        <Badge variant="secondary" className="mb-3">⭐ Featured Story</Badge>
+                        <Badge variant="secondary" className="mb-3">
+                          ⭐ Featured Story
+                        </Badge>
                       )}
 
-                      <h3 className="text-lg sm:text-xl font-semibold mb-2">{story.title}</h3>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                        {story.title}
+                      </h3>
 
                       <div className="flex items-center gap-2 text-muted-foreground mb-3">
                         <Building className="h-4 w-4 flex-shrink-0" />
@@ -142,7 +150,9 @@ const SuccessStories = () => {
             ) : (
               <div className="text-center py-12 sm:py-16 md:py-20 px-4">
                 <Award className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">No Success Stories Yet</h3>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                  No Success Stories Yet
+                </h3>
                 <p className="text-sm sm:text-base text-muted-foreground">
                   Stories will appear here once available from our community.
                 </p>

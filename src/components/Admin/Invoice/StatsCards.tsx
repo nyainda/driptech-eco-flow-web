@@ -1,8 +1,8 @@
 // components/StatsCards.tsx
-import React from 'react';
-import { FileText, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
-import { InvoiceStats } from '../types/InvoiceTypes';
-import { formatCurrency } from '../utils/formatters';
+import React from "react";
+import { FileText, DollarSign, CheckCircle, AlertCircle } from "lucide-react";
+import { InvoiceStats } from "../types/InvoiceTypes";
+import { formatCurrency } from "../utils/formatters";
 
 interface StatsCardsProps {
   stats: InvoiceStats;

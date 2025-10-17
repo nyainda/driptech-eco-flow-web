@@ -1,25 +1,24 @@
-
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Bell, 
-  Mail, 
-  FileText, 
-  ShoppingCart, 
-  Users, 
-  Calendar, 
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  Bell,
+  Mail,
+  FileText,
+  ShoppingCart,
+  Users,
+  Calendar,
   Settings,
   AlertCircle,
   X,
   MarkAsUnreadIcon,
-  Trash2
-} from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+  Trash2,
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Notification {
   id: string;
@@ -35,112 +34,126 @@ const NotificationSystem = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
   const { toast } = useToast();
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   // Initialize notifications from existing data
   const initializeNotifications = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch recent contact submissions
       const { data: contacts, error: contactsError } = await supabase
-        .from('contact_submissions')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("contact_submissions")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(10);
 
-      if (contactsError && !contactsError.message.includes('relation "contact_submissions" does not exist')) {
-        console.error('Error fetching contacts:', contactsError);
+      if (
+        contactsError &&
+        !contactsError.message.includes(
+          'relation "contact_submissions" does not exist',
+        )
+      ) {
+        console.error("Error fetching contacts:", contactsError);
       }
 
       // Fetch recent quotes
       const { data: quotes, error: quotesError } = await supabase
-        .from('quotes')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("quotes")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(10);
 
-      if (quotesError && !quotesError.message.includes('relation "quotes" does not exist')) {
-        console.error('Error fetching quotes:', quotesError);
+      if (
+        quotesError &&
+        !quotesError.message.includes('relation "quotes" does not exist')
+      ) {
+        console.error("Error fetching quotes:", quotesError);
       }
 
       // Fetch recent projects
       const { data: projects, error: projectsError } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("projects")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(5);
 
-      if (projectsError && !projectsError.message.includes('relation "projects" does not exist')) {
-        console.error('Error fetching projects:', projectsError);
+      if (
+        projectsError &&
+        !projectsError.message.includes('relation "projects" does not exist')
+      ) {
+        console.error("Error fetching projects:", projectsError);
       }
 
       // Fetch recent blog posts
       const { data: blogs, error: blogsError } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("blog_posts")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(5);
 
-      if (blogsError && !blogsError.message.includes('relation "blog_posts" does not exist')) {
-        console.error('Error fetching blogs:', blogsError);
+      if (
+        blogsError &&
+        !blogsError.message.includes('relation "blog_posts" does not exist')
+      ) {
+        console.error("Error fetching blogs:", blogsError);
       }
 
       // Convert data to notifications
       const allNotifications: Notification[] = [];
 
       // Add contact submission notifications
-      (contacts || []).forEach(contact => {
+      (contacts || []).forEach((contact) => {
         allNotifications.push({
           id: `contact_${contact.id}`,
-          type: 'contact_submission',
-          title: 'New Contact Submission',
-          message: `${contact.name || 'Someone'} submitted a contact form: ${contact.subject || 'No subject'}`,
+          type: "contact_submission",
+          title: "New Contact Submission",
+          message: `${contact.name || "Someone"} submitted a contact form: ${contact.subject || "No subject"}`,
           timestamp: new Date(contact.created_at),
           read: false,
-          data: contact
+          data: contact,
         });
       });
 
       // Add quote notifications
-      (quotes || []).forEach(quote => {
+      (quotes || []).forEach((quote) => {
         allNotifications.push({
           id: `quote_${quote.id}`,
-          type: 'quote',
-          title: 'New Quote Request',
-          message: `Quote #${quote.quote_number} for ${quote.customer_name || 'Unknown customer'} - ${quote.project_type || 'General'}`,
+          type: "quote",
+          title: "New Quote Request",
+          message: `Quote #${quote.quote_number} for ${quote.customer_name || "Unknown customer"} - ${quote.project_type || "General"}`,
           timestamp: new Date(quote.created_at),
           read: false,
-          data: quote
+          data: quote,
         });
       });
 
       // Add project notifications
-      (projects || []).forEach(project => {
+      (projects || []).forEach((project) => {
         allNotifications.push({
           id: `project_${project.id}`,
-          type: 'project',
-          title: 'Project Update',
-          message: `Project "${project.name}" status: ${project.status || 'Active'}`,
+          type: "project",
+          title: "Project Update",
+          message: `Project "${project.name}" status: ${project.status || "Active"}`,
           timestamp: new Date(project.created_at),
           read: false,
-          data: project
+          data: project,
         });
       });
 
       // Add blog notifications
-      (blogs || []).forEach(blog => {
+      (blogs || []).forEach((blog) => {
         allNotifications.push({
           id: `blog_${blog.id}`,
-          type: 'blog_post',
-          title: 'New Blog Post',
+          type: "blog_post",
+          title: "New Blog Post",
           message: `New blog post published: "${blog.title}"`,
           timestamp: new Date(blog.created_at),
           read: false,
-          data: blog
+          data: blog,
         });
       });
 
@@ -150,13 +163,12 @@ const NotificationSystem = () => {
         .slice(0, 50);
 
       setNotifications(sortedNotifications);
-      
     } catch (error) {
-      console.error('Error initializing notifications:', error);
+      console.error("Error initializing notifications:", error);
       toast({
         title: "Error",
         description: "Failed to load notifications",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -166,26 +178,30 @@ const NotificationSystem = () => {
   // Set up real-time subscriptions
   useEffect(() => {
     const channels: any[] = [];
-    
-    console.log('Setting up notification subscriptions...');
+
+    console.log("Setting up notification subscriptions...");
 
     try {
       // Subscribe to contact submissions
       const contactChannel = supabase
-        .channel('contact_submissions')
-        .on('postgres_changes', 
-          { event: 'INSERT', schema: 'public', table: 'contact_submissions' },
+        .channel("contact_submissions")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "contact_submissions" },
           (payload) => {
             try {
-              addNotification('contact_submission', {
-                title: 'New Contact Submission',
-                message: `${payload.new.name || 'Someone'} submitted a contact form: ${payload.new.subject || 'No subject'}`,
-                data: payload.new
+              addNotification("contact_submission", {
+                title: "New Contact Submission",
+                message: `${payload.new.name || "Someone"} submitted a contact form: ${payload.new.subject || "No subject"}`,
+                data: payload.new,
               });
             } catch (error) {
-              console.error('Error processing contact submission notification:', error);
+              console.error(
+                "Error processing contact submission notification:",
+                error,
+              );
             }
-          }
+          },
         )
         .subscribe();
 
@@ -193,20 +209,21 @@ const NotificationSystem = () => {
 
       // Subscribe to quotes
       const quoteChannel = supabase
-        .channel('quotes')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'quotes' },
+        .channel("quotes")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "quotes" },
           (payload) => {
             try {
-              addNotification('quote', {
-                title: 'New Quote Request',
-                message: `Quote #${payload.new.quote_number} for ${payload.new.customer_name || 'Unknown customer'}`,
-                data: payload.new
+              addNotification("quote", {
+                title: "New Quote Request",
+                message: `Quote #${payload.new.quote_number} for ${payload.new.customer_name || "Unknown customer"}`,
+                data: payload.new,
               });
             } catch (error) {
-              console.error('Error processing quote notification:', error);
+              console.error("Error processing quote notification:", error);
             }
-          }
+          },
         )
         .subscribe();
 
@@ -214,24 +231,28 @@ const NotificationSystem = () => {
 
       // Subscribe to projects
       const projectChannel = supabase
-        .channel('projects')
-        .on('postgres_changes',
-          { event: '*', schema: 'public', table: 'projects' },
+        .channel("projects")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "projects" },
           (payload) => {
             try {
               const eventType = payload.eventType;
-              const title = eventType === 'INSERT' ? 'New Project Created' : 'Project Updated';
-              const message = `Project "${payload.new.name}" ${eventType === 'INSERT' ? 'created' : 'updated'}`;
-              
-              addNotification('project', {
+              const title =
+                eventType === "INSERT"
+                  ? "New Project Created"
+                  : "Project Updated";
+              const message = `Project "${payload.new.name}" ${eventType === "INSERT" ? "created" : "updated"}`;
+
+              addNotification("project", {
                 title,
                 message,
-                data: payload.new
+                data: payload.new,
               });
             } catch (error) {
-              console.error('Error processing project notification:', error);
+              console.error("Error processing project notification:", error);
             }
-          }
+          },
         )
         .subscribe();
 
@@ -239,29 +260,29 @@ const NotificationSystem = () => {
 
       // Subscribe to blog posts
       const blogChannel = supabase
-        .channel('blog_posts')
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'blog_posts' },
+        .channel("blog_posts")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "blog_posts" },
           (payload) => {
             try {
-              addNotification('blog_post', {
-                title: 'New Blog Post',
+              addNotification("blog_post", {
+                title: "New Blog Post",
                 message: `New blog post published: "${payload.new.title}"`,
-                data: payload.new
+                data: payload.new,
               });
             } catch (error) {
-              console.error('Error processing blog notification:', error);
+              console.error("Error processing blog notification:", error);
             }
-          }
+          },
         )
         .subscribe();
 
       channels.push(blogChannel);
 
       console.log(`Set up ${channels.length} notification channels`);
-
     } catch (error) {
-      console.error('Error setting up subscriptions:', error);
+      console.error("Error setting up subscriptions:", error);
     }
 
     // Initialize notifications
@@ -269,19 +290,22 @@ const NotificationSystem = () => {
 
     // Cleanup subscriptions
     return () => {
-      console.log('Cleaning up notification subscriptions...');
-      channels.forEach(channel => {
+      console.log("Cleaning up notification subscriptions...");
+      channels.forEach((channel) => {
         try {
           supabase.removeChannel(channel);
         } catch (error) {
-          console.error('Error removing channel:', error);
+          console.error("Error removing channel:", error);
         }
       });
     };
   }, []);
 
-  const addNotification = (type: string, { title, message, data }: { title: string; message: string; data?: any }) => {
-    console.log('Adding notification:', { type, title, message });
+  const addNotification = (
+    type: string,
+    { title, message, data }: { title: string; message: string; data?: any },
+  ) => {
+    console.log("Adding notification:", { type, title, message });
     const newNotification: Notification = {
       id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type,
@@ -289,12 +313,12 @@ const NotificationSystem = () => {
       message,
       timestamp: new Date(),
       read: false,
-      data
+      data,
     };
 
-    setNotifications(prev => {
+    setNotifications((prev) => {
       const updated = [newNotification, ...prev].slice(0, 50);
-      console.log('Updated notifications:', updated.length);
+      console.log("Updated notifications:", updated.length);
       return updated;
     });
 
@@ -302,7 +326,7 @@ const NotificationSystem = () => {
     toast({
       title: title,
       description: message,
-      duration: 5000
+      duration: 5000,
     });
   };
 
@@ -317,42 +341,44 @@ const NotificationSystem = () => {
       blog_post: Settings,
       success_story: Settings,
       video: Settings,
-      document: Settings
+      document: Settings,
     };
-    
+
     const IconComponent = iconMap[type as keyof typeof iconMap] || AlertCircle;
     return <IconComponent className="w-5 h-5" />;
   };
 
   const getNotificationColor = (type: string) => {
     const colorMap = {
-      contact_submission: 'bg-blue-100 text-blue-800',
-      quote: 'bg-green-100 text-green-800',
-      mpesa_transaction: 'bg-yellow-100 text-yellow-800',
-      invoice: 'bg-purple-100 text-purple-800',
-      customer: 'bg-indigo-100 text-indigo-800',
-      project: 'bg-orange-100 text-orange-800',
-      blog_post: 'bg-pink-100 text-pink-800',
-      success_story: 'bg-teal-100 text-teal-800',
-      video: 'bg-red-100 text-red-800',
-      document: 'bg-gray-100 text-gray-800'
+      contact_submission: "bg-blue-100 text-blue-800",
+      quote: "bg-green-100 text-green-800",
+      mpesa_transaction: "bg-yellow-100 text-yellow-800",
+      invoice: "bg-purple-100 text-purple-800",
+      customer: "bg-indigo-100 text-indigo-800",
+      project: "bg-orange-100 text-orange-800",
+      blog_post: "bg-pink-100 text-pink-800",
+      success_story: "bg-teal-100 text-teal-800",
+      video: "bg-red-100 text-red-800",
+      document: "bg-gray-100 text-gray-800",
     };
-    
-    return colorMap[type as keyof typeof colorMap] || 'bg-gray-100 text-gray-800';
+
+    return (
+      colorMap[type as keyof typeof colorMap] || "bg-gray-100 text-gray-800"
+    );
   };
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   const deleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const clearAllNotifications = () => {
@@ -360,9 +386,9 @@ const NotificationSystem = () => {
     setShowDropdown(false);
   };
 
-  const filteredNotifications = notifications.filter(n => {
-    if (filter === 'unread') return !n.read;
-    if (filter === 'read') return n.read;
+  const filteredNotifications = notifications.filter((n) => {
+    if (filter === "unread") return !n.read;
+    if (filter === "read") return n.read;
     return true;
   });
 
@@ -373,7 +399,7 @@ const NotificationSystem = () => {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
@@ -400,11 +426,11 @@ const NotificationSystem = () => {
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
-          <Badge 
-            variant="destructive" 
+          <Badge
+            variant="destructive"
             className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs p-0 min-w-[20px]"
           >
-            {unreadCount > 99 ? '99+' : unreadCount}
+            {unreadCount > 99 ? "99+" : unreadCount}
           </Badge>
         )}
       </Button>
@@ -435,18 +461,18 @@ const NotificationSystem = () => {
                 </Button>
               </div>
             </div>
-            
+
             <div className="flex gap-2 mt-2">
-              {['all', 'unread', 'read'].map(filterType => (
+              {["all", "unread", "read"].map((filterType) => (
                 <Button
                   key={filterType}
-                  variant={filter === filterType ? 'default' : 'outline'}
+                  variant={filter === filterType ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilter(filterType)}
                   className="text-xs capitalize"
                 >
                   {filterType}
-                  {filterType === 'unread' && unreadCount > 0 && (
+                  {filterType === "unread" && unreadCount > 0 && (
                     <Badge variant="secondary" className="ml-1">
                       {unreadCount}
                     </Badge>
@@ -469,15 +495,17 @@ const NotificationSystem = () => {
                     <div key={notification.id}>
                       <div
                         className={`p-3 hover:bg-muted/50 cursor-pointer transition-colors ${
-                          !notification.read ? 'bg-muted/30' : ''
+                          !notification.read ? "bg-muted/30" : ""
                         }`}
                         onClick={() => markAsRead(notification.id)}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`p-1 rounded-full ${getNotificationColor(notification.type)}`}>
+                          <div
+                            className={`p-1 rounded-full ${getNotificationColor(notification.type)}`}
+                          >
                             {getNotificationIcon(notification.type)}
                           </div>
-                          
+
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                               <h4 className="text-sm font-medium truncate">
@@ -500,16 +528,16 @@ const NotificationSystem = () => {
                                 </Button>
                               </div>
                             </div>
-                            
+
                             <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                               {notification.message}
                             </p>
 
                             <div className="flex items-center justify-between mt-2">
                               <Badge variant="outline" className="text-xs">
-                                {notification.type.replace('_', ' ')}
+                                {notification.type.replace("_", " ")}
                               </Badge>
-                              
+
                               {!notification.read && (
                                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                               )}
@@ -517,13 +545,15 @@ const NotificationSystem = () => {
                           </div>
                         </div>
                       </div>
-                      {index < filteredNotifications.length - 1 && <Separator />}
+                      {index < filteredNotifications.length - 1 && (
+                        <Separator />
+                      )}
                     </div>
                   ))}
                 </div>
               )}
             </ScrollArea>
-            
+
             {notifications.length > 0 && (
               <>
                 <Separator />

@@ -1,7 +1,11 @@
 // hooks/useInvoiceData.ts
-import { useState } from 'react';
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Invoice, Customer, Quote } from '@/components/Admin/types/InvoiceTypes';
+import {
+  Invoice,
+  Customer,
+  Quote,
+} from "@/components/Admin/types/InvoiceTypes";
 
 export const useInvoiceData = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -14,23 +18,25 @@ export const useInvoiceData = () => {
     try {
       setLoading(true);
       const { data: invoiceData, error } = await supabase
-        .from('invoices')
-        .select(`
+        .from("invoices")
+        .select(
+          `
           *,
           customer:customers(*),
           invoice_items(*)
-        `)
-        .order('created_at', { ascending: false });
-        
+        `,
+        )
+        .order("created_at", { ascending: false });
+
       if (error) {
-        console.error('Error loading invoices:', error);
+        console.error("Error loading invoices:", error);
         return;
       }
-      
+
       // Type assertion to ensure compatibility
       setInvoices((invoiceData || []) as Invoice[]);
     } catch (error) {
-      console.error('Error loading invoices:', error);
+      console.error("Error loading invoices:", error);
     } finally {
       setLoading(false);
     }
@@ -40,18 +46,18 @@ export const useInvoiceData = () => {
   const loadCustomers = async () => {
     try {
       const { data: customerData, error } = await supabase
-        .from('customers')
-        .select('*')
-        .order('company_name');
-        
+        .from("customers")
+        .select("*")
+        .order("company_name");
+
       if (error) {
-        console.error('Error loading customers:', error);
+        console.error("Error loading customers:", error);
         return;
       }
-      
+
       setCustomers((customerData || []) as Customer[]);
     } catch (error) {
-      console.error('Error loading customers:', error);
+      console.error("Error loading customers:", error);
     }
   };
 
@@ -59,19 +65,19 @@ export const useInvoiceData = () => {
   const loadQuotes = async () => {
     try {
       const { data: quoteData, error } = await supabase
-        .from('quotes')
-        .select('*')
-        .eq('status', 'accepted')
-        .order('created_at', { ascending: false });
-        
+        .from("quotes")
+        .select("*")
+        .eq("status", "accepted")
+        .order("created_at", { ascending: false });
+
       if (error) {
-        console.error('Error loading quotes:', error);
+        console.error("Error loading quotes:", error);
         return;
       }
-      
+
       setQuotes((quoteData || []) as Quote[]);
     } catch (error) {
-      console.error('Error loading quotes:', error);
+      console.error("Error loading quotes:", error);
     }
   };
 
@@ -82,6 +88,6 @@ export const useInvoiceData = () => {
     loading,
     loadInvoices,
     loadCustomers,
-    loadQuotes
+    loadQuotes,
   };
 };

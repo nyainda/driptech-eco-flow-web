@@ -1,4 +1,4 @@
-import { Json } from '../shared';
+import { Json } from "../shared";
 
 export type PageViews = {
   Row: {
@@ -50,6 +50,6 @@ export type PageViews = {
       isOneToOne: false;
       referencedRelation: "visitor_sessions";
       referencedColumns: ["id"];
-    }
+    },
   ];
 };

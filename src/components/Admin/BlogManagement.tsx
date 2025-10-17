@@ -61,7 +61,7 @@ const BlogManagement = () => {
     totalPosts: 0,
     totalViews: 0,
     totalLikes: 0,
-    totalComments: 0
+    totalComments: 0,
   });
 
   useEffect(() => {
@@ -74,19 +74,23 @@ const BlogManagement = () => {
     try {
       const { data: postsData, error: postsError } = await supabase
         .from("blog_posts")
-        .select("views, likes, id, title, created_at, excerpt, featured_image_url, reading_time, published, blog_categories (name)");
+        .select(
+          "views, likes, id, title, created_at, excerpt, featured_image_url, reading_time, published, blog_categories (name)",
+        );
 
       if (postsError) throw postsError;
 
       const totalPostsCount = postsData?.length || 0;
-      const totalViews = postsData?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
-      const totalLikes = postsData?.reduce((sum, post) => sum + (post.likes || 0), 0) || 0;
+      const totalViews =
+        postsData?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
+      const totalLikes =
+        postsData?.reduce((sum, post) => sum + (post.likes || 0), 0) || 0;
 
       setStats({
         totalPosts: totalPostsCount,
         totalViews,
         totalLikes,
-        totalComments: 0
+        totalComments: 0,
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -97,18 +101,21 @@ const BlogManagement = () => {
     try {
       setLoading(true);
 
-      let query = supabase
-        .from('blog_posts')
-        .select(`
+      let query = supabase.from("blog_posts").select(
+        `
           *,
           blog_categories (
             name
           )
-        `, { count: "exact" });
+        `,
+        { count: "exact" },
+      );
 
       // Apply filters
       if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%`);
+        query = query.or(
+          `title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%`,
+        );
       }
 
       if (selectedCategory !== "all") {
@@ -121,16 +128,16 @@ const BlogManagement = () => {
       // Apply sorting
       switch (sortBy) {
         case "newest":
-          query = query.order('created_at', { ascending: false });
+          query = query.order("created_at", { ascending: false });
           break;
         case "oldest":
-          query = query.order('created_at', { ascending: true });
+          query = query.order("created_at", { ascending: true });
           break;
         case "title":
-          query = query.order('title', { ascending: true });
+          query = query.order("title", { ascending: true });
           break;
         case "views":
-          query = query.order('views', { ascending: false });
+          query = query.order("views", { ascending: false });
           break;
       }
 
@@ -146,11 +153,11 @@ const BlogManagement = () => {
       setPosts((data || []) as any);
       setTotalPosts(count || 0);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error("Error fetching posts:", error);
       toast({
         title: "Error",
         description: "Failed to fetch blog posts",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -160,18 +167,18 @@ const BlogManagement = () => {
   const fetchCategories = async () => {
     try {
       const { data, error } = await supabase
-        .from('blog_categories')
-        .select('*')
-        .order('name');
+        .from("blog_categories")
+        .select("*")
+        .order("name");
 
       if (error) throw error;
       setCategories(data || []);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error("Error fetching categories:", error);
       toast({
         title: "Error",
         description: "Failed to fetch categories",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -181,9 +188,9 @@ const BlogManagement = () => {
 
     try {
       const { data: currentPost, error: fetchError } = await supabase
-        .from('blog_posts')
-        .select('views')
-        .eq('id', postId)
+        .from("blog_posts")
+        .select("views")
+        .eq("id", postId)
         .single();
 
       if (fetchError) throw fetchError;
@@ -191,21 +198,21 @@ const BlogManagement = () => {
       const newViews = (currentPost.views || 0) + 1;
 
       const { error: updateError } = await supabase
-        .from('blog_posts')
+        .from("blog_posts")
         .update({ views: newViews })
-        .eq('id', postId);
+        .eq("id", postId);
 
       if (updateError) throw updateError;
 
       viewedPosts.current.add(postId);
 
-      setPosts(prevPosts => 
-        prevPosts.map(post => 
-          post.id === postId ? { ...post, views: newViews } : post
-        )
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId ? { ...post, views: newViews } : post,
+        ),
       );
     } catch (error) {
-      console.error('Error incrementing view count:', error);
+      console.error("Error incrementing view count:", error);
     }
   };
 
@@ -214,23 +221,23 @@ const BlogManagement = () => {
 
     try {
       const { error } = await supabase
-        .from('blog_posts')
+        .from("blog_posts")
         .delete()
-        .eq('id', postId);
+        .eq("id", postId);
 
       if (error) throw error;
       toast({
         title: "Success",
-        description: "Blog post deleted successfully"
+        description: "Blog post deleted successfully",
       });
       fetchPosts();
       fetchStats();
     } catch (error) {
-      console.error('Error deleting post:', error);
+      console.error("Error deleting post:", error);
       toast({
         title: "Error",
         description: "Failed to delete blog post",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -253,11 +260,16 @@ const BlogManagement = () => {
     fetchStats();
   };
 
-  const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || post.blog_categories?.name === selectedCategory;
-    const matchesStatus = statusFilter === "all" || (statusFilter === "published" ? post.published : !post.published);
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" ||
+      post.blog_categories?.name === selectedCategory;
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "published" ? post.published : !post.published);
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
@@ -333,23 +345,31 @@ const BlogManagement = () => {
                 <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
               </div>
               <h3 className="text-lg sm:text-2xl font-semibold mb-2 sm:mb-3">
-                {searchQuery || selectedCategory !== "all" || statusFilter !== "all" ? "No posts found" : "No blog posts yet"}
+                {searchQuery ||
+                selectedCategory !== "all" ||
+                statusFilter !== "all"
+                  ? "No posts found"
+                  : "No blog posts yet"}
               </h3>
               <p className="text-sm sm:text-base text-muted-foreground text-center mb-4 sm:mb-6 max-w-md leading-relaxed">
-                {searchQuery || selectedCategory !== "all" || statusFilter !== "all"
-                  ? "Try adjusting your search criteria or filters to find what you're looking for" 
+                {searchQuery ||
+                selectedCategory !== "all" ||
+                statusFilter !== "all"
+                  ? "Try adjusting your search criteria or filters to find what you're looking for"
                   : "Start creating engaging content for your audience. Your first blog post is just a click away!"}
               </p>
-              {(!searchQuery && selectedCategory === "all" && statusFilter === "all") && (
-                <Button 
-                  onClick={handleCreatePost}
-                  size="sm"
-                  className="h-10 sm:h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Create Your First Post
-                </Button>
-              )}
+              {!searchQuery &&
+                selectedCategory === "all" &&
+                statusFilter === "all" && (
+                  <Button
+                    onClick={handleCreatePost}
+                    size="sm"
+                    className="h-10 sm:h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    Create Your First Post
+                  </Button>
+                )}
             </CardContent>
           </Card>
         )}

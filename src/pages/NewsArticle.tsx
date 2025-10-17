@@ -4,7 +4,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, Clock, Eye, Tag, ArrowLeft, Newspaper, User, ChevronRight } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Eye,
+  Tag,
+  ArrowLeft,
+  Newspaper,
+  User,
+  ChevronRight,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
@@ -30,48 +39,52 @@ const NewsArticle = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  const { data: article, isLoading, error } = useQuery({
-    queryKey: ['news-article', slug],
+  const {
+    data: article,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["news-article", slug],
     queryFn: async () => {
-      console.log('Query function called with slug:', slug);
-      
+      console.log("Query function called with slug:", slug);
+
       if (!slug) {
-        console.error('No slug provided');
-        throw new Error('No slug provided');
+        console.error("No slug provided");
+        throw new Error("No slug provided");
       }
-      
+
       try {
         const { data, error } = await supabase
-          .from('news_articles')
-          .select('*')
-          .eq('slug', slug)
-          .eq('published', true)
+          .from("news_articles")
+          .select("*")
+          .eq("slug", slug)
+          .eq("published", true)
           .single();
 
-        console.log('Supabase query result:', { data, error });
+        console.log("Supabase query result:", { data, error });
 
         if (error) {
-          console.error('Supabase error:', error);
+          console.error("Supabase error:", error);
           throw error;
         }
-        
+
         if (!data) {
-          console.error('No data returned from query');
-          throw new Error('Article not found');
+          console.error("No data returned from query");
+          throw new Error("Article not found");
         }
 
         const { error: updateError } = await supabase
-          .from('news_articles')
+          .from("news_articles")
           .update({ views: (data.views || 0) + 1 })
-          .eq('id', data.id);
+          .eq("id", data.id);
 
         if (updateError) {
-          console.warn('Error updating view count:', updateError);
+          console.warn("Error updating view count:", updateError);
         }
 
         return data as NewsArticle;
       } catch (err) {
-        console.error('Error in query function:', err);
+        console.error("Error in query function:", err);
         throw err;
       }
     },
@@ -80,21 +93,23 @@ const NewsArticle = () => {
   });
 
   const { data: relatedArticles = [] } = useQuery({
-    queryKey: ['related-news-articles', article?.id],
+    queryKey: ["related-news-articles", article?.id],
     queryFn: async () => {
       if (!article) return [];
-      
+
       const { data } = await supabase
-        .from('news_articles')
-        .select('id, title, slug, excerpt, featured_image_url, created_at, views, reading_time, author')
-        .eq('published', true)
-        .neq('id', article.id)
-        .order('created_at', { ascending: false })
+        .from("news_articles")
+        .select(
+          "id, title, slug, excerpt, featured_image_url, created_at, views, reading_time, author",
+        )
+        .eq("published", true)
+        .neq("id", article.id)
+        .order("created_at", { ascending: false })
         .limit(3);
 
       return data || [];
     },
-    enabled: !!article
+    enabled: !!article,
   });
 
   if (isLoading) {
@@ -133,22 +148,37 @@ const NewsArticle = () => {
             <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Newspaper className="h-12 w-12 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold mb-4 text-foreground">News Article Not Found</h1>
+            <h1 className="text-3xl font-bold mb-4 text-foreground">
+              News Article Not Found
+            </h1>
             <p className="text-muted-foreground mb-4 leading-relaxed">
-              The news article you're looking for doesn't exist or hasn't been published yet.
+              The news article you're looking for doesn't exist or hasn't been
+              published yet.
             </p>
             <div className="mt-8 p-4 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl border-2 border-border/20 max-w-md mx-auto text-left">
-              <p className="text-sm font-medium mb-2 text-foreground">Debug Information:</p>
-              <p className="text-xs text-muted-foreground">Slug: {slug || 'No slug provided'}</p>
-              <p className="text-xs text-muted-foreground">Error: {error?.message || 'Article not found'}</p>
-              <p className="text-xs text-muted-foreground">URL: {window.location.pathname}</p>
+              <p className="text-sm font-medium mb-2 text-foreground">
+                Debug Information:
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Slug: {slug || "No slug provided"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Error: {error?.message || "Article not found"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                URL: {window.location.pathname}
+              </p>
             </div>
             <div className="mt-6 space-y-2 sm:space-y-0 sm:space-x-2 flex flex-col sm:flex-row justify-center">
               <Button className="rounded-xl hover:bg-primary/90 hover:shadow-lg hover:scale-105 transition-all duration-300">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to News
               </Button>
-              <Button variant="outline" className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300" onClick={() => window.location.reload()}>
+              <Button
+                variant="outline"
+                className="rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300"
+                onClick={() => window.location.reload()}
+              >
                 Reload Page
               </Button>
             </div>
@@ -162,7 +192,7 @@ const NewsArticle = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="pt-16 sm:pt-20 pb-8">
         <div className="container mx-auto px-4">
           {/* Breadcrumb */}
@@ -171,7 +201,10 @@ const NewsArticle = () => {
               Home
             </Link>
             <ChevronRight className="h-4 w-4" />
-            <Link to="/news" className="hover:text-foreground transition-colors">
+            <Link
+              to="/news"
+              className="hover:text-foreground transition-colors"
+            >
               News
             </Link>
             <ChevronRight className="h-4 w-4" />
@@ -185,7 +218,7 @@ const NewsArticle = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate('/news')}
+                  onClick={() => navigate("/news")}
                   className="shrink-0 rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
@@ -209,10 +242,14 @@ const NewsArticle = () => {
                   <User className="h-4 w-4" />
                   <span>By {article.author}</span>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>{formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}</span>
+                  <span>
+                    {formatDistanceToNow(new Date(article.created_at), {
+                      addSuffix: true,
+                    })}
+                  </span>
                 </div>
 
                 {article.reading_time && (
@@ -243,12 +280,12 @@ const NewsArticle = () => {
 
             {/* Article Content */}
             <div className="mb-12">
-              <div 
+              <div
                 className="prose prose-lg max-w-none text-foreground leading-relaxed overflow-hidden"
                 style={{
-                  wordWrap: 'break-word',
-                  wordBreak: 'break-word',
-                  maxHeight: 'none'
+                  wordWrap: "break-word",
+                  wordBreak: "break-word",
+                  maxHeight: "none",
                 }}
                 dangerouslySetInnerHTML={{ __html: article.content }}
               />
@@ -257,10 +294,16 @@ const NewsArticle = () => {
             {/* Tags */}
             {article.tags && article.tags.length > 0 && (
               <div className="mb-12">
-                <h3 className="text-lg font-semibold mb-4 text-foreground">Tags</h3>
+                <h3 className="text-lg font-semibold mb-4 text-foreground">
+                  Tags
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {article.tags.map((tag, index) => (
-                    <Badge key={`${tag}-${index}`} variant="secondary" className="px-3 py-1 text-sm font-semibold">
+                    <Badge
+                      key={`${tag}-${index}`}
+                      variant="secondary"
+                      className="px-3 py-1 text-sm font-semibold"
+                    >
                       <Tag className="h-3 w-3 mr-1" />
                       {tag}
                     </Badge>
@@ -272,10 +315,15 @@ const NewsArticle = () => {
             {/* Related Articles */}
             {relatedArticles.length > 0 && (
               <section className="border-t border-border/20 pt-12">
-                <h2 className="text-2xl font-bold mb-8 text-foreground">Related News</h2>
+                <h2 className="text-2xl font-bold mb-8 text-foreground">
+                  Related News
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {relatedArticles.map((relatedArticle) => (
-                    <Card key={relatedArticle.id} className="group border-2 border-border/20 shadow-md hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500 h-full">
+                    <Card
+                      key={relatedArticle.id}
+                      className="group border-2 border-border/20 shadow-md hover:shadow-2xl hover:border-primary/20 hover:scale-[1.02] transition-all duration-500 h-full"
+                    >
                       <div className="relative aspect-video overflow-hidden rounded-t-xl">
                         {relatedArticle.featured_image_url ? (
                           <img
@@ -290,12 +338,12 @@ const NewsArticle = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <CardContent className="p-4 flex flex-col flex-1">
                         <h3 className="font-semibold mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                           {relatedArticle.title}
                         </h3>
-                        
+
                         {relatedArticle.excerpt && (
                           <p className="text-sm text-muted-foreground mb-3 line-clamp-2 leading-relaxed">
                             {relatedArticle.excerpt}
@@ -305,10 +353,17 @@ const NewsArticle = () => {
                         <div className="text-xs text-muted-foreground mb-2">
                           By {relatedArticle.author}
                         </div>
-                        
+
                         <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
-                          <span>{formatDistanceToNow(new Date(relatedArticle.created_at), { addSuffix: true })}</span>
-                          {relatedArticle.reading_time && <span>{relatedArticle.reading_time}m read</span>}
+                          <span>
+                            {formatDistanceToNow(
+                              new Date(relatedArticle.created_at),
+                              { addSuffix: true },
+                            )}
+                          </span>
+                          {relatedArticle.reading_time && (
+                            <span>{relatedArticle.reading_time}m read</span>
+                          )}
                         </div>
 
                         <div className="flex items-center text-xs text-muted-foreground mb-3">
@@ -317,9 +372,13 @@ const NewsArticle = () => {
                             {relatedArticle.views} views
                           </span>
                         </div>
-                        
+
                         <Link to={`/news/${relatedArticle.slug}`}>
-                          <Button variant="ghost" size="sm" className="w-full text-primary hover:text-primary/80 hover:bg-primary/10 rounded-xl p-0 h-auto font-medium">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full text-primary hover:text-primary/80 hover:bg-primary/10 rounded-xl p-0 h-auto font-medium"
+                          >
                             Read Article
                           </Button>
                         </Link>

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { X, Gift, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { X, Gift, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 interface DiscountBannerData {
   id: string;
@@ -21,22 +21,27 @@ const DiscountBanner = () => {
   const [isVisible, setIsVisible] = useState(true);
 
   // Fetch active banners using React Query
-  const { data: banners = [], isLoading, error } = useQuery({
-    queryKey: ['active-discount-banners'],
+  const {
+    data: banners = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["active-discount-banners"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('discount_banners' as any)
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        .from("discount_banners" as any)
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
       // Filter out expired banners
-      const activeBanners = data?.filter((banner: DiscountBannerData) => {
-        if (!banner.valid_until) return true;
-        return new Date(banner.valid_until) >= new Date();
-      }) || [];
+      const activeBanners =
+        data?.filter((banner: DiscountBannerData) => {
+          if (!banner.valid_until) return true;
+          return new Date(banner.valid_until) >= new Date();
+        }) || [];
 
       return activeBanners as DiscountBannerData[];
     },
@@ -56,8 +61,8 @@ const DiscountBanner = () => {
     if (visibleBanners.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentBannerIndex((prevIndex) => 
-        (prevIndex + 1) % visibleBanners.length
+      setCurrentBannerIndex(
+        (prevIndex) => (prevIndex + 1) % visibleBanners.length,
       );
     }, 8000);
 
@@ -73,9 +78,9 @@ const DiscountBanner = () => {
   }, [banners, dismissedBanners, currentBannerIndex]);
 
   const getDismissedBanners = (): string[] => {
-    if (typeof window === 'undefined') return [];
+    if (typeof window === "undefined") return [];
     try {
-      const dismissed = sessionStorage.getItem('dismissedBanners');
+      const dismissed = sessionStorage.getItem("dismissedBanners");
       return dismissed ? JSON.parse(dismissed) : [];
     } catch {
       return [];
@@ -83,16 +88,16 @@ const DiscountBanner = () => {
   };
 
   const saveDismissedBanners = (dismissed: string[]) => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     try {
-      sessionStorage.setItem('dismissedBanners', JSON.stringify(dismissed));
+      sessionStorage.setItem("dismissedBanners", JSON.stringify(dismissed));
     } catch (error) {
-      console.warn('Failed to save dismissed banners:', error);
+      console.warn("Failed to save dismissed banners:", error);
     }
   };
 
   const getVisibleBanners = () => {
-    return banners.filter(banner => !dismissedBanners.includes(banner.id));
+    return banners.filter((banner) => !dismissedBanners.includes(banner.id));
   };
 
   const handleClose = (bannerId: string) => {
@@ -101,7 +106,9 @@ const DiscountBanner = () => {
     saveDismissedBanners(newDismissed);
 
     // If this was the last visible banner, hide the entire component
-    const remainingBanners = getVisibleBanners().filter(b => b.id !== bannerId);
+    const remainingBanners = getVisibleBanners().filter(
+      (b) => b.id !== bannerId,
+    );
     if (remainingBanners.length === 0) {
       setIsVisible(false);
     } else {
@@ -111,7 +118,7 @@ const DiscountBanner = () => {
   };
 
   const handleCloseAll = () => {
-    const allBannerIds = banners.map(b => b.id);
+    const allBannerIds = banners.map((b) => b.id);
     const newDismissed = [...dismissedBanners, ...allBannerIds];
     setDismissedBanners(newDismissed);
     saveDismissedBanners(newDismissed);
@@ -120,15 +127,15 @@ const DiscountBanner = () => {
 
   const handlePrevious = () => {
     const visibleBanners = getVisibleBanners();
-    setCurrentBannerIndex((prevIndex) => 
-      prevIndex === 0 ? visibleBanners.length - 1 : prevIndex - 1
+    setCurrentBannerIndex((prevIndex) =>
+      prevIndex === 0 ? visibleBanners.length - 1 : prevIndex - 1,
     );
   };
 
   const handleNext = () => {
     const visibleBanners = getVisibleBanners();
-    setCurrentBannerIndex((prevIndex) => 
-      (prevIndex + 1) % visibleBanners.length
+    setCurrentBannerIndex(
+      (prevIndex) => (prevIndex + 1) % visibleBanners.length,
     );
   };
 
@@ -137,14 +144,14 @@ const DiscountBanner = () => {
     const now = new Date();
     const diffTime = date.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return 'tomorrow';
+
+    if (diffDays === 1) return "tomorrow";
     if (diffDays <= 7) return `in ${diffDays} days`;
-    
-    return date.toLocaleDateString(undefined, { 
-      month: 'short', 
-      day: 'numeric',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
     });
   };
 
@@ -170,9 +177,9 @@ const DiscountBanner = () => {
   const isExpiring = isExpiringSoon(currentBanner.valid_until);
 
   const bannerClasses = `relative overflow-hidden transition-all duration-300 ease-in-out text-primary-foreground ${
-    isExpiring 
-      ? 'bg-gradient-to-r from-orange-500 to-red-500' 
-      : 'bg-gradient-to-r from-primary to-primary/80'
+    isExpiring
+      ? "bg-gradient-to-r from-orange-500 to-red-500"
+      : "bg-gradient-to-r from-primary to-primary/80"
   }`;
 
   return (
@@ -187,18 +194,18 @@ const DiscountBanner = () => {
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-shrink-0">
               <Gift className="h-5 w-5 animate-bounce" />
-              <Badge 
-                variant="secondary" 
+              <Badge
+                variant="secondary"
                 className={`font-bold text-xs px-2 py-1 ${
-                  isExpiring 
-                    ? 'bg-white text-red-600 animate-pulse' 
-                    : 'bg-white text-primary'
+                  isExpiring
+                    ? "bg-white text-red-600 animate-pulse"
+                    : "bg-white text-primary"
                 }`}
               >
                 {currentBanner.discount} OFF
               </Badge>
             </div>
-            
+
             <div className="flex-1 min-w-0">
               <span className="font-semibold text-sm sm:text-base block sm:inline">
                 {currentBanner.title}
@@ -207,11 +214,13 @@ const DiscountBanner = () => {
                 {currentBanner.description}
               </span>
             </div>
-            
+
             {currentBanner.valid_until && (
-              <div className={`flex items-center gap-1 text-xs opacity-90 flex-shrink-0 ${
-                isExpiring ? 'animate-pulse font-semibold' : ''
-              }`}>
+              <div
+                className={`flex items-center gap-1 text-xs opacity-90 flex-shrink-0 ${
+                  isExpiring ? "animate-pulse font-semibold" : ""
+                }`}
+              >
                 <Clock className="h-4 w-4" />
                 <span className="hidden sm:inline">Valid until </span>
                 <span className="font-medium">
@@ -220,7 +229,7 @@ const DiscountBanner = () => {
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center gap-1 ml-4 flex-shrink-0">
             {hasMultipleBanners && (
               <>
@@ -233,22 +242,22 @@ const DiscountBanner = () => {
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                
+
                 <div className="flex gap-1 px-2">
                   {visibleBanners.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentBannerIndex(index)}
                       className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                        index === currentBannerIndex 
-                          ? 'bg-primary-foreground' 
-                          : 'bg-primary-foreground/40 hover:bg-primary-foreground/60'
+                        index === currentBannerIndex
+                          ? "bg-primary-foreground"
+                          : "bg-primary-foreground/40 hover:bg-primary-foreground/60"
                       }`}
                       aria-label={`Go to banner ${index + 1}`}
                     />
                   ))}
                 </div>
-                
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -260,7 +269,7 @@ const DiscountBanner = () => {
                 </Button>
               </>
             )}
-            
+
             {hasMultipleBanners && (
               <Button
                 variant="ghost"
@@ -273,7 +282,7 @@ const DiscountBanner = () => {
                 <X className="h-3 w-3" />
               </Button>
             )}
-            
+
             <Button
               variant="ghost"
               size="sm"

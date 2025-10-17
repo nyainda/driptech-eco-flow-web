@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, UserCheck, Award, Clock } from "lucide-react";
 
@@ -50,7 +49,9 @@ const TeamStats = ({ stats }: TeamStatsProps) => {
           <Clock className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.averageExperience} yrs</div>
+          <div className="text-2xl font-bold">
+            {stats.averageExperience} yrs
+          </div>
         </CardContent>
       </Card>
     </div>

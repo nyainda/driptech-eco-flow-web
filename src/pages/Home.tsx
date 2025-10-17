@@ -1,4 +1,3 @@
-
 import HeroSection from "@/components/Home/HeroSection";
 import ServicesSection from "@/components/Home/ServicesSection";
 import ProductsShowcase from "@/components/Home/ProductsShowcase";
@@ -22,9 +21,7 @@ const Home = () => {
       <SuccessStoriesSection />
       <TeamSection />
       <ScheduleConsultation>
-        <Button className="w-full">
-          Schedule Free Consultation
-        </Button>
+        <Button className="w-full">Schedule Free Consultation</Button>
       </ScheduleConsultation>
     </>
   );

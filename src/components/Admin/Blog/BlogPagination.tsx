@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -16,7 +15,7 @@ const BlogPagination: React.FC<BlogPaginationProps> = ({
   totalPages,
   onPageChange,
   totalItems,
-  itemsPerPage
+  itemsPerPage,
 }) => {
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -28,7 +27,7 @@ const BlogPagination: React.FC<BlogPaginationProps> = ({
       <div className="text-sm text-muted-foreground order-2 sm:order-1">
         Showing {startItem}-{endItem} of {totalItems} posts
       </div>
-      
+
       <div className="flex items-center gap-2 order-1 sm:order-2">
         <Button
           variant="outline"
@@ -40,7 +39,7 @@ const BlogPagination: React.FC<BlogPaginationProps> = ({
           <ChevronLeft className="h-4 w-4 mr-1" />
           Previous
         </Button>
-        
+
         <div className="flex items-center gap-1">
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
             let pageNumber;
@@ -53,7 +52,7 @@ const BlogPagination: React.FC<BlogPaginationProps> = ({
             } else {
               pageNumber = currentPage - 2 + i;
             }
-            
+
             return (
               <Button
                 key={pageNumber}
@@ -67,7 +66,7 @@ const BlogPagination: React.FC<BlogPaginationProps> = ({
             );
           })}
         </div>
-        
+
         <Button
           variant="outline"
           size="sm"

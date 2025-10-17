@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Folder, FolderCheck, Clock, TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/utils/adminUtils";
@@ -13,9 +12,10 @@ interface ProjectStatsProps {
 }
 
 const ProjectStats = ({ stats }: ProjectStatsProps) => {
-  const completionRate = stats.totalProjects > 0 
-    ? ((stats.completedProjects / stats.totalProjects) * 100).toFixed(1)
-    : '0';
+  const completionRate =
+    stats.totalProjects > 0
+      ? ((stats.completedProjects / stats.totalProjects) * 100).toFixed(1)
+      : "0";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -36,7 +36,9 @@ const ProjectStats = ({ stats }: ProjectStatsProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.completedProjects}</div>
-          <p className="text-xs text-muted-foreground">{completionRate}% completion rate</p>
+          <p className="text-xs text-muted-foreground">
+            {completionRate}% completion rate
+          </p>
         </CardContent>
       </Card>
 
@@ -56,7 +58,9 @@ const ProjectStats = ({ stats }: ProjectStatsProps) => {
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(stats.totalValue)}</div>
+          <div className="text-2xl font-bold">
+            {formatCurrency(stats.totalValue)}
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -1,6 +1,11 @@
-
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Plus, Download } from "lucide-react";
 
@@ -27,7 +32,7 @@ const ProjectFilters = ({
   sortBy,
   setSortBy,
   onAddProject,
-  onExport
+  onExport,
 }: ProjectFiltersProps) => {
   return (
     <div className="flex flex-col gap-4 mb-6">

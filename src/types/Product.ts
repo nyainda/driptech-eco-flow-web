@@ -1,4 +1,3 @@
-
 export interface ProductVariant {
   name: string;
   price: number;
@@ -12,17 +11,24 @@ export interface ProductSpecification {
 }
 
 export interface TechnicalSpec {
-  [key: string]: {
-    value: string;
-    unit: string;
-  } | string;
+  [key: string]:
+    | {
+        value: string;
+        unit: string;
+      }
+    | string;
 }
 
 export interface Product {
   id: string;
   name: string;
   model_number?: string;
-  category: "drip_irrigation" | "sprinkler_systems" | "filtration_systems" | "control_systems" | "accessories";
+  category:
+    | "drip_irrigation"
+    | "sprinkler_systems"
+    | "filtration_systems"
+    | "control_systems"
+    | "accessories";
   subcategory?: string;
   description?: string;
   technical_specs?: TechnicalSpec;
@@ -63,5 +69,5 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
   { value: "sprinkler_systems", label: "Sprinkler Systems" },
   { value: "filtration_systems", label: "Filtration Systems" },
   { value: "control_systems", label: "Control Systems" },
-  { value: "accessories", label: "Accessories" }
+  { value: "accessories", label: "Accessories" },
 ];

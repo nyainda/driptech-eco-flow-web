@@ -1,8 +1,7 @@
-
 export interface AdminUser {
   id: string;
   email: string;
-  role: 'admin' | 'super_admin' | 'editor';
+  role: "admin" | "super_admin" | "editor";
   full_name?: string;
   avatar_url?: string;
   created_at: string;
@@ -20,7 +19,7 @@ export interface AdminStats {
 
 export interface NotificationMessage {
   id: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: "info" | "success" | "warning" | "error";
   title: string;
   message: string;
   timestamp: string;

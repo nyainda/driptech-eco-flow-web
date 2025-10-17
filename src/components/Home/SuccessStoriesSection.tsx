@@ -14,16 +14,16 @@ const SuccessStoriesSection = () => {
     const fetchStories = async () => {
       try {
         const { data, error } = await supabase
-          .from('success_stories')
-          .select('*')
-          .eq('featured', true)
-          .order('created_at', { ascending: false })
+          .from("success_stories")
+          .select("*")
+          .eq("featured", true)
+          .order("created_at", { ascending: false })
           .limit(3);
 
         if (error) throw error;
         setStories(data || []);
       } catch (error) {
-        console.error('Error fetching success stories:', error);
+        console.error("Error fetching success stories:", error);
       } finally {
         setLoading(false);
       }
@@ -42,11 +42,12 @@ const SuccessStoriesSection = () => {
             Success Stories
           </Badge>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Proven 
+            Proven
             <span className="text-primary">Results</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            See how our irrigation solutions have transformed agricultural operations and delivered exceptional results for our clients.
+            See how our irrigation solutions have transformed agricultural
+            operations and delivered exceptional results for our clients.
           </p>
         </div>
 
@@ -55,7 +56,10 @@ const SuccessStoriesSection = () => {
           {loading ? (
             // Loading skeleton
             Array.from({ length: 3 }).map((_, index) => (
-              <Card key={index} className="bg-background border-border shadow-lg">
+              <Card
+                key={index}
+                className="bg-background border-border shadow-lg"
+              >
                 <CardContent className="p-0">
                   <div className="animate-pulse">
                     <div className="aspect-[16/10] bg-muted rounded-t-lg"></div>
@@ -70,13 +74,16 @@ const SuccessStoriesSection = () => {
             ))
           ) : stories.length > 0 ? (
             stories.map((story) => (
-              <Card key={story.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-background border-border shadow-lg overflow-hidden">
+              <Card
+                key={story.id}
+                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-background border-border shadow-lg overflow-hidden"
+              >
                 <CardContent className="p-0">
                   {/* Image */}
                   <div className="aspect-[16/10] overflow-hidden bg-muted">
                     {story.image_url || story.after_image ? (
-                      <img 
-                        src={story.image_url || story.after_image} 
+                      <img
+                        src={story.image_url || story.after_image}
                         alt={story.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
@@ -93,7 +100,7 @@ const SuccessStoriesSection = () => {
                       <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                         {story.title}
                       </h3>
-                      
+
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                         <Building className="w-4 h-4 text-primary" />
                         <span>{story.client_name}</span>
@@ -116,7 +123,9 @@ const SuccessStoriesSection = () => {
                       <div className="bg-muted/30 rounded-lg p-3 border border-border">
                         <div className="flex items-center gap-2 mb-2">
                           <TrendingUp className="w-4 h-4 text-primary" />
-                          <span className="text-sm font-medium text-foreground">Results</span>
+                          <span className="text-sm font-medium text-foreground">
+                            Results
+                          </span>
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-2">
                           {story.results}
@@ -126,8 +135,8 @@ const SuccessStoriesSection = () => {
 
                     {/* CTA */}
                     <Link to="/success-stories">
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         className="w-full hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                       >
                         Read Full Story
@@ -140,8 +149,13 @@ const SuccessStoriesSection = () => {
             ))
           ) : (
             <div className="col-span-full text-center py-12 bg-background">
-              <p className="text-foreground mb-4 text-lg">No featured success stories available at the moment.</p>
-              <p className="text-sm text-muted-foreground">Success stories can be marked as featured in the admin dashboard.</p>
+              <p className="text-foreground mb-4 text-lg">
+                No featured success stories available at the moment.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Success stories can be marked as featured in the admin
+                dashboard.
+              </p>
             </div>
           )}
         </div>
@@ -149,8 +163,8 @@ const SuccessStoriesSection = () => {
         {/* CTA */}
         <div className="text-center mb-12">
           <Link to="/success-stories">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="px-10 py-4 text-lg bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:scale-105 transition-all duration-300 rounded-xl shadow-md group"
             >
               <Award className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />

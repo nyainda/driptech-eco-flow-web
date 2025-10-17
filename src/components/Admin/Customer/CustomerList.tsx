@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +12,7 @@ interface Customer {
   phone: string;
   company?: string;
   location?: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
   projectsCount: number;
   totalValue: number;
   lastContact: string;
@@ -28,18 +27,31 @@ interface CustomerListProps {
   onDelete: (customerId: string) => void;
 }
 
-const CustomerList = ({ customers, loading, onEdit, onDelete }: CustomerListProps) => {
+const CustomerList = ({
+  customers,
+  loading,
+  onEdit,
+  onDelete,
+}: CustomerListProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'inactive': return 'bg-gray-100 text-gray-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "inactive":
+        return "bg-gray-100 text-gray-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
   if (loading) {
@@ -79,12 +91,16 @@ const CustomerList = ({ customers, loading, onEdit, onDelete }: CustomerListProp
                 <div className="flex items-center space-x-3">
                   <Avatar>
                     <AvatarImage src={customer.avatar} />
-                    <AvatarFallback>{getInitials(customer.name)}</AvatarFallback>
+                    <AvatarFallback>
+                      {getInitials(customer.name)}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
                     <h3 className="font-semibold text-lg">{customer.name}</h3>
                     {customer.company && (
-                      <p className="text-sm text-muted-foreground">{customer.company}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {customer.company}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -118,7 +134,9 @@ const CustomerList = ({ customers, loading, onEdit, onDelete }: CustomerListProp
                   <span className="text-muted-foreground ml-1">Projects</span>
                 </div>
                 <div>
-                  <span className="font-medium">KES {customer.totalValue.toLocaleString()}</span>
+                  <span className="font-medium">
+                    KES {customer.totalValue.toLocaleString()}
+                  </span>
                   <span className="text-muted-foreground ml-1">Total</span>
                 </div>
               </div>
@@ -126,7 +144,7 @@ const CustomerList = ({ customers, loading, onEdit, onDelete }: CustomerListProp
               {/* Last Contact */}
               <div className="flex items-center text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4 mr-2" />
-                Last contact: {formatDate(customer.lastContact, 'MMM dd, yyyy')}
+                Last contact: {formatDate(customer.lastContact, "MMM dd, yyyy")}
               </div>
 
               {/* Actions */}

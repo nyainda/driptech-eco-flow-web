@@ -1,19 +1,31 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   Download,
   FileText,
   Image,
@@ -31,7 +43,7 @@ import {
   Users,
   AlertCircle,
   CheckCircle,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -51,8 +63,8 @@ interface Document {
   created_at: string;
 }
 
-type SortField = 'title' | 'created_at' | 'download_count' | 'file_size';
-type SortDirection = 'asc' | 'desc';
+type SortField = "title" | "created_at" | "download_count" | "file_size";
+type SortDirection = "asc" | "desc";
 
 const DocumentManagement = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -65,9 +77,11 @@ const DocumentManagement = () => {
   const [editingDocument, setEditingDocument] = useState<Document | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [selectedDocuments, setSelectedDocuments] = useState<Set<string>>(new Set());
-  const [sortField, setSortField] = useState<SortField>('created_at');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [selectedDocuments, setSelectedDocuments] = useState<Set<string>>(
+    new Set(),
+  );
+  const [sortField, setSortField] = useState<SortField>("created_at");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -80,12 +94,12 @@ const DocumentManagement = () => {
     file_type: "",
     category: "",
     tags: "",
-    requires_login: false
+    requires_login: false,
   });
 
   const documentCategories = [
     "Product Brochures",
-    "Technical Specifications", 
+    "Technical Specifications",
     "Installation Guides",
     "Maintenance Manuals",
     "Case Studies",
@@ -95,24 +109,24 @@ const DocumentManagement = () => {
     "Marketing Materials",
     "User Manuals",
     "Safety Guidelines",
-    "Warranty Information"
+    "Warranty Information",
   ];
 
   const fileTypeIcons = {
-    'pdf': FileText,
-    'doc': FileText,
-    'docx': FileText,
-    'xls': FileText,
-    'xlsx': FileText,
-    'jpg': Image,
-    'jpeg': Image,
-    'png': Image,
-    'gif': Image,
-    'mp4': Video,
-    'avi': Video,
-    'mov': Video,
-    'zip': Archive,
-    'rar': Archive
+    pdf: FileText,
+    doc: FileText,
+    docx: FileText,
+    xls: FileText,
+    xlsx: FileText,
+    jpg: Image,
+    jpeg: Image,
+    png: Image,
+    gif: Image,
+    mp4: Video,
+    avi: Video,
+    mov: Video,
+    zip: Archive,
+    rar: Archive,
   };
 
   // Debounce search input
@@ -131,78 +145,93 @@ const DocumentManagement = () => {
   // Get unique tags for filtering
   const availableTags = useMemo(() => {
     const tags = new Set<string>();
-    documents.forEach(doc => {
-      doc.tags?.forEach(tag => tags.add(tag));
+    documents.forEach((doc) => {
+      doc.tags?.forEach((tag) => tags.add(tag));
     });
     return Array.from(tags).sort();
   }, [documents]);
 
   // Enhanced filtering and sorting
   const filteredAndSortedDocuments = useMemo(() => {
-    let filtered = documents.filter(doc => {
-      const matchesSearch = 
+    let filtered = documents.filter((doc) => {
+      const matchesSearch =
         doc.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        doc.description?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        doc.category?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        doc.tags?.some(tag => tag.toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
-      
-      const matchesCategory = selectedCategory === "all" || doc.category === selectedCategory;
-      
-      const matchesTags = selectedTags.length === 0 || 
-        selectedTags.every(tag => doc.tags?.includes(tag));
-      
+        doc.description
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        doc.category
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        doc.tags?.some((tag) =>
+          tag.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+        );
+
+      const matchesCategory =
+        selectedCategory === "all" || doc.category === selectedCategory;
+
+      const matchesTags =
+        selectedTags.length === 0 ||
+        selectedTags.every((tag) => doc.tags?.includes(tag));
+
       return matchesSearch && matchesCategory && matchesTags;
     });
 
     // Sort documents
     filtered.sort((a, b) => {
       let aValue, bValue;
-      
+
       switch (sortField) {
-        case 'title':
+        case "title":
           aValue = a.title.toLowerCase();
           bValue = b.title.toLowerCase();
           break;
-        case 'created_at':
+        case "created_at":
           aValue = new Date(a.created_at).getTime();
           bValue = new Date(b.created_at).getTime();
           break;
-        case 'download_count':
+        case "download_count":
           aValue = a.download_count;
           bValue = b.download_count;
           break;
-        case 'file_size':
+        case "file_size":
           aValue = a.file_size;
           bValue = b.file_size;
           break;
         default:
           return 0;
       }
-      
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
 
     return filtered;
-  }, [documents, debouncedSearchTerm, selectedCategory, selectedTags, sortField, sortDirection]);
+  }, [
+    documents,
+    debouncedSearchTerm,
+    selectedCategory,
+    selectedTags,
+    sortField,
+    sortDirection,
+  ]);
 
   const fetchDocuments = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('documents')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("documents")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setDocuments(data || []);
     } catch (error) {
-      console.error('Error fetching documents:', error);
+      console.error("Error fetching documents:", error);
       toast({
         title: "Error",
         description: "Failed to fetch documents",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -211,15 +240,15 @@ const DocumentManagement = () => {
 
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.title.trim()) {
       newErrors.title = "Title is required";
     }
-    
+
     if (!formData.file_url.trim()) {
       newErrors.file_url = "File URL is required";
     }
-    
+
     if (!formData.category) {
       newErrors.category = "Category is required";
     }
@@ -242,7 +271,7 @@ const DocumentManagement = () => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileUpload(e.dataTransfer.files[0]);
     }
@@ -253,14 +282,29 @@ const DocumentManagement = () => {
 
     // File validation
     const maxSize = 10 * 1024 * 1024; // 10MB
-    const allowedTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif', 'mp4', 'avi', 'mov', 'zip', 'rar'];
-    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const allowedTypes = [
+      "pdf",
+      "doc",
+      "docx",
+      "xls",
+      "xlsx",
+      "jpg",
+      "jpeg",
+      "png",
+      "gif",
+      "mp4",
+      "avi",
+      "mov",
+      "zip",
+      "rar",
+    ];
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
     if (file.size > maxSize) {
       toast({
         title: "Error",
         description: "File size must be less than 10MB",
-        variant: "destructive"
+        variant: "destructive",
       });
       return null;
     }
@@ -269,7 +313,7 @@ const DocumentManagement = () => {
       toast({
         title: "Error",
         description: "File type not supported",
-        variant: "destructive"
+        variant: "destructive",
       });
       return null;
     }
@@ -283,7 +327,7 @@ const DocumentManagement = () => {
 
       // Simulate upload progress
       const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
+        setUploadProgress((prev) => {
           if (prev >= 90) {
             clearInterval(progressInterval);
             return prev;
@@ -293,7 +337,7 @@ const DocumentManagement = () => {
       }, 200);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('images')
+        .from("images")
         .upload(filePath, file);
 
       clearInterval(progressInterval);
@@ -301,17 +345,17 @@ const DocumentManagement = () => {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("images").getPublicUrl(filePath);
 
-      const fileType = file.name.split('.').pop()?.toLowerCase() || '';
-      
-      setFormData(prev => ({
+      const fileType = file.name.split(".").pop()?.toLowerCase() || "";
+
+      setFormData((prev) => ({
         ...prev,
         file_url: publicUrl,
         file_type: fileType,
-        title: prev.title || file.name.split('.')[0]
+        title: prev.title || file.name.split(".")[0],
       }));
 
       toast({
@@ -322,15 +366,14 @@ const DocumentManagement = () => {
       return {
         url: publicUrl,
         type: fileType,
-        size: file.size
+        size: file.size,
       };
-
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error("Error uploading file:", error);
       toast({
         title: "Error",
         description: "Failed to upload file",
-        variant: "destructive"
+        variant: "destructive",
       });
       return null;
     } finally {
@@ -341,143 +384,156 @@ const DocumentManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     try {
       const documentData = {
         ...formData,
-        tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        tags: formData.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
         file_size: 0,
-        download_count: 0
+        download_count: 0,
       };
 
       if (editingDocument) {
         const { error } = await supabase
-          .from('documents')
+          .from("documents")
           .update(documentData)
-          .eq('id', editingDocument.id);
-        
+          .eq("id", editingDocument.id);
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Document updated successfully"
+          description: "Document updated successfully",
         });
       } else {
         const { error } = await supabase
-          .from('documents')
+          .from("documents")
           .insert([documentData]);
-        
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Document added successfully"
+          description: "Document added successfully",
         });
       }
 
       resetForm();
       fetchDocuments();
     } catch (error) {
-      console.error('Error saving document:', error);
+      console.error("Error saving document:", error);
       toast({
         title: "Error",
         description: "Failed to save document",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedDocuments.size === 0) return;
-    
-    if (!confirm(`Are you sure you want to delete ${selectedDocuments.size} document(s)?`)) return;
+
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedDocuments.size} document(s)?`,
+      )
+    )
+      return;
 
     try {
       for (const docId of selectedDocuments) {
-        await supabase.from('documents').delete().eq('id', docId);
+        await supabase.from("documents").delete().eq("id", docId);
       }
-      
+
       toast({
         title: "Success",
-        description: `${selectedDocuments.size} document(s) deleted successfully`
+        description: `${selectedDocuments.size} document(s) deleted successfully`,
       });
-      
+
       setSelectedDocuments(new Set());
       fetchDocuments();
     } catch (error) {
-      console.error('Error deleting documents:', error);
+      console.error("Error deleting documents:", error);
       toast({
         title: "Error",
         description: "Failed to delete documents",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
-  const handleDownload = useCallback(async (document: Document) => {
-    try {
-      const { error } = await supabase
-        .from('documents')
-        .update({ download_count: document.download_count + 1 })
-        .eq('id', document.id);
+  const handleDownload = useCallback(
+    async (document: Document) => {
+      try {
+        const { error } = await supabase
+          .from("documents")
+          .update({ download_count: document.download_count + 1 })
+          .eq("id", document.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      window.open(document.file_url, '_blank');
-      
-      setDocuments(docs => 
-        docs.map(doc => 
-          doc.id === document.id 
-            ? { ...doc, download_count: doc.download_count + 1 }
-            : doc
-        )
-      );
+        window.open(document.file_url, "_blank");
 
-      toast({
-        title: "Download Started",
-        description: `Downloading ${document.title}`,
-      });
+        setDocuments((docs) =>
+          docs.map((doc) =>
+            doc.id === document.id
+              ? { ...doc, download_count: doc.download_count + 1 }
+              : doc,
+          ),
+        );
 
-    } catch (error) {
-      console.error('Error downloading document:', error);
-      toast({
-        title: "Error",
-        description: "Failed to download document",
-        variant: "destructive"
-      });
-    }
-  }, [toast]);
+        toast({
+          title: "Download Started",
+          description: `Downloading ${document.title}`,
+        });
+      } catch (error) {
+        console.error("Error downloading document:", error);
+        toast({
+          title: "Error",
+          description: "Failed to download document",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast],
+  );
 
-  const handleDelete = useCallback(async (id: string) => {
-    if (!confirm("Are you sure you want to delete this document?")) return;
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (!confirm("Are you sure you want to delete this document?")) return;
 
-    try {
-      const { error } = await supabase
-        .from('documents')
-        .delete()
-        .eq('id', id);
+      try {
+        const { error } = await supabase
+          .from("documents")
+          .delete()
+          .eq("id", id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Document deleted successfully"
-      });
-      
-      fetchDocuments();
-    } catch (error) {
-      console.error('Error deleting document:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete document",
-        variant: "destructive"
-      });
-    }
-  }, [toast, fetchDocuments]);
+        toast({
+          title: "Success",
+          description: "Document deleted successfully",
+        });
+
+        fetchDocuments();
+      } catch (error) {
+        console.error("Error deleting document:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete document",
+          variant: "destructive",
+        });
+      }
+    },
+    [toast, fetchDocuments],
+  );
 
   const handleEdit = useCallback((document: Document) => {
     setEditingDocument(document);
@@ -487,8 +543,8 @@ const DocumentManagement = () => {
       file_url: document.file_url,
       file_type: document.file_type || "",
       category: document.category || "",
-      tags: document.tags?.join(', ') || "",
-      requires_login: document.requires_login
+      tags: document.tags?.join(", ") || "",
+      requires_login: document.requires_login,
     });
     setShowAddForm(true);
     setErrors({});
@@ -502,7 +558,7 @@ const DocumentManagement = () => {
       file_type: "",
       category: "",
       tags: "",
-      requires_login: false
+      requires_login: false,
     });
     setEditingDocument(null);
     setShowAddForm(false);
@@ -510,25 +566,26 @@ const DocumentManagement = () => {
   }, []);
 
   const formatFileSize = useCallback((bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }, []);
 
   const getFileIcon = useCallback((fileType: string) => {
     const type = fileType?.toLowerCase();
-    const IconComponent = fileTypeIcons[type as keyof typeof fileTypeIcons] || FileText;
+    const IconComponent =
+      fileTypeIcons[type as keyof typeof fileTypeIcons] || FileText;
     return IconComponent;
   }, []);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
@@ -546,7 +603,9 @@ const DocumentManagement = () => {
     if (selectedDocuments.size === filteredAndSortedDocuments.length) {
       setSelectedDocuments(new Set());
     } else {
-      setSelectedDocuments(new Set(filteredAndSortedDocuments.map(doc => doc.id)));
+      setSelectedDocuments(
+        new Set(filteredAndSortedDocuments.map((doc) => doc.id)),
+      );
     }
   };
 
@@ -584,12 +643,19 @@ const DocumentManagement = () => {
         </div>
         <div className="flex gap-2">
           {selectedDocuments.size > 0 && (
-            <Button variant="destructive" onClick={handleBulkDelete} className="shadow-lg">
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              className="shadow-lg"
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete Selected ({selectedDocuments.size})
             </Button>
           )}
-          <Button onClick={() => setShowAddForm(true)} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
+          <Button
+            onClick={() => setShowAddForm(true)}
+            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add Document
           </Button>
@@ -603,7 +669,9 @@ const DocumentManagement = () => {
               {editingDocument ? "Edit Document" : "Add New Document"}
             </CardTitle>
             <CardDescription>
-              {editingDocument ? "Update document information" : "Upload and manage downloadable resources"}
+              {editingDocument
+                ? "Update document information"
+                : "Upload and manage downloadable resources"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -611,9 +679,11 @@ const DocumentManagement = () => {
               {!editingDocument && (
                 <div>
                   <Label htmlFor="file-upload">Upload File</Label>
-                  <div 
+                  <div
                     className={`mt-2 border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                      dragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
+                      dragActive
+                        ? "border-primary bg-primary/5"
+                        : "border-muted-foreground/25"
                     }`}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
@@ -626,7 +696,8 @@ const DocumentManagement = () => {
                         Drag and drop files here, or click to browse
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Supports: PDF, DOC, XLS, images, videos, archives (max 10MB)
+                        Supports: PDF, DOC, XLS, images, videos, archives (max
+                        10MB)
                       </p>
                       <input
                         id="file-upload"
@@ -640,11 +711,13 @@ const DocumentManagement = () => {
                         className="hidden"
                         accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.zip,.rar"
                       />
-                      <Button 
-                        type="button" 
-                        variant="outline" 
+                      <Button
+                        type="button"
+                        variant="outline"
                         size="sm"
-                        onClick={() => document.getElementById('file-upload')?.click()}
+                        onClick={() =>
+                          document.getElementById("file-upload")?.click()
+                        }
                       >
                         Browse Files
                       </Button>
@@ -667,7 +740,9 @@ const DocumentManagement = () => {
                   <Input
                     id="title"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     placeholder="Enter document title"
                     className={errors.title ? "border-red-500" : ""}
                   />
@@ -678,11 +753,18 @@ const DocumentManagement = () => {
                     </p>
                   )}
                 </div>
-                
+
                 <div>
                   <Label htmlFor="category">Category *</Label>
-                  <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                    <SelectTrigger className={errors.category ? "border-red-500" : ""}>
+                  <Select
+                    value={formData.category}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, category: value })
+                    }
+                  >
+                    <SelectTrigger
+                      className={errors.category ? "border-red-500" : ""}
+                    >
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -707,7 +789,9 @@ const DocumentManagement = () => {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Brief description of the document"
                   rows={3}
                 />
@@ -720,7 +804,9 @@ const DocumentManagement = () => {
                     <Input
                       id="file_url"
                       value={formData.file_url}
-                      onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, file_url: e.target.value })
+                      }
                       placeholder="https://example.com/document.pdf"
                       className={errors.file_url ? "border-red-500" : ""}
                     />
@@ -731,13 +817,15 @@ const DocumentManagement = () => {
                       </p>
                     )}
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="file_type">File Type</Label>
                     <Input
                       id="file_type"
                       value={formData.file_type}
-                      onChange={(e) => setFormData({ ...formData, file_type: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, file_type: e.target.value })
+                      }
                       placeholder="pdf, doc, jpg, etc."
                     />
                   </div>
@@ -749,7 +837,9 @@ const DocumentManagement = () => {
                 <Input
                   id="tags"
                   value={formData.tags}
-                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tags: e.target.value })
+                  }
                   placeholder="irrigation, installation, manual, guide"
                 />
               </div>
@@ -758,9 +848,13 @@ const DocumentManagement = () => {
                 <Switch
                   id="requires_login"
                   checked={formData.requires_login}
-                  onCheckedChange={(checked) => setFormData({ ...formData, requires_login: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, requires_login: checked })
+                  }
                 />
-                <Label htmlFor="requires_login">Require login to download</Label>
+                <Label htmlFor="requires_login">
+                  Require login to download
+                </Label>
               </div>
 
               <div className="flex justify-end space-x-2">
@@ -798,7 +892,10 @@ const DocumentManagement = () => {
             />
           </div>
           <div className="flex gap-2">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
@@ -838,7 +935,9 @@ const DocumentManagement = () => {
                           if (checked) {
                             setSelectedTags([...selectedTags, tag]);
                           } else {
-                            setSelectedTags(selectedTags.filter(t => t !== tag));
+                            setSelectedTags(
+                              selectedTags.filter((t) => t !== tag),
+                            );
                           }
                         }}
                       />
@@ -868,7 +967,11 @@ const DocumentManagement = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center space-x-2">
               <Checkbox
-                checked={selectedDocuments.size === filteredAndSortedDocuments.length && filteredAndSortedDocuments.length > 0}
+                checked={
+                  selectedDocuments.size ===
+                    filteredAndSortedDocuments.length &&
+                  filteredAndSortedDocuments.length > 0
+                }
                 onCheckedChange={selectAllDocuments}
               />
               <Label className="text-sm">
@@ -876,57 +979,70 @@ const DocumentManagement = () => {
               </Label>
             </div>
             <p className="text-sm text-muted-foreground">
-              Showing {filteredAndSortedDocuments.length} of {documents.length} documents
+              Showing {filteredAndSortedDocuments.length} of {documents.length}{" "}
+              documents
             </p>
           </div>
-          
+
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleSort('title')}
+              onClick={() => handleSort("title")}
               className="flex items-center gap-1"
             >
               Title
-              {sortField === 'title' && (
-                sortDirection === 'asc' ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />
-              )}
+              {sortField === "title" &&
+                (sortDirection === "asc" ? (
+                  <SortAsc className="h-3 w-3" />
+                ) : (
+                  <SortDesc className="h-3 w-3" />
+                ))}
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleSort('created_at')}
+              onClick={() => handleSort("created_at")}
               className="flex items-center gap-1"
             >
               <Calendar className="h-3 w-3" />
               Date
-              {sortField === 'created_at' && (
-                sortDirection === 'asc' ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />
-              )}
+              {sortField === "created_at" &&
+                (sortDirection === "asc" ? (
+                  <SortAsc className="h-3 w-3" />
+                ) : (
+                  <SortDesc className="h-3 w-3" />
+                ))}
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleSort('download_count')}
+              onClick={() => handleSort("download_count")}
               className="flex items-center gap-1"
             >
               <Users className="h-3 w-3" />
               Downloads
-              {sortField === 'download_count' && (
-                sortDirection === 'asc' ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />
-              )}
+              {sortField === "download_count" &&
+                (sortDirection === "asc" ? (
+                  <SortAsc className="h-3 w-3" />
+                ) : (
+                  <SortDesc className="h-3 w-3" />
+                ))}
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleSort('file_size')}
+              onClick={() => handleSort("file_size")}
               className="flex items-center gap-1"
             >
               <HardDrive className="h-3 w-3" />
               Size
-              {sortField === 'file_size' && (
-                sortDirection === 'asc' ? <SortAsc className="h-3 w-3" /> : <SortDesc className="h-3 w-3" />
-              )}
+              {sortField === "file_size" &&
+                (sortDirection === "asc" ? (
+                  <SortAsc className="h-3 w-3" />
+                ) : (
+                  <SortDesc className="h-3 w-3" />
+                ))}
             </Button>
           </div>
         </div>
@@ -936,21 +1052,28 @@ const DocumentManagement = () => {
         {filteredAndSortedDocuments.map((document) => {
           const FileIcon = getFileIcon(document.file_type);
           const isSelected = selectedDocuments.has(document.id);
-          
+
           return (
-            <Card key={document.id} className={`hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10 ${isSelected ? 'ring-2 ring-primary shadow-primary/20' : ''}`}>
+            <Card
+              key={document.id}
+              className={`hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10 ${isSelected ? "ring-2 ring-primary shadow-primary/20" : ""}`}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3 flex-1">
                     <Checkbox
                       checked={isSelected}
-                      onCheckedChange={() => toggleDocumentSelection(document.id)}
+                      onCheckedChange={() =>
+                        toggleDocumentSelection(document.id)
+                      }
                     />
                     <div className="p-2 bg-muted rounded-lg">
                       <FileIcon className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base truncate">{document.title}</CardTitle>
+                      <CardTitle className="text-base truncate">
+                        {document.title}
+                      </CardTitle>
                       {document.category && (
                         <Badge variant="secondary" className="text-xs mt-1">
                           {document.category}
@@ -969,21 +1092,27 @@ const DocumentManagement = () => {
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                   {document.description || "No description available"}
                 </p>
-                
+
                 <div className="space-y-2 text-xs text-muted-foreground">
                   <div className="flex items-center justify-between">
                     <span>File Type:</span>
-                    <span className="uppercase font-medium">{document.file_type || "Unknown"}</span>
+                    <span className="uppercase font-medium">
+                      {document.file_type || "Unknown"}
+                    </span>
                   </div>
                   {document.file_size > 0 && (
                     <div className="flex items-center justify-between">
                       <span>Size:</span>
-                      <span className="font-medium">{formatFileSize(document.file_size)}</span>
+                      <span className="font-medium">
+                        {formatFileSize(document.file_size)}
+                      </span>
                     </div>
                   )}
                   <div className="flex items-center justify-between">
                     <span>Downloads:</span>
-                    <span className="font-medium">{document.download_count}</span>
+                    <span className="font-medium">
+                      {document.download_count}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Added:</span>
@@ -1010,38 +1139,38 @@ const DocumentManagement = () => {
 
                 <div className="flex justify-between items-center mt-4">
                   <div className="flex space-x-1">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="h-8 w-8 p-0 hover:bg-green-50 hover:text-green-600"
                       onClick={() => handleDownload(document)}
                       title="Download document"
                     >
                       <Download className="h-3 w-3" />
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600"
-                      onClick={() => window.open(document.file_url, '_blank')}
+                      onClick={() => window.open(document.file_url, "_blank")}
                       title="View in new tab"
                     >
                       <ExternalLink className="h-3 w-3" />
                     </Button>
                   </div>
                   <div className="flex space-x-1">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="h-8 w-8 p-0 hover:bg-amber-50 hover:text-amber-600"
                       onClick={() => handleEdit(document)}
                       title="Edit document"
                     >
                       <Edit className="h-3 w-3" />
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-red-50"
                       onClick={() => handleDelete(document.id)}
                       title="Delete document"
@@ -1062,19 +1191,25 @@ const DocumentManagement = () => {
             <Download className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No documents found</h3>
             <p className="text-muted-foreground text-center mb-4">
-              {searchTerm || selectedCategory !== "all" || selectedTags.length > 0
-                ? "Try adjusting your search or filter criteria" 
+              {searchTerm ||
+              selectedCategory !== "all" ||
+              selectedTags.length > 0
+                ? "Try adjusting your search or filter criteria"
                 : "Get started by adding your first document"}
             </p>
-            {!searchTerm && selectedCategory === "all" && selectedTags.length === 0 && (
-              <Button onClick={() => setShowAddForm(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Your First Document
-              </Button>
-            )}
-            {(searchTerm || selectedCategory !== "all" || selectedTags.length > 0) && (
-              <Button 
-                variant="outline" 
+            {!searchTerm &&
+              selectedCategory === "all" &&
+              selectedTags.length === 0 && (
+                <Button onClick={() => setShowAddForm(true)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Your First Document
+                </Button>
+              )}
+            {(searchTerm ||
+              selectedCategory !== "all" ||
+              selectedTags.length > 0) && (
+              <Button
+                variant="outline"
                 onClick={() => {
                   setSearchTerm("");
                   setSelectedCategory("all");
@@ -1098,27 +1233,39 @@ const DocumentManagement = () => {
                 <div className="text-2xl font-bold text-primary">
                   {documents.length}
                 </div>
-                <div className="text-sm text-muted-foreground">Total Documents</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Documents
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-green-600">
                   {documents.reduce((sum, doc) => sum + doc.download_count, 0)}
                 </div>
-                <div className="text-sm text-muted-foreground">Total Downloads</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Downloads
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-blue-600">
-                  {documentCategories.filter(cat => 
-                    documents.some(doc => doc.category === cat)
-                  ).length}
+                  {
+                    documentCategories.filter((cat) =>
+                      documents.some((doc) => doc.category === cat),
+                    ).length
+                  }
                 </div>
-                <div className="text-sm text-muted-foreground">Categories Used</div>
+                <div className="text-sm text-muted-foreground">
+                  Categories Used
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-purple-600">
-                  {formatFileSize(documents.reduce((sum, doc) => sum + doc.file_size, 0))}
+                  {formatFileSize(
+                    documents.reduce((sum, doc) => sum + doc.file_size, 0),
+                  )}
                 </div>
-                <div className="text-sm text-muted-foreground">Total Storage</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Storage
+                </div>
               </div>
             </div>
           </CardContent>

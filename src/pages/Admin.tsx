@@ -17,11 +17,15 @@ import {
   CreditCard,
   Receipt,
   BarChart3,
-  Mail, 
+  Mail,
   Gift,
-  Newspaper
+  Newspaper,
 } from "lucide-react";
-import { AdminAuthProvider, AdminAuthGuard, AdminHeader } from "@/components/Admin/AdminAuth";
+import {
+  AdminAuthProvider,
+  AdminAuthGuard,
+  AdminHeader,
+} from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
 import NotificationSystem from "@/components/Admin/NotificationSystem";
 import AdminDashboard from "@/components/Admin/AdminDashboard";
@@ -41,124 +45,124 @@ import InvoiceManagementSystem from "@/components/Admin/Invoice/InvoiceManagemen
 import VisitorTrackingDashboard from "@/components/Admin/VisitorTrackingDashboard";
 import DiscountManagement from "@/components/Admin/DiscountManagement";
 import NewsManagement from "@/components/Admin/NewsManagement";
-import { Button } from "@/components/ui/button"; 
-import { Badge } from "@/components/ui/badge"; 
-import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagement"; 
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagement";
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const unreadCount = 0; 
+  const unreadCount = 0;
 
   const adminSections = [
     {
       id: "dashboard",
       label: "Dashboard",
       icon: LayoutDashboard,
-      description: "Overview and analytics"
+      description: "Overview and analytics",
     },
     {
       id: "products",
       label: "Products",
       icon: Package,
-      description: "Manage irrigation products"
+      description: "Manage irrigation products",
     },
 
     {
       id: "kits",
       label: "Irrigation Kits",
       icon: Package,
-      description: "Manage irrigation kits"
+      description: "Manage irrigation kits",
     },
     {
       id: "blog",
       label: "Blog & Content",
       icon: FileText,
-      description: "Content management system"
+      description: "Content management system",
     },
     {
       id: "news",
       label: "News",
       icon: Newspaper,
-      description: "News articles and announcements"
+      description: "News articles and announcements",
     },
     {
       id: "videos",
       label: "Videos",
       icon: Video,
-      description: "Video content management"
+      description: "Video content management",
     },
     {
       id: "quotes",
       label: "Quotes & BOQ",
       icon: Quote,
-      description: "Quote and billing management"
+      description: "Quote and billing management",
     },
     {
       id: "invoices",
       label: "Invoices",
       icon: Receipt,
-      description: "Invoice management system"
+      description: "Invoice management system",
     },
     {
       id: "analytics",
       label: "Analytics",
       icon: BarChart3,
-      description: "Visitor tracking and website analytics"
+      description: "Visitor tracking and website analytics",
     },
     {
       id: "customers",
       label: "Customers",
       icon: Users,
-      description: "Customer relationship management"
+      description: "Customer relationship management",
     },
     {
       id: "contact-notifications",
       label: "Contact Messages", // Changed label
       icon: Mail, // Changed icon to Mail
-      description: "Manage contact form submissions"
+      description: "Manage contact form submissions",
     },
     {
       id: "projects",
       label: "Projects",
       icon: TrendingUp,
-      description: "Project portfolio management"
+      description: "Project portfolio management",
     },
     {
       id: "team",
       label: "Team",
       icon: UsersIcon,
-      description: "Manage team members"
+      description: "Manage team members",
     },
     {
       id: "success-stories",
       label: "Success Stories",
       icon: Trophy,
-      description: "Client success stories"
+      description: "Client success stories",
     },
     {
       id: "documents",
       label: "Documents",
       icon: Download,
-      description: "Document download center"
+      description: "Document download center",
     },
     {
       id: "discounts",
       label: "Discount Banners",
       icon: Gift,
-      description: "Promotional banner management"
+      description: "Promotional banner management",
     },
     {
       id: "mpesa",
       label: "M-Pesa Payments",
       icon: CreditCard,
-      description: "Payment tracking and statements"
+      description: "Payment tracking and statements",
     },
     {
       id: "settings",
       label: "Settings",
       icon: Settings,
-      description: "System configuration"
-    }
+      description: "System configuration",
+    },
   ];
 
   return (
@@ -170,7 +174,9 @@ const AdminContent = () => {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                 DripTech Admin Portal
               </h1>
-              <p className="text-muted-foreground">Manage your irrigation business</p>
+              <p className="text-muted-foreground">
+                Manage your irrigation business
+              </p>
             </div>
             <div className="flex items-center gap-4">
               <NotificationSystem />
@@ -193,12 +199,14 @@ const AdminContent = () => {
                   onClick={() => setActiveTab(section.id)}
                   className={`flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-3 lg:p-4 rounded-lg border transition-all hover:shadow-md min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] ${
                     activeTab === section.id
-                      ? 'bg-primary text-primary-foreground shadow-lg'
-                      : 'bg-card hover:bg-muted/50'
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : "bg-card hover:bg-muted/50"
                   }`}
                 >
                   <Icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight px-1">{section.label}</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight px-1">
+                    {section.label}
+                  </span>
                 </Button>
               );
             })}
@@ -227,8 +235,6 @@ const AdminContent = () => {
           <TabsContent value="quotes" className="space-y-6">
             <QuoteManagement />
           </TabsContent>
-
-         
 
           <TabsContent value="invoices" className="space-y-6">
             <InvoiceManagementSystem />

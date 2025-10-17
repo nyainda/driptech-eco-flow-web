@@ -1,4 +1,3 @@
-
 export type AnalyticsSessionSummary = {
   Row: {
     avg_duration_ms: number | null;

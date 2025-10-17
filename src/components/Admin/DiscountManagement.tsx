@@ -1,13 +1,18 @@
-
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Plus,
   Edit,
   Trash2,
@@ -16,7 +21,7 @@ import {
   EyeOff,
   Calendar,
   Save,
-  X
+  X,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -45,28 +50,30 @@ const DiscountManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [editingBanner, setEditingBanner] = useState<DiscountBanner | null>(null);
-  
+  const [editingBanner, setEditingBanner] = useState<DiscountBanner | null>(
+    null,
+  );
+
   const [formData, setFormData] = useState<DiscountFormData>({
     discount: "",
     title: "",
     description: "",
     valid_until: "",
-    is_active: true
+    is_active: true,
   });
 
   // Fetch discount banners
   const { data: banners = [], isLoading } = useQuery({
-    queryKey: ['discount-banners'],
+    queryKey: ["discount-banners"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('discount_banners')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
+        .from("discount_banners")
+        .select("*")
+        .order("created_at", { ascending: false });
+
       if (error) throw error;
       return data as DiscountBanner[];
-    }
+    },
   });
 
   // Save banner mutation
@@ -75,41 +82,41 @@ const DiscountManagement = () => {
       if (editingBanner) {
         // Update existing banner
         const { data, error } = await supabase
-          .from('discount_banners')
+          .from("discount_banners")
           .update({
             discount: banner.discount,
             title: banner.title,
             description: banner.description,
             valid_until: banner.valid_until || null,
             is_active: banner.is_active,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
-          .eq('id', editingBanner.id)
+          .eq("id", editingBanner.id)
           .select()
           .single();
-        
+
         if (error) throw error;
         return data;
       } else {
         // Create new banner
         const { data, error } = await supabase
-          .from('discount_banners')
+          .from("discount_banners")
           .insert({
             discount: banner.discount,
             title: banner.title,
             description: banner.description,
             valid_until: banner.valid_until || null,
-            is_active: banner.is_active
+            is_active: banner.is_active,
           })
           .select()
           .single();
-        
+
         if (error) throw error;
         return data;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['discount-banners'] });
+      queryClient.invalidateQueries({ queryKey: ["discount-banners"] });
       resetForm();
       toast({
         title: "Success",
@@ -122,21 +129,21 @@ const DiscountManagement = () => {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Delete banner mutation
   const deleteBannerMutation = useMutation({
     mutationFn: async (bannerId: string) => {
       const { error } = await supabase
-        .from('discount_banners')
+        .from("discount_banners")
         .delete()
-        .eq('id', bannerId);
-      
+        .eq("id", bannerId);
+
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['discount-banners'] });
+      queryClient.invalidateQueries({ queryKey: ["discount-banners"] });
       toast({
         title: "Success",
         description: "Discount banner deleted successfully",
@@ -148,24 +155,30 @@ const DiscountManagement = () => {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Toggle active status mutation
   const toggleActiveMutation = useMutation({
-    mutationFn: async ({ bannerId, isActive }: { bannerId: string; isActive: boolean }) => {
+    mutationFn: async ({
+      bannerId,
+      isActive,
+    }: {
+      bannerId: string;
+      isActive: boolean;
+    }) => {
       const { error } = await supabase
-        .from('discount_banners')
-        .update({ 
+        .from("discount_banners")
+        .update({
           is_active: isActive,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', bannerId);
-      
+        .eq("id", bannerId);
+
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['discount-banners'] });
+      queryClient.invalidateQueries({ queryKey: ["discount-banners"] });
       toast({
         title: "Success",
         description: "Banner status updated successfully",
@@ -177,7 +190,7 @@ const DiscountManagement = () => {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   const resetForm = () => {
@@ -186,7 +199,7 @@ const DiscountManagement = () => {
       title: "",
       description: "",
       valid_until: "",
-      is_active: true
+      is_active: true,
     });
     setEditingBanner(null);
     setShowForm(false);
@@ -198,28 +211,28 @@ const DiscountManagement = () => {
       title: banner.title,
       description: banner.description,
       valid_until: banner.valid_until || "",
-      is_active: banner.is_active
+      is_active: banner.is_active,
     });
     setEditingBanner(banner);
     setShowForm(true);
   };
 
   const handleDelete = (banner: DiscountBanner) => {
-    if (confirm('Are you sure you want to delete this discount banner?')) {
+    if (confirm("Are you sure you want to delete this discount banner?")) {
       deleteBannerMutation.mutate(banner.id);
     }
   };
 
   const handleToggleActive = (banner: DiscountBanner) => {
-    toggleActiveMutation.mutate({ 
-      bannerId: banner.id, 
-      isActive: !banner.is_active 
+    toggleActiveMutation.mutate({
+      bannerId: banner.id,
+      isActive: !banner.is_active,
     });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.discount || !formData.title || !formData.description) {
       toast({
         title: "Error",
@@ -247,10 +260,14 @@ const DiscountManagement = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">
-              {editingBanner ? 'Edit Discount Banner' : 'Create Discount Banner'}
+              {editingBanner
+                ? "Edit Discount Banner"
+                : "Create Discount Banner"}
             </h2>
             <p className="text-muted-foreground">
-              {editingBanner ? 'Update banner details' : 'Add a new promotional banner'}
+              {editingBanner
+                ? "Update banner details"
+                : "Add a new promotional banner"}
             </p>
           </div>
           <Button variant="outline" onClick={resetForm}>
@@ -274,7 +291,9 @@ const DiscountManagement = () => {
                   <Input
                     id="discount"
                     value={formData.discount}
-                    onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, discount: e.target.value })
+                    }
                     placeholder="e.g., 20%, $50, Buy 1 Get 1"
                     required
                   />
@@ -284,7 +303,9 @@ const DiscountManagement = () => {
                   <Input
                     id="title"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     placeholder="e.g., Limited Time Offer!"
                     required
                   />
@@ -296,7 +317,9 @@ const DiscountManagement = () => {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="e.g., Save on all irrigation systems this month"
                   rows={3}
                   required
@@ -310,14 +333,18 @@ const DiscountManagement = () => {
                     id="valid_until"
                     type="date"
                     value={formData.valid_until}
-                    onChange={(e) => setFormData({ ...formData, valid_until: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, valid_until: e.target.value })
+                    }
                   />
                 </div>
                 <div className="flex items-center space-x-2 pt-6">
                   <Switch
                     id="is_active"
                     checked={formData.is_active}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_active: checked })
+                    }
                   />
                   <Label htmlFor="is_active">Active Banner</Label>
                 </div>
@@ -329,7 +356,7 @@ const DiscountManagement = () => {
                 </Button>
                 <Button type="submit" disabled={saveBannerMutation.isPending}>
                   <Save className="h-4 w-4 mr-2" />
-                  {editingBanner ? 'Update Banner' : 'Create Banner'}
+                  {editingBanner ? "Update Banner" : "Create Banner"}
                 </Button>
               </div>
             </form>
@@ -367,34 +394,40 @@ const DiscountManagement = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Banners</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Banners
+            </CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {banners.filter(b => b.is_active).length}
+              {banners.filter((b) => b.is_active).length}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expired Banners</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Expired Banners
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {banners.filter(b => isExpired(b.valid_until)).length}
+              {banners.filter((b) => isExpired(b.valid_until)).length}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inactive Banners</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Inactive Banners
+            </CardTitle>
             <EyeOff className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {banners.filter(b => !b.is_active).length}
+              {banners.filter((b) => !b.is_active).length}
             </div>
           </CardContent>
         </Card>
@@ -420,7 +453,9 @@ const DiscountManagement = () => {
           ) : banners.length === 0 ? (
             <div className="text-center py-8">
               <Gift className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No discount banners yet</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                No discount banners yet
+              </h3>
               <p className="text-muted-foreground mb-4">
                 Create your first promotional banner to engage visitors
               </p>
@@ -435,8 +470,8 @@ const DiscountManagement = () => {
                 <div
                   key={banner.id}
                   className={`border rounded-lg p-4 ${
-                    !banner.is_active ? 'opacity-60' : ''
-                  } ${isExpired(banner.valid_until) ? 'border-red-200 bg-red-50/50' : ''}`}
+                    !banner.is_active ? "opacity-60" : ""
+                  } ${isExpired(banner.valid_until) ? "border-red-200 bg-red-50/50" : ""}`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -444,19 +479,27 @@ const DiscountManagement = () => {
                         <Badge variant="secondary" className="font-bold">
                           {banner.discount} OFF
                         </Badge>
-                        <Badge variant={banner.is_active ? "default" : "secondary"}>
+                        <Badge
+                          variant={banner.is_active ? "default" : "secondary"}
+                        >
                           {banner.is_active ? "Active" : "Inactive"}
                         </Badge>
                         {isExpired(banner.valid_until) && (
                           <Badge variant="destructive">Expired</Badge>
                         )}
                       </div>
-                      <h3 className="font-semibold text-lg mb-1">{banner.title}</h3>
-                      <p className="text-muted-foreground mb-2">{banner.description}</p>
+                      <h3 className="font-semibold text-lg mb-1">
+                        {banner.title}
+                      </h3>
+                      <p className="text-muted-foreground mb-2">
+                        {banner.description}
+                      </p>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span>Created: {formatDate(banner.created_at)}</span>
                         {banner.valid_until && (
-                          <span>Valid until: {formatDate(banner.valid_until)}</span>
+                          <span>
+                            Valid until: {formatDate(banner.valid_until)}
+                          </span>
                         )}
                       </div>
                     </div>

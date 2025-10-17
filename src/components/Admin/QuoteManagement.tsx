@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -34,10 +40,14 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Trash2, Eye, Edit, Save, X, User, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { format } from 'date-fns';
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,43 +106,47 @@ const QuoteManagement = () => {
   const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([]);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<QuoteItem | null>(null);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null,
+  );
   const [showCustomerDialog, setShowCustomerDialog] = useState(false);
   const [includeVat, setIncludeVat] = useState(true);
   const [vatRate, setVatRate] = useState(16);
-  const [newQuoteItem, setNewQuoteItem] = useState<Omit<QuoteItem, 'id' | 'total'>>({
-    name: '',
-    description: '',
+  const [newQuoteItem, setNewQuoteItem] = useState<
+    Omit<QuoteItem, "id" | "total">
+  >({
+    name: "",
+    description: "",
     quantity: 1,
-    unit: 'unit',
+    unit: "unit",
     unit_price: 0,
   });
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(new Date().setDate(new Date().getDate() + 30)),
-  })
+  });
 
   const { data: customers = [], isLoading: customersLoading } = useQuery({
-    queryKey: ['customers'],
+    queryKey: ["customers"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .order('company_name', { ascending: true });
-      
+        .from("customers")
+        .select("*")
+        .order("company_name", { ascending: true });
+
       if (error) throw error;
       return data as Customer[];
-    }
+    },
   });
 
   const { data: quotes = [], isLoading: quotesLoading } = useQuery({
-    queryKey: ['quotes'],
+    queryKey: ["quotes"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('quotes')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
+        .from("quotes")
+        .select("*")
+        .order("created_at", { ascending: false });
+
       if (error) throw error;
       return (data as any[]).map((q) => ({
         ...q,
@@ -140,14 +154,14 @@ const QuoteManagement = () => {
         vat_rate: q.vat_rate ?? 16,
         total_amount: q.total_amount ?? 0,
       })) as Quote[];
-    }
+    },
   });
 
   const saveQuoteMutation = useMutation({
     mutationFn: async (quote: Partial<Quote>) => {
       if (quote.id) {
         const { data, error } = await supabase
-          .from('quotes')
+          .from("quotes")
           .update({
             customer_id: quote.customer_id,
             project_type: quote.project_type,
@@ -156,21 +170,21 @@ const QuoteManagement = () => {
             water_source: quote.water_source,
             terrain_info: quote.terrain_info,
             notes: quote.notes,
-            status: quote.status || 'draft' as QuoteStatus,
+            status: quote.status || ("draft" as QuoteStatus),
             valid_until: quote.valid_until,
             total_amount: quote.total_amount,
             include_vat: quote.include_vat,
             vat_rate: quote.vat_rate,
           })
-          .eq('id', quote.id)
+          .eq("id", quote.id)
           .select()
           .single();
-        
+
         if (error) throw error;
         return data;
       } else {
         const { data, error } = await supabase
-          .from('quotes')
+          .from("quotes")
           .insert({
             quote_number: `QT-${Date.now()}`,
             customer_id: quote.customer_id,
@@ -180,7 +194,7 @@ const QuoteManagement = () => {
             water_source: quote.water_source,
             terrain_info: quote.terrain_info,
             notes: quote.notes,
-            status: (quote.status || 'draft') as QuoteStatus,
+            status: (quote.status || "draft") as QuoteStatus,
             valid_until: quote.valid_until,
             total_amount: quote.total_amount,
             include_vat: quote.include_vat,
@@ -188,14 +202,14 @@ const QuoteManagement = () => {
           })
           .select()
           .single();
-        
+
         if (error) throw error;
         return data;
       }
     },
     onSuccess: (newQuote) => {
-      queryClient.invalidateQueries({ queryKey: ['quotes'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["quotes"] });
+
       saveQuoteItemsMutation.mutate({
         quoteId: newQuote.id,
         items: quoteItems,
@@ -207,19 +221,25 @@ const QuoteManagement = () => {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   const saveQuoteItemsMutation = useMutation({
-    mutationFn: async ({ quoteId, items }: { quoteId: string, items: QuoteItem[] }) => {
+    mutationFn: async ({
+      quoteId,
+      items,
+    }: {
+      quoteId: string;
+      items: QuoteItem[];
+    }) => {
       const { error: deleteError } = await supabase
-        .from('quote_items')
+        .from("quote_items")
         .delete()
-        .eq('quote_id', quoteId);
-      
+        .eq("quote_id", quoteId);
+
       if (deleteError) throw deleteError;
 
-      const quoteItemsToInsert = items.map(item => ({
+      const quoteItemsToInsert = items.map((item) => ({
         quote_id: quoteId,
         name: item.name,
         description: item.description,
@@ -230,15 +250,15 @@ const QuoteManagement = () => {
       }));
 
       const { data, error } = await supabase
-        .from('quote_items')
+        .from("quote_items")
         .insert(quoteItemsToInsert)
         .select();
-      
+
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      queryClient.invalidateQueries({ queryKey: ["quotes"] });
       setShowForm(false);
       setSelectedQuote(null);
       setQuoteItems([]);
@@ -254,20 +274,20 @@ const QuoteManagement = () => {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   const deleteQuoteMutation = useMutation({
     mutationFn: async (quoteId: string) => {
       const { error } = await supabase
-        .from('quotes')
+        .from("quotes")
         .delete()
-        .eq('id', quoteId);
-      
+        .eq("id", quoteId);
+
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      queryClient.invalidateQueries({ queryKey: ["quotes"] });
       toast({
         title: "Success",
         description: "Quote deleted successfully",
@@ -279,13 +299,14 @@ const QuoteManagement = () => {
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   const handleSaveQuote = (quote: Partial<Quote>) => {
-    const validUntilDate = date?.to instanceof Date ? date.to.toISOString() : undefined;
-    saveQuoteMutation.mutate({ 
-      ...quote, 
+    const validUntilDate =
+      date?.to instanceof Date ? date.to.toISOString() : undefined;
+    saveQuoteMutation.mutate({
+      ...quote,
       valid_until: validUntilDate,
       customer_id: selectedCustomer?.id,
       total_amount: totalAmount,
@@ -295,17 +316,17 @@ const QuoteManagement = () => {
   };
 
   const handleDeleteQuote = (quoteId: string) => {
-    if (confirm('Are you sure you want to delete this quote?')) {
+    if (confirm("Are you sure you want to delete this quote?")) {
       deleteQuoteMutation.mutate(quoteId);
     }
   };
 
   const handleEditQuote = async (quote: Quote) => {
     setSelectedQuote(quote);
-    
+
     setIncludeVat(quote.include_vat ?? true);
     setVatRate(quote.vat_rate ?? 16);
-    
+
     setDate({
       from: new Date(quote.created_at),
       to: quote.valid_until ? new Date(quote.valid_until) : undefined,
@@ -313,29 +334,29 @@ const QuoteManagement = () => {
 
     if (quote.customer_id) {
       const { data: customer } = await supabase
-        .from('customers')
-        .select('*')
-        .eq('id', quote.customer_id)
+        .from("customers")
+        .select("*")
+        .eq("id", quote.customer_id)
         .single();
-      
+
       setSelectedCustomer(customer);
     }
-    
+
     supabase
-      .from('quote_items')
-      .select('*')
-      .eq('quote_id', quote.id)
+      .from("quote_items")
+      .select("*")
+      .eq("quote_id", quote.id)
       .then(({ data, error }) => {
         if (error) throw error;
-        
-        const mappedItems: QuoteItem[] = (data || []).map(item => ({
+
+        const mappedItems: QuoteItem[] = (data || []).map((item) => ({
           id: item.id,
           name: item.name,
           description: item.description,
           quantity: item.quantity,
           unit: item.unit,
           unit_price: item.unitprice,
-          total: item.total
+          total: item.total,
         }));
 
         setQuoteItems(mappedItems);
@@ -361,19 +382,21 @@ const QuoteManagement = () => {
     };
     setQuoteItems([...quoteItems, newItem]);
     setNewQuoteItem({
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       quantity: 1,
-      unit: 'unit',
+      unit: "unit",
       unit_price: 0,
     });
   };
 
   const handleRemoveItem = (itemId: string) => {
-    setQuoteItems(quoteItems.filter(item => item.id !== itemId));
+    setQuoteItems(quoteItems.filter((item) => item.id !== itemId));
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setNewQuoteItem({
       ...newQuoteItem,
@@ -411,17 +434,22 @@ const QuoteManagement = () => {
     if (editingItem) {
       const updatedTotal = editingItem.quantity * editingItem.unit_price;
       const updatedItem = { ...editingItem, total: updatedTotal };
-      
-      setQuoteItems(quoteItems.map(item => 
-        item.id === editingItem.id ? updatedItem : item
-      ));
-      
+
+      setQuoteItems(
+        quoteItems.map((item) =>
+          item.id === editingItem.id ? updatedItem : item,
+        ),
+      );
+
       setEditingItemId(null);
       setEditingItem(null);
     }
   };
 
-  const handleEditItemChange = (field: keyof QuoteItem, value: string | number) => {
+  const handleEditItemChange = (
+    field: keyof QuoteItem,
+    value: string | number,
+  ) => {
     if (editingItem) {
       setEditingItem({
         ...editingItem,
@@ -444,18 +472,21 @@ const QuoteManagement = () => {
   const totalAmount = subtotal + tax;
 
   const [showPDFPreview, setShowPDFPreview] = useState(false);
-  const [selectedQuoteForPDF, setSelectedQuoteForPDF] = useState<Quote | null>(null);
+  const [selectedQuoteForPDF, setSelectedQuoteForPDF] = useState<Quote | null>(
+    null,
+  );
   const [selectedQuoteItems, setSelectedQuoteItems] = useState<QuoteItem[]>([]);
-  const [selectedCustomerForPDF, setSelectedCustomerForPDF] = useState<Customer | null>(null);
+  const [selectedCustomerForPDF, setSelectedCustomerForPDF] =
+    useState<Customer | null>(null);
 
   const handleViewPDF = async (quote: Quote) => {
     setSelectedQuoteForPDF(quote);
-    
+
     const { data: items, error: itemsError } = await supabase
-      .from('quote_items')
-      .select('*')
-      .eq('quote_id', quote.id);
-    
+      .from("quote_items")
+      .select("*")
+      .eq("quote_id", quote.id);
+
     if (itemsError) {
       toast({
         title: "Error",
@@ -465,28 +496,28 @@ const QuoteManagement = () => {
       return;
     }
 
-    const mappedItems: QuoteItem[] = (items || []).map(item => ({
+    const mappedItems: QuoteItem[] = (items || []).map((item) => ({
       id: item.id,
       name: item.name,
       description: item.description,
       quantity: item.quantity,
       unit: item.unit,
       unit_price: item.unitprice,
-      total: item.total
+      total: item.total,
     }));
 
     setSelectedQuoteItems(mappedItems);
-    
+
     if (quote.customer_id) {
       const { data: customer } = await supabase
-        .from('customers')
-        .select('*')
-        .eq('id', quote.customer_id)
+        .from("customers")
+        .select("*")
+        .eq("id", quote.customer_id)
         .single();
-      
+
       setSelectedCustomerForPDF(customer);
     }
-    
+
     setShowPDFPreview(true);
   };
 
@@ -504,16 +535,22 @@ const QuoteManagement = () => {
     return (
       <div className="space-y-6 bg-background p-3 sm:p-4 lg:p-6">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => setShowPDFPreview(false)} className="border-border text-muted-foreground hover:bg-muted">
+          <Button
+            variant="outline"
+            onClick={() => setShowPDFPreview(false)}
+            className="border-border text-muted-foreground hover:bg-muted"
+          >
             ← Back to Quotes
           </Button>
-          <h2 className="text-2xl font-bold text-foreground">Quote PDF Preview</h2>
+          <h2 className="text-2xl font-bold text-foreground">
+            Quote PDF Preview
+          </h2>
         </div>
-        
-        <QuotePDF 
+
+        <QuotePDF
           quote={{
             ...selectedQuoteForPDF,
-            vat_rate: selectedQuoteForPDF.vat_rate ?? 16 
+            vat_rate: selectedQuoteForPDF.vat_rate ?? 16,
           }}
           items={selectedQuoteItems}
           customer={selectedCustomerForPDF || undefined}
@@ -527,54 +564,87 @@ const QuoteManagement = () => {
     return (
       <div className="space-y-6 bg-background p-3 sm:p-4 lg:p-6">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => setShowForm(false)} className="border-border text-muted-foreground hover:bg-muted">
+          <Button
+            variant="outline"
+            onClick={() => setShowForm(false)}
+            className="border-border text-muted-foreground hover:bg-muted"
+          >
             ← Back to Quotes
           </Button>
-          <h2 className="text-2xl font-bold text-foreground">{selectedQuote ? 'Edit Quote' : 'New Quote'}</h2>
+          <h2 className="text-2xl font-bold text-foreground">
+            {selectedQuote ? "Edit Quote" : "New Quote"}
+          </h2>
         </div>
 
         <Card className="bg-background border-border shadow-lg">
           <CardHeader>
-            <CardTitle className="text-foreground">Customer Information</CardTitle>
-            <CardDescription className="text-muted-foreground">Select or view customer details</CardDescription>
+            <CardTitle className="text-foreground">
+              Customer Information
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Select or view customer details
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {selectedCustomer ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-semibold text-foreground">{selectedCustomer.company_name}</h3>
+                    <h3 className="font-semibold text-foreground">
+                      {selectedCustomer.company_name}
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                      {selectedCustomer.contact_person} • {selectedCustomer.email}
+                      {selectedCustomer.contact_person} •{" "}
+                      {selectedCustomer.email}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {selectedCustomer.phone} • {selectedCustomer.city}, {selectedCustomer.country}
+                      {selectedCustomer.phone} • {selectedCustomer.city},{" "}
+                      {selectedCustomer.country}
                     </p>
                   </div>
-                  <Dialog open={showCustomerDialog} onOpenChange={setShowCustomerDialog}>
+                  <Dialog
+                    open={showCustomerDialog}
+                    onOpenChange={setShowCustomerDialog}
+                  >
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="border-border text-muted-foreground hover:bg-muted">
+                      <Button
+                        variant="outline"
+                        className="border-border text-muted-foreground hover:bg-muted"
+                      >
                         <User className="h-4 w-4 mr-2" />
                         Change Customer
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl bg-background border-border">
                       <DialogHeader>
-                        <DialogTitle className="text-foreground">Select Customer</DialogTitle>
-                        <DialogDescription className="text-muted-foreground">Choose a customer for this quote</DialogDescription>
+                        <DialogTitle className="text-foreground">
+                          Select Customer
+                        </DialogTitle>
+                        <DialogDescription className="text-muted-foreground">
+                          Choose a customer for this quote
+                        </DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4 max-h-96 overflow-y-auto">
                         {customersLoading ? (
-                          <div className="text-muted-foreground">Loading customers...</div>
+                          <div className="text-muted-foreground">
+                            Loading customers...
+                          </div>
                         ) : (
                           customers.map((customer) => (
-                            <Card key={customer.id} className="cursor-pointer hover:bg-muted border-border" onClick={() => handleSelectCustomer(customer)}>
+                            <Card
+                              key={customer.id}
+                              className="cursor-pointer hover:bg-muted border-border"
+                              onClick={() => handleSelectCustomer(customer)}
+                            >
                               <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
                                   <div>
-                                    <h4 className="font-semibold text-foreground">{customer.company_name}</h4>
+                                    <h4 className="font-semibold text-foreground">
+                                      {customer.company_name}
+                                    </h4>
                                     <p className="text-sm text-muted-foreground">
-                                      {customer.contact_person} • {customer.email}
+                                      {customer.contact_person} •{" "}
+                                      {customer.email}
                                     </p>
                                     <p className="text-sm text-muted-foreground">
                                       {customer.city}, {customer.country}
@@ -594,27 +664,45 @@ const QuoteManagement = () => {
                 </div>
               </div>
             ) : (
-              <Dialog open={showCustomerDialog} onOpenChange={setShowCustomerDialog}>
+              <Dialog
+                open={showCustomerDialog}
+                onOpenChange={setShowCustomerDialog}
+              >
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="border-border text-muted-foreground hover:bg-muted">
+                  <Button
+                    variant="outline"
+                    className="border-border text-muted-foreground hover:bg-muted"
+                  >
                     <User className="h-4 w-4 mr-2" />
                     Select Customer
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl bg-background border-border">
                   <DialogHeader>
-                    <DialogTitle className="text-foreground">Select Customer</DialogTitle>
-                    <DialogDescription className="text-muted-foreground">Choose a customer for this quote</DialogDescription>
+                    <DialogTitle className="text-foreground">
+                      Select Customer
+                    </DialogTitle>
+                    <DialogDescription className="text-muted-foreground">
+                      Choose a customer for this quote
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 max-h-96 overflow-y-auto">
                     {customersLoading ? (
-                      <div className="text-muted-foreground">Loading customers...</div>
+                      <div className="text-muted-foreground">
+                        Loading customers...
+                      </div>
                     ) : (
                       customers.map((customer) => (
-                        <Card key={customer.id} className="cursor-pointer hover:bg-muted border-border" onClick={() => handleSelectCustomer(customer)}>
+                        <Card
+                          key={customer.id}
+                          className="cursor-pointer hover:bg-muted border-border"
+                          onClick={() => handleSelectCustomer(customer)}
+                        >
                           <CardContent className="p-4">
                             <div>
-                              <h4 className="font-semibold text-foreground">{customer.company_name}</h4>
+                              <h4 className="font-semibold text-foreground">
+                                {customer.company_name}
+                              </h4>
                               <p className="text-sm text-muted-foreground">
                                 {customer.contact_person} • {customer.email}
                               </p>
@@ -636,65 +724,109 @@ const QuoteManagement = () => {
         <Card className="bg-background border-border shadow-lg">
           <CardHeader>
             <CardTitle className="text-foreground">Quote Details</CardTitle>
-            <CardDescription className="text-muted-foreground">Enter the quote details below</CardDescription>
+            <CardDescription className="text-muted-foreground">
+              Enter the quote details below
+            </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="project_type" className="text-foreground">Project Type</Label>
+                <Label htmlFor="project_type" className="text-foreground">
+                  Project Type
+                </Label>
                 <Input
                   id="project_type"
                   defaultValue={selectedQuote?.project_type}
-                  onChange={(e) => setSelectedQuote({ ...selectedQuote, project_type: e.target.value } as Quote)}
+                  onChange={(e) =>
+                    setSelectedQuote({
+                      ...selectedQuote,
+                      project_type: e.target.value,
+                    } as Quote)
+                  }
                   className="bg-background border-border text-foreground placeholder-muted-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="crop_type" className="text-foreground">Crop Type</Label>
+                <Label htmlFor="crop_type" className="text-foreground">
+                  Crop Type
+                </Label>
                 <Input
                   id="crop_type"
                   defaultValue={selectedQuote?.crop_type}
-                  onChange={(e) => setSelectedQuote({ ...selectedQuote, crop_type: e.target.value } as Quote)}
+                  onChange={(e) =>
+                    setSelectedQuote({
+                      ...selectedQuote,
+                      crop_type: e.target.value,
+                    } as Quote)
+                  }
                   className="bg-background border-border text-foreground placeholder-muted-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="area_size" className="text-foreground">Area Size (acres)</Label>
+                <Label htmlFor="area_size" className="text-foreground">
+                  Area Size (acres)
+                </Label>
                 <Input
                   type="number"
                   id="area_size"
                   defaultValue={selectedQuote?.area_size}
-                  onChange={(e) => setSelectedQuote({ ...selectedQuote, area_size: parseFloat(e.target.value) } as Quote)}
+                  onChange={(e) =>
+                    setSelectedQuote({
+                      ...selectedQuote,
+                      area_size: parseFloat(e.target.value),
+                    } as Quote)
+                  }
                   className="bg-background border-border text-foreground placeholder-muted-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="water_source" className="text-foreground">Water Source</Label>
+                <Label htmlFor="water_source" className="text-foreground">
+                  Water Source
+                </Label>
                 <Input
                   id="water_source"
                   defaultValue={selectedQuote?.water_source}
-                  onChange={(e) => setSelectedQuote({ ...selectedQuote, water_source: e.target.value } as Quote)}
+                  onChange={(e) =>
+                    setSelectedQuote({
+                      ...selectedQuote,
+                      water_source: e.target.value,
+                    } as Quote)
+                  }
                   className="bg-background border-border text-foreground placeholder-muted-foreground"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="terrain_info" className="text-foreground">Terrain Info</Label>
+              <Label htmlFor="terrain_info" className="text-foreground">
+                Terrain Info
+              </Label>
               <Textarea
                 id="terrain_info"
                 defaultValue={selectedQuote?.terrain_info}
-                onChange={(e) => setSelectedQuote({ ...selectedQuote, terrain_info: e.target.value } as Quote)}
+                onChange={(e) =>
+                  setSelectedQuote({
+                    ...selectedQuote,
+                    terrain_info: e.target.value,
+                  } as Quote)
+                }
                 className="bg-background border-border text-foreground placeholder-muted-foreground"
               />
             </div>
 
             <div>
-              <Label htmlFor="notes" className="text-foreground">Notes</Label>
+              <Label htmlFor="notes" className="text-foreground">
+                Notes
+              </Label>
               <Textarea
                 id="notes"
                 defaultValue={selectedQuote?.notes}
-                onChange={(e) => setSelectedQuote({ ...selectedQuote, notes: e.target.value } as Quote)}
+                onChange={(e) =>
+                  setSelectedQuote({
+                    ...selectedQuote,
+                    notes: e.target.value,
+                  } as Quote)
+                }
                 className="bg-background border-border text-foreground placeholder-muted-foreground"
               />
             </div>
@@ -708,7 +840,7 @@ const QuoteManagement = () => {
                       variant={"outline"}
                       className={cn(
                         "w-[240px] justify-start text-left font-normal border-border text-foreground hover:bg-muted",
-                        !date && "text-muted-foreground"
+                        !date && "text-muted-foreground",
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
@@ -723,7 +855,10 @@ const QuoteManagement = () => {
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-background border-border" align="start">
+                  <PopoverContent
+                    className="w-auto p-0 bg-background border-border"
+                    align="start"
+                  >
                     <Calendar
                       initialFocus
                       mode="range"
@@ -736,10 +871,17 @@ const QuoteManagement = () => {
                 </Popover>
               </div>
               <div>
-                <Label htmlFor="status" className="text-foreground">Status</Label>
-                <Select 
-                  value={selectedQuote?.status || 'draft'} 
-                  onValueChange={(value) => setSelectedQuote({ ...selectedQuote, status: value as QuoteStatus } as Quote)}
+                <Label htmlFor="status" className="text-foreground">
+                  Status
+                </Label>
+                <Select
+                  value={selectedQuote?.status || "draft"}
+                  onValueChange={(value) =>
+                    setSelectedQuote({
+                      ...selectedQuote,
+                      status: value as QuoteStatus,
+                    } as Quote)
+                  }
                 >
                   <SelectTrigger className="bg-background border-border text-foreground">
                     <SelectValue />
@@ -760,20 +902,29 @@ const QuoteManagement = () => {
                 <Checkbox
                   id="include_vat"
                   checked={includeVat}
-                  onCheckedChange={(checked) => setIncludeVat(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setIncludeVat(checked as boolean)
+                  }
                 />
-                <Label htmlFor="include_vat" className="text-sm font-medium text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <Label
+                  htmlFor="include_vat"
+                  className="text-sm font-medium text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
                   Include VAT
                 </Label>
               </div>
               {includeVat && (
                 <div>
-                  <Label htmlFor="vat_rate" className="text-foreground">VAT Rate (%)</Label>
+                  <Label htmlFor="vat_rate" className="text-foreground">
+                    VAT Rate (%)
+                  </Label>
                   <Input
                     type="number"
                     id="vat_rate"
                     value={vatRate}
-                    onChange={(e) => setVatRate(parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setVatRate(parseFloat(e.target.value) || 0)
+                    }
                     min="0"
                     max="100"
                     step="0.1"
@@ -787,13 +938,19 @@ const QuoteManagement = () => {
 
         <Card className="bg-background border-border shadow-lg">
           <CardHeader>
-            <CardTitle className="text-foreground">Bill of Quantities (BOQ)</CardTitle>
-            <CardDescription className="text-muted-foreground">Add items to the quote</CardDescription>
+            <CardTitle className="text-foreground">
+              Bill of Quantities (BOQ)
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Add items to the quote
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
               <div>
-                <Label htmlFor="name" className="text-foreground">Item Name</Label>
+                <Label htmlFor="name" className="text-foreground">
+                  Item Name
+                </Label>
                 <Input
                   id="name"
                   name="name"
@@ -803,7 +960,9 @@ const QuoteManagement = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="description" className="text-foreground">Description</Label>
+                <Label htmlFor="description" className="text-foreground">
+                  Description
+                </Label>
                 <Input
                   id="description"
                   name="description"
@@ -813,7 +972,9 @@ const QuoteManagement = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="quantity" className="text-foreground">Quantity</Label>
+                <Label htmlFor="quantity" className="text-foreground">
+                  Quantity
+                </Label>
                 <Input
                   type="number"
                   id="quantity"
@@ -824,7 +985,9 @@ const QuoteManagement = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="unit" className="text-foreground">Unit</Label>
+                <Label htmlFor="unit" className="text-foreground">
+                  Unit
+                </Label>
                 <Input
                   id="unit"
                   name="unit"
@@ -834,7 +997,9 @@ const QuoteManagement = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="unit_price" className="text-foreground">Unit Price (KES)</Label>
+                <Label htmlFor="unit_price" className="text-foreground">
+                  Unit Price (KES)
+                </Label>
                 <Input
                   type="number"
                   id="unit_price"
@@ -846,7 +1011,11 @@ const QuoteManagement = () => {
               </div>
             </div>
             <div className="flex items-end mb-4">
-              <Button type="button" onClick={handleAddItem} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Button
+                type="button"
+                onClick={handleAddItem}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Item
               </Button>
@@ -855,7 +1024,9 @@ const QuoteManagement = () => {
             <Separator className="bg-border" />
 
             <Table>
-              <TableCaption className="text-muted-foreground">A list of items in the quote.</TableCaption>
+              <TableCaption className="text-muted-foreground">
+                A list of items in the quote.
+              </TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-foreground">Item</TableHead>
@@ -863,8 +1034,12 @@ const QuoteManagement = () => {
                   <TableHead className="text-foreground">Quantity</TableHead>
                   <TableHead className="text-foreground">Unit</TableHead>
                   <TableHead className="text-foreground">Unit Price</TableHead>
-                  <TableHead className="text-right text-foreground">Total</TableHead>
-                  <TableHead className="text-right text-foreground">Actions</TableHead>
+                  <TableHead className="text-right text-foreground">
+                    Total
+                  </TableHead>
+                  <TableHead className="text-right text-foreground">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -873,8 +1048,10 @@ const QuoteManagement = () => {
                     <TableCell className="font-medium text-foreground">
                       {editingItemId === item.id ? (
                         <Input
-                          value={editingItem?.name || ''}
-                          onChange={(e) => handleEditItemChange('name', e.target.value)}
+                          value={editingItem?.name || ""}
+                          onChange={(e) =>
+                            handleEditItemChange("name", e.target.value)
+                          }
                           className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
                         />
                       ) : (
@@ -884,8 +1061,10 @@ const QuoteManagement = () => {
                     <TableCell className="text-foreground">
                       {editingItemId === item.id ? (
                         <Input
-                          value={editingItem?.description || ''}
-                          onChange={(e) => handleEditItemChange('description', e.target.value)}
+                          value={editingItem?.description || ""}
+                          onChange={(e) =>
+                            handleEditItemChange("description", e.target.value)
+                          }
                           className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
                         />
                       ) : (
@@ -897,7 +1076,12 @@ const QuoteManagement = () => {
                         <Input
                           type="number"
                           value={editingItem?.quantity || 0}
-                          onChange={(e) => handleEditItemChange('quantity', parseInt(e.target.value) || 0)}
+                          onChange={(e) =>
+                            handleEditItemChange(
+                              "quantity",
+                              parseInt(e.target.value) || 0,
+                            )
+                          }
                           className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
                         />
                       ) : (
@@ -907,8 +1091,10 @@ const QuoteManagement = () => {
                     <TableCell className="text-foreground">
                       {editingItemId === item.id ? (
                         <Input
-                          value={editingItem?.unit || ''}
-                          onChange={(e) => handleEditItemChange('unit', e.target.value)}
+                          value={editingItem?.unit || ""}
+                          onChange={(e) =>
+                            handleEditItemChange("unit", e.target.value)
+                          }
                           className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
                         />
                       ) : (
@@ -920,7 +1106,12 @@ const QuoteManagement = () => {
                         <Input
                           type="number"
                           value={editingItem?.unit_price || 0}
-                          onChange={(e) => handleEditItemChange('unit_price', parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            handleEditItemChange(
+                              "unit_price",
+                              parseFloat(e.target.value) || 0,
+                            )
+                          }
                           className="w-24 bg-background border-border text-foreground placeholder-muted-foreground"
                         />
                       ) : (
@@ -928,28 +1119,50 @@ const QuoteManagement = () => {
                       )}
                     </TableCell>
                     <TableCell className="text-right text-foreground">
-                      KES {(editingItemId === item.id && editingItem ? 
-                        (editingItem.quantity * editingItem.unit_price).toLocaleString() : 
-                        item.total.toLocaleString()
-                      )}
+                      KES{" "}
+                      {editingItemId === item.id && editingItem
+                        ? (
+                            editingItem.quantity * editingItem.unit_price
+                          ).toLocaleString()
+                        : item.total.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center gap-2">
                         {editingItemId === item.id ? (
                           <>
-                            <Button variant="ghost" size="sm" onClick={handleSaveEdit} className="hover:bg-muted">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleSaveEdit}
+                              className="hover:bg-muted"
+                            >
                               <Save className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={handleCancelEdit} className="hover:bg-muted">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleCancelEdit}
+                              className="hover:bg-muted"
+                            >
                               <X className="h-4 w-4" />
                             </Button>
                           </>
                         ) : (
                           <>
-                            <Button variant="ghost" size="sm" onClick={() => handleStartEdit(item)} className="hover:bg-muted">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleStartEdit(item)}
+                              className="hover:bg-muted"
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleRemoveItem(item.id)} className="hover:bg-muted">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveItem(item.id)}
+                              className="hover:bg-muted"
+                            >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </>
@@ -961,20 +1174,32 @@ const QuoteManagement = () => {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={5} className="text-foreground">Subtotal</TableCell>
-                  <TableCell className="text-right text-foreground">KES {subtotal.toLocaleString()}</TableCell>
+                  <TableCell colSpan={5} className="text-foreground">
+                    Subtotal
+                  </TableCell>
+                  <TableCell className="text-right text-foreground">
+                    KES {subtotal.toLocaleString()}
+                  </TableCell>
                   <TableCell></TableCell>
                 </TableRow>
                 {includeVat && (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-foreground">VAT ({vatRate}%)</TableCell>
-                    <TableCell className="text-right text-foreground">KES {tax.toLocaleString()}</TableCell>
+                    <TableCell colSpan={5} className="text-foreground">
+                      VAT ({vatRate}%)
+                    </TableCell>
+                    <TableCell className="text-right text-foreground">
+                      KES {tax.toLocaleString()}
+                    </TableCell>
                     <TableCell></TableCell>
                   </TableRow>
                 )}
                 <TableRow>
-                  <TableCell colSpan={5} className="text-foreground">Total Amount {includeVat ? '(Incl. VAT)' : '(Excl. VAT)'}</TableCell>
-                  <TableCell className="text-right font-bold text-foreground">KES {totalAmount.toLocaleString()}</TableCell>
+                  <TableCell colSpan={5} className="text-foreground">
+                    Total Amount {includeVat ? "(Incl. VAT)" : "(Excl. VAT)"}
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-foreground">
+                    KES {totalAmount.toLocaleString()}
+                  </TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableFooter>
@@ -983,23 +1208,32 @@ const QuoteManagement = () => {
         </Card>
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setShowForm(false)} className="border-border text-muted-foreground hover:bg-muted">
+          <Button
+            variant="outline"
+            onClick={() => setShowForm(false)}
+            className="border-border text-muted-foreground hover:bg-muted"
+          >
             Cancel
           </Button>
-          <Button onClick={() => handleSaveQuote({
-            id: selectedQuote?.id,
-            project_type: selectedQuote?.project_type,
-            crop_type: selectedQuote?.crop_type,
-            area_size: selectedQuote?.area_size,
-            water_source: selectedQuote?.water_source,
-            terrain_info: selectedQuote?.terrain_info,
-            notes: selectedQuote?.notes,
-            status: (selectedQuote?.status || 'draft') as QuoteStatus,
-            valid_until: date?.to?.toISOString(),
-            total_amount: totalAmount,
-            include_vat: includeVat,
-            vat_rate: vatRate,
-          })} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button
+            onClick={() =>
+              handleSaveQuote({
+                id: selectedQuote?.id,
+                project_type: selectedQuote?.project_type,
+                crop_type: selectedQuote?.crop_type,
+                area_size: selectedQuote?.area_size,
+                water_source: selectedQuote?.water_source,
+                terrain_info: selectedQuote?.terrain_info,
+                notes: selectedQuote?.notes,
+                status: (selectedQuote?.status || "draft") as QuoteStatus,
+                valid_until: date?.to?.toISOString(),
+                total_amount: totalAmount,
+                include_vat: includeVat,
+                vat_rate: vatRate,
+              })
+            }
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
             Save Quote
           </Button>
         </div>
@@ -1018,14 +1252,20 @@ const QuoteManagement = () => {
                   <span className="text-2xl">📄</span>
                 </div>
                 <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">Quote Management</h1>
-                  <p className="text-sm text-muted-foreground mt-1">Create and manage professional quotes</p>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                    Quote Management
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Create and manage professional quotes
+                  </p>
                   <div className="flex items-center gap-4 mt-3 text-muted-foreground">
-                    <span className="text-sm">Total Quotes: {quotes.length}</span>
+                    <span className="text-sm">
+                      Total Quotes: {quotes.length}
+                    </span>
                   </div>
                 </div>
               </div>
-              <Button 
+              <Button
                 onClick={handleNewQuote}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all duration-200 transform hover:scale-105"
               >
@@ -1042,7 +1282,9 @@ const QuoteManagement = () => {
               <CardContent className="flex items-center justify-center py-16">
                 <div className="text-center">
                   <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-muted-foreground text-lg font-medium">Loading quotes...</p>
+                  <p className="text-muted-foreground text-lg font-medium">
+                    Loading quotes...
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -1052,9 +1294,16 @@ const QuoteManagement = () => {
                 <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                   <Plus className="w-12 h-12 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">No quotes yet</h3>
-                <p className="text-muted-foreground mb-6">Create your first quote to get started</p>
-                <Button onClick={handleNewQuote} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <h3 className="text-xl font-bold text-foreground mb-2">
+                  No quotes yet
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  Create your first quote to get started
+                </p>
+                <Button
+                  onClick={handleNewQuote}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Create First Quote
                 </Button>
@@ -1062,50 +1311,69 @@ const QuoteManagement = () => {
             </Card>
           ) : (
             quotes.map((quote) => (
-              <Card key={quote.id} className="group bg-background border-border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <Card
+                key={quote.id}
+                className="group bg-background border-border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4 flex-1">
                       <div className="w-16 h-16 bg-muted border border-border rounded-xl flex items-center justify-center text-foreground font-bold text-xl">
-                        {quote.quote_number.split('-')[1] || 'Q'}
+                        {quote.quote_number.split("-")[1] || "Q"}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
                           <CardTitle className="text-xl sm:text-2xl font-bold text-foreground">
                             {quote.quote_number}
                           </CardTitle>
-                          <Badge 
-                            variant="secondary" 
+                          <Badge
+                            variant="secondary"
                             className={`px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-muted text-muted-foreground border-border`}
                           >
                             {quote.status}
                           </Badge>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                           {quote.project_type && (
                             <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">🚿 Project:</span>
-                              <span className="text-foreground">{quote.project_type}</span>
+                              <span className="text-primary font-medium">
+                                🚿 Project:
+                              </span>
+                              <span className="text-foreground">
+                                {quote.project_type}
+                              </span>
                             </div>
                           )}
                           {quote.crop_type && (
                             <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">🌱 Crop:</span>
-                              <span className="text-foreground">{quote.crop_type}</span>
+                              <span className="text-primary font-medium">
+                                🌱 Crop:
+                              </span>
+                              <span className="text-foreground">
+                                {quote.crop_type}
+                              </span>
                             </div>
                           )}
                           {quote.area_size && (
                             <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">📏 Area:</span>
-                              <span className="text-foreground">{quote.area_size} acres</span>
+                              <span className="text-primary font-medium">
+                                📏 Area:
+                              </span>
+                              <span className="text-foreground">
+                                {quote.area_size} acres
+                              </span>
                             </div>
                           )}
                           {quote.customer_id && (
                             <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">👤 Customer:</span>
+                              <span className="text-primary font-medium">
+                                👤 Customer:
+                              </span>
                               <span className="text-foreground truncate">
-                                {customers.find(c => c.id === quote.customer_id)?.company_name || 'Unknown'}
+                                {customers.find(
+                                  (c) => c.id === quote.customer_id,
+                                )?.company_name || "Unknown"}
                               </span>
                             </div>
                           )}
@@ -1118,8 +1386,13 @@ const QuoteManagement = () => {
                                 KES {quote.total_amount.toLocaleString()}
                               </span>
                             </div>
-                            <Badge variant="outline" className="bg-background border-border text-xs text-muted-foreground font-semibold">
-                              {quote.include_vat ? `Incl. VAT (${quote.vat_rate || 16}%)` : 'Excl. VAT'}
+                            <Badge
+                              variant="outline"
+                              className="bg-background border-border text-xs text-muted-foreground font-semibold"
+                            >
+                              {quote.include_vat
+                                ? `Incl. VAT (${quote.vat_rate || 16}%)`
+                                : "Excl. VAT"}
                             </Badge>
                           </div>
                         )}
@@ -1127,11 +1400,23 @@ const QuoteManagement = () => {
                         <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                           <div className="flex items-center gap-2">
                             <span>📅</span>
-                            <span>Created: {new Date(quote.created_at).toLocaleDateString('en-GB')}</span>
+                            <span>
+                              Created:{" "}
+                              {new Date(quote.created_at).toLocaleDateString(
+                                "en-GB",
+                              )}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
                             <span>⏰</span>
-                            <span>Valid Until: {quote.valid_until ? new Date(quote.valid_until).toLocaleDateString('en-GB') : 'N/A'}</span>
+                            <span>
+                              Valid Until:{" "}
+                              {quote.valid_until
+                                ? new Date(
+                                    quote.valid_until,
+                                  ).toLocaleDateString("en-GB")
+                                : "N/A"}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -1140,33 +1425,33 @@ const QuoteManagement = () => {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="flex flex-wrap justify-end gap-3">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => handleViewPDF(quote)}
                       className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold"
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       View PDF
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => handleEditQuote(quote)}
                       className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => handleDeleteQuote(quote.id)} 
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeleteQuote(quote.id)}
                       disabled={deleteQuoteMutation.isPending}
                       className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      {deleteQuoteMutation.isPending ? 'Deleting...' : 'Delete'}
+                      {deleteQuoteMutation.isPending ? "Deleting..." : "Delete"}
                     </Button>
                   </div>
                 </CardContent>

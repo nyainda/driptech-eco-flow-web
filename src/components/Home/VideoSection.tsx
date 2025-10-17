@@ -4,8 +4,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Play, Clock, Eye, AlertTriangle, Star, X, ExternalLink, Download } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Play,
+  Clock,
+  Eye,
+  AlertTriangle,
+  Star,
+  X,
+  ExternalLink,
+  Download,
+} from "lucide-react";
 
 // Define types for video
 interface Video {
@@ -42,10 +56,18 @@ const VideoSkeleton = () => (
 );
 
 // Error state component
-const ErrorState = ({ error, onRetry }: { error: Error | null; onRetry: () => void }) => (
+const ErrorState = ({
+  error,
+  onRetry,
+}: {
+  error: Error | null;
+  onRetry: () => void;
+}) => (
   <div className="text-center py-16">
     <AlertTriangle className="h-12 w-12 sm:h-16 sm:w-16 text-primary mx-auto mb-4" />
-    <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Error Loading Videos</h3>
+    <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
+      Error Loading Videos
+    </h3>
     <p className="text-sm sm:text-base text-muted-foreground mb-4 px-4">
       {error?.message || "Failed to load videos. Please try again later."}
     </p>
@@ -63,8 +85,12 @@ const ErrorState = ({ error, onRetry }: { error: Error | null; onRetry: () => vo
 const EmptyState = () => (
   <div className="text-center py-16">
     <Play className="h-12 w-12 sm:h-16 sm:w-16 text-primary mx-auto mb-4" />
-    <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">No Videos Available</h3>
-    <p className="text-sm sm:text-base text-muted-foreground">Check back later for new tutorials!</p>
+    <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
+      No Videos Available
+    </h3>
+    <p className="text-sm sm:text-base text-muted-foreground">
+      Check back later for new tutorials!
+    </p>
   </div>
 );
 
@@ -82,14 +108,21 @@ const VideoCard = ({
   onDownload: (video: Video) => void;
   isDownloading: boolean;
 }) => {
-  const isYouTube = video.video_url.includes("youtube.com") || video.video_url.includes("youtu.be");
+  const isYouTube =
+    video.video_url.includes("youtube.com") ||
+    video.video_url.includes("youtu.be");
   const thumbnailUrl =
     video.thumbnail_url ||
-    (isYouTube ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.video_url)}/maxresdefault.jpg` : "/fallback-thumbnail.jpg");
+    (isYouTube
+      ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.video_url)}/maxresdefault.jpg`
+      : "/fallback-thumbnail.jpg");
 
   return (
     <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 bg-background border-border">
-      <div className="relative aspect-video overflow-hidden cursor-pointer" onClick={() => onWatch(video)}>
+      <div
+        className="relative aspect-video overflow-hidden cursor-pointer"
+        onClick={() => onWatch(video)}
+      >
         <img
           src={thumbnailUrl}
           alt={video.title}
@@ -109,7 +142,10 @@ const VideoCard = ({
           </div>
         )}
         <div className="absolute top-2 left-2">
-          <Badge variant="secondary" className="capitalize text-xs sm:text-sm bg-muted text-foreground border-border">
+          <Badge
+            variant="secondary"
+            className="capitalize text-xs sm:text-sm bg-muted text-foreground border-border"
+          >
             {video.category}
           </Badge>
         </div>
@@ -127,26 +163,41 @@ const VideoCard = ({
           {video.title}
         </h3>
         {video.description && (
-          <p className="text-sm text-muted-foreground mb-3 sm:mb-4 line-clamp-2">{video.description}</p>
+          <p className="text-sm text-muted-foreground mb-3 sm:mb-4 line-clamp-2">
+            {video.description}
+          </p>
         )}
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Eye className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-              <span className="hidden sm:inline">{video.views.toLocaleString()}</span>
-              <span className="sm:hidden">{video.views > 999 ? `${Math.floor(video.views / 1000)}K` : video.views}</span>
+              <span className="hidden sm:inline">
+                {video.views.toLocaleString()}
+              </span>
+              <span className="sm:hidden">
+                {video.views > 999
+                  ? `${Math.floor(video.views / 1000)}K`
+                  : video.views}
+              </span>
             </div>
           </div>
         </div>
         {video.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4">
             {video.tags.slice(0, window.innerWidth < 640 ? 2 : 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs bg-muted/30 border-border text-foreground">
+              <Badge
+                key={tag}
+                variant="outline"
+                className="text-xs bg-muted/30 border-border text-foreground"
+              >
                 {tag}
               </Badge>
             ))}
             {video.tags.length > (window.innerWidth < 640 ? 2 : 3) && (
-              <Badge variant="outline" className="text-xs bg-muted/30 border-border text-foreground">
+              <Badge
+                variant="outline"
+                className="text-xs bg-muted/30 border-border text-foreground"
+              >
                 +{video.tags.length - (window.innerWidth < 640 ? 2 : 3)}
               </Badge>
             )}
@@ -180,7 +231,9 @@ const VideoCard = ({
               title={isYouTube ? "Open YouTube video" : "Download video"}
             >
               <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-              <span className="text-xs sm:text-sm">{isDownloading ? "..." : isYouTube ? "View" : "Download"}</span>
+              <span className="text-xs sm:text-sm">
+                {isDownloading ? "..." : isYouTube ? "View" : "Download"}
+              </span>
             </Button>
           </div>
         </div>
@@ -206,7 +259,9 @@ const VideoModal = ({
   isDownloading: boolean;
 }) => {
   if (!video) return null;
-  const isYouTube = video.video_url.includes("youtube.com") || video.video_url.includes("youtu.be");
+  const isYouTube =
+    video.video_url.includes("youtube.com") ||
+    video.video_url.includes("youtu.be");
   const embedUrl = isYouTube
     ? `https://www.youtube.com/embed/${getYouTubeVideoId(video.video_url)}?autoplay=1&rel=0`
     : video.video_url;
@@ -253,7 +308,9 @@ const VideoModal = ({
         </div>
         <div className="p-4 sm:p-6">
           {video.description && (
-            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{video.description}</p>
+            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
+              {video.description}
+            </p>
           )}
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
             <div className="flex items-center gap-1">
@@ -266,21 +323,32 @@ const VideoModal = ({
                 {formatDuration(video.duration)}
               </div>
             )}
-            <Badge variant="outline" className="capitalize text-xs sm:text-sm bg-muted/30 border-border text-foreground">
+            <Badge
+              variant="outline"
+              className="capitalize text-xs sm:text-sm bg-muted/30 border-border text-foreground"
+            >
               {video.category}
             </Badge>
           </div>
           {video.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
               {video.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs bg-muted/30 border-border text-foreground">
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="text-xs bg-muted/30 border-border text-foreground"
+                >
                   {tag}
                 </Badge>
               ))}
             </div>
           )}
           <div className="flex gap-2 pt-4 border-t border-border">
-            <Button variant="outline" className="flex-1" onClick={() => onCopyLink(video)}>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => onCopyLink(video)}
+            >
               <ExternalLink className="h-4 w-4 mr-2" />
               Share Video
             </Button>
@@ -291,7 +359,11 @@ const VideoModal = ({
               disabled={isDownloading}
             >
               <Download className="h-4 w-4 mr-2" />
-              {isDownloading ? "Downloading..." : isYouTube ? "View on YouTube" : "Download"}
+              {isDownloading
+                ? "Downloading..."
+                : isYouTube
+                  ? "View on YouTube"
+                  : "Download"}
             </Button>
           </div>
         </div>
@@ -306,7 +378,12 @@ const VideoSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [downloadingVideo, setDownloadingVideo] = useState<string | null>(null);
 
-  const { data: videos = [], isLoading, isError, error } = useQuery({
+  const {
+    data: videos = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["published-videos"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -322,13 +399,16 @@ const VideoSection = () => {
   });
 
   const getYouTubeVideoId = (url: string) => {
-    const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
+    const regex =
+      /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
     return url.match(regex)?.[1] || null;
   };
 
   const handleCopyLink = async (video: Video) => {
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/watch/${video.id}`);
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/watch/${video.id}`,
+      );
       // Consider adding a toast notification here
       console.log("Link copied to clipboard");
     } catch (error) {
@@ -337,7 +417,10 @@ const VideoSection = () => {
   };
 
   const handleVideoDownload = async (video: Video) => {
-    if (video.video_url.includes("youtube.com") || video.video_url.includes("youtu.be")) {
+    if (
+      video.video_url.includes("youtube.com") ||
+      video.video_url.includes("youtu.be")
+    ) {
       window.open(video.video_url, "_blank");
       return;
     }
@@ -349,7 +432,10 @@ const VideoSection = () => {
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `${video.title.replace(/[^a-zA-Z0-9\s-]/g, "").replace(/\s+/g, "-").toLowerCase()}.${
+      link.download = `${video.title
+        .replace(/[^a-zA-Z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .toLowerCase()}.${
         video.video_url.split(".").pop()?.split("?")[0] || "mp4"
       }`;
       document.body.appendChild(link);
@@ -368,7 +454,10 @@ const VideoSection = () => {
     try {
       const currentVideo = videos.find((v) => v.id === videoId);
       if (currentVideo) {
-        await supabase.from("videos").update({ views: currentVideo.views + 1 }).eq("id", videoId);
+        await supabase
+          .from("videos")
+          .update({ views: currentVideo.views + 1 })
+          .eq("id", videoId);
       }
     } catch (error) {
       console.error("Failed to increment views:", error);
@@ -389,7 +478,8 @@ const VideoSection = () => {
             Irrigation Videos & <span className="text-primary">Tutorials</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-            Learn from our expert irrigation tutorials and see our systems in action
+            Learn from our expert irrigation tutorials and see our systems in
+            action
           </p>
         </div>
 
@@ -397,7 +487,10 @@ const VideoSection = () => {
           {isLoading ? (
             Array.from({ length: 6 }).map((_, i) => <VideoSkeleton key={i} />)
           ) : isError ? (
-            <ErrorState error={error} onRetry={() => window.location.reload()} />
+            <ErrorState
+              error={error}
+              onRetry={() => window.location.reload()}
+            />
           ) : videos.length === 0 ? (
             <EmptyState />
           ) : (

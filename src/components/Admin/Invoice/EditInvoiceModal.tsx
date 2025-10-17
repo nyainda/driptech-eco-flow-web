@@ -1,9 +1,14 @@
 // components/EditInvoiceModal.tsx
-import React, { useState, useEffect } from 'react';
-import { X, Edit, Plus, Trash2, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { X, Edit, Plus, Trash2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Invoice, Customer, Quote, EditInvoiceForm } from '../types/InvoiceTypes';
-import { formatCurrency, calculateItemTotal } from '../utils/formatters';
+import {
+  Invoice,
+  Customer,
+  Quote,
+  EditInvoiceForm,
+} from "../types/InvoiceTypes";
+import { formatCurrency, calculateItemTotal } from "../utils/formatters";
 
 interface EditInvoiceModalProps {
   invoice: Invoice;
@@ -18,64 +23,64 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   customers,
   quotes,
   onClose,
-  onSuccess
+  onSuccess,
 }) => {
   const [updating, setUpdating] = useState(false);
   const [editForm, setEditForm] = useState<EditInvoiceForm>({
-    customer_id: '',
-    quote_id: '',
-    issue_date: '',
-    due_date: '',
-    payment_terms: '30 days',
+    customer_id: "",
+    quote_id: "",
+    issue_date: "",
+    due_date: "",
+    payment_terms: "30 days",
     tax_rate: 16,
     discount_amount: 0,
-    notes: '',
-    payment_details: '',
+    notes: "",
+    payment_details: "",
     items: [
       {
-        id: '',
-        name: '',
-        description: '',
+        id: "",
+        name: "",
+        description: "",
         quantity: 1,
-        unit: 'pcs',
+        unit: "pcs",
         unit_price: 0,
-        total: 0
-      }
-    ]
+        total: 0,
+      },
+    ],
   });
 
   // Initialize form with invoice data
   useEffect(() => {
     if (invoice) {
       setEditForm({
-        customer_id: invoice.customer_id || '',
-        quote_id: invoice.quote_id || '',
+        customer_id: invoice.customer_id || "",
+        quote_id: invoice.quote_id || "",
         issue_date: invoice.issue_date,
         due_date: invoice.due_date,
-        payment_terms: invoice.payment_terms || '30 days',
+        payment_terms: invoice.payment_terms || "30 days",
         tax_rate: invoice.tax_rate || 16,
         discount_amount: invoice.discount_amount || 0,
-        notes: invoice.notes || '',
-        payment_details: invoice.payment_details || '',
-        items: invoice.invoice_items?.map(item => ({
+        notes: invoice.notes || "",
+        payment_details: invoice.payment_details || "",
+        items: invoice.invoice_items?.map((item) => ({
           id: item.id,
           name: item.name,
-          description: item.description || '',
+          description: item.description || "",
           quantity: item.quantity,
-          unit: item.unit || 'pcs',
+          unit: item.unit || "pcs",
           unit_price: item.unit_price,
-          total: item.total
+          total: item.total,
         })) || [
           {
-            id: '',
-            name: '',
-            description: '',
+            id: "",
+            name: "",
+            description: "",
             quantity: 1,
-            unit: 'pcs',
+            unit: "pcs",
             unit_price: 0,
-            total: 0
-          }
-        ]
+            total: 0,
+          },
+        ],
       });
     }
   }, [invoice]);
@@ -92,7 +97,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       subtotal,
       discountAmount,
       taxAmount,
-      total
+      total,
     };
   };
 
@@ -101,20 +106,20 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
     const updatedItems = [...editForm.items];
     updatedItems[index] = {
       ...updatedItems[index],
-      [field]: value
+      [field]: value,
     };
 
     // Recalculate total for this item
-    if (field === 'quantity' || field === 'unit_price') {
+    if (field === "quantity" || field === "unit_price") {
       updatedItems[index].total = calculateItemTotal(
         updatedItems[index].quantity,
-        updatedItems[index].unit_price
+        updatedItems[index].unit_price,
       );
     }
 
     setEditForm({
       ...editForm,
-      items: updatedItems
+      items: updatedItems,
     });
   };
 
@@ -125,15 +130,15 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       items: [
         ...editForm.items,
         {
-          id: '',
-          name: '',
-          description: '',
+          id: "",
+          name: "",
+          description: "",
           quantity: 1,
-          unit: 'pcs',
+          unit: "pcs",
           unit_price: 0,
-          total: 0
-        }
-      ]
+          total: 0,
+        },
+      ],
     });
   };
 
@@ -143,7 +148,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       const updatedItems = editForm.items.filter((_, i) => i !== index);
       setEditForm({
         ...editForm,
-        items: updatedItems
+        items: updatedItems,
       });
     }
   };
@@ -152,23 +157,23 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
   const updateInvoice = async (invoiceId: string, invoiceData: any) => {
     try {
       const { data: updatedInvoice, error: invoiceError } = await supabase
-        .from('invoices')
+        .from("invoices")
         .update({
           ...invoiceData,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', invoiceId)
+        .eq("id", invoiceId)
         .select()
         .single();
 
       if (invoiceError) {
-        console.error('Error updating invoice:', invoiceError);
+        console.error("Error updating invoice:", invoiceError);
         throw invoiceError;
       }
 
       return updatedInvoice;
     } catch (error) {
-      console.error('Error updating invoice:', error);
+      console.error("Error updating invoice:", error);
       throw error;
     }
   };
@@ -178,38 +183,38 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
     try {
       // Delete existing items
       const { error: deleteError } = await supabase
-        .from('invoice_items')
+        .from("invoice_items")
         .delete()
-        .eq('invoice_id', invoiceId);
+        .eq("invoice_id", invoiceId);
 
       if (deleteError) {
-        console.error('Error deleting existing items:', deleteError);
+        console.error("Error deleting existing items:", deleteError);
         throw deleteError;
       }
 
       // Insert new/updated items
-      const itemsWithInvoiceId = items.map(item => ({
+      const itemsWithInvoiceId = items.map((item) => ({
         name: item.name,
         description: item.description || null,
         quantity: item.quantity,
         unit_price: item.unit_price,
         total: item.total,
-        unit: item.unit || 'pcs',
-        invoice_id: invoiceId
+        unit: item.unit || "pcs",
+        invoice_id: invoiceId,
       }));
 
       const { error: insertError } = await supabase
-        .from('invoice_items')
+        .from("invoice_items")
         .insert(itemsWithInvoiceId);
 
       if (insertError) {
-        console.error('Error inserting updated items:', insertError);
+        console.error("Error inserting updated items:", insertError);
         throw insertError;
       }
 
       return true;
     } catch (error) {
-      console.error('Error updating invoice items:', error);
+      console.error("Error updating invoice items:", error);
       throw error;
     }
   };
@@ -220,24 +225,24 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
 
     // Validate form
     if (!editForm.customer_id) {
-      alert('Please select a customer');
+      alert("Please select a customer");
       return;
     }
 
-    if (editForm.items.some(item => !item.name.trim())) {
-      alert('Please fill in all item names');
+    if (editForm.items.some((item) => !item.name.trim())) {
+      alert("Please fill in all item names");
       return;
     }
 
     if (!editForm.issue_date || !editForm.due_date) {
-      alert('Please set issue and due dates');
+      alert("Please set issue and due dates");
       return;
     }
 
     try {
       setUpdating(true);
       const totals = calculateEditFormTotals();
-      
+
       const invoiceData = {
         customer_id: editForm.customer_id,
         quote_id: editForm.quote_id || null,
@@ -250,24 +255,24 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         subtotal: totals.subtotal,
         total_amount: totals.total,
         notes: editForm.notes || null,
-        payment_details: editForm.payment_details || null
+        payment_details: editForm.payment_details || null,
       };
 
       const updatedInvoice = await updateInvoice(invoice.id, invoiceData);
-      
+
       if (updatedInvoice) {
         await updateInvoiceItems(invoice.id, editForm.items);
-        
+
         // Success feedback
-        alert('Invoice updated successfully!');
-        
+        alert("Invoice updated successfully!");
+
         // Close modal and reload
         onClose();
         onSuccess();
       }
     } catch (error) {
-      console.error('Error updating invoice:', error);
-      alert('Error updating invoice. Please try again.');
+      console.error("Error updating invoice:", error);
+      alert("Error updating invoice. Please try again.");
     } finally {
       setUpdating(false);
     }
@@ -292,12 +297,14 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
             <X className="w-6 h-6" />
           </button>
         </div>
-        
+
         <div className="p-4 sm:p-6">
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            handleUpdateInvoice();
-          }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleUpdateInvoice();
+            }}
+          >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
               {/* Customer Selection */}
               <div>
@@ -307,7 +314,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                 <select
                   required
                   value={editForm.customer_id}
-                  onChange={(e) => setEditForm({ ...editForm, customer_id: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, customer_id: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={updating}
                 >
@@ -325,16 +334,19 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Quote Reference (Optional)
                 </label>
-                <select 
+                <select
                   value={editForm.quote_id}
-                  onChange={(e) => setEditForm({ ...editForm, quote_id: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, quote_id: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={updating}
                 >
                   <option value="">Select Quote</option>
                   {quotes.map((quote) => (
                     <option key={quote.id} value={quote.id}>
-                      {quote.quote_number} - {formatCurrency(quote.total_amount || 0)}
+                      {quote.quote_number} -{" "}
+                      {formatCurrency(quote.total_amount || 0)}
                     </option>
                   ))}
                 </select>
@@ -349,7 +361,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                   type="date"
                   required
                   value={editForm.issue_date}
-                  onChange={(e) => setEditForm({ ...editForm, issue_date: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, issue_date: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={updating}
                 />
@@ -364,7 +378,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                   type="date"
                   required
                   value={editForm.due_date}
-                  onChange={(e) => setEditForm({ ...editForm, due_date: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, due_date: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={updating}
                 />
@@ -375,9 +391,11 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Payment Terms
                 </label>
-                <select 
+                <select
                   value={editForm.payment_terms}
-                  onChange={(e) => setEditForm({ ...editForm, payment_terms: e.target.value })}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, payment_terms: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={updating}
                 >
@@ -399,7 +417,12 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                   min="0"
                   max="100"
                   value={editForm.tax_rate}
-                  onChange={(e) => setEditForm({ ...editForm, tax_rate: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      tax_rate: parseFloat(e.target.value) || 0,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={updating}
                 />
@@ -409,7 +432,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
             {/* Invoice Items Section */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Invoice Items</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Invoice Items
+                </h3>
                 <button
                   type="button"
                   onClick={addEditFormItem}
@@ -426,23 +451,44 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                   <table className="w-full">
                     <thead className="bg-gray-50 dark:bg-gray-700">
                       <tr>
-                        <th className="px-3 sm:px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">Description</th>
-                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">Qty</th>
-                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">Unit</th>
-                        <th className="px-3 sm:px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">Unit Price</th>
-                        <th className="px-3 sm:px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">Total</th>
-                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">Action</th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">
+                          Description
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
+                          Qty
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
+                          Unit
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">
+                          Unit Price
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">
+                          Total
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {editForm.items.map((item, index) => (
-                        <tr key={index} className="border-t border-gray-200 dark:border-gray-700">
+                        <tr
+                          key={index}
+                          className="border-t border-gray-200 dark:border-gray-700"
+                        >
                           <td className="px-3 sm:px-4 py-3">
                             <input
                               type="text"
                               placeholder="Item name"
                               value={item.name}
-                              onChange={(e) => updateEditFormItem(index, 'name', e.target.value)}
+                              onChange={(e) =>
+                                updateEditFormItem(
+                                  index,
+                                  "name",
+                                  e.target.value,
+                                )
+                              }
                               className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent mb-1 transition-colors"
                               required
                               disabled={updating}
@@ -451,7 +497,13 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                               type="text"
                               placeholder="Description (optional)"
                               value={item.description}
-                              onChange={(e) => updateEditFormItem(index, 'description', e.target.value)}
+                              onChange={(e) =>
+                                updateEditFormItem(
+                                  index,
+                                  "description",
+                                  e.target.value,
+                                )
+                              }
                               className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
                               disabled={updating}
                             />
@@ -461,15 +513,27 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                               type="number"
                               min="1"
                               value={item.quantity}
-                              onChange={(e) => updateEditFormItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                              onChange={(e) =>
+                                updateEditFormItem(
+                                  index,
+                                  "quantity",
+                                  parseInt(e.target.value) || 1,
+                                )
+                              }
                               className="w-16 sm:w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm text-center focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
                               disabled={updating}
                             />
                           </td>
                           <td className="px-3 sm:px-4 py-3">
-                            <select 
+                            <select
                               value={item.unit}
-                              onChange={(e) => updateEditFormItem(index, 'unit', e.target.value)}
+                              onChange={(e) =>
+                                updateEditFormItem(
+                                  index,
+                                  "unit",
+                                  e.target.value,
+                                )
+                              }
                               className="w-16 sm:w-20 px-1 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
                               disabled={updating}
                             >
@@ -486,7 +550,13 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                               step="0.01"
                               min="0"
                               value={item.unit_price}
-                              onChange={(e) => updateEditFormItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                              onChange={(e) =>
+                                updateEditFormItem(
+                                  index,
+                                  "unit_price",
+                                  parseFloat(e.target.value) || 0,
+                                )
+                              }
                               className="w-20 sm:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm text-right focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
                               disabled={updating}
                             />
@@ -516,31 +586,50 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
             <div className="flex justify-end mb-6">
               <div className="w-full sm:w-80 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
-                  <span className="text-gray-900 dark:text-white">{formatCurrency(calculateEditFormTotals().subtotal)}</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Subtotal:
+                  </span>
+                  <span className="text-gray-900 dark:text-white">
+                    {formatCurrency(calculateEditFormTotals().subtotal)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Discount:</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Discount:
+                  </span>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
                       step="0.01"
                       min="0"
                       value={editForm.discount_amount}
-                      onChange={(e) => setEditForm({ ...editForm, discount_amount: parseFloat(e.target.value) || 0 })}
+                      onChange={(e) =>
+                        setEditForm({
+                          ...editForm,
+                          discount_amount: parseFloat(e.target.value) || 0,
+                        })
+                      }
                       className="w-20 sm:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm text-right transition-colors"
                       disabled={updating}
                     />
                   </div>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Tax ({editForm.tax_rate}%):</span>
-                  <span className="text-gray-900 dark:text-white">{formatCurrency(calculateEditFormTotals().taxAmount)}</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Tax ({editForm.tax_rate}%):
+                  </span>
+                  <span className="text-gray-900 dark:text-white">
+                    {formatCurrency(calculateEditFormTotals().taxAmount)}
+                  </span>
                 </div>
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
                   <div className="flex justify-between text-lg font-semibold">
-                    <span className="text-gray-900 dark:text-white">Total:</span>
-                    <span className="text-gray-900 dark:text-white">{formatCurrency(calculateEditFormTotals().total)}</span>
+                    <span className="text-gray-900 dark:text-white">
+                      Total:
+                    </span>
+                    <span className="text-gray-900 dark:text-white">
+                      {formatCurrency(calculateEditFormTotals().total)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -555,12 +644,15 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                 rows={6}
                 placeholder="Enter bank details, M-Pesa paybill, or other payment instructions..."
                 value={editForm.payment_details}
-                onChange={(e) => setEditForm({ ...editForm, payment_details: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, payment_details: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
                 disabled={updating}
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Include bank account details, M-Pesa paybill, or other payment methods
+                Include bank account details, M-Pesa paybill, or other payment
+                methods
               </p>
             </div>
 
@@ -573,7 +665,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                 rows={3}
                 placeholder="Additional notes or terms..."
                 value={editForm.notes}
-                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, notes: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
                 disabled={updating}
               />
@@ -586,8 +680,12 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                 disabled={updating}
                 className="flex items-center gap-2 px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Edit className="w-4 h-4" />}
-                {updating ? 'Updating...' : 'Update Invoice'}
+                {updating ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Edit className="w-4 h-4" />
+                )}
+                {updating ? "Updating..." : "Update Invoice"}
               </button>
               <button
                 type="button"

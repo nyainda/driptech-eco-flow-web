@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Video, Eye, ThumbsUp, Clock } from "lucide-react";
 
@@ -36,7 +35,9 @@ const VideoStats = ({ stats }: VideoStatsProps) => {
           <Eye className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
+          <div className="text-2xl font-bold">
+            {stats.totalViews.toLocaleString()}
+          </div>
         </CardContent>
       </Card>
 
@@ -56,7 +57,9 @@ const VideoStats = ({ stats }: VideoStatsProps) => {
           <Clock className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatDuration(stats.totalDuration)}</div>
+          <div className="text-2xl font-bold">
+            {formatDuration(stats.totalDuration)}
+          </div>
         </CardContent>
       </Card>
     </div>

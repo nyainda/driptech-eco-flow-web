@@ -1,5 +1,4 @@
-
-import { Json, DatabaseWithoutInternals } from '../shared';
+import { Json, DatabaseWithoutInternals } from "../shared";
 
 export type Projects = {
   Row: {
@@ -17,7 +16,9 @@ export type Projects = {
     project_type: string | null;
     quote_id: string | null;
     start_date: string | null;
-    status: DatabaseWithoutInternals["public"]["Enums"]["project_status"] | null;
+    status:
+      | DatabaseWithoutInternals["public"]["Enums"]["project_status"]
+      | null;
     testimonial: string | null;
     updated_at: string | null;
     water_saved: number | null;
@@ -38,7 +39,9 @@ export type Projects = {
     project_type?: string | null;
     quote_id?: string | null;
     start_date?: string | null;
-    status?: DatabaseWithoutInternals["public"]["Enums"]["project_status"] | null;
+    status?:
+      | DatabaseWithoutInternals["public"]["Enums"]["project_status"]
+      | null;
     testimonial?: string | null;
     updated_at?: string | null;
     water_saved?: number | null;
@@ -59,7 +62,9 @@ export type Projects = {
     project_type?: string | null;
     quote_id?: string | null;
     start_date?: string | null;
-    status?: DatabaseWithoutInternals["public"]["Enums"]["project_status"] | null;
+    status?:
+      | DatabaseWithoutInternals["public"]["Enums"]["project_status"]
+      | null;
     testimonial?: string | null;
     updated_at?: string | null;
     water_saved?: number | null;

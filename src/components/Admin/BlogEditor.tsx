@@ -1,29 +1,34 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Bold, 
-  Italic, 
-  Underline, 
-  List, 
-  ListOrdered, 
-  Link, 
-  Image, 
-  Code, 
+import {
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Link,
+  Image,
+  Code,
   Quote,
   Heading1,
   Heading2,
   Heading3,
   Eye,
-  X
+  X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -55,7 +60,12 @@ interface BlogEditorProps {
   onCancel: () => void;
 }
 
-const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => {
+const BlogEditor = ({
+  post,
+  categories,
+  onSave,
+  onCancel,
+}: BlogEditorProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<BlogPost>({
     title: "",
@@ -64,7 +74,7 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
     excerpt: "",
     tags: [],
     published: false,
-    ...post
+    ...post,
   });
   const [newTag, setNewTag] = useState("");
   const [preview, setPreview] = useState(false);
@@ -74,10 +84,10 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
     if (formData.title && !post?.slug) {
       const slug = formData.title
         .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
         .trim();
-      setFormData(prev => ({ ...prev, slug }));
+      setFormData((prev) => ({ ...prev, slug }));
     }
   }, [formData.title, post?.slug]);
 
@@ -85,42 +95,50 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
   useEffect(() => {
     const wordCount = formData.content.split(/\s+/).length;
     const readingTime = Math.ceil(wordCount / 200); // Average 200 words per minute
-    setFormData(prev => ({ ...prev, reading_time: readingTime }));
+    setFormData((prev) => ({ ...prev, reading_time: readingTime }));
   }, [formData.content]);
 
   const insertText = (before: string, after: string = "") => {
-    const textarea = document.getElementById('content-editor') as HTMLTextAreaElement;
+    const textarea = document.getElementById(
+      "content-editor",
+    ) as HTMLTextAreaElement;
     if (!textarea) return;
 
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = textarea.value.substring(start, end);
     const newText = before + selectedText + after;
-    
-    const newValue = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
-    setFormData(prev => ({ ...prev, content: newValue }));
-    
+
+    const newValue =
+      textarea.value.substring(0, start) +
+      newText +
+      textarea.value.substring(end);
+    setFormData((prev) => ({ ...prev, content: newValue }));
+
     // Set cursor position
     setTimeout(() => {
       textarea.focus();
-      textarea.setSelectionRange(start + before.length, start + before.length + selectedText.length);
+      textarea.setSelectionRange(
+        start + before.length,
+        start + before.length + selectedText.length,
+      );
     }, 0);
   };
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, newTag.trim()]
+        tags: [...prev.tags, newTag.trim()],
       }));
       setNewTag("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
@@ -140,45 +158,66 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
   const toolbarButtons = [
     { icon: Bold, action: () => insertText("**", "**"), title: "Bold" },
     { icon: Italic, action: () => insertText("*", "*"), title: "Italic" },
-    { icon: Underline, action: () => insertText("<u>", "</u>"), title: "Underline" },
+    {
+      icon: Underline,
+      action: () => insertText("<u>", "</u>"),
+      title: "Underline",
+    },
     { icon: Heading1, action: () => insertText("# "), title: "Heading 1" },
     { icon: Heading2, action: () => insertText("## "), title: "Heading 2" },
     { icon: Heading3, action: () => insertText("### "), title: "Heading 3" },
     { icon: List, action: () => insertText("- "), title: "Bullet List" },
-    { icon: ListOrdered, action: () => insertText("1. "), title: "Numbered List" },
+    {
+      icon: ListOrdered,
+      action: () => insertText("1. "),
+      title: "Numbered List",
+    },
     { icon: Quote, action: () => insertText("> "), title: "Quote" },
     { icon: Code, action: () => insertText("`", "`"), title: "Inline Code" },
     { icon: Link, action: () => insertText("[", "](url)"), title: "Link" },
-    { icon: Image, action: () => insertText("![alt text](", ")"), title: "Image" },
+    {
+      icon: Image,
+      action: () => insertText("![alt text](", ")"),
+      title: "Image",
+    },
   ];
 
   const renderPreview = (content: string) => {
     return content
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g, "<em>$1</em>")
+      .replace(/<u>(.*?)<\/u>/g, "<u>$1</u>")
       .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mb-4">$1</h1>')
       .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mb-3">$1</h2>')
       .replace(/^### (.*$)/gm, '<h3 class="text-xl font-bold mb-2">$1</h3>')
       .replace(/^- (.*$)/gm, '<li class="ml-4">• $1</li>')
       .replace(/^\d+\. (.*$)/gm, '<li class="ml-4">$1</li>')
-      .replace(/^> (.*$)/gm, '<blockquote class="border-l-4 border-gray-300 pl-4 italic">$1</blockquote>')
+      .replace(
+        /^> (.*$)/gm,
+        '<blockquote class="border-l-4 border-gray-300 pl-4 italic">$1</blockquote>',
+      )
       .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-1 rounded">$1</code>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 underline">$1</a>')
-      .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto" />')
-      .replace(/\n/g, '<br>');
+      .replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" class="text-blue-600 underline">$1</a>',
+      )
+      .replace(
+        /!\[([^\]]*)\]\(([^)]+)\)/g,
+        '<img src="$2" alt="$1" class="max-w-full h-auto" />',
+      )
+      .replace(/\n/g, "<br>");
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold">
-          {post ? 'Edit Blog Post' : 'Create New Blog Post'}
+          {post ? "Edit Blog Post" : "Create New Blog Post"}
         </h3>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setPreview(!preview)}>
             <Eye className="h-4 w-4 mr-2" />
-            {preview ? 'Edit' : 'Preview'}
+            {preview ? "Edit" : "Preview"}
           </Button>
           <Button onClick={handleSubmit}>Save Post</Button>
           <Button variant="outline" onClick={onCancel}>
@@ -201,7 +240,9 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, title: e.target.value }))
+                }
                 placeholder="Enter blog post title"
               />
             </div>
@@ -210,7 +251,9 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
               <Input
                 id="slug"
                 value={formData.slug}
-                onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, slug: e.target.value }))
+                }
                 placeholder="url-friendly-slug"
               />
             </div>
@@ -221,7 +264,9 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
             <Textarea
               id="excerpt"
               value={formData.excerpt}
-              onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, excerpt: e.target.value }))
+              }
               placeholder="Brief description of the post"
               rows={3}
             />
@@ -245,12 +290,17 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
                     </Button>
                   ))}
                 </div>
-                
+
                 {/* Editor */}
                 <Textarea
                   id="content-editor"
                   value={formData.content}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      content: e.target.value,
+                    }))
+                  }
                   placeholder="Write your blog post content here. Use markdown formatting."
                   rows={20}
                   className="border-0 focus:ring-0 resize-none"
@@ -267,11 +317,15 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
                 <CardContent className="p-6">
                   <h1 className="text-3xl font-bold mb-4">{formData.title}</h1>
                   {formData.excerpt && (
-                    <p className="text-lg text-muted-foreground mb-6">{formData.excerpt}</p>
+                    <p className="text-lg text-muted-foreground mb-6">
+                      {formData.excerpt}
+                    </p>
                   )}
-                  <div 
+                  <div
                     className="prose max-w-none"
-                    dangerouslySetInnerHTML={{ __html: renderPreview(formData.content) }}
+                    dangerouslySetInnerHTML={{
+                      __html: renderPreview(formData.content),
+                    }}
                   />
                 </CardContent>
               </Card>
@@ -285,7 +339,9 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
               <Label htmlFor="category">Category</Label>
               <Select
                 value={formData.category_id || ""}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, category_id: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
@@ -305,7 +361,12 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
               <Input
                 id="featured-image"
                 value={formData.featured_image_url || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    featured_image_url: e.target.value,
+                  }))
+                }
                 placeholder="https://example.com/image.jpg"
               />
             </div>
@@ -318,13 +379,20 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 placeholder="Add a tag"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), addTag())
+                }
               />
               <Button onClick={addTag}>Add</Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {formData.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => removeTag(tag)}>
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="cursor-pointer"
+                  onClick={() => removeTag(tag)}
+                >
                   {tag} <X className="h-3 w-3 ml-1" />
                 </Badge>
               ))}
@@ -335,7 +403,9 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
             <Switch
               id="published"
               checked={formData.published}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, published: checked }))}
+              onCheckedChange={(checked) =>
+                setFormData((prev) => ({ ...prev, published: checked }))
+              }
             />
             <Label htmlFor="published">Published</Label>
           </div>
@@ -347,7 +417,9 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
             <Input
               id="seo-title"
               value={formData.seo_title || ""}
-              onChange={(e) => setFormData(prev => ({ ...prev, seo_title: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, seo_title: e.target.value }))
+              }
               placeholder="SEO optimized title"
               maxLength={60}
             />
@@ -361,7 +433,12 @@ const BlogEditor = ({ post, categories, onSave, onCancel }: BlogEditorProps) => 
             <Textarea
               id="seo-description"
               value={formData.seo_description || ""}
-              onChange={(e) => setFormData(prev => ({ ...prev, seo_description: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  seo_description: e.target.value,
+                }))
+              }
               placeholder="Brief description for search engines"
               rows={3}
               maxLength={160}

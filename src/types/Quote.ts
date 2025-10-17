@@ -1,4 +1,3 @@
-
 export interface QuoteItem {
   id: string;
   name: string;
@@ -22,7 +21,12 @@ export interface Customer {
   created_at: string;
 }
 
-export type QuoteStatus = "draft" | "sent" | "accepted" | "rejected" | "expired";
+export type QuoteStatus =
+  | "draft"
+  | "sent"
+  | "accepted"
+  | "rejected"
+  | "expired";
 
 export interface Quote {
   id: string;

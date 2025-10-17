@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +14,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Trophy, Image } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface SuccessStory {
   id: string;
@@ -41,7 +53,7 @@ const SuccessStoriesManagement = () => {
     before_image: "",
     after_image: "",
     results: "",
-    featured: false
+    featured: false,
   });
 
   useEffect(() => {
@@ -51,9 +63,9 @@ const SuccessStoriesManagement = () => {
   const fetchStories = async () => {
     try {
       const { data, error } = await supabase
-        .from('success_stories')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("success_stories")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setStories(data || []);
@@ -61,43 +73,46 @@ const SuccessStoriesManagement = () => {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: string,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `success-story-${field}-${Date.now()}.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
-        .from('images')
+        .from("images")
         .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('images')
-        .getPublicUrl(fileName);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("images").getPublicUrl(fileName);
 
       setFormData({ ...formData, [field]: publicUrl });
-      
+
       toast({
         title: "Success",
-        description: "Image uploaded successfully"
+        description: "Image uploaded successfully",
       });
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setUploading(false);
@@ -106,66 +121,66 @@ const SuccessStoriesManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       if (editingStory) {
         const { error } = await supabase
-          .from('success_stories')
+          .from("success_stories")
           .update(formData)
-          .eq('id', editingStory.id);
-        
+          .eq("id", editingStory.id);
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Success story updated successfully"
+          description: "Success story updated successfully",
         });
       } else {
         const { error } = await supabase
-          .from('success_stories')
+          .from("success_stories")
           .insert([formData]);
-        
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Success story created successfully"
+          description: "Success story created successfully",
         });
       }
-      
+
       fetchStories();
       resetForm();
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this success story?')) return;
-    
+    if (!confirm("Are you sure you want to delete this success story?")) return;
+
     try {
       const { error } = await supabase
-        .from('success_stories')
+        .from("success_stories")
         .delete()
-        .eq('id', id);
-      
+        .eq("id", id);
+
       if (error) throw error;
-      
+
       toast({
         title: "Success",
-        description: "Success story deleted successfully"
+        description: "Success story deleted successfully",
       });
-      
+
       fetchStories();
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -181,7 +196,7 @@ const SuccessStoriesManagement = () => {
       before_image: story.before_image,
       after_image: story.after_image,
       results: story.results,
-      featured: story.featured
+      featured: story.featured,
     });
     setShowForm(true);
   };
@@ -196,7 +211,7 @@ const SuccessStoriesManagement = () => {
       before_image: "",
       after_image: "",
       results: "",
-      featured: false
+      featured: false,
     });
     setEditingStory(null);
     setShowForm(false);
@@ -218,7 +233,9 @@ const SuccessStoriesManagement = () => {
             <Trophy className="h-8 w-8 text-primary" />
             Success Stories
           </h2>
-          <p className="text-muted-foreground">Manage your client success stories</p>
+          <p className="text-muted-foreground">
+            Manage your client success stories
+          </p>
         </div>
         <Dialog open={showForm} onOpenChange={setShowForm}>
           <DialogTrigger asChild>
@@ -230,7 +247,7 @@ const SuccessStoriesManagement = () => {
           <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingStory ? 'Edit Success Story' : 'Add New Success Story'}
+                {editingStory ? "Edit Success Story" : "Add New Success Story"}
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -239,7 +256,9 @@ const SuccessStoriesManagement = () => {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -249,7 +268,9 @@ const SuccessStoriesManagement = () => {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                 />
               </div>
@@ -260,7 +281,9 @@ const SuccessStoriesManagement = () => {
                   <Input
                     id="client_name"
                     value={formData.client_name}
-                    onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, client_name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -269,7 +292,12 @@ const SuccessStoriesManagement = () => {
                   <Input
                     id="client_company"
                     value={formData.client_company}
-                    onChange={(e) => setFormData({ ...formData, client_company: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        client_company: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -281,10 +309,14 @@ const SuccessStoriesManagement = () => {
                     id="main_image"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'image_url')}
+                    onChange={(e) => handleImageUpload(e, "image_url")}
                     disabled={uploading}
                   />
-                  {uploading && <span className="text-sm text-muted-foreground">Uploading...</span>}
+                  {uploading && (
+                    <span className="text-sm text-muted-foreground">
+                      Uploading...
+                    </span>
+                  )}
                 </div>
                 {formData.image_url && (
                   <img
@@ -302,7 +334,7 @@ const SuccessStoriesManagement = () => {
                     id="before_image"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'before_image')}
+                    onChange={(e) => handleImageUpload(e, "before_image")}
                     disabled={uploading}
                   />
                   {formData.before_image && (
@@ -319,7 +351,7 @@ const SuccessStoriesManagement = () => {
                     id="after_image"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'after_image')}
+                    onChange={(e) => handleImageUpload(e, "after_image")}
                     disabled={uploading}
                   />
                   {formData.after_image && (
@@ -337,7 +369,9 @@ const SuccessStoriesManagement = () => {
                 <Textarea
                   id="results"
                   value={formData.results}
-                  onChange={(e) => setFormData({ ...formData, results: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, results: e.target.value })
+                  }
                   rows={3}
                   placeholder="e.g., 40% water savings, 25% yield increase..."
                 />
@@ -347,7 +381,9 @@ const SuccessStoriesManagement = () => {
                 <Switch
                   id="featured"
                   checked={formData.featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, featured: checked })
+                  }
                 />
                 <Label htmlFor="featured">Featured Story</Label>
               </div>
@@ -356,8 +392,11 @@ const SuccessStoriesManagement = () => {
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-gradient-to-r from-primary to-primary/80">
-                  {editingStory ? 'Update' : 'Create'} Success Story
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-primary to-primary/80"
+                >
+                  {editingStory ? "Update" : "Create"} Success Story
                 </Button>
               </div>
             </form>
@@ -367,7 +406,10 @@ const SuccessStoriesManagement = () => {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {stories.map((story) => (
-          <Card key={story.id} className="hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-primary/20">
+          <Card
+            key={story.id}
+            className="hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-primary/20"
+          >
             <CardHeader>
               {story.image_url && (
                 <img
@@ -378,7 +420,8 @@ const SuccessStoriesManagement = () => {
               )}
               <CardTitle className="text-lg">{story.title}</CardTitle>
               <CardDescription>
-                {story.client_name} {story.client_company && `- ${story.client_company}`}
+                {story.client_name}{" "}
+                {story.client_company && `- ${story.client_company}`}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -436,7 +479,9 @@ const SuccessStoriesManagement = () => {
         <Card>
           <CardContent className="text-center py-12">
             <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No success stories yet</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              No success stories yet
+            </h3>
             <p className="text-muted-foreground">
               Start by adding your first client success story.
             </p>

@@ -1,4 +1,3 @@
-
 export type AnalyticsProductSummary = {
   Row: {
     interaction_count: number | null;

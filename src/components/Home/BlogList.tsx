@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, User, ArrowRight } from "lucide-react";
@@ -30,19 +36,21 @@ interface BlogListProps {
 
 const BlogList = ({ limit }: BlogListProps) => {
   const { data: blogPosts = [], isLoading } = useQuery({
-    queryKey: ['published-blog-posts', limit],
+    queryKey: ["published-blog-posts", limit],
     queryFn: async () => {
       let query = supabase
-        .from('blog_posts')
-        .select(`
+        .from("blog_posts")
+        .select(
+          `
           *,
           blog_categories (
             name,
             slug
           )
-        `)
-        .eq('published', true)
-        .order('published_at', { ascending: false });
+        `,
+        )
+        .eq("published", true)
+        .order("published_at", { ascending: false });
 
       if (limit !== undefined) {
         query = query.limit(limit);
@@ -55,21 +63,23 @@ const BlogList = ({ limit }: BlogListProps) => {
   });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const getExcerpt = (post: BlogPost) => {
     if (post.excerpt) return post.excerpt;
     const plainText = post.content
-      .replace(/<[^>]*>/g, '')
-      .replace(/[#*`_~]/g, '')
-      .replace(/\n+/g, ' ')
+      .replace(/<[^>]*>/g, "")
+      .replace(/[#*`_~]/g, "")
+      .replace(/\n+/g, " ")
       .trim();
-    return plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText;
+    return plainText.length > 150
+      ? plainText.substring(0, 150) + "..."
+      : plainText;
   };
 
   if (isLoading) {
@@ -78,7 +88,10 @@ const BlogList = ({ limit }: BlogListProps) => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({ length: limit || 6 }).map((_, index) => (
-              <Card key={index} className="animate-pulse bg-background border-border shadow-md">
+              <Card
+                key={index}
+                className="animate-pulse bg-background border-border shadow-md"
+              >
                 <div className="aspect-video bg-muted rounded-t-lg"></div>
                 <CardContent className="p-6">
                   <div className="h-4 bg-muted rounded mb-2"></div>
@@ -100,8 +113,12 @@ const BlogList = ({ limit }: BlogListProps) => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-md mx-auto text-center bg-background shadow-md rounded-xl p-6">
             <User className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No Posts Available</h3>
-            <p className="text-muted-foreground">Check back later for new blog posts!</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              No Posts Available
+            </h3>
+            <p className="text-muted-foreground">
+              Check back later for new blog posts!
+            </p>
           </div>
         </div>
       </section>
@@ -121,14 +138,18 @@ const BlogList = ({ limit }: BlogListProps) => {
             Latest <span className="text-primary">Insights</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Discover expert tips, industry trends, and insights on irrigation solutions from the DripTech team.
+            Discover expert tips, industry trends, and insights on irrigation
+            solutions from the DripTech team.
           </p>
         </div>
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
-            <Card key={post.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-background border-border">
+            <Card
+              key={post.id}
+              className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-background border-border"
+            >
               {post.featured_image_url && (
                 <div className="relative aspect-video overflow-hidden">
                   <img
@@ -149,12 +170,18 @@ const BlogList = ({ limit }: BlogListProps) => {
               <CardHeader className="flex-1">
                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4 text-primary" aria-hidden="true" />
+                    <Calendar
+                      className="h-4 w-4 text-primary"
+                      aria-hidden="true"
+                    />
                     {formatDate(post.published_at || post.created_at)}
                   </div>
                   {post.reading_time && (
                     <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4 text-primary" aria-hidden="true" />
+                      <Clock
+                        className="h-4 w-4 text-primary"
+                        aria-hidden="true"
+                      />
                       {post.reading_time} min read
                     </div>
                   )}
@@ -173,7 +200,10 @@ const BlogList = ({ limit }: BlogListProps) => {
                 {post.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
                     {post.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} className="text-xs bg-muted/30 border-border text-foreground">
+                      <Badge
+                        key={tag}
+                        className="text-xs bg-muted/30 border-border text-foreground"
+                      >
                         {tag}
                       </Badge>
                     ))}

@@ -1,14 +1,29 @@
-
 import React, { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -38,7 +53,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   vatRate,
   setVatRate,
   date,
-  setDate
+  setDate,
 }) => {
   const [formData, setFormData] = useState({
     project_type: quote?.project_type || "",
@@ -47,7 +62,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     water_source: quote?.water_source || "",
     terrain_info: quote?.terrain_info || "",
     notes: quote?.notes || "",
-    status: quote?.status || "draft" as QuoteStatus
+    status: quote?.status || ("draft" as QuoteStatus),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -63,7 +78,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -80,7 +95,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
               <Input
                 id="project_type"
                 value={formData.project_type}
-                onChange={(e) => handleInputChange('project_type', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("project_type", e.target.value)
+                }
                 placeholder="e.g., Greenhouse Irrigation"
               />
             </div>
@@ -89,7 +106,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
               <Input
                 id="crop_type"
                 value={formData.crop_type}
-                onChange={(e) => handleInputChange('crop_type', e.target.value)}
+                onChange={(e) => handleInputChange("crop_type", e.target.value)}
                 placeholder="e.g., Tomatoes"
               />
             </div>
@@ -100,7 +117,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
                 step="0.1"
                 id="area_size"
                 value={formData.area_size}
-                onChange={(e) => handleInputChange('area_size', e.target.value)}
+                onChange={(e) => handleInputChange("area_size", e.target.value)}
                 placeholder="0.0"
               />
             </div>
@@ -109,7 +126,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
               <Input
                 id="water_source"
                 value={formData.water_source}
-                onChange={(e) => handleInputChange('water_source', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("water_source", e.target.value)
+                }
                 placeholder="e.g., Borehole, River"
               />
             </div>
@@ -120,7 +139,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             <Textarea
               id="terrain_info"
               value={formData.terrain_info}
-              onChange={(e) => handleInputChange('terrain_info', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("terrain_info", e.target.value)
+              }
               placeholder="Describe the terrain and soil conditions"
               rows={3}
             />
@@ -131,7 +152,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             <Textarea
               id="notes"
               value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
+              onChange={(e) => handleInputChange("notes", e.target.value)}
               placeholder="Any additional information or special requirements"
               rows={3}
             />
@@ -146,7 +167,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
+                      !date && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -175,9 +196,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
             </div>
             <div>
               <Label htmlFor="status">Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(value) => handleInputChange('status', value)}
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleInputChange("status", value)}
               >
                 <SelectTrigger>
                   <SelectValue />

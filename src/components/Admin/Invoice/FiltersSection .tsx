@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, RefreshCw } from 'lucide-react';
+import React from "react";
+import { Search, RefreshCw } from "lucide-react";
 
 interface FiltersSectionProps {
   searchTerm: string;
@@ -14,7 +14,7 @@ const FiltersSection: React.FC<FiltersSectionProps> = ({
   setSearchTerm,
   statusFilter,
   setStatusFilter,
-  onRefresh
+  onRefresh,
 }) => {
   return (
     <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border dark:border-gray-700 mb-6 transition-colors">

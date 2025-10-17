@@ -1,15 +1,14 @@
-
 // Product types
-export * from './Product';
+export * from "./Product";
 
 // Quote types
-export * from './Quote';
+export * from "./Quote";
 
 // Blog types
-export * from './Blog';
+export * from "./Blog";
 
 // Admin types
-export * from './Admin';
+export * from "./Admin";
 
 // Re-export common types
 export interface ApiResponse<T = any> {

@@ -1,7 +1,12 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Search } from "lucide-react";
 
 interface ProductSearchProps {
@@ -17,7 +22,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({
   setSearchTerm,
   selectedCategory,
   setSelectedCategory,
-  categories
+  categories,
 }) => {
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">

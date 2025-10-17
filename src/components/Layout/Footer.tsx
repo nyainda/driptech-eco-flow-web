@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
+import {
+  MapPin,
+  Phone,
+  Mail,
   Clock,
   Facebook,
   Twitter,
@@ -13,12 +13,12 @@ import {
   Instagram,
   Send,
   CheckCircle,
-  MessageCircle
+  MessageCircle,
 } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   const footerLinks = {
@@ -49,15 +49,35 @@ const Footer = () => {
       { title: "Product Catalog", href: "/catalog" },
       { title: "Case Studies", href: "/case-studies" },
       { title: "Blog", href: "/blog" },
-    ]
+    ],
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "https://facebook.com/driptech-eco-flow", label: "Facebook" },
-    { icon: Twitter, href: "https://twitter.com/dripechoflow", label: "Twitter" },
-    { icon: Linkedin, href: "https://linkedin.com/company/driptech-eco-flow", label: "LinkedIn" },
-    { icon: Youtube, href: "https://youtube.com/driptech-eco-flow", label: "YouTube" },
-    { icon: Instagram, href: "https://instagram.com/driptech-eco-flow", label: "Instagram" },
+    {
+      icon: Facebook,
+      href: "https://facebook.com/driptech-eco-flow",
+      label: "Facebook",
+    },
+    {
+      icon: Twitter,
+      href: "https://twitter.com/dripechoflow",
+      label: "Twitter",
+    },
+    {
+      icon: Linkedin,
+      href: "https://linkedin.com/company/driptech-eco-flow",
+      label: "LinkedIn",
+    },
+    {
+      icon: Youtube,
+      href: "https://youtube.com/driptech-eco-flow",
+      label: "YouTube",
+    },
+    {
+      icon: Instagram,
+      href: "https://instagram.com/driptech-eco-flow",
+      label: "Instagram",
+    },
   ];
 
   const handleSubscribe = (e) => {
@@ -65,7 +85,7 @@ const Footer = () => {
     if (email.trim()) {
       setTimeout(() => {
         setIsSubscribed(true);
-        setEmail('');
+        setEmail("");
         setTimeout(() => setIsSubscribed(false), 3000);
       }, 500);
     }
@@ -81,20 +101,24 @@ const Footer = () => {
               Stay Updated with Industry Insights
             </h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Get the latest irrigation technology updates, maintenance tips, and industry best practices delivered to your inbox.
+              Get the latest irrigation technology updates, maintenance tips,
+              and industry best practices delivered to your inbox.
             </p>
-            
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-md mx-auto">
-              <Input 
-                type="email" 
+
+            <form
+              onSubmit={handleSubscribe}
+              className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-md mx-auto"
+            >
+              <Input
+                type="email"
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 h-9 sm:h-10 text-sm"
                 required
               />
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="sm:w-auto w-full h-9 sm:h-10 text-sm"
                 disabled={isSubscribed}
               >
@@ -121,12 +145,16 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-foreground mb-2">DripTech</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                DripTech
+              </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Leading provider of advanced irrigation solutions, helping farmers and growers maximize efficiency while conserving water resources.
+                Leading provider of advanced irrigation solutions, helping
+                farmers and growers maximize efficiency while conserving water
+                resources.
               </p>
             </div>
-            
+
             {/* Contact Info */}
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3">
@@ -137,17 +165,20 @@ const Footer = () => {
                   <p>Nairobi, Kenya</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <Phone className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-muted-foreground">
                   <div className="flex items-center gap-2 mb-1">
-                    <a href="tel:0114575401" className="hover:text-foreground transition-colors">
+                    <a
+                      href="tel:0114575401"
+                      className="hover:text-foreground transition-colors"
+                    >
                       0114575401
                     </a>
-                    <a 
-                      href="https://wa.me/0114575401" 
-                      target="_blank" 
+                    <a
+                      href="https://wa.me/0114575401"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-green-600 hover:text-green-700 transition-colors"
                       aria-label="WhatsApp 0114575401"
@@ -156,12 +187,15 @@ const Footer = () => {
                     </a>
                   </div>
                   <div className="flex items-center gap-2">
-                    <a href="tel:0114575401" className="hover:text-foreground transition-colors">
+                    <a
+                      href="tel:0114575401"
+                      className="hover:text-foreground transition-colors"
+                    >
                       0114575401
                     </a>
-                    <a 
-                      href="https://wa.me/0114575401" 
-                      target="_blank" 
+                    <a
+                      href="https://wa.me/0114575401"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-green-600 hover:text-green-700 transition-colors"
                       aria-label="WhatsApp 0114575401"
@@ -171,22 +205,30 @@ const Footer = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-muted-foreground">
-                  <a href="mailto:driptechs.info@gmail.com" className="hover:text-foreground transition-colors block">
+                  <a
+                    href="mailto:driptechs.info@gmail.com"
+                    className="hover:text-foreground transition-colors block"
+                  >
                     driptechs.info@gmail.com
                   </a>
-                  <a href="mailto:driptech2025@gmail.com" className="hover:text-foreground transition-colors block">
+                  <a
+                    href="mailto:driptech2025@gmail.com"
+                    className="hover:text-foreground transition-colors block"
+                  >
                     driptech2025@gmail.com
                   </a>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3">
                 <Clock className="h-5 w-5 text-primary flex-shrink-0" />
-                <span className="text-sm text-muted-foreground">Mon-Fri: 8AM-6PM EST</span>
+                <span className="text-sm text-muted-foreground">
+                  Mon-Fri: 8AM-6PM EST
+                </span>
               </div>
             </div>
 
@@ -213,7 +255,7 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.products.map((link) => (
                 <li key={link.href}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
                   >
@@ -230,7 +272,7 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
                 <li key={link.href}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
                   >
@@ -247,7 +289,7 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
                   >
@@ -264,7 +306,7 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.href}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
                   >
@@ -282,16 +324,26 @@ const Footer = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-muted-foreground">
-              © {currentYear} DripTech Irrigation Solutions. All rights reserved.
+              © {currentYear} DripTech Irrigation Solutions. All rights
+              reserved.
             </div>
             <div className="flex gap-6 text-sm">
-              <a href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="/privacy"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Privacy Policy
               </a>
-              <a href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="/terms"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Terms of Service
               </a>
-              <a href="/cookies" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="/cookies"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Cookie Policy
               </a>
             </div>

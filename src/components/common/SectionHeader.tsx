@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 
 interface SectionHeaderProps {
   title: string;
@@ -7,7 +6,11 @@ interface SectionHeaderProps {
   className?: string;
 }
 
-const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, className = "" }) => {
+const SectionHeader: React.FC<SectionHeaderProps> = ({
+  title,
+  subtitle,
+  className = "",
+}) => {
   return (
     <div className={`text-center mb-8 ${className}`}>
       <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">

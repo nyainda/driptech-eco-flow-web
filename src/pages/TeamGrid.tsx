@@ -13,14 +13,14 @@ const TeamGrid = () => {
     const fetchTeam = async () => {
       try {
         const { data, error } = await supabase
-          .from('team')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .from("team")
+          .select("*")
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
         setTeam(data || []);
       } catch (error) {
-        console.error('Error fetching team:', error);
+        console.error("Error fetching team:", error);
       } finally {
         setLoading(false);
       }
@@ -49,8 +49,13 @@ const TeamGrid = () => {
     return (
       <div className="text-center py-20">
         <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-xl font-semibold mb-2">No Team Members Available</h3>
-        <p className="text-muted-foreground">Team members will be displayed here once they are added in the admin dashboard.</p>
+        <h3 className="text-xl font-semibold mb-2">
+          No Team Members Available
+        </h3>
+        <p className="text-muted-foreground">
+          Team members will be displayed here once they are added in the admin
+          dashboard.
+        </p>
       </div>
     );
   }
@@ -58,13 +63,16 @@ const TeamGrid = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {team.map((member) => (
-        <Card key={member.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-primary/20">
+        <Card
+          key={member.id}
+          className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-primary/20"
+        >
           <CardContent className="p-8 text-center">
             {/* Profile Image */}
             <div className="relative mb-6">
               {member.image_url ? (
-                <img 
-                  src={member.image_url} 
+                <img
+                  src={member.image_url}
                   alt={member.name}
                   className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-primary/10 group-hover:border-primary/30 transition-colors"
                 />
@@ -74,7 +82,10 @@ const TeamGrid = () => {
                 </div>
               )}
               {member.featured && (
-                <Badge variant="secondary" className="absolute -top-2 -right-2 text-xs font-semibold">
+                <Badge
+                  variant="secondary"
+                  className="absolute -top-2 -right-2 text-xs font-semibold"
+                >
                   Lead
                 </Badge>
               )}
@@ -92,21 +103,41 @@ const TeamGrid = () => {
             {/* Contact Links */}
             <div className="flex justify-center gap-2">
               {member.linkedin_url && (
-                <Button variant="ghost" size="sm" className="hover:bg-primary/10 hover:text-primary" asChild>
-                  <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" title="LinkedIn Profile">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-primary/10 hover:text-primary"
+                  asChild
+                >
+                  <a
+                    href={member.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="LinkedIn Profile"
+                  >
                     <Linkedin className="h-4 w-4" />
                   </a>
                 </Button>
               )}
               {member.email && (
-                <Button variant="ghost" size="sm" className="hover:bg-primary/10 hover:text-primary" asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-primary/10 hover:text-primary"
+                  asChild
+                >
                   <a href={`mailto:${member.email}`} title="Send Email">
                     <Mail className="h-4 w-4" />
                   </a>
                 </Button>
               )}
               {member.phone && (
-                <Button variant="ghost" size="sm" className="hover:bg-primary/10 hover:text-primary" asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-primary/10 hover:text-primary"
+                  asChild
+                >
                   <a href={`tel:${member.phone}`} title="Call">
                     <Phone className="h-4 w-4" />
                   </a>

@@ -1,4 +1,3 @@
-
 export interface BlogPost {
   id: string;
   title: string;
@@ -38,5 +37,5 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
   { value: "case-studies", label: "Case Studies" },
   { value: "sustainability", label: "Sustainability" },
   { value: "farming", label: "Smart Farming" },
-  { value: "maintenance", label: "Maintenance" }
+  { value: "maintenance", label: "Maintenance" },
 ];

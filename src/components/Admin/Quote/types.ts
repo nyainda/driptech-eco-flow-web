@@ -19,7 +19,7 @@ export interface Quote {
   terrain_info?: string;
   notes?: string;
   total_amount?: number;
-  include_vat: boolean; 
+  include_vat: boolean;
   vat_rate: number;
   status: string;
   valid_until?: string;

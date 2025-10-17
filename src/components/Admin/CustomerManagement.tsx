@@ -1,20 +1,44 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   Users,
   Mail,
   Phone,
   MapPin,
-  Building
+  Building,
+  Grid3x3,
+  List,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -39,6 +63,9 @@ const CustomerManagement = () => {
   const [selectedRole, setSelectedRole] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(9);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -49,14 +76,14 @@ const CustomerManagement = () => {
     address: "",
     city: "",
     country: "",
-    user_role: "customer"
+    user_role: "customer",
   });
 
   const userRoles = [
     { value: "customer", label: "Customer" },
     { value: "sales", label: "Sales" },
     { value: "manager", label: "Manager" },
-    { value: "admin", label: "Admin" }
+    { value: "admin", label: "Admin" },
   ];
 
   useEffect(() => {
@@ -66,18 +93,18 @@ const CustomerManagement = () => {
   const fetchCustomers = async () => {
     try {
       const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("customers")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setCustomers(data || []);
     } catch (error) {
-      console.error('Error fetching customers:', error);
+      console.error("Error fetching customers:", error);
       toast({
         title: "Error",
         description: "Failed to fetch customers",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -86,46 +113,51 @@ const CustomerManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const customerData = {
         ...formData,
-        user_role: formData.user_role as "admin" | "manager" | "sales" | "customer"
+        email: formData.email || `customer_${Date.now()}@placeholder.local`,
+        user_role: formData.user_role as
+          | "admin"
+          | "manager"
+          | "sales"
+          | "customer",
       };
 
       if (editingCustomer) {
         const { error } = await supabase
-          .from('customers')
+          .from("customers")
           .update(customerData)
-          .eq('id', editingCustomer.id);
-        
+          .eq("id", editingCustomer.id);
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Customer updated successfully"
+          description: "Customer updated successfully",
         });
       } else {
         const { error } = await supabase
-          .from('customers')
+          .from("customers")
           .insert([customerData]);
-        
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Customer added successfully"
+          description: "Customer added successfully",
         });
       }
 
       resetForm();
       fetchCustomers();
     } catch (error) {
-      console.error('Error saving customer:', error);
+      console.error("Error saving customer:", error);
       toast({
         title: "Error",
         description: "Failed to save customer",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -134,25 +166,22 @@ const CustomerManagement = () => {
     if (!confirm("Are you sure you want to delete this customer?")) return;
 
     try {
-      const { error } = await supabase
-        .from('customers')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from("customers").delete().eq("id", id);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Customer deleted successfully"
+        description: "Customer deleted successfully",
       });
-      
+
       fetchCustomers();
     } catch (error) {
-      console.error('Error deleting customer:', error);
+      console.error("Error deleting customer:", error);
       toast({
         title: "Error",
         description: "Failed to delete customer",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -167,7 +196,7 @@ const CustomerManagement = () => {
       address: customer.address || "",
       city: customer.city || "",
       country: customer.country || "",
-      user_role: customer.user_role
+      user_role: customer.user_role,
     });
     setShowAddForm(true);
   };
@@ -181,20 +210,33 @@ const CustomerManagement = () => {
       address: "",
       city: "",
       country: "",
-      user_role: "customer"
+      user_role: "customer",
     });
     setEditingCustomer(null);
     setShowAddForm(false);
   };
 
-  const filteredCustomers = customers.filter(customer => {
-    const matchesSearch = 
-      customer.contact_person.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredCustomers = customers.filter((customer) => {
+    const matchesSearch =
+      customer.contact_person
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       customer.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = selectedRole === "all" || customer.user_role === selectedRole;
+    const matchesRole =
+      selectedRole === "all" || customer.user_role === selectedRole;
     return matchesSearch && matchesRole;
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentCustomers = filteredCustomers.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
 
   if (loading) {
     return (
@@ -228,7 +270,10 @@ const CustomerManagement = () => {
             Manage your customer relationships and contacts
           </p>
         </div>
-        <Button onClick={() => setShowAddForm(true)} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
+        <Button
+          onClick={() => setShowAddForm(true)}
+          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Customer
         </Button>
@@ -241,7 +286,9 @@ const CustomerManagement = () => {
               {editingCustomer ? "Edit Customer" : "Add New Customer"}
             </CardTitle>
             <CardDescription>
-              {editingCustomer ? "Update customer information" : "Enter customer details below"}
+              {editingCustomer
+                ? "Update customer information"
+                : "Enter customer details below"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -252,7 +299,12 @@ const CustomerManagement = () => {
                   <Input
                     id="contact_person"
                     value={formData.contact_person}
-                    onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        contact_person: e.target.value,
+                      })
+                    }
                     placeholder="Enter contact person name"
                     required
                   />
@@ -262,7 +314,9 @@ const CustomerManagement = () => {
                   <Input
                     id="company_name"
                     value={formData.company_name}
-                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, company_name: e.target.value })
+                    }
                     placeholder="Enter company name"
                   />
                 </div>
@@ -270,14 +324,15 @@ const CustomerManagement = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="Enter email address"
-                    required
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder="Enter email address (optional)"
                   />
                 </div>
                 <div>
@@ -285,7 +340,9 @@ const CustomerManagement = () => {
                   <Input
                     id="phone"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                     placeholder="Enter phone number"
                   />
                 </div>
@@ -296,7 +353,9 @@ const CustomerManagement = () => {
                 <Input
                   id="address"
                   value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
                   placeholder="Enter full address"
                 />
               </div>
@@ -307,7 +366,9 @@ const CustomerManagement = () => {
                   <Input
                     id="city"
                     value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, city: e.target.value })
+                    }
                     placeholder="Enter city"
                   />
                 </div>
@@ -316,7 +377,9 @@ const CustomerManagement = () => {
                   <Input
                     id="country"
                     value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, country: e.target.value })
+                    }
                     placeholder="Enter country"
                   />
                 </div>
@@ -324,7 +387,12 @@ const CustomerManagement = () => {
 
               <div>
                 <Label htmlFor="user_role">Role</Label>
-                <Select value={formData.user_role} onValueChange={(value) => setFormData({ ...formData, user_role: value })}>
+                <Select
+                  value={formData.user_role}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, user_role: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -374,76 +442,212 @@ const CustomerManagement = () => {
             ))}
           </SelectContent>
         </Select>
+        <div className="flex gap-2">
+          <Button
+            variant={viewMode === "grid" ? "default" : "outline"}
+            size="icon"
+            onClick={() => setViewMode("grid")}
+          >
+            <Grid3x3 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === "table" ? "default" : "outline"}
+            size="icon"
+            onClick={() => setViewMode("table")}
+          >
+            <List className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCustomers.map((customer) => (
-          <Card key={customer.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{customer.contact_person}</CardTitle>
-                  {customer.company_name && (
-                    <CardDescription className="flex items-center mt-1">
-                      <Building className="h-3 w-3 mr-1" />
-                      {customer.company_name}
-                    </CardDescription>
+      {viewMode === "grid" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {currentCustomers.map((customer) => (
+            <Card
+              key={customer.id}
+              className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10"
+            >
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg">
+                      {customer.contact_person}
+                    </CardTitle>
+                    {customer.company_name && (
+                      <CardDescription className="flex items-center mt-1">
+                        <Building className="h-3 w-3 mr-1" />
+                        {customer.company_name}
+                      </CardDescription>
+                    )}
+                  </div>
+                  <Badge
+                    variant={
+                      customer.user_role === "admin" ? "default" : "secondary"
+                    }
+                  >
+                    {
+                      userRoles.find((r) => r.value === customer.user_role)
+                        ?.label
+                    }
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm">
+                    <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span className="truncate">{customer.email}</span>
+                  </div>
+
+                  {customer.phone && (
+                    <div className="flex items-center text-sm">
+                      <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>{customer.phone}</span>
+                    </div>
                   )}
-                </div>
-                <Badge variant={customer.user_role === 'admin' ? 'default' : 'secondary'}>
-                  {userRoles.find(r => r.value === customer.user_role)?.label}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center text-sm">
-                  <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span className="truncate">{customer.email}</span>
-                </div>
-                
-                {customer.phone && (
-                  <div className="flex items-center text-sm">
-                    <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span>{customer.phone}</span>
-                  </div>
-                )}
-                
-                {(customer.city || customer.country) && (
-                  <div className="flex items-center text-sm">
-                    <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span>
-                      {[customer.city, customer.country].filter(Boolean).join(', ')}
-                    </span>
-                  </div>
-                )}
-                
-                <div className="text-xs text-muted-foreground">
-                  Joined: {new Date(customer.created_at).toLocaleDateString()}
-                </div>
-              </div>
 
-              <div className="flex justify-end space-x-1 mt-4">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleEdit(customer)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  className="text-destructive hover:text-destructive"
-                  onClick={() => handleDelete(customer.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  {(customer.city || customer.country) && (
+                    <div className="flex items-center text-sm">
+                      <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>
+                        {[customer.city, customer.country]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="text-xs text-muted-foreground">
+                    Joined: {new Date(customer.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-1 mt-4">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEdit(customer)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-destructive hover:text-destructive"
+                    onClick={() => handleDelete(customer.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Contact Person</TableHead>
+                  <TableHead>Company</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentCustomers.map((customer) => (
+                  <TableRow key={customer.id}>
+                    <TableCell className="font-medium">
+                      {customer.contact_person}
+                    </TableCell>
+                    <TableCell>
+                      {customer.company_name ? (
+                        <div className="flex items-center">
+                          <Building className="h-3 w-3 mr-1 text-muted-foreground" />
+                          {customer.company_name}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <Mail className="h-3 w-3 mr-1 text-muted-foreground" />
+                        <span className="truncate max-w-[200px]">
+                          {customer.email}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {customer.phone ? (
+                        <div className="flex items-center">
+                          <Phone className="h-3 w-3 mr-1 text-muted-foreground" />
+                          {customer.phone}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {customer.city || customer.country ? (
+                        <div className="flex items-center">
+                          <MapPin className="h-3 w-3 mr-1 text-muted-foreground" />
+                          {[customer.city, customer.country]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          customer.user_role === "admin"
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
+                        {
+                          userRoles.find((r) => r.value === customer.user_role)
+                            ?.label
+                        }
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(customer.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end space-x-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEdit(customer)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(customer.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
 
       {filteredCustomers.length === 0 && (
         <Card>
@@ -451,8 +655,8 @@ const CustomerManagement = () => {
             <Users className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No customers found</h3>
             <p className="text-muted-foreground text-center mb-4">
-              {searchTerm || selectedRole !== "all" 
-                ? "Try adjusting your search or filter criteria" 
+              {searchTerm || selectedRole !== "all"
+                ? "Try adjusting your search or filter criteria"
                 : "Get started by adding your first customer"}
             </p>
             {!searchTerm && selectedRole === "all" && (
@@ -463,6 +667,64 @@ const CustomerManagement = () => {
             )}
           </CardContent>
         </Card>
+      )}
+
+      {filteredCustomers.length > 0 && totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {startIndex + 1} to{" "}
+            {Math.min(endIndex, filteredCustomers.length)} of{" "}
+            {filteredCustomers.length} customers
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+
+            <div className="flex gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNumber;
+                if (totalPages <= 5) {
+                  pageNumber = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNumber = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNumber = totalPages - 4 + i;
+                } else {
+                  pageNumber = currentPage - 2 + i;
+                }
+
+                return (
+                  <Button
+                    key={pageNumber}
+                    variant={currentPage === pageNumber ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => goToPage(pageNumber)}
+                    className="w-10"
+                  >
+                    {pageNumber}
+                  </Button>
+                );
+              })}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );

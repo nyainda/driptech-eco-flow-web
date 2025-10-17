@@ -1,62 +1,68 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Invoice } from '@/components/Admin/types/InvoiceTypes';
-import { formatCurrency, formatDate } from '@/components/Admin/utils/formatters';
+import { Invoice } from "@/components/Admin/types/InvoiceTypes";
+import {
+  formatCurrency,
+  formatDate,
+} from "@/components/Admin/utils/formatters";
 
 export const useInvoiceOperations = (onSuccess?: () => void) => {
-
   // Handle status update
   const updateInvoiceStatus = async (invoiceId: string, newStatus: string) => {
     try {
-      const updateData: any = { 
+      const updateData: any = {
         status: newStatus,
         updated_at: new Date().toISOString(),
       };
 
       // Add specific timestamps based on status
-      if (newStatus === 'paid') {
+      if (newStatus === "paid") {
         updateData.paid_at = new Date().toISOString();
-      } else if (newStatus === 'sent') {
+      } else if (newStatus === "sent") {
         updateData.sent_at = new Date().toISOString();
       }
 
       const { error } = await supabase
-        .from('invoices')
+        .from("invoices")
         .update(updateData)
-        .eq('id', invoiceId);
+        .eq("id", invoiceId);
 
       if (error) {
-        console.error('Error updating invoice status:', error);
+        console.error("Error updating invoice status:", error);
         return;
       }
 
       // Reload invoices to reflect changes
       if (onSuccess) onSuccess();
     } catch (error) {
-      console.error('Error updating invoice status:', error);
+      console.error("Error updating invoice status:", error);
     }
   };
 
   // Handle delete invoice
   const deleteInvoice = async (invoiceId: string) => {
-    if (!confirm('Are you sure you want to delete this invoice? This action cannot be undone.')) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this invoice? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
     try {
       const { error } = await supabase
-        .from('invoices')
+        .from("invoices")
         .delete()
-        .eq('id', invoiceId);
+        .eq("id", invoiceId);
 
       if (error) {
-        console.error('Error deleting invoice:', error);
+        console.error("Error deleting invoice:", error);
         return;
       }
 
       // Reload invoices to reflect changes
       if (onSuccess) onSuccess();
     } catch (error) {
-      console.error('Error deleting invoice:', error);
+      console.error("Error deleting invoice:", error);
     }
   };
 
@@ -162,7 +168,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                   </div>
                   <div class="flex justify-between items-center text-xs">
                     <span class="font-medium text-white text-opacity-90">Status:</span>
-                    <span class="font-bold ml-2 uppercase">${invoice.status || 'draft'}</span>
+                    <span class="font-bold ml-2 uppercase">${invoice.status || "draft"}</span>
                   </div>
                 </div>
               </div>
@@ -201,12 +207,12 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                 </h3>
                 <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
                   <div class="space-y-1 text-xs">
-                    <div class="font-bold text-gray-900 break-words">${invoice.customer?.contact_person || 'N/A'}</div>
-                    ${invoice.customer?.company_name ? `<div class="text-blue-600 font-semibold break-words">${invoice.customer.company_name}</div>` : ''}
-                    ${invoice.customer?.address ? `<div class="text-gray-600 break-words">${invoice.customer.address}</div>` : ''}
-                    ${invoice.customer?.city ? `<div class="text-gray-600 break-words">${invoice.customer.city}, ${invoice.customer?.country || ''}</div>` : ''}
-                    ${invoice.customer?.phone ? `<div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">📞</span> ${invoice.customer.phone}</div>` : ''}
-                    <div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">✉️</span> ${invoice.customer?.email || 'N/A'}</div>
+                    <div class="font-bold text-gray-900 break-words">${invoice.customer?.contact_person || "N/A"}</div>
+                    ${invoice.customer?.company_name ? `<div class="text-blue-600 font-semibold break-words">${invoice.customer.company_name}</div>` : ""}
+                    ${invoice.customer?.address ? `<div class="text-gray-600 break-words">${invoice.customer.address}</div>` : ""}
+                    ${invoice.customer?.city ? `<div class="text-gray-600 break-words">${invoice.customer.city}, ${invoice.customer?.country || ""}</div>` : ""}
+                    ${invoice.customer?.phone ? `<div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">📞</span> ${invoice.customer.phone}</div>` : ""}
+                    <div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">✉️</span> ${invoice.customer?.email || "N/A"}</div>
                   </div>
                 </div>
               </div>
@@ -232,16 +238,23 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-100">
-                    ${invoice.invoice_items?.map((item, index) => `
+                    ${
+                      invoice.invoice_items
+                        ?.map(
+                          (item, index) => `
                       <tr class="hover:bg-blue-50 border-b border-gray-100">
                         <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
                         <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
-                        <td class="p-1.5 text-gray-600 text-xs">${item.description || 'N/A'}</td>
+                        <td class="p-1.5 text-gray-600 text-xs">${item.description || "N/A"}</td>
                         <td class="p-1.5 text-center font-bold text-green-600 text-xs">${item.quantity}</td>
-                        <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${item.unit_price.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
-                        <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+                        <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${item.unit_price.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+                        <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
                       </tr>
-                    `).join('') || '<tr><td colspan="6" class="p-4 text-center text-gray-500">No items found</td></tr>'}
+                    `,
+                        )
+                        .join("") ||
+                      '<tr><td colspan="6" class="p-4 text-center text-gray-500">No items found</td></tr>'
+                    }
                   </tbody>
                 </table>
               </div>
@@ -256,29 +269,37 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                       <tr class="border-b border-gray-200">
                         <td class="p-2 font-semibold text-gray-700 text-xs">Subtotal</td>
                         <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-                          KES ${invoice.subtotal.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
+                          KES ${invoice.subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
-                      ${invoice.discount_amount && invoice.discount_amount > 0 ? `
+                      ${
+                        invoice.discount_amount && invoice.discount_amount > 0
+                          ? `
                       <tr class="border-b border-gray-200">
                         <td class="p-2 font-semibold text-gray-700 text-xs">Discount</td>
                         <td class="p-2 text-right font-mono font-bold text-red-600 text-xs">
-                          -KES ${invoice.discount_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
+                          -KES ${invoice.discount_amount.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
-                      ` : ''}
-                      ${invoice.tax_amount && invoice.tax_amount > 0 ? `
+                      `
+                          : ""
+                      }
+                      ${
+                        invoice.tax_amount && invoice.tax_amount > 0
+                          ? `
                       <tr class="border-b border-gray-200">
                         <td class="p-2 font-semibold text-gray-700 text-xs">Tax (${invoice.tax_rate}%)</td>
                         <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-                          KES ${invoice.tax_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
+                          KES ${invoice.tax_amount.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
-                      ` : ''}
+                      `
+                          : ""
+                      }
                       <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
                         <td class="p-2 font-extrabold text-sm">Total Amount</td>
                         <td class="p-2 text-right font-mono font-extrabold text-sm">
-                          KES ${invoice.total_amount.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
+                          KES ${invoice.total_amount.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
                     </tbody>
@@ -288,7 +309,9 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             </div>
 
             <!-- Payment Details Section -->
-            ${invoice.payment_details ? `
+            ${
+              invoice.payment_details
+                ? `
             <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg p-3 border-l-3 border-blue-500 mb-3">
               <div class="flex items-center gap-2 mb-2">
                 <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-md flex items-center justify-center text-sm">💳</div>
@@ -298,10 +321,14 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                 <pre class="text-blue-900 text-xs font-medium break-words whitespace-pre-wrap font-mono">${invoice.payment_details}</pre>
               </div>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
 
             <!-- Notes Section -->
-            ${invoice.notes ? `
+            ${
+              invoice.notes
+                ? `
             <div class="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-3 border-l-3 border-amber-500 mb-3">
               <div class="flex items-center gap-2 mb-2">
                 <div class="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-md flex items-center justify-center text-sm">📝</div>
@@ -311,15 +338,21 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                 <p class="text-amber-900 text-xs font-medium break-words">${invoice.notes}</p>
               </div>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
 
             <!-- Payment Terms -->
-            ${invoice.payment_terms ? `
+            ${
+              invoice.payment_terms
+                ? `
             <div class="text-center text-gray-600 text-xs mt-4 p-3 bg-gray-50 rounded-lg">
               <p><strong>Payment Terms:</strong> ${invoice.payment_terms}</p>
               <p class="mt-1">Thank you for your business!</p>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
         </div>
       </body>
@@ -331,22 +364,25 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
   const downloadInvoicePDF = async (invoice: Invoice) => {
     try {
       // Create a new window with your beautiful HTML content
-      const pdfWindow = window.open('', '_blank');
-      if (!pdfWindow) throw new Error('Failed to open PDF window');
-      
+      const pdfWindow = window.open("", "_blank");
+      if (!pdfWindow) throw new Error("Failed to open PDF window");
+
       const htmlContent = generateInvoiceContent(invoice);
       pdfWindow.document.write(htmlContent);
       pdfWindow.document.close();
-      
+
       // Wait for content to load
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Check if it's mobile
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-      
+      const isMobile =
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        ) || window.innerWidth <= 768;
+
       if (isMobile) {
         // Mobile: Add helpful instruction
-        const banner = pdfWindow.document.createElement('div');
+        const banner = pdfWindow.document.createElement("div");
         banner.innerHTML = `
           <div style="
             position: fixed; 
@@ -379,35 +415,33 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
         `;
         pdfWindow.document.body.appendChild(banner);
       }
-      
+
       // Always trigger print dialog (works universally)
       setTimeout(() => {
         pdfWindow.print();
       }, 500);
-      
+
       console.log(`Invoice ${invoice.invoice_number} ready for PDF download.`);
-      
     } catch (error) {
-      console.error('PDF Generation Error:', error);
+      console.error("PDF Generation Error:", error);
     }
   };
 
   // Print invoice function
   const printInvoice = async (invoice: Invoice) => {
     try {
-      const printWindow = window.open('', '_blank');
-      if (!printWindow) throw new Error('Failed to open print window');
-      
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) throw new Error("Failed to open print window");
+
       const htmlContent = generateInvoiceContent(invoice);
       printWindow.document.write(htmlContent);
       printWindow.document.close();
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
       printWindow.print();
       printWindow.close();
-      
     } catch (error) {
-      console.error('Error printing invoice:', error);
+      console.error("Error printing invoice:", error);
     }
   };
 
@@ -415,6 +449,6 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
     updateInvoiceStatus,
     deleteInvoice,
     downloadInvoicePDF,
-    printInvoice
+    printInvoice,
   };
 };

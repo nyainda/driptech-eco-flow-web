@@ -42,7 +42,13 @@ const TeamMemberSkeleton = () => (
 );
 
 // Team member card component
-const TeamMemberCard = ({ member, index }: { member: TeamMember; index: number }) => (
+const TeamMemberCard = ({
+  member,
+  index,
+}: {
+  member: TeamMember;
+  index: number;
+}) => (
   <Card
     className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-background border-border shadow-lg overflow-hidden"
     style={{ animationDelay: `${index * 150}ms` }}
@@ -87,7 +93,11 @@ const TeamMemberCard = ({ member, index }: { member: TeamMember; index: number }
               className="h-10 w-10 p-0 rounded-full bg-muted/30 border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover:scale-105 shadow-md"
               asChild
             >
-              <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer">
+              <a
+                href={member.linkedin_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Linkedin className="h-4 w-4 text-primary" />
               </a>
             </Button>
@@ -129,9 +139,15 @@ const EmptyTeamState = () => (
       <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
         <Users className="w-10 h-10 text-primary" />
       </div>
-      <h3 className="text-xl font-semibold text-foreground mb-3">No Team Members Yet</h3>
-      <p className="text-muted-foreground mb-2 text-lg">No featured team members available at the moment.</p>
-      <p className="text-sm text-muted-foreground">Team members can be marked as featured in the admin dashboard.</p>
+      <h3 className="text-xl font-semibold text-foreground mb-3">
+        No Team Members Yet
+      </h3>
+      <p className="text-muted-foreground mb-2 text-lg">
+        No featured team members available at the moment.
+      </p>
+      <p className="text-sm text-muted-foreground">
+        Team members can be marked as featured in the admin dashboard.
+      </p>
     </div>
   </div>
 );
@@ -174,14 +190,18 @@ const TeamSection = () => {
             Meet the <span className="text-primary">Experts</span>
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            Our experienced team of irrigation specialists, engineers, and consultants are here to help you achieve{" "}
-            <span className="text-foreground font-medium">optimal results</span>.
+            Our experienced team of irrigation specialists, engineers, and
+            consultants are here to help you achieve{" "}
+            <span className="text-foreground font-medium">optimal results</span>
+            .
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {loading ? (
-            Array.from({ length: 4 }).map((_, index) => <TeamMemberSkeleton key={index} />)
+            Array.from({ length: 4 }).map((_, index) => (
+              <TeamMemberSkeleton key={index} />
+            ))
           ) : team.length > 0 ? (
             team.map((member, index) => (
               <TeamMemberCard key={member.id} member={member} index={index} />

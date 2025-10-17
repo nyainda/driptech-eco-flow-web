@@ -29,12 +29,19 @@ interface VideoListProps {
   isDeleting: boolean;
 }
 
-const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting }: VideoListProps) => {
+const VideoList = ({
+  videos,
+  isLoading,
+  onEdit,
+  onDelete,
+  onShowForm,
+  isDeleting,
+}: VideoListProps) => {
   const formatDuration = (seconds: number) => {
     if (!seconds) return "0:00";
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const formatFileSize = (bytes: number) => {
@@ -58,7 +65,9 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
         <CardContent className="text-center py-8">
           <FileVideo className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">No videos yet</h3>
-          <p className="text-muted-foreground mb-4">Start by adding your first irrigation video</p>
+          <p className="text-muted-foreground mb-4">
+            Start by adding your first irrigation video
+          </p>
           <Button onClick={onShowForm}>
             <Plus className="h-4 w-4 mr-2" />
             Add Your First Video
@@ -82,7 +91,7 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
                     className="w-full sm:w-32 h-20 object-cover rounded"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
+                      target.style.display = "none";
                     }}
                   />
                 </div>
@@ -90,19 +99,33 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold break-words">{video.title}</h3>
+                    <h3 className="text-lg font-semibold break-words">
+                      {video.title}
+                    </h3>
                     {video.description && (
-                      <p className="text-muted-foreground mt-1 line-clamp-2 break-words">{video.description}</p>
+                      <p className="text-muted-foreground mt-1 line-clamp-2 break-words">
+                        {video.description}
+                      </p>
                     )}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 text-sm text-muted-foreground">
                       <span>Views: {video.views?.toLocaleString() || 0}</span>
-                      {video.duration && <span>Duration: {formatDuration(video.duration)}</span>}
-                      {video.file_size && <span className="hidden sm:inline">Size: {formatFileSize(video.file_size)}</span>}
+                      {video.duration && (
+                        <span>Duration: {formatDuration(video.duration)}</span>
+                      )}
+                      {video.file_size && (
+                        <span className="hidden sm:inline">
+                          Size: {formatFileSize(video.file_size)}
+                        </span>
+                      )}
                       <span>Category: {video.category}</span>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {video.tags?.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {tag}
                         </Badge>
                       ))}
@@ -118,25 +141,39 @@ const VideoList = ({ videos, isLoading, onEdit, onDelete, onShowForm, isDeleting
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4">
-                  <Button size="sm" variant="outline" asChild className="flex-1 sm:flex-none">
-                    <a href={video.video_url} target="_blank" rel="noopener noreferrer">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    asChild
+                    className="flex-1 sm:flex-none"
+                  >
+                    <a
+                      href={video.video_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Play className="h-4 w-4 mr-1" />
                       Watch
                     </a>
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => onEdit(video)} className="flex-1 sm:flex-none">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onEdit(video)}
+                    className="flex-1 sm:flex-none"
+                  >
                     <Edit className="h-4 w-4 mr-1" />
                     Edit
                   </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => onDelete(video)}
                     disabled={isDeleting}
                     className="flex-1 sm:flex-none"
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
-                    {isDeleting ? 'Deleting...' : 'Delete'}
+                    {isDeleting ? "Deleting..." : "Delete"}
                   </Button>
                 </div>
               </div>

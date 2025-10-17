@@ -1,77 +1,111 @@
-import { TermsSection } from './TermsAndConditions';
-import { Quote, QuoteItem, Customer } from './types';
+import { TermsSection } from "./TermsAndConditions";
+import { Quote, QuoteItem, Customer } from "./types";
 
-export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?: Customer): string => {
+export const generatePrintContent = (
+  quote: Quote,
+  items: QuoteItem[],
+  customer?: Customer,
+): string => {
   const subtotal = items.reduce((sum, item) => sum + item.total, 0);
   const tax = quote.include_vat ? subtotal * (quote.vat_rate / 100) : 0;
   const total = subtotal + tax;
 
-  const customerSection = customer ? `
+  const customerSection = customer
+    ? `
     <div class="space-y-1 text-xs">
       <div class="font-bold text-gray-900 break-words">${customer.contact_person}</div>
-      ${customer.company_name ? `<div class="text-blue-600 font-semibold break-words">${customer.company_name}</div>` : ''}
-      ${customer.address ? `<div class="text-gray-600 break-words">${customer.address}</div>` : ''}
-      ${customer.city ? `<div class="text-gray-600 break-words">${customer.city}</div>` : ''}
-      ${customer.country ? `<div class="text-gray-600 break-words">${customer.country}</div>` : ''}
-      ${customer.phone ? `<div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">📞</span> ${customer.phone}</div>` : ''}
+      ${customer.company_name ? `<div class="text-blue-600 font-semibold break-words">${customer.company_name}</div>` : ""}
+      ${customer.address ? `<div class="text-gray-600 break-words">${customer.address}</div>` : ""}
+      ${customer.city ? `<div class="text-gray-600 break-words">${customer.city}</div>` : ""}
+      ${customer.country ? `<div class="text-gray-600 break-words">${customer.country}</div>` : ""}
+      ${customer.phone ? `<div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">📞</span> ${customer.phone}</div>` : ""}
       <div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">✉️</span> ${customer.email}</div>
     </div>
-  ` : '<div class="text-gray-500 text-xs">Customer information not available</div>';
+  `
+    : '<div class="text-gray-500 text-xs">Customer information not available</div>';
 
-  const projectDetailsSection = (quote.project_type || quote.crop_type || quote.area_size) ? `
+  const projectDetailsSection =
+    quote.project_type || quote.crop_type || quote.area_size
+      ? `
     <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-3 rounded-lg border-l-3 border-blue-600 mb-3">
       <div class="flex items-center gap-2 mb-2">
         <div class="w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-500 rounded-md flex items-center justify-center text-sm">🌱</div>
         <h3 class="text-blue-600 text-sm font-bold">Project Overview</h3>
       </div>
       <div class="grid grid-cols-2 gap-2 text-xs">
-        ${quote.project_type ? `
+        ${
+          quote.project_type
+            ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Project</span>
             <span class="block text-xs font-bold text-gray-900">${quote.project_type}</span>
           </div>
-        ` : ''}
-        ${quote.crop_type ? `
+        `
+            : ""
+        }
+        ${
+          quote.crop_type
+            ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Crop</span>
             <span class="block text-xs font-bold text-gray-900">${quote.crop_type}</span>
           </div>
-        ` : ''}
-        ${quote.area_size ? `
+        `
+            : ""
+        }
+        ${
+          quote.area_size
+            ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Area</span>
             <span class="block text-xs font-bold text-gray-900">${quote.area_size} acres</span>
           </div>
-        ` : ''}
-        ${quote.water_source ? `
+        `
+            : ""
+        }
+        ${
+          quote.water_source
+            ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Water</span>
             <span class="block text-xs font-bold text-gray-900">${quote.water_source}</span>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
-      ${quote.terrain_info ? `
+      ${
+        quote.terrain_info
+          ? `
         <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100 mt-2">
           <span class="block text-xs font-medium text-gray-500 uppercase">Terrain</span>
           <span class="block text-xs font-medium text-gray-900">${quote.terrain_info}</span>
         </div>
-      ` : ''}
+      `
+          : ""
+      }
     </div>
-  ` : '';
+  `
+      : "";
 
-  const itemsRows = items.map((item, index) => `
+  const itemsRows = items
+    .map(
+      (item, index) => `
     <tr class="hover:bg-blue-50 border-b border-gray-100">
       <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
       <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
       <td class="p-1.5 text-gray-600 text-xs">${item.description}</td>
       <td class="p-1.5 text-center font-bold text-green-600 text-xs">${item.quantity}</td>
       <td class="p-1.5 text-center text-gray-600 text-xs">${item.unit}</td>
-      <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${item.unit_price.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
-      <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+      <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${item.unit_price.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+      <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
     </tr>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const notesSection = quote.notes ? `
+  const notesSection = quote.notes
+    ? `
     <div class="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-3 border-l-3 border-amber-500 mb-3">
       <div class="flex items-center gap-2 mb-2">
         <div class="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-md flex items-center justify-center text-sm">📝</div>
@@ -81,27 +115,32 @@ export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?
         <p class="text-amber-900 text-xs font-medium break-words">${quote.notes}</p>
       </div>
     </div>
-  ` : '';
+  `
+    : "";
 
   const totalsRows = `
     <tr class="border-b border-gray-200">
       <td class="p-2 font-semibold text-gray-700 text-xs">Subtotal</td>
       <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-        KES ${subtotal.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
+        KES ${subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
       </td>
     </tr>
-    ${quote.include_vat ? `
+    ${
+      quote.include_vat
+        ? `
     <tr class="border-b border-gray-200">
       <td class="p-2 font-semibold text-gray-700 text-xs">VAT (${quote.vat_rate}%)</td>
       <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-        KES ${tax.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
+        KES ${tax.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
       </td>
     </tr>
-    ` : ''}
+    `
+        : ""
+    }
     <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
       <td class="p-2 font-extrabold text-sm">Total Amount</td>
       <td class="p-2 text-right font-mono font-extrabold text-sm">
-        KES ${total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}
+        KES ${total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
       </td>
     </tr>
   `;
@@ -252,14 +291,18 @@ export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?
                 </div>
                 <div class="flex justify-between items-center mb-1 text-xs">
                   <span class="font-medium text-white text-opacity-90">Date:</span>
-                  <span class="font-bold ml-2">${new Date(quote.created_at).toLocaleDateString('en-GB')}</span>
+                  <span class="font-bold ml-2">${new Date(quote.created_at).toLocaleDateString("en-GB")}</span>
                 </div>
-                ${quote.valid_until ? `
+                ${
+                  quote.valid_until
+                    ? `
                 <div class="flex justify-between items-center text-xs">
                   <span class="font-medium text-white text-opacity-90">Valid Until:</span>
-                  <span class="font-bold ml-2">${new Date(quote.valid_until).toLocaleDateString('en-GB')}</span>
+                  <span class="font-bold ml-2">${new Date(quote.valid_until).toLocaleDateString("en-GB")}</span>
                 </div>
-                ` : ''}
+                `
+                    : ""
+                }
               </div>
             </div>
           </div>

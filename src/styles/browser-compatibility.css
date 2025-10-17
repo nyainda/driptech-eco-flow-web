@@ -1,0 +1,87 @@
+/* Cross-Browser Compatibility Styles */
+
+/* Normalize box-sizing across browsers */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Fix for flexbox in older browsers */
+.flex-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+/* Grid fallback for older browsers */
+@supports not (display: grid) {
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/* Smooth scrolling for all browsers */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+/* Input and button normalization */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+}
+
+/* Fix for Safari button appearance */
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+}
+
+/* Remove IE 10+ clear button */
+input::-ms-clear {
+  display: none;
+}
+
+/* Fix for Edge and IE input placeholders */
+input::-ms-input-placeholder {
+  color: #999;
+}
+
+input::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+/* Smooth transitions across browsers */
+* {
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+/* Fix for object-fit in older browsers */
+@supports not (object-fit: cover) {
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* Ensure proper rendering in Firefox */
+@-moz-document url-prefix() {
+  select {
+    padding-right: 1.5em;
+  }
+}

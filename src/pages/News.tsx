@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { formatDistanceToNow } from 'date-fns';
-import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { useState, useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Calendar,
   Clock,
@@ -13,20 +13,20 @@ import {
   Eye,
   Heart,
   Star,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import Header from '@/components/Layout/Header';
-import Footer from '@/components/Layout/Footer';
+} from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import Header from "@/components/Layout/Header";
+import Footer from "@/components/Layout/Footer";
 
 // Types
 interface NewsArticle {
@@ -56,15 +56,16 @@ interface NewsData {
 const ARTICLES_PER_PAGE = 9;
 const MAX_PAGES_TO_SHOW = 5;
 const SORT_OPTIONS = [
-  { value: 'newest', label: 'Newest First' },
-  { value: 'oldest', label: 'Oldest First' },
-  { value: 'popular', label: 'Most Popular' },
-  { value: 'title', label: 'Alphabetical' },
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "popular", label: "Most Popular" },
+  { value: "title", label: "Alphabetical" },
 ] as const;
 
 // Utility Functions
 const getArticleExcerpt = (article: NewsArticle): string =>
-  article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 200) + '...';
+  article.excerpt ||
+  article.content.replace(/<[^>]*>/g, "").substring(0, 200) + "...";
 
 // Components
 interface HeroSectionProps {
@@ -98,7 +99,8 @@ const HeroSection = ({
           Stay <span className="text-primary">Informed</span>
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-          Discover the latest in irrigation technology, sustainable farming practices, and industry innovations.
+          Discover the latest in irrigation technology, sustainable farming
+          practices, and industry innovations.
         </p>
         <div className="max-w-2xl mx-auto mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
@@ -179,7 +181,9 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => (
           <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-foreground">
             <div className="flex items-center gap-2 bg-primary/20 rounded-full px-3 py-1">
               <Calendar className="h-4 w-4" />
-              {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
+              {formatDistanceToNow(new Date(article.created_at), {
+                addSuffix: true,
+              })}
             </div>
             {article.reading_time && (
               <div className="flex items-center gap-2 bg-primary/20 rounded-full px-3 py-1">
@@ -196,7 +200,9 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => (
               {article.likes} likes
             </div>
           </div>
-          <div className="text-sm text-muted-foreground mb-2">By {article.author}</div>
+          <div className="text-sm text-muted-foreground mb-2">
+            By {article.author}
+          </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight text-foreground group-hover:text-primary transition-colors">
             {article.title}
           </h2>
@@ -242,7 +248,7 @@ const SecondaryArticle = ({ article, index }: SecondaryArticleProps) => (
         <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
         <div className="absolute top-4 left-4">
           <Badge variant="secondary" className="text-sm font-semibold">
-            {index === 0 ? 'TRENDING' : 'LATEST'}
+            {index === 0 ? "TRENDING" : "LATEST"}
           </Badge>
         </div>
         <div className="absolute bottom-4 left-4 right-4">
@@ -252,7 +258,9 @@ const SecondaryArticle = ({ article, index }: SecondaryArticleProps) => (
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
+              {formatDistanceToNow(new Date(article.created_at), {
+                addSuffix: true,
+              })}
             </div>
             <div className="flex items-center gap-1">
               <Eye className="h-3 w-3" />
@@ -266,14 +274,20 @@ const SecondaryArticle = ({ article, index }: SecondaryArticleProps) => (
         </div>
       </div>
       <CardContent className="p-6">
-        <div className="text-sm text-muted-foreground mb-2">By {article.author}</div>
+        <div className="text-sm text-muted-foreground mb-2">
+          By {article.author}
+        </div>
         <p className="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
           {getArticleExcerpt(article)}
         </p>
         <div className="flex items-center justify-between">
           <div className="flex flex-wrap gap-2">
             {article.tags.slice(0, 2).map((tag, tagIndex) => (
-              <Badge key={`${tag}-${tagIndex}`} variant="secondary" className="text-xs font-semibold">
+              <Badge
+                key={`${tag}-${tagIndex}`}
+                variant="secondary"
+                className="text-xs font-semibold"
+              >
                 {tag}
               </Badge>
             ))}
@@ -325,7 +339,9 @@ const RegularArticle = ({ article }: RegularArticleProps) => (
         <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
+            {formatDistanceToNow(new Date(article.created_at), {
+              addSuffix: true,
+            })}
           </div>
           {article.reading_time && (
             <div className="flex items-center gap-1">
@@ -340,7 +356,9 @@ const RegularArticle = ({ article }: RegularArticleProps) => (
         <p className="text-muted-foreground mb-4 line-clamp-3 flex-1 leading-relaxed">
           {getArticleExcerpt(article)}
         </p>
-        <div className="text-sm text-muted-foreground mb-3">By {article.author}</div>
+        <div className="text-sm text-muted-foreground mb-3">
+          By {article.author}
+        </div>
         <div className="flex items-center justify-between pt-4 border-t border-border/20">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
@@ -375,15 +393,22 @@ interface PaginationProps {
   setCurrentPage: (page: number) => void;
 }
 
-const Pagination = ({ currentPage, totalPages, setCurrentPage }: PaginationProps) => {
+const Pagination = ({
+  currentPage,
+  totalPages,
+  setCurrentPage,
+}: PaginationProps) => {
   const getPageNumbers = useCallback(() => {
-    const pages: (number | 'ellipsis')[] = [];
-    const startPage = Math.max(1, currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2));
+    const pages: (number | "ellipsis")[] = [];
+    const startPage = Math.max(
+      1,
+      currentPage - Math.floor(MAX_PAGES_TO_SHOW / 2),
+    );
     const endPage = Math.min(totalPages, startPage + MAX_PAGES_TO_SHOW - 1);
 
-    if (startPage > 1) pages.push('ellipsis');
+    if (startPage > 1) pages.push("ellipsis");
     for (let i = startPage; i <= endPage; i++) pages.push(i);
-    if (endPage < totalPages) pages.push('ellipsis');
+    if (endPage < totalPages) pages.push("ellipsis");
     return pages;
   }, [currentPage, totalPages]);
 
@@ -400,7 +425,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }: PaginationProps
       </Button>
       <div className="flex gap-1">
         {getPageNumbers().map((page, index) =>
-          page === 'ellipsis' ? (
+          page === "ellipsis" ? (
             <Button
               key={`ellipsis-${index}`}
               variant="outline"
@@ -412,7 +437,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }: PaginationProps
           ) : (
             <Button
               key={page}
-              variant={currentPage === page ? 'default' : 'outline'}
+              variant={currentPage === page ? "default" : "outline"}
               size="sm"
               onClick={() => setCurrentPage(page)}
               className="w-10 h-10 rounded-xl hover:bg-primary/10 hover:shadow-lg hover:scale-105 transition-all duration-300"
@@ -420,7 +445,7 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }: PaginationProps
             >
               {page}
             </Button>
-          )
+          ),
         )}
       </div>
       <Button
@@ -438,71 +463,74 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }: PaginationProps
 
 // Main Component
 const News: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: newsData = { articles: [], total: 0 }, isLoading } = useQuery<NewsData>({
-    queryKey: ['news-articles', searchQuery, sortBy, currentPage],
-    queryFn: async () => {
-      let query = supabase
-        .from('news_articles')
-        .select('*', { count: 'exact' })
-        .eq('published', true);
+  const { data: newsData = { articles: [], total: 0 }, isLoading } =
+    useQuery<NewsData>({
+      queryKey: ["news-articles", searchQuery, sortBy, currentPage],
+      queryFn: async () => {
+        let query = supabase
+          .from("news_articles")
+          .select("*", { count: "exact" })
+          .eq("published", true);
 
-      if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`);
-      }
+        if (searchQuery) {
+          query = query.or(
+            `title.ilike.%${searchQuery}%,excerpt.ilike.%${searchQuery}%,content.ilike.%${searchQuery}%`,
+          );
+        }
 
-      switch (sortBy) {
-        case 'newest':
-          query = query.order('created_at', { ascending: false });
-          break;
-        case 'oldest':
-          query = query.order('created_at', { ascending: true });
-          break;
-        case 'popular':
-          query = query.order('views', { ascending: false });
-          break;
-        case 'title':
-          query = query.order('title', { ascending: true });
-          break;
-        default:
-          query = query.order('created_at', { ascending: false });
-      }
+        switch (sortBy) {
+          case "newest":
+            query = query.order("created_at", { ascending: false });
+            break;
+          case "oldest":
+            query = query.order("created_at", { ascending: true });
+            break;
+          case "popular":
+            query = query.order("views", { ascending: false });
+            break;
+          case "title":
+            query = query.order("title", { ascending: true });
+            break;
+          default:
+            query = query.order("created_at", { ascending: false });
+        }
 
-      const from = (currentPage - 1) * ARTICLES_PER_PAGE;
-      const to = from + ARTICLES_PER_PAGE - 1;
-      query = query.range(from, to);
+        const from = (currentPage - 1) * ARTICLES_PER_PAGE;
+        const to = from + ARTICLES_PER_PAGE - 1;
+        query = query.range(from, to);
 
-      const { data, error, count } = await query;
+        const { data, error, count } = await query;
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
 
-      return {
-        articles: (data as NewsArticle[]) || [],
-        total: count || 0,
-      };
-    },
-    refetchInterval: 5 * 60 * 1000,
-    staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
-  });
+        return {
+          articles: (data as NewsArticle[]) || [],
+          total: count || 0,
+        };
+      },
+      refetchInterval: 5 * 60 * 1000,
+      staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
+    });
 
   const totalPages = Math.ceil(newsData.total / ARTICLES_PER_PAGE);
   const totalViews = useMemo(
     () => newsData.articles.reduce((sum, article) => sum + article.views, 0),
-    [newsData.articles]
+    [newsData.articles],
   );
   const totalLikes = useMemo(
     () => newsData.articles.reduce((sum, article) => sum + article.likes, 0),
-    [newsData.articles]
+    [newsData.articles],
   );
 
   const clearSearch = useCallback(() => {
-    setSearchQuery('');
+    setSearchQuery("");
     setCurrentPage(1);
   }, []);
 
@@ -534,7 +562,10 @@ const News: React.FC = () => {
               </Card>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="overflow-hidden border-2 border-border/20 shadow-md">
+                  <Card
+                    key={i}
+                    className="overflow-hidden border-2 border-border/20 shadow-md"
+                  >
                     <div className="aspect-video bg-muted animate-pulse" />
                     <CardContent className="p-6">
                       <div className="space-y-3">
@@ -551,10 +582,12 @@ const News: React.FC = () => {
               <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Newspaper className="h-12 w-12 text-primary" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 text-foreground">No Articles Found</h3>
+              <h3 className="text-2xl font-semibold mb-4 text-foreground">
+                No Articles Found
+              </h3>
               <p className="text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
                 {searchQuery
-                  ? 'Try adjusting your search terms or explore our latest content.'
+                  ? "Try adjusting your search terms or explore our latest content."
                   : "We're working on bringing you the latest news. Check back soon!"}
               </p>
               {searchQuery && (
@@ -568,21 +601,37 @@ const News: React.FC = () => {
                 </Button>
               )}
               <div className="mt-8 p-4 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl border-2 border-border/20 max-w-md mx-auto text-left">
-                <p className="text-sm font-medium mb-2 text-foreground">Debug Information:</p>
-                <p className="text-xs text-muted-foreground">Total articles: {newsData.total}</p>
-                <p className="text-xs text-muted-foreground">Search query: {searchQuery || 'None'}</p>
-                <p className="text-xs text-muted-foreground">Sort by: {sortBy}</p>
-                <p className="text-xs text-muted-foreground">Current page: {currentPage}</p>
+                <p className="text-sm font-medium mb-2 text-foreground">
+                  Debug Information:
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Total articles: {newsData.total}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Search query: {searchQuery || "None"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Sort by: {sortBy}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Current page: {currentPage}
+                </p>
               </div>
             </div>
           ) : (
             <div className="space-y-12 lg:space-y-16">
-              {newsData.articles[0] && <FeaturedArticle article={newsData.articles[0]} />}
+              {newsData.articles[0] && (
+                <FeaturedArticle article={newsData.articles[0]} />
+              )}
               {newsData.articles.length > 1 && (
                 <section>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {newsData.articles.slice(1, 3).map((article, index) => (
-                      <SecondaryArticle key={article.id} article={article} index={index} />
+                      <SecondaryArticle
+                        key={article.id}
+                        article={article}
+                        index={index}
+                      />
                     ))}
                   </div>
                 </section>
@@ -590,7 +639,9 @@ const News: React.FC = () => {
               {newsData.articles.length > 3 && (
                 <section>
                   <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold text-foreground">More Stories</h2>
+                    <h2 className="text-3xl font-bold text-foreground">
+                      More Stories
+                    </h2>
                     <div className="h-px bg-border flex-1 ml-6" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

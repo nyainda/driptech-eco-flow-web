@@ -1,7 +1,17 @@
 import Footer from "@/components/Layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, MapPin, Clock, MessageCircle, ArrowRight, CheckCircle, Star, Zap } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  MessageCircle,
+  ArrowRight,
+  CheckCircle,
+  Star,
+  Zap,
+} from "lucide-react";
 import SimpleContactForm from "@/components/common/SimpleContactForm";
 
 const Contact = () => {
@@ -12,7 +22,7 @@ const Contact = () => {
       subtitle: "Speak with our irrigation experts",
       details: ["0111 409 454", "0114 575 401"],
       action: "tel:+254111409454",
-      actionText: "Call Now"
+      actionText: "Call Now",
     },
     {
       icon: MessageCircle,
@@ -20,7 +30,7 @@ const Contact = () => {
       subtitle: "Quick responses & support",
       details: ["0111 409 454", "0114 575 401"],
       action: "https://wa.me/0114575401",
-      actionText: "Chat on WhatsApp"
+      actionText: "Chat on WhatsApp",
     },
     {
       icon: Mail,
@@ -28,7 +38,7 @@ const Contact = () => {
       subtitle: "Get detailed information",
       details: ["driptech2025@gmail.com", "driptechs.info@gmail.com"],
       action: "mailto:driptech2025@gmail.com",
-      actionText: "Send Email"
+      actionText: "Send Email",
     },
     {
       icon: MapPin,
@@ -36,14 +46,14 @@ const Contact = () => {
       subtitle: "Our office location",
       details: ["Nairobi, Kenya", "East Africa"],
       action: "https://goo.gl/maps/nairobi-kenya",
-      actionText: "Get Directions"
-    }
+      actionText: "Get Directions",
+    },
   ];
 
   const businessHours = [
     { day: "Monday - Friday", hours: "8:00 AM - 6:00 PM" },
     { day: "Saturday", hours: "9:00 AM - 12:00 PM" },
-    { day: "Sunday", hours: "Closed" }
+    { day: "Sunday", hours: "Closed" },
   ];
 
   return (
@@ -64,8 +74,9 @@ const Contact = () => {
               <span className="block text-primary">Irrigation Experts</span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              Ready to transform your farm with modern irrigation? Our team is here to help you design,
-              install, and maintain the perfect irrigation solution for your needs.
+              Ready to transform your farm with modern irrigation? Our team is
+              here to help you design, install, and maintain the perfect
+              irrigation solution for your needs.
             </p>
 
             {/* Quick stats */}
@@ -92,27 +103,41 @@ const Contact = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Contact Form */}
               <div>
-                <h2 className="text-3xl font-bold mb-6 text-foreground">Send us a Message</h2>
+                <h2 className="text-3xl font-bold mb-6 text-foreground">
+                  Send us a Message
+                </h2>
                 <SimpleContactForm />
               </div>
 
               {/* Contact Information */}
               <div>
-                <h2 className="text-3xl font-bold mb-6 text-foreground">Contact Information</h2>
+                <h2 className="text-3xl font-bold mb-6 text-foreground">
+                  Contact Information
+                </h2>
                 <div className="space-y-6">
                   {contactInfo.map((info, index) => (
-                    <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-background border-border">
+                    <Card
+                      key={index}
+                      className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-background border-border"
+                    >
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
                           <div className="p-3 bg-muted rounded-xl transition-all duration-300 group-hover:bg-muted/50">
                             <info.icon className="h-6 w-6 text-primary" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg mb-1 text-foreground">{info.title}</h3>
-                            <p className="text-sm text-muted-foreground mb-3">{info.subtitle}</p>
+                            <h3 className="font-semibold text-lg mb-1 text-foreground">
+                              {info.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              {info.subtitle}
+                            </p>
                             <div className="space-y-1 mb-4">
                               {info.details.map((detail, idx) => (
-                                <p key={idx} className="text-muted-foreground font-medium">
+                                <p
+                                  key={idx}
+                                  className="text-muted-foreground font-medium"
+                                >
                                   {detail}
                                 </p>
                               ))}
@@ -120,11 +145,20 @@ const Contact = () => {
                             {info.action && (
                               <a
                                 href={info.action}
-                                target={info.action.startsWith('http') ? '_blank' : '_self'}
-                                rel={info.action.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                target={
+                                  info.action.startsWith("http")
+                                    ? "_blank"
+                                    : "_self"
+                                }
+                                rel={
+                                  info.action.startsWith("http")
+                                    ? "noopener noreferrer"
+                                    : undefined
+                                }
                                 className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
                               >
-                                {info.actionText} <ArrowRight className="h-4 w-4 ml-1" />
+                                {info.actionText}{" "}
+                                <ArrowRight className="h-4 w-4 ml-1" />
                               </a>
                             )}
                           </div>
@@ -141,13 +175,20 @@ const Contact = () => {
                       <div className="p-3 bg-muted rounded-xl">
                         <Clock className="h-6 w-6 text-primary" />
                       </div>
-                      <h3 className="font-semibold text-lg text-foreground">Business Hours</h3>
+                      <h3 className="font-semibold text-lg text-foreground">
+                        Business Hours
+                      </h3>
                     </div>
                     <div className="space-y-2">
                       {businessHours.map((schedule, idx) => (
-                        <div key={idx} className="flex justify-between items-center text-muted-foreground">
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center text-muted-foreground"
+                        >
                           <span>{schedule.day}</span>
-                          <span className="font-medium text-foreground">{schedule.hours}</span>
+                          <span className="font-medium text-foreground">
+                            {schedule.hours}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -159,9 +200,12 @@ const Contact = () => {
             {/* Map Section */}
             <div className="mt-12 lg:mt-16">
               <div className="mb-8 text-center">
-                <h2 className="text-3xl font-bold text-foreground mb-4">Find Us in Kenya</h2>
+                <h2 className="text-3xl font-bold text-foreground mb-4">
+                  Find Us in Kenya
+                </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Located in Nairobi, Kenya's capital city. We serve irrigation projects across Kenya.
+                  Located in Nairobi, Kenya's capital city. We serve irrigation
+                  projects across Kenya.
                 </p>
               </div>
 
@@ -187,12 +231,17 @@ const Contact = () => {
                           <MapPin className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-foreground">DripTech Kenya</h4>
-                          <p className="text-sm text-muted-foreground">Irrigation Solutions</p>
+                          <h4 className="font-bold text-foreground">
+                            DripTech Kenya
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Irrigation Solutions
+                          </p>
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">
-                        Nairobi, Kenya<br />
+                        Nairobi, Kenya
+                        <br />
                         East Africa
                       </p>
                       <div className="flex gap-2">

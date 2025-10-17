@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { useVisitorTracking } from '@/hooks/useVisitorTracking';
+import React, { useRef, useEffect } from "react";
+import { useVisitorTracking } from "@/hooks/useVisitorTracking";
 
 interface ProductTrackerProps {
   productName: string;
@@ -25,17 +25,15 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
     const element = elementRef.current;
     if (!element) return;
 
-    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasTrackedView.current) {
-          
             setTimeout(() => {
-              trackProductInteraction(productName, 'view', {
+              trackProductInteraction(productName, "view", {
                 productId,
                 category,
-                elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
+                elementSelector: `.product-${productId || productName.replace(/\s+/g, "-")}`,
               });
               hasTrackedView.current = true;
             }, 200);
@@ -43,9 +41,9 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
         });
       },
       {
-        threshold: 0.5, 
-        rootMargin: '0px 0px -10% 0px',
-      }
+        threshold: 0.5,
+        rootMargin: "0px 0px -10% 0px",
+      },
     );
 
     observer.observe(element);
@@ -55,12 +53,11 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
     };
   }, [productName, productId, category, trackProductInteraction]);
 
-  
   const shouldTrackInteraction = (interactionType: string): boolean => {
     const now = Date.now();
     const lastInteraction = interactionCooldown.current[interactionType] || 0;
-    const cooldownPeriod = interactionType === 'click' ? 1000 : 5000; 
-    
+    const cooldownPeriod = interactionType === "click" ? 1000 : 5000;
+
     if (now - lastInteraction > cooldownPeriod) {
       interactionCooldown.current[interactionType] = now;
       return true;
@@ -69,22 +66,22 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
   };
 
   const handleClick = (event: React.MouseEvent) => {
-    if (shouldTrackInteraction('click')) {
-      trackProductInteraction(productName, 'click', {
+    if (shouldTrackInteraction("click")) {
+      trackProductInteraction(productName, "click", {
         productId,
         category,
-        elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
+        elementSelector: `.product-${productId || productName.replace(/\s+/g, "-")}`,
         clickTarget: (event.target as HTMLElement).tagName,
       });
     }
   };
 
   const handleHover = () => {
-    if (shouldTrackInteraction('hover')) {
-      trackProductInteraction(productName, 'hover', {
+    if (shouldTrackInteraction("hover")) {
+      trackProductInteraction(productName, "hover", {
         productId,
         category,
-        elementSelector: `.product-${productId || productName.replace(/\s+/g, '-')}`,
+        elementSelector: `.product-${productId || productName.replace(/\s+/g, "-")}`,
       });
     }
   };
@@ -92,7 +89,7 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
   return (
     <div
       ref={elementRef}
-      className={`product-${productId || productName.replace(/\s+/g, '-')} ${className || ''}`}
+      className={`product-${productId || productName.replace(/\s+/g, "-")} ${className || ""}`}
       onClick={handleClick}
       onMouseEnter={handleHover}
     >

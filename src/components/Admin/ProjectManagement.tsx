@@ -1,17 +1,29 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   TrendingUp,
   MapPin,
   Calendar,
@@ -19,7 +31,7 @@ import {
   Star,
   Camera,
   Upload,
-  X
+  X,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -78,7 +90,7 @@ const ProjectManagement = () => {
     testimonial: "",
     featured: false,
     status: "planning",
-    project_images: [] as string[]
+    project_images: [] as string[],
   });
 
   const [uploading, setUploading] = useState(false);
@@ -87,7 +99,7 @@ const ProjectManagement = () => {
     { value: "planning", label: "Planning", color: "secondary" },
     { value: "in_progress", label: "In Progress", color: "default" },
     { value: "completed", label: "Completed", color: "default" },
-    { value: "on_hold", label: "On Hold", color: "destructive" }
+    { value: "on_hold", label: "On Hold", color: "destructive" },
   ];
 
   const projectTypes = [
@@ -98,7 +110,7 @@ const ProjectManagement = () => {
     "Urban Landscaping",
     "Sports Field",
     "Residential Garden",
-    "Commercial Farm"
+    "Commercial Farm",
   ];
 
   useEffect(() => {
@@ -109,24 +121,26 @@ const ProjectManagement = () => {
   const fetchProjects = async () => {
     try {
       const { data, error } = await supabase
-        .from('projects')
-        .select(`
+        .from("projects")
+        .select(
+          `
           *,
           customers (
             contact_person,
             company_name
           )
-        `)
-        .order('created_at', { ascending: false });
+        `,
+        )
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setProjects(data || []);
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.error("Error fetching projects:", error);
       toast({
         title: "Error",
         description: "Failed to fetch projects",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -134,20 +148,22 @@ const ProjectManagement = () => {
   const fetchCustomers = async () => {
     try {
       const { data, error } = await supabase
-        .from('customers')
-        .select('id, contact_person, company_name')
-        .order('contact_person');
+        .from("customers")
+        .select("id, contact_person, company_name")
+        .order("contact_person");
 
       if (error) throw error;
       setCustomers(data || []);
     } catch (error) {
-      console.error('Error fetching customers:', error);
+      console.error("Error fetching customers:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
@@ -156,38 +172,36 @@ const ProjectManagement = () => {
 
     try {
       for (const file of Array.from(files)) {
-        const fileExt = file.name.split('.').pop();
+        const fileExt = file.name.split(".").pop();
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `projects/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('images')
+          .from("images")
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        const { data } = supabase.storage
-          .from('images')
-          .getPublicUrl(filePath);
+        const { data } = supabase.storage.from("images").getPublicUrl(filePath);
 
         uploadedUrls.push(data.publicUrl);
       }
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        project_images: [...prev.project_images, ...uploadedUrls]
+        project_images: [...prev.project_images, ...uploadedUrls],
       }));
 
       toast({
         title: "Success",
-        description: `${uploadedUrls.length} image(s) uploaded successfully`
+        description: `${uploadedUrls.length} image(s) uploaded successfully`,
       });
     } catch (error) {
-      console.error('Error uploading images:', error);
+      console.error("Error uploading images:", error);
       toast({
         title: "Error",
         description: "Failed to upload images",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setUploading(false);
@@ -195,59 +209,69 @@ const ProjectManagement = () => {
   };
 
   const removeImage = (indexToRemove: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      project_images: prev.project_images.filter((_, index) => index !== indexToRemove)
+      project_images: prev.project_images.filter(
+        (_, index) => index !== indexToRemove,
+      ),
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const projectData = {
         ...formData,
-        area_covered: formData.area_covered ? parseFloat(formData.area_covered) : null,
-        water_saved: formData.water_saved ? parseFloat(formData.water_saved) : null,
-        yield_improvement: formData.yield_improvement ? parseFloat(formData.yield_improvement) : null,
-        status: formData.status as "planning" | "in_progress" | "completed" | "on_hold",
+        area_covered: formData.area_covered
+          ? parseFloat(formData.area_covered)
+          : null,
+        water_saved: formData.water_saved
+          ? parseFloat(formData.water_saved)
+          : null,
+        yield_improvement: formData.yield_improvement
+          ? parseFloat(formData.yield_improvement)
+          : null,
+        status: formData.status as
+          | "planning"
+          | "in_progress"
+          | "completed"
+          | "on_hold",
         before_images: [],
-        after_images: []
+        after_images: [],
       };
 
       if (editingProject) {
         const { error } = await supabase
-          .from('projects')
+          .from("projects")
           .update(projectData)
-          .eq('id', editingProject.id);
-        
+          .eq("id", editingProject.id);
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Project updated successfully"
+          description: "Project updated successfully",
         });
       } else {
-        const { error } = await supabase
-          .from('projects')
-          .insert([projectData]);
-        
+        const { error } = await supabase.from("projects").insert([projectData]);
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Project created successfully"
+          description: "Project created successfully",
         });
       }
 
       resetForm();
       fetchProjects();
     } catch (error) {
-      console.error('Error saving project:', error);
+      console.error("Error saving project:", error);
       toast({
         title: "Error",
         description: "Failed to save project",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -256,25 +280,22 @@ const ProjectManagement = () => {
     if (!confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      const { error } = await supabase
-        .from('projects')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from("projects").delete().eq("id", id);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Project deleted successfully"
+        description: "Project deleted successfully",
       });
-      
+
       fetchProjects();
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error("Error deleting project:", error);
       toast({
         title: "Error",
         description: "Failed to delete project",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -294,7 +315,7 @@ const ProjectManagement = () => {
       testimonial: project.testimonial || "",
       featured: project.featured,
       status: project.status,
-      project_images: project.project_images || []
+      project_images: project.project_images || [],
     });
     setShowAddForm(true);
   };
@@ -313,18 +334,21 @@ const ProjectManagement = () => {
       testimonial: "",
       featured: false,
       status: "planning",
-      project_images: []
+      project_images: [],
     });
     setEditingProject(null);
     setShowAddForm(false);
   };
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = 
+  const filteredProjects = projects.filter((project) => {
+    const matchesSearch =
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.customers?.contact_person?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.customers?.contact_person
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       project.location?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === "all" || project.status === selectedStatus;
+    const matchesStatus =
+      selectedStatus === "all" || project.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -360,7 +384,10 @@ const ProjectManagement = () => {
             Manage your irrigation project portfolio and case studies
           </p>
         </div>
-        <Button onClick={() => setShowAddForm(true)} className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg">
+        <Button
+          onClick={() => setShowAddForm(true)}
+          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+        >
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
@@ -373,7 +400,9 @@ const ProjectManagement = () => {
               {editingProject ? "Edit Project" : "Create New Project"}
             </CardTitle>
             <CardDescription>
-              {editingProject ? "Update project information" : "Enter project details and track progress"}
+              {editingProject
+                ? "Update project information"
+                : "Enter project details and track progress"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -384,15 +413,22 @@ const ProjectManagement = () => {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Enter project name"
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="customer">Customer</Label>
-                  <Select value={formData.customer_id} onValueChange={(value) => setFormData({ ...formData, customer_id: value })}>
+                  <Select
+                    value={formData.customer_id}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, customer_id: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select customer" />
                     </SelectTrigger>
@@ -410,7 +446,12 @@ const ProjectManagement = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="project_type">Project Type</Label>
-                  <Select value={formData.project_type} onValueChange={(value) => setFormData({ ...formData, project_type: value })}>
+                  <Select
+                    value={formData.project_type}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, project_type: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select project type" />
                     </SelectTrigger>
@@ -423,10 +464,15 @@ const ProjectManagement = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="status">Status</Label>
-                  <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, status: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -446,7 +492,9 @@ const ProjectManagement = () => {
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
                   placeholder="Enter project location"
                 />
               </div>
@@ -459,30 +507,41 @@ const ProjectManagement = () => {
                     type="number"
                     step="0.1"
                     value={formData.area_covered}
-                    onChange={(e) => setFormData({ ...formData, area_covered: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, area_covered: e.target.value })
+                    }
                     placeholder="0.0"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="water_saved">Water Saved (gallons)</Label>
                   <Input
                     id="water_saved"
                     type="number"
                     value={formData.water_saved}
-                    onChange={(e) => setFormData({ ...formData, water_saved: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, water_saved: e.target.value })
+                    }
                     placeholder="0"
                   />
                 </div>
-                
+
                 <div>
-                  <Label htmlFor="yield_improvement">Yield Improvement (%)</Label>
+                  <Label htmlFor="yield_improvement">
+                    Yield Improvement (%)
+                  </Label>
                   <Input
                     id="yield_improvement"
                     type="number"
                     step="0.1"
                     value={formData.yield_improvement}
-                    onChange={(e) => setFormData({ ...formData, yield_improvement: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        yield_improvement: e.target.value,
+                      })
+                    }
                     placeholder="0.0"
                   />
                 </div>
@@ -495,17 +554,24 @@ const ProjectManagement = () => {
                     id="start_date"
                     type="date"
                     value={formData.start_date}
-                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, start_date: e.target.value })
+                    }
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="completion_date">Completion Date</Label>
                   <Input
                     id="completion_date"
                     type="date"
                     value={formData.completion_date}
-                    onChange={(e) => setFormData({ ...formData, completion_date: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        completion_date: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -515,7 +581,9 @@ const ProjectManagement = () => {
                 <Textarea
                   id="testimonial"
                   value={formData.testimonial}
-                  onChange={(e) => setFormData({ ...formData, testimonial: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, testimonial: e.target.value })
+                  }
                   placeholder="Customer feedback and testimonial"
                   rows={3}
                 />
@@ -534,7 +602,12 @@ const ProjectManagement = () => {
                     id="image-upload"
                   />
                   <Label htmlFor="image-upload" className="cursor-pointer">
-                    <Button type="button" variant="outline" disabled={uploading} asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={uploading}
+                      asChild
+                    >
                       <div>
                         <Camera className="mr-2 h-4 w-4" />
                         {uploading ? "Uploading..." : "Upload Images"}
@@ -571,9 +644,13 @@ const ProjectManagement = () => {
                 <Switch
                   id="featured"
                   checked={formData.featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, featured: checked })
+                  }
                 />
-                <Label htmlFor="featured">Featured Project (show in portfolio)</Label>
+                <Label htmlFor="featured">
+                  Featured Project (show in portfolio)
+                </Label>
               </div>
 
               <div className="flex justify-end space-x-2">
@@ -616,7 +693,10 @@ const ProjectManagement = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredProjects.map((project) => (
-          <Card key={project.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10">
+          <Card
+            key={project.id}
+            className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10"
+          >
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -630,12 +710,18 @@ const ProjectManagement = () => {
                     <CardDescription className="flex items-center mt-1">
                       <Users className="h-3 w-3 mr-1" />
                       {project.customers.contact_person}
-                      {project.customers.company_name && ` - ${project.customers.company_name}`}
+                      {project.customers.company_name &&
+                        ` - ${project.customers.company_name}`}
                     </CardDescription>
                   )}
                 </div>
-                <Badge variant={statusOptions.find(s => s.value === project.status)?.color as any}>
-                  {statusOptions.find(s => s.value === project.status)?.label}
+                <Badge
+                  variant={
+                    statusOptions.find((s) => s.value === project.status)
+                      ?.color as any
+                  }
+                >
+                  {statusOptions.find((s) => s.value === project.status)?.label}
                 </Badge>
               </div>
             </CardHeader>
@@ -647,22 +733,28 @@ const ProjectManagement = () => {
                     <span>{project.location}</span>
                   </div>
                 )}
-                
+
                 {project.project_type && (
                   <div className="flex items-center text-sm">
                     <TrendingUp className="h-4 w-4 mr-2 text-muted-foreground" />
                     <span>{project.project_type}</span>
-                    {project.area_covered && <span className="ml-2">({project.area_covered} acres)</span>}
+                    {project.area_covered && (
+                      <span className="ml-2">
+                        ({project.area_covered} acres)
+                      </span>
+                    )}
                   </div>
                 )}
-                
+
                 {(project.start_date || project.completion_date) && (
                   <div className="flex items-center text-sm">
                     <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                     <span>
-                      {project.start_date && new Date(project.start_date).toLocaleDateString()}
+                      {project.start_date &&
+                        new Date(project.start_date).toLocaleDateString()}
                       {project.start_date && project.completion_date && " - "}
-                      {project.completion_date && new Date(project.completion_date).toLocaleDateString()}
+                      {project.completion_date &&
+                        new Date(project.completion_date).toLocaleDateString()}
                     </span>
                   </div>
                 )}
@@ -674,7 +766,9 @@ const ProjectManagement = () => {
                         <div className="text-lg font-semibold text-blue-600">
                           {project.water_saved.toLocaleString()}
                         </div>
-                        <div className="text-xs text-muted-foreground">Gallons Saved</div>
+                        <div className="text-xs text-muted-foreground">
+                          Gallons Saved
+                        </div>
                       </div>
                     )}
                     {project.yield_improvement && (
@@ -682,7 +776,9 @@ const ProjectManagement = () => {
                         <div className="text-lg font-semibold text-green-600">
                           +{project.yield_improvement}%
                         </div>
-                        <div className="text-xs text-muted-foreground">Yield Improvement</div>
+                        <div className="text-xs text-muted-foreground">
+                          Yield Improvement
+                        </div>
                       </div>
                     )}
                   </div>
@@ -696,15 +792,15 @@ const ProjectManagement = () => {
                   </Button>
                 </div>
                 <div className="flex space-x-1">
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="outline"
                     onClick={() => handleEdit(project)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="outline"
                     className="text-destructive hover:text-destructive"
                     onClick={() => handleDelete(project.id)}
@@ -724,8 +820,8 @@ const ProjectManagement = () => {
             <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No projects found</h3>
             <p className="text-muted-foreground text-center mb-4">
-              {searchTerm || selectedStatus !== "all" 
-                ? "Try adjusting your search or filter criteria" 
+              {searchTerm || selectedStatus !== "all"
+                ? "Try adjusting your search or filter criteria"
                 : "Get started by creating your first project"}
             </p>
             {!searchTerm && selectedStatus === "all" && (

@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Invoice } from '../types/InvoiceTypes';
-import { useInvoiceData } from '@/hooks/useInvoiceData';
-import { useInvoiceOperations } from '@/hooks/useInvoiceOperations';
+import React, { useState, useEffect } from "react";
+import { Plus, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Invoice } from "../types/InvoiceTypes";
+import { useInvoiceData } from "@/hooks/useInvoiceData";
+import { useInvoiceOperations } from "@/hooks/useInvoiceOperations";
 
-import StatsCards from './StatsCards';
-import InvoicesTable from './InvoicesTable';
-import CreateInvoiceModal from './CreateInvoiceModal';
-import InvoiceModal from './InvoiceModal';
+import StatsCards from "./StatsCards";
+import InvoicesTable from "./InvoicesTable";
+import CreateInvoiceModal from "./CreateInvoiceModal";
+import InvoiceModal from "./InvoiceModal";
 //import FiltersSection from './FiltersSection';
-import FiltersSection from './FiltersSection ';
-import EditInvoiceModal from './EditInvoiceModal';
+import FiltersSection from "./FiltersSection ";
+import EditInvoiceModal from "./EditInvoiceModal";
 
 const InvoiceManagementSystem = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -29,14 +29,14 @@ const InvoiceManagementSystem = () => {
     loading,
     loadInvoices,
     loadCustomers,
-    loadQuotes
+    loadQuotes,
   } = useInvoiceData();
 
   const {
     updateInvoiceStatus,
     deleteInvoice,
     downloadInvoicePDF,
-    printInvoice
+    printInvoice,
   } = useInvoiceOperations(loadInvoices);
 
   useEffect(() => {
@@ -45,19 +45,24 @@ const InvoiceManagementSystem = () => {
     loadQuotes();
   }, []);
 
-  const filteredInvoices = invoices.filter(invoice => {
-    const matchesSearch = 
+  const filteredInvoices = invoices.filter((invoice) => {
+    const matchesSearch =
       invoice.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invoice.customer?.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invoice.customer?.contact_person.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
-    
+      invoice.customer?.company_name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      invoice.customer?.contact_person
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || invoice.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
   const getDaysOverdue = (dueDate: string, status: string) => {
-    if (status === 'paid') return 0;
+    if (status === "paid") return 0;
     const due = new Date(dueDate);
     const today = new Date();
     const diffTime = today.getTime() - due.getTime();
@@ -67,12 +72,16 @@ const InvoiceManagementSystem = () => {
 
   const stats = {
     totalInvoices: invoices.length,
-    totalOutstanding: invoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled').reduce((sum, i) => sum + i.total_amount, 0),
-    totalPaid: invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.total_amount, 0),
-    overdueCount: invoices.filter(i => {
-      const daysOverdue = getDaysOverdue(i.due_date, i.status || 'draft');
-      return daysOverdue > 0 && i.status !== 'paid';
-    }).length
+    totalOutstanding: invoices
+      .filter((i) => i.status !== "paid" && i.status !== "cancelled")
+      .reduce((sum, i) => sum + i.total_amount, 0),
+    totalPaid: invoices
+      .filter((i) => i.status === "paid")
+      .reduce((sum, i) => sum + i.total_amount, 0),
+    overdueCount: invoices.filter((i) => {
+      const daysOverdue = getDaysOverdue(i.due_date, i.status || "draft");
+      return daysOverdue > 0 && i.status !== "paid";
+    }).length,
   };
 
   const openEditModal = (invoice: Invoice) => {
@@ -101,11 +110,19 @@ const InvoiceManagementSystem = () => {
                 <span className="text-2xl">📋</span>
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">Invoice Management</h1>
-                <p className="text-sm text-muted-foreground mt-1">Manage customer invoices and payments</p>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                  Invoice Management
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Manage customer invoices and payments
+                </p>
                 <div className="flex items-center gap-4 mt-3 text-muted-foreground">
-                  <span className="text-sm">Total Invoices: {stats.totalInvoices}</span>
-                  <span className="text-sm">Outstanding: KES {stats.totalOutstanding.toLocaleString()}</span>
+                  <span className="text-sm">
+                    Total Invoices: {stats.totalInvoices}
+                  </span>
+                  <span className="text-sm">
+                    Outstanding: KES {stats.totalOutstanding.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>

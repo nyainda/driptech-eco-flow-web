@@ -3,7 +3,7 @@ export interface Invoice {
   invoice_number: string;
   customer_id: string | null;
   quote_id: string | null;
-  status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled' | null;
+  status: "draft" | "sent" | "paid" | "overdue" | "cancelled" | null;
   issue_date: string;
   due_date: string;
   subtotal: number;

@@ -1,5 +1,4 @@
-
-import { Json } from '../shared';
+import { Json } from "../shared";
 
 export type Notifications = {
   Row: {

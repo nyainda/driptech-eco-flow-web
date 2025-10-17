@@ -1,22 +1,33 @@
-
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  TrendingUp, 
+import {
+  TrendingUp,
   TrendingDown,
-  Users, 
-  ShoppingBag, 
-  FileText, 
-  Quote, 
-  Calendar, 
-  DollarSign, 
+  Users,
+  ShoppingBag,
+  FileText,
+  Quote,
+  Calendar,
+  DollarSign,
   Target,
   Activity,
   Clock,
@@ -38,9 +49,23 @@ import {
   Monitor,
   Tablet,
   RefreshCw,
-  Filter
+  Filter,
 } from "lucide-react";
-import { PieChart as RechartsPieChart, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart as RechartsLineChart, Line, Area, AreaChart } from 'recharts';
+import {
+  PieChart as RechartsPieChart,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  LineChart as RechartsLineChart,
+  Line,
+  Area,
+  AreaChart,
+} from "recharts";
 
 interface DashboardStats {
   totalCustomers: number;
@@ -65,17 +90,67 @@ interface DashboardStats {
       projects: number;
       revenue: number;
     };
-    categoryDistribution: Array<{ category: string; count: number; percentage: number; color: string }>;
-    quotesStatusDistribution: Array<{ status: string; count: number; percentage: number; color: string }>;
-    projectsStatusDistribution: Array<{ status: string; count: number; percentage: number; color: string }>;
-    monthlyActivity: Array<{ month: string; customers: number; quotes: number; projects: number }>;
-    recentActivity: Array<{ type: string; title: string; time: string; status: string }>;
-    topPerformingProducts: Array<{ name: string; sales: number; revenue: number }>;
-    upcomingDeadlines: Array<{ type: string; title: string; date: string; priority: string }>;
-    deviceStats: Array<{ device: string; sessions: number; percentage: number }>;
-    trafficSources: Array<{ source: string; visitors: number; percentage: number }>;
-    conversionFunnel: Array<{ stage: string; count: number; conversion: number }>;
-    revenueByCategory: Array<{ category: string; revenue: number; growth: number }>;
+    categoryDistribution: Array<{
+      category: string;
+      count: number;
+      percentage: number;
+      color: string;
+    }>;
+    quotesStatusDistribution: Array<{
+      status: string;
+      count: number;
+      percentage: number;
+      color: string;
+    }>;
+    projectsStatusDistribution: Array<{
+      status: string;
+      count: number;
+      percentage: number;
+      color: string;
+    }>;
+    monthlyActivity: Array<{
+      month: string;
+      customers: number;
+      quotes: number;
+      projects: number;
+    }>;
+    recentActivity: Array<{
+      type: string;
+      title: string;
+      time: string;
+      status: string;
+    }>;
+    topPerformingProducts: Array<{
+      name: string;
+      sales: number;
+      revenue: number;
+    }>;
+    upcomingDeadlines: Array<{
+      type: string;
+      title: string;
+      date: string;
+      priority: string;
+    }>;
+    deviceStats: Array<{
+      device: string;
+      sessions: number;
+      percentage: number;
+    }>;
+    trafficSources: Array<{
+      source: string;
+      visitors: number;
+      percentage: number;
+    }>;
+    conversionFunnel: Array<{
+      stage: string;
+      count: number;
+      conversion: number;
+    }>;
+    revenueByCategory: Array<{
+      category: string;
+      revenue: number;
+      growth: number;
+    }>;
   };
 }
 
@@ -101,7 +176,7 @@ const Dashboard = () => {
         products: 0,
         quotes: 0,
         projects: 0,
-        revenue: 0
+        revenue: 0,
       },
       categoryDistribution: [],
       quotesStatusDistribution: [],
@@ -113,11 +188,11 @@ const Dashboard = () => {
       deviceStats: [],
       trafficSources: [],
       conversionFunnel: [],
-      revenueByCategory: []
-    }
+      revenueByCategory: [],
+    },
   });
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('30d');
+  const [timeRange, setTimeRange] = useState("30d");
   const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
 
@@ -129,8 +204,7 @@ const Dashboard = () => {
     try {
       setRefreshing(true);
       setLoading(true);
-      
-      
+
       const [
         customersResult,
         productsResult,
@@ -143,68 +217,130 @@ const Dashboard = () => {
         invoicesResult,
         sessionsResult,
         pageViewsResult,
-        productInteractionsResult
+        productInteractionsResult,
       ] = await Promise.all([
-        supabase.from('customers').select('*', { count: 'exact' }),
-        supabase.from('products').select('*', { count: 'exact' }),
-        supabase.from('blog_posts').select('*', { count: 'exact' }),
-        supabase.from('documents').select('*', { count: 'exact' }),
-        supabase.from('quotes').select('*', { count: 'exact' }),
-        supabase.from('videos').select('*', { count: 'exact' }),
-        supabase.from('projects').select('*', { count: 'exact' }),
-        supabase.from('contact_submissions').select('*', { count: 'exact' }),
-        supabase.from('invoices').select('*', { count: 'exact' }),
-        supabase.from('visitor_sessions').select('*', { count: 'exact' }),
-        supabase.from('page_views').select('*', { count: 'exact' }),
-        supabase.from('product_interactions').select('*', { count: 'exact' })
+        supabase.from("customers").select("*", { count: "exact" }),
+        supabase.from("products").select("*", { count: "exact" }),
+        supabase.from("blog_posts").select("*", { count: "exact" }),
+        supabase.from("documents").select("*", { count: "exact" }),
+        supabase.from("quotes").select("*", { count: "exact" }),
+        supabase.from("videos").select("*", { count: "exact" }),
+        supabase.from("projects").select("*", { count: "exact" }),
+        supabase.from("contact_submissions").select("*", { count: "exact" }),
+        supabase.from("invoices").select("*", { count: "exact" }),
+        supabase.from("visitor_sessions").select("*", { count: "exact" }),
+        supabase.from("page_views").select("*", { count: "exact" }),
+        supabase.from("product_interactions").select("*", { count: "exact" }),
       ]);
 
-      
       const [
-        quotesData, 
-        projectsData, 
-        productsData, 
-        customersData, 
-        videosData, 
+        quotesData,
+        projectsData,
+        productsData,
+        customersData,
+        videosData,
         blogData,
         invoicesData,
         sessionsData,
         pageViewsData,
-        productInteractionsData
+        productInteractionsData,
       ] = await Promise.all([
-        supabase.from('quotes').select('*').order('created_at', { ascending: false }),
-        supabase.from('projects').select('*').order('created_at', { ascending: false }),
-        supabase.from('products').select('*').order('created_at', { ascending: false }),
-        supabase.from('customers').select('*').order('created_at', { ascending: false }),
-        supabase.from('videos').select('*').order('created_at', { ascending: false }),
-        supabase.from('blog_posts').select('*').order('created_at', { ascending: false }),
-        supabase.from('invoices').select('*').order('created_at', { ascending: false }),
-        supabase.from('visitor_sessions').select('*').order('session_start', { ascending: false }).limit(1000),
-        supabase.from('page_views').select('*').order('timestamp', { ascending: false }).limit(1000),
-        supabase.from('product_interactions').select('*').order('timestamp', { ascending: false }).limit(500)
+        supabase
+          .from("quotes")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("projects")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("products")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("customers")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("videos")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("blog_posts")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("invoices")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("visitor_sessions")
+          .select("*")
+          .order("session_start", { ascending: false })
+          .limit(1000),
+        supabase
+          .from("page_views")
+          .select("*")
+          .order("timestamp", { ascending: false })
+          .limit(1000),
+        supabase
+          .from("product_interactions")
+          .select("*")
+          .order("timestamp", { ascending: false })
+          .limit(500),
       ]);
 
-      if (customersResult.error || productsResult.error || blogPostsResult.error || documentsResult.error || quotesResult.error || videosResult.error || projectsResult.error || contactSubmissionsResult.error || invoicesResult.error || sessionsResult.error || pageViewsResult.error || productInteractionsResult.error) {
-        throw new Error('Failed to fetch some data from the database');
+      if (
+        customersResult.error ||
+        productsResult.error ||
+        blogPostsResult.error ||
+        documentsResult.error ||
+        quotesResult.error ||
+        videosResult.error ||
+        projectsResult.error ||
+        contactSubmissionsResult.error ||
+        invoicesResult.error ||
+        sessionsResult.error ||
+        pageViewsResult.error ||
+        productInteractionsResult.error
+      ) {
+        throw new Error("Failed to fetch some data from the database");
       }
-      const totalRevenue = quotesData.data?.reduce((sum, quote) => sum + (quote.total_amount || 0), 0) || 0;
-      const totalDownloads = documentsResult.data?.reduce((sum, doc) => sum + (doc.download_count || 0), 0) || 0;
-      const totalBlogViews = blogData.data?.reduce((sum, blog) => sum + (blog.views || 0), 0) || 0;
-      const totalVideoViews = videosData.data?.reduce((sum, video) => sum + (video.views || 0), 0) || 0;
-      const avgProjectValue = projectsData.data?.length > 0 ? totalRevenue / projectsData.data.length : 0;
-      const conversionRate = customersResult.count > 0 ? ((quotesResult.count || 0) / customersResult.count) * 100 : 0;
-      
+      const totalRevenue =
+        quotesData.data?.reduce(
+          (sum, quote) => sum + (quote.total_amount || 0),
+          0,
+        ) || 0;
+      const totalDownloads =
+        documentsResult.data?.reduce(
+          (sum, doc) => sum + (doc.download_count || 0),
+          0,
+        ) || 0;
+      const totalBlogViews =
+        blogData.data?.reduce((sum, blog) => sum + (blog.views || 0), 0) || 0;
+      const totalVideoViews =
+        videosData.data?.reduce((sum, video) => sum + (video.views || 0), 0) ||
+        0;
+      const avgProjectValue =
+        projectsData.data?.length > 0
+          ? totalRevenue / projectsData.data.length
+          : 0;
+      const conversionRate =
+        customersResult.count > 0
+          ? ((quotesResult.count || 0) / customersResult.count) * 100
+          : 0;
+
       const analytics = calculateAnalytics(
-        productsData.data || [], 
-        quotesData.data || [], 
-        projectsData.data || [], 
+        productsData.data || [],
+        quotesData.data || [],
+        projectsData.data || [],
         customersData.data || [],
         videosData.data || [],
         blogData.data || [],
         invoicesData.data || [],
         sessionsData.data || [],
         pageViewsData.data || [],
-        productInteractionsData.data || []
+        productInteractionsData.data || [],
       );
 
       setStats({
@@ -222,15 +358,14 @@ const Dashboard = () => {
         avgProjectValue,
         conversionRate,
         customerSatisfaction: 0, // No satisfaction data in DB
-        analytics
+        analytics,
       });
-
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
       toast({
         title: "Error",
         description: "Failed to load dashboard data",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -239,21 +374,28 @@ const Dashboard = () => {
   };
 
   const calculateAnalytics = (
-    products: any[], 
-    quotes: any[], 
-    projects: any[], 
-    customers: any[], 
-    videos: any[], 
+    products: any[],
+    quotes: any[],
+    projects: any[],
+    customers: any[],
+    videos: any[],
     blogs: any[],
     invoices: any[],
     sessions: any[],
     pageViews: any[],
-    productInteractions: any[]
+    productInteractions: any[],
   ) => {
     const colors = [
-      'hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 
-      'hsl(210 40% 60%)', 'hsl(25 95% 53%)', 'hsl(142 76% 36%)',
-      'hsl(262 83% 58%)', 'hsl(346 87% 43%)', 'hsl(47 96% 53%)', 'hsl(195 100% 39%)'
+      "hsl(var(--primary))",
+      "hsl(var(--secondary))",
+      "hsl(var(--accent))",
+      "hsl(210 40% 60%)",
+      "hsl(25 95% 53%)",
+      "hsl(142 76% 36%)",
+      "hsl(262 83% 58%)",
+      "hsl(346 87% 43%)",
+      "hsl(47 96% 53%)",
+      "hsl(195 100% 39%)",
     ];
 
     // Enhanced category distribution
@@ -262,12 +404,14 @@ const Dashboard = () => {
       return acc;
     }, {});
 
-    const categoryDistribution = Object.entries(categoryCount).map(([category, count], index) => ({
-      category: category.charAt(0).toUpperCase() + category.slice(1),
-      count: count as number,
-      percentage: Math.round(((count as number) / products.length) * 100),
-      color: colors[index % colors.length]
-    }));
+    const categoryDistribution = Object.entries(categoryCount).map(
+      ([category, count], index) => ({
+        category: category.charAt(0).toUpperCase() + category.slice(1),
+        count: count as number,
+        percentage: Math.round(((count as number) / products.length) * 100),
+        color: colors[index % colors.length],
+      }),
+    );
 
     // Enhanced status distributions with more detail
     const quotesStatusCount = quotes.reduce((acc, quote) => {
@@ -275,72 +419,90 @@ const Dashboard = () => {
       return acc;
     }, {});
 
-    const quotesStatusDistribution = Object.entries(quotesStatusCount).map(([status, count], index) => ({
-      status: status.charAt(0).toUpperCase() + status.slice(1),
-      count: count as number,
-      percentage: quotes.length > 0 ? Math.round(((count as number) / quotes.length) * 100) : 0,
-      color: colors[index % colors.length]
-    }));
+    const quotesStatusDistribution = Object.entries(quotesStatusCount).map(
+      ([status, count], index) => ({
+        status: status.charAt(0).toUpperCase() + status.slice(1),
+        count: count as number,
+        percentage:
+          quotes.length > 0
+            ? Math.round(((count as number) / quotes.length) * 100)
+            : 0,
+        color: colors[index % colors.length],
+      }),
+    );
 
     const projectsStatusCount = projects.reduce((acc, project) => {
       acc[project.status] = (acc[project.status] || 0) + 1;
       return acc;
     }, {});
 
-    const projectsStatusDistribution = Object.entries(projectsStatusCount).map(([status, count], index) => ({
-      status: status.charAt(0).toUpperCase() + status.slice(1),
-      count: count as number,
-      percentage: projects.length > 0 ? Math.round(((count as number) / projects.length) * 100) : 0,
-      color: colors[index % colors.length]
-    }));
+    const projectsStatusDistribution = Object.entries(projectsStatusCount).map(
+      ([status, count], index) => ({
+        status: status.charAt(0).toUpperCase() + status.slice(1),
+        count: count as number,
+        percentage:
+          projects.length > 0
+            ? Math.round(((count as number) / projects.length) * 100)
+            : 0,
+        color: colors[index % colors.length],
+      }),
+    );
 
     // Enhanced monthly activity with more metrics
     const monthlyActivity = Array.from({ length: 6 }, (_, i) => {
       const date = new Date();
       date.setMonth(date.getMonth() - (5 - i));
       const monthStr = date.toISOString().slice(0, 7);
-      
+
       return {
-        month: date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
-        customers: customers.filter(c => c.created_at?.startsWith(monthStr)).length,
-        quotes: quotes.filter(q => q.created_at?.startsWith(monthStr)).length,
-        projects: projects.filter(p => p.created_at?.startsWith(monthStr)).length,
-        revenue: quotes.filter(q => q.created_at?.startsWith(monthStr))
-          .reduce((sum, q) => sum + (q.total_amount || 0), 0)
+        month: date.toLocaleDateString("en-US", {
+          month: "short",
+          year: "2-digit",
+        }),
+        customers: customers.filter((c) => c.created_at?.startsWith(monthStr))
+          .length,
+        quotes: quotes.filter((q) => q.created_at?.startsWith(monthStr)).length,
+        projects: projects.filter((p) => p.created_at?.startsWith(monthStr))
+          .length,
+        revenue: quotes
+          .filter((q) => q.created_at?.startsWith(monthStr))
+          .reduce((sum, q) => sum + (q.total_amount || 0), 0),
       };
     });
 
-    // Recent activity 
+    // Recent activity
     const recentActivity = [
-      ...quotes.slice(0, 3).map(q => ({
-        type: 'quote',
+      ...quotes.slice(0, 3).map((q) => ({
+        type: "quote",
         title: `Quote #${q.quote_number}`,
         time: new Date(q.created_at).toLocaleDateString(),
-        status: q.status || 'pending'
+        status: q.status || "pending",
       })),
-      ...projects.slice(0, 2).map(p => ({
-        type: 'project',
+      ...projects.slice(0, 2).map((p) => ({
+        type: "project",
         title: `Project: ${p.name}`,
         time: new Date(p.created_at).toLocaleDateString(),
-        status: p.status || 'active'
-      }))
-    ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5);
+        status: p.status || "active",
+      })),
+    ]
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      .slice(0, 5);
 
     // Top products by price (no sales data available)
     const topPerformingProducts = products
-      .filter(p => p.price && p.price > 0)
+      .filter((p) => p.price && p.price > 0)
       .sort((a, b) => (b.price || 0) - (a.price || 0))
       .slice(0, 5)
-      .map(p => ({
+      .map((p) => ({
         name: p.name,
         sales: 0,
-        revenue: p.price || 0
+        revenue: p.price || 0,
       }));
 
     // Calculate analytics from visitor sessions
     const deviceStats = sessions.reduce((acc: any[], session) => {
-      const device = session.device_type || 'Unknown';
-      const existing = acc.find(d => d.device === device);
+      const device = session.device_type || "Unknown";
+      const existing = acc.find((d) => d.device === device);
       if (existing) {
         existing.sessions += 1;
       } else {
@@ -348,24 +510,35 @@ const Dashboard = () => {
       }
       return acc;
     }, []);
-    
-    const totalDeviceSessions = deviceStats.reduce((sum, d) => sum + d.sessions, 0);
-    deviceStats.forEach(d => {
-      d.percentage = totalDeviceSessions > 0 ? Math.round((d.sessions / totalDeviceSessions) * 100) : 0;
+
+    const totalDeviceSessions = deviceStats.reduce(
+      (sum, d) => sum + d.sessions,
+      0,
+    );
+    deviceStats.forEach((d) => {
+      d.percentage =
+        totalDeviceSessions > 0
+          ? Math.round((d.sessions / totalDeviceSessions) * 100)
+          : 0;
     });
 
     // Calculate traffic sources from referrer data
     const trafficSources = sessions.reduce((acc: any[], session) => {
       const referrer = session.referrer;
-      let source = 'Direct';
-      
+      let source = "Direct";
+
       if (referrer) {
-        if (referrer.includes('google')) source = 'Google Search';
-        else if (referrer.includes('facebook') || referrer.includes('twitter') || referrer.includes('linkedin')) source = 'Social Media';
-        else source = 'Referrals';
+        if (referrer.includes("google")) source = "Google Search";
+        else if (
+          referrer.includes("facebook") ||
+          referrer.includes("twitter") ||
+          referrer.includes("linkedin")
+        )
+          source = "Social Media";
+        else source = "Referrals";
       }
-      
-      const existing = acc.find(s => s.source === source);
+
+      const existing = acc.find((s) => s.source === source);
       if (existing) {
         existing.visitors += 1;
       } else {
@@ -373,26 +546,35 @@ const Dashboard = () => {
       }
       return acc;
     }, []);
-    
-    const totalVisitors = trafficSources.reduce((sum, s) => sum + s.visitors, 0);
-    trafficSources.forEach(s => {
-      s.percentage = totalVisitors > 0 ? Math.round((s.visitors / totalVisitors) * 100) : 0;
+
+    const totalVisitors = trafficSources.reduce(
+      (sum, s) => sum + s.visitors,
+      0,
+    );
+    trafficSources.forEach((s) => {
+      s.percentage =
+        totalVisitors > 0 ? Math.round((s.visitors / totalVisitors) * 100) : 0;
     });
 
     // Calculate conversion funnel from real data
     const conversionFunnel = [
-      { stage: 'Visitors', count: sessions.length, conversion: 100 },
-      { stage: 'Engaged', count: sessions.filter(s => (s.page_views || 0) > 1).length, conversion: 0 },
-      { stage: 'Contacts', count: customers.length, conversion: 0 },
-      { stage: 'Quotes', count: quotes.length, conversion: 0 },
-      { stage: 'Projects', count: projects.length, conversion: 0 }
+      { stage: "Visitors", count: sessions.length, conversion: 100 },
+      {
+        stage: "Engaged",
+        count: sessions.filter((s) => (s.page_views || 0) > 1).length,
+        conversion: 0,
+      },
+      { stage: "Contacts", count: customers.length, conversion: 0 },
+      { stage: "Quotes", count: quotes.length, conversion: 0 },
+      { stage: "Projects", count: projects.length, conversion: 0 },
     ];
-    
+
     conversionFunnel.forEach((stage, idx) => {
       if (idx > 0) {
-        stage.conversion = conversionFunnel[0].count > 0 
-          ? Math.round((stage.count / conversionFunnel[0].count) * 100) 
-          : 0;
+        stage.conversion =
+          conversionFunnel[0].count > 0
+            ? Math.round((stage.count / conversionFunnel[0].count) * 100)
+            : 0;
       }
     });
 
@@ -402,20 +584,36 @@ const Dashboard = () => {
     const lastMonthStr = lastMonth.toISOString().slice(0, 7);
     const currentMonthStr = now.toISOString().slice(0, 7);
 
-    const lastMonthCustomers = customers.filter(c => c.created_at?.startsWith(lastMonthStr)).length;
-    const currentMonthCustomers = customers.filter(c => c.created_at?.startsWith(currentMonthStr)).length;
-    const lastMonthProducts = products.filter(p => p.created_at?.startsWith(lastMonthStr)).length;
-    const currentMonthProducts = products.filter(p => p.created_at?.startsWith(currentMonthStr)).length;
-    const lastMonthQuotes = quotes.filter(q => q.created_at?.startsWith(lastMonthStr)).length;
-    const currentMonthQuotes = quotes.filter(q => q.created_at?.startsWith(currentMonthStr)).length;
-    const lastMonthProjects = projects.filter(p => p.created_at?.startsWith(lastMonthStr)).length;
-    const currentMonthProjects = projects.filter(p => p.created_at?.startsWith(currentMonthStr)).length;
-    
+    const lastMonthCustomers = customers.filter((c) =>
+      c.created_at?.startsWith(lastMonthStr),
+    ).length;
+    const currentMonthCustomers = customers.filter((c) =>
+      c.created_at?.startsWith(currentMonthStr),
+    ).length;
+    const lastMonthProducts = products.filter((p) =>
+      p.created_at?.startsWith(lastMonthStr),
+    ).length;
+    const currentMonthProducts = products.filter((p) =>
+      p.created_at?.startsWith(currentMonthStr),
+    ).length;
+    const lastMonthQuotes = quotes.filter((q) =>
+      q.created_at?.startsWith(lastMonthStr),
+    ).length;
+    const currentMonthQuotes = quotes.filter((q) =>
+      q.created_at?.startsWith(currentMonthStr),
+    ).length;
+    const lastMonthProjects = projects.filter((p) =>
+      p.created_at?.startsWith(lastMonthStr),
+    ).length;
+    const currentMonthProjects = projects.filter((p) =>
+      p.created_at?.startsWith(currentMonthStr),
+    ).length;
+
     const lastMonthRevenue = [...quotes, ...invoices]
-      .filter(item => item.created_at?.startsWith(lastMonthStr))
+      .filter((item) => item.created_at?.startsWith(lastMonthStr))
       .reduce((sum, item) => sum + (item.total_amount || 0), 0);
     const currentMonthRevenue = [...quotes, ...invoices]
-      .filter(item => item.created_at?.startsWith(currentMonthStr))
+      .filter((item) => item.created_at?.startsWith(currentMonthStr))
       .reduce((sum, item) => sum + (item.total_amount || 0), 0);
 
     const calculateGrowth = (current: number, last: number) => {
@@ -423,52 +621,60 @@ const Dashboard = () => {
       return ((current - last) / last) * 100;
     };
 
-    const revenueByCategory = categoryDistribution.map(cat => {
-      const categoryRevenue = quotes
-        .filter(q => q.total_amount)
-        .reduce((sum, q) => sum + (q.total_amount || 0), 0) / categoryDistribution.length;
-      
+    const revenueByCategory = categoryDistribution.map((cat) => {
+      const categoryRevenue =
+        quotes
+          .filter((q) => q.total_amount)
+          .reduce((sum, q) => sum + (q.total_amount || 0), 0) /
+        categoryDistribution.length;
+
       return {
         category: cat.category,
         revenue: categoryRevenue,
-        growth: 0
+        growth: 0,
       };
     });
 
     // Popular pages from page_views
-    const popularPages = pageViews.reduce((acc: any[], pv) => {
-      const existing = acc.find(p => p.path === pv.page_path);
-      if (existing) {
-        existing.views += 1;
-        existing.timeSpent += pv.time_spent || 0;
-      } else {
-        acc.push({
-          path: pv.page_path,
-          title: pv.page_title,
-          views: 1,
-          timeSpent: pv.time_spent || 0
-        });
-      }
-      return acc;
-    }, []).sort((a, b) => b.views - a.views).slice(0, 10);
+    const popularPages = pageViews
+      .reduce((acc: any[], pv) => {
+        const existing = acc.find((p) => p.path === pv.page_path);
+        if (existing) {
+          existing.views += 1;
+          existing.timeSpent += pv.time_spent || 0;
+        } else {
+          acc.push({
+            path: pv.page_path,
+            title: pv.page_title,
+            views: 1,
+            timeSpent: pv.time_spent || 0,
+          });
+        }
+        return acc;
+      }, [])
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 10);
 
     // Product interaction summary
-    const productInteractionSummary = productInteractions.reduce((acc: any[], pi) => {
-      const existing = acc.find(p => p.name === pi.product_name);
-      if (existing) {
-        existing.interactions += 1;
-        if (pi.interaction_type === 'view') existing.views += 1;
-        if (pi.interaction_type === 'click') existing.clicks += 1;
-      } else {
-        acc.push({
-          name: pi.product_name,
-          interactions: 1,
-          views: pi.interaction_type === 'view' ? 1 : 0,
-          clicks: pi.interaction_type === 'click' ? 1 : 0
-        });
-      }
-      return acc;
-    }, []).sort((a, b) => b.interactions - a.interactions).slice(0, 10);
+    const productInteractionSummary = productInteractions
+      .reduce((acc: any[], pi) => {
+        const existing = acc.find((p) => p.name === pi.product_name);
+        if (existing) {
+          existing.interactions += 1;
+          if (pi.interaction_type === "view") existing.views += 1;
+          if (pi.interaction_type === "click") existing.clicks += 1;
+        } else {
+          acc.push({
+            name: pi.product_name,
+            interactions: 1,
+            views: pi.interaction_type === "view" ? 1 : 0,
+            clicks: pi.interaction_type === "click" ? 1 : 0,
+          });
+        }
+        return acc;
+      }, [])
+      .sort((a, b) => b.interactions - a.interactions)
+      .slice(0, 10);
 
     return {
       monthlyGrowth: {
@@ -476,7 +682,7 @@ const Dashboard = () => {
         products: calculateGrowth(currentMonthProducts, lastMonthProducts),
         quotes: calculateGrowth(currentMonthQuotes, lastMonthQuotes),
         projects: calculateGrowth(currentMonthProjects, lastMonthProjects),
-        revenue: calculateGrowth(currentMonthRevenue, lastMonthRevenue)
+        revenue: calculateGrowth(currentMonthRevenue, lastMonthRevenue),
       },
       categoryDistribution,
       quotesStatusDistribution,
@@ -485,13 +691,17 @@ const Dashboard = () => {
       recentActivity,
       topPerformingProducts,
       upcomingDeadlines: projects
-        .filter(p => p.deadline && new Date(p.deadline) > now)
+        .filter((p) => p.deadline && new Date(p.deadline) > now)
         .slice(0, 5)
-        .map(p => ({
-          type: 'project',
+        .map((p) => ({
+          type: "project",
           title: p.name,
           date: new Date(p.deadline!).toLocaleDateString(),
-          priority: new Date(p.deadline!).getTime() - now.getTime() < 7 * 24 * 60 * 60 * 1000 ? 'high' : 'medium'
+          priority:
+            new Date(p.deadline!).getTime() - now.getTime() <
+            7 * 24 * 60 * 60 * 1000
+              ? "high"
+              : "medium",
         })),
       deviceStats,
       trafficSources,
@@ -501,38 +711,54 @@ const Dashboard = () => {
       productInteractionSummary,
       invoiceMetrics: {
         totalInvoices: invoices.length,
-        paidInvoices: invoices.filter(i => i.status === 'paid').length,
-        pendingInvoices: invoices.filter(i => i.status === 'pending' || i.status === 'sent').length,
-        overdueInvoices: invoices.filter(i => i.status === 'overdue').length,
-        totalInvoiceAmount: invoices.reduce((sum, i) => sum + (i.total_amount || 0), 0),
-        paidAmount: invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + (i.total_amount || 0), 0)
+        paidInvoices: invoices.filter((i) => i.status === "paid").length,
+        pendingInvoices: invoices.filter(
+          (i) => i.status === "pending" || i.status === "sent",
+        ).length,
+        overdueInvoices: invoices.filter((i) => i.status === "overdue").length,
+        totalInvoiceAmount: invoices.reduce(
+          (sum, i) => sum + (i.total_amount || 0),
+          0,
+        ),
+        paidAmount: invoices
+          .filter((i) => i.status === "paid")
+          .reduce((sum, i) => sum + (i.total_amount || 0), 0),
       },
       sessionMetrics: {
         totalSessions: sessions.length,
-        avgDuration: sessions.reduce((sum, s) => sum + (s.total_duration || 0), 0) / sessions.length || 0,
-        avgPageViews: sessions.reduce((sum, s) => sum + (s.page_views || 0), 0) / sessions.length || 0,
-        bounceRate: sessions.filter(s => (s.page_views || 0) <= 1).length / sessions.length * 100 || 0
-      }
+        avgDuration:
+          sessions.reduce((sum, s) => sum + (s.total_duration || 0), 0) /
+            sessions.length || 0,
+        avgPageViews:
+          sessions.reduce((sum, s) => sum + (s.page_views || 0), 0) /
+            sessions.length || 0,
+        bounceRate:
+          (sessions.filter((s) => (s.page_views || 0) <= 1).length /
+            sessions.length) *
+            100 || 0,
+      },
     };
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
-      currency: 'KES',
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
   };
 
   const getGrowthIcon = (value: number) => {
-    return value >= 0 ? 
-      <ArrowUpRight className="h-4 w-4 text-green-500" /> : 
-      <ArrowDownRight className="h-4 w-4 text-red-500" />;
+    return value >= 0 ? (
+      <ArrowUpRight className="h-4 w-4 text-green-500" />
+    ) : (
+      <ArrowDownRight className="h-4 w-4 text-red-500" />
+    );
   };
 
   const getGrowthColor = (value: number) => {
-    return value >= 0 ? 'text-green-600' : 'text-red-600';
+    return value >= 0 ? "text-green-600" : "text-red-600";
   };
 
   if (loading) {
@@ -541,7 +767,9 @@ const Dashboard = () => {
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
           <h3 className="text-lg font-semibold">Loading Dashboard Analytics</h3>
-          <p className="text-muted-foreground">Fetching real-time business insights...</p>
+          <p className="text-muted-foreground">
+            Fetching real-time business insights...
+          </p>
         </div>
       </div>
     );
@@ -576,13 +804,15 @@ const Dashboard = () => {
               <SelectItem value="1y">Last year</SelectItem>
             </SelectContent>
           </Select>
-          <Button 
-            onClick={fetchDashboardData} 
+          <Button
+            onClick={fetchDashboardData}
             disabled={refreshing}
             className="shadow-lg hover:shadow-xl transition-all duration-200"
           >
-            <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+            />
+            {refreshing ? "Refreshing..." : "Refresh"}
           </Button>
         </div>
       </div>
@@ -599,7 +829,9 @@ const Dashboard = () => {
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold">{stats.totalCustomers.toLocaleString()}</p>
+              <p className="text-2xl font-bold">
+                {stats.totalCustomers.toLocaleString()}
+              </p>
               <p className="text-sm text-muted-foreground">Total Customers</p>
             </div>
           </CardContent>
@@ -615,7 +847,9 @@ const Dashboard = () => {
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</p>
+              <p className="text-2xl font-bold">
+                {formatCurrency(stats.totalRevenue)}
+              </p>
               <p className="text-sm text-muted-foreground">Total Revenue</p>
             </div>
           </CardContent>
@@ -662,7 +896,9 @@ const Dashboard = () => {
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold">{stats.conversionRate.toFixed(1)}%</p>
+              <p className="text-2xl font-bold">
+                {stats.conversionRate.toFixed(1)}%
+              </p>
               <p className="text-sm text-muted-foreground">Conversion Rate</p>
             </div>
           </CardContent>
@@ -687,7 +923,10 @@ const Dashboard = () => {
       {/* Analytics Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid grid-cols-2 lg:grid-cols-6 w-full h-auto p-1 bg-muted/50">
-          <TabsTrigger value="overview" className="flex items-center gap-2 py-3">
+          <TabsTrigger
+            value="overview"
+            className="flex items-center gap-2 py-3"
+          >
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">Overview</span>
           </TabsTrigger>
@@ -695,11 +934,17 @@ const Dashboard = () => {
             <DollarSign className="h-4 w-4" />
             <span className="hidden sm:inline">Revenue</span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2 py-3">
+          <TabsTrigger
+            value="analytics"
+            className="flex items-center gap-2 py-3"
+          >
             <PieChart className="h-4 w-4" />
             <span className="hidden sm:inline">Analytics</span>
           </TabsTrigger>
-          <TabsTrigger value="performance" className="flex items-center gap-2 py-3">
+          <TabsTrigger
+            value="performance"
+            className="flex items-center gap-2 py-3"
+          >
             <TrendingUp className="h-4 w-4" />
             <span className="hidden sm:inline">Performance</span>
           </TabsTrigger>
@@ -707,7 +952,10 @@ const Dashboard = () => {
             <Globe className="h-4 w-4" />
             <span className="hidden sm:inline">Traffic</span>
           </TabsTrigger>
-          <TabsTrigger value="insights" className="flex items-center gap-2 py-3">
+          <TabsTrigger
+            value="insights"
+            className="flex items-center gap-2 py-3"
+          >
             <Zap className="h-4 w-4" />
             <span className="hidden sm:inline">Insights</span>
           </TabsTrigger>
@@ -723,38 +971,97 @@ const Dashboard = () => {
                   <LineChart className="h-5 w-5 text-primary" />
                   Monthly Business Activity
                 </CardTitle>
-                <CardDescription>Track growth across key business metrics</CardDescription>
+                <CardDescription>
+                  Track growth across key business metrics
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={stats.analytics.monthlyActivity}>
                     <defs>
-                      <linearGradient id="customers" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      <linearGradient
+                        id="customers"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="hsl(var(--primary))"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="hsl(var(--primary))"
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                       <linearGradient id="quotes" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(142 76% 36%)" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(142 76% 36%)" stopOpacity={0}/>
+                        <stop
+                          offset="5%"
+                          stopColor="hsl(142 76% 36%)"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="hsl(142 76% 36%)"
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                       <linearGradient id="projects" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(262 83% 58%)" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(262 83% 58%)" stopOpacity={0}/>
+                        <stop
+                          offset="5%"
+                          stopColor="hsl(262 83% 58%)"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="hsl(262 83% 58%)"
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
-                    <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="hsl(var(--muted))"
+                    />
+                    <XAxis
+                      dataKey="month"
+                      stroke="hsl(var(--muted-foreground))"
+                    />
                     <YAxis stroke="hsl(var(--muted-foreground))" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px'
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--popover))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
                       }}
                     />
-                    <Area type="monotone" dataKey="customers" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#customers)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="quotes" stroke="hsl(142 76% 36%)" fillOpacity={1} fill="url(#quotes)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="projects" stroke="hsl(262 83% 58%)" fillOpacity={1} fill="url(#projects)" strokeWidth={2} />
+                    <Area
+                      type="monotone"
+                      dataKey="customers"
+                      stroke="hsl(var(--primary))"
+                      fillOpacity={1}
+                      fill="url(#customers)"
+                      strokeWidth={2}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="quotes"
+                      stroke="hsl(142 76% 36%)"
+                      fillOpacity={1}
+                      fill="url(#quotes)"
+                      strokeWidth={2}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="projects"
+                      stroke="hsl(262 83% 58%)"
+                      fillOpacity={1}
+                      fill="url(#projects)"
+                      strokeWidth={2}
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -767,26 +1074,47 @@ const Dashboard = () => {
                   <Activity className="h-5 w-5 text-primary" />
                   Recent Activity
                 </CardTitle>
-                <CardDescription>Latest business activities and updates</CardDescription>
+                <CardDescription>
+                  Latest business activities and updates
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {stats.analytics.recentActivity.map((activity, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-                    <div className={`p-1.5 rounded-full ${
-                      activity.type === 'quote' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30' :
-                      activity.type === 'project' ? 'bg-green-100 text-green-600 dark:bg-green-900/30' :
-                      'bg-purple-100 text-purple-600 dark:bg-purple-900/30'
-                    }`}>
-                      {activity.type === 'quote' ? <Quote className="h-3 w-3" /> :
-                       activity.type === 'project' ? <Activity className="h-3 w-3" /> :
-                       <Users className="h-3 w-3" />}
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  >
+                    <div
+                      className={`p-1.5 rounded-full ${
+                        activity.type === "quote"
+                          ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30"
+                          : activity.type === "project"
+                            ? "bg-green-100 text-green-600 dark:bg-green-900/30"
+                            : "bg-purple-100 text-purple-600 dark:bg-purple-900/30"
+                      }`}
+                    >
+                      {activity.type === "quote" ? (
+                        <Quote className="h-3 w-3" />
+                      ) : activity.type === "project" ? (
+                        <Activity className="h-3 w-3" />
+                      ) : (
+                        <Users className="h-3 w-3" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{activity.title}</p>
+                      <p className="text-sm font-medium truncate">
+                        {activity.title}
+                      </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <p className="text-xs text-muted-foreground">{activity.time}</p>
-                        <Badge 
-                          variant={activity.status === 'completed' ? 'default' : 'secondary'} 
+                        <p className="text-xs text-muted-foreground">
+                          {activity.time}
+                        </p>
+                        <Badge
+                          variant={
+                            activity.status === "completed"
+                              ? "default"
+                              : "secondary"
+                          }
                           className="text-xs px-2 py-0"
                         >
                           {activity.status}
@@ -810,7 +1138,9 @@ const Dashboard = () => {
                   <DollarSign className="h-5 w-5 text-green-600" />
                   Revenue by Category
                 </CardTitle>
-                <CardDescription>Performance across product categories</CardDescription>
+                <CardDescription>
+                  Performance across product categories
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {stats.analytics.revenueByCategory.map((item, index) => (
@@ -819,7 +1149,9 @@ const Dashboard = () => {
                       <h4 className="font-medium">{item.category}</h4>
                       <div className="flex items-center gap-2">
                         {getGrowthIcon(item.growth)}
-                        <span className={`text-sm font-medium ${getGrowthColor(item.growth)}`}>
+                        <span
+                          className={`text-sm font-medium ${getGrowthColor(item.growth)}`}
+                        >
                           {Math.abs(item.growth).toFixed(1)}%
                         </span>
                       </div>
@@ -827,8 +1159,16 @@ const Dashboard = () => {
                     <p className="text-2xl font-bold text-green-600 mb-1">
                       {formatCurrency(item.revenue)}
                     </p>
-                    <Progress 
-                      value={(item.revenue / Math.max(...stats.analytics.revenueByCategory.map(r => r.revenue))) * 100}
+                    <Progress
+                      value={
+                        (item.revenue /
+                          Math.max(
+                            ...stats.analytics.revenueByCategory.map(
+                              (r) => r.revenue,
+                            ),
+                          )) *
+                        100
+                      }
                       className="h-2"
                     />
                   </div>
@@ -843,17 +1183,27 @@ const Dashboard = () => {
                   <Award className="h-5 w-5 text-yellow-600" />
                   Top Performing Products
                 </CardTitle>
-                <CardDescription>Best selling products by revenue</CardDescription>
+                <CardDescription>
+                  Best selling products by revenue
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {stats.analytics.topPerformingProducts.map((product, index) => (
-                  <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-                    <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-                      index === 0 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30' :
-                      index === 1 ? 'bg-gray-100 text-gray-700 dark:bg-gray-900/30' :
-                      index === 2 ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30' :
-                      'bg-muted text-muted-foreground'
-                    }`}>
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  >
+                    <div
+                      className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
+                        index === 0
+                          ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30"
+                          : index === 1
+                            ? "bg-gray-100 text-gray-700 dark:bg-gray-900/30"
+                            : index === 2
+                              ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30"
+                              : "bg-muted text-muted-foreground"
+                      }`}
+                    >
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -863,7 +1213,9 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-green-600">{formatCurrency(product.revenue)}</p>
+                      <p className="font-bold text-green-600">
+                        {formatCurrency(product.revenue)}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -887,17 +1239,27 @@ const Dashboard = () => {
               <CardContent>
                 <div className="space-y-3">
                   {stats.analytics.categoryDistribution.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                    >
                       <div className="flex items-center gap-3">
-                        <div 
-                          className="w-4 h-4 rounded-full" 
+                        <div
+                          className="w-4 h-4 rounded-full"
                           style={{ backgroundColor: item.color }}
                         ></div>
-                        <span className="font-medium text-sm">{item.category}</span>
+                        <span className="font-medium text-sm">
+                          {item.category}
+                        </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-sm text-muted-foreground">{item.count}</span>
-                        <Badge variant="secondary" className="text-xs font-semibold">
+                        <span className="text-sm text-muted-foreground">
+                          {item.count}
+                        </span>
+                        <Badge
+                          variant="secondary"
+                          className="text-xs font-semibold"
+                        >
                           {item.percentage}%
                         </Badge>
                       </div>
@@ -914,24 +1276,35 @@ const Dashboard = () => {
                   <Quote className="h-5 w-5 text-green-500" />
                   Quotes Pipeline
                 </CardTitle>
-                <CardDescription>Current quote status breakdown</CardDescription>
+                <CardDescription>
+                  Current quote status breakdown
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {stats.analytics.quotesStatusDistribution.map((item, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{item.status}</span>
-                        <span className="text-sm text-muted-foreground">{item.count} quotes</span>
+                  {stats.analytics.quotesStatusDistribution.map(
+                    (item, index) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">
+                            {item.status}
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            {item.count} quotes
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Progress
+                            value={item.percentage}
+                            className="flex-1 h-2"
+                          />
+                          <Badge variant="outline" className="text-xs">
+                            {item.percentage}%
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Progress value={item.percentage} className="flex-1 h-2" />
-                        <Badge variant="outline" className="text-xs">
-                          {item.percentage}%
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -950,7 +1323,9 @@ const Dashboard = () => {
                   <div key={index} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">{stage.stage}</span>
-                      <span className="text-sm text-muted-foreground">{stage.count.toLocaleString()}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {stage.count.toLocaleString()}
+                      </span>
                     </div>
                     <div className="relative">
                       <Progress value={stage.conversion} className="h-3" />
@@ -981,9 +1356,15 @@ const Dashboard = () => {
                   </Badge>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-2xl font-bold">{formatCurrency(stats.avgProjectValue)}</p>
-                  <p className="text-sm text-muted-foreground">Avg. Project Value</p>
-                  <p className="text-xs text-green-600">+12.3% from last month</p>
+                  <p className="text-2xl font-bold">
+                    {formatCurrency(stats.avgProjectValue)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Avg. Project Value
+                  </p>
+                  <p className="text-xs text-green-600">
+                    +12.3% from last month
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -1000,7 +1381,9 @@ const Dashboard = () => {
                   </Badge>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">
+                    {stats.totalViews.toLocaleString()}
+                  </p>
                   <p className="text-sm text-muted-foreground">Total Views</p>
                   <p className="text-xs text-blue-600">Content engagement up</p>
                 </div>
@@ -1019,9 +1402,15 @@ const Dashboard = () => {
                   </Badge>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-2xl font-bold">{stats.totalDownloads.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">Resource Downloads</p>
-                  <p className="text-xs text-purple-600">Documentation popular</p>
+                  <p className="text-2xl font-bold">
+                    {stats.totalDownloads.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Resource Downloads
+                  </p>
+                  <p className="text-xs text-purple-600">
+                    Documentation popular
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -1038,8 +1427,12 @@ const Dashboard = () => {
                   </Badge>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-2xl font-bold">{stats.customerSatisfaction}/5.0</p>
-                  <p className="text-sm text-muted-foreground">Customer Rating</p>
+                  <p className="text-2xl font-bold">
+                    {stats.customerSatisfaction}/5.0
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Customer Rating
+                  </p>
                   <p className="text-xs text-orange-600">Above industry avg</p>
                 </div>
               </CardContent>
@@ -1057,21 +1450,34 @@ const Dashboard = () => {
                   <Monitor className="h-5 w-5 text-primary" />
                   Device Analytics
                 </CardTitle>
-                <CardDescription>Traffic breakdown by device type</CardDescription>
+                <CardDescription>
+                  Traffic breakdown by device type
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {stats.analytics.deviceStats.map((device, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 rounded-lg bg-muted/30"
+                  >
                     <div className="flex items-center gap-3">
-                      {device.device === 'Mobile' ? <Smartphone className="h-4 w-4" /> :
-                       device.device === 'Tablet' ? <Tablet className="h-4 w-4" /> :
-                       <Monitor className="h-4 w-4" />}
+                      {device.device === "Mobile" ? (
+                        <Smartphone className="h-4 w-4" />
+                      ) : device.device === "Tablet" ? (
+                        <Tablet className="h-4 w-4" />
+                      ) : (
+                        <Monitor className="h-4 w-4" />
+                      )}
                       <span className="font-medium">{device.device}</span>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className="font-medium">{device.sessions.toLocaleString()}</p>
-                        <p className="text-xs text-muted-foreground">sessions</p>
+                        <p className="font-medium">
+                          {device.sessions.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          sessions
+                        </p>
                       </div>
                       <Badge variant="outline" className="text-xs">
                         {device.percentage}%
@@ -1095,13 +1501,18 @@ const Dashboard = () => {
                 {stats.analytics.trafficSources.map((source, index) => (
                   <div key={index} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm">{source.source}</span>
+                      <span className="font-medium text-sm">
+                        {source.source}
+                      </span>
                       <span className="text-sm text-muted-foreground">
                         {source.visitors.toLocaleString()} visitors
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Progress value={source.percentage} className="flex-1 h-2" />
+                      <Progress
+                        value={source.percentage}
+                        className="flex-1 h-2"
+                      />
                       <Badge variant="secondary" className="text-xs">
                         {source.percentage}%
                       </Badge>
@@ -1123,17 +1534,23 @@ const Dashboard = () => {
                   <Zap className="h-5 w-5 text-yellow-500" />
                   AI-Powered Business Insights
                 </CardTitle>
-                <CardDescription>Automated recommendations based on your data</CardDescription>
+                <CardDescription>
+                  Automated recommendations based on your data
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-green-900 dark:text-green-100">Strong Performance</h4>
+                      <h4 className="font-medium text-green-900 dark:text-green-100">
+                        Strong Performance
+                      </h4>
                       <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                        Your conversion rate of {stats.conversionRate.toFixed(1)}% is above industry average. 
-                        Customer satisfaction remains excellent at {stats.customerSatisfaction}/5.0.
+                        Your conversion rate of{" "}
+                        {stats.conversionRate.toFixed(1)}% is above industry
+                        average. Customer satisfaction remains excellent at{" "}
+                        {stats.customerSatisfaction}/5.0.
                       </p>
                     </div>
                   </div>
@@ -1143,10 +1560,13 @@ const Dashboard = () => {
                   <div className="flex items-start gap-3">
                     <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-blue-900 dark:text-blue-100">Growth Opportunity</h4>
+                      <h4 className="font-medium text-blue-900 dark:text-blue-100">
+                        Growth Opportunity
+                      </h4>
                       <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                        Mobile traffic represents 35% of sessions. Consider optimizing mobile experience 
-                        to capture more mobile conversions.
+                        Mobile traffic represents 35% of sessions. Consider
+                        optimizing mobile experience to capture more mobile
+                        conversions.
                       </p>
                     </div>
                   </div>
@@ -1156,10 +1576,13 @@ const Dashboard = () => {
                   <div className="flex items-start gap-3">
                     <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-amber-900 dark:text-amber-100">Action Required</h4>
+                      <h4 className="font-medium text-amber-900 dark:text-amber-100">
+                        Action Required
+                      </h4>
                       <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                        {stats.analytics.upcomingDeadlines.length} project deadlines approaching. 
-                        Review project timelines to ensure on-time delivery.
+                        {stats.analytics.upcomingDeadlines.length} project
+                        deadlines approaching. Review project timelines to
+                        ensure on-time delivery.
                       </p>
                     </div>
                   </div>
@@ -1178,26 +1601,41 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="space-y-3">
                 {stats.analytics.upcomingDeadlines.map((deadline, index) => (
-                  <div key={index} className="p-3 rounded-lg bg-muted/30 border-l-4 border-orange-500">
+                  <div
+                    key={index}
+                    className="p-3 rounded-lg bg-muted/30 border-l-4 border-orange-500"
+                  >
                     <div className="flex items-center justify-between mb-2">
-                      <Badge 
-                        variant={deadline.priority === 'high' ? 'destructive' : 'secondary'}
+                      <Badge
+                        variant={
+                          deadline.priority === "high"
+                            ? "destructive"
+                            : "secondary"
+                        }
                         className="text-xs"
                       >
                         {deadline.priority} priority
                       </Badge>
-                      <span className="text-xs text-muted-foreground">{deadline.date}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {deadline.date}
+                      </span>
                     </div>
                     <h4 className="font-medium text-sm">{deadline.title}</h4>
-                    <p className="text-xs text-muted-foreground capitalize">{deadline.type}</p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {deadline.type}
+                    </p>
                   </div>
                 ))}
-                
+
                 {stats.analytics.upcomingDeadlines.length === 0 && (
                   <div className="text-center py-8">
                     <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-2" />
-                    <p className="text-sm text-muted-foreground">No upcoming deadlines</p>
-                    <p className="text-xs text-muted-foreground">You're all caught up!</p>
+                    <p className="text-sm text-muted-foreground">
+                      No upcoming deadlines
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      You're all caught up!
+                    </p>
                   </div>
                 )}
               </CardContent>

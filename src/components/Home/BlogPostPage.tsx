@@ -1,36 +1,42 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Clock, User } from 'lucide-react';
+import React from "react";
+import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 
 const BlogPostPage = () => {
   const { slug } = useParams();
 
-  const { data: post, isLoading, error } = useQuery({
-    queryKey: ['blog-post', slug],
+  const {
+    data: post,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["blog-post", slug],
     queryFn: async () => {
-      if (!slug) throw new Error('No slug provided');
-      
+      if (!slug) throw new Error("No slug provided");
+
       const { data, error } = await supabase
-        .from('blog_posts')
-        .select(`
+        .from("blog_posts")
+        .select(
+          `
           *,
           blog_categories (
             name,
             slug
           )
-        `)
-        .eq('slug', slug)
-        .eq('published', true)
+        `,
+        )
+        .eq("slug", slug)
+        .eq("published", true)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!slug
+    enabled: !!slug,
   });
 
   React.useEffect(() => {
@@ -38,23 +44,23 @@ const BlogPostPage = () => {
       const updateViews = async () => {
         try {
           await supabase
-            .from('blog_posts')
+            .from("blog_posts")
             .update({ views: (post.views || 0) + 1 })
-            .eq('id', post.id);
+            .eq("id", post.id);
         } catch (error) {
-          console.error('Error updating views:', error);
+          console.error("Error updating views:", error);
         }
       };
-      
+
       updateViews();
     }
   }, [post?.id, post?.views]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -84,11 +90,14 @@ const BlogPostPage = () => {
       <div className="min-h-screen bg-background border-t border-border">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto text-center bg-background shadow-md rounded-xl p-6">
-            <h1 className="text-3xl font-bold text-foreground mb-4">Post Not Found</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-4">
+              Post Not Found
+            </h1>
             <p className="text-muted-foreground mb-8">
-              The blog post you're looking for doesn't exist or has been removed.
+              The blog post you're looking for doesn't exist or has been
+              removed.
             </p>
-            <Button 
+            <Button
               className="px-6 py-3 text-base bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:scale-105 transition-all duration-300 rounded-xl shadow-md group"
               asChild
             >
@@ -108,7 +117,7 @@ const BlogPostPage = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Back button */}
-          <Button 
+          <Button
             className="mb-6 px-6 py-3 text-base bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:scale-105 transition-all duration-300 rounded-xl shadow-md group"
             asChild
           >
@@ -127,11 +136,15 @@ const BlogPostPage = () => {
                     {post.blog_categories.name}
                   </Badge>
                 )}
-                {post.tags && post.tags.map((tag: string, index: number) => (
-                  <Badge key={index} className="bg-muted/30 border-border text-foreground">
-                    {tag}
-                  </Badge>
-                ))}
+                {post.tags &&
+                  post.tags.map((tag: string, index: number) => (
+                    <Badge
+                      key={index}
+                      className="bg-muted/30 border-border text-foreground"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
@@ -148,13 +161,12 @@ const BlogPostPage = () => {
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-primary" />
                   <span>
-                    {post.published_at 
+                    {post.published_at
                       ? formatDate(post.published_at)
-                      : formatDate(post.created_at)
-                    }
+                      : formatDate(post.created_at)}
                   </span>
                 </div>
-                
+
                 {post.reading_time && (
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-primary" />
@@ -181,22 +193,26 @@ const BlogPostPage = () => {
             )}
 
             {/* Content */}
-            <div 
+            <div
               className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:text-accent bg-background p-6 rounded-xl shadow-md"
-              dangerouslySetInnerHTML={{ __html: post.content || '' }}
+              dangerouslySetInnerHTML={{ __html: post.content || "" }}
             />
 
             {/* Footer */}
             <footer className="mt-12 pt-8 bg-background p-6 rounded-xl shadow-md border border-border">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  {post.tags && post.tags.map((tag: string, index: number) => (
-                    <Badge key={index} className="bg-muted/30 border-border text-foreground">
-                      #{tag}
-                    </Badge>
-                  ))}
+                  {post.tags &&
+                    post.tags.map((tag: string, index: number) => (
+                      <Badge
+                        key={index}
+                        className="bg-muted/30 border-border text-foreground"
+                      >
+                        #{tag}
+                      </Badge>
+                    ))}
                 </div>
-                
+
                 <div className="text-sm text-foreground">
                   {post.views > 0 && (
                     <span>{post.views.toLocaleString()} views</span>

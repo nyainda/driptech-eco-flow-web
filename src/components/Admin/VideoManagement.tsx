@@ -107,7 +107,7 @@ const VideoManagement = () => {
       file: File,
       bucket: string,
       path: string,
-      onProgress?: (progress: number) => void
+      onProgress?: (progress: number) => void,
     ) => {
       const { data, error } = await supabase.storage
         .from(bucket)
@@ -136,7 +136,7 @@ const VideoManagement = () => {
 
       return publicUrl;
     },
-    []
+    [],
   );
 
   // Get video duration
@@ -175,13 +175,17 @@ const VideoManagement = () => {
             (blob) => {
               window.URL.revokeObjectURL(video.src);
               if (blob) {
-                resolve(new File([blob], `${Date.now()}_thumbnail.jpg`, { type: "image/jpeg" }));
+                resolve(
+                  new File([blob], `${Date.now()}_thumbnail.jpg`, {
+                    type: "image/jpeg",
+                  }),
+                );
               } else {
                 reject(new Error("Failed to generate thumbnail"));
               }
             },
             "image/jpeg",
-            0.8
+            0.8,
           );
         } else {
           reject(new Error("Canvas context not available"));
@@ -215,8 +219,11 @@ const VideoManagement = () => {
           const videoPath = `videos/${timestamp}_${video.video_file.name}`;
           fileSize = video.video_file.size;
 
-          videoUrl = await uploadFile(video.video_file, "videos", videoPath, (progress) =>
-            setUploadProgress(Math.round(progress * 0.6))
+          videoUrl = await uploadFile(
+            video.video_file,
+            "videos",
+            videoPath,
+            (progress) => setUploadProgress(Math.round(progress * 0.6)),
           );
 
           if (!duration) {
@@ -225,10 +232,16 @@ const VideoManagement = () => {
 
           if (!video.thumbnail_file && !thumbnailUrl) {
             try {
-              const thumbnailFile = await generateVideoThumbnail(video.video_file);
+              const thumbnailFile = await generateVideoThumbnail(
+                video.video_file,
+              );
               const thumbnailPath = `thumbnails/${timestamp}_thumbnail.jpg`;
-              thumbnailUrl = await uploadFile(thumbnailFile, "thumbnails", thumbnailPath, (progress) =>
-                setUploadProgress(Math.round(65 + progress * 0.15))
+              thumbnailUrl = await uploadFile(
+                thumbnailFile,
+                "thumbnails",
+                thumbnailPath,
+                (progress) =>
+                  setUploadProgress(Math.round(65 + progress * 0.15)),
               );
             } catch (error) {
               console.warn("Failed to generate thumbnail:", error);
@@ -239,8 +252,11 @@ const VideoManagement = () => {
         if (video.thumbnail_file) {
           const timestamp = Date.now();
           const thumbnailPath = `thumbnails/${timestamp}_${video.thumbnail_file.name}`;
-          thumbnailUrl = await uploadFile(video.thumbnail_file, "thumbnails", thumbnailPath, (progress) =>
-            setUploadProgress(Math.round(80 + progress * 0.15))
+          thumbnailUrl = await uploadFile(
+            video.thumbnail_file,
+            "thumbnails",
+            thumbnailPath,
+            (progress) => setUploadProgress(Math.round(80 + progress * 0.15)),
           );
         }
 
@@ -260,7 +276,12 @@ const VideoManagement = () => {
         };
 
         const { data, error } = editingVideo
-          ? await supabase.from("videos").update(videoData).eq("id", editingVideo.id).select().single()
+          ? await supabase
+              .from("videos")
+              .update(videoData)
+              .eq("id", editingVideo.id)
+              .select()
+              .single()
           : await supabase.from("videos").insert(videoData).select().single();
 
         if (error) throw error;
@@ -278,7 +299,11 @@ const VideoManagement = () => {
       toast({ title: "Success", description: "Video saved successfully" });
     },
     onError: (error: Error) => {
-      toast({ title: "Upload Failed", description: error.message || "Failed to upload video.", variant: "destructive" });
+      toast({
+        title: "Upload Failed",
+        description: error.message || "Failed to upload video.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -292,10 +317,15 @@ const VideoManagement = () => {
 
       if (video.thumbnail_url?.includes("supabase")) {
         const fileName = video.thumbnail_url.split("/").pop();
-        await supabase.storage.from("thumbnails").remove([`thumbnails/${fileName}`]);
+        await supabase.storage
+          .from("thumbnails")
+          .remove([`thumbnails/${fileName}`]);
       }
 
-      const { error } = await supabase.from("videos").delete().eq("id", video.id);
+      const { error } = await supabase
+        .from("videos")
+        .delete()
+        .eq("id", video.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -303,7 +333,11 @@ const VideoManagement = () => {
       toast({ title: "Success", description: "Video deleted successfully" });
     },
     onError: (error: Error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -343,11 +377,14 @@ const VideoManagement = () => {
     setUploadMode("url");
   }, []);
 
-  const handleDelete = useCallback((video: Video) => {
-    if (confirm("Are you sure you want to delete this video?")) {
-      deleteVideoMutation.mutate(video);
-    }
-  }, [deleteVideoMutation]);
+  const handleDelete = useCallback(
+    (video: Video) => {
+      if (confirm("Are you sure you want to delete this video?")) {
+        deleteVideoMutation.mutate(video);
+      }
+    },
+    [deleteVideoMutation],
+  );
 
   const handleVideoFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -355,12 +392,20 @@ const VideoManagement = () => {
       if (!file) return;
 
       if (!file.type.startsWith("video/")) {
-        toast({ title: "Error", description: "Please select a valid video file", variant: "destructive" });
+        toast({
+          title: "Error",
+          description: "Please select a valid video file",
+          variant: "destructive",
+        });
         return;
       }
 
       if (file.size > 100 * 1024 * 1024) {
-        toast({ title: "Error", description: "Video file size must be less than 100MB", variant: "destructive" });
+        toast({
+          title: "Error",
+          description: "Video file size must be less than 100MB",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -370,7 +415,7 @@ const VideoManagement = () => {
         title: prev.title || file.name.split(".")[0],
       }));
     },
-    [toast]
+    [toast],
   );
 
   const handleThumbnailFileChange = useCallback(
@@ -379,25 +424,38 @@ const VideoManagement = () => {
       if (!file) return;
 
       if (!file.type.startsWith("image/")) {
-        toast({ title: "Error", description: "Please select a valid image file", variant: "destructive" });
+        toast({
+          title: "Error",
+          description: "Please select a valid image file",
+          variant: "destructive",
+        });
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        toast({ title: "Error", description: "Thumbnail file size must be less than 5MB", variant: "destructive" });
+        toast({
+          title: "Error",
+          description: "Thumbnail file size must be less than 5MB",
+          variant: "destructive",
+        });
         return;
       }
 
       setFormData((prev) => ({ ...prev, thumbnail_file: file }));
     },
-    [toast]
+    [toast],
   );
 
   const videoStats = {
     totalVideos: videos.length,
     totalViews: videos.reduce((sum, video) => sum + (video.views || 0), 0),
-    totalLikes: videos.reduce((sum, video) => sum + (video.featured ? 1 : 0), 0),
-    totalDuration: Math.floor(videos.reduce((sum, video) => sum + (video.duration || 0), 0) / 60),
+    totalLikes: videos.reduce(
+      (sum, video) => sum + (video.featured ? 1 : 0),
+      0,
+    ),
+    totalDuration: Math.floor(
+      videos.reduce((sum, video) => sum + (video.duration || 0), 0) / 60,
+    ),
   };
 
   return (
@@ -409,15 +467,31 @@ const VideoManagement = () => {
           onSubmit={(e) => {
             e.preventDefault();
             if (!formData.title) {
-              toast({ title: "Error", description: "Title is required", variant: "destructive" });
+              toast({
+                title: "Error",
+                description: "Title is required",
+                variant: "destructive",
+              });
               return;
             }
-            if (uploadMode === "file" && !formData.video_file && !editingVideo) {
-              toast({ title: "Error", description: "Please select a video file", variant: "destructive" });
+            if (
+              uploadMode === "file" &&
+              !formData.video_file &&
+              !editingVideo
+            ) {
+              toast({
+                title: "Error",
+                description: "Please select a video file",
+                variant: "destructive",
+              });
               return;
             }
             if (uploadMode === "url" && !formData.video_url) {
-              toast({ title: "Error", description: "Video URL is required", variant: "destructive" });
+              toast({
+                title: "Error",
+                description: "Video URL is required",
+                variant: "destructive",
+              });
               return;
             }
             saveVideoMutation.mutate(formData);
@@ -439,9 +513,14 @@ const VideoManagement = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-2">
               <h2 className="text-2xl font-bold">Video Management</h2>
-              <p className="text-muted-foreground">Manage irrigation videos and tutorials</p>
+              <p className="text-muted-foreground">
+                Manage irrigation videos and tutorials
+              </p>
             </div>
-            <Button onClick={() => setShowForm(true)} className="w-full sm:w-auto">
+            <Button
+              onClick={() => setShowForm(true)}
+              className="w-full sm:w-auto"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Video
             </Button>

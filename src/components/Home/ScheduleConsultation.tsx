@@ -3,11 +3,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, MapPin } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+} from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,7 +57,7 @@ const ScheduleConsultation = ({ children }: ScheduleConsultationProps) => {
     preferred_time: "",
     project_details: "",
     area_size: "",
-    budget_range: ""
+    budget_range: "",
   });
 
   const consultationTypes = [
@@ -44,16 +68,16 @@ const ScheduleConsultation = ({ children }: ScheduleConsultationProps) => {
     "Installation Planning",
     "Maintenance Review",
     "Efficiency Audit",
-    "Training Session"
+    "Training Session",
   ];
 
   const timeSlots = [
     "9:00 AM - 10:00 AM",
-    "10:00 AM - 11:00 AM", 
+    "10:00 AM - 11:00 AM",
     "11:00 AM - 12:00 PM",
     "2:00 PM - 3:00 PM",
     "3:00 PM - 4:00 PM",
-    "4:00 PM - 5:00 PM"
+    "4:00 PM - 5:00 PM",
   ];
 
   const budgetRanges = [
@@ -61,24 +85,29 @@ const ScheduleConsultation = ({ children }: ScheduleConsultationProps) => {
     "KSh 500,000 - 1,000,000",
     "KSh 1,000,000 - 2,500,000",
     "KSh 2,500,000 - 5,000,000",
-    "Above KSh 5,000,000"
+    "Above KSh 5,000,000",
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!selectedDate || !formData.preferred_time || !formData.consultation_type) {
+
+    if (
+      !selectedDate ||
+      !formData.preferred_time ||
+      !formData.consultation_type
+    ) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields including date and time.",
-        variant: "destructive"
+        description:
+          "Please fill in all required fields including date and time.",
+        variant: "destructive",
       });
       return;
     }
@@ -94,7 +123,7 @@ const ScheduleConsultation = ({ children }: ScheduleConsultationProps) => {
         message: `Consultation Request:
         
 Type: ${formData.consultation_type}
-Preferred Date: ${format(selectedDate, 'PPP')}
+Preferred Date: ${format(selectedDate, "PPP")}
 Preferred Time: ${formData.preferred_time}
 Project Details: ${formData.project_details}
 Area Size: ${formData.area_size}
@@ -103,19 +132,20 @@ Location: ${formData.location}`,
         project_type: formData.consultation_type,
         area_size: formData.area_size,
         budget_range: formData.budget_range,
-        status: 'pending',
-        read: false
+        status: "pending",
+        read: false,
       };
 
       const { error } = await supabase
-        .from('contact_submissions')
+        .from("contact_submissions")
         .insert([consultationData]);
 
       if (error) throw error;
 
       toast({
         title: "Consultation Scheduled!",
-        description: "We'll contact you within 24 hours to confirm your appointment.",
+        description:
+          "We'll contact you within 24 hours to confirm your appointment.",
       });
 
       setOpen(false);
@@ -129,16 +159,15 @@ Location: ${formData.location}`,
         preferred_time: "",
         project_details: "",
         area_size: "",
-        budget_range: ""
+        budget_range: "",
       });
       setSelectedDate(undefined);
-
     } catch (error) {
-      console.error('Error scheduling consultation:', error);
+      console.error("Error scheduling consultation:", error);
       toast({
         title: "Error",
         description: "Failed to schedule consultation. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -147,9 +176,7 @@ Location: ${formData.location}`,
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
@@ -157,7 +184,8 @@ Location: ${formData.location}`,
             Schedule Your Consultation
           </DialogTitle>
           <DialogDescription>
-            Book a personalized consultation with our irrigation experts to discuss your project needs and get professional recommendations.
+            Book a personalized consultation with our irrigation experts to
+            discuss your project needs and get professional recommendations.
           </DialogDescription>
         </DialogHeader>
 
@@ -174,7 +202,7 @@ Location: ${formData.location}`,
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
                   required
                 />
               </div>
@@ -184,7 +212,7 @@ Location: ${formData.location}`,
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                   required
                 />
               </div>
@@ -193,7 +221,7 @@ Location: ${formData.location}`,
                 <Input
                   id="phone"
                   value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
                 />
               </div>
               <div>
@@ -201,7 +229,7 @@ Location: ${formData.location}`,
                 <Input
                   id="company"
                   value={formData.company}
-                  onChange={(e) => handleInputChange('company', e.target.value)}
+                  onChange={(e) => handleInputChange("company", e.target.value)}
                 />
               </div>
             </div>
@@ -219,7 +247,9 @@ Location: ${formData.location}`,
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
                   placeholder="City, County"
                 />
               </div>
@@ -228,20 +258,29 @@ Location: ${formData.location}`,
                 <Input
                   id="area_size"
                   value={formData.area_size}
-                  onChange={(e) => handleInputChange('area_size', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("area_size", e.target.value)
+                  }
                   placeholder="e.g., 10 acres, 5 hectares"
                 />
               </div>
             </div>
             <div>
               <Label htmlFor="budget_range">Budget Range</Label>
-              <Select value={formData.budget_range} onValueChange={(value) => handleInputChange('budget_range', value)}>
+              <Select
+                value={formData.budget_range}
+                onValueChange={(value) =>
+                  handleInputChange("budget_range", value)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select budget range" />
                 </SelectTrigger>
                 <SelectContent>
-                  {budgetRanges.map(range => (
-                    <SelectItem key={range} value={range}>{range}</SelectItem>
+                  {budgetRanges.map((range) => (
+                    <SelectItem key={range} value={range}>
+                      {range}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -256,18 +295,25 @@ Location: ${formData.location}`,
             </h3>
             <div>
               <Label htmlFor="consultation_type">Consultation Type *</Label>
-              <Select value={formData.consultation_type} onValueChange={(value) => handleInputChange('consultation_type', value)}>
+              <Select
+                value={formData.consultation_type}
+                onValueChange={(value) =>
+                  handleInputChange("consultation_type", value)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select consultation type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {consultationTypes.map(type => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  {consultationTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Preferred Date *</Label>
@@ -277,11 +323,13 @@ Location: ${formData.location}`,
                       variant="outline"
                       className={cn(
                         "w-full justify-start text-left font-normal",
-                        !selectedDate && "text-muted-foreground"
+                        !selectedDate && "text-muted-foreground",
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                      {selectedDate
+                        ? format(selectedDate, "PPP")
+                        : "Pick a date"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -290,23 +338,32 @@ Location: ${formData.location}`,
                       selected={selectedDate}
                       onSelect={setSelectedDate}
                       disabled={(date) =>
-                        date < new Date() || date.getDay() === 0 || date.getDay() === 6
+                        date < new Date() ||
+                        date.getDay() === 0 ||
+                        date.getDay() === 6
                       }
                       initialFocus
                     />
                   </PopoverContent>
                 </Popover>
               </div>
-              
+
               <div>
                 <Label htmlFor="preferred_time">Preferred Time *</Label>
-                <Select value={formData.preferred_time} onValueChange={(value) => handleInputChange('preferred_time', value)}>
+                <Select
+                  value={formData.preferred_time}
+                  onValueChange={(value) =>
+                    handleInputChange("preferred_time", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select time slot" />
                   </SelectTrigger>
                   <SelectContent>
-                    {timeSlots.map(slot => (
-                      <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                    {timeSlots.map((slot) => (
+                      <SelectItem key={slot} value={slot}>
+                        {slot}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -316,11 +373,15 @@ Location: ${formData.location}`,
 
           {/* Additional Details */}
           <div>
-            <Label htmlFor="project_details">Project Details & Specific Requirements</Label>
+            <Label htmlFor="project_details">
+              Project Details & Specific Requirements
+            </Label>
             <Textarea
               id="project_details"
               value={formData.project_details}
-              onChange={(e) => handleInputChange('project_details', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("project_details", e.target.value)
+              }
               placeholder="Please describe your irrigation needs, challenges, or specific requirements..."
               className="min-h-[100px]"
             />
@@ -328,7 +389,11 @@ Location: ${formData.location}`,
 
           {/* Submit Button */}
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>

@@ -1,28 +1,32 @@
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { Quote, QuoteItem, Customer } from '@/components/Admin/Quote/types';
-import { generatePrintContent } from '@/components/Admin/Quote/PrintActions';
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Quote, QuoteItem, Customer } from "@/components/Admin/Quote/types";
+import { generatePrintContent } from "@/components/Admin/Quote/PrintActions";
 
 export const usePrintHandlers = () => {
   const { toast } = useToast();
   const [isPrinting, setIsPrinting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const handlePrint = async (quote: Quote, items: QuoteItem[], customer?: Customer) => {
+  const handlePrint = async (
+    quote: Quote,
+    items: QuoteItem[],
+    customer?: Customer,
+  ) => {
     setIsPrinting(true);
     try {
-      const printWindow = window.open('', '_blank');
-      if (!printWindow) throw new Error('Failed to open print window');
-      
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) throw new Error("Failed to open print window");
+
       const printContent = generatePrintContent(quote, items, customer);
       printWindow.document.write(printContent);
       printWindow.document.close();
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
       printWindow.print();
       printWindow.close();
       setIsPrinting(false);
-      
+
       toast({
         title: "Print Initiated",
         description: "Quote is being sent to printer.",
@@ -37,25 +41,32 @@ export const usePrintHandlers = () => {
     }
   };
 
-  const handleDownloadPDF = async (quote: Quote, items: QuoteItem[], customer?: Customer) => {
+  const handleDownloadPDF = async (
+    quote: Quote,
+    items: QuoteItem[],
+    customer?: Customer,
+  ) => {
     setIsDownloading(true);
     try {
       // Use the exact same approach as your working print function
       // This gives crisp text, not scanned images
-      const pdfWindow = window.open('', '_blank');
-      if (!pdfWindow) throw new Error('Failed to open PDF window');
-      
+      const pdfWindow = window.open("", "_blank");
+      if (!pdfWindow) throw new Error("Failed to open PDF window");
+
       const printContent = generatePrintContent(quote, items, customer);
       pdfWindow.document.write(printContent);
       pdfWindow.document.close();
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Add a simple instruction banner for mobile users
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
+      const isMobile =
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
+
       if (isMobile) {
-        const banner = pdfWindow.document.createElement('div');
+        const banner = pdfWindow.document.createElement("div");
         banner.innerHTML = `
           <div style="
             position: fixed; 
@@ -83,23 +94,25 @@ export const usePrintHandlers = () => {
             ">Got it</button>
           </div>
         `;
-        pdfWindow.document.body.insertBefore(banner, pdfWindow.document.body.firstChild);
+        pdfWindow.document.body.insertBefore(
+          banner,
+          pdfWindow.document.body.firstChild,
+        );
       }
-      
+
       // Trigger print dialog (works on both mobile and desktop)
       setTimeout(() => {
         pdfWindow.print();
       }, 500);
-      
+
       setIsDownloading(false);
-      
+
       toast({
         title: "PDF Ready",
         description: `Quote ${quote.quote_number} is ready to save as PDF.`,
       });
-      
     } catch (error) {
-      console.error('PDF Error:', error);
+      console.error("PDF Error:", error);
       setIsDownloading(false);
       toast({
         title: "PDF Error",
@@ -113,6 +126,6 @@ export const usePrintHandlers = () => {
     handlePrint,
     handleDownloadPDF,
     isPrinting,
-    isDownloading
+    isDownloading,
   };
 };

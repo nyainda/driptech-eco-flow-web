@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { X, Download } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { X, Download } from "lucide-react";
 
 // Define types for the beforeinstallprompt event
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
 const PWAInstallPrompt = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
   useEffect(() => {
@@ -22,15 +23,18 @@ const PWAInstallPrompt = () => {
       setShowInstallPrompt(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handler as EventListener);
+    window.addEventListener("beforeinstallprompt", handler as EventListener);
 
     // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (window.matchMedia("(display-mode: standalone)").matches) {
       setShowInstallPrompt(false);
     }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler as EventListener);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handler as EventListener,
+      );
     };
   }, []);
 
@@ -53,15 +57,15 @@ const PWAInstallPrompt = () => {
   const handleDismiss = () => {
     setShowInstallPrompt(false);
     // Store dismissal in localStorage to not show again for a while
-    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    localStorage.setItem("pwa-install-dismissed", Date.now().toString());
   };
 
   // Check if user previously dismissed the prompt (within last 7 days)
   useEffect(() => {
-    const dismissed = localStorage.getItem('pwa-install-dismissed');
+    const dismissed = localStorage.getItem("pwa-install-dismissed");
     if (dismissed) {
       const dismissedTime = parseInt(dismissed);
-      const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
       if (dismissedTime > sevenDaysAgo) {
         setShowInstallPrompt(false);
       }
@@ -87,11 +91,7 @@ const PWAInstallPrompt = () => {
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <Button
-            onClick={handleInstallClick}
-            size="sm"
-            className="text-xs"
-          >
+          <Button onClick={handleInstallClick} size="sm" className="text-xs">
             Install
           </Button>
           <Button

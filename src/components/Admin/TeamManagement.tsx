@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +14,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Upload, Users } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface TeamMember {
   id: string;
@@ -39,7 +51,7 @@ const TeamManagement = () => {
     linkedin_url: "",
     email: "",
     phone: "",
-    featured: false
+    featured: false,
   });
 
   useEffect(() => {
@@ -49,9 +61,9 @@ const TeamManagement = () => {
   const fetchTeamMembers = async () => {
     try {
       const { data, error } = await supabase
-        .from('team')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("team")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setTeamMembers(data || []);
@@ -59,43 +71,45 @@ const TeamManagement = () => {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `team-${Date.now()}.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
-        .from('images')
+        .from("images")
         .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('images')
-        .getPublicUrl(fileName);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("images").getPublicUrl(fileName);
 
       setFormData({ ...formData, image_url: publicUrl });
-      
+
       toast({
         title: "Success",
-        description: "Image uploaded successfully"
+        description: "Image uploaded successfully",
       });
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setUploading(false);
@@ -104,66 +118,61 @@ const TeamManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       if (editingMember) {
         const { error } = await supabase
-          .from('team')
+          .from("team")
           .update(formData)
-          .eq('id', editingMember.id);
-        
+          .eq("id", editingMember.id);
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Team member updated successfully"
+          description: "Team member updated successfully",
         });
       } else {
-        const { error } = await supabase
-          .from('team')
-          .insert([formData]);
-        
+        const { error } = await supabase.from("team").insert([formData]);
+
         if (error) throw error;
-        
+
         toast({
           title: "Success",
-          description: "Team member created successfully"
+          description: "Team member created successfully",
         });
       }
-      
+
       fetchTeamMembers();
       resetForm();
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this team member?')) return;
-    
+    if (!confirm("Are you sure you want to delete this team member?")) return;
+
     try {
-      const { error } = await supabase
-        .from('team')
-        .delete()
-        .eq('id', id);
-      
+      const { error } = await supabase.from("team").delete().eq("id", id);
+
       if (error) throw error;
-      
+
       toast({
         title: "Success",
-        description: "Team member deleted successfully"
+        description: "Team member deleted successfully",
       });
-      
+
       fetchTeamMembers();
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -178,7 +187,7 @@ const TeamManagement = () => {
       linkedin_url: member.linkedin_url,
       email: member.email,
       phone: member.phone,
-      featured: member.featured
+      featured: member.featured,
     });
     setShowForm(true);
   };
@@ -192,7 +201,7 @@ const TeamManagement = () => {
       linkedin_url: "",
       email: "",
       phone: "",
-      featured: false
+      featured: false,
     });
     setEditingMember(null);
     setShowForm(false);
@@ -226,7 +235,7 @@ const TeamManagement = () => {
           <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingMember ? 'Edit Team Member' : 'Add New Team Member'}
+                {editingMember ? "Edit Team Member" : "Add New Team Member"}
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -236,7 +245,9 @@ const TeamManagement = () => {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -245,7 +256,9 @@ const TeamManagement = () => {
                   <Input
                     id="position"
                     value={formData.position}
-                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, position: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -256,7 +269,9 @@ const TeamManagement = () => {
                 <Textarea
                   id="bio"
                   value={formData.bio}
-                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, bio: e.target.value })
+                  }
                   rows={3}
                 />
               </div>
@@ -271,7 +286,11 @@ const TeamManagement = () => {
                     onChange={handleImageUpload}
                     disabled={uploading}
                   />
-                  {uploading && <span className="text-sm text-muted-foreground">Uploading...</span>}
+                  {uploading && (
+                    <span className="text-sm text-muted-foreground">
+                      Uploading...
+                    </span>
+                  )}
                 </div>
                 {formData.image_url && (
                   <img
@@ -289,7 +308,9 @@ const TeamManagement = () => {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                   />
                 </div>
                 <div>
@@ -297,7 +318,9 @@ const TeamManagement = () => {
                   <Input
                     id="phone"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -307,7 +330,9 @@ const TeamManagement = () => {
                 <Input
                   id="linkedin"
                   value={formData.linkedin_url}
-                  onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, linkedin_url: e.target.value })
+                  }
                 />
               </div>
 
@@ -315,7 +340,9 @@ const TeamManagement = () => {
                 <Switch
                   id="featured"
                   checked={formData.featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, featured: checked })
+                  }
                 />
                 <Label htmlFor="featured">Featured Member</Label>
               </div>
@@ -324,8 +351,11 @@ const TeamManagement = () => {
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-gradient-to-r from-primary to-primary/80">
-                  {editingMember ? 'Update' : 'Create'} Team Member
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-primary to-primary/80"
+                >
+                  {editingMember ? "Update" : "Create"} Team Member
                 </Button>
               </div>
             </form>

@@ -1,4 +1,3 @@
-
 export type AnalyticsPopularPages = {
   Row: {
     page_path: string;

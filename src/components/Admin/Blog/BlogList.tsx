@@ -1,20 +1,19 @@
-
-import React from 'react';
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Eye, 
-  ThumbsUp, 
-  MessageCircle, 
-  Edit, 
-  Trash2, 
+import {
+  Eye,
+  ThumbsUp,
+  MessageCircle,
+  Edit,
+  Trash2,
   Calendar,
   User,
   Globe,
-  FileText
+  FileText,
 } from "lucide-react";
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from "date-fns";
 
 interface BlogPost {
   id: string;
@@ -23,7 +22,7 @@ interface BlogPost {
   excerpt: string;
   content: string;
   featured_image: string | null;
-  status: 'draft' | 'published';
+  status: "draft" | "published";
   views: number;
   likes: number;
   comments_count: number;
@@ -40,7 +39,12 @@ interface BlogListProps {
   onDelete: (postId: string) => void;
 }
 
-const BlogList: React.FC<BlogListProps> = ({ posts, loading, onEdit, onDelete }) => {
+const BlogList: React.FC<BlogListProps> = ({
+  posts,
+  loading,
+  onEdit,
+  onDelete,
+}) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:gap-6">
@@ -81,14 +85,17 @@ const BlogList: React.FC<BlogListProps> = ({ posts, loading, onEdit, onDelete })
   return (
     <div className="grid grid-cols-1 gap-4 sm:gap-6">
       {posts.map((post) => (
-        <Card key={post.id} className="border-0 bg-card shadow-lg hover:shadow-xl transition-shadow">
+        <Card
+          key={post.id}
+          className="border-0 bg-card shadow-lg hover:shadow-xl transition-shadow"
+        >
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Featured Image */}
               <div className="w-full sm:w-32 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg overflow-hidden flex-shrink-0">
                 {post.featured_image ? (
-                  <img 
-                    src={post.featured_image} 
+                  <img
+                    src={post.featured_image}
                     alt={post.title}
                     className="w-full h-full object-cover"
                   />
@@ -111,17 +118,19 @@ const BlogList: React.FC<BlogListProps> = ({ posts, loading, onEdit, onDelete })
                     </p>
                   </div>
                   <div className="flex flex-row sm:flex-col gap-2 flex-shrink-0">
-                    <Badge 
-                      variant={post.status === 'published' ? 'default' : 'secondary'}
+                    <Badge
+                      variant={
+                        post.status === "published" ? "default" : "secondary"
+                      }
                       className="text-xs"
                     >
-                      {post.status === 'published' ? (
+                      {post.status === "published" ? (
                         <>
                           <Globe className="h-3 w-3 mr-1" />
                           Published
                         </>
                       ) : (
-                        'Draft'
+                        "Draft"
                       )}
                     </Badge>
                   </div>
@@ -135,7 +144,11 @@ const BlogList: React.FC<BlogListProps> = ({ posts, loading, onEdit, onDelete })
                   </div>
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
+                    <span>
+                      {formatDistanceToNow(new Date(post.created_at), {
+                        addSuffix: true,
+                      })}
+                    </span>
                   </div>
                 </div>
 
@@ -155,7 +168,7 @@ const BlogList: React.FC<BlogListProps> = ({ posts, loading, onEdit, onDelete })
                       <span>{post.comments_count}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"

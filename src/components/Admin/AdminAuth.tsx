@@ -1,6 +1,12 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,12 +36,16 @@ const AdminAuthContext = createContext<AdminAuthContextType | null>(null);
 export const useAdminAuth = () => {
   const context = useContext(AdminAuthContext);
   if (!context) {
-    throw new Error('useAdminAuth must be used within AdminAuthProvider');
+    throw new Error("useAdminAuth must be used within AdminAuthProvider");
   }
   return context;
 };
 
-export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AdminAuthProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -43,33 +53,35 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   const { toast } = useToast();
 
   // Check if user is admin by checking their email domain or specific emails
-  const checkAdminRole = async (supabaseUser: SupabaseUser): Promise<AdminUser | null> => {
+  const checkAdminRole = async (
+    supabaseUser: SupabaseUser,
+  ): Promise<AdminUser | null> => {
     try {
       const email = supabaseUser.email;
-      
+
       // Define admin emails or email patterns
       const adminEmails = [
-        'admin@driptech.com',
-        'support@driptech.com',
+        "admin@driptech.com",
+        "support@driptech.com",
         // Add more admin emails as needed
       ];
-      
+
       // Check if user email is in admin list or has admin domain
-      const isAdmin = adminEmails.includes(email || '') || 
-                     email?.endsWith('@driptech.com');
-      
+      const isAdmin =
+        adminEmails.includes(email || "") || email?.endsWith("@driptech.com");
+
       if (!isAdmin) {
         return null;
       }
 
       return {
         id: supabaseUser.id,
-        email: email || '',
-        name: supabaseUser.user_metadata?.name || 'Admin User',
-        role: 'admin'
+        email: email || "",
+        name: supabaseUser.user_metadata?.name || "Admin User",
+        role: "admin",
       };
     } catch (error) {
-      console.error('Error checking admin role:', error);
+      console.error("Error checking admin role:", error);
       return null;
     }
   };
@@ -78,10 +90,13 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   const refreshSession = async (): Promise<boolean> => {
     try {
       setLoading(true);
-      const { data: { session }, error } = await supabase.auth.refreshSession();
-      
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.refreshSession();
+
       if (error || !session) {
-        console.error('Failed to refresh session:', error);
+        console.error("Failed to refresh session:", error);
         setSessionExpired(true);
         setIsAuthenticated(false);
         setUser(null);
@@ -95,10 +110,10 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         setSessionExpired(false);
         return true;
       }
-      
+
       return false;
     } catch (error) {
-      console.error('Error refreshing session:', error);
+      console.error("Error refreshing session:", error);
       setSessionExpired(true);
       return false;
     } finally {
@@ -109,23 +124,23 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   // Enhanced session validation
   const validateSession = async (session: any): Promise<boolean> => {
     if (!session?.user) return false;
-    
+
     try {
       // Check if token is expired (this is additional validation)
       const token = session.access_token;
       if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const payload = JSON.parse(atob(token.split(".")[1]));
         const currentTime = Date.now() / 1000;
-        
+
         if (payload.exp < currentTime) {
-          console.log('Token expired, attempting refresh...');
+          console.log("Token expired, attempting refresh...");
           return await refreshSession();
         }
       }
-      
+
       return true;
     } catch (error) {
-      console.error('Error validating session:', error);
+      console.error("Error validating session:", error);
       return false;
     }
   };
@@ -134,14 +149,17 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     // Get initial session
     const initializeAuth = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
         if (error) {
-          console.error('Error getting initial session:', error);
+          console.error("Error getting initial session:", error);
           setLoading(false);
           return;
         }
-        
+
         if (session?.user) {
           const isValid = await validateSession(session);
           if (isValid) {
@@ -154,7 +172,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
           }
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error("Error initializing auth:", error);
       } finally {
         setLoading(false);
       }
@@ -163,61 +181,61 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     initializeAuth();
 
     // Listen for auth changes with enhanced error handling
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event);
-        
-        switch (event) {
-          case 'SIGNED_IN':
-            if (session?.user) {
-              const adminUser = await checkAdminRole(session.user);
-              if (adminUser) {
-                setUser(adminUser);
-                setIsAuthenticated(true);
-                setSessionExpired(false);
-              } else {
-                // User is not admin, sign them out
-                await supabase.auth.signOut();
-                toast({
-                  title: "Access Denied",
-                  description: "You don't have admin privileges",
-                  variant: "destructive"
-                });
-              }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event);
+
+      switch (event) {
+        case "SIGNED_IN":
+          if (session?.user) {
+            const adminUser = await checkAdminRole(session.user);
+            if (adminUser) {
+              setUser(adminUser);
+              setIsAuthenticated(true);
+              setSessionExpired(false);
+            } else {
+              // User is not admin, sign them out
+              await supabase.auth.signOut();
+              toast({
+                title: "Access Denied",
+                description: "You don't have admin privileges",
+                variant: "destructive",
+              });
             }
-            break;
-            
-          case 'SIGNED_OUT':
-            setUser(null);
-            setIsAuthenticated(false);
-            setSessionExpired(false);
-            break;
-            
-          case 'TOKEN_REFRESHED':
-            console.log('Token refreshed successfully');
-            if (session?.user) {
-              const adminUser = await checkAdminRole(session.user);
-              if (adminUser) {
-                setUser(adminUser);
-                setIsAuthenticated(true);
-                setSessionExpired(false);
-              }
+          }
+          break;
+
+        case "SIGNED_OUT":
+          setUser(null);
+          setIsAuthenticated(false);
+          setSessionExpired(false);
+          break;
+
+        case "TOKEN_REFRESHED":
+          console.log("Token refreshed successfully");
+          if (session?.user) {
+            const adminUser = await checkAdminRole(session.user);
+            if (adminUser) {
+              setUser(adminUser);
+              setIsAuthenticated(true);
+              setSessionExpired(false);
             }
-            break;
-            
-          case 'USER_UPDATED':
-            if (session?.user) {
-              const adminUser = await checkAdminRole(session.user);
-              if (adminUser) {
-                setUser(adminUser);
-              }
+          }
+          break;
+
+        case "USER_UPDATED":
+          if (session?.user) {
+            const adminUser = await checkAdminRole(session.user);
+            if (adminUser) {
+              setUser(adminUser);
             }
-            break;
-        }
-        
-        setLoading(false);
+          }
+          break;
       }
-    );
+
+      setLoading(false);
+    });
 
     return () => subscription.unsubscribe();
   }, [toast]);
@@ -234,7 +252,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         toast({
           title: "Error",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
         return false;
       }
@@ -247,7 +265,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
           setSessionExpired(false);
           toast({
             title: "Success",
-            description: "Logged in successfully"
+            description: "Logged in successfully",
           });
           return true;
         } else {
@@ -256,7 +274,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
           toast({
             title: "Access Denied",
             description: "You don't have admin privileges",
-            variant: "destructive"
+            variant: "destructive",
           });
           return false;
         }
@@ -267,7 +285,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
       toast({
         title: "Error",
         description: error.message || "An error occurred during login",
-        variant: "destructive"
+        variant: "destructive",
       });
       return false;
     } finally {
@@ -282,7 +300,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         toast({
           title: "Error",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
       } else {
         setUser(null);
@@ -290,37 +308,42 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         setSessionExpired(false);
         toast({
           title: "Success",
-          description: "Logged out successfully"
+          description: "Logged out successfully",
         });
       }
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "An error occurred during logout",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   return (
-    <AdminAuthContext.Provider value={{ 
-      user, 
-      login, 
-      logout, 
-      isAuthenticated, 
-      loading, 
-      sessionExpired,
-      refreshSession 
-    }}>
+    <AdminAuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        isAuthenticated,
+        loading,
+        sessionExpired,
+        refreshSession,
+      }}
+    >
       {children}
     </AdminAuthContext.Provider>
   );
 };
 
 // Session Expired Warning Component
-const SessionExpiredWarning = ({ onRefresh, onLogin }: { 
-  onRefresh: () => void; 
-  onLogin: () => void; 
+const SessionExpiredWarning = ({
+  onRefresh,
+  onLogin,
+}: {
+  onRefresh: () => void;
+  onLogin: () => void;
 }) => (
   <div className="fixed top-4 right-4 z-50">
     <Card className="w-80 border-destructive">
@@ -348,15 +371,15 @@ const SessionExpiredWarning = ({ onRefresh, onLogin }: {
 );
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAdminAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       return;
     }
@@ -374,9 +397,7 @@ const AdminLogin = () => {
             <Lock className="h-6 w-6 text-primary" />
           </div>
           <CardTitle className="text-2xl">Admin Login</CardTitle>
-          <CardDescription>
-            Access the DripTech admin dashboard
-          </CardDescription>
+          <CardDescription>Access the DripTech admin dashboard</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -425,7 +446,7 @@ const AdminLogin = () => {
               className="w-full bg-gradient-to-r from-primary to-primary/80"
               disabled={loading || !email || !password}
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
           <div className="mt-4 p-4 bg-muted/50 rounded-lg">
@@ -440,8 +461,9 @@ const AdminLogin = () => {
 };
 
 export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, loading, sessionExpired, refreshSession, logout } = useAdminAuth();
-  
+  const { isAuthenticated, loading, sessionExpired, refreshSession, logout } =
+    useAdminAuth();
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -449,29 +471,29 @@ export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-  
+
   if (sessionExpired) {
     return (
       <>
         <AdminLogin />
-        <SessionExpiredWarning 
+        <SessionExpiredWarning
           onRefresh={refreshSession}
           onLogin={logout} // This will trigger logout and show login
         />
       </>
     );
   }
-  
+
   if (!isAuthenticated) {
     return <AdminLogin />;
   }
-  
+
   return <>{children}</>;
 };
 
 export const AdminHeader = () => {
   const { user, logout } = useAdminAuth();
-  
+
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2 text-sm">

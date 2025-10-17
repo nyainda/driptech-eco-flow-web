@@ -1,53 +1,68 @@
 // components/PrintContent.ts
-import { Quote, QuoteItem, Customer } from './types';
+import { Quote, QuoteItem, Customer } from "./types";
 
-export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?: Customer): string => {
+export const generatePrintContent = (
+  quote: Quote,
+  items: QuoteItem[],
+  customer?: Customer,
+): string => {
   const subtotal = items.reduce((sum, item) => sum + item.total, 0);
   const tax = subtotal * 0.16;
   const total = subtotal + tax;
 
-  const customerSection = customer ? `
+  const customerSection = customer
+    ? `
     <p class="font-medium">${customer.contact_person}</p>
-    ${customer.company_name ? `<p>${customer.company_name}</p>` : ''}
-    ${customer.address ? `<p>${customer.address}</p>` : ''}
-    ${customer.city ? `<p>${customer.city}</p>` : ''}
-    ${customer.country ? `<p>${customer.country}</p>` : ''}
-    ${customer.phone ? `<p>Phone: ${customer.phone}</p>` : ''}
+    ${customer.company_name ? `<p>${customer.company_name}</p>` : ""}
+    ${customer.address ? `<p>${customer.address}</p>` : ""}
+    ${customer.city ? `<p>${customer.city}</p>` : ""}
+    ${customer.country ? `<p>${customer.country}</p>` : ""}
+    ${customer.phone ? `<p>Phone: ${customer.phone}</p>` : ""}
     <p>Email: ${customer.email}</p>
-  ` : '<p>Customer information not available</p>';
+  `
+    : "<p>Customer information not available</p>";
 
-  const projectDetailsSection = (quote.project_type || quote.crop_type || quote.area_size) ? `
+  const projectDetailsSection =
+    quote.project_type || quote.crop_type || quote.area_size
+      ? `
     <div class="project-details">
       <h3>Project Details</h3>
       <div class="project-grid">
-        ${quote.project_type ? `<div><span class="font-medium">Project Type:</span> ${quote.project_type}</div>` : ''}
-        ${quote.crop_type ? `<div><span class="font-medium">Crop Type:</span> ${quote.crop_type}</div>` : ''}
-        ${quote.area_size ? `<div><span class="font-medium">Area Size:</span> ${quote.area_size} acres</div>` : ''}
-        ${quote.water_source ? `<div><span class="font-medium">Water Source:</span> ${quote.water_source}</div>` : ''}
+        ${quote.project_type ? `<div><span class="font-medium">Project Type:</span> ${quote.project_type}</div>` : ""}
+        ${quote.crop_type ? `<div><span class="font-medium">Crop Type:</span> ${quote.crop_type}</div>` : ""}
+        ${quote.area_size ? `<div><span class="font-medium">Area Size:</span> ${quote.area_size} acres</div>` : ""}
+        ${quote.water_source ? `<div><span class="font-medium">Water Source:</span> ${quote.water_source}</div>` : ""}
       </div>
-      ${quote.terrain_info ? `<div style="margin-top: 16px;"><span class="font-medium">Terrain Info:</span> ${quote.terrain_info}</div>` : ''}
+      ${quote.terrain_info ? `<div style="margin-top: 16px;"><span class="font-medium">Terrain Info:</span> ${quote.terrain_info}</div>` : ""}
     </div>
-  ` : '';
+  `
+      : "";
 
-  const itemsRows = items.map(item => `
+  const itemsRows = items
+    .map(
+      (item) => `
     <tr>
       <td class="font-medium">${item.name}</td>
       <td>${item.description}</td>
       <td class="text-center">${item.quantity}</td>
       <td class="text-center">${item.unit}</td>
-      <td class="text-right">${item.unit_price.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
-      <td class="text-right font-medium">${item.total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+      <td class="text-right">${item.unit_price.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+      <td class="text-right font-medium">${item.total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
     </tr>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const notesSection = quote.notes ? `
+  const notesSection = quote.notes
+    ? `
     <div class="section">
       <h3>Notes:</h3>
       <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #1e40af;">
         <p style="color: #4b5563;">${quote.notes}</p>
       </div>
     </div>
-  ` : '';
+  `
+    : "";
 
   return `
     <!DOCTYPE html>
@@ -346,7 +361,7 @@ export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?
             <div class="quote-info-box">
               <p><strong>Quote #:</strong> ${quote.quote_number}</p>
               <p><strong>Date:</strong> ${new Date(quote.created_at).toLocaleDateString()}</p>
-              ${quote.valid_until ? `<p><strong>Valid Until:</strong> ${new Date(quote.valid_until).toLocaleDateString()}</p>` : ''}
+              ${quote.valid_until ? `<p><strong>Valid Until:</strong> ${new Date(quote.valid_until).toLocaleDateString()}</p>` : ""}
             </div>
           </div>
         </div>
@@ -399,15 +414,15 @@ export const generatePrintContent = (quote: Quote, items: QuoteItem[], customer?
           <table>
             <tr>
               <td>Subtotal:</td>
-              <td class="text-right">KES ${subtotal.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+              <td class="text-right">KES ${subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
             </tr>
             <tr>
               <td>VAT (16%):</td>
-              <td class="text-right">KES ${tax.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+              <td class="text-right">KES ${tax.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
             </tr>
             <tr class="total-row">
               <td>Total:</td>
-              <td class="text-right">KES ${total.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</td>
+              <td class="text-right">KES ${total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
             </tr>
           </table>
         </div>

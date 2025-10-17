@@ -1,8 +1,13 @@
-
-import React from 'react';
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Search, Filter, Plus } from "lucide-react";
 
 interface BlogFiltersProps {
@@ -22,7 +27,7 @@ const BlogFilters: React.FC<BlogFiltersProps> = ({
   setStatusFilter,
   sortBy,
   setSortBy,
-  onCreatePost
+  onCreatePost,
 }) => {
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -35,7 +40,7 @@ const BlogFilters: React.FC<BlogFiltersProps> = ({
           className="pl-10 text-sm sm:text-base"
         />
       </div>
-      
+
       <Select value={statusFilter} onValueChange={setStatusFilter}>
         <SelectTrigger className="w-full sm:w-[160px]">
           <Filter className="h-4 w-4 mr-2" />

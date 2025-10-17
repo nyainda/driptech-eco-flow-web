@@ -3,7 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, MapPin, Droplets, TrendingUp } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar,
+  MapPin,
+  Droplets,
+  TrendingUp,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 // Type definition based on your schema
@@ -39,17 +45,17 @@ const ProjectsSection = () => {
       try {
         setError(null);
         const { data, error } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('featured', true)
-          .order('created_at', { ascending: false })
+          .from("projects")
+          .select("*")
+          .eq("featured", true)
+          .order("created_at", { ascending: false })
           .limit(3);
 
         if (error) throw error;
         setProjects(data || []);
       } catch (error) {
-        console.error('Error fetching projects:', error);
-        setError('Failed to load projects. Please try again later.');
+        console.error("Error fetching projects:", error);
+        setError("Failed to load projects. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -60,7 +66,8 @@ const ProjectsSection = () => {
 
   // Helper function to get project image
   const getProjectImage = (project: Project) => {
-    const images = project.project_images || project.after_images || project.before_images;
+    const images =
+      project.project_images || project.after_images || project.before_images;
     return images && images.length > 0 ? images[0] : null;
   };
 
@@ -75,8 +82,8 @@ const ProjectsSection = () => {
 
   // Helper function to format status text
   const formatStatus = (status: string | null) => {
-    if (!status) return 'Unknown';
-    return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    if (!status) return "Unknown";
+    return status.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   if (loading) {
@@ -90,7 +97,10 @@ const ProjectsSection = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Array.from({ length: 3 }).map((_, index) => (
-              <Card key={index} className="animate-pulse overflow-hidden bg-background border-border">
+              <Card
+                key={index}
+                className="animate-pulse overflow-hidden bg-background border-border"
+              >
                 <CardContent className="p-0">
                   <div className="aspect-[3/2] bg-muted rounded-t-lg"></div>
                   <div className="p-6 space-y-4">
@@ -119,9 +129,11 @@ const ProjectsSection = () => {
       <section className="py-24 bg-background border-t border-border">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-md mx-auto">
-            <div className="text-foreground mb-4 text-lg font-medium">{error}</div>
-            <Button 
-              variant="outline" 
+            <div className="text-foreground mb-4 text-lg font-medium">
+              {error}
+            </div>
+            <Button
+              variant="outline"
               onClick={() => window.location.reload()}
               className="border-border hover:bg-accent hover:text-accent-foreground"
             >
@@ -143,8 +155,8 @@ const ProjectsSection = () => {
         {/* Header */}
         <div className="text-center max-w-4xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 mb-8">
-            <Badge 
-              variant="secondary" 
+            <Badge
+              variant="secondary"
               className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
@@ -153,12 +165,11 @@ const ProjectsSection = () => {
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 lg:mb-8 leading-tight tracking-tight">
             <span className="block mb-1 sm:mb-2">Empowering Kenyan Farms,</span>
-            <span className="block text-primary">
-              Transforming Agriculture
-            </span>
+            <span className="block text-primary">Transforming Agriculture</span>
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Discover how our innovative irrigation solutions, rooted in Kenyan expertise, enable farmers and businesses to thrive sustainably.
+            Discover how our innovative irrigation solutions, rooted in Kenyan
+            expertise, enable farmers and businesses to thrive sustainably.
           </p>
         </div>
 
@@ -167,18 +178,18 @@ const ProjectsSection = () => {
           {projects.map((project) => {
             const projectImage = getProjectImage(project);
             const formattedArea = formatArea(project.area_covered);
-            
+
             return (
-              <Card 
-                key={project.id} 
+              <Card
+                key={project.id}
                 className="group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 <CardContent className="p-0">
                   {/* Project Image */}
                   <div className="relative aspect-[3/2] overflow-hidden">
                     {projectImage ? (
-                      <img 
-                        src={projectImage} 
+                      <img
+                        src={projectImage}
                         alt={project.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
                         loading="lazy"
@@ -193,15 +204,15 @@ const ProjectsSection = () => {
 
                   <div className="p-6 space-y-4">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <Badge 
+                      <Badge
                         variant="secondary"
                         className="bg-muted text-foreground border-border font-medium"
                       >
-                        {project.project_type || 'Irrigation Project'}
+                        {project.project_type || "Irrigation Project"}
                       </Badge>
                       {project.status && (
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className="font-medium bg-muted text-foreground border-border"
                         >
                           {formatStatus(project.status)}
@@ -216,7 +227,9 @@ const ProjectsSection = () => {
                     {project.location && (
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
-                        <span className="text-sm truncate">{project.location}</span>
+                        <span className="text-sm truncate">
+                          {project.location}
+                        </span>
                       </div>
                     )}
 
@@ -224,7 +237,10 @@ const ProjectsSection = () => {
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="h-4 w-4 flex-shrink-0 text-primary" />
                         <span className="text-sm">
-                          Completed: {new Date(project.completion_date).toLocaleDateString()}
+                          Completed:{" "}
+                          {new Date(
+                            project.completion_date,
+                          ).toLocaleDateString()}
                         </span>
                       </div>
                     )}
@@ -234,14 +250,22 @@ const ProjectsSection = () => {
                       <div className="grid grid-cols-2 gap-3">
                         {formattedArea && (
                           <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
-                            <div className="text-lg font-bold text-foreground">{formattedArea}</div>
-                            <div className="text-xs text-muted-foreground">Area Covered</div>
+                            <div className="text-lg font-bold text-foreground">
+                              {formattedArea}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Area Covered
+                            </div>
                           </div>
                         )}
                         {project.water_saved && (
                           <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
-                            <div className="text-lg font-bold text-foreground">{project.water_saved}%</div>
-                            <div className="text-xs text-muted-foreground">Water Saved</div>
+                            <div className="text-lg font-bold text-foreground">
+                              {project.water_saved}%
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Water Saved
+                            </div>
                           </div>
                         )}
                       </div>
@@ -250,10 +274,12 @@ const ProjectsSection = () => {
                     {project.yield_improvement && (
                       <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
                         <div className="flex items-center justify-center gap-1 text-lg font-bold text-foreground">
-                          <TrendingUp className="h-4 w-4 text-primary" />
-                          +{project.yield_improvement}%
+                          <TrendingUp className="h-4 w-4 text-primary" />+
+                          {project.yield_improvement}%
                         </div>
-                        <div className="text-xs text-muted-foreground">Yield Improvement</div>
+                        <div className="text-xs text-muted-foreground">
+                          Yield Improvement
+                        </div>
                       </div>
                     )}
 
@@ -272,7 +298,7 @@ const ProjectsSection = () => {
         {/* CTA */}
         <div className="text-center">
           <Link to="/projects">
-            <Button 
+            <Button
               size="lg"
               className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
             >

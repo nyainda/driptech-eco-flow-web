@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Eye, ThumbsUp, MessageCircle } from "lucide-react";
 
@@ -18,26 +17,26 @@ const BlogStats: React.FC<BlogStatsProps> = ({ stats }) => {
       title: "Total Posts",
       value: stats.totalPosts,
       icon: FileText,
-      color: "text-blue-600"
+      color: "text-blue-600",
     },
     {
       title: "Total Views",
       value: stats.totalViews,
       icon: Eye,
-      color: "text-green-600"
+      color: "text-green-600",
     },
     {
       title: "Total Likes",
       value: stats.totalLikes,
       icon: ThumbsUp,
-      color: "text-pink-600"
+      color: "text-pink-600",
     },
     {
       title: "Comments",
       value: stats.totalComments,
       icon: MessageCircle,
-      color: "text-purple-600"
-    }
+      color: "text-purple-600",
+    },
   ];
 
   return (
