@@ -277,11 +277,15 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   useEffect(() => {
+    let mounted = true;
+    
     // Get initial session
     const initializeAuth = async () => {
       try {
         // First try to get session from storage
         const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
         
         if (error) {
           console.error('Error getting initial session:', error);
@@ -290,9 +294,16 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
         }
         
         if (session?.user) {
+          console.log('Found existing session, validating...', session.user.email);
           const isValid = await validateSession(session);
+          
+          if (!mounted) return;
+          
           if (isValid) {
             const adminUser = await checkAdminRole(session.user);
+            
+            if (!mounted) return;
+            
             if (adminUser) {
               setUser(adminUser);
               setIsAuthenticated(true);
@@ -300,20 +311,26 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
               console.log('Admin session restored successfully');
             } else {
               // User is not admin, clear session
+              console.log('User is not admin, clearing session');
               await supabase.auth.signOut();
             }
           } else {
             // Session invalid, try to refresh
+            console.log('Session invalid, attempting refresh...');
             const refreshed = await refreshSession();
-            if (!refreshed) {
+            if (!refreshed && mounted) {
               setSessionExpired(true);
             }
           }
+        } else {
+          console.log('No existing session found');
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -324,6 +341,8 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         
+        if (!mounted) return;
+        
         switch (event) {
           case 'INITIAL_SESSION':
             // Skip - handled by initializeAuth
@@ -332,11 +351,11 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
           case 'SIGNED_IN':
             if (session?.user) {
               const adminUser = await checkAdminRole(session.user);
-              if (adminUser) {
+              if (adminUser && mounted) {
                 setUser(adminUser);
                 setIsAuthenticated(true);
                 setSessionExpired(false);
-              } else {
+              } else if (mounted) {
                 // User is not admin, sign them out
                 await supabase.auth.signOut();
                 toast({
@@ -349,18 +368,20 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
             break;
             
           case 'SIGNED_OUT':
-            setUser(null);
-            setIsAuthenticated(false);
-            setSessionExpired(false);
-            setIdleWarning(false);
-            clearAllTimers();
+            if (mounted) {
+              setUser(null);
+              setIsAuthenticated(false);
+              setSessionExpired(false);
+              setIdleWarning(false);
+              clearAllTimers();
+            }
             break;
             
           case 'TOKEN_REFRESHED':
             console.log('Token refreshed successfully');
             if (session?.user) {
               const adminUser = await checkAdminRole(session.user);
-              if (adminUser) {
+              if (adminUser && mounted) {
                 setUser(adminUser);
                 setIsAuthenticated(true);
                 setSessionExpired(false);
@@ -372,19 +393,24 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
           case 'USER_UPDATED':
             if (session?.user) {
               const adminUser = await checkAdminRole(session.user);
-              if (adminUser) {
+              if (adminUser && mounted) {
                 setUser(adminUser);
               }
             }
             break;
         }
         
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     );
 
-    return () => subscription.unsubscribe();
-  }, [toast, resetIdleTimer, clearAllTimers]);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
