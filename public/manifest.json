@@ -10,18 +10,7 @@
   "categories": ["business", "productivity", "utilities"],
   "lang": "en-US",
   "scope": "/",
-  "icons": [
-    {
-      "src": "/favicon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    }
-  ],
+  "icons": [],
   "screenshots": [
     {
       "src": "/screenshots/mobile-home.png",
