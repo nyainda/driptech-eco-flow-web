@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import ProductTracker from "@/components/Analytics/ProductTracker";
 
 interface Variant {
   name: string;
@@ -374,20 +375,25 @@ useEffect(() => {
     : product.in_stock;
 
   return (
-    <Card className="group bg-background border-border shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300">
-      <CardHeader className="p-0">
-        <div className="relative aspect-video bg-muted rounded-t-xl overflow-hidden">
-          {product.images && product.images[0] ? (
-            <img 
-              src={product.images[0]} 
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Package className="h-12 w-12 text-muted-foreground" />
-            </div>
-          )}
+    <ProductTracker
+      productName={product.name}
+      productId={product.id}
+      category={product.category}
+    >
+      <Card className="group bg-background border-border shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300">
+        <CardHeader className="p-0">
+          <div className="relative aspect-video bg-muted rounded-t-xl overflow-hidden">
+            {product.images && product.images[0] ? (
+              <img 
+                src={product.images[0]} 
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Package className="h-12 w-12 text-muted-foreground" />
+              </div>
+            )}
           
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.featured && (
@@ -692,6 +698,7 @@ useEffect(() => {
         </div>
       </CardContent>
     </Card>
+    </ProductTracker>
   );
 };
 
