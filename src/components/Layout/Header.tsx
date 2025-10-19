@@ -419,11 +419,11 @@ const Header = () => {
               <div className="flex items-center gap-1 sm:gap-2 hover:text-foreground transition-colors">
                 <Mail className="h-3 w-3" />
                 <a
-                  href="mailto:driptech2025@gmail.com"
+                  href="mailto:info@dripstech.co.ke"
                   className="hover:underline"
                 >
                   <span className="hidden md:inline">
-                    driptechs.info@gmail.com
+                   info@dripstech.co.ke
                   </span>
                   <span className="hidden sm:inline md:hidden">Email</span>
                   <span className="sm:hidden">Mail</span>

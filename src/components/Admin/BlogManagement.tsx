@@ -94,6 +94,13 @@ const BlogManagement = () => {
       });
     } catch (error) {
       console.error("Error fetching stats:", error);
+      // Set default stats on error
+      setStats({
+        totalPosts: 0,
+        totalViews: 0,
+        totalLikes: 0,
+        totalComments: 0,
+      });
     }
   };
 
@@ -150,7 +157,8 @@ const BlogManagement = () => {
 
       if (error) throw error;
 
-      setPosts((data || []) as any);
+      // Ensure data is always an array
+      setPosts(Array.isArray(data) ? data : []);
       setTotalPosts(count || 0);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -159,6 +167,9 @@ const BlogManagement = () => {
         description: "Failed to fetch blog posts",
         variant: "destructive",
       });
+      // Set empty array on error
+      setPosts([]);
+      setTotalPosts(0);
     } finally {
       setLoading(false);
     }
@@ -172,7 +183,8 @@ const BlogManagement = () => {
         .order("name");
 
       if (error) throw error;
-      setCategories(data || []);
+      // Ensure categories is always an array
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching categories:", error);
       toast({
@@ -180,6 +192,8 @@ const BlogManagement = () => {
         description: "Failed to fetch categories",
         variant: "destructive",
       });
+      // Set empty array on error
+      setCategories([]);
     }
   };
 
@@ -195,7 +209,7 @@ const BlogManagement = () => {
 
       if (fetchError) throw fetchError;
 
-      const newViews = (currentPost.views || 0) + 1;
+      const newViews = (currentPost?.views || 0) + 1;
 
       const { error: updateError } = await supabase
         .from("blog_posts")
@@ -260,21 +274,21 @@ const BlogManagement = () => {
     fetchStats();
   };
 
-  const filteredPosts = posts.filter((post) => {
+  const filteredPosts = Array.isArray(posts) ? posts.filter((post) => {
     const matchesSearch =
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
+      post?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post?.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
       selectedCategory === "all" ||
-      post.blog_categories?.name === selectedCategory;
+      post?.blog_categories?.name === selectedCategory;
     const matchesStatus =
       statusFilter === "all" ||
-      (statusFilter === "published" ? post.published : !post.published);
+      (statusFilter === "published" ? post?.published : !post?.published);
     return matchesSearch && matchesCategory && matchesStatus;
-  });
+  }) : [];
 
   const totalPagesCalculated = Math.ceil(totalPosts / ITEMS_PER_PAGE);
-  const currentPosts = posts; // Already paginated from the query
+  const currentPosts = Array.isArray(posts) ? posts : []; // Already paginated from the query
 
   if (showEditor) {
     return (
@@ -315,7 +329,7 @@ const BlogManagement = () => {
           sortBy={sortBy}
           setSortBy={setSortBy}
           onCreatePost={handleCreatePost}
-          categories={categories}
+          categories={categories || []}
         />
 
         {/* Blog Posts List */}
@@ -327,7 +341,7 @@ const BlogManagement = () => {
         />
 
         {/* Pagination */}
-        {currentPosts.length > 0 && (
+        {currentPosts.length > 0 && totalPagesCalculated > 1 && (
           <BlogPagination
             currentPage={currentPage}
             totalPages={totalPagesCalculated}

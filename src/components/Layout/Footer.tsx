@@ -216,10 +216,10 @@ const Footer = () => {
                     driptechs.info@gmail.com
                   </a>
                   <a
-                    href="mailto:driptech2025@gmail.com"
+                    href="mailto:info@dripstech.co.ke"
                     className="hover:text-foreground transition-colors block"
                   >
-                    driptech2025@gmail.com
+                    info@dripstech.co.ke
                   </a>
                 </div>
               </div>

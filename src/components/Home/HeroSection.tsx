@@ -302,10 +302,10 @@ const HeroSection = () => {
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
                 <Mail className="h-5 w-5 text-emerald-400" />
                 <a
-                  href="mailto:driptechs.info@gmail.com"
+                  href="mailto:info@dripstech.co.ke"
                   className="hover:text-emerald-300 transition-colors font-medium"
                 >
-                  driptechs.info@gmail.com
+                  info@dripstech.co.ke
                 </a>
               </div>
               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">

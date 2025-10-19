@@ -145,7 +145,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                   <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
                     <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
                     <div>📞 0111409454 / 0114575401</div>
-                    <div>✉️ driptech2025@gmail.com</div>
+                    <div>✉️ info@dripstech.co.ke</div>
                     <div>✉️ driptechs.info@gmail.com</div>
                   </div>
                 </div>
