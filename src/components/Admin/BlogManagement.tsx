@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Plus } from "lucide-react";
-import BlogEditor from "./BlogEditor";
+import BlogEditorRich from "./BlogEditorRich";
 import BlogStats from "./Blog/BlogStats";
 import BlogFilters from "./Blog/BlogFilters";
 import BlogList from "./Blog/BlogList";
@@ -31,6 +31,7 @@ interface BlogPost {
   reading_time?: number;
   category_id?: string;
   featured_image_url?: string;
+
 }
 
 interface BlogCategory {
@@ -274,6 +275,72 @@ const BlogManagement = () => {
     fetchStats();
   };
 
+  const handleSavePost = async (postData: BlogPost) => {
+    try {
+      if (editingPost?.id) {
+        // Update existing post
+        const { error } = await supabase
+          .from("blog_posts")
+          .update({
+            title: postData.title,
+            slug: postData.slug,
+            content: postData.content,
+            excerpt: postData.excerpt,
+            category_id: postData.category_id,
+            tags: postData.tags,
+            published: postData.published,
+            featured_image_url: postData.featured_image_url,
+            seo_title: postData.seo_title,
+            seo_description: postData.seo_description,
+            reading_time: postData.reading_time,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", editingPost.id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Blog post updated successfully",
+        });
+      } else {
+        // Create new post
+        const { error } = await supabase
+          .from("blog_posts")
+          .insert({
+            title: postData.title,
+            slug: postData.slug,
+            content: postData.content,
+            excerpt: postData.excerpt,
+            category_id: postData.category_id,
+            tags: postData.tags,
+            published: postData.published,
+            featured_image_url: postData.featured_image_url,
+            seo_title: postData.seo_title,
+            seo_description: postData.seo_description,
+            reading_time: postData.reading_time,
+            published_at: postData.published ? new Date().toISOString() : null,
+          });
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Blog post created successfully",
+        });
+      }
+
+      handleEditorClose();
+    } catch (error: any) {
+      console.error("Error saving post:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save blog post",
+        variant: "destructive",
+      });
+    }
+  };
+
   const filteredPosts = Array.isArray(posts) ? posts.filter((post) => {
     const matchesSearch =
       post?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -292,10 +359,11 @@ const BlogManagement = () => {
 
   if (showEditor) {
     return (
-      <BlogEditor
+      <BlogEditorRich
         post={editingPost}
+        categories={categories}
         onClose={handleEditorClose}
-        onSave={handleEditorClose}
+        onSave={handleSavePost}
       />
     );
   }
@@ -320,8 +388,8 @@ const BlogManagement = () => {
 
         {/* Search and Filter Bar */}
         <BlogFilters
-          searchTerm={searchQuery}
-          setSearchTerm={setSearchQuery}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           statusFilter={statusFilter}

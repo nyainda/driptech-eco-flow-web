@@ -20,6 +20,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import {
   FileText,
   Plus,
@@ -81,6 +83,40 @@ const NewsManagement = () => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const quillRef = useRef<ReactQuill>(null);
+
+  const quillModules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ align: [] }],
+      ["link", "image", "video"],
+      [{ color: [] }, { background: [] }],
+      ["blockquote", "code-block"],
+      ["clean"],
+    ],
+  };
+
+  const quillFormats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "list",
+    "bullet",
+    "indent",
+    "align",
+    "link",
+    "image",
+    "video",
+    "color",
+    "background",
+    "blockquote",
+    "code-block",
+  ];
 
   const [newArticle, setNewArticle] = useState({
     title: "",
@@ -160,21 +196,13 @@ const NewsManagement = () => {
   const fetchStats = async () => {
     try {
       const { data, error } = await supabase
-        .from("news_articles" as any)
+        .from("news_articles")
         .select("views, likes, published, title");
 
       if (error) throw error;
 
-      if (!error && Array.isArray(data)) {
-        const articlesArray = data.filter(
-          (item: any) =>
-            typeof item === "object" &&
-            item !== null &&
-            "published" in item &&
-            "views" in item &&
-            "likes" in item &&
-            "title" in item,
-        ) as NewsArticle[];
+      if (data && Array.isArray(data)) {
+        const articlesArray = data as Pick<NewsArticle, 'views' | 'likes' | 'published' | 'title'>[];
         const total = articlesArray.length;
         const published = articlesArray.filter(
           (article) => article.published,
@@ -212,7 +240,7 @@ const NewsManagement = () => {
       setLoading(true);
 
       let query = supabase
-        .from("news_articles" as any)
+        .from("news_articles")
         .select("*", { count: "exact" });
 
       if (searchQuery) {
@@ -248,7 +276,12 @@ const NewsManagement = () => {
 
       if (error) throw error;
 
-      setArticles(data || []);
+      setArticles(
+        (data as any[]).map((article) => ({
+          ...article,
+          id: String(article.id),
+        })) || [],
+      );
       setTotalArticles(count || 0);
     } catch (error) {
       console.error("Error fetching news articles:", error);
@@ -273,7 +306,9 @@ const NewsManagement = () => {
         return;
       }
 
-      const wordCount = newArticle.content.split(/\s+/).length;
+      // Strip HTML tags for word count
+      const textContent = newArticle.content.replace(/<[^>]*>/g, '');
+      const wordCount = textContent.split(/\s+/).filter(word => word.length > 0).length;
       const readingTime = Math.ceil(wordCount / 200);
 
       const slug = generateSlug(newArticle.title);
@@ -294,7 +329,7 @@ const NewsManagement = () => {
         const { error } = await supabase
           .from("news_articles")
           .update(articleData)
-          .eq("id", editingArticle.id);
+          .eq("id", Number(editingArticle.id));
 
         if (error) throw error;
 
@@ -365,7 +400,7 @@ const NewsManagement = () => {
       const { error } = await supabase
         .from("news_articles")
         .delete()
-        .eq("id", id);
+        .eq("id", Number(id));
 
       if (error) throw error;
 
@@ -597,19 +632,24 @@ const NewsManagement = () => {
                         >
                           Content
                         </Label>
-                        <Textarea
-                          id="content"
-                          value={newArticle.content}
-                          onChange={(e) =>
-                            setNewArticle((prev) => ({
-                              ...prev,
-                              content: e.target.value,
-                            }))
-                          }
-                          placeholder="Write your news content here..."
-                          rows={6}
-                          className="mt-1 resize-none bg-background border-border text-foreground placeholder-muted-foreground"
-                        />
+                        <div className="mt-1 bg-background border border-border rounded-lg overflow-hidden">
+                          <ReactQuill
+                            ref={quillRef}
+                            theme="snow"
+                            value={newArticle.content}
+                            onChange={(content) =>
+                              setNewArticle((prev) => ({
+                                ...prev,
+                                content,
+                              }))
+                            }
+                            modules={quillModules}
+                            formats={quillFormats}
+                            placeholder="Write your news content here..."
+                            style={{ minHeight: "300px" }}
+                            className="bg-background text-foreground"
+                          />
+                        </div>
                       </div>
 
                       <div>
