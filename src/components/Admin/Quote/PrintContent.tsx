@@ -448,7 +448,7 @@ export const generatePrintContent = (
         <!-- Footer Section -->
         <div class="footer">
           <p><span class="company-name">DripTech Solutions</span> - Your Partner in Smart Irrigation</p>
-          <p>Phone: 0111409454 / 0114575401 | Email: driptech2025@gmail.com</p>
+          <p>Phone: 0111409454 / 0114575401 | Email: info@dripstech.co.ke</p>
         </div>
       </div>
     </body>

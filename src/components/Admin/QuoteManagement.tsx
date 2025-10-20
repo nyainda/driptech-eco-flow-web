@@ -542,7 +542,7 @@ const QuoteManagement = () => {
           >
             ← Back to Quotes
           </Button>
-          <h2 className="text-2xl font-bold text-foreground">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">
             Quote PDF Preview
           </h2>
         </div>
@@ -562,16 +562,16 @@ const QuoteManagement = () => {
 
   if (showForm) {
     return (
-      <div className="space-y-6 bg-background p-3 sm:p-4 lg:p-6">
-        <div className="flex items-center gap-4">
+      <div className="space-y-4 sm:space-y-6 bg-background p-3 sm:p-4 lg:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
           <Button
             variant="outline"
             onClick={() => setShowForm(false)}
-            className="border-border text-muted-foreground hover:bg-muted"
+            className="border-border text-muted-foreground hover:bg-muted w-full sm:w-auto"
           >
             ← Back to Quotes
           </Button>
-          <h2 className="text-2xl font-bold text-foreground">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">
             {selectedQuote ? "Edit Quote" : "New Quote"}
           </h2>
         </div>
@@ -588,16 +588,16 @@ const QuoteManagement = () => {
           <CardContent>
             {selectedCustomer ? (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground break-words">
                       {selectedCustomer.company_name}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground break-words">
                       {selectedCustomer.contact_person} •{" "}
                       {selectedCustomer.email}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground break-words">
                       {selectedCustomer.phone} • {selectedCustomer.city},{" "}
                       {selectedCustomer.country}
                     </p>
@@ -609,13 +609,13 @@ const QuoteManagement = () => {
                     <DialogTrigger asChild>
                       <Button
                         variant="outline"
-                        className="border-border text-muted-foreground hover:bg-muted"
+                        className="border-border text-muted-foreground hover:bg-muted w-full sm:w-auto"
                       >
                         <User className="h-4 w-4 mr-2" />
                         Change Customer
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl bg-background border-border">
+                    <DialogContent className="max-w-[95vw] sm:max-w-2xl bg-background border-border">
                       <DialogHeader>
                         <DialogTitle className="text-foreground">
                           Select Customer
@@ -624,7 +624,7 @@ const QuoteManagement = () => {
                           Choose a customer for this quote
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="grid gap-4 max-h-96 overflow-y-auto">
+                      <div className="grid gap-4 max-h-[60vh] overflow-y-auto">
                         {customersLoading ? (
                           <div className="text-muted-foreground">
                             Loading customers...
@@ -637,21 +637,21 @@ const QuoteManagement = () => {
                               onClick={() => handleSelectCustomer(customer)}
                             >
                               <CardContent className="p-4">
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <h4 className="font-semibold text-foreground">
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="font-semibold text-foreground break-words">
                                       {customer.company_name}
                                     </h4>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm text-muted-foreground break-words">
                                       {customer.contact_person} •{" "}
                                       {customer.email}
                                     </p>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm text-muted-foreground break-words">
                                       {customer.city}, {customer.country}
                                     </p>
                                   </div>
                                   {selectedCustomer?.id === customer.id && (
-                                    <Check className="h-5 w-5 text-primary" />
+                                    <Check className="h-5 w-5 text-primary flex-shrink-0" />
                                   )}
                                 </div>
                               </CardContent>
@@ -671,13 +671,13 @@ const QuoteManagement = () => {
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
-                    className="border-border text-muted-foreground hover:bg-muted"
+                    className="border-border text-muted-foreground hover:bg-muted w-full sm:w-auto"
                   >
                     <User className="h-4 w-4 mr-2" />
                     Select Customer
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl bg-background border-border">
+                <DialogContent className="max-w-[95vw] sm:max-w-2xl bg-background border-border">
                   <DialogHeader>
                     <DialogTitle className="text-foreground">
                       Select Customer
@@ -686,7 +686,7 @@ const QuoteManagement = () => {
                       Choose a customer for this quote
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid gap-4 max-h-96 overflow-y-auto">
+                  <div className="grid gap-4 max-h-[60vh] overflow-y-auto">
                     {customersLoading ? (
                       <div className="text-muted-foreground">
                         Loading customers...
@@ -699,14 +699,14 @@ const QuoteManagement = () => {
                           onClick={() => handleSelectCustomer(customer)}
                         >
                           <CardContent className="p-4">
-                            <div>
-                              <h4 className="font-semibold text-foreground">
+                            <div className="min-w-0">
+                              <h4 className="font-semibold text-foreground break-words">
                                 {customer.company_name}
                               </h4>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-sm text-muted-foreground break-words">
                                 {customer.contact_person} • {customer.email}
                               </p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-sm text-muted-foreground break-words">
                                 {customer.city}, {customer.country}
                               </p>
                             </div>
@@ -729,7 +729,7 @@ const QuoteManagement = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="project_type" className="text-foreground">
                   Project Type
@@ -831,7 +831,7 @@ const QuoteManagement = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="text-foreground">Valid Until</Label>
                 <Popover>
@@ -839,20 +839,22 @@ const QuoteManagement = () => {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[240px] justify-start text-left font-normal border-border text-foreground hover:bg-muted",
+                        "w-full justify-start text-left font-normal border-border text-foreground hover:bg-muted",
                         !date && "text-muted-foreground",
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date?.from ? (
-                        date.to ? (
-                          `${format(date.from, "PPP")} - ${format(date.to, "PPP")}`
+                      <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">
+                        {date?.from ? (
+                          date.to ? (
+                            `${format(date.from, "PPP")} - ${format(date.to, "PPP")}`
+                          ) : (
+                            format(date.from, "PPP")
+                          )
                         ) : (
-                          format(date.from, "PPP")
-                        )
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                          "Pick a date"
+                        )}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
@@ -897,7 +899,7 @@ const QuoteManagement = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="include_vat"
@@ -936,7 +938,7 @@ const QuoteManagement = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-background border-border shadow-lg">
+        <Card className="bg-background border-border shadow-lg overflow-hidden">
           <CardHeader>
             <CardTitle className="text-foreground">
               Bill of Quantities (BOQ)
@@ -946,7 +948,7 @@ const QuoteManagement = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
               <div>
                 <Label htmlFor="name" className="text-foreground">
                   Item Name
@@ -1014,7 +1016,7 @@ const QuoteManagement = () => {
               <Button
                 type="button"
                 onClick={handleAddItem}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Item
@@ -1023,195 +1025,199 @@ const QuoteManagement = () => {
 
             <Separator className="bg-border" />
 
-            <Table>
-              <TableCaption className="text-muted-foreground">
-                A list of items in the quote.
-              </TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-foreground">Item</TableHead>
-                  <TableHead className="text-foreground">Description</TableHead>
-                  <TableHead className="text-foreground">Quantity</TableHead>
-                  <TableHead className="text-foreground">Unit</TableHead>
-                  <TableHead className="text-foreground">Unit Price</TableHead>
-                  <TableHead className="text-right text-foreground">
-                    Total
-                  </TableHead>
-                  <TableHead className="text-right text-foreground">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {quoteItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium text-foreground">
-                      {editingItemId === item.id ? (
-                        <Input
-                          value={editingItem?.name || ""}
-                          onChange={(e) =>
-                            handleEditItemChange("name", e.target.value)
-                          }
-                          className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
-                        />
-                      ) : (
-                        item.name
-                      )}
-                    </TableCell>
-                    <TableCell className="text-foreground">
-                      {editingItemId === item.id ? (
-                        <Input
-                          value={editingItem?.description || ""}
-                          onChange={(e) =>
-                            handleEditItemChange("description", e.target.value)
-                          }
-                          className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
-                        />
-                      ) : (
-                        item.description
-                      )}
-                    </TableCell>
-                    <TableCell className="text-foreground">
-                      {editingItemId === item.id ? (
-                        <Input
-                          type="number"
-                          value={editingItem?.quantity || 0}
-                          onChange={(e) =>
-                            handleEditItemChange(
-                              "quantity",
-                              parseInt(e.target.value) || 0,
-                            )
-                          }
-                          className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
-                        />
-                      ) : (
-                        item.quantity
-                      )}
-                    </TableCell>
-                    <TableCell className="text-foreground">
-                      {editingItemId === item.id ? (
-                        <Input
-                          value={editingItem?.unit || ""}
-                          onChange={(e) =>
-                            handleEditItemChange("unit", e.target.value)
-                          }
-                          className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
-                        />
-                      ) : (
-                        item.unit
-                      )}
-                    </TableCell>
-                    <TableCell className="text-foreground">
-                      {editingItemId === item.id ? (
-                        <Input
-                          type="number"
-                          value={editingItem?.unit_price || 0}
-                          onChange={(e) =>
-                            handleEditItemChange(
-                              "unit_price",
-                              parseFloat(e.target.value) || 0,
-                            )
-                          }
-                          className="w-24 bg-background border-border text-foreground placeholder-muted-foreground"
-                        />
-                      ) : (
-                        `KES ${item.unit_price.toLocaleString()}`
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right text-foreground">
-                      KES{" "}
-                      {editingItemId === item.id && editingItem
-                        ? (
-                            editingItem.quantity * editingItem.unit_price
-                          ).toLocaleString()
-                        : item.total.toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center gap-2">
-                        {editingItemId === item.id ? (
-                          <>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={handleSaveEdit}
-                              className="hover:bg-muted"
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={handleCancelEdit}
-                              className="hover:bg-muted"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleStartEdit(item)}
-                              className="hover:bg-muted"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveItem(item.id)}
-                              className="hover:bg-muted"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={5} className="text-foreground">
-                    Subtotal
-                  </TableCell>
-                  <TableCell className="text-right text-foreground">
-                    KES {subtotal.toLocaleString()}
-                  </TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-                {includeVat && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-foreground">
-                      VAT ({vatRate}%)
-                    </TableCell>
-                    <TableCell className="text-right text-foreground">
-                      KES {tax.toLocaleString()}
-                    </TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                )}
-                <TableRow>
-                  <TableCell colSpan={5} className="text-foreground">
-                    Total Amount {includeVat ? "(Incl. VAT)" : "(Excl. VAT)"}
-                  </TableCell>
-                  <TableCell className="text-right font-bold text-foreground">
-                    KES {totalAmount.toLocaleString()}
-                  </TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
+            <div className="overflow-x-auto -mx-3 sm:mx-0">
+              <div className="inline-block min-w-full align-middle">
+                <Table>
+                  <TableCaption className="text-muted-foreground">
+                    A list of items in the quote.
+                  </TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-foreground min-w-[120px]">Item</TableHead>
+                      <TableHead className="text-foreground min-w-[150px]">Description</TableHead>
+                      <TableHead className="text-foreground min-w-[80px]">Quantity</TableHead>
+                      <TableHead className="text-foreground min-w-[80px]">Unit</TableHead>
+                      <TableHead className="text-foreground min-w-[100px]">Unit Price</TableHead>
+                      <TableHead className="text-right text-foreground min-w-[100px]">
+                        Total
+                      </TableHead>
+                      <TableHead className="text-right text-foreground min-w-[120px]">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {quoteItems.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium text-foreground">
+                          {editingItemId === item.id ? (
+                            <Input
+                              value={editingItem?.name || ""}
+                              onChange={(e) =>
+                                handleEditItemChange("name", e.target.value)
+                              }
+                              className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
+                            />
+                          ) : (
+                            <span className="break-words">{item.name}</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-foreground">
+                          {editingItemId === item.id ? (
+                            <Input
+                              value={editingItem?.description || ""}
+                              onChange={(e) =>
+                                handleEditItemChange("description", e.target.value)
+                              }
+                              className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
+                            />
+                          ) : (
+                            <span className="break-words">{item.description}</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-foreground">
+                          {editingItemId === item.id ? (
+                            <Input
+                              type="number"
+                              value={editingItem?.quantity || 0}
+                              onChange={(e) =>
+                                handleEditItemChange(
+                                  "quantity",
+                                  parseInt(e.target.value) || 0,
+                                )
+                              }
+                              className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
+                            />
+                          ) : (
+                            item.quantity
+                          )}
+                        </TableCell>
+                        <TableCell className="text-foreground">
+                          {editingItemId === item.id ? (
+                            <Input
+                              value={editingItem?.unit || ""}
+                              onChange={(e) =>
+                                handleEditItemChange("unit", e.target.value)
+                              }
+                              className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
+                            />
+                          ) : (
+                            item.unit
+                          )}
+                        </TableCell>
+                        <TableCell className="text-foreground">
+                          {editingItemId === item.id ? (
+                            <Input
+                              type="number"
+                              value={editingItem?.unit_price || 0}
+                              onChange={(e) =>
+                                handleEditItemChange(
+                                  "unit_price",
+                                  parseFloat(e.target.value) || 0,
+                                )
+                              }
+                              className="w-24 bg-background border-border text-foreground placeholder-muted-foreground"
+                            />
+                          ) : (
+                            `KES ${item.unit_price.toLocaleString()}`
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right text-foreground">
+                          KES{" "}
+                          {editingItemId === item.id && editingItem
+                            ? (
+                                editingItem.quantity * editingItem.unit_price
+                              ).toLocaleString()
+                            : item.total.toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {editingItemId === item.id ? (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={handleSaveEdit}
+                                  className="hover:bg-muted"
+                                >
+                                  <Save className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={handleCancelEdit}
+                                  className="hover:bg-muted"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleStartEdit(item)}
+                                  className="hover:bg-muted"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleRemoveItem(item.id)}
+                                  className="hover:bg-muted"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-foreground">
+                        Subtotal
+                      </TableCell>
+                      <TableCell className="text-right text-foreground">
+                        KES {subtotal.toLocaleString()}
+                      </TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                    {includeVat && (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-foreground">
+                          VAT ({vatRate}%)
+                        </TableCell>
+                        <TableCell className="text-right text-foreground">
+                          KES {tax.toLocaleString()}
+                        </TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
+                    )}
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-foreground">
+                        Total Amount {includeVat ? "(Incl. VAT)" : "(Excl. VAT)"}
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-foreground">
+                        KES {totalAmount.toLocaleString()}
+                      </TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col sm:flex-row justify-end gap-2">
           <Button
             variant="outline"
             onClick={() => setShowForm(false)}
-            className="border-border text-muted-foreground hover:bg-muted"
+            className="border-border text-muted-foreground hover:bg-muted w-full sm:w-auto"
           >
             Cancel
           </Button>
@@ -1232,7 +1238,7 @@ const QuoteManagement = () => {
                 vat_rate: vatRate,
               })
             }
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
           >
             Save Quote
           </Button>
@@ -1246,12 +1252,12 @@ const QuoteManagement = () => {
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
         <Card className="bg-background border-border shadow-lg">
           <CardHeader>
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-center gap-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
                 <div className="p-2 rounded-xl bg-muted border border-border w-fit">
                   <span className="text-2xl">📄</span>
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
                     Quote Management
                   </h1>
@@ -1267,7 +1273,7 @@ const QuoteManagement = () => {
               </div>
               <Button
                 onClick={handleNewQuote}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all duration-200 transform hover:scale-105"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all duration-200 transform hover:scale-105 w-full lg:w-auto"
               >
                 <Plus className="h-5 w-5 mr-3" />
                 Create New Quote
@@ -1276,7 +1282,7 @@ const QuoteManagement = () => {
           </CardHeader>
         </Card>
 
-        <div className="grid gap-8">
+        <div className="grid gap-4 sm:gap-6 lg:gap-8">
           {quotesLoading ? (
             <Card className="bg-background border-border shadow-lg">
               <CardContent className="flex items-center justify-center py-16">
@@ -1316,79 +1322,91 @@ const QuoteManagement = () => {
                 className="group bg-background border-border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className="w-16 h-16 bg-muted border border-border rounded-xl flex items-center justify-center text-foreground font-bold text-xl">
-                        {quote.quote_number.split("-")[1] || "Q"}
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-muted border border-border rounded-xl flex items-center justify-center text-foreground font-bold text-base sm:text-xl flex-shrink-0">
+                        {quote.quote_number.split("-")[1]?.slice(-4) || "Q"}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <CardTitle className="text-xl sm:text-2xl font-bold text-foreground">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                          <CardTitle className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground break-all">
                             {quote.quote_number}
                           </CardTitle>
                           <Badge
                             variant="secondary"
-                            className={`px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-muted text-muted-foreground border-border`}
+                            className="px-3 py-1 text-xs font-semibold uppercase tracking-wide bg-muted text-muted-foreground border-border w-fit"
                           >
                             {quote.status}
                           </Badge>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mb-4">
                           {quote.project_type && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">
-                                🚿 Project:
+                            <div className="flex items-start gap-2 text-sm">
+                              <span className="text-primary font-medium flex-shrink-0">
+                                🚿
                               </span>
-                              <span className="text-foreground">
-                                {quote.project_type}
-                              </span>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-primary font-medium">Project: </span>
+                                <span className="text-foreground break-words">
+                                  {quote.project_type}
+                                </span>
+                              </div>
                             </div>
                           )}
                           {quote.crop_type && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">
-                                🌱 Crop:
+                            <div className="flex items-start gap-2 text-sm">
+                              <span className="text-primary font-medium flex-shrink-0">
+                                🌱
                               </span>
-                              <span className="text-foreground">
-                                {quote.crop_type}
-                              </span>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-primary font-medium">Crop: </span>
+                                <span className="text-foreground break-words">
+                                  {quote.crop_type}
+                                </span>
+                              </div>
                             </div>
                           )}
                           {quote.area_size && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">
-                                📏 Area:
+                            <div className="flex items-start gap-2 text-sm">
+                              <span className="text-primary font-medium flex-shrink-0">
+                                📏
                               </span>
-                              <span className="text-foreground">
-                                {quote.area_size} acres
-                              </span>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-primary font-medium">Area: </span>
+                                <span className="text-foreground">
+                                  {quote.area_size} acres
+                                </span>
+                              </div>
                             </div>
                           )}
                           {quote.customer_id && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="text-primary font-medium">
-                                👤 Customer:
+                            <div className="flex items-start gap-2 text-sm">
+                              <span className="text-primary font-medium flex-shrink-0">
+                                👤
                               </span>
-                              <span className="text-foreground truncate">
-                                {customers.find(
-                                  (c) => c.id === quote.customer_id,
-                                )?.company_name || "Unknown"}
-                              </span>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-primary font-medium">Customer: </span>
+                                <span className="text-foreground truncate">
+                                  {customers.find(
+                                    (c) => c.id === quote.customer_id,
+                                  )?.company_name || "Unknown"}
+                                </span>
+                              </div>
                             </div>
                           )}
                         </div>
 
                         {quote.total_amount && (
-                          <div className="flex items-center gap-4 mb-4">
-                            <div className="bg-muted border border-border px-4 py-2 rounded-lg">
-                              <span className="text-xl sm:text-2xl font-bold text-foreground">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
+                            <div className="bg-muted border border-border px-4 py-2 rounded-lg w-fit">
+                              <span className="text-xl sm:text-2xl font-bold text-foreground break-all">
                                 KES {quote.total_amount.toLocaleString()}
                               </span>
                             </div>
                             <Badge
                               variant="outline"
-                              className="bg-background border-border text-xs text-muted-foreground font-semibold"
+                              className="bg-background border-border text-xs text-muted-foreground font-semibold w-fit"
                             >
                               {quote.include_vat
                                 ? `Incl. VAT (${quote.vat_rate || 16}%)`
@@ -1397,10 +1415,10 @@ const QuoteManagement = () => {
                           </div>
                         )}
 
-                        <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-6 text-sm text-muted-foreground">
                           <div className="flex items-center gap-2">
-                            <span>📅</span>
-                            <span>
+                            <span className="flex-shrink-0">📅</span>
+                            <span className="break-words">
                               Created:{" "}
                               {new Date(quote.created_at).toLocaleDateString(
                                 "en-GB",
@@ -1408,8 +1426,8 @@ const QuoteManagement = () => {
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span>⏰</span>
-                            <span>
+                            <span className="flex-shrink-0">⏰</span>
+                            <span className="break-words">
                               Valid Until:{" "}
                               {quote.valid_until
                                 ? new Date(
@@ -1424,12 +1442,12 @@ const QuoteManagement = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="flex flex-wrap justify-end gap-3">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-2 sm:gap-3">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleViewPDF(quote)}
-                      className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold"
+                      className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold w-full sm:w-auto"
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       View PDF
@@ -1438,7 +1456,7 @@ const QuoteManagement = () => {
                       size="sm"
                       variant="outline"
                       onClick={() => handleEditQuote(quote)}
-                      className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold"
+                      className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold w-full sm:w-auto"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
@@ -1448,7 +1466,7 @@ const QuoteManagement = () => {
                       variant="outline"
                       onClick={() => handleDeleteQuote(quote.id)}
                       disabled={deleteQuoteMutation.isPending}
-                      className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-background border-border text-muted-foreground hover:bg-muted font-semibold disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
                       {deleteQuoteMutation.isPending ? "Deleting..." : "Delete"}

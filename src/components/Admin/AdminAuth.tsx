@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
@@ -41,6 +41,9 @@ export const useAdminAuth = () => {
   return context;
 };
 
+// Inactivity timeout in milliseconds (30 minutes)
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000;
+
 export const AdminAuthProvider = ({
   children,
 }: {
@@ -51,6 +54,9 @@ export const AdminAuthProvider = ({
   const [loading, setLoading] = useState(true);
   const [sessionExpired, setSessionExpired] = useState(false);
   const { toast } = useToast();
+  
+  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastActivityRef = useRef<number>(Date.now());
 
   // Check if user is admin by checking their email domain or specific emails
   const checkAdminRole = async (
@@ -86,6 +92,92 @@ export const AdminAuthProvider = ({
     }
   };
 
+  // Function to handle auto logout due to inactivity
+  const handleInactivityLogout = useCallback(async () => {
+    console.log("Auto logout due to inactivity");
+    await supabase.auth.signOut();
+    setUser(null);
+    setIsAuthenticated(false);
+    setSessionExpired(true);
+    toast({
+      title: "Session Expired",
+      description: "You were logged out due to inactivity",
+      variant: "destructive",
+    });
+  }, [toast]);
+
+  // Reset inactivity timer
+  const resetInactivityTimer = useCallback(() => {
+    // Clear existing timer
+    if (inactivityTimerRef.current) {
+      clearTimeout(inactivityTimerRef.current);
+    }
+
+    // Update last activity time
+    lastActivityRef.current = Date.now();
+
+    // Set new timer only if user is authenticated
+    if (isAuthenticated) {
+      inactivityTimerRef.current = setTimeout(() => {
+        handleInactivityLogout();
+      }, INACTIVITY_TIMEOUT);
+    }
+  }, [isAuthenticated, handleInactivityLogout]);
+
+  // Track user activity
+  useEffect(() => {
+    if (!isAuthenticated) {
+      // Clear timer when not authenticated
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+        inactivityTimerRef.current = null;
+      }
+      return;
+    }
+
+    // Events to track user activity
+    const activityEvents = [
+      'mousedown',
+      'mousemove',
+      'keypress',
+      'scroll',
+      'touchstart',
+      'click',
+    ];
+
+    // Throttle function to avoid too many timer resets
+    let throttleTimeout: NodeJS.Timeout | null = null;
+    const throttledResetTimer = () => {
+      if (!throttleTimeout) {
+        throttleTimeout = setTimeout(() => {
+          resetInactivityTimer();
+          throttleTimeout = null;
+        }, 1000); // Throttle to once per second
+      }
+    };
+
+    // Add event listeners
+    activityEvents.forEach(event => {
+      window.addEventListener(event, throttledResetTimer);
+    });
+
+    // Initialize timer
+    resetInactivityTimer();
+
+    // Cleanup
+    return () => {
+      activityEvents.forEach(event => {
+        window.removeEventListener(event, throttledResetTimer);
+      });
+      if (throttleTimeout) {
+        clearTimeout(throttleTimeout);
+      }
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+    };
+  }, [isAuthenticated, resetInactivityTimer]);
+
   // Function to refresh session manually
   const refreshSession = async (): Promise<boolean> => {
     try {
@@ -108,6 +200,7 @@ export const AdminAuthProvider = ({
         setUser(adminUser);
         setIsAuthenticated(true);
         setSessionExpired(false);
+        resetInactivityTimer();
         return true;
       }
 
@@ -295,6 +388,12 @@ export const AdminAuthProvider = ({
 
   const logout = async () => {
     try {
+      // Clear inactivity timer
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+        inactivityTimerRef.current = null;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) {
         toast({

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bold,
@@ -56,25 +56,29 @@ interface BlogCategory {
 interface BlogEditorProps {
   post?: BlogPost;
   categories: BlogCategory[];
-  onSave: (post: BlogPost) => void;
-  onCancel: () => void;
+  onSave: (post: BlogPost) => void | Promise<void>;
+  onClose: () => void;
 }
 
 const BlogEditor = ({
   post,
   categories,
   onSave,
-  onCancel,
+  onClose,
 }: BlogEditorProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<BlogPost>({
-    title: "",
-    slug: "",
-    content: "",
-    excerpt: "",
-    tags: [],
-    published: false,
-    ...post,
+    title: post?.title || "",
+    slug: post?.slug || "",
+    content: post?.content || "",
+    excerpt: post?.excerpt || "",
+    tags: post?.tags || [],
+    published: post?.published || false,
+    category_id: post?.category_id,
+    featured_image_url: post?.featured_image_url,
+    seo_title: post?.seo_title,
+    seo_description: post?.seo_description,
+    reading_time: post?.reading_time,
   });
   const [newTag, setNewTag] = useState("");
   const [preview, setPreview] = useState(false);
@@ -94,7 +98,7 @@ const BlogEditor = ({
   // Calculate reading time
   useEffect(() => {
     const wordCount = formData.content.split(/\s+/).length;
-    const readingTime = Math.ceil(wordCount / 200); // Average 200 words per minute
+    const readingTime = Math.ceil(wordCount / 200);
     setFormData((prev) => ({ ...prev, reading_time: readingTime }));
   }, [formData.content]);
 
@@ -115,7 +119,6 @@ const BlogEditor = ({
       textarea.value.substring(end);
     setFormData((prev) => ({ ...prev, content: newValue }));
 
-    // Set cursor position
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(
@@ -126,10 +129,10 @@ const BlogEditor = ({
   };
 
   const addTag = () => {
-    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
+    if (newTag.trim() && !(formData.tags || []).includes(newTag.trim())) {
       setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, newTag.trim()],
+        tags: [...(prev.tags || []), newTag.trim()],
       }));
       setNewTag("");
     }
@@ -138,11 +141,11 @@ const BlogEditor = ({
   const removeTag = (tagToRemove: string) => {
     setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+      tags: (prev.tags || []).filter((tag) => tag !== tagToRemove),
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.title || !formData.content) {
       toast({
         title: "Error",
@@ -152,7 +155,7 @@ const BlogEditor = ({
       return;
     }
 
-    onSave(formData);
+    await onSave(formData);
   };
 
   const toolbarButtons = [
@@ -220,7 +223,7 @@ const BlogEditor = ({
             {preview ? "Edit" : "Preview"}
           </Button>
           <Button onClick={handleSubmit}>Save Post</Button>
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -276,7 +279,6 @@ const BlogEditor = ({
             <div>
               <Label htmlFor="content">Content *</Label>
               <div className="border rounded-md">
-                {/* Toolbar */}
                 <div className="flex flex-wrap gap-1 p-2 border-b bg-muted/50">
                   {toolbarButtons.map((button, index) => (
                     <Button
@@ -291,7 +293,6 @@ const BlogEditor = ({
                   ))}
                 </div>
 
-                {/* Editor */}
                 <Textarea
                   id="content-editor"
                   value={formData.content}
@@ -307,7 +308,7 @@ const BlogEditor = ({
                 />
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Reading time: ~{formData.reading_time} minutes
+                Reading time: ~{formData.reading_time || 0} minutes
               </p>
             </div>
           ) : (
@@ -347,7 +348,7 @@ const BlogEditor = ({
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
+                  {(categories || []).map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
                     </SelectItem>
@@ -386,7 +387,7 @@ const BlogEditor = ({
               <Button onClick={addTag}>Add</Button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {formData.tags.map((tag) => (
+              {(formData.tags || []).map((tag) => (
                 <Badge
                   key={tag}
                   variant="secondary"
