@@ -31,6 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import ProductTracker from "@/components/Analytics/ProductTracker";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import ProductRecommendations from "@/components/Products/ProductRecommendations";
+import WhatsAppContact from "@/components/common/WhatsAppContact";
 
 type DatabaseProductCategory = Database["public"]["Enums"]["product_category"];
 type CategoryValue = "all" | DatabaseProductCategory;
@@ -309,6 +310,10 @@ const ProductCatalog: React.FC = () => {
       <Header />
 
       <main className="py-20">
+        <WhatsAppContact
+          filterCategory={selectedCategory}
+          variant="floating"
+        />
         <div className="container mx-auto px-4">
           <div className="text-center mb-8 sm:mb-12 px-4">
             <Badge variant="secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">

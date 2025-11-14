@@ -53,6 +53,7 @@ import ProductTracker from "@/components/Analytics/ProductTracker";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import ProductRecommendations from "@/components/Products/ProductRecommendations";
 import OptimizedImage from "@/components/common/OptimizedImage";
+import WhatsAppContact from "@/components/common/WhatsAppContact";
 
 interface Variant {
   name: string;
@@ -1169,6 +1170,14 @@ const Products = () => {
             )}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
+          <WhatsAppContact
+            currentProduct={{
+              name: product.name,
+              model_number: product.model_number,
+            }}
+            variant="button"
+            className="flex-1 text-sm rounded-xl shadow-md"
+          />
           <Button
             className={`flex-1 text-sm ${favorites.includes(product.id) ? "bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground" : "bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground"} rounded-xl shadow-md`}
             onClick={() => toggleFavorite(product.id)}

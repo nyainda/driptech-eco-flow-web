@@ -8,6 +8,7 @@ import TeamSection from "@/components/Home/TeamSection";
 import PartnersSection from "@/components/Home/PartnersSection";
 import ScheduleConsultation from "@/components/Home/ScheduleConsultation";
 import { Button } from "@/components/ui/button";
+import WhatsAppContact from "@/components/WhatsAppContact"; // Assuming WhatsAppContact is in this path
 
 const Home = () => {
   return (
@@ -23,6 +24,7 @@ const Home = () => {
       <ScheduleConsultation>
         <Button className="w-full">Schedule Free Consultation</Button>
       </ScheduleConsultation>
+      <WhatsAppContact variant="floating" />
     </>
   );
 };
