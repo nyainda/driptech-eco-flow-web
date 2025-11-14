@@ -26,6 +26,7 @@ import {
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 
 // Interface for IrrigationKit (aligned with IrrigationKits)
 interface IrrigationKit {
@@ -375,27 +376,24 @@ const ServicesSection = () => {
                     className="group relative overflow-hidden bg-background border-border hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:border-primary/50"
                   >
                     {/* Image Section */}
-                    {imageUrl && (
+                    {images.length > 0 && (
                       <div className="aspect-[4/3] relative overflow-hidden bg-muted">
-                        <img
-                          src={imageUrl}
-                          alt={kit.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display =
-                              "none";
-                          }}
+                        <AutoRotatingGallery
+                          images={images}
+                          interval={3000}
+                          autoPlay={true}
+                          className="w-full h-full"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent dark:from-background/70 dark:via-background/20" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent dark:from-background/70 dark:via-background/20 pointer-events-none" />
                         {kit.featured && (
-                          <div className="absolute top-4 right-4">
+                          <div className="absolute top-4 right-4 z-10">
                             <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800 shadow-sm">
                               <Star className="h-3 w-3 mr-1" />
                               Featured
                             </Badge>
                           </div>
                         )}
-                        <div className="absolute bottom-4 left-4 right-4">
+                        <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-none">
                           <div className="text-white dark:text-foreground">
                             <h3 className="text-xl font-bold mb-1 drop-shadow-md">
                               {kit.name}
@@ -410,7 +408,7 @@ const ServicesSection = () => {
                     )}
 
                     <CardContent className="p-6 space-y-4">
-                      {!imageUrl && (
+                      {images.length === 0 && (
                         <div className="flex items-center justify-between mb-4">
                           <div>
                             <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
