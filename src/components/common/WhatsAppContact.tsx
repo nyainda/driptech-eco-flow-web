@@ -57,8 +57,7 @@ const WhatsAppContact = ({
         .select('id, name, model_number, price, category')
         .eq('in_stock', true)
         .order('featured', { ascending: false })
-        .order('name', { ascending: true })
-        .limit(20);
+        .order('name', { ascending: true });
 
       if (filterCategory && filterCategory !== 'all') {
         query = query.eq('category', filterCategory);
@@ -154,11 +153,11 @@ const WhatsAppContact = ({
         return (
           <Button
             size="lg"
-            className={`fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${className}`}
+            className={`fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ${className}`}
             onClick={currentProduct ? openWhatsApp : undefined}
           >
-            <MessageCircle className="h-6 w-6 mr-2" />
-            WhatsApp
+            <MessageCircle className="h-6 w-6 mr-2 animate-bounce" />
+            <span className="font-semibold">WhatsApp</span>
           </Button>
         );
       default:
@@ -185,7 +184,7 @@ const WhatsAppContact = ({
         <DialogHeader>
           <DialogTitle>Select Products to Inquire About</DialogTitle>
           <DialogDescription>
-            Choose one or more products you'd like to ask about via WhatsApp
+            Choose one or more products you'd like to ask about via WhatsApp. Showing all available products.
           </DialogDescription>
         </DialogHeader>
 

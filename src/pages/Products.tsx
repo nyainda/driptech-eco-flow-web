@@ -1420,6 +1420,11 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+      <WhatsAppContact
+        filterCategory={category}
+        variant="floating"
+        className="shadow-2xl hover:shadow-3xl"
+      />
       <main>
         <section className="py-12 sm:py-16 lg:py-20 bg-background border-b border-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">

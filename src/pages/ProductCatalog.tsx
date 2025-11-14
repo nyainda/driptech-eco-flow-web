@@ -313,6 +313,7 @@ const ProductCatalog: React.FC = () => {
         <WhatsAppContact
           filterCategory={selectedCategory}
           variant="floating"
+          className="shadow-2xl hover:shadow-3xl animate-pulse"
         />
         <div className="container mx-auto px-4">
           <div className="text-center mb-8 sm:mb-12 px-4">
