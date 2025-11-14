@@ -38,8 +38,7 @@ const ProductRecommendations = ({
       try {
         let query = supabase
           .from('products')
-          .select('*')
-          .eq('in_stock', true);
+          .select('*');
 
         if (currentProductId) {
           query = query.neq('id', currentProductId);
@@ -49,13 +48,28 @@ const ProductRecommendations = ({
           query = query.eq('category', currentCategory);
         }
 
-        const { data, error } = await query
-          .order('featured', { ascending: false })
+        // First try to get featured products
+        const { data: featuredData, error: featuredError } = await query
+          .eq('featured', true)
+          .eq('in_stock', true)
           .order('created_at', { ascending: false })
           .limit(limit);
 
-        if (error) throw error;
-        setRecommendations(data || []);
+        if (featuredError) throw featuredError;
+
+        // If we don't have enough featured products, get more products
+        if (!featuredData || featuredData.length < limit) {
+          const { data: moreData, error: moreError } = await query
+            .eq('in_stock', true)
+            .order('featured', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+          if (moreError) throw moreError;
+          setRecommendations(moreData || []);
+        } else {
+          setRecommendations(featuredData);
+        }
       } catch (error) {
         console.error('Error fetching recommendations:', error);
       } finally {

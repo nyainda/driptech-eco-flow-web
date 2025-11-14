@@ -29,6 +29,8 @@ import Footer from "@/components/Layout/Footer";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { useToast } from "@/hooks/use-toast";
 import ProductTracker from "@/components/Analytics/ProductTracker";
+import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
+import ProductRecommendations from "@/components/Products/ProductRecommendations";
 
 type DatabaseProductCategory = Database["public"]["Enums"]["product_category"];
 type CategoryValue = "all" | DatabaseProductCategory;
@@ -98,10 +100,11 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         <CardContent className="p-0">
           <div className="relative aspect-video bg-muted/50 overflow-hidden rounded-t-lg">
             {product.images && product.images.length > 0 ? (
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              <AutoRotatingGallery
+                images={product.images}
+                interval={4000}
+                autoPlay={true}
+                className="w-full h-full"
               />
             ) : (
               <div className="flex items-center justify-center h-full">
@@ -417,6 +420,15 @@ const ProductCatalog: React.FC = () => {
               <Button variant="outline" onClick={handleClearFilters}>
                 Clear Filters
               </Button>
+            </div>
+          )}
+
+          {filteredProducts.length > 0 && (
+            <div className="mt-16 mb-16">
+              <ProductRecommendations
+                currentCategory={selectedCategory !== "all" ? selectedCategory : undefined}
+                limit={4}
+              />
             </div>
           )}
 
