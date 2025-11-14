@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import QuoteModal from "./QuoteModal";
+import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 
 interface Variant {
   name: string;
@@ -268,13 +269,14 @@ const ProductsShowcase = () => {
           {/* Product Image */}
           <div className="relative overflow-hidden">
             {product.images && product.images.length > 0 ? (
-              <div className="aspect-[4/3] bg-muted overflow-hidden">
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              <div className="aspect-[4/3] bg-muted overflow-hidden relative">
+                <AutoRotatingGallery
+                  images={product.images}
+                  interval={3000}
+                  autoPlay={true}
+                  className="w-full h-full"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
               </div>
             ) : (
               <div className="aspect-[4/3] bg-muted flex items-center justify-center relative overflow-hidden">
