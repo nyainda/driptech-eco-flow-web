@@ -45,7 +45,7 @@ interface WhatsAppContactProps {
 const WhatsAppContact = ({
   currentProduct,
   filterCategory,
-  phoneNumber = '+254111409454', // Real WhatsApp number: 0111 409 454
+  phoneNumber = '+254114575401', 
   variant = 'button',
   className = '',
 }: WhatsAppContactProps) => {

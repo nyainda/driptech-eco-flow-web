@@ -1354,7 +1354,7 @@ const IrrigationKits = () => {
                           className="light:bg-blue-600 light:hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
                         >
                           <Phone className="h-5 w-5 mr-2" />
-                          Call +254111409454
+                          Call +254114575401
                         </Button>
                         <Button
                           variant="outline"

@@ -21,7 +21,7 @@ const Contact = () => {
       title: "Call Us",
       subtitle: "Speak with our irrigation experts",
       details: ["0111 409 454", "0114 575 401"],
-      action: "tel:+254111409454",
+      action: "tel:+254114575401",
       actionText: "Call Now",
     },
     {
@@ -254,7 +254,7 @@ const Contact = () => {
                           Get Directions <ArrowRight className="h-3 w-3 ml-1" />
                         </a>
                         <a
-                          href="https://wa.me/254111409454?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
+                          href="https://wa.me/254114575401?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full hover:bg-muted/50 transition-colors"

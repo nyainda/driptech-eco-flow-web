@@ -306,7 +306,7 @@ const About = () => {
                       Get Free Consultation
                     </a>
                     <a
-                      href="tel:+254111409454"
+                      href="tel:+254114575401"
                       className="inline-flex items-center px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-semibold hover:bg-secondary/90 hover:shadow-lg hover:scale-105 transition-all duration-300"
                     >
                       <Phone className="h-5 w-5 mr-2" />
