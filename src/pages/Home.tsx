@@ -8,7 +8,7 @@ import TeamSection from "@/components/Home/TeamSection";
 import PartnersSection from "@/components/Home/PartnersSection";
 import ScheduleConsultation from "@/components/Home/ScheduleConsultation";
 import { Button } from "@/components/ui/button";
-import WhatsAppContact from "@/components/WhatsAppContact"; // Assuming WhatsAppContact is in this path
+import WhatsAppContact from "@/components/common/WhatsAppContact";
 
 const Home = () => {
   return (
