@@ -21,6 +21,17 @@
     scroll-behavior: smooth;
   }
 
+  /* Smooth theme transition */
+  html.transitioning,
+  html.transitioning *,
+  html.transitioning *:before,
+  html.transitioning *:after {
+    transition: background-color 0.2s ease-in-out, 
+                border-color 0.2s ease-in-out,
+                color 0.2s ease-in-out !important;
+    transition-delay: 0s !important;
+  }
+
   body {
     font-feature-settings:
       "rlig" 1,

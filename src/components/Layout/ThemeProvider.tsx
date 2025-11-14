@@ -33,26 +33,36 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove("light", "dark");
+    // Add transitioning class for smooth theme switch
+    root.classList.add('transitioning');
 
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
+    // Use requestAnimationFrame to ensure smooth transition
+    requestAnimationFrame(() => {
+      root.classList.remove("light", "dark");
 
-      root.classList.add(systemTheme);
-      return;
-    }
+      if (theme === "system") {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light";
 
-    root.classList.add(theme);
+        root.classList.add(systemTheme);
+      } else {
+        root.classList.add(theme);
+      }
+
+      // Remove transitioning class after transition completes
+      setTimeout(() => {
+        root.classList.remove('transitioning');
+      }, 200);
+    });
   }, [theme]);
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
     },
   };
 
