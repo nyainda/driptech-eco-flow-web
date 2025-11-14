@@ -101,13 +101,13 @@ const ProductRecommendations = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center gap-2">
-        <Sparkles className="h-6 w-6 text-primary" />
-        <h2 className="text-2xl font-bold">Recommended for You</h2>
+        <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+        <h2 className="text-xl sm:text-2xl font-bold">Recommended for You</h2>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {recommendations.map((product) => (
           <Card
             key={product.id}
@@ -115,9 +115,9 @@ const ProductRecommendations = ({
           >
             <div className="relative aspect-square overflow-hidden bg-gray-100">
               {product.featured && (
-                <Badge className="absolute left-2 top-2 z-10 bg-yellow-500">
-                  <Star className="mr-1 h-3 w-3" />
-                  Featured
+                <Badge className="absolute left-1 sm:left-2 top-1 sm:top-2 z-10 bg-yellow-500 text-xs">
+                  <Star className="mr-1 h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                  <span className="hidden sm:inline">Featured</span>
                 </Badge>
               )}
               <OptimizedImage
@@ -128,22 +128,22 @@ const ProductRecommendations = ({
               />
             </div>
 
-            <CardContent className="p-4">
-              <h3 className="line-clamp-2 font-semibold text-foreground">
+            <CardContent className="p-3 sm:p-4">
+              <h3 className="line-clamp-2 text-sm sm:text-base font-semibold text-foreground">
                 {product.name}
               </h3>
               {product.description && (
-                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                <p className="mt-1 sm:mt-2 line-clamp-2 text-xs sm:text-sm text-muted-foreground">
                   {product.description}
                 </p>
               )}
               {product.price && (
-                <p className="mt-2 text-lg font-bold text-primary">
+                <p className="mt-1 sm:mt-2 text-base sm:text-lg font-bold text-primary">
                   KES {product.price.toLocaleString()}
                 </p>
               )}
               <Link to={`/products/${product.category.replace('_', '-')}`}>
-                <Button className="mt-4 w-full" variant="outline">
+                <Button className="mt-3 sm:mt-4 w-full text-xs sm:text-sm h-8 sm:h-10" variant="outline">
                   View Details
                 </Button>
               </Link>

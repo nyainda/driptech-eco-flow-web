@@ -310,28 +310,28 @@ const ProductCatalog: React.FC = () => {
 
       <main className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">
+          <div className="text-center mb-8 sm:mb-12 px-4">
+            <Badge variant="secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">
               📦 Complete Product Range
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-6">
               Product <span className="text-primary">Catalog</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               Explore our comprehensive range of irrigation solutions designed
               for efficiency, sustainability, and superior performance.
             </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-4 mb-8 p-6 bg-muted/30 rounded-2xl">
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8 p-4 sm:p-6 bg-muted/30 rounded-xl sm:rounded-2xl">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search products by name, model, or description..."
+                  placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 h-9 sm:h-10 text-sm"
                 />
               </div>
             </div>
@@ -342,15 +342,15 @@ const ProductCatalog: React.FC = () => {
                 setSelectedCategory(value)
               }
             >
-              <SelectTrigger className="w-full lg:w-64">
+              <SelectTrigger className="w-full lg:w-64 h-9 sm:h-10 text-sm">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map((category) => (
                   <SelectItem key={category.value} value={category.value}>
                     <div className="flex items-center gap-2">
-                      <category.icon className="h-4 w-4" />
-                      {category.label}
+                      <category.icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="text-xs sm:text-sm">{category.label}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -358,14 +358,14 @@ const ProductCatalog: React.FC = () => {
             </Select>
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full lg:w-48">
+              <SelectTrigger className="w-full lg:w-48 h-9 sm:h-10 text-sm">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="name">Name A-Z</SelectItem>
-                <SelectItem value="price">Price Low-High</SelectItem>
-                <SelectItem value="created_at">Newest First</SelectItem>
-                <SelectItem value="featured">Featured First</SelectItem>
+                <SelectItem value="name" className="text-xs sm:text-sm">Name A-Z</SelectItem>
+                <SelectItem value="price" className="text-xs sm:text-sm">Price Low-High</SelectItem>
+                <SelectItem value="created_at" className="text-xs sm:text-sm">Newest First</SelectItem>
+                <SelectItem value="featured" className="text-xs sm:text-sm">Featured First</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -385,22 +385,22 @@ const ProductCatalog: React.FC = () => {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {Array.from({ length: 8 }).map((_, index) => (
                 <Card key={index} className="animate-pulse">
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      <div className="h-48 bg-muted rounded-lg"></div>
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                      <div className="h-6 bg-muted rounded"></div>
-                      <div className="h-16 bg-muted rounded"></div>
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="space-y-3 sm:space-y-4">
+                      <div className="h-40 sm:h-48 bg-muted rounded-lg"></div>
+                      <div className="h-3 sm:h-4 bg-muted rounded w-3/4"></div>
+                      <div className="h-5 sm:h-6 bg-muted rounded"></div>
+                      <div className="h-12 sm:h-16 bg-muted rounded"></div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
