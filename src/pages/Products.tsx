@@ -50,6 +50,9 @@ import {
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import ProductTracker from "@/components/Analytics/ProductTracker";
+import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
+import ProductRecommendations from "@/components/Products/ProductRecommendations";
+import OptimizedImage from "@/components/common/OptimizedImage";
 
 interface Variant {
   name: string;
@@ -448,10 +451,13 @@ const Products = () => {
           <CardHeader className="p-0">
             <div className="relative aspect-video bg-muted rounded-t-xl overflow-hidden">
               {product.images && product.images[0] ? (
-                <img
+                <OptimizedImage
                   src={product.images[0]}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  priority={false}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -845,18 +851,14 @@ const Products = () => {
         {product.images && product.images.length > 0 && (
           <div className="space-y-4">
             <h4 className="text-base sm:text-lg font-semibold text-foreground">
-              Product Images
+              Product Gallery
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {product.images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`${product.name} - ${index + 1}`}
-                  className="w-full h-32 sm:h-48 object-cover rounded-xl border border-border hover:shadow-lg transition-shadow cursor-pointer"
-                />
-              ))}
-            </div>
+            <AutoRotatingGallery
+              images={product.images}
+              interval={3000}
+              autoPlay={true}
+              className="mx-auto max-w-2xl"
+            />
           </div>
         )}
 
@@ -1584,6 +1586,15 @@ const Products = () => {
                 </Button>
               </div>
             )}
+          </div>
+        </section>
+
+        <section className="bg-background py-12 sm:py-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <ProductRecommendations
+              currentCategory={category}
+              limit={4}
+            />
           </div>
         </section>
       </main>

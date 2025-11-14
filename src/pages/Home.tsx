@@ -6,6 +6,7 @@ import BlogSection from "@/components/Home/BlogSection";
 import VideoSection from "@/components/Home/VideoSection";
 import SuccessStoriesSection from "@/components/Home/SuccessStoriesSection";
 import TeamSection from "@/components/Home/TeamSection";
+import PartnersSection from "@/components/Home/PartnersSection";
 import ScheduleConsultation from "@/components/Home/ScheduleConsultation";
 import { Button } from "@/components/ui/button";
 
@@ -19,6 +20,7 @@ const Home = () => {
       <VideoSection />
       <BlogSection />
       <SuccessStoriesSection />
+      <PartnersSection />
       <TeamSection />
       <ScheduleConsultation>
         <Button className="w-full">Schedule Free Consultation</Button>
