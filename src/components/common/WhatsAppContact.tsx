@@ -151,14 +151,15 @@ const WhatsAppContact = ({
         );
       case 'floating':
         return (
-          <Button
-            size="lg"
-            className={`fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ${className}`}
+          <button
             onClick={currentProduct ? openWhatsApp : undefined}
+            className={`fixed bottom-8 right-8 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center ${className}`}
           >
-            <MessageCircle className="h-6 w-6 mr-2 animate-bounce" />
-            <span className="font-semibold">WhatsApp</span>
-          </Button>
+            <span className="text-2xl">💬</span>
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+              !
+            </div>
+          </button>
         );
       default:
         return (
