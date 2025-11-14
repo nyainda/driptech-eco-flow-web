@@ -222,6 +222,7 @@ const Header = () => {
       items: [
         { title: "Product Catalog", href: "/products" },
         { title: "Installation Guides", href: "/installation-guides" },
+        { title: "Video Tutorials", href: "/videos" },
         { title: "Technical Support", href: "/technical-support" },
         { title: "Case Studies", href: "/case-studies" },
         { title: "Technicians", href: "/technicians" },
@@ -714,7 +715,7 @@ const Header = () => {
                               </div>
                             ) : (
                               <Link
-                                to={item.href}
+                                to={item.href || '/'}
                                 className="flex items-center justify-between py-2.5 px-3 ml-3 text-muted-foreground hover:text-primary hover:bg-muted/40 rounded-lg transition-all duration-200 text-sm font-medium group min-h-[44px]"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >

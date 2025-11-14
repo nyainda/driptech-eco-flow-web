@@ -3,7 +3,6 @@ import ServicesSection from "@/components/Home/ServicesSection";
 import ProductsShowcase from "@/components/Home/ProductsShowcase";
 import ProjectsSection from "@/components/Home/ProjectsSection";
 import BlogSection from "@/components/Home/BlogSection";
-import VideoSection from "@/components/Home/VideoSection";
 import SuccessStoriesSection from "@/components/Home/SuccessStoriesSection";
 import TeamSection from "@/components/Home/TeamSection";
 import PartnersSection from "@/components/Home/PartnersSection";
@@ -17,7 +16,6 @@ const Home = () => {
       <ServicesSection />
       <ProductsShowcase />
       <ProjectsSection />
-      <VideoSection />
       <BlogSection />
       <SuccessStoriesSection />
       <PartnersSection />
