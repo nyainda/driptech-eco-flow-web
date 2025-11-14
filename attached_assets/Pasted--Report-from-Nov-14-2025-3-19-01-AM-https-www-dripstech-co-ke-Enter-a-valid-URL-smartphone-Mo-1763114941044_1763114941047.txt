@@ -1,0 +1,182 @@
+
+Report from Nov 14, 2025, 3:19:01 AM
+https://www.dripstech.co.ke/
+Enter a valid URL
+
+
+smartphone
+Mobile
+
+computer
+Desktop
+
+Discover what your real users are experiencing
+This URL
+Origin
+
+Core Web Vitals Assessment: 
+Failed
+
+Expand view
+Largest Contentful Paint (LCP)
+4.9 s
+
+Interaction to Next Paint (INP)
+N/A
+
+Cumulative Layout Shift (CLS)
+0.01
+
+Other Notable Metrics
+First Contentful Paint (FCP)
+4.1 s
+
+Time to First Byte (TTFB)
+0.9 s
+
+Latest 28-day period
+(
+history
+)
+Various mobile devices
+
+Many samples (
+Chrome UX Report
+)
+Full visit durations
+Various network connections
+
+All Chrome versions
+
+Diagnose performance issues
+64
+Performance
+83
+Accessibility
+96
+Best Practices
+85
+SEO
+64
+FCP
++3
+LCP
++1
+TBT
++28
+CLS
++25
+SI
++9
+Performance
+Values are estimated and may vary. The performance score is calculated directly from these metrics.See calculator.
+0–49
+50–89
+90–100
+Final Screenshot
+
+Metrics
+Expand view
+First Contentful Paint
+3.8 s
+Largest Contentful Paint
+8.1 s
+Total Blocking Time
+180 ms
+Cumulative Layout Shift
+0.009
+Speed Index
+3.8 s
+Captured at Nov 14, 2025, 3:19 AM EST
+Emulated Moto G Power with Lighthouse 13.0.1
+Single page session
+Initial page load
+Slow 4G throttling
+Using HeadlessChromium 137.0.7151.119 with lr
+View Treemap
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Show audits relevant to:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+Insights
+Render blocking requests Est savings of 300 ms
+Improve image delivery Est savings of 396 KiB
+Legacy JavaScript Est savings of 10 KiB
+LCP request discovery
+Network dependency tree
+Use efficient cache lifetimes Est savings of 5,135 KiB
+Layout shift culprits
+Optimize DOM size
+LCP breakdown
+3rd parties
+These insights are also available in the Chrome DevTools Performance Panel - record a trace to view more detailed information.
+Diagnostics
+Reduce unused JavaScript Est savings of 388 KiB
+Reduce unused CSS Est savings of 22 KiB
+Avoid enormous network payloads Total size was 7,701 KiB
+Avoid long main-thread tasks 9 long tasks found
+Avoid non-composited animations 4 animated elements found
+More information about the performance of your application. These numbers don't directly affect the Performance score.
+Passed audits (12)
+Show
+83
+Accessibility
+These checks highlight opportunities to improve the accessibility of your web app. Automatic detection can only detect a subset of issues and does not guarantee the accessibility of your web app, so manual testing is also encouraged.
+Names and labels
+Buttons do not have an accessible name
+Links do not have a discernible name
+These are opportunities to improve the semantics of the controls in your application. This may enhance the experience for users of assistive technology, like a screen reader.
+Contrast
+Background and foreground colors do not have a sufficient contrast ratio.
+These are opportunities to improve the legibility of your content.
+Best practices
+Touch targets do not have sufficient size or spacing.
+Identical links have the same purpose.
+These items highlight common accessibility best practices.
+Navigation
+Heading elements are not in a sequentially-descending order
+These are opportunities to improve keyboard navigation in your application.
+Additional items to manually check (10)
+Show
+These items address areas which an automated testing tool cannot cover. Learn more in our guide on conducting an accessibility review.
+Passed audits (21)
+Show
+Not applicable (33)
+Show
+96
+Best Practices
+General
+Browser errors were logged to the console
+Missing source maps for large first-party JavaScript
+Trust and Safety
+Ensure CSP is effective against XSS attacks
+Use a strong HSTS policy
+Ensure proper origin isolation with COOP
+Mitigate clickjacking with XFO or CSP
+Mitigate DOM-based XSS with Trusted Types
+Passed audits (11)
+Show
+Not applicable (2)
+Show
+85
+SEO
+These checks ensure that your page is following basic search engine optimization advice. There are many additional factors Lighthouse does not score here that may affect your search ranking, including performance on Core Web Vitals. Learn more about Google Search Essentials.
+Content Best Practices
+Links do not have descriptive text 6 links found
+Document does not have a valid rel=canonicalMultiple conflicting URLs (https://www.dripstech.co.ke/, https://driptech.co.ke/)
+Format your HTML in a way that enables crawlers to better understand your app’s content.
