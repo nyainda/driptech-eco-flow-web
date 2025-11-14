@@ -438,19 +438,6 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Floating WhatsApp Button */}
-      <div className="fixed bottom-8 right-8 z-20">
-        <button
-          onClick={() => openWhatsApp(whatsappNumbers.secondary)}
-          className="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 relative cursor-pointer flex items-center justify-center"
-        >
-          <span className="text-2xl">💬</span>
-          <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-            !
-          </div>
-        </button>
-      </div>
-
       {/* Decorative Elements */}
       <div className="absolute top-20 right-20 w-40 h-40 bg-gradient-to-r from-green-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse hidden lg:block" />
       <div className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-r from-blue-400/5 to-green-400/5 rounded-full blur-2xl animate-pulse hidden lg:block" />
