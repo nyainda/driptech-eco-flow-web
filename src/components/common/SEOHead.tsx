@@ -32,6 +32,7 @@ export default function SEOHead({
     description: "Advanced Irrigation Solutions for Modern Agriculture",
     url: "https://www.dripstech.co.ke",
     logo: "https://www.dripstech.co.ke/driptech-logo.png",
+    image: "https://www.dripstech.co.ke/driptech-logo.png",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+254-700-000-000",
