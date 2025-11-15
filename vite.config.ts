@@ -1,4 +1,3 @@
-
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
@@ -27,6 +26,16 @@ export default defineConfig(async ({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+      },
+    },
+    build: {
+      minify: 'terser' as const,
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        },
       },
     },
   };
