@@ -1,10 +1,10 @@
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
-import { defineConfig, type PluginOption, type UserConfig } from "vite";
+import { defineConfig, type PluginOption, type UserConfig, type ConfigEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig(async ({ mode }): Promise<UserConfig> => {
+export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => {
   const plugins: PluginOption[] = [react()];
   
   // Only load componentTagger in development mode
@@ -27,6 +27,7 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },
+      dedupe: ['react', 'react-dom'], // Force single React version
     },
     esbuild: {
       drop: mode === 'production' ? ['console', 'debugger'] : [],
@@ -36,7 +37,6 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            // Vendor chunks
             if (id.includes('node_modules')) {
               if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
                 return 'react-vendor';
