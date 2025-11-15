@@ -13,7 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import QuoteModal from "@/components/Home/QuoteModal";
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const Services = () => {
   const services = [
