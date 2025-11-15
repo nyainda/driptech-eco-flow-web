@@ -77,15 +77,7 @@ const PartnersSection = () => {
               </div>
 
               {/* Visit Website */}
-              <a
-                href="https://accentinternationals.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
-              >
-                Visit Partner Website
-                <ExternalLink className="h-4 w-4" />
-              </a>
+              
             </CardContent>
           </Card>
         </div>
