@@ -5,33 +5,38 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/Layout/ThemeProvider";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Admin from "./pages/Admin";
-import Products from "./pages/Products";
-import Services from "./pages/Services";
-import Projects from "./pages/Projects";
-import Team from "./pages/Team";
-import VideosPage from "./pages/VideosPage";
-import About from "./pages/About";
-import NewsArticle from "./pages/NewsArticle";
-import Technicians from "./pages/Technicians";
-import SuccessStories from "./pages/SuccessStories";
-import Contact from "./pages/Contact";
-import TechnicalSupport from "./pages/TechnicalSupport";
-import CaseStudies from "./pages/CaseStudies";
-import InstallationGuides from "@/pages/InstallationGuides";
-import News from "./pages/News";
-import Certifications from "./pages/Certifications";
-import BlogPage from "@/components/Home/BlogPage";
-import BlogPostPage from "@/components/Home/BlogPostPage";
-import VideoSection from "./components/Home/VideoSection";
-import VisitorTracker from "./components/Analytics/VisitorTracker";
-import ScrollToTop from "@/components/common/ScrollToTop";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Cookies from "./pages/Cookies";
-import IrrigationKits from "@/pages/IrrigationKits";
+import { lazy, Suspense } from "react";
+import LoadingSpinner from "./components/common/LoadingSpinner";
+
+// Lazy load pages
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Admin = lazy(() => import("./pages/Admin"));
+const Products = lazy(() => import("./pages/Products"));
+const Services = lazy(() => import("./pages/Services"));
+const Projects = lazy(() => import("./pages/Projects"));
+const TeamGrid = lazy(() => import("./pages/TeamGrid"));
+const VideosPage = lazy(() => import("./pages/VideosPage"));
+const About = lazy(() => import("./pages/About"));
+const NewsArticle = lazy(() => import("./pages/NewsArticle"));
+const Technicians = lazy(() => import("./pages/Technicians"));
+const SuccessStories = lazy(() => import("./pages/SuccessStories"));
+const Contact = lazy(() => import("./pages/Contact"));
+const TechnicalSupport = lazy(() => import("./pages/TechnicalSupport"));
+const CaseStudies = lazy(() => import("./pages/CaseStudies"));
+const InstallationGuides = lazy(() => import("@/pages/InstallationGuides"));
+const News = lazy(() => import("./pages/News"));
+const Certifications = lazy(() => import("./pages/Certifications"));
+const BlogPage = lazy(() => import("@/components/Home/BlogPage"));
+const BlogPostPage = lazy(() => import("@/components/Home/BlogPostPage"));
+const VideoSection = lazy(() => import("./components/Home/VideoSection"));
+const VisitorTracker = lazy(() => import("./components/Analytics/VisitorTracker"));
+const ScrollToTop = lazy(() => import("@/components/common/ScrollToTop"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Cookies = lazy(() => import("./pages/Cookies"));
+const IrrigationKits = lazy(() => import("@/pages/IrrigationKits"));
+const ProductCatalog = lazy(() => import("./pages/ProductCatalog")); // Added ProductCatalog import
 
 const queryClient = new QueryClient();
 
@@ -44,57 +49,60 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <VisitorTracker />
-            <Routes>
-              {/* Main pages */}
-              <Route path="/" element={<Index />} />
-              <Route path="/admin" element={<Admin />} />
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                {/* Main pages */}
+                <Route path="/" element={<Index />} />
+                <Route path="/admin" element={<Admin />} />
 
-              {/* Product routes */}
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/:category" element={<Products />} />
-              <Route path="/products/:category/:product" element={<Products />} />
+                {/* Product routes */}
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:category" element={<Products />} />
+                <Route path="/products/:category/:product" element={<Products />} />
+                <Route path="/catalog" element={<ProductCatalog />} /> {/* Added ProductCatalog route */}
 
-              {/* Service routes */}
-              <Route path="/services" element={<Services />} />
-              <Route path="/services/:service" element={<Services />} />
+                {/* Service routes */}
+                <Route path="/services" element={<Services />} />
+                <Route path="/services/:service" element={<Services />} />
 
-              {/* Support and info pages */}
-              <Route path="/installation-guides" element={<InstallationGuides />} />
-              <Route path="/case-studies" element={<CaseStudies />} />
-              <Route path="/technical-support" element={<TechnicalSupport />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/success-stories" element={<SuccessStories />} />
+                {/* Support and info pages */}
+                <Route path="/installation-guides" element={<InstallationGuides />} />
+                <Route path="/case-studies" element={<CaseStudies />} />
+                <Route path="/technical-support" element={<TechnicalSupport />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/success-stories" element={<SuccessStories />} />
 
-              {/* Team and company */}
-              <Route path="/team" element={<Team />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/technicians" element={<Technicians />} />
-              <Route path="/contact" element={<Contact />} />
+                {/* Team and company */}
+                <Route path="/team" element={<TeamGrid />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/technicians" element={<Technicians />} />
+                <Route path="/contact" element={<Contact />} />
 
-              {/* News and certifications */}
-              <Route path="/news" element={<News />} />
-              <Route path="/news/:slug" element={<NewsArticle />} />
-              <Route path="/certifications" element={<Certifications />} />
+                {/* News and certifications */}
+                <Route path="/news" element={<News />} />
+                <Route path="/news/:slug" element={<NewsArticle />} />
+                <Route path="/certifications" element={<Certifications />} />
 
-              {/* Irrigation Kits */}
-              <Route path="/irrigation-kits" element={<IrrigationKits />} />
+                {/* Irrigation Kits */}
+                <Route path="/irrigation-kits" element={<IrrigationKits />} />
 
-              {/* Blog routes */}
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog/:slug" element={<BlogPostPage />} />
+                {/* Blog routes */}
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogPostPage />} />
 
-              {/* Video section */}
-              <Route path="/video" element={<VideoSection />} />
-              <Route path="/videos" element={<VideosPage />} />
+                {/* Video section */}
+                <Route path="/video" element={<VideoSection />} />
+                <Route path="/videos" element={<VideosPage />} />
 
-              {/* Legal pages */}
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/cookies" element={<Cookies />} />
+                {/* Legal pages */}
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/cookies" element={<Cookies />} />
 
-              {/* Catch-all route for 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                {/* Catch-all route for 404 */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
             <ScrollToTop />
           </BrowserRouter>
         </TooltipProvider>

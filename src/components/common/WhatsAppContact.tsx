@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -145,13 +144,13 @@ const WhatsAppContact = ({
     );
 
     let message = 'Hi, I would like to inquire about the following products:\n\n';
-    
+
     selectedProductDetails.forEach((product, index) => {
       const modelInfo = product.model_number ? ` (Model: ${product.model_number})` : '';
       const priceInfo = product.price ? ` - KES ${product.price.toLocaleString()}` : '';
       message += `${index + 1}. *${product.name}*${modelInfo}${priceInfo}\n`;
     });
-    
+
     message += '\nCould you please provide more details about these products?';
 
     return message;
@@ -179,15 +178,20 @@ const WhatsAppContact = ({
         );
       case 'floating':
         return (
-          <button
-            onClick={currentProduct ? openWhatsApp : undefined}
-            className={`fixed bottom-8 right-8 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center ${className}`}
+          <a
+            href={`https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+              generateWhatsAppMessage()
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-8 right-8 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
+            aria-label="Contact us on WhatsApp"
           >
             <MessageCircle className="h-8 w-8" />
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
               !
             </div>
-          </button>
+          </a>
         );
       default:
         return (
@@ -308,7 +312,7 @@ const WhatsAppContact = ({
               {filteredProducts.map((product) => {
                 const isSelected = selectedProducts.includes(product.id);
                 const IconComponent = getCategoryIcon(product.category);
-                
+
                 return (
                   <Card
                     key={product.id}
@@ -333,7 +337,7 @@ const WhatsAppContact = ({
                             <IconComponent className="h-16 w-16 text-primary opacity-70" />
                           </div>
                         )}
-                        
+
                         {/* Selection indicator */}
                         {isSelected && (
                           <div className="absolute top-3 right-3">
@@ -356,20 +360,20 @@ const WhatsAppContact = ({
                         <h4 className="font-semibold line-clamp-2 text-foreground">
                           {product.name}
                         </h4>
-                        
+
                         {product.model_number && (
                           <p className="text-xs text-muted-foreground">
                             Model: {product.model_number}
                           </p>
                         )}
-                        
+
                         <div className="flex items-center justify-between pt-2">
                           {product.price && (
                             <span className="text-sm font-bold text-primary">
                               KES {product.price.toLocaleString()}
                             </span>
                           )}
-                          
+
                           <div className={`text-xs px-2 py-1 rounded-full ${
                             isSelected 
                               ? 'bg-green-500 text-white' 
@@ -398,7 +402,7 @@ const WhatsAppContact = ({
               <span>No products selected - Send general inquiry</span>
             )}
           </div>
-          
+
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -406,7 +410,7 @@ const WhatsAppContact = ({
             >
               Cancel
             </Button>
-            
+
             <Button
               onClick={openWhatsApp}
               className="bg-green-500 hover:bg-green-600 text-white"
