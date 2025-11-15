@@ -36,12 +36,12 @@ const PartnersSection = () => {
               </div>
               
               <h3 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 text-foreground">
-                Accent Internationals
+                Driptech Solution 
               </h3>
               
               <Badge className="mb-3 sm:mb-4 bg-muted text-foreground border-border text-sm">
                 <Shield className="h-3 w-3 mr-1" />
-                ISO 9001:2015 Certified
+                ISO 3000:1998 Certified
               </Badge>
               
               <p className="text-base sm:text-lg font-medium text-muted-foreground mb-3 sm:mb-4">
@@ -97,7 +97,7 @@ const PartnersSection = () => {
             <div className="flex items-center gap-2 rounded-full bg-background px-4 py-2.5 sm:py-3 border border-border shadow-sm">
               <Award className="h-4 w-4 text-primary flex-shrink-0" />
               <span className="text-xs sm:text-sm font-medium text-foreground">
-                ISO 9001:2015 Certified
+                ISO 3000:1998 Certified
               </span>
             </div>
             <div className="flex items-center gap-2 rounded-full bg-background px-4 py-2.5 sm:py-3 border border-border shadow-sm">
