@@ -4,14 +4,14 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(({ mode }) => {
   const plugins: PluginOption[] = [react()];
   
   // Only load componentTagger in development mode
   if (mode === 'development') {
     try {
-      const { componentTagger } = await import("lovable-tagger");
-      plugins.push(componentTagger());
+      const { componentTagger } = require("lovable-tagger");
+      plugins.push(componentTagger.componentTagger());
     } catch (error) {
       console.warn('lovable-tagger not available:', error);
     }
@@ -28,15 +28,8 @@ export default defineConfig(async ({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    build: {
-      minify: 'terser' as const,
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-          pure_funcs: ['console.log', 'console.info', 'console.debug'],
-        },
-      },
+    esbuild: {
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
   };
 });
