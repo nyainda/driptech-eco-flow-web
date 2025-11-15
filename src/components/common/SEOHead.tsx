@@ -15,8 +15,8 @@ interface SEOHeadProps {
 
 export default function SEOHead({
   title = "DripTech - Advanced Irrigation Solutions for Modern Agriculture",
-  description = "Leading provider of smart drip irrigation systems, sprinkler systems, and water management solutions. Transform your agricultural productivity with our innovative irrigation technology.",
-  keywords = "drip irrigation, irrigation systems, smart irrigation, agricultural water management, sprinkler systems, water conservation, precision agriculture, Kenya irrigation, farm irrigation, greenhouse irrigation",
+  description = "Buy quality irrigation materials in Kenya: driplines (15cm, 20cm, 30cm), sprinkler systems, irrigation pipes, filters, pumps, fittings, emitters. Complete irrigation kits, professional installation, fast delivery.",
+  keywords = "irrigation materials Kenya, dripline Kenya, irrigation kits, sprinkler systems, drip irrigation pipes, irrigation fittings, water pumps, farm irrigation, dripline 15cm, dripline 20cm, dripline 30cm, irrigation equipment, emitters, drippers, irrigation filters, irrigation valves, pressure regulators, fertigation systems, drip tape, irrigation accessories, farming equipment Kenya, greenhouse irrigation, agriculture irrigation, irrigation suppliers Kenya",
   image = "https://www.dripstech.co.ke/driptech-social-image.jpg",
   url = "https://www.dripstech.co.ke",
   type = "website",

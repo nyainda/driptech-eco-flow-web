@@ -8,9 +8,9 @@ const Index = () => {
   return (
     <ThemeProvider>
       <SEOHead
-        title="DripTech - Advanced Irrigation Solutions for Modern Agriculture in Kenya"
-        description="Transform your farm with DripTech's smart drip irrigation systems. Save up to 40% water, increase yields by 60%, and boost productivity. Expert installation across Kenya. Contact us on WhatsApp for a free consultation!"
-        keywords="drip irrigation Kenya, smart irrigation systems, water conservation, precision agriculture, farm irrigation Kenya, greenhouse irrigation, sprinkler systems, irrigation installation Kenya, agricultural technology, water management systems"
+        title="Irrigation Materials Kenya | Driplines, Sprinklers, Irrigation Kits & Farm Water Solutions - DripTech"
+        description="Buy quality irrigation materials in Kenya: driplines (15cm, 20cm, 30cm spacing), sprinkler systems, irrigation pipes, filters, water pumps, fittings, farm irrigation kits. Affordable prices, fast delivery nationwide. Professional installation available."
+        keywords="irrigation materials Kenya, dripline Kenya, irrigation kits, sprinkler systems, drip irrigation pipes, irrigation fittings, water pumps Kenya, farm irrigation solutions, agriculture irrigation, greenhouse irrigation, irrigation filters, irrigation accessories, dripline 15cm, dripline 20cm, dripline 30cm, irrigation equipment Kenya, farming equipment, water management systems, irrigation installation Kenya, irrigation suppliers Kenya, drip tape, emitters, irrigation valves, pressure regulators, fertigation systems"
         url="https://www.dripstech.co.ke"
         schema={{
           "@context": "https://schema.org",

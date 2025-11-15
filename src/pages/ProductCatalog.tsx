@@ -1,3 +1,6 @@
+
+import { Helmet } from "react-helmet-async";
+
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -307,6 +310,11 @@ const ProductCatalog: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Irrigation Products & Materials Kenya | Driplines, Sprinklers, Pipes & Fittings - DripTech</title>
+        <meta name="description" content="Shop irrigation materials: driplines (15cm, 20cm, 30cm), sprinkler systems, irrigation pipes, filters, pumps, fittings, valves. Complete irrigation kits for farms, greenhouses. Free delivery in Kenya." />
+        <meta name="keywords" content="irrigation products Kenya, dripline suppliers, sprinkler systems Kenya, irrigation pipes, drip tape, irrigation fittings, water filters, irrigation pumps, emitters, drippers, irrigation valves, pressure regulators, irrigation accessories, farming equipment Kenya" />
+      </Helmet>
       <Header />
 
       <main className="py-20">

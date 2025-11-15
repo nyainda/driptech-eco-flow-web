@@ -235,8 +235,7 @@ const HeroSection = () => {
               </div>
 
               <p className="text-lg md:text-xl lg:text-2xl text-gray-100 leading-relaxed max-w-3xl font-medium drop-shadow-lg">
-                Revolutionary drip irrigation technology that increases yields
-                by
+                Quality irrigation materials including driplines (15cm, 20cm, 30cm spacing), sprinkler systems, irrigation pipes, filters, fittings, water pumps, and emitters. Complete irrigation kits for farms and greenhouses that increase yields by
                 <span className="text-emerald-300 font-bold bg-emerald-900/30 px-2 py-1 rounded-lg">
                   {" "}
                   40-60%
@@ -246,7 +245,7 @@ const HeroSection = () => {
                   {" "}
                   up to 50%
                 </span>
-                . Professional installation and nationwide support across Kenya.
+                . Professional installation and nationwide delivery across Kenya.
               </p>
             </div>
 

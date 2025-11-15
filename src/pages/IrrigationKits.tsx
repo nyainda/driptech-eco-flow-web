@@ -1,3 +1,6 @@
+
+import { Helmet } from "react-helmet-async";
+
 import React, { useState } from "react";
 import {
   Card,
@@ -323,6 +326,11 @@ const IrrigationKits = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Helmet>
+        <title>Irrigation Kits Kenya | Complete Drip Irrigation & Sprinkler Kits for Farms - DripTech</title>
+        <meta name="description" content="Buy complete irrigation kits in Kenya: drip irrigation kits, sprinkler kits, greenhouse irrigation systems. Includes driplines, pipes, filters, fittings, emitters. Professional installation, training & support. Affordable farm irrigation solutions." />
+        <meta name="keywords" content="irrigation kits Kenya, drip irrigation kits, sprinkler irrigation kits, farm irrigation systems, greenhouse irrigation kits, complete irrigation packages, irrigation installation Kenya, affordable irrigation kits, irrigation materials package, farming irrigation solutions, water saving kits" />
+      </Helmet>
       <Header />
 
       <main className="py-12 sm:py-16 lg:py-20">

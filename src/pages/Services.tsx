@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import QuoteModal from "@/components/Home/QuoteModal";
+import { Helmet } from 'react-helmet';
 
 const Services = () => {
   const services = [
@@ -80,6 +81,11 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Irrigation Services Kenya | Installation, Maintenance & Design - DripTech</title>
+        <meta name="description" content="Professional irrigation services in Kenya: drip irrigation installation, sprinkler system setup, maintenance, design, consultation. Expert irrigation contractors for farms, greenhouses, commercial properties. Nationwide service." />
+        <meta name="keywords" content="irrigation services Kenya, irrigation installation, drip irrigation contractors, sprinkler installation Kenya, irrigation maintenance, irrigation system design, irrigation consultation, farm irrigation services, greenhouse irrigation installation, irrigation repair Kenya, professional irrigation services" />
+      </Helmet>
       <Header />
       <main>
         {/* Hero Section */}

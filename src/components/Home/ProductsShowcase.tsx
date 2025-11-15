@@ -677,9 +677,7 @@ const ProductsShowcase = () => {
             <span className="block text-primary">Irrigation Solutions</span>
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            From precision drip systems to intelligent controls, we provide
-            everything you need for efficient, sustainable irrigation that
-            transforms agriculture.
+            Complete range of irrigation materials: driplines with 15cm, 20cm, and 30cm spacing, sprinkler systems, irrigation pipes, filters, water pumps, fittings, emitters, valves, and pressure regulators. Everything you need for efficient farm irrigation that transforms agriculture.
           </p>
         </div>
 
