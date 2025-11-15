@@ -61,6 +61,34 @@ export const useVisitorTracking = () => {
   const currentPagePath = useRef<string>("");
   const isSessionInitialized = useRef<boolean>(false);
   const sessionInitPromise = useRef<Promise<void> | null>(null);
+  const hasTrackedExit = useRef<boolean>(false); // Added for session end tracking
+
+  // Helper function to end the session
+  const endSession = async () => {
+    const sessionEnd = new Date();
+    const totalDuration = Math.floor(
+      (sessionEnd.getTime() - sessionStartTime.current.getTime()) / 1000,
+    );
+
+    if (totalDuration > 0) {
+      try {
+        // Update the session in the database with end time and duration
+        const { error } = await supabase
+          .from("visitor_sessions")
+          .update({
+            session_end: sessionEnd.toISOString(),
+            total_duration: totalDuration,
+          })
+          .eq("id", sessionId);
+
+        if (error) {
+          console.error("Error updating session end:", error);
+        }
+      } catch (updateError) {
+        console.error("Error during session update:", updateError);
+      }
+    }
+  };
 
   // Initialize session with better error handling
   useEffect(() => {
@@ -117,29 +145,22 @@ export const useVisitorTracking = () => {
 
   // Clean session end handling
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      const sessionEnd = new Date();
-      const totalDuration = Math.floor(
-        (sessionEnd.getTime() - sessionStartTime.current.getTime()) / 1000,
-      );
-
-      // Use sendBeacon for better reliability
-      if (navigator.sendBeacon && totalDuration > 0) {
-        const data = JSON.stringify({
-          session_end: sessionEnd.toISOString(),
-          total_duration: totalDuration,
-        });
-
-        const supabaseRestUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-        navigator.sendBeacon(
-          `${supabaseRestUrl}/rest/v1/visitor_sessions?id=eq.${sessionId}`,
-          data,
-        );
+    const handleBeforeUnload = async () => {
+      if (sessionId && !hasTrackedExit.current) {
+        hasTrackedExit.current = true;
+        await endSession();
       }
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    // Only add beforeunload in production
+    if (import.meta.env.PROD) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    }
+    return () => {
+      if (import.meta.env.PROD) {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      }
+    };
   }, [sessionId]);
 
   const trackPageView = async (path: string, title: string) => {
