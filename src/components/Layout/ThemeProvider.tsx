@@ -50,8 +50,12 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-      localStorage.setItem(storageKey, newTheme);
+      // Apply theme immediately for instant visual feedback
       setTheme(newTheme);
+      // Save to localStorage asynchronously
+      requestAnimationFrame(() => {
+        localStorage.setItem(storageKey, newTheme);
+      });
     },
   };
 

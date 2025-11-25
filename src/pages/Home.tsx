@@ -5,10 +5,12 @@ import ProjectsSection from "@/components/Home/ProjectsSection";
 import BlogSection from "@/components/Home/BlogSection";
 import SuccessStoriesSection from "@/components/Home/SuccessStoriesSection";
 import TeamSection from "@/components/Home/TeamSection";
-import PartnersSection from "@/components/Home/PartnersSection";
+// import PartnersSection from "@/components/Home/PartnersSection"; // Hidden temporarily
 import ScheduleConsultation from "@/components/Home/ScheduleConsultation";
 import { Button } from "@/components/ui/button";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
+import FAQSection from "@/components/SEO/FAQSection";
+import { COMMON_FAQS } from "@/lib/seo-config";
 
 const Home = () => {
   return (
@@ -19,8 +21,9 @@ const Home = () => {
       <ProjectsSection />
       <BlogSection />
       <SuccessStoriesSection />
-      <PartnersSection />
+      {/* <PartnersSection /> */} {/* Hidden temporarily - will add back later */}
       <TeamSection />
+      <FAQSection faqs={COMMON_FAQS.homepage} />
       <ScheduleConsultation>
         <Button className="w-full">Schedule Free Consultation</Button>
       </ScheduleConsultation>

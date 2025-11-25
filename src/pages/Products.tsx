@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
@@ -54,6 +55,8 @@ import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import ProductRecommendations from "@/components/Products/ProductRecommendations";
 import OptimizedImage from "@/components/common/OptimizedImage";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
+import FAQSection from "@/components/SEO/FAQSection";
+import { COMMON_FAQS } from "@/lib/seo-config";
 
 interface Variant {
   name: string;
@@ -67,11 +70,11 @@ interface Product {
   description: string | null;
   price: number | null;
   category:
-    | "accessories"
-    | "drip_irrigation"
-    | "sprinkler_systems"
-    | "filtration_systems"
-    | "control_systems";
+  | "accessories"
+  | "drip_irrigation"
+  | "sprinkler_systems"
+  | "filtration_systems"
+  | "control_systems";
   subcategory: string | null;
   model_number: string | null;
   images: string[] | null;
@@ -91,9 +94,7 @@ interface Product {
 
 const Products = () => {
   const { category } = useParams<{ category?: string }>();
-  const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
@@ -108,69 +109,67 @@ const Products = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let query = supabase.from("products").select("*");
+  const { data: products = [], isLoading: loading, error: queryError } = useQuery({
+    queryKey: ["products", category],
+    queryFn: async () => {
+      let query = supabase.from("products").select("*");
 
-        if (category) {
-          const categoryMap: Record<string, Product["category"]> = {
-            drip: "drip_irrigation",
-            sprinklers: "sprinkler_systems",
-            filtration: "filtration_systems",
-            controls: "control_systems",
-            accessories: "accessories",
-          };
+      if (category) {
+        const categoryMap: Record<string, Product["category"]> = {
+          drip: "drip_irrigation",
+          sprinklers: "sprinkler_systems",
+          filtration: "filtration_systems",
+          controls: "control_systems",
+          accessories: "accessories",
+        };
 
-          const dbCategory = categoryMap[category];
-          if (dbCategory) {
-            query = query.eq("category", dbCategory);
-          }
+        const dbCategory = categoryMap[category];
+        if (dbCategory) {
+          query = query.eq("category", dbCategory);
         }
-
-        const { data, error } = await query;
-        if (error) throw error;
-
-        const transformedData = (data || []).map((item: any) => {
-          const variants = item.variants
-            ? Array.isArray(item.variants)
-              ? item.variants
-                  .filter(
-                    (v: any) =>
-                      typeof v === "object" &&
-                      v !== null &&
-                      typeof v.name === "string" &&
-                      typeof v.price === "number" &&
-                      typeof v.in_stock === "boolean",
-                  )
-                  .map(
-                    (v: any) =>
-                      ({
-                        name: v.name,
-                        price: v.price,
-                        in_stock: v.in_stock,
-                      }) as Variant,
-                  )
-              : null
-            : null;
-
-          return {
-            ...item,
-            variants,
-          } as Product;
-        });
-
-        setProducts(transformedData);
-      } catch (error: any) {
-        console.error("Error fetching products:", error);
-        setError(error.message || "Failed to load products. Please try again.");
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchProducts();
-  }, [category]);
+      const { data, error } = await query;
+      if (error) throw error;
+
+      return (data || []).map((item: any) => {
+        const variants = item.variants
+          ? Array.isArray(item.variants)
+            ? item.variants
+              .filter(
+                (v: any) =>
+                  typeof v === "object" &&
+                  v !== null &&
+                  typeof v.name === "string" &&
+                  typeof v.price === "number" &&
+                  typeof v.in_stock === "boolean",
+              )
+              .map(
+                (v: any) =>
+                  ({
+                    name: v.name,
+                    price: v.price,
+                    in_stock: v.in_stock,
+                  }) as Variant,
+              )
+            : null
+          : null;
+
+        return {
+          ...item,
+          variants,
+        } as Product;
+      });
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+
+  useEffect(() => {
+    if (queryError) {
+      console.error("Error fetching products:", queryError);
+      setError(queryError instanceof Error ? queryError.message : "Failed to load products");
+    }
+  }, [queryError]);
 
   useEffect(() => {
     let filtered = [...products];
@@ -392,11 +391,10 @@ const Products = () => {
         {variants.map((variant, index) => (
           <div
             key={index}
-            className={`p-3 rounded-xl border border-border cursor-pointer transition-all duration-200 ${
-              selectedVariant === variant
-                ? "bg-primary/10 border-primary shadow-sm"
-                : "bg-background hover:bg-muted/30"
-            }`}
+            className={`p-3 rounded-xl border border-border cursor-pointer transition-all duration-200 ${selectedVariant === variant
+              ? "bg-primary/10 border-primary shadow-sm"
+              : "bg-background hover:bg-muted/30"
+              }`}
             onClick={() => onVariantChange(variant)}
           >
             <div className="flex items-center justify-between">
@@ -576,11 +574,10 @@ const Products = () => {
                       {product.variants!.map((variant, index) => (
                         <div
                           key={index}
-                          className={`p-2 rounded-xl cursor-pointer text-xs transition-colors ${
-                            selectedVariant === variant
-                              ? "bg-primary/10 text-primary"
-                              : "hover:bg-muted/50"
-                          }`}
+                          className={`p-2 rounded-xl cursor-pointer text-xs transition-colors ${selectedVariant === variant
+                            ? "bg-primary/10 text-primary"
+                            : "hover:bg-muted/50"
+                            }`}
                           onClick={() => setSelectedVariant(variant)}
                         >
                           <div className="flex justify-between items-center">
@@ -728,8 +725,8 @@ const Products = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
                 <div className="text-lg sm:text-xl font-bold text-primary">
                   {hasVariants &&
-                  variantPriceRange &&
-                  variantPriceRange.min !== variantPriceRange.max
+                    variantPriceRange &&
+                    variantPriceRange.min !== variantPriceRange.max
                     ? `${formatPrice(variantPriceRange.min)} - ${formatPrice(variantPriceRange.max)}`
                     : formatPrice(displayPrice)}
                   {hasVariants && selectedVariant && (
@@ -768,6 +765,20 @@ const Products = () => {
                     <ProductDetailModal product={product} />
                   </DialogContent>
                 </Dialog>
+
+                <Button
+                  onClick={() => {
+                    const message = encodeURIComponent(
+                      `Hi DripTech! I'm interested in: ${product.name}${hasVariants && selectedVariant ? ` (${selectedVariant.name})` : ''}. Could you provide more information?`
+                    );
+                    window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md text-sm"
+                >
+                  <span className="mr-2">💬</span>
+                  WhatsApp Inquiry
+                </Button>
+
                 <div className="flex gap-1 justify-center sm:justify-start">
                   {product.brochure_url && (
                     <Button
@@ -1548,26 +1559,25 @@ const Products = () => {
                   showFeaturedOnly ||
                   showInStockOnly ||
                   subcategoryFilter) && (
-                  <Button
-                    className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-xs sm:text-sm"
-                    size="sm"
-                    onClick={clearAllFilters}
-                  >
-                    <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    Clear All
-                  </Button>
-                )}
+                    <Button
+                      className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-xs sm:text-sm"
+                      size="sm"
+                      onClick={clearAllFilters}
+                    >
+                      <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      Clear All
+                    </Button>
+                  )}
               </div>
             </div>
 
             {currentProducts.length > 0 ? (
               <div>
                 <div
-                  className={`grid gap-6 mb-12 ${
-                    viewMode === "grid"
-                      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                      : "grid-cols-1"
-                  }`}
+                  className={`grid gap-6 mb-12 ${viewMode === "grid"
+                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                    : "grid-cols-1"
+                    }`}
                 >
                   {currentProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
@@ -1602,6 +1612,8 @@ const Products = () => {
             )}
           </div>
         </section>
+
+        <FAQSection faqs={COMMON_FAQS.products} />
 
         <section className="bg-background py-12 sm:py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">

@@ -79,23 +79,24 @@ const Header = () => {
   }, []);
 
   // Auto-rotate banners with smooth transitions
-  useEffect(() => {
-    const visibleBanners = getVisibleBanners();
-    if (visibleBanners.length <= 1 || isPaused) return;
+useEffect(() => {
+  const visibleBanners = getVisibleBanners();
+  if (visibleBanners.length <= 1 || isPaused) return;
 
-    const interval = setInterval(() => {
-      setIsTransitioning(true);
+  const interval = setInterval(() => {
+    setIsTransitioning(true);
 
-      setTimeout(() => {
-        setCurrentBannerIndex(
-          (prevIndex) => (prevIndex + 1) % visibleBanners.length,
-        );
-        setIsTransitioning(false);
-      }, 300); // Half of transition duration
-    }, 5000); // 5 seconds per banner
+    setTimeout(() => {
+      setCurrentBannerIndex(
+        (prevIndex) => (prevIndex + 1) % visibleBanners.length,
+      );
+      setIsTransitioning(false);
+    }, 300);
+  }, 5000);
 
-    return () => clearInterval(interval);
-  }, [banners, dismissedBanners, isPaused]);
+  return () => clearInterval(interval);
+}, [banners, dismissedBanners, isPaused]);
+
 
   const getDismissedBanners = (): string[] => {
     if (typeof window === "undefined") return [];

@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { Helmet } from 'react-helmet-async';
+import FAQSection from "@/components/SEO/FAQSection";
+import { COMMON_FAQS } from "@/lib/seo-config";
 
 const Services = () => {
   const services = [
@@ -154,6 +156,8 @@ const Services = () => {
             </div>
           </div>
         </section>
+
+        <FAQSection faqs={COMMON_FAQS.services} />
       </main>
       <Footer />
     </div>

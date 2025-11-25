@@ -557,7 +557,7 @@ const Terms = () => {
                       <div>
                         <p className="font-medium">Phone</p>
                         <a
-                          href="tel:+254111409454"
+                          href="tel:+25411411575401"
                           className="text-primary hover:underline"
                         >
                           +254 111409454

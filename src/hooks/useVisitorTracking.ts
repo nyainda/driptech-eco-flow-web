@@ -119,9 +119,12 @@ export const useVisitorTracking = () => {
             // If duplicate key error, session already exists - that's fine
             if (
               error.code === "23505" ||
-              error.message?.includes("duplicate key")
+              error.message?.includes("duplicate key") ||
+              error.message?.includes("409")
             ) {
-              console.log("Session already exists, continuing...");
+              // Silently continue - this is expected in development with React Strict Mode
+              isSessionInitialized.current = true;
+              return;
             } else {
               throw error;
             }
@@ -174,7 +177,7 @@ export const useVisitorTracking = () => {
       if (currentPagePath.current && currentPagePath.current !== path) {
         const timeSpent = Math.floor(
           (new Date().getTime() - currentPageStartTime.current.getTime()) /
-            1000,
+          1000,
         );
 
         if (timeSpent > 0 && timeSpent < 3600) {

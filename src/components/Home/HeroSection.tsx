@@ -1,457 +1,347 @@
 import { useState, useEffect } from "react";
 import {
-  ArrowRight,
-  Play,
-  Award,
-  Users,
-  Droplets,
-  Zap,
-  ShieldCheck,
-  Star,
-  CheckCircle,
-  Phone,
-  Mail,
+    ArrowRight,
+    Phone,
+    Mail,
+    Droplets,
+    Award,
+    Users,
+    CheckCircle,
+    Play,
+    Star,
+    Sprout,
+    Leaf,
+    Zap,
+    ShieldCheck,
+    ShoppingBag,
+    Tag,
+    Image as ImageIcon
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useWhatsAppProducts } from "@/hooks/useWhatsAppProducts";
 
 const HeroSection = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [currentProductIndex, setCurrentProductIndex] = useState(0);
+    const [fadeProduct, setFadeProduct] = useState(true);
 
-  // WhatsApp numbers and message
-  const whatsappNumbers = {
-    primary: "254114575401", // 0114575401 in international format
-    secondary: "254114575401", // 0114575401 in international format
-  };
+    const { products, loading: productsLoading } = useWhatsAppProducts();
 
-  const whatsappMessage = encodeURIComponent(
-    "Hi DripTech! I'm interested in your modern drip irrigation systems. Could you please provide me with more information about your services and pricing? Thank you!",
-  );
-
-  // Function to open WhatsApp
-  const openWhatsApp = (number) => {
-    const whatsappUrl = `https://wa.me/${number}?text=${whatsappMessage}`;
-    window.open(whatsappUrl, "_blank");
-  };
-
-  // Function to make phone call
-  const makePhoneCall = (number) => {
-    window.open(`tel:+${number}`, "_self");
-  };
-
-  const stats = [
-    {
-      icon: Users,
-      value: "85+",
-      label: "Happy Customers",
-      color: "from-blue-400 to-blue-600",
-    },
-    {
-      icon: Droplets,
-      value: "2M+",
-      label: "Liters Saved Monthly",
-      color: "from-green-400 to-green-600",
-    },
-    {
-      icon: Award,
-      value: "6+",
-      label: "Months Growing",
-      color: "from-amber-400 to-amber-600",
-    },
-  ];
-
-  const features = [
-    {
-      icon: Zap,
-      text: "Smart IoT Systems",
-      desc: "Automated precision control",
-    },
-    {
-      icon: Droplets,
-      text: "Water Conservation",
-      desc: "Up to 40% water savings",
-    },
-    {
-      icon: ShieldCheck,
-      text: "5-Year Warranty",
-      desc: "Complete peace of mind",
-    },
-  ];
-
-  const testimonials = [
-    {
-      text: "Quick installation and great results on my greenhouse",
-      author: "John Kamau",
-      company: "Kamau Vegetables",
-    },
-    {
-      text: "Young team but very professional and knowledgeable",
-      author: "Mary Wanjiku",
-      company: "Wanjiku Flowers",
-    },
-    {
-      text: "Affordable prices and excellent customer service",
-      author: "Peter Otieno",
-      company: "Otieno Farm",
-    },
-  ];
-
-  const certifications = [
-    "Quality Guaranteed",
-    "Professional Installation",
-    "Local Kenyan Business",
-    "Growing Fast & Trusted",
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    const whatsappNumber = "254114575401";
+    const openWhatsApp = () => {
+        const message = encodeURIComponent(
+            "Hi DripTech! I'm interested in your irrigation systems."
+        );
+        window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
-  return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-100 via-blue-100 to-emerald-100 dark:from-slate-900 dark:via-blue-950 dark:to-emerald-950">
-      {/* Enhanced Background with Professional Irrigation Photo */}
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50 dark:opacity-25"
-          style={{
-            backgroundImage: `url(https://images.unsplash.com/photo-1574943320219-553eb213f72d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)`,
-          }}
-        />
-        {/* Professional overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/75 via-slate-800/70 to-emerald-900/75 dark:from-slate-900/90 dark:via-slate-800/85 dark:to-emerald-950/90" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+    const makePhoneCall = (number: string) => {
+        window.open(`tel:+${number}`, "_self");
+    };
 
-        {/* Animated gradient mesh */}
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            background: `radial-gradient(circle at ${mousePosition.x * 0.1}% ${mousePosition.y * 0.1}%, rgba(34, 197, 94, 0.3) 0%, transparent 70%)`,
-          }}
-        />
+    const features = [
+        {
+            icon: Zap,
+            text: "Smart IoT Systems",
+            desc: "Automated precision control",
+        },
+        {
+            icon: Droplets,
+            text: "Water Conservation",
+            desc: "Up to 40% water savings",
+        },
+        {
+            icon: ShieldCheck,
+            text: "5-Year Warranty",
+            desc: "Complete peace of mind",
+        },
+    ];
 
-        {/* Enhanced floating particles with water droplet effect */}
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className={`absolute rounded-full animate-pulse ${
-              i % 3 === 0
-                ? "w-2 h-2 bg-blue-400/60"
-                : i % 3 === 1
-                  ? "w-1.5 h-1.5 bg-emerald-400/70"
-                  : "w-1 h-1 bg-cyan-400/80"
-            }`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
-            }}
-          />
-        ))}
+    // Rotate products
+    useEffect(() => {
+        if (products.length > 0) {
+            const interval = setInterval(() => {
+                setFadeProduct(false);
+                setTimeout(() => {
+                    setCurrentProductIndex((prev) => (prev + 1) % products.length);
+                    setFadeProduct(true);
+                }, 500);
+            }, 5000);
+            return () => clearInterval(interval);
+        }
+    }, [products]);
 
-        {/* Professional irrigation pattern overlay */}
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `
-            linear-gradient(rgba(34, 197, 94, 0.4) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(34, 197, 94, 0.4) 1px, transparent 1px)
-          `,
-            backgroundSize: "80px 80px",
-          }}
-        />
+    const currentProduct = products[currentProductIndex];
 
-        {/* Additional water pattern */}
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: `radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.3) 2px, transparent 2px)`,
-            backgroundSize: "100px 100px",
-          }}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-7 space-y-8 text-white">
-            {/* Enhanced Company Badge */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
-              <div className="bg-gradient-to-r from-emerald-500 via-green-500 to-blue-500 text-white border-0 px-6 py-3 text-sm font-bold rounded-full shadow-2xl backdrop-blur-sm border border-white/20">
-                💧 Kenya's #1 Smart Irrigation Specialists
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-yellow-100 font-semibold">
-                  4.9/5
-                </span>
-                <span className="text-xs text-gray-300">(47 reviews)</span>
-              </div>
-            </div>
-
-            {/* Revolutionary Main Headline */}
-            <div className="space-y-6">
-              <div className="relative">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.85] tracking-tight">
-                  <span className="block text-white mb-3 drop-shadow-2xl">
-                    Transform Your
-                  </span>
-                  <span className="block bg-gradient-to-r from-emerald-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-3 filter drop-shadow-lg">
-                    Agriculture
-                  </span>
-                  <span className="block text-emerald-100 text-4xl md:text-5xl lg:text-6xl font-bold drop-shadow-xl">
-                    With Smart Irrigation
-                  </span>
-                </h1>
-
-                {/* Enhanced decorative elements */}
-                <div className="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-emerald-400/30 to-blue-400/30 rounded-full blur-2xl animate-pulse"></div>
+    return (
+        <section className="relative min-h-[90vh] flex items-center bg-slate-50 dark:bg-slate-950 font-sans overflow-hidden transition-colors duration-300">
+            {/* Background Image - High Quality, Natural */}
+            <div className="absolute inset-0 z-0">
                 <div
-                  className="absolute -bottom-6 -right-6 w-20 h-20 bg-gradient-to-br from-blue-400/25 to-cyan-400/25 rounded-full blur-xl animate-pulse"
-                  style={{ animationDelay: "1s" }}
-                ></div>
-                <div
-                  className="absolute top-1/2 -right-12 w-16 h-16 bg-gradient-to-br from-cyan-400/20 to-emerald-400/20 rounded-full blur-lg animate-pulse"
-                  style={{ animationDelay: "2s" }}
-                ></div>
-              </div>
-
-              <p className="text-lg md:text-xl lg:text-2xl text-gray-100 leading-relaxed max-w-3xl font-medium drop-shadow-lg">
-                Quality irrigation materials including driplines (15cm, 20cm, 30cm spacing), sprinkler systems, irrigation pipes, filters, fittings, water pumps, and emitters. Complete irrigation kits for farms and greenhouses that increase yields by
-                <span className="text-emerald-300 font-bold bg-emerald-900/30 px-2 py-1 rounded-lg">
-                  {" "}
-                  40-60%
-                </span>{" "}
-                while reducing water usage by
-                <span className="text-blue-300 font-bold bg-blue-900/30 px-2 py-1 rounded-lg">
-                  {" "}
-                  up to 50%
-                </span>
-                . Professional installation and nationwide delivery across Kenya.
-              </p>
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 ease-in-out transform hover:scale-105"
+                    style={{
+                        backgroundImage: `url(https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop)`,
+                    }}
+                />
+                {/* Professional Gradient Overlay - Adapts to Dark Mode */}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40 dark:from-slate-950/95 dark:via-slate-950/90 dark:to-slate-950/60" />
             </div>
 
-            {/* Enhanced Key Benefits */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className="group bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 hover:bg-white/15 hover:border-emerald-400/60 transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-2xl"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-gradient-to-br from-emerald-400/30 to-blue-500/30 rounded-xl border border-emerald-400/40 shadow-lg">
-                      <feature.icon className="h-6 w-6 text-emerald-300" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white text-base mb-2 drop-shadow-sm">
-                        {feature.text}
-                      </h3>
-                      <p className="text-gray-200 text-sm leading-relaxed">
-                        {feature.desc}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-24 pb-16">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-            {/* Revolutionary CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 pt-8">
-              <button
-                onClick={() => makePhoneCall(whatsappNumbers.primary)}
-                className="group relative bg-gradient-to-r from-emerald-500 via-green-500 to-blue-500 hover:from-emerald-600 hover:via-green-600 hover:to-blue-600 text-white font-bold px-12 py-6 rounded-3xl shadow-2xl hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105 hover:-translate-y-2 text-xl flex items-center justify-center cursor-pointer overflow-hidden border border-white/20"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <Phone className="mr-4 h-6 w-6 relative z-10" />
-                <span className="relative z-10 font-black">
-                  Call: 0111 409 454
-                </span>
-                <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform relative z-10" />
-              </button>
-
-              <button
-                onClick={() => openWhatsApp(whatsappNumbers.primary)}
-                className="group relative bg-white/15 backdrop-blur-md border-2 border-emerald-400/40 text-white hover:bg-white/20 hover:border-emerald-400/70 px-12 py-6 rounded-3xl font-bold text-xl transition-all duration-300 hover:scale-105 hover:-translate-y-2 cursor-pointer shadow-2xl"
-              >
-                <span className="mr-4 text-3xl">💬</span>
-                <span className="font-black">WhatsApp Us</span>
-              </button>
-            </div>
-
-            {/* Enhanced Contact Info */}
-            <div className="flex flex-col sm:flex-row gap-6 pt-6 text-base text-gray-100">
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
-                <Mail className="h-5 w-5 text-emerald-400" />
-                <a
-                  href="mailto:info@dripstech.co.ke"
-                  className="hover:text-emerald-300 transition-colors font-medium"
-                >
-                  info@dripstech.co.ke
-                </a>
-              </div>
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
-                <Phone className="h-5 w-5 text-emerald-400" />
-                <button
-                  onClick={() => makePhoneCall("0114575401")}
-                  className="hover:text-emerald-300 transition-colors cursor-pointer font-medium"
-                >
-                  0114575401
-                </button>
-              </div>
-              <div className="flex items-center gap-3 bg-emerald-500/20 backdrop-blur-sm rounded-full px-4 py-2 border border-emerald-400/30">
-                <CheckCircle className="h-5 w-5 text-emerald-300" />
-                <span className="font-semibold text-emerald-100">
-                  Free Site Visit
-                </span>
-              </div>
-            </div>
-
-            {/* Enhanced Company Strengths */}
-            <div className="pt-8 border-t border-white/20">
-              <p className="text-emerald-300 text-base mb-4 font-semibold">
-                Why Choose DripTech:
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {certifications.map((cert, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 text-sm bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10"
-                  >
-                    <CheckCircle className="h-4 w-4 text-emerald-400 flex-shrink-0" />
-                    <span className="text-gray-100 font-medium">{cert}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column - Stats & Testimonials */}
-          <div className="lg:col-span-5 lg:justify-self-end">
-            <div className="space-y-6 max-w-md">
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 gap-4">
-                {stats.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="group bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-green-400/50 transition-all duration-300 hover:scale-105"
-                    style={{ animationDelay: `${index * 0.2}s` }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`p-4 bg-gradient-to-br ${stat.color} rounded-2xl shadow-lg`}
-                      >
-                        <stat.icon className="h-7 w-7 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-4xl font-black text-white mb-1">
-                          {stat.value}
+                    {/* Left Column: Content */}
+                    <div className="space-y-8 max-w-2xl animate-fade-in-up">
+                        {/* Trust Badge */}
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-sm hover:bg-white/20 transition-colors cursor-default">
+                            <Leaf className="h-4 w-4 text-emerald-400" />
+                            <span className="text-sm font-semibold text-white tracking-wide uppercase">
+                                Kenya's #1 Smart Irrigation Specialists
+                            </span>
                         </div>
-                        <div className="text-gray-300 font-medium text-sm">
-                          {stat.label}
+
+                        {/* Headline - Clean, Bold, Professional */}
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] tracking-tight drop-shadow-lg">
+                            Transform Your <br />
+                            <span className="text-emerald-400">Agriculture</span> <br />
+                            With Smart Irrigation
+                        </h1>
+
+                        {/* Description - Clear Value Prop */}
+                        <p className="text-lg md:text-xl text-slate-200 dark:text-slate-300 leading-relaxed max-w-xl font-medium drop-shadow-md border-l-4 border-emerald-500 pl-6">
+                            Quality irrigation materials including driplines, sprinklers, and smart systems.
+                            Increase yields by <span className="text-emerald-400 font-bold">40-60%</span> while reducing water usage by <span className="text-blue-400 font-bold">50%</span>.
+                        </p>
+
+                        {/* Key Features Grid (Mobile/Tablet friendly) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                            {features.map((feature, index) => (
+                                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-colors">
+                                    <feature.icon className="h-6 w-6 text-emerald-400 mb-2" />
+                                    <h3 className="text-white font-semibold text-sm">{feature.text}</h3>
+                                    <p className="text-slate-400 text-xs">{feature.desc}</p>
+                                </div>
+                            ))}
                         </div>
-                      </div>
+
+                        {/* CTA Buttons - Solid, Professional */}
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                            <Button
+                                size="lg"
+                                onClick={() => makePhoneCall(whatsappNumber)}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-emerald-900/20 transition-all hover:translate-y-[-2px] border-none w-full sm:w-auto"
+                            >
+                                <div className="flex items-center justify-center gap-3">
+                                    <Phone className="h-5 w-5" />
+                                    <span className="font-semibold">Call: 0111 409 454</span>
+                                </div>
+                            </Button>
+
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                onClick={openWhatsApp}
+                                className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-emerald-900 px-8 py-6 text-lg rounded-xl backdrop-blur-sm transition-all hover:translate-y-[-2px] w-full sm:w-auto"
+                            >
+                                <div className="flex items-center justify-center gap-3">
+                                    <span className="text-xl">💬</span>
+                                    <span className="font-semibold">WhatsApp Us</span>
+                                </div>
+                            </Button>
+
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                onClick={() => window.location.href = 'mailto:info@driptech.com'}
+                                className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-emerald-900 px-8 py-6 text-lg rounded-xl backdrop-blur-sm transition-all hover:translate-y-[-2px] w-full sm:w-auto"
+                            >
+                                <div className="flex items-center justify-center gap-3">
+                                    <Mail className="h-5 w-5" />
+                                    <span className="font-semibold">Email Us</span>
+                                </div>
+                            </Button>
+                        </div>
+
+                        {/* Trust Indicators - Clean List */}
+                        <div className="pt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-slate-300 border-t border-white/10">
+                            {["Quality Guaranteed", "Professional Installation", "Local Kenyan Business"].map((item, i) => (
+                                <div key={i} className="flex items-center gap-2">
+                                    <CheckCircle className="h-4 w-4 text-emerald-400" />
+                                    <span>{item}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                  </div>
-                ))}
-              </div>
 
-              {/* Testimonial Carousel */}
-              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-300">Client Reviews</span>
-                </div>
+                    {/* Right Column: Dynamic Product Showcase - Fully Responsive */}
+                    <div className="relative mt-8 lg:mt-0 w-full max-w-lg mx-auto lg:mx-0 lg:ml-auto">
+                        {/* Main Card - Premium Glassmorphism */}
+                        <div className="relative bg-white/10 dark:bg-slate-900/10 backdrop-blur-2xl rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl border border-white/20 dark:border-slate-700/30 transform transition-all duration-500 hover:shadow-emerald-500/10 hover:scale-[1.02] overflow-hidden">
 
-                <div className="min-h-[100px] flex items-center">
-                  <div key={currentSlide} className="animate-fade-in">
-                    <p className="text-white font-medium mb-3 text-sm leading-relaxed">
-                      "{testimonials[currentSlide].text}"
-                    </p>
-                    <div>
-                      <p className="text-green-400 font-semibold text-sm">
-                        {testimonials[currentSlide].author}
-                      </p>
-                      <p className="text-gray-400 text-xs">
-                        {testimonials[currentSlide].company}
-                      </p>
+                            {/* Decorative gradient orb */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-full blur-3xl -z-0" />
+
+                            {/* Header Section with Logo */}
+                            <div className="relative z-10 flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-3 flex-1">
+                                    {/* Logo */}
+                                    <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl overflow-hidden bg-white dark:bg-slate-800 p-1.5 shadow-lg flex-shrink-0">
+                                        <img
+                                            src="/favicon.svg"
+                                            alt="DripTech EcoFlow"
+                                            className="w-full h-full object-contain"
+                                        />
+                                    </div>
+
+                                    {/* Text */}
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                            </span>
+                                            <h3 className="text-[10px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Live Products</h3>
+                                        </div>
+                                        <p className="text-slate-900 dark:text-white text-base sm:text-lg md:text-xl font-black tracking-tight leading-tight">
+                                            DripTech EcoFlow Products
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 flex-shrink-0">
+                                    <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                                </div>
+                            </div>
+
+                            {/* Dynamic Product Display */}
+                            <div className="relative z-10 min-h-[280px] sm:min-h-[320px] flex items-center justify-center">
+                                {productsLoading ? (
+                                    <div className="flex flex-col items-center gap-3">
+                                        <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Loading collection...</p>
+                                    </div>
+                                ) : products.length > 0 ? (
+                                    <div className={`w-full transition-all duration-700 ${fadeProduct ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                                        <div className="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border border-slate-100 dark:border-slate-700 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-300">
+
+                                            {/* Product Image Area with Gradient Overlay */}
+                                            <div className="aspect-[4/3] w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 relative overflow-hidden">
+                                                {currentProduct.images && currentProduct.images.length > 0 ? (
+                                                    <>
+                                                        <img
+                                                            src={currentProduct.images[0]}
+                                                            alt={currentProduct.name}
+                                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                        />
+                                                        {/* Gradient overlay for better text contrast */}
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                                                    </>
+                                                ) : (
+                                                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-500">
+                                                        <ImageIcon className="h-12 sm:h-16 w-12 sm:w-16 mb-2 opacity-30" />
+                                                        <span className="text-xs font-medium">No Image</span>
+                                                    </div>
+                                                )}
+
+                                                {/* Premium Price Tag */}
+                                                {currentProduct.price && (
+                                                    <div className="absolute top-3 right-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-xl backdrop-blur-sm border border-white/20">
+                                                        KSh {currentProduct.price.toLocaleString()}
+                                                    </div>
+                                                )}
+
+                                                {/* Category Badge */}
+                                                <div className="absolute top-3 left-3">
+                                                    <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10">
+                                                        <Tag className="h-3 w-3 text-emerald-400" />
+                                                        <span className="text-white text-[10px] sm:text-xs font-bold uppercase tracking-wide">
+                                                            {currentProduct.category}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Product Details Area */}
+                                            <div className="p-4 sm:p-5 md:p-6">
+                                                <h4 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                                    {currentProduct.name}
+                                                </h4>
+
+                                                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-3">
+                                                    {currentProduct.description || "Premium quality irrigation equipment for professional farming results."}
+                                                </p>
+
+                                                <Button
+                                                    onClick={openWhatsApp}
+                                                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-900/20 hover:shadow-xl hover:shadow-emerald-900/30 transition-all h-10 sm:h-11 text-sm sm:text-base font-semibold rounded-xl"
+                                                >
+                                                    <span className="mr-2">💬</span>
+                                                    Inquire on WhatsApp
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        {/* Progress Indicators */}
+                                        <div className="flex justify-center gap-1.5 mt-5 sm:mt-6">
+                                            {products.slice(0, 5).map((_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className={`h-1 sm:h-1.5 rounded-full transition-all duration-500 ${i === currentProductIndex % 5
+                                                        ? 'w-6 sm:w-8 bg-gradient-to-r from-emerald-500 to-teal-500'
+                                                        : 'w-1.5 sm:w-2 bg-slate-300 dark:bg-slate-600'
+                                                        }`}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-center text-slate-500 dark:text-slate-400 py-12">
+                                        <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                                        <p className="text-sm">Check out our full catalog below!</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Enhanced Stats Row with Icons */}
+                            <div className="relative z-10 mt-6 sm:mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 grid grid-cols-3 gap-2 sm:gap-4">
+                                <div className="text-center group cursor-default">
+                                    <div className="flex items-center justify-center gap-1 mb-1">
+                                        <Users className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600 dark:text-emerald-400" />
+                                    </div>
+                                    <div className="text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">500+</div>
+                                    <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Happy Clients</div>
+                                </div>
+                                <div className="text-center group cursor-default">
+                                    <div className="flex items-center justify-center gap-1 mb-1">
+                                        <Droplets className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400" />
+                                    </div>
+                                    <div className="text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">2M+</div>
+                                    <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Liters Saved</div>
+                                </div>
+                                <div className="text-center group cursor-default">
+                                    <div className="flex items-center justify-center gap-1 mb-1">
+                                        <Star className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500 fill-amber-500" />
+                                    </div>
+                                    <div className="text-base sm:text-lg md:text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">4.9</div>
+                                    <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Rating</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-
-                <div className="flex gap-2 mt-4">
-                  {testimonials.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentSlide ? "bg-green-400" : "bg-gray-600"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* WhatsApp Contact */}
-              <button
-                onClick={() => openWhatsApp(whatsappNumbers.primary)}
-                className="w-full bg-gradient-to-r from-green-500/20 to-green-600/20 backdrop-blur-md rounded-2xl p-4 border border-green-400/30 hover:from-green-500/30 hover:to-green-600/30 transition-all duration-300 cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-500/30 rounded-lg">
-                    <Phone className="h-4 w-4 text-green-300" />
-                  </div>
-                  <div>
-                    <p className="text-green-200 font-semibold text-sm">
-                      WhatsApp Direct
-                    </p>
-                    <p className="text-green-100 text-xs">0114575401</p>
-                  </div>
-                </div>
-              </button>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute top-20 right-20 w-40 h-40 bg-gradient-to-r from-green-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse hidden lg:block" />
-      <div className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-r from-blue-400/5 to-green-400/5 rounded-full blur-2xl animate-pulse hidden lg:block" />
-
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
+            <style>{`
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out;
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
         }
       `}</style>
-    </section>
-  );
+        </section>
+    );
 };
 
 export default HeroSection;

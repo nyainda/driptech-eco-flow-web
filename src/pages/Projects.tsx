@@ -137,27 +137,26 @@ interface ProjectCardProps {
 
 const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
   <Card
-    className={`group overflow-hidden bg-background border-border shadow-md hover:shadow-xl hover:bg-accent hover:text-accent-foreground transition-all duration-500 hover:-translate-y-1 ${
-      viewMode === "list" ? "flex" : ""
-    }`}
+    className={`group overflow-hidden bg-background border-border shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-2xl ${viewMode === "list" ? "flex" : ""
+      }`}
     style={{ animationDelay: `${index * 100}ms` }}
   >
     {viewMode === "grid" ? (
       <>
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
           {project.project_images?.length ? (
             <img
               src={project.project_images[0]}
               alt={`Image of ${project.name} project`}
               loading="lazy"
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              className="w-full h-full object-cover transition-all duration-300"
             />
           ) : (
-            <div className="w-full h-full bg-muted flex items-center justify-center">
-              <Droplets className="h-16 w-16 text-primary/60" />
+            <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center">
+              <Droplets className="h-16 w-16 text-primary/40" />
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
           <div className="absolute top-4 right-4">
             <Badge className={getStatusColor(project.status)}>
               {getStatusIcon(project.status)}
@@ -195,21 +194,21 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
           {(project.area_covered || project.water_saved) && (
             <div className="grid grid-cols-2 gap-3 mb-4">
               {project.area_covered != null && (
-                <div className="text-center p-3 bg-muted/30 border-border rounded-xl shadow-sm">
-                  <div className="text-lg font-black text-primary">
+                <div className="text-center p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl shadow-sm">
+                  <div className="text-2xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                     {project.area_covered}
                   </div>
-                  <div className="text-xs text-muted-foreground font-medium">
+                  <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">
                     Area Covered
                   </div>
                 </div>
               )}
               {project.water_saved != null && (
-                <div className="text-center p-3 bg-muted/30 border-border rounded-xl shadow-sm">
-                  <div className="text-lg font-black text-primary">
+                <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-200 dark:border-blue-800 rounded-xl shadow-sm">
+                  <div className="text-2xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                     {project.water_saved}%
                   </div>
-                  <div className="text-xs text-muted-foreground font-medium">
+                  <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">
                     Water Saved
                   </div>
                 </div>
@@ -217,12 +216,26 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
             </div>
           )}
           {project.testimonial && (
-            <div className="mb-4 p-3 bg-muted/30 border-l-4 border-primary rounded-lg">
-              <p className="text-sm text-muted-foreground italic leading-relaxed">
+            <div className="mb-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-gradient-to-b from-amber-500 to-orange-500 rounded-lg">
+              <p className="text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
                 "{project.testimonial}"
               </p>
             </div>
           )}
+
+          {/* WhatsApp Inquiry Button */}
+          <Button
+            onClick={() => {
+              const message = encodeURIComponent(
+                `Hi DripTech! I'm interested in the "${project.name}" project${project.location ? ` in ${project.location}` : ''}. Can you share more details?`
+              );
+              window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
+            }}
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all text-sm font-semibold py-3"
+          >
+            <span className="mr-2 text-lg">💬</span>
+            Inquire About This Project
+          </Button>
         </CardContent>
       </>
     ) : (
@@ -278,21 +291,21 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
               )}
             </div>
             {(project.area_covered || project.water_saved) && (
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 {project.area_covered != null && (
-                  <div className="text-center p-2 bg-muted/30 border-border rounded-lg shadow-sm flex-1">
-                    <div className="text-sm font-bold text-primary">
+                  <div className="text-center p-3 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg shadow-sm flex-1">
+                    <div className="text-lg font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                       {project.area_covered}
                     </div>
-                    <div className="text-xs text-muted-foreground">Area</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold">Area</div>
                   </div>
                 )}
                 {project.water_saved != null && (
-                  <div className="text-center p-2 bg-muted/30 border-border rounded-lg shadow-sm flex-1">
-                    <div className="text-sm font-bold text-primary">
+                  <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-200 dark:border-blue-800 rounded-lg shadow-sm flex-1">
+                    <div className="text-lg font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                       {project.water_saved}%
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold">
                       Water Saved
                     </div>
                   </div>
@@ -301,12 +314,26 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
             )}
           </div>
           {project.testimonial && (
-            <div className="mt-4 p-3 bg-muted/30 border-l-4 border-primary rounded-lg">
-              <p className="text-sm text-muted-foreground italic leading-relaxed line-clamp-2">
+            <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-gradient-to-b from-amber-500 to-orange-500 rounded-lg">
+              <p className="text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed line-clamp-2">
                 "{project.testimonial}"
               </p>
             </div>
           )}
+
+          {/* WhatsApp Inquiry Button */}
+          <Button
+            onClick={() => {
+              const message = encodeURIComponent(
+                `Hi DripTech! I'm interested in the "${project.name}" project${project.location ? ` in ${project.location}` : ''}. Can you share more details?`
+              );
+              window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
+            }}
+            className="w-full mt-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all text-sm font-semibold py-3"
+          >
+            <span className="mr-2 text-lg">💬</span>
+            Inquire About This Project
+          </Button>
         </CardContent>
       </div>
     )}
@@ -390,10 +417,10 @@ const FilterControls = ({
                 filters.projectType !== "all" ||
                 filters.location !== "all" ||
                 searchQuery) && (
-                <Badge className="ml-2 px-1 py-0 text-xs bg-primary text-primary-foreground">
-                  {filteredProjectsCount}
-                </Badge>
-              )}
+                  <Badge className="ml-2 px-1 py-0 text-xs bg-primary text-primary-foreground">
+                    {filteredProjectsCount}
+                  </Badge>
+                )}
             </Button>
             <select
               value={sortBy}
@@ -412,16 +439,16 @@ const FilterControls = ({
               filters.location !== "all" ||
               searchQuery ||
               sortBy !== "newest") && (
-              <Button
-                variant="outline"
-                onClick={clearAllFilters}
-                className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-                aria-label="Clear all filters and sorting"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Clear All
-              </Button>
-            )}
+                <Button
+                  variant="outline"
+                  onClick={clearAllFilters}
+                  className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                  aria-label="Clear all filters and sorting"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear All
+                </Button>
+              )}
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">

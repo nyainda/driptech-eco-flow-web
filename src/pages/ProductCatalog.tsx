@@ -257,17 +257,14 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 };
 
 const ProductCatalog: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] =
-    useState<CategoryValue>("all");
+  const [selectedCategory, setSelectedCategory] = useState<CategoryValue>("all");
   const [sortBy, setSortBy] = useState("name");
   const { toast } = useToast();
 
-  const fetchProducts = useCallback(async () => {
-    try {
-      setLoading(true);
+  const { data: products = [], isLoading: loading, error } = useQuery({
+    queryKey: ["product-catalog", selectedCategory, sortBy],
+    queryFn: async () => {
       let query = supabase.from("products").select("*");
 
       if (selectedCategory !== "all") {
@@ -277,22 +274,21 @@ const ProductCatalog: React.FC = () => {
       const { data, error } = await query.order(sortBy, { ascending: true });
 
       if (error) throw error;
-      setProducts(data || []);
-    } catch (error) {
+      return data as Product[];
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+
+  useEffect(() => {
+    if (error) {
       console.error("Error fetching products:", error);
       toast({
         title: "Error",
         description: "Failed to fetch products",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
-  }, [selectedCategory, sortBy, toast]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  }, [error, toast]);
 
   const filteredProducts = useMemo(() => {
     return products.filter(

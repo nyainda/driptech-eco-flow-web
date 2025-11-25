@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -699,7 +700,7 @@ const Dashboard = () => {
           date: new Date(p.deadline!).toLocaleDateString(),
           priority:
             new Date(p.deadline!).getTime() - now.getTime() <
-            7 * 24 * 60 * 60 * 1000
+              7 * 24 * 60 * 60 * 1000
               ? "high"
               : "medium",
         })),
@@ -728,14 +729,14 @@ const Dashboard = () => {
         totalSessions: sessions.length,
         avgDuration:
           sessions.reduce((sum, s) => sum + (s.total_duration || 0), 0) /
-            sessions.length || 0,
+          sessions.length || 0,
         avgPageViews:
           sessions.reduce((sum, s) => sum + (s.page_views || 0), 0) /
-            sessions.length || 0,
+          sessions.length || 0,
         bounceRate:
           (sessions.filter((s) => (s.page_views || 0) <= 1).length /
             sessions.length) *
-            100 || 0,
+          100 || 0,
       },
     };
   };
@@ -1085,13 +1086,12 @@ const Dashboard = () => {
                     className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
                   >
                     <div
-                      className={`p-1.5 rounded-full ${
-                        activity.type === "quote"
+                      className={`p-1.5 rounded-full ${activity.type === "quote"
                           ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30"
                           : activity.type === "project"
                             ? "bg-green-100 text-green-600 dark:bg-green-900/30"
                             : "bg-purple-100 text-purple-600 dark:bg-purple-900/30"
-                      }`}
+                        }`}
                     >
                       {activity.type === "quote" ? (
                         <Quote className="h-3 w-3" />
@@ -1194,15 +1194,14 @@ const Dashboard = () => {
                     className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
                   >
                     <div
-                      className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-                        index === 0
+                      className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${index === 0
                           ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30"
                           : index === 1
                             ? "bg-gray-100 text-gray-700 dark:bg-gray-900/30"
                             : index === 2
                               ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30"
                               : "bg-muted text-muted-foreground"
-                      }`}
+                        }`}
                     >
                       {index + 1}
                     </div>

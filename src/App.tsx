@@ -37,6 +37,7 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Cookies = lazy(() => import("./pages/Cookies"));
 const IrrigationKits = lazy(() => import("@/pages/IrrigationKits"));
 const ProductCatalog = lazy(() => import("./pages/ProductCatalog")); // Added ProductCatalog import
+const Careers = lazy(() => import("./pages/Careers"));
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,7 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/technicians" element={<Technicians />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/careers" element={<Careers />} />
 
                 {/* News and certifications */}
                 <Route path="/news" element={<News />} />

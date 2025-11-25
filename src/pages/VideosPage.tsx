@@ -107,6 +107,7 @@ const VideosPage = () => {
       if (error) throw error;
       return data as Video[];
     },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   const { data: categories = [] } = useQuery({
@@ -121,6 +122,7 @@ const VideosPage = () => {
       const uniqueCategories = [...new Set(data.map((item) => item.category))];
       return uniqueCategories;
     },
+    staleTime: 1000 * 60 * 60, // Cache categories for 1 hour
   });
 
   const totalPages = Math.ceil(videos.length / videosPerPage);
