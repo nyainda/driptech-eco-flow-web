@@ -5,8 +5,15 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const plugins: PluginOption[] = [react()];
-  
+  const plugins: PluginOption[] = [
+    react(),
+    ViteImageOptimizer({
+      png: { quality: 80 },
+      jpeg: { quality: 80 },
+      webp: { quality: 80, lossless: true },
+    }),
+  ];
+
   // Only load componentTagger in development mode
   if (mode === 'development') {
     try {
@@ -16,7 +23,7 @@ export default defineConfig(({ mode }) => {
       console.warn('lovable-tagger not available:', error);
     }
   }
-  
+
   return {
     server: {
       host: "0.0.0.0",
@@ -26,6 +33,17 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+      },
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            ui: ['@radix-ui/react-dialog', '@radix-ui/react-slot', '@radix-ui/react-toast', 'lucide-react'],
+            utils: ['date-fns', 'clsx', 'tailwind-merge'],
+          },
+        },
       },
     },
     esbuild: {

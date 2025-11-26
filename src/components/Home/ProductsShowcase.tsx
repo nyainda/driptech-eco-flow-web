@@ -389,6 +389,7 @@ const ProductsShowcase = () => {
                     size="sm"
                     onClick={() => setShowVariants(!showVariants)}
                     className="h-6 px-2 text-xs"
+                    aria-label={showVariants ? "Hide variants" : "Show variants"}
                   >
                     <ChevronDown
                       className={`h-3 w-3 transition-transform ${showVariants ? "rotate-180" : ""}`}
@@ -399,41 +400,38 @@ const ProductsShowcase = () => {
                 {showVariants ? (
                   <div className="space-y-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
                     {product.variants!.map((variant, idx) => (
-                      <div
+                      <button
                         key={idx}
                         onClick={() => setSelectedVariant(variant)}
-                        className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
-                          selectedVariant?.name === variant.name
-                            ? "bg-muted/30 border-primary"
-                            : "border-border hover:bg-muted/30 hover:border-primary/20"
-                        }`}
+                        className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all duration-200 w-full text-left ${selectedVariant?.name === variant.name
+                          ? "bg-muted/30 border-primary"
+                          : "border-border hover:bg-muted/30 hover:border-primary/20"
+                          }`}
+                        aria-label={`Select variant ${variant.name} - KSh ${variant.price.toLocaleString()}`}
                       >
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              variant.in_stock ? "bg-primary" : "bg-red-500"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${variant.in_stock ? "bg-primary" : "bg-red-500"
+                              }`}
                           />
                           <span
-                            className={`text-xs font-medium truncate max-w-[80px] ${
-                              selectedVariant?.name === variant.name
-                                ? "text-primary"
-                                : "text-foreground"
-                            }`}
+                            className={`text-xs font-medium truncate max-w-[80px] ${selectedVariant?.name === variant.name
+                              ? "text-primary"
+                              : "text-foreground"
+                              }`}
                           >
                             {variant.name}
                           </span>
                         </div>
                         <span
-                          className={`text-xs font-bold ${
-                            selectedVariant?.name === variant.name
-                              ? "text-primary"
-                              : "text-muted-foreground"
-                          }`}
+                          className={`text-xs font-bold ${selectedVariant?.name === variant.name
+                            ? "text-primary"
+                            : "text-muted-foreground"
+                            }`}
                         >
                           KSh {variant.price.toLocaleString()}
                         </span>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 ) : (
@@ -441,11 +439,10 @@ const ProductsShowcase = () => {
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border">
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 rounded-full ${
-                            selectedVariant.in_stock
-                              ? "bg-primary"
-                              : "bg-red-500"
-                          }`}
+                          className={`w-2 h-2 rounded-full ${selectedVariant.in_stock
+                            ? "bg-primary"
+                            : "bg-red-500"
+                            }`}
                         />
                         <span className="text-xs font-medium text-primary truncate max-w-[100px]">
                           {selectedVariant.name}
@@ -626,6 +623,7 @@ const ProductsShowcase = () => {
                 <Button
                   variant="ghost"
                   className="w-full hover:bg-accent hover:text-accent-foreground transition-all duration-300 rounded-xl"
+                  aria-label={`View details for ${product.name}`}
                 >
                   <Eye className="mr-2 h-4 w-4" />
                   View Details
@@ -636,6 +634,7 @@ const ProductsShowcase = () => {
                 <Button
                   variant="outline"
                   className="rounded-xl hover:bg-accent hover:text-accent-foreground border-border transition-all duration-300"
+                  aria-label={`Request quote for ${product.name}`}
                 >
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   Quote

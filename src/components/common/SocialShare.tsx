@@ -79,6 +79,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                     size="icon"
                     onClick={() => handleShare('native')}
                     title="Share"
+                    aria-label="Share via native options"
                     className="h-9 w-9"
                 >
                     <Share2 className="h-4 w-4" />
@@ -91,6 +92,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                 size="icon"
                 onClick={() => handleShare('whatsapp')}
                 title="Share on WhatsApp"
+                aria-label="Share on WhatsApp"
                 className="h-9 w-9 hover:bg-green-50 hover:text-green-600 hover:border-green-300"
             >
                 <MessageCircle className="h-4 w-4" />
@@ -102,6 +104,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                 size="icon"
                 onClick={() => handleShare('facebook')}
                 title="Share on Facebook"
+                aria-label="Share on Facebook"
                 className="h-9 w-9 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
             >
                 <Facebook className="h-4 w-4" />
@@ -113,6 +116,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                 size="icon"
                 onClick={() => handleShare('twitter')}
                 title="Share on Twitter"
+                aria-label="Share on Twitter"
                 className="h-9 w-9 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-300"
             >
                 <Twitter className="h-4 w-4" />
@@ -124,6 +128,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                 size="icon"
                 onClick={() => handleShare('linkedin')}
                 title="Share on LinkedIn"
+                aria-label="Share on LinkedIn"
                 className="h-9 w-9 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300"
             >
                 <Linkedin className="h-4 w-4" />
@@ -135,6 +140,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                 size="icon"
                 onClick={() => handleShare('copy')}
                 title="Copy Link"
+                aria-label="Copy link to clipboard"
                 className="h-9 w-9"
             >
                 <Link2 className="h-4 w-4" />

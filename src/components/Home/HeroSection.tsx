@@ -118,7 +118,7 @@ const HeroSection = () => {
                             {features.map((feature, index) => (
                                 <div key={index} className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-colors">
                                     <feature.icon className="h-6 w-6 text-emerald-400 mb-2" />
-                                    <h3 className="text-white font-semibold text-sm">{feature.text}</h3>
+                                    <div className="text-white font-semibold text-sm">{feature.text}</div>
                                     <p className="text-slate-400 text-xs">{feature.desc}</p>
                                 </div>
                             ))}
@@ -130,6 +130,7 @@ const HeroSection = () => {
                                 size="lg"
                                 onClick={() => makePhoneCall(whatsappNumber)}
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-emerald-900/20 transition-all hover:translate-y-[-2px] border-none w-full sm:w-auto"
+                                aria-label="Call 0111 409 454"
                             >
                                 <div className="flex items-center justify-center gap-3">
                                     <Phone className="h-5 w-5" />
@@ -142,6 +143,7 @@ const HeroSection = () => {
                                 variant="outline"
                                 onClick={openWhatsApp}
                                 className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-emerald-900 px-8 py-6 text-lg rounded-xl backdrop-blur-sm transition-all hover:translate-y-[-2px] w-full sm:w-auto"
+                                aria-label="Contact us on WhatsApp"
                             >
                                 <div className="flex items-center justify-center gap-3">
                                     <span className="text-xl">💬</span>
@@ -154,6 +156,7 @@ const HeroSection = () => {
                                 variant="outline"
                                 onClick={() => window.location.href = 'mailto:info@driptech.com'}
                                 className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-emerald-900 px-8 py-6 text-lg rounded-xl backdrop-blur-sm transition-all hover:translate-y-[-2px] w-full sm:w-auto"
+                                aria-label="Send us an email"
                             >
                                 <div className="flex items-center justify-center gap-3">
                                     <Mail className="h-5 w-5" />
@@ -274,6 +277,7 @@ const HeroSection = () => {
                                                 <Button
                                                     onClick={openWhatsApp}
                                                     className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-900/20 hover:shadow-xl hover:shadow-emerald-900/30 transition-all h-10 sm:h-11 text-sm sm:text-base font-semibold rounded-xl"
+                                                    aria-label="Inquire about this product on WhatsApp"
                                                 >
                                                     <span className="mr-2">💬</span>
                                                     Inquire on WhatsApp

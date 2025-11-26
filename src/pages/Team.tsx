@@ -247,6 +247,7 @@ const Team = () => {
                               href={member.linkedin_url}
                               target="_blank"
                               rel="noopener noreferrer"
+                              aria-label={`${member.name}'s LinkedIn profile`}
                             >
                               <Linkedin className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
                             </a>
@@ -259,7 +260,7 @@ const Team = () => {
                             className="h-12 w-12 p-0 rounded-full hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-950/50 dark:hover:text-green-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-green-200 dark:hover:border-green-800 group/btn"
                             asChild
                           >
-                            <a href={`mailto:${member.email}`}>
+                            <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
                               <Mail className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
                             </a>
                           </Button>
@@ -271,7 +272,7 @@ const Team = () => {
                             className="h-12 w-12 p-0 rounded-full hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950/50 dark:hover:text-purple-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-purple-200 dark:hover:border-purple-800 group/btn"
                             asChild
                           >
-                            <a href={`tel:${member.phone}`}>
+                            <a href={`tel:${member.phone}`} aria-label={`Call ${member.name}`}>
                               <Phone className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
                             </a>
                           </Button>

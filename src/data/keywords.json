@@ -1,0 +1,126 @@
+{
+    "primaryProducts": [
+        "drip irrigation systems",
+        "sprinkler systems",
+        "irrigation pipes",
+        "hose pipes",
+        "water pumps",
+        "irrigation kits"
+    ],
+    "dripIrrigation": [
+        "drip lines",
+        "driplines",
+        "drip tape",
+        "drip emitters",
+        "inline drippers",
+        "button drippers",
+        "pressure compensating drippers",
+        "drip irrigation tubing",
+        "16mm drip pipes",
+        "drip irrigation fittings"
+    ],
+    "sprinklers": [
+        "sprinkler heads",
+        "micro sprinklers",
+        "mini sprinklers",
+        "impact sprinklers",
+        "rotary sprinklers",
+        "pop-up sprinklers",
+        "sprinkler nozzles",
+        "sprinkler risers"
+    ],
+    "pipes": [
+        "HDPE pipes",
+        "PVC pipes",
+        "polyethylene pipes",
+        "irrigation hoses",
+        "lay flat hoses",
+        "garden hoses",
+        "flexible pipes",
+        "rigid pipes",
+        "half inch pipes",
+        "three quarter inch pipes",
+        "one inch pipes"
+    ],
+    "fittings": [
+        "pipe fittings",
+        "elbow fittings",
+        "tee fittings",
+        "couplings",
+        "reducers",
+        "end caps",
+        "quick connectors",
+        "barbed fittings",
+        "threaded fittings",
+        "compression fittings"
+    ],
+    "valves": [
+        "ball valves",
+        "gate valves",
+        "solenoid valves",
+        "check valves",
+        "pressure relief valves",
+        "flow control valves",
+        "irrigation timers",
+        "water timers",
+        "automatic controllers",
+        "manual valves"
+    ],
+    "filtration": [
+        "sand filters",
+        "disc filters",
+        "screen filters",
+        "media filters",
+        "Y-filters",
+        "inline filters",
+        "irrigation filters",
+        "water filters"
+    ],
+    "pumps": [
+        "water pumps",
+        "submersible pumps",
+        "surface pumps",
+        "centrifugal pumps",
+        "booster pumps",
+        "solar pumps",
+        "electric pumps",
+        "diesel pumps"
+    ],
+    "accessories": [
+        "pressure regulators",
+        "pressure gauges",
+        "flow meters",
+        "fertilizer injectors",
+        "venturi injectors",
+        "goof plugs",
+        "hole punches",
+        "pipe cutters",
+        "teflon tape",
+        "clamps"
+    ],
+    "smartSystems": [
+        "smart irrigation controllers",
+        "IoT irrigation systems",
+        "soil moisture sensors",
+        "weather-based controllers",
+        "automated irrigation",
+        "remote irrigation control"
+    ],
+    "applications": [
+        "farm irrigation",
+        "agricultural irrigation",
+        "greenhouse irrigation",
+        "landscape irrigation",
+        "garden irrigation",
+        "lawn irrigation",
+        "orchard irrigation",
+        "vegetable irrigation"
+    ],
+    "locationSpecific": [
+        "irrigation Kenya",
+        "drip irrigation Nairobi",
+        "irrigation supplies Kenya",
+        "irrigation equipment Kenya",
+        "irrigation materials Kenya"
+    ]
+}

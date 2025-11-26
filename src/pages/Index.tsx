@@ -3,6 +3,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import Home from "./Home";
 import SEOHead from "@/components/common/SEOHead";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 
 const Index = () => {
   return (
@@ -43,6 +44,7 @@ const Index = () => {
         <Header />
         <main>
           <Home />
+          <IrrigationKeywords />
         </main>
         <Footer />
       </div>

@@ -37,17 +37,19 @@ const HeroSectionModern = () => {
     return (
         <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-slate-900">
             {/* Background Image with Parallax-like effect */}
+            {/* Background Image with Parallax-like effect */}
             <div
                 className="absolute inset-0 z-0 transition-transform duration-100 ease-out"
                 style={{
                     transform: `translate(${mousePosition.x * -1}px, ${mousePosition.y * -1}px) scale(1.05)`
                 }}
             >
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{
-                        backgroundImage: `url(https://images.unsplash.com/photo-1574943320219-553eb213f72d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)`,
-                    }}
+                <img
+                    src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+                    alt="Lush green farm with irrigation system"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    fetchPriority="high"
+                    loading="eager"
                 />
                 {/* Premium Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/40" />

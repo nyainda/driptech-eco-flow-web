@@ -173,6 +173,7 @@ const Footer = () => {
                     <a
                       href="tel:0114575401"
                       className="hover:text-foreground transition-colors"
+                      aria-label="Call us at 0114575401"
                     >
                       0114575401
                     </a>
@@ -190,6 +191,7 @@ const Footer = () => {
                     <a
                       href="tel:0114575401"
                       className="hover:text-foreground transition-colors"
+                      aria-label="Call us at 0114575401"
                     >
                       0114575401
                     </a>
@@ -211,13 +213,15 @@ const Footer = () => {
                 <div className="text-sm text-muted-foreground">
                   <a
                     href="mailto:driptechs.info@gmail.com"
-                    className="hover:text-foreground transition-colors block"
+                    className="hover:text-foreground transition-colors block py-1"
+                    aria-label="Email us at driptechs.info@gmail.com"
                   >
                     driptechs.info@gmail.com
                   </a>
                   <a
                     href="mailto:info@dripstech.co.ke"
-                    className="hover:text-foreground transition-colors block"
+                    className="hover:text-foreground transition-colors block py-1"
+                    aria-label="Email us at info@dripstech.co.ke"
                   >
                     info@dripstech.co.ke
                   </a>

@@ -57,6 +57,7 @@ import OptimizedImage from "@/components/common/OptimizedImage";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 
 interface Variant {
   name: string;
@@ -1624,7 +1625,7 @@ const Products = () => {
           </div>
         </section>
       </main>
-
+      <IrrigationKeywords />
       <Footer />
     </div>
   );

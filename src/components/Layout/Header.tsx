@@ -79,23 +79,23 @@ const Header = () => {
   }, []);
 
   // Auto-rotate banners with smooth transitions
-useEffect(() => {
-  const visibleBanners = getVisibleBanners();
-  if (visibleBanners.length <= 1 || isPaused) return;
+  useEffect(() => {
+    const visibleBanners = getVisibleBanners();
+    if (visibleBanners.length <= 1 || isPaused) return;
 
-  const interval = setInterval(() => {
-    setIsTransitioning(true);
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
 
-    setTimeout(() => {
-      setCurrentBannerIndex(
-        (prevIndex) => (prevIndex + 1) % visibleBanners.length,
-      );
-      setIsTransitioning(false);
-    }, 300);
-  }, 5000);
+      setTimeout(() => {
+        setCurrentBannerIndex(
+          (prevIndex) => (prevIndex + 1) % visibleBanners.length,
+        );
+        setIsTransitioning(false);
+      }, 300);
+    }, 5000);
 
-  return () => clearInterval(interval);
-}, [banners, dismissedBanners, isPaused]);
+    return () => clearInterval(interval);
+  }, [banners, dismissedBanners, isPaused]);
 
 
   const getDismissedBanners = (): string[] => {
@@ -242,11 +242,10 @@ useEffect(() => {
       {/* Enhanced Discount Banner with Smooth Transitions */}
       {showBanner && currentBanner && (
         <div
-          className={`relative overflow-hidden transition-all duration-600 ${
-            isExpiringSoon(currentBanner.valid_until)
+          className={`relative overflow-hidden transition-all duration-600 ${isExpiringSoon(currentBanner.valid_until)
               ? "bg-gradient-to-r from-orange-500 to-red-500"
               : "bg-gradient-to-r from-primary to-primary/80"
-          } text-primary-foreground`}
+            } text-primary-foreground`}
         >
           {/* Animated background */}
           <div className="absolute inset-0 opacity-10">
@@ -269,11 +268,10 @@ useEffect(() => {
           )}
 
           <div
-            className={`relative py-2 px-4 transition-all duration-600 ${
-              isTransitioning
+            className={`relative py-2 px-4 transition-all duration-600 ${isTransitioning
                 ? "opacity-0 transform translate-x-2"
                 : "opacity-100 transform translate-x-0"
-            }`}
+              }`}
           >
             <div className="container mx-auto flex items-center justify-between">
               <div className="flex items-center gap-1 sm:gap-3 flex-1 min-w-0">
@@ -291,11 +289,10 @@ useEffect(() => {
                 <Gift className="h-3 w-3 sm:h-4 sm:w-4 animate-bounce flex-shrink-0" />
                 <Badge
                   variant="secondary"
-                  className={`font-bold text-xs px-1.5 sm:px-2 py-0.5 flex-shrink-0 ${
-                    isExpiringSoon(currentBanner.valid_until)
+                  className={`font-bold text-xs px-1.5 sm:px-2 py-0.5 flex-shrink-0 ${isExpiringSoon(currentBanner.valid_until)
                       ? "bg-white text-red-600 animate-pulse"
                       : "bg-white text-primary"
-                  }`}
+                    }`}
                 >
                   <span className="hidden xs:inline">
                     {currentBanner.discount} OFF
@@ -314,11 +311,10 @@ useEffect(() => {
 
                 {currentBanner.valid_until && (
                   <div
-                    className={`flex items-center gap-1 text-xs opacity-90 flex-shrink-0 ${
-                      isExpiringSoon(currentBanner.valid_until)
+                    className={`flex items-center gap-1 text-xs opacity-90 flex-shrink-0 ${isExpiringSoon(currentBanner.valid_until)
                         ? "animate-pulse font-semibold"
                         : ""
-                    }`}
+                      }`}
                   >
                     <Clock className="h-3 w-3" />
                     <span className="hidden sm:inline">
@@ -372,11 +368,10 @@ useEffect(() => {
                       <button
                         key={index}
                         onClick={() => handleManualNavigation(index)}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          index === currentBannerIndex
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentBannerIndex
                             ? "bg-primary-foreground scale-110"
                             : "bg-primary-foreground/40 hover:bg-primary-foreground/60"
-                        }`}
+                          }`}
                         aria-label={`Go to offer ${index + 1}`}
                       />
                     ))}
@@ -409,11 +404,11 @@ useEffect(() => {
       {/* Top Bar with Enhanced Contact Info */}
       <div className="border-b border-border/50 bg-muted/30">
         <div className="container mx-auto px-2 sm:px-4">
-          <div className="flex h-8 sm:h-10 items-center justify-between text-xs sm:text-sm text-muted-foreground">
+          <div className="flex h-8 sm:h-10 items-center justify-between text-xs sm:text-sm text-foreground/90">
             <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
               <div className="flex items-center gap-1 sm:gap-2 hover:text-foreground transition-colors">
                 <Phone className="h-3 w-3" />
-                <a href="tel:0114575401" className="hover:underline">
+                <a href="tel:0114575401" className="hover:underline" aria-label="Call us at 0114575401">
                   <span className="hidden xs:inline">0114575401</span>
                   <span className="xs:hidden">Call</span>
                 </a>
@@ -423,9 +418,10 @@ useEffect(() => {
                 <a
                   href="mailto:info@dripstech.co.ke"
                   className="hover:underline"
+                  aria-label="Email us at info@dripstech.co.ke"
                 >
                   <span className="hidden md:inline">
-                   info@dripstech.co.ke
+                    info@dripstech.co.ke
                   </span>
                   <span className="hidden sm:inline md:hidden">Email</span>
                   <span className="sm:hidden">Mail</span>
@@ -436,6 +432,7 @@ useEffect(() => {
                 <a
                   href="mailto:driptechs.info@gmail.com"
                   className="hover:underline"
+                  aria-label="Email us at driptechs.info@gmail.com"
                 >
                   driptechs.info@gmail.com
                 </a>
@@ -629,11 +626,10 @@ useEffect(() => {
                           )}
 
                           <div
-                            className={`p-4 rounded-xl transition-all duration-500 shadow-lg border ${
-                              isExpiringSoon(currentBanner?.valid_until)
+                            className={`p-4 rounded-xl transition-all duration-500 shadow-lg border ${isExpiringSoon(currentBanner?.valid_until)
                                 ? "bg-gradient-to-br from-orange-500/90 via-red-500/90 to-red-600/90 border-red-400/20"
                                 : "bg-gradient-to-br from-primary/90 via-primary/90 to-primary/80 border-primary/20"
-                            } text-primary-foreground relative overflow-hidden`}
+                              } text-primary-foreground relative overflow-hidden`}
                           >
                             <div className="relative z-10">
                               <div className="flex items-center gap-2 mb-2">
@@ -653,11 +649,10 @@ useEffect(() => {
                               </p>
                               {currentBanner?.valid_until && (
                                 <div
-                                  className={`flex items-center gap-1.5 text-xs ${
-                                    isExpiringSoon(currentBanner.valid_until)
+                                  className={`flex items-center gap-1.5 text-xs ${isExpiringSoon(currentBanner.valid_until)
                                       ? "animate-pulse font-semibold"
                                       : "opacity-90"
-                                  }`}
+                                    }`}
                                 >
                                   <Clock className="h-3 w-3" />
                                   <span>
@@ -676,11 +671,10 @@ useEffect(() => {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleManualNavigation(index)}
-                                  className={`w-2 h-2 p-0 rounded-full transition-all duration-300 ${
-                                    index === currentBannerIndex
+                                  className={`w-2 h-2 p-0 rounded-full transition-all duration-300 ${index === currentBannerIndex
                                       ? "bg-primary scale-125"
                                       : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                                  }`}
+                                    }`}
                                 />
                               ))}
                             </div>
@@ -763,6 +757,7 @@ useEffect(() => {
                       <a
                         href="tel:0114575401"
                         className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors min-h-[44px] py-2"
+                        aria-label="Call us at 0114575401"
                       >
                         <Phone className="h-3.5 w-3.5" />
                         <span className="font-medium">Call Us</span>
@@ -770,6 +765,7 @@ useEffect(() => {
                       <a
                         href="mailto:driptech2025@gmail.com"
                         className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors min-h-[44px] py-2"
+                        aria-label="Email us at driptech2025@gmail.com"
                       >
                         <Mail className="h-3.5 w-3.5" />
                         <span className="font-medium">Email</span>

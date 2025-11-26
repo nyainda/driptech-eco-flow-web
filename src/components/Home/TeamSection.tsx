@@ -97,6 +97,7 @@ const TeamMemberCard = ({
                 href={member.linkedin_url}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`${member.name}'s LinkedIn profile`}
               >
                 <Linkedin className="h-4 w-4 text-primary" />
               </a>
@@ -109,7 +110,7 @@ const TeamMemberCard = ({
               className="h-10 w-10 p-0 rounded-full bg-muted/30 border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover:scale-105 shadow-md"
               asChild
             >
-              <a href={`mailto:${member.email}`}>
+              <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
                 <Mail className="h-4 w-4 text-primary" />
               </a>
             </Button>
@@ -121,7 +122,7 @@ const TeamMemberCard = ({
               className="h-10 w-10 p-0 rounded-full bg-muted/30 border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover:scale-105 shadow-md"
               asChild
             >
-              <a href={`tel:${member.phone}`}>
+              <a href={`tel:${member.phone}`} aria-label={`Call ${member.name}`}>
                 <Phone className="h-4 w-4 text-primary" />
               </a>
             </Button>
