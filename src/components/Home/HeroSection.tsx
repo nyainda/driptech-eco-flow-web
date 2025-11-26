@@ -78,7 +78,14 @@ const HeroSection = () => {
             {/* Background Image - Optimized for LCP */}
             <div className="absolute inset-0 z-0">
                 <img
-                    src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop"
+                    srcSet="
+                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=75&w=640&auto=format&fit=crop 640w,
+                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=75&w=1024&auto=format&fit=crop 1024w,
+                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1920&auto=format&fit=crop 1920w,
+                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop 2070w
+                    "
+                    sizes="100vw"
+                    src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1920&auto=format&fit=crop"
                     alt="Modern agricultural irrigation system in Kenya"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-10000 ease-in-out hover:scale-105"
                     fetchPriority="high"

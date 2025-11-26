@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/Layout/ThemeProvider";
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+import useWebVitals from "./hooks/useWebVitals";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
@@ -41,76 +42,88 @@ const Careers = lazy(() => import("./pages/Careers"));
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <HelmetProvider> {/* Add HelmetProvider here */}
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <VisitorTracker />
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
-                {/* Main pages */}
-                <Route path="/" element={<Index />} />
-                <Route path="/admin" element={<Admin />} />
+const App = () => {
+  // Monitor Web Vitals in production
+  useWebVitals((metric) => {
+    // Log to console in development
+    if (import.meta.env.DEV) {
+      console.log(`📊 ${metric.name}:`, metric);
+    }
+    // In production, you could send to analytics
+    // analytics.send(metric);
+  });
 
-                {/* Product routes */}
-                <Route path="/products" element={<Products />} />
-                <Route path="/products/:category" element={<Products />} />
-                <Route path="/products/:category/:product" element={<Products />} />
-                <Route path="/catalog" element={<ProductCatalog />} /> {/* Added ProductCatalog route */}
+  return (
+    <HelmetProvider> {/* Add HelmetProvider here */}
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <VisitorTracker />
+              <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
+                  {/* Main pages */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/admin" element={<Admin />} />
 
-                {/* Service routes */}
-                <Route path="/services" element={<Services />} />
-                <Route path="/services/:service" element={<Services />} />
+                  {/* Product routes */}
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/products/:category" element={<Products />} />
+                  <Route path="/products/:category/:product" element={<Products />} />
+                  <Route path="/catalog" element={<ProductCatalog />} /> {/* Added ProductCatalog route */}
 
-                {/* Support and info pages */}
-                <Route path="/installation-guides" element={<InstallationGuides />} />
-                <Route path="/case-studies" element={<CaseStudies />} />
-                <Route path="/technical-support" element={<TechnicalSupport />} />
-                <Route path="/projects" element={<Projects />} />
-                <Route path="/success-stories" element={<SuccessStories />} />
+                  {/* Service routes */}
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/services/:service" element={<Services />} />
 
-                {/* Team and company */}
-                <Route path="/team" element={<TeamGrid />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/technicians" element={<Technicians />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/careers" element={<Careers />} />
+                  {/* Support and info pages */}
+                  <Route path="/installation-guides" element={<InstallationGuides />} />
+                  <Route path="/case-studies" element={<CaseStudies />} />
+                  <Route path="/technical-support" element={<TechnicalSupport />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/success-stories" element={<SuccessStories />} />
 
-                {/* News and certifications */}
-                <Route path="/news" element={<News />} />
-                <Route path="/news/:slug" element={<NewsArticle />} />
-                <Route path="/certifications" element={<Certifications />} />
+                  {/* Team and company */}
+                  <Route path="/team" element={<TeamGrid />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/technicians" element={<Technicians />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/careers" element={<Careers />} />
 
-                {/* Irrigation Kits */}
-                <Route path="/irrigation-kits" element={<IrrigationKits />} />
+                  {/* News and certifications */}
+                  <Route path="/news" element={<News />} />
+                  <Route path="/news/:slug" element={<NewsArticle />} />
+                  <Route path="/certifications" element={<Certifications />} />
 
-                {/* Blog routes */}
-                <Route path="/blog" element={<BlogPage />} />
-                <Route path="/blog/:slug" element={<BlogPostPage />} />
+                  {/* Irrigation Kits */}
+                  <Route path="/irrigation-kits" element={<IrrigationKits />} />
 
-                {/* Video section */}
-                <Route path="/video" element={<VideoSection />} />
-                <Route path="/videos" element={<VideosPage />} />
+                  {/* Blog routes */}
+                  <Route path="/blog" element={<BlogPage />} />
+                  <Route path="/blog/:slug" element={<BlogPostPage />} />
 
-                {/* Legal pages */}
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/cookies" element={<Cookies />} />
+                  {/* Video section */}
+                  <Route path="/video" element={<VideoSection />} />
+                  <Route path="/videos" element={<VideosPage />} />
 
-                {/* Catch-all route for 404 */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-            <ScrollToTop />
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
-);
+                  {/* Legal pages */}
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/cookies" element={<Cookies />} />
+
+                  {/* Catch-all route for 404 */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+              <ScrollToTop />
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  );
+};
 
 export default App;
