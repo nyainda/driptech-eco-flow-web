@@ -75,13 +75,14 @@ const HeroSection = () => {
 
     return (
         <section className="relative min-h-[90vh] flex items-center bg-slate-50 dark:bg-slate-950 font-sans overflow-hidden transition-colors duration-300">
-            {/* Background Image - High Quality, Natural */}
+            {/* Background Image - Optimized for LCP */}
             <div className="absolute inset-0 z-0">
-                <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 ease-in-out transform hover:scale-105"
-                    style={{
-                        backgroundImage: `url(https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop)`,
-                    }}
+                <img
+                    src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop"
+                    alt="Modern agricultural irrigation system in Kenya"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-10000 ease-in-out hover:scale-105"
+                    fetchPriority="high"
+                    loading="eager"
                 />
                 {/* Professional Gradient Overlay - Adapts to Dark Mode */}
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40 dark:from-slate-950/95 dark:via-slate-950/90 dark:to-slate-950/60" />
