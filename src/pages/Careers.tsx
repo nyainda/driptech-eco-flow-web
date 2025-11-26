@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -111,6 +112,8 @@ const Careers = () => {
                     </div>
                 </section>
             </main>
+            <IrrigationKeywords />
+
             <Footer />
         </div>
     );

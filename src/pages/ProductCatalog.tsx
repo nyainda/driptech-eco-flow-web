@@ -29,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { useToast } from "@/hooks/use-toast";
 import ProductTracker from "@/components/Analytics/ProductTracker";
@@ -461,6 +462,9 @@ const ProductCatalog: React.FC = () => {
           </div>
         </div>
       </main>
+
+      <IrrigationKeywords />
+
 
       <Footer />
     </div>

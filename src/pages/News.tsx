@@ -27,6 +27,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 
 // Types
 interface NewsArticle {
@@ -660,6 +661,8 @@ const News: React.FC = () => {
           )}
         </div>
       </main>
+      <IrrigationKeywords />
+
       <Footer />
     </div>
   );

@@ -1,4 +1,5 @@
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -270,6 +271,8 @@ const Contact = () => {
           </div>
         </section>
       </main>
+      <IrrigationKeywords />
+
       <Footer />
     </div>
   );

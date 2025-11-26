@@ -51,6 +51,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -316,6 +317,8 @@ const IrrigationKits = () => {
             </Button>
           </div>
         </main>
+        <IrrigationKeywords />
+
         <Footer />
       </div>
     );

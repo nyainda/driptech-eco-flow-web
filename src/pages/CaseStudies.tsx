@@ -34,6 +34,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { useToast } from "@/hooks/use-toast";
 
 const CaseStudies = () => {
@@ -545,6 +546,9 @@ const CaseStudies = () => {
           </div>
         </div>
       </main>
+
+      <IrrigationKeywords />
+
 
       <Footer />
     </div>

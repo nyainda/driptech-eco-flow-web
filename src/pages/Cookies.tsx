@@ -1,5 +1,6 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -522,6 +523,9 @@ const Cookies = () => {
           </div>
         </div>
       </main>
+
+      <IrrigationKeywords />
+
 
       <Footer />
     </div>

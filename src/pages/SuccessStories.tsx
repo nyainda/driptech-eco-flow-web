@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -161,6 +162,8 @@ const SuccessStories = () => {
           </div>
         </section>
       </main>
+      <IrrigationKeywords />
+
       <Footer />
     </div>
   );

@@ -1,5 +1,6 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Mail, Phone, MapPin, Clock } from "lucide-react";
@@ -448,6 +449,9 @@ const Privacy = () => {
           </div>
         </div>
       </main>
+
+      <IrrigationKeywords />
+
 
       <Footer />
     </div>

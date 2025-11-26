@@ -17,6 +17,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 
 interface NewsArticle {
   id: number;
@@ -134,6 +135,8 @@ const NewsArticle = () => {
             </div>
           </div>
         </main>
+        <IrrigationKeywords />
+
         <Footer />
       </div>
     );

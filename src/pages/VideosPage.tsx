@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import {
   Play,
   Clock,
@@ -266,6 +267,8 @@ const VideosPage = () => {
             </div>
           </section>
         </main>
+        <IrrigationKeywords />
+
         <Footer />
       </div>
     );

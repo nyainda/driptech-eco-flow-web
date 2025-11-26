@@ -47,6 +47,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -970,6 +971,9 @@ ${supportForm.steps_taken}`,
           </Tabs>
         </div>
       </main>
+
+      <IrrigationKeywords />
+
 
       <Footer />
     </div>

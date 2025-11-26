@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import {
   Phone,
   Mail,
@@ -143,6 +144,8 @@ const Technicians = () => {
             </div>
           </div>
         </main>
+        <IrrigationKeywords />
+
         <Footer />
       </div>
     );

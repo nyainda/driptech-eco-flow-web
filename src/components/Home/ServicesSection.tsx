@@ -271,9 +271,8 @@ const ServicesSection = () => {
             {services.map((service, index) => (
               <Card
                 key={index}
-                className={`group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-2 ${
-                  service.popular ? "border-primary/20 border-2" : ""
-                }`}
+                className={`group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-2 ${service.popular ? "border-primary/20 border-2" : ""
+                  }`}
               >
                 {service.popular && (
                   <div className="absolute top-4 right-4">
@@ -313,7 +312,7 @@ const ServicesSection = () => {
                     asChild
                   >
                     <Link to="/services">
-                      Learn More
+                      Learn About {service.title}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>

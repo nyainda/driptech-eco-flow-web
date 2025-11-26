@@ -1,5 +1,6 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Mail, Phone, MapPin, AlertTriangle } from "lucide-react";
@@ -584,6 +585,9 @@ const Terms = () => {
           </div>
         </div>
       </main>
+
+      <IrrigationKeywords />
+
 
       <Footer />
     </div>

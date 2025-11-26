@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 
 const Certifications = () => {
   const certifications = [
@@ -328,6 +329,9 @@ const Certifications = () => {
           </Card>
         </div>
       </main>
+
+      <IrrigationKeywords />
+
 
       <Footer />
     </div>
