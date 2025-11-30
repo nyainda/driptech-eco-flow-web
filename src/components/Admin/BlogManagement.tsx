@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import AIBlogGenerator from "./AI/AIBlogGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
@@ -263,6 +264,29 @@ const BlogManagement = () => {
     incrementViewCount(post.id);
   };
 
+  const handleAIGenerated = (data: any) => {
+    setEditingPost({
+      id: "",
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      content: data.content,
+      featured_image: null,
+      views: 0,
+      likes: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      tags: data.tags,
+      published: false,
+      published_at: null,
+      seo_title: data.seo_title,
+      seo_description: data.seo_description,
+      reading_time: data.reading_time,
+      featured_image_url: "",
+    } as BlogPost);
+    setShowEditor(true);
+  };
+
   const handleCreatePost = () => {
     setEditingPost(null);
     setShowEditor(true);
@@ -381,6 +405,9 @@ const BlogManagement = () => {
               Create, manage, and publish compelling content
             </p>
           </div>
+          <div className="flex gap-2">
+            <AIBlogGenerator onGenerate={handleAIGenerated} />
+          </div>
         </div>
 
         {/* Statistics Cards */}
@@ -428,15 +455,15 @@ const BlogManagement = () => {
               </div>
               <h3 className="text-lg sm:text-2xl font-semibold mb-2 sm:mb-3">
                 {searchQuery ||
-                selectedCategory !== "all" ||
-                statusFilter !== "all"
+                  selectedCategory !== "all" ||
+                  statusFilter !== "all"
                   ? "No posts found"
                   : "No blog posts yet"}
               </h3>
               <p className="text-sm sm:text-base text-muted-foreground text-center mb-4 sm:mb-6 max-w-md leading-relaxed">
                 {searchQuery ||
-                selectedCategory !== "all" ||
-                statusFilter !== "all"
+                  selectedCategory !== "all" ||
+                  statusFilter !== "all"
                   ? "Try adjusting your search criteria or filters to find what you're looking for"
                   : "Start creating engaging content for your audience. Your first blog post is just a click away!"}
               </p>

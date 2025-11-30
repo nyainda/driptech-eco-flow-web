@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import AIProjectGenerator from "./AI/AIProjectGenerator";
 import {
   Card,
   CardContent,
@@ -320,6 +321,26 @@ const ProjectManagement = () => {
     setShowAddForm(true);
   };
 
+  const handleAIGenerated = (data: any) => {
+    setFormData({
+      name: data.name,
+      customer_id: "",
+      project_type: data.project_type,
+      location: data.location,
+      area_covered: data.area_covered?.toString() || "",
+      water_saved: data.water_saved?.toString() || "",
+      yield_improvement: "",
+      start_date: "",
+      completion_date: "",
+      testimonial: data.testimonial,
+      featured: false,
+      status: "planning",
+      project_images: [],
+    });
+    setEditingProject(null);
+    setShowAddForm(true);
+  };
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -384,13 +405,16 @@ const ProjectManagement = () => {
             Manage your irrigation project portfolio and case studies
           </p>
         </div>
-        <Button
-          onClick={() => setShowAddForm(true)}
-          className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          New Project
-        </Button>
+        <div className="flex gap-2">
+          <AIProjectGenerator onGenerate={handleAIGenerated} />
+          <Button
+            onClick={() => setShowAddForm(true)}
+            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New Project
+          </Button>
+        </div>
       </div>
 
       {showAddForm && (

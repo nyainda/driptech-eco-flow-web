@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import AIProductGenerator from "../AI/AIProductGenerator";
 
 interface ProductFormData {
   name: string;
@@ -215,17 +216,36 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }));
   };
 
+  const handleAIGenerated = (data: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      name: data.name || prev.name,
+      model_number: data.model_number || prev.model_number,
+      subcategory: data.subcategory || prev.subcategory,
+      description: data.description || prev.description,
+      features: data.features ? [...prev.features, ...data.features] : prev.features,
+      applications: data.applications ? [...prev.applications, ...data.applications] : prev.applications,
+      specifications: data.specifications ? [...prev.specifications, ...data.specifications] : prev.specifications,
+      variants: data.variants ? [...prev.variants, ...data.variants] : prev.variants,
+    }));
+  };
+
   return (
     <Card className="border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-2xl">
       <CardHeader className="p-4 sm:p-6 rounded-t-lg">
-        <CardTitle className="text-xl sm:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-gray-400 dark:to-gray-200">
-          {editingProduct ? "Edit Product" : "Add New Product"}
-        </CardTitle>
-        <CardDescription className="text-sm sm:text-base text-slate-600 dark:text-gray-400">
-          {editingProduct
-            ? "Update product information"
-            : "Enter product details below"}
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              {editingProduct ? "Edit Product" : "Add New Product"}
+            </CardTitle>
+            <CardDescription className="text-sm sm:text-base text-slate-600 dark:text-gray-400">
+              {editingProduct
+                ? "Update product information"
+                : "Fill in the details to add a new product to your catalog"}
+            </CardDescription>
+          </div>
+          <AIProductGenerator onGenerate={handleAIGenerated} />
+        </div>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
         <form onSubmit={onSubmit} className="space-y-6">

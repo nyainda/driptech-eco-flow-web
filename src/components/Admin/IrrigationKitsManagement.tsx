@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import AIIrrigationKitGenerator from "./AI/AIIrrigationKitGenerator";
 import {
   Card,
   CardContent,
@@ -193,10 +194,10 @@ const IrrigationKitsManagement = () => {
             typeof kit.components === "string"
               ? JSON.parse(kit.components)
               : kit.components || {
-                  main_components: [],
-                  pricing_tiers: [],
-                  included_services: [],
-                },
+                main_components: [],
+                pricing_tiers: [],
+                included_services: [],
+              },
         })),
       );
 
@@ -350,6 +351,35 @@ const IrrigationKitsManagement = () => {
   const handleNewKit = () => {
     setSelectedKit(null);
     resetForm();
+    setShowForm(true);
+  };
+
+  const handleAIGenerated = (data: any) => {
+    setFormData({
+      name: data.name || "",
+      description: data.description || "",
+      category: data.category || "general",
+      coverage_area: 0,
+      target_crop: data.target_crop || "",
+      price: 0,
+      components: {
+        main_components: data.components?.main_components || [],
+        pricing_tiers: [],
+        included_services: data.components?.included_services || [],
+      },
+      in_stock: true,
+      featured: false,
+      maintenance_level: data.maintenance_level || "low",
+      installation_complexity: "medium",
+      installation_time_hours: 4,
+      water_efficiency_percentage: 70,
+      warranty_months: 12,
+      active: true,
+      images: [],
+      kit_type: data.kit_type || "",
+      recommended_crops: data.recommended_crops || [],
+    });
+    setSelectedKit(null);
     setShowForm(true);
   };
 
@@ -576,17 +606,17 @@ const IrrigationKitsManagement = () => {
     avgRating:
       installations.length > 0
         ? Number(
-            (
-              installations.reduce(
-                (sum, inst) => sum + (inst.satisfaction_rating || 0),
-                0,
-              ) /
-                installations.filter(
-                  (inst) =>
-                    inst.satisfaction_rating && inst.satisfaction_rating > 0,
-                ).length || 0
-            ).toFixed(1),
-          )
+          (
+            installations.reduce(
+              (sum, inst) => sum + (inst.satisfaction_rating || 0),
+              0,
+            ) /
+            installations.filter(
+              (inst) =>
+                inst.satisfaction_rating && inst.satisfaction_rating > 0,
+            ).length || 0
+          ).toFixed(1),
+        )
         : 0,
     pendingInstallations: installations.filter(
       (inst) => inst.installation_status === "planned",
@@ -1310,6 +1340,7 @@ const IrrigationKitsManagement = () => {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
+                <AIIrrigationKitGenerator onGenerate={handleAIGenerated} />
                 <Button
                   onClick={handleNewKit}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground border-0 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
@@ -1731,7 +1762,7 @@ const IrrigationKitsManagement = () => {
                                 installation.installation_status === "completed"
                                   ? "default"
                                   : installation.installation_status ===
-                                      "planned"
+                                    "planned"
                                     ? "outline"
                                     : "outline"
                               }
@@ -1746,11 +1777,10 @@ const IrrigationKitsManagement = () => {
                                 {[...Array(5)].map((_, i) => (
                                   <Star
                                     key={i}
-                                    className={`h-4 w-4 ${
-                                      i < installation.satisfaction_rating!
-                                        ? "text-primary fill-current"
-                                        : "text-muted-foreground"
-                                    }`}
+                                    className={`h-4 w-4 ${i < installation.satisfaction_rating!
+                                      ? "text-primary fill-current"
+                                      : "text-muted-foreground"
+                                      }`}
                                   />
                                 ))}
                                 <span className="text-sm text-muted-foreground ml-1">
@@ -1766,8 +1796,8 @@ const IrrigationKitsManagement = () => {
                           <TableCell className="text-foreground">
                             {installation.installation_date
                               ? new Date(
-                                  installation.installation_date,
-                                ).toLocaleDateString()
+                                installation.installation_date,
+                              ).toLocaleDateString()
                               : "N/A"}
                           </TableCell>
                         </TableRow>

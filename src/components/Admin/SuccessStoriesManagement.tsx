@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import AISuccessStoryGenerator from "./AI/AISuccessStoryGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
@@ -201,6 +202,22 @@ const SuccessStoriesManagement = () => {
     setShowForm(true);
   };
 
+  const handleAIGenerated = (data: any) => {
+    setFormData({
+      title: data.title,
+      description: data.description,
+      client_name: data.client_name,
+      client_company: data.client_company,
+      image_url: "",
+      before_image: "",
+      after_image: "",
+      results: data.results,
+      featured: false,
+    });
+    setEditingStory(null);
+    setShowForm(true);
+  };
+
   const resetForm = () => {
     setFormData({
       title: "",
@@ -229,21 +246,19 @@ const SuccessStoriesManagement = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-            <Trophy className="h-8 w-8 text-primary" />
-            Success Stories
-          </h2>
+          <h2 className="text-3xl font-bold tracking-tight">Success Stories</h2>
           <p className="text-muted-foreground">
-            Manage your client success stories
+            Manage customer success stories and testimonials
           </p>
         </div>
+        <div className="flex gap-2">
+          <AISuccessStoryGenerator onGenerate={handleAIGenerated} />
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Success Story
+          </Button>
+        </div>
         <Dialog open={showForm} onOpenChange={setShowForm}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Success Story
-            </Button>
-          </DialogTrigger>
           <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
@@ -475,20 +490,22 @@ const SuccessStoriesManagement = () => {
         ))}
       </div>
 
-      {stories.length === 0 && (
-        <Card>
-          <CardContent className="text-center py-12">
-            <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">
-              No success stories yet
-            </h3>
-            <p className="text-muted-foreground">
-              Start by adding your first client success story.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+      {
+        stories.length === 0 && (
+          <Card>
+            <CardContent className="text-center py-12">
+              <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                No success stories yet
+              </h3>
+              <p className="text-muted-foreground">
+                Start by adding your first client success story.
+              </p>
+            </CardContent>
+          </Card>
+        )
+      }
+    </div >
   );
 };
 

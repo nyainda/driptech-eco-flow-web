@@ -44,10 +44,10 @@ export const WhatsAppProductButton = ({
   const handleSendWhatsApp = () => {
     const selectedItems = products.filter(p => selectedProducts.includes(p.id));
 
-    let message = "Hi DripTech! 🌿\\n\\n";
+    let message = "Hi DripTech! 🌿\n\n";
 
     if (selectedItems.length > 0) {
-      message += "I'm interested in the following products:\\n\\n";
+      message += "I'm interested in the following products:\n\n";
 
       const productsByCategory = selectedItems.reduce((acc, product) => {
         const category = product.category || 'Other';
@@ -59,22 +59,22 @@ export const WhatsAppProductButton = ({
       }, {} as Record<string, typeof products>);
 
       Object.entries(productsByCategory).forEach(([category, items]) => {
-        const categoryName = category.replace(/_/g, ' ').replace(/\\b\\w/g, (l) => l.toUpperCase());
-        message += `*${categoryName}*\\n`;
+        const categoryName = category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+        message += `*${categoryName}*\n`;
         items.forEach((product, index) => {
           message += `${index + 1}. ${product.name}`;
           if (product.price) {
             message += ` - KSh ${product.price.toLocaleString()}`;
           }
-          message += `\\n`;
+          message += `\n`;
         });
-        message += `\\n`;
+        message += `\n`;
       });
     } else {
       message += "I'm interested in your irrigation systems. ";
     }
 
-    message += "Could you please provide more details on pricing, availability, and installation services?\\n\\n";
+    message += "Could you please provide more details on pricing, availability, and installation services?\n\n";
     message += "Thank you! 💧";
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -137,7 +137,7 @@ export const WhatsAppProductButton = ({
           ) : (
             <div className="space-y-6">
               {Object.entries(productsByCategory).map(([category, items]) => {
-                const categoryName = category.replace(/_/g, ' ').replace(/\\b\\w/g, (l) => l.toUpperCase());
+                const categoryName = category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
                 return (
                   <div key={category} className="space-y-3">
                     <h3 className="font-semibold text-lg text-foreground border-b pb-2">
@@ -197,11 +197,10 @@ export const WhatsAppProductButton = ({
           </Button>
           <Button onClick={handleSendWhatsApp} className="gap-2">
             <MessageCircle className="h-4 w-4" />
-            Send General Inquiry
+            {selectedProducts.length > 0 ? 'Send to WhatsApp' : 'Send General Inquiry'}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
-

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import AIVideoGenerator from "./AI/AIVideoGenerator";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -277,11 +278,11 @@ const VideoManagement = () => {
 
         const { data, error } = editingVideo
           ? await supabase
-              .from("videos")
-              .update(videoData)
-              .eq("id", editingVideo.id)
-              .select()
-              .single()
+            .from("videos")
+            .update(videoData)
+            .eq("id", editingVideo.id)
+            .select()
+            .single()
           : await supabase.from("videos").insert(videoData).select().single();
 
         if (error) throw error;
@@ -340,6 +341,22 @@ const VideoManagement = () => {
       });
     },
   });
+
+  const handleAIGenerated = (data: any) => {
+    setFormData({
+      title: data.title,
+      description: data.description,
+      video_url: "",
+      thumbnail_url: "",
+      category: data.category || "irrigation",
+      tags: data.tags || [],
+      published: false,
+      featured: false,
+      duration: 0,
+    });
+    setEditingVideo(null);
+    setShowForm(true);
+  };
 
   const resetForm = useCallback(() => {
     setFormData({
@@ -512,18 +529,18 @@ const VideoManagement = () => {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Video Management</h2>
+              <h1 className="text-3xl font-bold tracking-tight">Video Management</h1>
               <p className="text-muted-foreground">
-                Manage irrigation videos and tutorials
+                Manage your video content and tutorials
               </p>
             </div>
-            <Button
-              onClick={() => setShowForm(true)}
-              className="w-full sm:w-auto"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Video
-            </Button>
+            <div className="flex gap-2">
+              <AIVideoGenerator onGenerate={handleAIGenerated} />
+              <Button onClick={() => setShowForm(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Video
+              </Button>
+            </div>
           </div>
           <VideoStats stats={videoStats} />
           <VideoList

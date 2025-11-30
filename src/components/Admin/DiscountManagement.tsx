@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import AIBannerGenerator from "./AI/AIBannerGenerator";
 import {
   Card,
   CardContent,
@@ -230,6 +231,18 @@ const DiscountManagement = () => {
     });
   };
 
+  const handleAIGenerated = (data: any) => {
+    setFormData({
+      discount: data.discount,
+      title: data.title,
+      description: data.description,
+      valid_until: data.valid_until,
+      is_active: true,
+    });
+    setEditingBanner(null);
+    setShowForm(true);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -375,14 +388,18 @@ const DiscountManagement = () => {
             Create and manage promotional banners for your website
           </p>
         </div>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create Banner
-        </Button>
-      </div>
+
+        <div className="flex gap-2">
+          <AIBannerGenerator onGenerate={handleAIGenerated} />
+          <Button onClick={() => setShowForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Banner
+          </Button>
+        </div>
+      </div >
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      < div className="grid grid-cols-1 md:grid-cols-4 gap-4" >
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Banners</CardTitle>
@@ -431,10 +448,10 @@ const DiscountManagement = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div >
 
       {/* Banners List */}
-      <Card>
+      < Card >
         <CardHeader>
           <CardTitle>Discount Banners</CardTitle>
           <CardDescription>
@@ -469,9 +486,8 @@ const DiscountManagement = () => {
               {banners.map((banner) => (
                 <div
                   key={banner.id}
-                  className={`border rounded-lg p-4 ${
-                    !banner.is_active ? "opacity-60" : ""
-                  } ${isExpired(banner.valid_until) ? "border-red-200 bg-red-50/50" : ""}`}
+                  className={`border rounded-lg p-4 ${!banner.is_active ? "opacity-60" : ""
+                    } ${isExpired(banner.valid_until) ? "border-red-200 bg-red-50/50" : ""}`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -538,8 +554,8 @@ const DiscountManagement = () => {
             </div>
           )}
         </CardContent>
-      </Card>
-    </div>
+      </Card >
+    </div >
   );
 };
 

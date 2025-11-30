@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useWebVitals from "@/hooks/useWebVitals";
 import {
   LayoutDashboard,
   Package,
@@ -52,6 +53,16 @@ import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagemen
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const unreadCount = 0;
+
+  // Monitor Web Vitals in Admin
+  useWebVitals((metric) => {
+    // Log to console in development
+    if (import.meta.env.DEV) {
+      console.log(`📊 [Admin] ${metric.name}:`, metric);
+    }
+    // In production, you could send to analytics
+    // analytics.send({ ...metric, page: 'admin' });
+  });
 
   const adminSections = [
     {
@@ -197,11 +208,10 @@ const AdminContent = () => {
                   key={section.id}
                   variant={activeTab === section.id ? "secondary" : "ghost"}
                   onClick={() => setActiveTab(section.id)}
-                  className={`flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-3 lg:p-4 rounded-lg border transition-all hover:shadow-md min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] ${
-                    activeTab === section.id
-                      ? "bg-primary text-primary-foreground shadow-lg"
-                      : "bg-card hover:bg-muted/50"
-                  }`}
+                  className={`flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-3 lg:p-4 rounded-lg border transition-all hover:shadow-md min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] ${activeTab === section.id
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "bg-card hover:bg-muted/50"
+                    }`}
                 >
                   <Icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                   <span className="text-[10px] sm:text-xs font-medium text-center leading-tight px-1">

@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { MessageCircle, Check, Package, Droplets, Filter, Gauge, Settings, X, ChevronDown } from 'lucide-react';
+import { MessageCircle, Check, Package, Droplets, Filter, Gauge, Settings, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Variant {
@@ -44,7 +44,7 @@ interface WhatsAppContactProps {
 const WhatsAppContact = ({
   currentProduct,
   filterCategory,
-  phoneNumber = '+254114575401', 
+  phoneNumber = '+254114575401',
   variant = 'button',
   className = '',
 }: WhatsAppContactProps) => {
@@ -111,8 +111,8 @@ const WhatsAppContact = ({
     return acc;
   }, {} as Record<string, Product[]>);
 
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
+  const filteredProducts = selectedCategory === 'all'
+    ? products
     : products.filter(p => p.category === selectedCategory);
 
   const toggleProduct = (productId: string) => {
@@ -178,12 +178,8 @@ const WhatsAppContact = ({
         );
       case 'floating':
         return (
-          <a
-            href={`https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-              generateWhatsAppMessage()
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={currentProduct ? openWhatsApp : () => setIsDialogOpen(true)}
             className="fixed bottom-8 right-8 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
             aria-label="Contact us on WhatsApp"
           >
@@ -191,7 +187,7 @@ const WhatsAppContact = ({
             <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
               !
             </div>
-          </a>
+          </button>
         );
       default:
         return (
@@ -317,11 +313,10 @@ const WhatsAppContact = ({
                   <Card
                     key={product.id}
                     onClick={() => toggleProduct(product.id)}
-                    className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                      isSelected
+                    className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${isSelected
                         ? 'border-green-500 bg-green-50 dark:bg-green-950 ring-2 ring-green-500'
                         : 'border-border hover:border-green-300'
-                    }`}
+                      }`}
                   >
                     <CardContent className="p-0">
                       {/* Product Image */}
@@ -374,11 +369,10 @@ const WhatsAppContact = ({
                             </span>
                           )}
 
-                          <div className={`text-xs px-2 py-1 rounded-full ${
-                            isSelected 
-                              ? 'bg-green-500 text-white' 
+                          <div className={`text-xs px-2 py-1 rounded-full ${isSelected
+                              ? 'bg-green-500 text-white'
                               : 'bg-muted text-muted-foreground'
-                          }`}>
+                            }`}>
                             {isSelected ? 'Selected' : 'Select'}
                           </div>
                         </div>
@@ -416,8 +410,8 @@ const WhatsAppContact = ({
               className="bg-green-500 hover:bg-green-600 text-white"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
-              {selectedProducts.length > 0 
-                ? `Send Inquiry (${selectedProducts.length})` 
+              {selectedProducts.length > 0
+                ? `Send Inquiry (${selectedProducts.length})`
                 : 'Send General Inquiry'}
             </Button>
           </div>

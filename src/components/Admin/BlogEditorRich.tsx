@@ -187,8 +187,8 @@ const BlogEditorRich = ({
     toolbar: [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
       ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
       [{ 'align': [] }],
       ['link', 'image', 'video'],
       [{ 'color': [] }, { 'background': [] }],
@@ -315,7 +315,7 @@ const BlogEditorRich = ({
 
             <div className="space-y-3">
               <Label>Featured Image</Label>
-              
+
               {/* Toggle between URL and Upload */}
               <div className="flex gap-2 mb-2">
                 <Button

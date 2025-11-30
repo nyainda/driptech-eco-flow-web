@@ -71,6 +71,10 @@ const SystemSettings = () => {
     google_tag_manager: "",
   });
 
+  const [apiKeys, setApiKeys] = useState({
+    gemini_api_key: "",
+  });
+
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -102,6 +106,9 @@ const SystemSettings = () => {
       }
       if (settingsMap.seo_settings) {
         setSeoSettings({ ...seoSettings, ...settingsMap.seo_settings });
+      }
+      if (settingsMap.gemini_api_key) {
+        setApiKeys({ gemini_api_key: settingsMap.gemini_api_key });
       }
     } catch (error) {
       console.error("Error fetching settings:", error);
@@ -165,6 +172,7 @@ const SystemSettings = () => {
       contact_info: "Contact information",
       social_media: "Social media links",
       seo_settings: "SEO configuration",
+      gemini_api_key: "Gemini API Key for AI features",
     };
     return descriptions[key] || "";
   };
@@ -245,6 +253,25 @@ const SystemSettings = () => {
     }
   };
 
+  const handleSaveApiKeys = async () => {
+    setSaving(true);
+    try {
+      await updateSetting("gemini_api_key", apiKeys.gemini_api_key);
+      toast({
+        title: "Success",
+        description: "API key saved successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save API key",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -278,7 +305,7 @@ const SystemSettings = () => {
       </div>
 
       <Tabs defaultValue="company" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="company" className="flex items-center gap-2">
             <Building className="h-4 w-4" />
             Company
@@ -294,6 +321,10 @@ const SystemSettings = () => {
           <TabsTrigger value="seo" className="flex items-center gap-2">
             <Search className="h-4 w-4" />
             SEO
+          </TabsTrigger>
+          <TabsTrigger value="api" className="flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            API Keys
           </TabsTrigger>
         </TabsList>
 
@@ -704,6 +735,60 @@ const SystemSettings = () => {
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {saving ? "Saving..." : "Save SEO Settings"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="api">
+          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="h-5 w-5 text-primary" />
+                API Keys
+              </CardTitle>
+              <CardDescription>
+                Configure API keys for external services
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="gemini_api_key">Gemini API Key</Label>
+                <Input
+                  id="gemini_api_key"
+                  type="password"
+                  value={apiKeys.gemini_api_key}
+                  onChange={(e) =>
+                    setApiKeys({
+                      ...apiKeys,
+                      gemini_api_key: e.target.value,
+                    })
+                  }
+                  placeholder="Enter your Gemini API Key"
+                  className="mt-2"
+                />
+                <p className="text-sm text-muted-foreground mt-2">
+                  Get your API key from{" "}
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Google AI Studio
+                  </a>
+                </p>
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleSaveApiKeys}
+                  disabled={saving}
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+                >
+                  <Save className="mr-2 h-4 w-4" />
+                  {saving ? "Saving..." : "Save API Key"}
                 </Button>
               </div>
             </CardContent>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import AINewsGenerator from "./AI/AINewsGenerator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -393,6 +394,20 @@ const NewsManagement = () => {
       author: "",
     });
     setNewTag("");
+  };
+
+  const handleAIGenerated = (data: any) => {
+    setNewArticle({
+      title: data.title,
+      content: data.content,
+      excerpt: data.excerpt,
+      published: false,
+      featured_image_url: "",
+      tags: data.tags,
+      author: data.author,
+    });
+    setEditingArticle(null);
+    setShowCreateModal(true);
   };
 
   const handleDeleteArticle = async (id: string) => {
@@ -1009,7 +1024,8 @@ const NewsManagement = () => {
 
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <div className="flex gap-2 order-2 sm:order-1">
+              <div className="flex gap-2 w-full sm:w-auto order-2 sm:order-1">
+                <AINewsGenerator onGenerate={handleAIGenerated} />
                 <Button
                   variant="outline"
                   onClick={() =>
