@@ -88,7 +88,7 @@ const HeroSection = () => {
                     src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1920&auto=format&fit=crop"
                     alt="Modern agricultural irrigation system in Kenya"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-10000 ease-in-out hover:scale-105"
-                    fetchPriority="high"
+                    fetchpriority="high"
                     loading="eager"
                 />
                 {/* Professional Gradient Overlay - Adapts to Dark Mode */}

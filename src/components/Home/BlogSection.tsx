@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { dataService } from "@/services/dataService";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
@@ -34,22 +35,7 @@ const BlogSection = () => {
   const { data: blogPosts = [], isLoading } = useQuery({
     queryKey: ["published-blog-posts"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select(
-          `
-          *,
-          blog_categories (
-            name,
-            slug
-          )
-        `,
-        )
-        .eq("published", true)
-        .order("published_at", { ascending: false })
-        .limit(6);
-
-      if (error) throw error;
+      const data = await dataService.getBlogPosts({ limit: 6 });
       return data as BlogPost[];
     },
   });

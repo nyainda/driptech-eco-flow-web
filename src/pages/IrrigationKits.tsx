@@ -54,6 +54,7 @@ import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { dataService } from "@/services/dataService";
 
 // Interface definitions remain unchanged
 interface IrrigationKit {
@@ -117,18 +118,7 @@ const IrrigationKits = () => {
   } = useQuery({
     queryKey: ["irrigation-kits-public"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("irrigation_kits")
-        .select("*")
-        .eq("active", true)
-        .order("featured", { ascending: false })
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching kits:", error);
-        throw error;
-      }
-
+      const data = await dataService.getIrrigationKits({ sortBy: 'featured' });
       return data as IrrigationKit[];
     },
     retry: 3,
@@ -137,18 +127,7 @@ const IrrigationKits = () => {
 
   const fetchKitDocuments = async (kitId: string) => {
     try {
-      const { data, error } = await supabase
-        .from("kit_documents")
-        .select("*")
-        .eq("kit_id", kitId)
-        .order("document_type");
-
-      if (error) {
-        console.error("Error fetching kit documents:", error);
-        setKitDocuments([]);
-        return;
-      }
-
+      const data = await dataService.getKitDocuments(kitId);
       setKitDocuments(data || []);
     } catch (err) {
       console.error("Error fetching documents:", err);
@@ -1024,95 +1003,95 @@ const IrrigationKits = () => {
                       {/* Components */}
                       {parseComponents(selectedKit.components)
                         ?.main_components && (
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
-                            <Package className="h-5 w-5 text-primary" />
-                            Included Components
-                          </h3>
-                          <div className="grid gap-3">
-                            {parseComponents(
-                              selectedKit.components,
-                            ).main_components?.map(
-                              (component: string, index: number) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-3 p-3 light:bg-gray-100 dark:bg-muted/30 rounded-lg border border-border"
-                                >
-                                  <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                                  <span className="text-foreground">
-                                    {component}
-                                  </span>
-                                </div>
-                              ),
-                            )}
+                          <div>
+                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
+                              <Package className="h-5 w-5 text-primary" />
+                              Included Components
+                            </h3>
+                            <div className="grid gap-3">
+                              {parseComponents(
+                                selectedKit.components,
+                              ).main_components?.map(
+                                (component: string, index: number) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-3 p-3 light:bg-gray-100 dark:bg-muted/30 rounded-lg border border-border"
+                                  >
+                                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                                    <span className="text-foreground">
+                                      {component}
+                                    </span>
+                                  </div>
+                                ),
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
                       {/* Pricing Tiers */}
                       {parseComponents(selectedKit.components)
                         ?.pricing_tiers && (
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
-                            <TrendingUp className="h-5 w-5 text-primary" />
-                            Pricing Options
-                          </h3>
-                          <div className="grid gap-4">
-                            {parseComponents(
-                              selectedKit.components,
-                            ).pricing_tiers?.map((tier: any, index: number) => (
-                              <Card
-                                key={index}
-                                className="p-4 light:bg-gray-100 dark:bg-muted/30 border-border"
-                              >
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <div className="font-semibold text-foreground">
-                                      {tier.name}
-                                    </div>
-                                    {tier.description && (
-                                      <div className="text-sm text-muted-foreground mt-1">
-                                        {tier.description}
+                          <div>
+                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
+                              <TrendingUp className="h-5 w-5 text-primary" />
+                              Pricing Options
+                            </h3>
+                            <div className="grid gap-4">
+                              {parseComponents(
+                                selectedKit.components,
+                              ).pricing_tiers?.map((tier: any, index: number) => (
+                                <Card
+                                  key={index}
+                                  className="p-4 light:bg-gray-100 dark:bg-muted/30 border-border"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <div className="font-semibold text-foreground">
+                                        {tier.name}
                                       </div>
-                                    )}
+                                      {tier.description && (
+                                        <div className="text-sm text-muted-foreground mt-1">
+                                          {tier.description}
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="text-2xl font-bold text-primary">
+                                      {formatCurrency(tier.price)}
+                                    </div>
                                   </div>
-                                  <div className="text-2xl font-bold text-primary">
-                                    {formatCurrency(tier.price)}
-                                  </div>
-                                </div>
-                              </Card>
-                            ))}
+                                </Card>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
                       {/* Services */}
                       {parseComponents(selectedKit.components)
                         ?.included_services && (
-                        <div>
-                          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
-                            <Settings className="h-5 w-5 text-primary" />
-                            Included Services
-                          </h3>
-                          <div className="grid gap-3">
-                            {parseComponents(
-                              selectedKit.components,
-                            ).included_services?.map(
-                              (service: string, index: number) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-3 p-3 light:bg-gray-100 dark:bg-muted/30 rounded-lg border border-border"
-                                >
-                                  <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                                  <span className="text-foreground">
-                                    {service}
-                                  </span>
-                                </div>
-                              ),
-                            )}
+                          <div>
+                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
+                              <Settings className="h-5 w-5 text-primary" />
+                              Included Services
+                            </h3>
+                            <div className="grid gap-3">
+                              {parseComponents(
+                                selectedKit.components,
+                              ).included_services?.map(
+                                (service: string, index: number) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-3 p-3 light:bg-gray-100 dark:bg-muted/30 rounded-lg border border-border"
+                                  >
+                                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                                    <span className="text-foreground">
+                                      {service}
+                                    </span>
+                                  </div>
+                                ),
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
                       {/* Documents */}
                       {kitDocuments.length > 0 && (

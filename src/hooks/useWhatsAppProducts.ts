@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { dataService } from '@/services/dataService';
 
 export interface Product {
   id: string;
@@ -14,14 +14,20 @@ export const useWhatsAppProducts = () => {
   const { data: products = [], isLoading: loading, error } = useQuery({
     queryKey: ['whatsapp-products'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('id, name, category, price, images, description')
-        .eq('in_stock', true)
-        .order('category', { ascending: true });
+      const data = await dataService.getProducts();
 
-      if (error) throw error;
-      return data as Product[];
+      // Filter and map to match expected interface
+      return data
+        .filter((p: any) => p.in_stock)
+        .sort((a: any, b: any) => a.category.localeCompare(b.category))
+        .map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          price: p.price,
+          images: p.images,
+          description: p.description,
+        })) as Product[];
     },
     staleTime: 1000 * 60 * 10, // Cache for 10 minutes
     retry: 1,

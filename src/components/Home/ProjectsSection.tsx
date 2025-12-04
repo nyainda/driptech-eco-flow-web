@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,15 +44,9 @@ const ProjectsSection = () => {
     const fetchProjects = async () => {
       try {
         setError(null);
-        const { data, error } = await supabase
-          .from("projects")
-          .select("*")
-          .eq("featured", true)
-          .order("created_at", { ascending: false })
-          .limit(3);
-
-        if (error) throw error;
-        setProjects(data || []);
+        const data = await dataService.getProjects({ featured: true });
+        // Take only first 3 projects
+        setProjects((data || []).slice(0, 3));
       } catch (error) {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects. Please try again later.");

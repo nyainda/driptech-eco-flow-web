@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -160,15 +160,9 @@ const TeamSection = () => {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const { data, error } = await supabase
-          .from("team")
-          .select("*")
-          .eq("featured", true)
-          .order("created_at", { ascending: false })
-          .limit(4);
-
-        if (error) throw error;
-        setTeam(data ?? []);
+        const data = await dataService.getTeamMembers({ featured: true });
+        // Take only first 4
+        setTeam((data || []).slice(0, 4));
       } catch (error) {
         console.error("Error fetching team:", error);
       } finally {

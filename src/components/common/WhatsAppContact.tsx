@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { MessageCircle, Check, Package, Droplets, Filter, Gauge, Settings, X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { dataService } from '@/services/dataService';
 
 interface Variant {
   name: string;
@@ -63,20 +63,23 @@ const WhatsAppContact = ({
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      let query = supabase
-        .from('products')
-        .select('id, name, model_number, price, category, images, in_stock')
-        .eq('in_stock', true)
-        .order('featured', { ascending: false })
-        .order('name', { ascending: true });
+      const data = await dataService.getProducts(
+        filterCategory && filterCategory !== 'all'
+          ? { category: filterCategory }
+          : undefined
+      );
 
-      if (filterCategory && filterCategory !== 'all') {
-        query = query.eq('category', filterCategory);
-      }
+      // Filter and sort
+      const filteredData = data
+        .filter((p: any) => p.in_stock)
+        .sort((a: any, b: any) => {
+          // Sort by featured first, then by name
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return a.name.localeCompare(b.name);
+        });
 
-      const { data, error } = await query;
-      if (error) throw error;
-      setProducts(data || []);
+      setProducts(filteredData as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
@@ -314,8 +317,8 @@ const WhatsAppContact = ({
                     key={product.id}
                     onClick={() => toggleProduct(product.id)}
                     className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${isSelected
-                        ? 'border-green-500 bg-green-50 dark:bg-green-950 ring-2 ring-green-500'
-                        : 'border-border hover:border-green-300'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-950 ring-2 ring-green-500'
+                      : 'border-border hover:border-green-300'
                       }`}
                   >
                     <CardContent className="p-0">
@@ -370,8 +373,8 @@ const WhatsAppContact = ({
                           )}
 
                           <div className={`text-xs px-2 py-1 rounded-full ${isSelected
-                              ? 'bg-green-500 text-white'
-                              : 'bg-muted text-muted-foreground'
+                            ? 'bg-green-500 text-white'
+                            : 'bg-muted text-muted-foreground'
                             }`}>
                             {isSelected ? 'Selected' : 'Select'}
                           </div>

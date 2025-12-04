@@ -40,6 +40,7 @@ import {
   Maximize2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
@@ -111,34 +112,26 @@ const InstallationGuides = () => {
 
   const fetchInstallationResources = async () => {
     try {
-      const { data: productsData, error: productsError } = await supabase
-        .from("products")
-        .select("*")
-        .not("installation_guide_url", "is", null);
+      // Fetch products and filter for those with installation guides
+      const productsData = await dataService.getProducts({});
+      const productsWithGuides = (productsData || []).filter((p: any) => p.installation_guide_url);
 
-      if (productsError) throw productsError;
+      // Fetch installation documents
+      const documentsData = await dataService.getDocuments({
+        category: "installation",
+        requiresLogin: false
+      });
 
-      const { data: documentsData, error: documentsError } = await supabase
-        .from("documents")
-        .select("*")
-        .eq("category", "installation")
-        .eq("requires_login", false);
+      // Fetch managed documents
+      const managedDocsData = await dataService.getDocuments({
+        category: documentCategories
+      });
 
-      if (documentsError) throw documentsError;
-
-      const { data: managedDocsData, error: managedDocsError } = await supabase
-        .from("documents")
-        .select("*")
-        .in("category", documentCategories)
-        .order("created_at", { ascending: false });
-
-      if (managedDocsError) throw managedDocsError;
-
-      console.log("Products:", productsData);
+      console.log("Products:", productsWithGuides);
       console.log("Documents:", documentsData);
       console.log("Managed Documents:", managedDocsData);
 
-      setProducts(productsData || []);
+      setProducts(productsWithGuides || []);
       setDocuments(documentsData || []);
       setManagedDocuments(managedDocsData || []);
     } catch (error) {

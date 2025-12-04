@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -70,42 +71,11 @@ const VideosPage = () => {
   } = useQuery({
     queryKey: ["all-videos", searchTerm, selectedCategory, sortBy],
     queryFn: async () => {
-      let query = supabase.from("videos").select("*").eq("published", true);
-
-      if (selectedCategory !== "all") {
-        query = query.eq("category", selectedCategory);
-      }
-
-      if (searchTerm) {
-        query = query.or(
-          `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,tags.cs.{${searchTerm}}`,
-        );
-      }
-
-      switch (sortBy) {
-        case "newest":
-          query = query.order("created_at", { ascending: false });
-          break;
-        case "oldest":
-          query = query.order("created_at", { ascending: true });
-          break;
-        case "most-viewed":
-          query = query.order("views", { ascending: false });
-          break;
-        case "least-viewed":
-          query = query.order("views", { ascending: true });
-          break;
-        case "featured":
-          query = query
-            .order("featured", { ascending: false })
-            .order("created_at", { ascending: false });
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
+      const data = await dataService.getVideos({
+        category: selectedCategory,
+        search: searchTerm,
+        sortBy: sortBy,
+      });
       return data as Video[];
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
@@ -114,13 +84,10 @@ const VideosPage = () => {
   const { data: categories = [] } = useQuery({
     queryKey: ["video-categories"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("videos")
-        .select("category")
-        .eq("published", true);
-
-      if (error) throw error;
-      const uniqueCategories = [...new Set(data.map((item) => item.category))];
+      // Fetch all videos to extract categories
+      // In a real app, we might want a dedicated endpoint for this
+      const data = await dataService.getVideos({});
+      const uniqueCategories = [...new Set((data as Video[]).map((item) => item.category))];
       return uniqueCategories;
     },
     staleTime: 1000 * 60 * 60, // Cache categories for 1 hour

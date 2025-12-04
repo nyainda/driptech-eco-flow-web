@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { dataService } from "@/services/dataService";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -386,14 +387,7 @@ const VideoSection = () => {
   } = useQuery({
     queryKey: ["published-videos"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("videos")
-        .select("*")
-        .eq("published", true)
-        .order("featured", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(6);
-      if (error) throw error;
+      const data = await dataService.getVideos({ limit: 6 });
       return data as Video[];
     },
   });
@@ -435,9 +429,8 @@ const VideoSection = () => {
       link.download = `${video.title
         .replace(/[^a-zA-Z0-9\s-]/g, "")
         .replace(/\s+/g, "-")
-        .toLowerCase()}.${
-        video.video_url.split(".").pop()?.split("?")[0] || "mp4"
-      }`;
+        .toLowerCase()}.${video.video_url.split(".").pop()?.split("?")[0] || "mp4"
+        }`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

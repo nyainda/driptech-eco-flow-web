@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,15 +13,10 @@ const SuccessStoriesSection = () => {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const { data, error } = await supabase
-          .from("success_stories")
-          .select("*")
-          .eq("featured", true)
-          .order("created_at", { ascending: false })
-          .limit(3);
-
-        if (error) throw error;
-        setStories(data || []);
+        const data = await dataService.getSuccessStories();
+        // Filter for featured and take only first 3
+        const featured = (data || []).filter((story: any) => story.featured).slice(0, 3);
+        setStories(featured);
       } catch (error) {
         console.error("Error fetching success stories:", error);
       } finally {

@@ -16,12 +16,19 @@ A modern web application for DripTech EcoFlow, providing innovative smart irriga
 
 ## Tech Stack
 
+### Frontend
 - React 18
 - TypeScript
 - Tailwind CSS
 - React Router
 - Tanstack Query
 - Vite
+
+### Backend & Data
+- **Supabase** - PostgreSQL database (source of truth, admin operations, analytics)
+- **Cloudflare D1** - Edge SQLite database (fast public reads)
+- **Cloudflare Workers** - Edge API and sync logic
+- **Hybrid Architecture** - Automatic sync from Supabase to D1 via webhooks
 
 ## Getting Started
 
@@ -65,6 +72,16 @@ bun run build
 ## Deployment
 
 The application is automatically deployed to Vercel when changes are pushed to the main branch.
+
+## Documentation
+
+Comprehensive documentation is available in the [`docs/`](./docs) folder:
+
+- **[Hybrid Architecture](./docs/HYBRID-ARCHITECTURE.md)** - Complete architecture overview
+- **[Migration & Sync Guide](./docs/MIGRATION-SYNC-COMPLETE.md)** - Setup and sync instructions
+- **[Schema Comparison](./docs/SCHEMA-COMPARISON.md)** - Supabase vs D1 schema reference
+- **[Webhook Setup](./docs/SUPABASE-WEBHOOK-SETUP.md)** - Configure automatic sync
+- **[Cleanup Summary](./docs/CLEANUP-SUMMARY.md)** - Project cleanup details
 
 ## Project Structure
 

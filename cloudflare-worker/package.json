@@ -1,0 +1,17 @@
+{
+    "name": "dripstech-api",
+    "version": "1.0.0",
+    "description": "DripTech Cloudflare Worker API for D1",
+    "main": "src/index.ts",
+    "scripts": {
+        "dev": "wrangler dev",
+        "dev:remote": "wrangler dev --remote",
+        "deploy": "wrangler deploy",
+        "tail": "wrangler tail"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20231218.0",
+        "typescript": "^5.0.0",
+        "wrangler": "^4.51.0"
+    }
+}

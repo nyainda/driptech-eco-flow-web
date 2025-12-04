@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -82,13 +82,7 @@ const ProductsShowcase = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data, error } = await supabase
-          .from("products")
-          .select("*")
-          .eq("featured", true)
-          .limit(6);
-
-        if (error) throw error;
+        const data = await dataService.getProducts({ featured: true, limit: 6 });
         console.log("Fetched products:", data);
         setProducts(data || []);
       } catch (error) {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { dataService } from '@/services/dataService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,19 +49,14 @@ const ProductRecommendations = ({
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        let query = supabase
-          .from('products')
-          .select('*')
-          .eq('in_stock', true);
+        const allProducts = await dataService.getProducts();
 
-        if (currentProductId) {
-          query = query.neq('id', currentProductId);
-        }
+        // Filter out current product
+        const filteredProducts = currentProductId
+          ? allProducts.filter((p: any) => p.id !== currentProductId && p.in_stock)
+          : allProducts.filter((p: any) => p.in_stock);
 
-        const { data: allProducts, error } = await query;
-        
-        if (error) throw error;
-        if (!allProducts || allProducts.length === 0) {
+        if (filteredProducts.length === 0) {
           setRecommendations([]);
           setComplementaryProducts([]);
           setLoading(false);
@@ -69,14 +64,14 @@ const ProductRecommendations = ({
         }
 
         // Smart scoring algorithm for recommendations
-        const scoredProducts: ScoredProduct[] = allProducts.map(product => {
+        const scoredProducts: ScoredProduct[] = filteredProducts.map((product: any) => {
           let score = 0;
 
           // 1. Same subcategory gets highest priority (40 points)
           if (currentSubcategory && product.subcategory === currentSubcategory) {
             score += 40;
           }
-          
+
           // 2. Same category (20 points)
           if (currentCategory && product.category === currentCategory) {
             score += 20;
@@ -112,12 +107,12 @@ const ProductRecommendations = ({
 
         // Get complementary products (accessories)
         if (showComplementary && currentCategory !== 'accessories') {
-          const accessories = allProducts.filter(
-            product => 
+          const accessories = filteredProducts.filter(
+            (product: any) =>
               product.category === 'accessories' &&
               product.id !== currentProductId
           ).slice(0, 3);
-          
+
           setComplementaryProducts(accessories);
         }
 

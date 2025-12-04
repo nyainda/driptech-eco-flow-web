@@ -5,7 +5,7 @@ import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import {
   Linkedin,
   Mail,
@@ -15,6 +15,7 @@ import {
   Sparkles,
   Crown,
 } from "lucide-react";
+
 
 const Team = () => {
   const [team, setTeam] = useState<any[]>([]);
@@ -28,12 +29,8 @@ const Team = () => {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const { data, error } = await supabase
-          .from("team")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
+        setLoading(true);
+        const data = await dataService.getTeamMembers();
         setTeam(data || []);
       } catch (error) {
         console.error("Error fetching team:", error);
@@ -131,7 +128,7 @@ const Team = () => {
                   <Card
                     key={index}
                     className="border-0 shadow-lg bg-card/80 backdrop-blur-sm overflow-hidden"
-                    style={{ animationDelay: `${index * 100}ms` }}
+                    style={{ animationDelay: `${index * 100} ms` }}
                   >
                     <CardContent className="p-8">
                       <div className="animate-pulse space-y-6">
@@ -165,7 +162,7 @@ const Team = () => {
                   <Card
                     key={member.id}
                     className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border-0 shadow-lg overflow-hidden bg-card/90 backdrop-blur-sm relative"
-                    style={{ animationDelay: `${index * 100}ms` }}
+                    style={{ animationDelay: `${index * 100} ms` }}
                   >
                     {/* Hover Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -248,41 +245,45 @@ const Team = () => {
                               href={member.linkedin_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              aria-label={`${member.name}'s LinkedIn profile`}
+                              aria-label={`${member.name} 's LinkedIn profile`}
                             >
                               <Linkedin className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
-                            </a>
-                          </Button>
+                            </a >
+                          </Button >
                         )}
-                        {member.email && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-12 w-12 p-0 rounded-full hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-950/50 dark:hover:text-green-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-green-200 dark:hover:border-green-800 group/btn"
-                            asChild
-                          >
-                            <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
-                              <Mail className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
-                            </a>
-                          </Button>
-                        )}
-                        {member.phone && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-12 w-12 p-0 rounded-full hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950/50 dark:hover:text-purple-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-purple-200 dark:hover:border-purple-800 group/btn"
-                            asChild
-                          >
-                            <a href={`tel:${member.phone}`} aria-label={`Call ${member.name}`}>
-                              <Phone className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                        {
+                          member.email && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-12 w-12 p-0 rounded-full hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-950/50 dark:hover:text-green-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-green-200 dark:hover:border-green-800 group/btn"
+                              asChild
+                            >
+                              <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
+                                <Mail className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
+                              </a>
+                            </Button>
+                          )
+                        }
+                        {
+                          member.phone && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-12 w-12 p-0 rounded-full hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950/50 dark:hover:text-purple-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-purple-200 dark:hover:border-purple-800 group/btn"
+                              asChild
+                            >
+                              <a href={`tel:${member.phone}`} aria-label={`Call ${member.name}`}>
+                                <Phone className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
+                              </a>
+                            </Button>
+                          )
+                        }
+                      </div >
+                    </CardContent >
+                  </Card >
                 ))}
-              </div>
+              </div >
             ) : (
               <div className="text-center py-24">
                 <div className="max-w-md mx-auto">
@@ -305,13 +306,13 @@ const Team = () => {
                 </div>
               </div>
             )}
-          </div>
-        </section>
-      </main>
+          </div >
+        </section >
+      </main >
       <IrrigationKeywords />
 
       <Footer />
-    </div>
+    </div >
   );
 };
 

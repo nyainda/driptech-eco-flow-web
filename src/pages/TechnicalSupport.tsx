@@ -49,6 +49,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { useToast } from "@/hooks/use-toast";
 
 const TechnicalSupport = () => {
@@ -74,18 +75,12 @@ const TechnicalSupport = () => {
     steps_taken: "",
   });
 
-  // Fetch videos from Supabase
+  // Fetch videos from dataService
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         setVideosLoading(true);
-        const { data, error } = await supabase
-          .from("videos")
-          .select("*")
-          .eq("published", true)
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
+        const data = await dataService.getVideos({ sortBy: 'newest' });
         setVideos(data || []);
       } catch (error) {
         console.error("Error fetching videos:", error);

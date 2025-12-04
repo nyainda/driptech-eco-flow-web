@@ -21,6 +21,7 @@ import {
   Mail,
   Gift,
   Newspaper,
+  Database,
 } from "lucide-react";
 import {
   AdminAuthProvider,
@@ -49,6 +50,7 @@ import NewsManagement from "@/components/Admin/NewsManagement";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagement";
+import SyncDashboard from "@/components/Admin/SyncDashboard";
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -174,6 +176,12 @@ const AdminContent = () => {
       icon: Settings,
       description: "System configuration",
     },
+    {
+      id: "sync",
+      label: "Sync Status",
+      icon: Database,
+      description: "Data synchronization",
+    },
   ];
 
   return (
@@ -292,6 +300,10 @@ const AdminContent = () => {
 
           <TabsContent value="settings" className="space-y-6">
             <SystemSettings />
+          </TabsContent>
+
+          <TabsContent value="sync" className="space-y-6">
+            <SyncDashboard />
           </TabsContent>
         </Tabs>
       </div>

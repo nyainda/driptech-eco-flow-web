@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { dataService } from "@/services/dataService";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,23 +18,7 @@ const BlogPostPage = () => {
     queryKey: ["blog-post", slug],
     queryFn: async () => {
       if (!slug) throw new Error("No slug provided");
-
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select(
-          `
-          *,
-          blog_categories (
-            name,
-            slug
-          )
-        `,
-        )
-        .eq("slug", slug)
-        .eq("published", true)
-        .single();
-
-      if (error) throw error;
+      const data = await dataService.getBlogBySlug(slug);
       return data;
     },
     enabled: !!slug,

@@ -1,0 +1,13 @@
+name = "dripstech-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# D1 Database Binding
+[[d1_databases]]
+binding = "DB"
+database_name = "dripstech-products"
+database_id = "834d06cc-79b2-4586-bd50-047498e7a473"
+
+# Environment Variables
+[vars]
+ALLOWED_ORIGINS = "*"  # Change to your domain in production

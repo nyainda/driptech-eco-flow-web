@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { dataService } from "@/services/dataService";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
@@ -89,55 +90,17 @@ const BlogPage = () => {
       sortBy,
     ],
     queryFn: async () => {
-      let query = supabase
-        .from("blog_posts")
-        .select(
-          `
-          *,
-          blog_categories (
-            name,
-            slug
-          )
-        `,
-          { count: "exact" },
-        )
-        .eq("published", true);
+      const result = await dataService.getBlogPostsPaginated({
+        search: searchTerm,
+        category: selectedCategory,
+        sortBy,
+        page: currentPage,
+        limit: POSTS_PER_PAGE,
+      });
 
-      if (searchTerm) {
-        query = query.or(
-          `title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%,tags.cs.{${searchTerm}}`,
-        );
-      }
-
-      if (selectedCategory !== "all") {
-        query = query.eq("blog_categories.slug", selectedCategory);
-      }
-
-      switch (sortBy) {
-        case "newest":
-          query = query.order("published_at", { ascending: false });
-          break;
-        case "oldest":
-          query = query.order("published_at", { ascending: true });
-          break;
-        case "popular":
-          query = query.order("views", { ascending: false });
-          break;
-        case "alphabetical":
-          query = query.order("title", { ascending: true });
-          break;
-      }
-
-      const from = (currentPage - 1) * POSTS_PER_PAGE;
-      const to = from + POSTS_PER_PAGE - 1;
-      query = query.range(from, to);
-
-      const { data, error, count } = await query;
-
-      if (error) throw error;
       return {
-        posts: data as BlogPost[],
-        totalCount: count || 0,
+        posts: result.posts as BlogPost[],
+        totalCount: result.totalCount,
       };
     },
   });

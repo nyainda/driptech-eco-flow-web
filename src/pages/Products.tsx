@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -113,25 +114,21 @@ const Products = () => {
   const { data: products = [], isLoading: loading, error: queryError } = useQuery({
     queryKey: ["products", category],
     queryFn: async () => {
-      let query = supabase.from("products").select("*");
-
+      // Map URL category to database category format
+      let dbCategory = category;
       if (category) {
-        const categoryMap: Record<string, Product["category"]> = {
+        const categoryMap: Record<string, string> = {
           drip: "drip_irrigation",
           sprinklers: "sprinkler_systems",
           filtration: "filtration_systems",
           controls: "control_systems",
           accessories: "accessories",
         };
-
-        const dbCategory = categoryMap[category];
-        if (dbCategory) {
-          query = query.eq("category", dbCategory);
-        }
+        dbCategory = categoryMap[category] || category;
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
+      // Use dataService to fetch products
+      const data = await dataService.getProducts({ category: dbCategory });
 
       return (data || []).map((item: any) => {
         const variants = item.variants

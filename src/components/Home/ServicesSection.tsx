@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { useQuery } from "@tanstack/react-query";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 
@@ -155,21 +156,10 @@ const ServicesSection = () => {
   } = useQuery({
     queryKey: ["irrigation-kits-featured"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("irrigation_kits")
-        .select(
-          "id, name, description, kit_type, coverage_area, recommended_crops, price, components, installation_complexity, installation_time_hours, water_efficiency_percentage, warranty_months, featured, images",
-        )
-        .eq("active", true)
-        .eq("featured", true)
-        .limit(6)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching kits:", error);
-        throw error;
-      }
-
+      const data = await dataService.getIrrigationKits({
+        featured: true,
+        limit: 6,
+      });
       return data as IrrigationKit[];
     },
     retry: 3,

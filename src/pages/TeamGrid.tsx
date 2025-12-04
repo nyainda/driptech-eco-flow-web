@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import { Linkedin, Mail, Phone, Users } from "lucide-react";
 
 const TeamGrid = () => {
@@ -12,12 +12,7 @@ const TeamGrid = () => {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const { data, error } = await supabase
-          .from("team")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
+        const data = await dataService.getTeamMembers();
         setTeam(data || []);
       } catch (error) {
         console.error("Error fetching team:", error);

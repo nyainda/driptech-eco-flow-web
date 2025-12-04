@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import {
   Card,
   CardContent,
@@ -38,26 +38,7 @@ const BlogList = ({ limit }: BlogListProps) => {
   const { data: blogPosts = [], isLoading } = useQuery({
     queryKey: ["published-blog-posts", limit],
     queryFn: async () => {
-      let query = supabase
-        .from("blog_posts")
-        .select(
-          `
-          *,
-          blog_categories (
-            name,
-            slug
-          )
-        `,
-        )
-        .eq("published", true)
-        .order("published_at", { ascending: false });
-
-      if (limit !== undefined) {
-        query = query.limit(limit);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
+      const data = await dataService.getBlogPosts({ limit });
       return data as BlogPost[];
     },
   });
