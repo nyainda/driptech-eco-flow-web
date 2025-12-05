@@ -59,6 +59,7 @@ import WhatsAppContact from "@/components/common/WhatsAppContact";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import { trackSearch } from "@/services/aiProductService";
 
 interface Variant {
   name: string;
@@ -168,6 +169,17 @@ const Products = () => {
       setError(queryError instanceof Error ? queryError.message : "Failed to load products");
     }
   }, [queryError]);
+
+  // Track search queries for AI analysis
+  useEffect(() => {
+    if (searchTerm && searchTerm.length >= 3) {
+      // Debounce tracking - only track after user stops typing
+      const timer = setTimeout(() => {
+        trackSearch(searchTerm, category, filteredProducts.length);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchTerm, category, filteredProducts.length]);
 
   useEffect(() => {
     let filtered = [...products];

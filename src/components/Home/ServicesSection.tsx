@@ -58,86 +58,23 @@ interface ComponentsData {
 }
 
 const ServicesSection = () => {
-  const services = [
-    {
-      icon: Droplets,
-      title: "System Design & Planning",
-      description:
-        "Custom irrigation system design tailored to your specific crop, terrain, and water requirements.",
-      features: [
-        "Site assessment & soil analysis",
-        "CAD drawings & blueprints",
-        "Water flow calculations",
-        "ROI projections",
-      ],
-      popular: true,
+  // Fetch products for marquee using Cloudflare D1 service
+  const { data: products = [] } = useQuery({
+    queryKey: ["home-products-marquee"],
+    queryFn: async () => {
+      const data = await dataService.getProducts({
+        limit: 10,
+        sortBy: 'created_at',
+        sortOrder: 'desc',
+      });
+      return data || [];
     },
-    {
-      icon: Wrench,
-      title: "Professional Installation",
-      description:
-        "Expert installation by certified technicians with comprehensive testing and commissioning.",
-      features: [
-        "Professional setup",
-        "Quality testing",
-        "System commissioning",
-        "User training included",
-      ],
-      popular: false,
-    },
-    {
-      icon: Settings,
-      title: "Maintenance & Support",
-      description:
-        "Regular maintenance services and 24/7 technical support to ensure optimal system performance.",
-      features: [
-        "Preventive maintenance",
-        "Emergency repairs",
-        "Component replacement",
-        "Performance optimization",
-      ],
-      popular: false,
-    },
-    {
-      icon: LineChart,
-      title: "Smart Monitoring",
-      description:
-        "IoT-enabled monitoring systems with real-time data analytics and automated controls.",
-      features: [
-        "Real-time monitoring",
-        "Mobile app control",
-        "Weather integration",
-        "Usage analytics",
-      ],
-      popular: true,
-    },
-    {
-      icon: GraduationCap,
-      title: "Training & Consultation",
-      description:
-        "Comprehensive training programs and expert consultation for optimal system operation.",
-      features: [
-        "Operator training",
-        "Best practices",
-        "Troubleshooting",
-        "Efficiency optimization",
-      ],
-      popular: false,
-    },
-    {
-      icon: Shield,
-      title: "Warranty & Guarantee",
-      description:
-        "Extended warranty coverage and performance guarantees for complete peace of mind.",
-      features: [
-        "12-month warranty",
-        "Performance guarantee",
-        "Free service visits",
-        "Parts replacement",
-      ],
-      popular: false,
-    },
-  ];
+    staleTime: 1000 * 60 * 5,
+    retry: 3,
+  });
+
+  // Duplicate products for infinite scroll effect (triple it to ensure smooth loop)
+  const marqueeProducts = [...products, ...products, ...products];
 
   const benefits = [
     "Increase crop yield by 30-50%",
@@ -252,63 +189,73 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        {/* Services Grid */}
-        <div className="mb-16">
-          <h3 className="text-2xl md:text-3xl font-bold mb-8 text-center text-foreground">
-            Our Services
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <Card
-                key={index}
-                className={`group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-2 ${service.popular ? "border-primary/20 border-2" : ""
-                  }`}
-              >
-                {service.popular && (
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-muted text-foreground border-border">
-                      Popular
-                    </Badge>
+        {/* Product Marquee Section */}
+        <div className="mb-24 overflow-hidden">
+          <div className="text-center mb-12">
+            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
+              Our Premium Products
+            </h3>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Explore our wide range of high-quality irrigation equipment and accessories.
+            </p>
+          </div>
+
+          <div className="relative w-full">
+            {/* Gradient Masks */}
+            <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+
+            {/* Marquee Container */}
+            <div className="flex animate-marquee pause-on-hover gap-6 w-max py-4">
+              {marqueeProducts.map((product, index) => (
+                <Card
+                  key={`${product.id}-${index}`}
+                  className="w-[280px] md:w-[320px] flex-shrink-0 bg-background border-border hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
+                >
+                  <div className="aspect-[4/3] relative overflow-hidden bg-muted rounded-t-lg">
+                    {product.images && product.images.length > 0 ? (
+                      <img
+                        src={typeof product.images[0] === 'string' ? product.images[0] : ''}
+                        alt={product.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted/50">
+                        <Package className="w-12 h-12 opacity-20" />
+                      </div>
+                    )}
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-white/90 text-black backdrop-blur-sm shadow-sm hover:bg-white">
+                        {product.category?.replace('_', ' ') || 'Product'}
+                      </Badge>
+                    </div>
+                    {product.in_stock === false && (
+                      <div className="absolute bottom-3 right-3">
+                        <Badge variant="destructive">Out of Stock</Badge>
+                      </div>
+                    )}
                   </div>
-                )}
 
-                <CardHeader className="pb-4">
-                  <div className="p-3 bg-muted rounded-xl inline-block mb-4">
-                    <service.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl mb-2 text-foreground">
-                    {service.title}
-                  </CardTitle>
-                  <CardDescription className="text-base text-muted-foreground">
-                    {service.description}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent>
-                  <ul className="space-y-2 mb-6">
-                    {service.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm text-foreground">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all border-border hover:bg-accent hover:text-accent-foreground"
-                    asChild
-                  >
-                    <Link to="/services">
-                      Learn About {service.title}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-5">
+                    <h4 className="font-bold text-lg mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+                      {product.name}
+                    </h4>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10">
+                      {product.description || "High-quality irrigation product."}
+                    </p>
+                    <div className="flex items-center justify-between mt-auto">
+                      <span className="font-bold text-primary text-lg">
+                        {product.price ? formatCurrency(product.price) : 'Contact us'}
+                      </span>
+                      <Button size="sm" variant="outline" className="rounded-full" asChild>
+                        <Link to="/products">View Details</Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
 

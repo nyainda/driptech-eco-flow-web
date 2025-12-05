@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const TABLES = [
     'products',
@@ -17,10 +18,40 @@ const TABLES = [
     'team'
 ];
 
+const KNOWN_TABLES = [
+    // Content Tables (Priority)
+    'products',
+    'blog_posts',
+    'videos',
+    'projects',
+    'success_stories',
+    'news_articles',
+    'irrigation_kits',
+    'documents',
+    'team',
+
+    // Other Tables
+    'blog_categories',
+    'variants',
+    'kit_documents',
+    'system_settings',
+    'mpesa_transactions',
+    'customers',
+    'quotes',
+    'invoices',
+    'contact_submissions',
+    'user_roles',
+    'page_views',
+    'visitor_sessions',
+    'product_interactions',
+    'notifications'
+];
+
 export default function SyncDashboard() {
     const [syncing, setSyncing] = useState<Record<string, boolean>>({});
     const [status, setStatus] = useState<Record<string, 'idle' | 'success' | 'error'>>({});
     const [messages, setMessages] = useState<Record<string, string>>({});
+    const [selectedTable, setSelectedTable] = useState<string>("");
 
     const handleSync = async (table: string) => {
         setSyncing(prev => ({ ...prev, [table]: true }));
@@ -117,6 +148,46 @@ export default function SyncDashboard() {
                         </CardContent>
                     </Card>
                 ))}
+
+                {/* Custom Table Sync Card */}
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Sync Specific Table</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-2 mt-2">
+                            <Select value={selectedTable} onValueChange={setSelectedTable}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select a table..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {KNOWN_TABLES.map(table => (
+                                        <SelectItem key={table} value={table}>
+                                            {table}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                    if (selectedTable) handleSync(selectedTable);
+                                }}
+                                disabled={!selectedTable || syncing[selectedTable]}
+                            >
+                                {syncing[selectedTable] ? (
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                    <RefreshCw className="h-3 w-3" />
+                                )}
+                            </Button>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-2">
+                            Select any table from the database to sync.
+                        </p>
+                    </CardContent>
+                </Card>
             </div>
 
             <div className="mt-8 p-4 bg-muted/50 rounded-lg border">

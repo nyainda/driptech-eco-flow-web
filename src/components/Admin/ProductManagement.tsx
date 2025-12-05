@@ -8,6 +8,7 @@ import ProductForm from "./Product/ProductForm";
 import ProductList from "./Product/ProductList";
 import ProductSearch from "./Product/ProductSearch";
 import ProductPagination from "./Product/ProductPagination";
+import AIMarketResearch from "./AI/AIMarketResearch";
 import { Product, ProductFormData, PRODUCT_CATEGORIES } from "@/types/Product";
 
 const ProductManagement = () => {
@@ -250,12 +251,12 @@ const ProductManagement = () => {
     setEditingProduct(product);
     const specs = product.technical_specs
       ? Object.entries(product.technical_specs).map(
-          ([name, spec]: [string, any]) => ({
-            name,
-            value: spec.value || spec,
-            unit: spec.unit || "",
-          }),
-        )
+        ([name, spec]: [string, any]) => ({
+          name,
+          value: spec.value || spec,
+          unit: spec.unit || "",
+        }),
+      )
       : [];
 
     setFormData({
@@ -385,8 +386,20 @@ const ProductManagement = () => {
           </Button>
         </div>
 
-        {/* Product Seeder Component */}
-        <ProductSeeder />
+        {/* AI Tools Section */}
+        <div className="flex flex-wrap gap-3">
+          {/* Product Seeder Component */}
+          <ProductSeeder />
+
+          {/* AI Market Research */}
+          <AIMarketResearch
+            onGenerate={(products) => {
+              // Products are now saved to ai_product_suggestions
+              // Admin can review them in AI Product Research tab
+              console.log(`Generated ${products.length} product suggestions`);
+            }}
+          />
+        </div>
 
         {/* Add/Edit Form */}
         {showAddForm && (

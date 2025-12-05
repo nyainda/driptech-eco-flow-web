@@ -89,6 +89,11 @@ export default {
                 return await handleSync(request, env, url);
             }
 
+            // AI Analysis endpoint
+            if (request.method === 'POST' && path === '/api/ai/analyze-trends') {
+                return await handleAIAnalysis(request, env);
+            }
+
             // Webhooks
             if (path === '/api/webhooks/supabase' && request.method === 'POST') {
                 return handleSupabaseWebhook(request, env);
@@ -559,6 +564,177 @@ async function handleSync(request: Request, env: Env, url: URL): Promise<Respons
         return jsonResponse({ success: true, synced: data.length });
     } catch (error: any) {
         return jsonResponse({ error: error.message }, 500);
+    }
+}
+
+// ============================================
+// AI ANALYSIS HANDLER
+// ============================================
+
+async function handleAIAnalysis(request: Request, env: Env): Promise<Response> {
+    try {
+        // 1. Get Gemini API key from Supabase
+        const supabaseUrl = 'https://cnvtnxesywbzwsxwpejw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNudnRueGVzeXdiendzeHdwZWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MDc5MTQsImV4cCI6MjA2Nzk4MzkxNH0.2N0Ou0PypE0U773zX0864G4Z27-lpmyZQJ6G31F1_Es';
+
+        const settingsResponse = await fetch(
+            `${supabaseUrl}/rest/v1/system_settings?setting_key=eq.gemini_api_key&select=setting_value`,
+            {
+                headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': `Bearer ${supabaseKey}`
+                }
+            }
+        );
+
+        if (!settingsResponse.ok) {
+            console.error('Failed to fetch settings:', await settingsResponse.text());
+            return jsonResponse({ error: 'Failed to fetch API key from settings' }, 500);
+        }
+
+        const settings = await settingsResponse.json();
+        console.log('Settings response:', settings);
+
+        const geminiApiKey = settings[0]?.setting_value;
+
+        if (!geminiApiKey) {
+            console.error('No API key found. Settings:', settings);
+            return jsonResponse({
+                error: 'Gemini API key not configured. Please add it in Admin → Settings → API Keys',
+                debug: { settingsCount: settings.length }
+            }, 400);
+        }
+
+        // 2. Get top search queries from last 30 days
+        const searchResponse = await fetch(
+            `${supabaseUrl}/rest/v1/search_queries?select=query,category&created_at=gte.${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}`,
+            {
+                headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': `Bearer ${supabaseKey}`
+                }
+            }
+        );
+
+        const searches = await searchResponse.json();
+
+        // Aggregate search queries
+        const queryMap = new Map<string, { count: number; categories: Set<string> }>();
+        searches.forEach((s: any) => {
+            const existing = queryMap.get(s.query) || { count: 0, categories: new Set() };
+            existing.count++;
+            if (s.category) existing.categories.add(s.category);
+            queryMap.set(s.query, existing);
+        });
+
+        const topQueries = Array.from(queryMap.entries())
+            .map(([query, data]) => ({ query, count: data.count, categories: Array.from(data.categories) }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 20);
+
+        if (topQueries.length === 0) {
+            return jsonResponse({ error: 'No search data available yet' }, 400);
+        }
+
+        // 3. Call Gemini API to analyze trends
+        const prompt = `You are an irrigation equipment expert. Analyze these search queries from a Kenyan irrigation website:
+
+${JSON.stringify(topQueries, null, 2)}
+
+Based on these searches, generate 15 product suggestions that would satisfy user demand. For each product, provide:
+
+{
+  "suggestions": [
+    {
+      "name": "Professional product name",
+      "category": "drip_irrigation | sprinkler_systems | filtration_systems | control_systems | accessories",
+      "description": "2-3 paragraphs describing the product, its benefits, and applications",
+      "price_range": "KSH X,XXX - X,XXX",
+      "estimated_price": XXXX,
+      "target_crops": ["Tomatoes", "Peppers", "etc"],
+      "technical_specs": {
+        "material": "LDPE/PVC/etc",
+        "size": "16mm/etc",
+        "flow_rate": "2.0 L/hr/etc"
+      },
+      "features": ["Feature 1", "Feature 2", "etc"],
+      "applications": ["Greenhouse", "Open field", "etc"],
+      "search_volume": <count from queries>
+    }
+  ]
+}
+
+Make products realistic, market-accurate, and aligned with Kenyan irrigation needs. Output ONLY valid JSON, no markdown.`;
+
+        const geminiResponse = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiApiKey}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: prompt }]
+                    }]
+                })
+            }
+        );
+
+        if (!geminiResponse.ok) {
+            const error = await geminiResponse.json();
+            throw new Error(error.error?.message || 'Gemini API failed');
+        }
+
+        const geminiData = await geminiResponse.json();
+        const generatedText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!generatedText) {
+            throw new Error('No content generated from Gemini');
+        }
+
+        // 4. Parse JSON response
+        const cleanJson = generatedText.replace(/```json\n?|\n?```/g, '').trim();
+        const parsed = JSON.parse(cleanJson);
+
+        // 5. Save suggestions to Supabase
+        const suggestions = parsed.suggestions || [];
+
+        for (const suggestion of suggestions) {
+            await fetch(
+                `${supabaseUrl}/rest/v1/ai_product_suggestions`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        name: suggestion.name,
+                        category: suggestion.category,
+                        description: suggestion.description,
+                        price_range: suggestion.price_range,
+                        estimated_price: suggestion.estimated_price,
+                        target_crops: suggestion.target_crops,
+                        technical_specs: suggestion.technical_specs,
+                        features: suggestion.features,
+                        applications: suggestion.applications,
+                        search_volume: suggestion.search_volume || 0,
+                        status: 'pending'
+                    })
+                }
+            );
+        }
+
+        return jsonResponse({
+            success: true,
+            suggestions: suggestions,
+            analyzed_queries: topQueries.length
+        });
+
+    } catch (error: any) {
+        console.error('AI Analysis error:', error);
+        return jsonResponse({ error: error.message || 'Analysis failed' }, 500);
     }
 }
 

@@ -51,6 +51,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagement";
 import SyncDashboard from "@/components/Admin/SyncDashboard";
+import AIProductResearch from "@/components/Admin/AIProductResearch";
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -182,6 +183,12 @@ const AdminContent = () => {
       icon: Database,
       description: "Data synchronization",
     },
+    {
+      id: "ai-research",
+      label: "AI Product Research",
+      icon: TrendingUp,
+      description: "AI-powered product suggestions",
+    },
   ];
 
   return (
@@ -304,6 +311,10 @@ const AdminContent = () => {
 
           <TabsContent value="sync" className="space-y-6">
             <SyncDashboard />
+          </TabsContent>
+
+          <TabsContent value="ai-research" className="space-y-6">
+            <AIProductResearch />
           </TabsContent>
         </Tabs>
       </div>
