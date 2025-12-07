@@ -142,7 +142,7 @@ const HeroSection = () => {
                             >
                                 <div className="flex items-center justify-center gap-3">
                                     <Phone className="h-5 w-5" />
-                                    <span className="font-semibold">Call: 0111 409 454</span>
+                                    <span className="font-semibold">Call: 0794494515</span>
                                 </div>
                             </Button>
 

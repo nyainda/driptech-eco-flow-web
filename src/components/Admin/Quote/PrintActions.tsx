@@ -33,56 +33,51 @@ export const generatePrintContent = (
         <h3 class="text-blue-600 text-sm font-bold">Project Overview</h3>
       </div>
       <div class="grid grid-cols-2 gap-2 text-xs">
-        ${
-          quote.project_type
-            ? `
+        ${quote.project_type
+        ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Project</span>
             <span class="block text-xs font-bold text-gray-900">${quote.project_type}</span>
           </div>
         `
-            : ""
-        }
-        ${
-          quote.crop_type
-            ? `
+        : ""
+      }
+        ${quote.crop_type
+        ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Crop</span>
             <span class="block text-xs font-bold text-gray-900">${quote.crop_type}</span>
           </div>
         `
-            : ""
-        }
-        ${
-          quote.area_size
-            ? `
+        : ""
+      }
+        ${quote.area_size
+        ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Area</span>
             <span class="block text-xs font-bold text-gray-900">${quote.area_size} acres</span>
           </div>
         `
-            : ""
-        }
-        ${
-          quote.water_source
-            ? `
+        : ""
+      }
+        ${quote.water_source
+        ? `
           <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
             <span class="block text-xs font-medium text-gray-500 uppercase">Water</span>
             <span class="block text-xs font-bold text-gray-900">${quote.water_source}</span>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
       </div>
-      ${
-        quote.terrain_info
-          ? `
+      ${quote.terrain_info
+        ? `
         <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100 mt-2">
           <span class="block text-xs font-medium text-gray-500 uppercase">Terrain</span>
           <span class="block text-xs font-medium text-gray-900">${quote.terrain_info}</span>
         </div>
       `
-          : ""
+        : ""
       }
     </div>
   `
@@ -125,9 +120,8 @@ export const generatePrintContent = (
         KES ${subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
       </td>
     </tr>
-    ${
-      quote.include_vat
-        ? `
+    ${quote.include_vat
+      ? `
     <tr class="border-b border-gray-200">
       <td class="p-2 font-semibold text-gray-700 text-xs">VAT (${quote.vat_rate}%)</td>
       <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
@@ -135,7 +129,7 @@ export const generatePrintContent = (
       </td>
     </tr>
     `
-        : ""
+      : ""
     }
     <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
       <td class="p-2 font-extrabold text-sm">Total Amount</td>
@@ -276,7 +270,7 @@ export const generatePrintContent = (
                 <div class="text-white text-opacity-90 text-xs font-medium">Smart Irrigation Systems</div>
                 <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
                   <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
-                  <div>📞 0111409454 / 0114575401</div>
+                  <div>📞 0794494515 / 0114575401</div>
                   <div>✉️ driptech2025@gmail.com</div>
                 </div>
               </div>
@@ -293,16 +287,15 @@ export const generatePrintContent = (
                   <span class="font-medium text-white text-opacity-90">Date:</span>
                   <span class="font-bold ml-2">${new Date(quote.created_at).toLocaleDateString("en-GB")}</span>
                 </div>
-                ${
-                  quote.valid_until
-                    ? `
+                ${quote.valid_until
+      ? `
                 <div class="flex justify-between items-center text-xs">
                   <span class="font-medium text-white text-opacity-90">Valid Until:</span>
                   <span class="font-bold ml-2">${new Date(quote.valid_until).toLocaleDateString("en-GB")}</span>
                 </div>
                 `
-                    : ""
-                }
+      : ""
+    }
               </div>
             </div>
           </div>
@@ -321,7 +314,7 @@ export const generatePrintContent = (
                   <div class="font-bold text-gray-900">DripTech Solutions</div>
                   <div class="text-gray-600">P.O. Box 12345, Nairobi, Kenya</div>
                   <div class="flex items-center gap-1 text-gray-600">
-                    <span class="opacity-70">📞</span> 0111409454 / 0114575401
+                    <span class="opacity-70">📞</span> 0794494515 / 0114575401
                   </div>
                   <div class="flex items-center gap-1 text-gray-600">
                     <span class="opacity-70">✉️</span> driptech2025@gmail.com

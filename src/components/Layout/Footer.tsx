@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React from "react";
 import {
   MapPin,
   Phone,
@@ -11,15 +9,12 @@ import {
   Linkedin,
   Youtube,
   Instagram,
-  Send,
-  CheckCircle,
   MessageCircle,
 } from "lucide-react";
+import NewsletterSubscription from "@/components/Newsletter/NewsletterSubscription";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
 
   const footerLinks = {
     products: [
@@ -80,62 +75,12 @@ const Footer = () => {
     },
   ];
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setTimeout(() => {
-        setIsSubscribed(true);
-        setEmail("");
-        setTimeout(() => setIsSubscribed(false), 3000);
-      }, 500);
-    }
-  };
-
   return (
     <footer className="bg-background border-t border-border">
       {/* Newsletter Section */}
       <div className="bg-muted/30 border-b border-border">
         <div className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-2xl font-semibold text-foreground mb-4">
-              Stay Updated with Industry Insights
-            </h3>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Get the latest irrigation technology updates, maintenance tips,
-              and industry best practices delivered to your inbox.
-            </p>
-
-            <form
-              onSubmit={handleSubscribe}
-              className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-md mx-auto"
-            >
-              <Input
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 h-9 sm:h-10 text-sm"
-                required
-              />
-              <Button
-                type="submit"
-                className="sm:w-auto w-full h-9 sm:h-10 text-sm"
-                disabled={isSubscribed}
-              >
-                {isSubscribed ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Subscribed!
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Subscribe
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
+          <NewsletterSubscription variant="default" showDescription={true} />
         </div>
       </div>
 

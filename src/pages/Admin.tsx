@@ -22,6 +22,7 @@ import {
   Gift,
   Newspaper,
   Database,
+  MessageCircle,
 } from "lucide-react";
 import {
   AdminAuthProvider,
@@ -52,6 +53,9 @@ import { Badge } from "@/components/ui/badge";
 import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagement";
 import SyncDashboard from "@/components/Admin/SyncDashboard";
 import AIProductResearch from "@/components/Admin/AIProductResearch";
+import NewsletterManagement from "@/components/Admin/NewsletterManagement";
+import PaymentIntegrations from "@/components/Admin/PaymentIntegrations";
+import WhatsAppManagement from "@/components/Admin/WhatsAppManagement";
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -170,6 +174,24 @@ const AdminContent = () => {
       label: "M-Pesa Payments",
       icon: CreditCard,
       description: "Payment tracking and statements",
+    },
+    {
+      id: "payments",
+      label: "Payment Integrations",
+      icon: CreditCard,
+      description: "M-Pesa & Bank payment setup",
+    },
+    {
+      id: "newsletter",
+      label: "Newsletter",
+      icon: Mail,
+      description: "Email subscriber management",
+    },
+    {
+      id: "whatsapp",
+      label: "WhatsApp",
+      icon: MessageCircle,
+      description: "WhatsApp message management",
     },
     {
       id: "settings",
@@ -303,6 +325,18 @@ const AdminContent = () => {
 
           <TabsContent value="mpesa" className="space-y-6">
             <MpesaIntegration />
+          </TabsContent>
+
+          <TabsContent value="payments" className="space-y-6">
+            <PaymentIntegrations />
+          </TabsContent>
+
+          <TabsContent value="newsletter" className="space-y-6">
+            <NewsletterManagement />
+          </TabsContent>
+
+          <TabsContent value="whatsapp" className="space-y-6">
+            <WhatsAppManagement />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">

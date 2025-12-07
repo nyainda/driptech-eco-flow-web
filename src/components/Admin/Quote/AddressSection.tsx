@@ -19,7 +19,7 @@ export const AddressSection: React.FC<AddressSectionProps> = ({ customer }) => (
           P.O. Box 12345, Nairobi, Kenya
         </p>
         <p className="text-gray-600 dark:text-gray-400">
-          Phone: 0111409454 / 0114575401
+          Phone: 0794494515
         </p>
         <p className="text-gray-600 dark:text-gray-400">
           Email: driptech2025@gmail.com

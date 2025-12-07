@@ -144,7 +144,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                   <div class="text-white text-opacity-90 text-xs font-medium">Smart Irrigation Systems</div>
                   <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
                     <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
-                    <div>📞 0111409454 / 0114575401</div>
+                    <div>📞 0794494515 / 0114575401</div>
                     <div>✉️ info@dripstech.co.ke</div>
                     <div>✉️ driptechs.info@gmail.com</div>
                   </div>
@@ -188,7 +188,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                     <div class="font-bold text-gray-900">DripTech Solutions</div>
                     <div class="text-gray-600">P.O. Box 12345, Nairobi, Kenya</div>
                     <div class="flex items-center gap-1 text-gray-600">
-                      <span class="opacity-70">📞</span> 0111409454 / 0114575401
+                      <span class="opacity-70">📞</span> 0794494515 / 0114575401
                     </div>
                     <div class="flex items-center gap-1 text-gray-600">
                       <span class="opacity-70">✉️</span> driptech2025@gmail.com
@@ -238,10 +238,9 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-100">
-                    ${
-                      invoice.invoice_items
-                        ?.map(
-                          (item, index) => `
+                    ${invoice.invoice_items
+        ?.map(
+          (item, index) => `
                       <tr class="hover:bg-blue-50 border-b border-gray-100">
                         <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
                         <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
@@ -251,10 +250,10 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                         <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
                       </tr>
                     `,
-                        )
-                        .join("") ||
-                      '<tr><td colspan="6" class="p-4 text-center text-gray-500">No items found</td></tr>'
-                    }
+        )
+        .join("") ||
+      '<tr><td colspan="6" class="p-4 text-center text-gray-500">No items found</td></tr>'
+      }
                   </tbody>
                 </table>
               </div>
@@ -272,9 +271,8 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                           KES ${invoice.subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
-                      ${
-                        invoice.discount_amount && invoice.discount_amount > 0
-                          ? `
+                      ${invoice.discount_amount && invoice.discount_amount > 0
+        ? `
                       <tr class="border-b border-gray-200">
                         <td class="p-2 font-semibold text-gray-700 text-xs">Discount</td>
                         <td class="p-2 text-right font-mono font-bold text-red-600 text-xs">
@@ -282,11 +280,10 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                         </td>
                       </tr>
                       `
-                          : ""
-                      }
-                      ${
-                        invoice.tax_amount && invoice.tax_amount > 0
-                          ? `
+        : ""
+      }
+                      ${invoice.tax_amount && invoice.tax_amount > 0
+        ? `
                       <tr class="border-b border-gray-200">
                         <td class="p-2 font-semibold text-gray-700 text-xs">Tax (${invoice.tax_rate}%)</td>
                         <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
@@ -294,8 +291,8 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                         </td>
                       </tr>
                       `
-                          : ""
-                      }
+        : ""
+      }
                       <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
                         <td class="p-2 font-extrabold text-sm">Total Amount</td>
                         <td class="p-2 text-right font-mono font-extrabold text-sm">
@@ -309,9 +306,8 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             </div>
 
             <!-- Payment Details Section -->
-            ${
-              invoice.payment_details
-                ? `
+            ${invoice.payment_details
+        ? `
             <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg p-3 border-l-3 border-blue-500 mb-3">
               <div class="flex items-center gap-2 mb-2">
                 <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-md flex items-center justify-center text-sm">💳</div>
@@ -322,13 +318,12 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
               </div>
             </div>
             `
-                : ""
-            }
+        : ""
+      }
 
             <!-- Notes Section -->
-            ${
-              invoice.notes
-                ? `
+            ${invoice.notes
+        ? `
             <div class="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-3 border-l-3 border-amber-500 mb-3">
               <div class="flex items-center gap-2 mb-2">
                 <div class="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-md flex items-center justify-center text-sm">📝</div>
@@ -339,20 +334,19 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
               </div>
             </div>
             `
-                : ""
-            }
+        : ""
+      }
 
             <!-- Payment Terms -->
-            ${
-              invoice.payment_terms
-                ? `
+            ${invoice.payment_terms
+        ? `
             <div class="text-center text-gray-600 text-xs mt-4 p-3 bg-gray-50 rounded-lg">
               <p><strong>Payment Terms:</strong> ${invoice.payment_terms}</p>
               <p class="mt-1">Thank you for your business!</p>
             </div>
             `
-                : ""
-            }
+        : ""
+      }
           </div>
         </div>
       </body>
