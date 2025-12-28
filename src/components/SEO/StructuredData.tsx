@@ -118,7 +118,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
                     "description": data.description,
                     "contactPoint": {
                         "@type": "ContactPoint",
-                        "telephone": data.phone || "+254-111-409-454",
+                        "telephone": data.phone || "",
                         "contactType": "customer service",
                         "email": data.email || "driptech2025@gmail.com"
                     },

@@ -114,7 +114,7 @@ const SimpleContactForm = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
-                placeholder="0111 409 454"
+                placeholder="e.g., 0114 575 401"
               />
             </div>
             <div>

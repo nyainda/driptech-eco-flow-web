@@ -115,7 +115,7 @@ const BlogPostPage = () => {
           <article>
             {/* Header */}
             <header className="mb-12 bg-background shadow-md rounded-xl p-6">
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex flex-wrap items-center gap-2 mb-4">
                 {post.blog_categories && (
                   <Badge className="bg-muted text-foreground border-border">
                     {post.blog_categories.name}
@@ -186,7 +186,7 @@ const BlogPostPage = () => {
             {/* Footer */}
             <footer className="mt-12 pt-8 bg-background p-6 rounded-xl shadow-md border border-border">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-2">
                   {post.tags &&
                     post.tags.map((tag: string, index: number) => (
                       <Badge

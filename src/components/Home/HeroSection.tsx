@@ -112,12 +112,12 @@ const HeroSection = () => {
                         <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] tracking-tight drop-shadow-lg">
                             Transform Your <br />
                             <span className="text-emerald-400">Agriculture</span> <br />
-                            With Smart Irrigation
+                            With Smart Drip Irrigation
                         </h1>
 
                         {/* Description - Clear Value Prop */}
                         <p className="text-lg md:text-xl text-slate-200 dark:text-slate-300 leading-relaxed max-w-xl font-medium drop-shadow-md border-l-4 border-emerald-500 pl-6">
-                            Quality irrigation materials including driplines, sprinklers, and smart systems.
+                            Affordable smart drip irrigation kits, sprinklers, and water pumps for smallholder and commercial farmers.
                             Increase yields by <span className="text-emerald-400 font-bold">40-60%</span> while reducing water usage by <span className="text-blue-400 font-bold">50%</span>.
                         </p>
 
@@ -138,7 +138,7 @@ const HeroSection = () => {
                                 size="lg"
                                 onClick={() => makePhoneCall(whatsappNumber)}
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-emerald-900/20 transition-all hover:translate-y-[-2px] border-none w-full sm:w-auto"
-                                aria-label="Call 0111 409 454"
+                                aria-label="Call 0794494515"
                             >
                                 <div className="flex items-center justify-center gap-3">
                                     <Phone className="h-5 w-5" />

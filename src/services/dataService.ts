@@ -319,7 +319,7 @@ export const dataService = {
         page?: number;
         limit?: number;
     }) {
-        if (USE_D1) {
+        const fetchFromD1 = async () => {
             const queryParams = new URLSearchParams();
             if (params.search) queryParams.set('search', params.search);
             if (params.category) queryParams.set('category', params.category);
@@ -329,8 +329,14 @@ export const dataService = {
 
             const response = await fetch(`${WORKER_URL}/api/blog/search?${queryParams}`);
             if (!response.ok) throw new Error('Failed to fetch blog posts from D1');
-            return await response.json();
-        } else {
+            const json = await response.json();
+            return {
+                posts: json.data,
+                totalCount: json.pagination.total
+            };
+        };
+
+        const fetchFromSupabase = async () => {
             let query = supabase
                 .from('blog_posts')
                 .select(
@@ -385,8 +391,10 @@ export const dataService = {
             return {
                 posts: data,
                 totalCount: count || 0,
-            };
-        }
+            } as { posts: any[]; totalCount: number };
+        };
+
+        return await fetchWithFailover(fetchFromD1, fetchFromSupabase);
     },
 
     // ============================================

@@ -455,8 +455,9 @@ const Products = () => {
         productName={product.name}
         productId={product.id}
         category={product.category}
+        className="h-full"
       >
-        <Card className="group bg-background border-border shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300">
+        <Card className="group h-full flex flex-col bg-background border-border shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300">
           <CardHeader className="p-0">
             <div className="relative aspect-video bg-muted rounded-t-xl overflow-hidden">
               {product.images && product.images[0] ? (
@@ -534,8 +535,8 @@ const Products = () => {
             </div>
           </CardHeader>
 
-          <CardContent className="p-4 sm:p-6">
-            <div className="space-y-3">
+          <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-1 flex-wrap">
                   <Badge className="capitalize text-xs bg-muted/30 border-border text-foreground">
@@ -615,7 +616,7 @@ const Products = () => {
               <div className="text-sm text-muted-foreground leading-relaxed">
                 {product.description ? (
                   <div className="space-y-2">
-                    <p className="line-clamp-2 sm:line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+                    <p className="line-clamp-2 sm:line-clamp-3 transition-all duration-300">
                       {product.description}
                     </p>
                     <Dialog>
@@ -732,7 +733,7 @@ const Products = () => {
                 </div>
               )}
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
+              <div className="mt-auto flex flex-row items-center justify-between gap-2 pt-2">
                 <div className="text-lg sm:text-xl font-bold text-primary">
                   {hasVariants &&
                     variantPriceRange &&
@@ -758,84 +759,87 @@ const Products = () => {
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="flex-1 bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-sm">
-                      View Details
-                      <Eye className="h-4 w-4 ml-2" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-y-auto bg-background border-border shadow-md rounded-xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-lg sm:text-2xl pr-8 text-foreground">
-                        {product.name}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <ProductDetailModal product={product} />
-                  </DialogContent>
-                </Dialog>
+            </div>
 
-                <Button
-                  onClick={() => {
-                    const message = encodeURIComponent(
-                      `Hi DripTech! I'm interested in: ${product.name}${hasVariants && selectedVariant ? ` (${selectedVariant.name})` : ''}. Could you provide more information?`
-                    );
-                    window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
-                  }}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md text-sm"
-                >
-                  <span className="mr-2">💬</span>
-                  WhatsApp Inquiry
-                </Button>
 
-                <div className="flex gap-1 justify-center sm:justify-start">
-                  {product.brochure_url && (
-                    <Button
-                      className="p-2 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-                      title="Download Brochure"
-                      asChild
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-border mt-3">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="flex-1 bg-muted/30 text-foreground border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-sm">
+                    View Details
+                    <Eye className="h-4 w-4 ml-2" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-y-auto bg-background border-border shadow-md rounded-xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg sm:text-2xl pr-8 text-foreground">
+                      {product.name}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <ProductDetailModal product={product} />
+                </DialogContent>
+              </Dialog>
+
+              <Button
+                onClick={() => {
+                  const message = encodeURIComponent(
+                    `Hi DripTech! I'm interested in: ${product.name}${hasVariants && selectedVariant ? ` (${selectedVariant.name})` : ''}. Could you provide more information?`
+                  );
+                  window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
+                }}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md text-sm"
+              >
+                <span className="mr-2">💬</span>
+                WhatsApp Inquiry
+              </Button>
+
+              <div className="flex gap-1 justify-center sm:justify-start">
+                {product.brochure_url && (
+                  <Button
+                    className="p-2 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                    title="Download Brochure"
+                    asChild
+                  >
+                    <a
+                      href={product.brochure_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      <a
-                        href={product.brochure_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Download className="h-4 w-4" />
-                      </a>
-                    </Button>
-                  )}
-                  {product.video_url && (
-                    <Button
-                      className="p-2 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-                      title="Watch Video"
-                      asChild
+                      <Download className="h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
+                {product.video_url && (
+                  <Button
+                    className="p-2 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                    title="Watch Video"
+                    asChild
+                  >
+                    <a
+                      href={product.video_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      <a
-                        href={product.video_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Play className="h-4 w-4" />
-                      </a>
-                    </Button>
-                  )}
-                  {product.installation_guide_url && (
-                    <Button
-                      className="p-2 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-                      title="Installation Guide"
-                      asChild
+                      <Play className="h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
+                {product.installation_guide_url && (
+                  <Button
+                    className="p-2 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                    title="Installation Guide"
+                    asChild
+                  >
+                    <a
+                      href={product.installation_guide_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      <a
-                        href={product.installation_guide_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Wrench className="h-4 w-4" />
-                      </a>
-                    </Button>
-                  )}
-                </div>
+                      <Wrench className="h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>

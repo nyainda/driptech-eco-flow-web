@@ -14,9 +14,9 @@ interface SEOHeadProps {
 }
 
 export default function SEOHead({
-  title = "DripTech - Professional Irrigation Solutions in Kenya",
-  description = "Buy quality irrigation materials in Kenya: driplines (15cm, 20cm, 30cm spacing), sprinkler systems, irrigation pipes, filters, water pumps, fittings. Complete irrigation kits with professional installation and fast delivery nationwide.",
-  keywords = "irrigation materials Kenya, dripline Kenya, irrigation kits, sprinkler systems, drip irrigation pipes, irrigation fittings, water pumps, farm irrigation, dripline 15cm, dripline 20cm, dripline 30cm, irrigation equipment, emitters, drippers, irrigation filters, irrigation valves, pressure regulators, fertigation systems, drip tape, irrigation accessories, farming equipment Kenya, greenhouse irrigation, agriculture irrigation, irrigation suppliers Kenya",
+  title = "Smart Drip Irrigation Systems & Water Solutions Kenya | DripTech EcoFlow",
+  description = "Kenya's leading provider of specific smart drip irrigation kits, sprinklers, water pumps, and greenhouse solutions. Affordable, water-efficient farming systems for smallholder and commercial farmers.",
+  keywords = "drip irrigation kenya, smart irrigation systems, irrigation kits prices kenya, water pumps for farming, sprinkler systems kenya, greenhouse irrigation, drip lines, agricultural water solutions, solar water pumps, precision farming kenya, smallholder irrigation, automated irrigation controller, soil moisture sensors",
   image = "https://www.dripstech.co.ke/driptech-social-image.jpg",
   url = "https://www.dripstech.co.ke",
   type = "website",

@@ -9,6 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -30,6 +35,8 @@ import {
   ChevronRight,
   Grid,
   List,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Layout/Header";
@@ -81,7 +88,9 @@ const BlogPage = () => {
     },
   });
 
-  const { data: blogData, isLoading } = useQuery({
+
+
+  const { data: blogData, isLoading, isError, refetch } = useQuery({
     queryKey: [
       "blog-posts-filtered",
       currentPage,
@@ -403,8 +412,18 @@ const BlogPage = () => {
               </div>
             </div>
 
-            {/* Blog Posts */}
-            {isLoading ? (
+            {isError ? (
+              <Alert variant="destructive" className="mb-8">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error Loading Posts</AlertTitle>
+                <AlertDescription className="flex items-center justify-between">
+                  <span>Failed to load blog posts. Please check your connection and try again.</span>
+                  <Button variant="outline" size="sm" onClick={() => refetch()} className="ml-4 bg-background hover:bg-accent text-foreground">
+                    <RefreshCw className="mr-2 h-4 w-4" /> Retry
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            ) : isLoading ? (
               <div className="bg-background shadow-md rounded-xl p-6">
                 <div
                   className={

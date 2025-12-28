@@ -8,7 +8,7 @@ export const SEO_CONFIG = {
     defaultDescription: "Buy quality irrigation materials in Kenya: driplines (15cm, 20cm, 30cm spacing), sprinkler systems, irrigation pipes, filters, water pumps, fittings, farm irrigation kits. Affordable prices, professional installation, fast delivery nationwide.",
     defaultImage: "https://images.unsplash.com/photo-1574263867128-a3d5c1b1deac?w=1200&h=630&fit=crop",
     twitterHandle: "@driptech_eco",
-    phone: "+254-111-409-454",
+    phone: "",
     email: "driptech2025@gmail.com",
     address: {
         street: "Nairobi Industrial Area",
@@ -109,7 +109,7 @@ export const PAGE_SEO = {
 
     contact: {
         title: "Contact DripTech | Get Free Irrigation Consultation Kenya",
-        description: "Contact DripTech for free irrigation consultation. Call +254-111-409-454, WhatsApp, or visit our Nairobi office. Professional irrigation experts ready to help with your farm water needs.",
+        description: "Contact DripTech for free irrigation consultation. WhatsApp, email, or visit our Nairobi office. Professional irrigation experts ready to help with your farm water needs.",
         keywords: "contact DripTech, irrigation consultation Kenya, irrigation quote, irrigation experts Nairobi"
     }
 };
