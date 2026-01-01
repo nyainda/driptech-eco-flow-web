@@ -14,8 +14,22 @@ import {
   ChevronRight,
   Pause,
   Play,
+  Layers,
+  Zap,
+  Filter,
+  Settings,
+  Box,
+  LayoutGrid,
+  FileText,
+  Book,
+  Video,
+  LifeBuoy,
+  BarChart3,
+  Users,
+  Search,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import SearchManager from "./SearchManager";
 import { Link } from "react-router-dom";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,7 +43,14 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 interface DiscountBannerData {
   id: string;
@@ -199,12 +220,42 @@ const Header = () => {
     {
       title: "Products",
       items: [
-        { title: "Drip Irrigation", href: "/products/drip" },
-        { title: "Sprinkler Systems", href: "/products/sprinklers" },
-        { title: "Filtration Systems", href: "/products/filtration" },
-        { title: "Control Systems", href: "/products/controls" },
-        { title: "Accessories", href: "/products/accessories" },
-        { title: "Irrigation Kits", href: "/irrigation-kits" },
+        {
+          title: "Drip Irrigation",
+          href: "/products/drip",
+          description: "Precision watering for every plant",
+          icon: Droplets,
+        },
+        {
+          title: "Sprinkler Systems",
+          href: "/products/sprinklers",
+          description: "Efficient wide-area coverage",
+          icon: Zap,
+        },
+        {
+          title: "Filtration Systems",
+          href: "/products/filtration",
+          description: "Clean water for system longevity",
+          icon: Filter,
+        },
+        {
+          title: "Control Systems",
+          href: "/products/controls",
+          description: "Smart automation for your farm",
+          icon: Settings,
+        },
+        {
+          title: "Accessories",
+          href: "/products/accessories",
+          description: "Essential components and tools",
+          icon: Box,
+        },
+        {
+          title: "Irrigation Kits",
+          href: "/irrigation-kits",
+          description: "All-in-one solutions for quick setup",
+          icon: LayoutGrid,
+        },
       ],
     },
     {
@@ -221,12 +272,42 @@ const Header = () => {
     {
       title: "Resources",
       items: [
-        { title: "Product Catalog", href: "/products" },
-        { title: "Installation Guides", href: "/installation-guides" },
-        { title: "Video Tutorials", href: "/videos" },
-        { title: "Technical Support", href: "/technical-support" },
-        { title: "Case Studies", href: "/case-studies" },
-        { title: "Technicians", href: "/technicians" },
+        {
+          title: "Product Catalog",
+          href: "/products",
+          description: "Browse our full range of solutions",
+          icon: Book,
+        },
+        {
+          title: "Installation Guides",
+          href: "/installation-guides",
+          description: "Step-by-step setup instructions",
+          icon: FileText,
+        },
+        {
+          title: "Video Tutorials",
+          href: "/videos",
+          description: "Watch and learn from experts",
+          icon: Video,
+        },
+        {
+          title: "Technical Support",
+          href: "/technical-support",
+          description: "Get help when you need it",
+          icon: LifeBuoy,
+        },
+        {
+          title: "Case Studies",
+          href: "/case-studies",
+          description: "Real-world success stories",
+          icon: BarChart3,
+        },
+        {
+          title: "Technicians",
+          href: "/technicians",
+          description: "Find certified local experts",
+          icon: Users,
+        },
       ],
     },
     { title: "About", href: "/about" },
@@ -238,25 +319,23 @@ const Header = () => {
   const hasMultipleBanners = visibleBanners.length > 1;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl">
-      {/* Enhanced Discount Banner with Smooth Transitions */}
+    <header className="sticky top-0 z-50 w-full">
+      {/* Enhanced Discount Banner */}
       {showBanner && currentBanner && (
         <div
-          className={`relative overflow-hidden transition-all duration-600 ${isExpiringSoon(currentBanner.valid_until)
-              ? "bg-gradient-to-r from-orange-500 to-red-500"
-              : "bg-gradient-to-r from-primary to-primary/80"
-            } text-primary-foreground`}
+          className={`relative overflow-hidden group transition-all duration-500 ${isExpiringSoon(currentBanner.valid_until)
+            ? "bg-gradient-to-r from-red-600 via-orange-500 to-red-600"
+            : "bg-gradient-to-r from-primary via-blue-600 to-primary"
+            } text-primary-foreground shadow-inner`}
         >
-          {/* Animated background */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent animate-pulse" />
-          </div>
+          {/* Animated Glow Effect */}
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.4),transparent)] animate-pulse" />
 
           {/* Progress bar for auto-rotation */}
           {hasMultipleBanners && !isPaused && (
-            <div className="absolute bottom-0 left-0 h-0.5 bg-primary-foreground/30 w-full">
+            <div className="absolute bottom-0 left-0 h-0.5 bg-white/20 w-full">
               <div
-                className="h-full bg-primary-foreground transition-all duration-5000 ease-linear"
+                className="h-full bg-white transition-all duration-5000 ease-linear"
                 style={{
                   width: isTransitioning ? "100%" : "0%",
                   animation: isTransitioning
@@ -268,244 +347,208 @@ const Header = () => {
           )}
 
           <div
-            className={`relative py-2 px-4 transition-all duration-600 ${isTransitioning
-                ? "opacity-0 transform translate-x-2"
-                : "opacity-100 transform translate-x-0"
+            className={`relative py-1.5 px-4 transition-all duration-500 ${isTransitioning
+              ? "opacity-0 translate-y-2"
+              : "opacity-100 translate-y-0"
               }`}
           >
-            <div className="container mx-auto flex items-center justify-between">
-              <div className="flex items-center gap-1 sm:gap-3 flex-1 min-w-0">
-                {/* Navigation arrows for multiple banners */}
+            <div className="container mx-auto flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                 {hasMultipleBanners && (
-                  <button
-                    onClick={handlePrevBanner}
-                    className="flex-shrink-0 p-0.5 sm:p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
-                    aria-label="Previous offer"
-                  >
-                    <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={handlePrevBanner}
+                      className="p-1 rounded-full hover:bg-white/20 transition-all active:scale-90"
+                      aria-label="Previous offer"
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={handleNextBanner}
+                      className="p-1 rounded-full hover:bg-white/20 transition-all active:scale-90"
+                      aria-label="Next offer"
+                    >
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 )}
 
-                <Gift className="h-3 w-3 sm:h-4 sm:w-4 animate-bounce flex-shrink-0" />
-                <Badge
-                  variant="secondary"
-                  className={`font-bold text-xs px-1.5 sm:px-2 py-0.5 flex-shrink-0 ${isExpiringSoon(currentBanner.valid_until)
-                      ? "bg-white text-red-600 animate-pulse"
+                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                  <div className="hidden sm:flex items-center justify-center w-6 h-6 rounded-full bg-white/20">
+                    <Gift className="h-3.5 w-3.5 animate-bounce" />
+                  </div>
+                  <Badge
+                    variant="secondary"
+                    className={`font-bold text-[10px] sm:text-xs px-2 py-0.5 whitespace-nowrap ${isExpiringSoon(currentBanner.valid_until)
+                      ? "bg-white text-red-600"
                       : "bg-white text-primary"
-                    }`}
-                >
-                  <span className="hidden xs:inline">
+                      }`}
+                  >
                     {currentBanner.discount} OFF
-                  </span>
-                  <span className="xs:hidden">{currentBanner.discount}</span>
-                </Badge>
+                  </Badge>
 
-                <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-xs sm:text-sm mr-1 sm:mr-2 truncate block">
-                    {currentBanner.title}
-                  </span>
-                  <span className="opacity-90 text-xs sm:text-sm hidden md:inline">
-                    {currentBanner.description}
-                  </span>
+                  <div className="flex-1 min-w-0 flex items-center gap-2">
+                    <span className="font-semibold text-xs sm:text-sm truncate">
+                      {currentBanner.title}
+                    </span>
+                    <span className="opacity-80 text-xs hidden lg:inline-block border-l border-white/30 pl-2">
+                      {currentBanner.description}
+                    </span>
+                  </div>
                 </div>
 
                 {currentBanner.valid_until && (
                   <div
-                    className={`flex items-center gap-1 text-xs opacity-90 flex-shrink-0 ${isExpiringSoon(currentBanner.valid_until)
-                        ? "animate-pulse font-semibold"
-                        : ""
+                    className={`flex items-center gap-1.5 text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-black/10 transition-all ${isExpiringSoon(currentBanner.valid_until)
+                      ? "animate-pulse bg-red-900/20 font-bold"
+                      : "opacity-90"
                       }`}
                   >
                     <Clock className="h-3 w-3" />
-                    <span className="hidden sm:inline">
-                      {formatDate(currentBanner.valid_until)}
-                    </span>
-                    <span className="sm:hidden">Limited time</span>
+                    <span>{formatDate(currentBanner.valid_until)}</span>
                   </div>
-                )}
-
-                {/* Next arrow */}
-                {hasMultipleBanners && (
-                  <button
-                    onClick={handleNextBanner}
-                    className="flex-shrink-0 p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
-                    aria-label="Next offer"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
                 )}
               </div>
 
-              <div className="flex items-center gap-2 ml-3 flex-shrink-0">
-                {/* Banner counter */}
-                {hasMultipleBanners && (
-                  <span className="text-xs opacity-75 hidden sm:inline">
-                    {currentBannerIndex + 1} / {visibleBanners.length}
-                  </span>
-                )}
-
-                {/* Pause/Play button */}
+              <div className="flex items-center gap-2 flex-shrink-0">
                 {hasMultipleBanners && (
                   <button
                     onClick={togglePause}
-                    className="p-1 rounded-full hover:bg-primary-foreground/20 transition-colors"
-                    aria-label={
-                      isPaused ? "Resume auto-rotation" : "Pause auto-rotation"
-                    }
+                    className="p-1 rounded-full hover:bg-white/20 transition-colors"
                   >
-                    {isPaused ? (
-                      <Play className="h-3 w-3" />
-                    ) : (
-                      <Pause className="h-3 w-3" />
-                    )}
+                    {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
                   </button>
                 )}
-
-                {/* Banner indicators */}
-                {hasMultipleBanners && (
-                  <div className="flex gap-1">
-                    {visibleBanners.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleManualNavigation(index)}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentBannerIndex
-                            ? "bg-primary-foreground scale-110"
-                            : "bg-primary-foreground/40 hover:bg-primary-foreground/60"
-                          }`}
-                        aria-label={`Go to offer ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                )}
-
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleCloseBanner(currentBanner.id)}
-                  className="text-primary-foreground hover:bg-primary-foreground/20 h-6 w-6 p-0 ml-2"
-                  aria-label="Close banner"
+                  className="text-white hover:bg-white/20 h-7 w-7 p-0 ml-1"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           </div>
-
-          {/* Custom CSS for progress animation */}
           <style>{`
-            @keyframes progressBar {
-              from { width: 0%; }
-              to { width: 100%; }
-            }
+            @keyframes progressBar { from { width: 0%; } to { width: 100%; } }
           `}</style>
         </div>
       )}
 
-      {/* Top Bar with Enhanced Contact Info */}
-      <div className="border-b border-border/50 bg-muted/30">
-        <div className="container mx-auto px-2 sm:px-4">
-          <div className="flex h-8 sm:h-10 items-center justify-between text-xs sm:text-sm text-foreground/90">
-            <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
-              <div className="flex items-center gap-1 sm:gap-2 hover:text-foreground transition-colors">
-                <Phone className="h-3 w-3" />
-                <a href="tel:0114575401" className="hover:underline" aria-label="Call us at 0114575401">
-                  <span className="hidden xs:inline">0114575401</span>
-                  <span className="xs:hidden">Call</span>
-                </a>
-              </div>
-              <div className="flex items-center gap-1 sm:gap-2 hover:text-foreground transition-colors">
-                <Mail className="h-3 w-3" />
-                <a
-                  href="mailto:info@dripstech.co.ke"
-                  className="hover:underline"
-                  aria-label="Email us at info@dripstech.co.ke"
-                >
-                  <span className="hidden md:inline">
-                    info@dripstech.co.ke
-                  </span>
-                  <span className="hidden sm:inline md:hidden">Email</span>
-                  <span className="sm:hidden">Mail</span>
-                </a>
-              </div>
-              <div className="hidden lg:flex items-center gap-2 hover:text-foreground transition-colors">
-                <Mail className="h-3 w-3" />
-                <a
-                  href="mailto:driptechs.info@gmail.com"
-                  className="hover:underline"
-                  aria-label="Email us at driptechs.info@gmail.com"
-                >
-                  driptechs.info@gmail.com
-                </a>
-              </div>
+      {/* Premium Top Bar */}
+      <div className="bg-background/95 backdrop-blur-md border-b border-border/50 hidden sm:block">
+        <div className="container mx-auto px-4">
+          <div className="flex h-10 items-center justify-between text-xs font-medium text-muted-foreground">
+            <div className="flex items-center gap-6">
+              <a
+                href="tel:0794494515"
+                className="flex items-center gap-2 hover:text-primary transition-colors group"
+              >
+                <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                  <Phone className="h-3 w-3 text-primary" />
+                </div>
+                <span>0794494515</span>
+              </a>
+              <a
+                href="mailto:info@driptech.co.ke"
+                className="flex items-center gap-2 hover:text-primary transition-colors group"
+              >
+                <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                  <Mail className="h-3 w-3 text-primary" />
+                </div>
+                <span>info@driptech.co.ke</span>
+              </a>
             </div>
 
-            {/* Compact banner indicator in top bar when main banner is hidden */}
-            {!showBanner && hasMultipleBanners && (
-              <div className="hidden lg:flex items-center gap-2 text-xs">
-                <Gift className="h-3 w-3 text-primary" />
-                <span className="text-primary font-medium">
-                  {visibleBanners.length} Active Offers
-                </span>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 py-1 px-3 bg-accent/10 text-accent rounded-full font-bold">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                <span>Professional Irrigation Solutions</span>
               </div>
-            )}
-
-            <div className="hidden md:flex items-center gap-4">
-              <span>Professional Irrigation Solutions</span>
+              <div className="flex items-center gap-4 border-l border-border/50 pl-6">
+                <div className="flex items-center gap-1.5 opacity-80">
+                  <Clock className="h-3 w-3" />
+                  <span>Mon - Fri: 8am - 5pm</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Header - Rest of the component remains the same */}
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+      {/* Main Navigation Bar */}
+      <div className="bg-background/80 backdrop-blur-xl border-b border-border/50 sticky top-0 z-50">
+        <div className="container mx-auto px-4 flex h-20 items-center justify-between">
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2 hover:opacity-90 transition-opacity"
+            className="flex items-center gap-3 lg:gap-4 hover:opacity-90 transition-all duration-300 group flex-shrink-0"
           >
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-              <Droplets className="h-6 w-6 text-white" />
+            <div className="flex items-center justify-center w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-primary via-blue-700 to-primary rounded-2xl shadow-xl group-hover:shadow-primary/30 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105 border border-white/20">
+              <Droplets className="h-7 w-7 lg:h-8 lg:w-8 text-white animate-pulse" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl lg:text-2xl font-black text-foreground tracking-tighter leading-none">
                 DripTech
               </span>
-              <span className="text-xs text-muted-foreground">
-                Irrigation Solutions
+              <span className="text-[10px] lg:text-[11px] font-bold text-primary uppercase tracking-[0.3em] mt-1.5">
+                Eco Flow
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <NavigationMenu className="hidden lg:flex">
-            <NavigationMenuList className="gap-1">
+            <NavigationMenuList className="gap-2">
               {navigation.map((item) => (
                 <NavigationMenuItem key={item.title}>
                   {item.items ? (
                     <>
-                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-4 py-2 font-medium text-foreground hover:text-primary">
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-4 py-2 font-semibold text-foreground hover:text-primary">
                         {item.title}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        <div className="grid w-[420px] gap-2 p-5 bg-background/95 backdrop-blur-xl border shadow-xl rounded-xl">
-                          <div className="mb-3">
-                            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                              {item.title}
-                            </h4>
-                            <div className="w-12 h-0.5 bg-gradient-to-r from-primary to-accent rounded-full mt-1"></div>
+                        <div className={`grid ${item.items.length > 5 ? "grid-cols-2 w-[550px]" : "grid-cols-1 w-[300px]"} gap-2 p-5 bg-background/95 backdrop-blur-xl border shadow-2xl rounded-2xl`}>
+                          <div className="col-span-full mb-4 flex items-center justify-between border-b border-border/50 pb-3">
+                            <div>
+                              <h4 className="text-sm font-bold text-foreground">
+                                {item.title}
+                              </h4>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                Explore our {item.title.toLowerCase()}
+                              </p>
+                            </div>
+                            <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center">
+                              {(() => {
+                                const Icon = item.items[0].icon;
+                                return Icon ? <Icon className="h-5 w-5 text-primary/60" /> : null;
+                              })()}
+                            </div>
                           </div>
-                          {item.items.map((subItem) => (
+                          {item.items.map((subItem: any) => (
                             <NavigationMenuLink key={subItem.href} asChild>
                               <Link
                                 to={subItem.href}
-                                className="block select-none rounded-xl p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30 hover:shadow-md group border border-transparent hover:border-muted"
+                                className="flex items-start gap-4 select-none rounded-xl p-3 leading-none no-underline outline-none transition-all duration-300 hover:bg-primary/5 group border border-transparent hover:border-primary/10"
                               >
-                                <div className="flex items-center justify-between">
-                                  <div className="font-medium leading-tight group-hover:text-primary transition-colors duration-200">
+                                {subItem.icon && (
+                                  <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                                    {(() => {
+                                      const Icon = subItem.icon;
+                                      return Icon ? <Icon className="h-4.5 w-4.5 text-muted-foreground group-hover:text-primary transition-colors" /> : null;
+                                    })()}
+                                  </div>
+                                )}
+                                <div className="space-y-1">
+                                  <div className="text-[13px] font-bold leading-tight group-hover:text-primary transition-colors">
                                     {subItem.title}
                                   </div>
-                                  <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 text-primary" />
+                                  {subItem.description && (
+                                    <p className="line-clamp-1 text-[11px] leading-snug text-muted-foreground group-hover:text-muted-foreground/80">
+                                      {subItem.description}
+                                    </p>
+                                  )}
                                 </div>
                               </Link>
                             </NavigationMenuLink>
@@ -516,8 +559,8 @@ const Header = () => {
                   ) : (
                     <NavigationMenuLink asChild>
                       <Link
-                        to={item.href}
-                        className="group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 font-medium transition-all duration-200 hover:bg-muted/50 text-foreground hover:text-primary hover:shadow-sm focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        to={item.href || '#'}
+                        className="group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 text-sm font-semibold transition-all duration-300 hover:bg-muted/50 text-foreground hover:text-primary focus:outline-none"
                       >
                         {item.title}
                       </Link>
@@ -529,20 +572,25 @@ const Header = () => {
           </NavigationMenu>
 
           {/* CTA Buttons */}
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1 sm:gap-2 pr-1 sm:pr-2 border-r border-border/50 mr-0.5 sm:mr-1">
+              <SearchManager />
+              <ThemeToggle />
+            </div>
+
             <QuoteModal>
               <Button
                 variant="outline"
-                className="hidden md:flex hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="hidden lg:flex h-10 px-6 rounded-xl border-primary/20 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary transition-all duration-300 font-bold"
               >
                 Get Quote
               </Button>
             </QuoteModal>
+
             <Link to="/contact">
               <Button
                 variant="premium"
-                className="shadow-lg hover:shadow-xl transition-shadow"
+                className="h-10 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 font-bold"
               >
                 Contact Us
               </Button>
@@ -561,216 +609,159 @@ const Header = () => {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-[90vw] max-w-md p-0 bg-background/98 backdrop-blur-xl border-l shadow-2xl"
+                className="w-full sm:w-[400px] p-0 bg-background/98 backdrop-blur-xl border-l shadow-2xl flex flex-col"
               >
-                <div className="flex flex-col h-full">
-                  {/* Mobile Header */}
-                  <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5">
+                {/* Mobile Header */}
+                <SheetHeader className="p-5 border-b border-border/50 text-left sm:text-left space-y-0">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                        <Droplets className="h-5 w-5 text-white" />
+                      <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-blue-700 rounded-xl shadow-lg">
+                        <Droplets className="h-5.5 w-5.5 text-white animate-pulse" />
                       </div>
                       <div>
-                        <span className="font-bold text-foreground text-xl">
+                        <SheetTitle className="font-extrabold text-foreground text-lg tracking-tight leading-none">
                           DripTech
-                        </span>
-                        <p className="text-xs text-muted-foreground">
-                          Irrigation Solutions
-                        </p>
+                        </SheetTitle>
+                        <SheetDescription className="text-[10px] font-medium text-primary uppercase tracking-wider mt-1">
+                          Eco Flow
+                        </SheetDescription>
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="h-9 w-9 rounded-xl hover:bg-muted/50 transition-colors"
-                    >
-                      <X className="h-5 w-5" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <ThemeToggle />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="h-9 w-9 rounded-xl hover:bg-muted/50"
+                      >
+                        <X className="h-5 w-5" />
+                      </Button>
+                    </div>
                   </div>
+                </SheetHeader>
 
-                  {/* Scrollable Content */}
-                  <div className="flex-1 overflow-y-auto scrollbar-thin">
-                    <div className="p-4 space-y-6">
-                      {/* Enhanced Mobile Banner with navigation */}
-                      {visibleBanners.length > 0 && (
-                        <div className="space-y-3">
-                          {hasMultipleBanners && (
-                            <div className="flex items-center justify-between px-1">
-                              <span className="text-sm font-medium text-muted-foreground">
-                                Active Offers ({visibleBanners.length})
-                              </span>
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={handlePrevBanner}
-                                  className="h-8 w-8 p-0 rounded-lg hover:bg-muted/50"
-                                >
-                                  <ChevronLeft className="h-4 w-4" />
-                                </Button>
-                                <span className="text-xs px-2 py-1 bg-muted rounded-md font-medium min-w-[3rem] text-center">
-                                  {currentBannerIndex + 1}/
-                                  {visibleBanners.length}
-                                </span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={handleNextBanner}
-                                  className="h-8 w-8 p-0 rounded-lg hover:bg-muted/50"
-                                >
-                                  <ChevronRight className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-
-                          <div
-                            className={`p-4 rounded-xl transition-all duration-500 shadow-lg border ${isExpiringSoon(currentBanner?.valid_until)
-                                ? "bg-gradient-to-br from-orange-500/90 via-red-500/90 to-red-600/90 border-red-400/20"
-                                : "bg-gradient-to-br from-primary/90 via-primary/90 to-primary/80 border-primary/20"
-                              } text-primary-foreground relative overflow-hidden`}
-                          >
-                            <div className="relative z-10">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Gift className="h-4 w-4" />
-                                <Badge
-                                  variant="secondary"
-                                  className="bg-white text-primary font-bold text-xs px-2 py-0.5"
-                                >
-                                  {currentBanner?.discount} OFF
-                                </Badge>
-                              </div>
-                              <h4 className="font-bold text-sm mb-1.5 leading-tight">
-                                {currentBanner?.title}
-                              </h4>
-                              <p className="text-xs opacity-95 leading-relaxed mb-2">
-                                {currentBanner?.description}
-                              </p>
+                {/* Scrollable Navigation */}
+                <div className="flex-1 overflow-y-auto pt-6 pb-20 custom-scrollbar">
+                  <div className="px-6 space-y-8">
+                    {/* Active Offers Section if any */}
+                    {visibleBanners.length > 0 && (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                            Active Offers
+                          </h3>
+                        </div>
+                        <div className={`p-5 rounded-2xl border ${isExpiringSoon(currentBanner?.valid_until) ? "bg-red-50/50 dark:bg-red-950/20 border-red-100 dark:border-red-900/30" : "bg-primary/5 border-primary/10"} relative overflow-hidden group`}>
+                          <div className="relative z-10">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Badge className={isExpiringSoon(currentBanner?.valid_until) ? "bg-red-600" : "bg-primary"}>
+                                {currentBanner?.discount} OFF
+                              </Badge>
                               {currentBanner?.valid_until && (
-                                <div
-                                  className={`flex items-center gap-1.5 text-xs ${isExpiringSoon(currentBanner.valid_until)
-                                      ? "animate-pulse font-semibold"
-                                      : "opacity-90"
-                                    }`}
-                                >
-                                  <Clock className="h-3 w-3" />
-                                  <span>
-                                    {formatDate(currentBanner.valid_until)}
-                                  </span>
-                                </div>
+                                <span className={`text-[10px] font-bold ${isExpiringSoon(currentBanner.valid_until) ? "text-red-600 animate-pulse" : "text-primary"}`}>
+                                  {formatDate(currentBanner.valid_until)}
+                                </span>
                               )}
                             </div>
+                            <h4 className="font-bold text-sm text-foreground mb-1 leading-tight">{currentBanner?.title}</h4>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{currentBanner?.description}</p>
                           </div>
-
-                          {hasMultipleBanners && (
-                            <div className="flex justify-center gap-1.5">
-                              {visibleBanners.map((_, index) => (
-                                <Button
-                                  key={index}
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleManualNavigation(index)}
-                                  className={`w-2 h-2 p-0 rounded-full transition-all duration-300 ${index === currentBannerIndex
-                                      ? "bg-primary scale-125"
-                                      : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                                    }`}
-                                />
-                              ))}
-                            </div>
-                          )}
                         </div>
-                      )}
+                      </div>
+                    )}
 
-                      {/* Navigation Menu */}
-                      <nav className="space-y-4">
-                        {navigation.map((item) => (
-                          <div key={item.title} className="space-y-2">
-                            <div className="flex items-center gap-2.5 px-1">
-                              <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full"></div>
-                              <h3 className="font-semibold text-foreground text-base tracking-tight">
-                                {item.title}
-                              </h3>
-                            </div>
+                    {/* Main Nav links */}
+                    <nav className="space-y-6">
+                      {navigation.map((item) => (
+                        <div key={item.title} className="space-y-3">
+                          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] px-1">
+                            {item.title}
+                          </h3>
+                          <div className="grid gap-1">
                             {item.items ? (
-                              <div className="space-y-0.5 ml-3 pl-2 border-l border-border/50">
-                                {item.items.map((subItem) => (
-                                  <Link
-                                    key={subItem.href}
-                                    to={subItem.href}
-                                    className="flex items-center justify-between py-2.5 px-3 text-muted-foreground hover:text-primary hover:bg-muted/40 rounded-lg transition-all duration-200 text-sm font-medium group min-h-[44px]"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                  >
-                                    <span className="group-hover:translate-x-0.5 transition-transform duration-200">
+                              item.items.map((subItem: any) => (
+                                <Link
+                                  key={subItem.href}
+                                  to={subItem.href}
+                                  className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-all group"
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                  {subItem.icon && (
+                                    <div className="w-9 h-9 rounded-lg bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                                      {(() => {
+                                        const Icon = subItem.icon;
+                                        return Icon ? <Icon className="h-4.5 w-4.5 text-muted-foreground group-hover:text-primary" /> : null;
+                                      })()}
+                                    </div>
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
                                       {subItem.title}
-                                    </span>
-                                    <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0" />
-                                  </Link>
-                                ))}
-                              </div>
+                                    </div>
+                                    <div className="text-[11px] text-muted-foreground truncate">
+                                      {subItem.description || "Learn more"}
+                                    </div>
+                                  </div>
+                                  <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                </Link>
+                              ))
                             ) : (
                               <Link
-                                to={item.href || '/'}
-                                className="flex items-center justify-between py-2.5 px-3 ml-3 text-muted-foreground hover:text-primary hover:bg-muted/40 rounded-lg transition-all duration-200 text-sm font-medium group min-h-[44px]"
+                                to={item.href || '#'}
+                                className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-all group"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
-                                <span className="group-hover:translate-x-0.5 transition-transform duration-200">
+                                <div className="text-sm font-bold text-foreground group-hover:text-primary">
                                   {item.title}
-                                </span>
-                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0" />
+                                </div>
+                                <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                               </Link>
                             )}
                           </div>
-                        ))}
-                      </nav>
-                    </div>
+                        </div>
+                      ))}
+                    </nav>
                   </div>
+                </div>
 
-                  {/* Fixed Bottom Actions */}
-                  <div className="p-4 space-y-3 border-t border-border/50 bg-gradient-to-r from-muted/20 to-muted/10 backdrop-blur-sm">
-                    <div className="grid grid-cols-1 gap-3">
-                      <div className="grid grid-cols-2 gap-2">
-                        <QuoteModal>
-                          <Button
-                            variant="outline"
-                            className="h-11 text-sm font-medium rounded-xl border hover:border-primary hover:bg-primary/5 transition-all duration-200 min-h-[44px]"
-                          >
-                            Get Quote
-                          </Button>
-                        </QuoteModal>
-                        <Link
-                          to="/contact"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          <Button
-                            variant="premium"
-                            className="w-full h-11 text-sm font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200 min-h-[44px]"
-                          >
-                            Contact Us
-                          </Button>
-                        </Link>
+                {/* Fixed Mobile Bottom Actions */}
+                <div className="p-6 border-t border-border/50 bg-background/95 backdrop-blur-md">
+                  <div className="flex gap-3 mb-6">
+                    <QuoteModal>
+                      <Button variant="outline" className="flex-1 h-12 rounded-xl border-primary/20 text-primary font-bold">
+                        Quote
+                      </Button>
+                    </QuoteModal>
+                    <Link to="/contact" className="flex-[2]" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="premium" className="w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/20">
+                        Contact Us
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="flex items-center justify-around">
+                    <a href="tel:0794494515" className="flex flex-col items-center gap-1.5 group">
+                      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <Phone className="h-4 w-4 text-primary" />
                       </div>
-                    </div>
-
-                    {/* Contact Info */}
-                    <div className="flex items-center justify-center gap-6 pt-2 border-t border-border/30">
-                      <a
-                        href="tel:0114575401"
-                        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors min-h-[44px] py-2"
-                        aria-label="Call us at 0114575401"
-                      >
-                        <Phone className="h-3.5 w-3.5" />
-                        <span className="font-medium">Call Us</span>
-                      </a>
-                      <a
-                        href="mailto:driptech2025@gmail.com"
-                        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors min-h-[44px] py-2"
-                        aria-label="Email us at driptech2025@gmail.com"
-                      >
-                        <Mail className="h-3.5 w-3.5" />
-                        <span className="font-medium">Email</span>
-                      </a>
-                    </div>
+                      <span className="text-[10px] font-bold text-muted-foreground">Call</span>
+                    </a>
+                    <a href="mailto:info@driptech.co.ke" className="flex flex-col items-center gap-1.5 group">
+                      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <Mail className="h-4 w-4 text-primary" />
+                      </div>
+                      <span className="text-[10px] font-bold text-muted-foreground">Email</span>
+                    </a>
+                    <button
+                      className="flex flex-col items-center gap-1.5 group cursor-pointer border-none bg-transparent p-0 outline-none"
+                      onClick={() => document.getElementById('search-trigger')?.click()}
+                      aria-label="Search"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <Search className="h-4 w-4 text-primary" />
+                      </div>
+                      <span className="text-[10px] font-bold text-muted-foreground">Search</span>
+                    </button>
                   </div>
                 </div>
               </SheetContent>

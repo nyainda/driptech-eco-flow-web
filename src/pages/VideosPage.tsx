@@ -8,9 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -728,6 +730,9 @@ const VideosPage = () => {
               <DialogTitle className="text-base sm:text-xl font-semibold text-foreground pr-8 line-clamp-2">
                 {selectedVideo?.title}
               </DialogTitle>
+              <DialogDescription className="sr-only">
+                {selectedVideo?.description || "Watch this video to learn more about our irrigation solutions."}
+              </DialogDescription>
               <Button
                 variant="ghost"
                 size="icon"

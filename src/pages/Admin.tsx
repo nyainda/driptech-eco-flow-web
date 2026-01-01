@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useWebVitals from "@/hooks/useWebVitals";
+import { Loader2 } from "lucide-react";
 import {
   LayoutDashboard,
   Package,
@@ -31,31 +32,40 @@ import {
 } from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
 import NotificationSystem from "@/components/Admin/NotificationSystem";
-import AdminDashboard from "@/components/Admin/AdminDashboard";
-import ProductManagement from "@/components/Admin/ProductManagement";
-import BlogManagement from "@/components/Admin/BlogManagement";
-import QuoteManagement from "@/components/Admin/QuoteManagement";
-import CustomerManagement from "@/components/Admin/CustomerManagement";
-import ContactNotifications from "@/components/Admin/ContactNotifications";
-import ProjectManagement from "@/components/Admin/ProjectManagement";
-import DocumentManagement from "@/components/Admin/DocumentManagement";
-import SystemSettings from "@/components/Admin/SystemSettings";
-import TeamManagement from "@/components/Admin/TeamManagement";
-import SuccessStoriesManagement from "@/components/Admin/SuccessStoriesManagement";
-import VideoManagement from "@/components/Admin/VideoManagement";
-import MpesaIntegration from "@/components/Admin/MpesaIntegration";
-import InvoiceManagementSystem from "@/components/Admin/Invoice/InvoiceManagementSystem";
-import VisitorTrackingDashboard from "@/components/Admin/VisitorTrackingDashboard";
-import DiscountManagement from "@/components/Admin/DiscountManagement";
-import NewsManagement from "@/components/Admin/NewsManagement";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import IrrigationKitsManagement from "@/components/Admin/IrrigationKitsManagement";
-import SyncDashboard from "@/components/Admin/SyncDashboard";
-import AIProductResearch from "@/components/Admin/AIProductResearch";
-import NewsletterManagement from "@/components/Admin/NewsletterManagement";
-import PaymentIntegrations from "@/components/Admin/PaymentIntegrations";
-import WhatsAppManagement from "@/components/Admin/WhatsAppManagement";
+
+// Lazy loaded admin components
+const AdminDashboard = lazy(() => import("@/components/Admin/AdminDashboard"));
+const ProductManagement = lazy(() => import("@/components/Admin/ProductManagement"));
+const BlogManagement = lazy(() => import("@/components/Admin/BlogManagement"));
+const QuoteManagement = lazy(() => import("@/components/Admin/QuoteManagement"));
+const CustomerManagement = lazy(() => import("@/components/Admin/CustomerManagement"));
+const ContactNotifications = lazy(() => import("@/components/Admin/ContactNotifications"));
+const ProjectManagement = lazy(() => import("@/components/Admin/ProjectManagement"));
+const DocumentManagement = lazy(() => import("@/components/Admin/DocumentManagement"));
+const SystemSettings = lazy(() => import("@/components/Admin/SystemSettings"));
+const TeamManagement = lazy(() => import("@/components/Admin/TeamManagement"));
+const SuccessStoriesManagement = lazy(() => import("@/components/Admin/SuccessStoriesManagement"));
+const VideoManagement = lazy(() => import("@/components/Admin/VideoManagement"));
+const MpesaIntegration = lazy(() => import("@/components/Admin/MpesaIntegration"));
+const InvoiceManagementSystem = lazy(() => import("@/components/Admin/Invoice/InvoiceManagementSystem"));
+const VisitorTrackingDashboard = lazy(() => import("@/components/Admin/VisitorTrackingDashboard"));
+const DiscountManagement = lazy(() => import("@/components/Admin/DiscountManagement"));
+const NewsManagement = lazy(() => import("@/components/Admin/NewsManagement"));
+const IrrigationKitsManagement = lazy(() => import("@/components/Admin/IrrigationKitsManagement"));
+const SyncDashboard = lazy(() => import("@/components/Admin/SyncDashboard"));
+const AIProductResearch = lazy(() => import("@/components/Admin/AIProductResearch"));
+const NewsletterManagement = lazy(() => import("@/components/Admin/NewsletterManagement"));
+const PaymentIntegrations = lazy(() => import("@/components/Admin/PaymentIntegrations"));
+const WhatsAppManagement = lazy(() => import("@/components/Admin/WhatsAppManagement"));
+
+const AdminLoading = () => (
+  <div className="flex flex-col items-center justify-center py-20 gap-4">
+    <Loader2 className="h-10 w-10 text-primary animate-spin" />
+    <p className="text-muted-foreground animate-pulse">Loading management module...</p>
+  </div>
+);
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -259,97 +269,99 @@ const AdminContent = () => {
             })}
           </div>
 
-          <TabsContent value="dashboard" className="space-y-6">
-            <AdminDashboard />
-          </TabsContent>
+          <Suspense fallback={<AdminLoading />}>
+            <TabsContent value="dashboard" className="space-y-6">
+              <AdminDashboard />
+            </TabsContent>
 
-          <TabsContent value="products" className="space-y-6">
-            <ProductManagement />
-          </TabsContent>
+            <TabsContent value="products" className="space-y-6">
+              <ProductManagement />
+            </TabsContent>
 
-          <TabsContent value="blog" className="space-y-6">
-            <BlogManagement />
-          </TabsContent>
+            <TabsContent value="blog" className="space-y-6">
+              <BlogManagement />
+            </TabsContent>
 
-          <TabsContent value="news" className="space-y-6">
-            <NewsManagement />
-          </TabsContent>
+            <TabsContent value="news" className="space-y-6">
+              <NewsManagement />
+            </TabsContent>
 
-          <TabsContent value="videos" className="space-y-6">
-            <VideoManagement />
-          </TabsContent>
+            <TabsContent value="videos" className="space-y-6">
+              <VideoManagement />
+            </TabsContent>
 
-          <TabsContent value="quotes" className="space-y-6">
-            <QuoteManagement />
-          </TabsContent>
+            <TabsContent value="quotes" className="space-y-6">
+              <QuoteManagement />
+            </TabsContent>
 
-          <TabsContent value="invoices" className="space-y-6">
-            <InvoiceManagementSystem />
-          </TabsContent>
+            <TabsContent value="invoices" className="space-y-6">
+              <InvoiceManagementSystem />
+            </TabsContent>
 
-          <TabsContent value="analytics" className="space-y-6">
-            <VisitorTrackingDashboard />
-          </TabsContent>
+            <TabsContent value="analytics" className="space-y-6">
+              <VisitorTrackingDashboard />
+            </TabsContent>
 
-          <TabsContent value="customers" className="space-y-6">
-            <CustomerManagement />
-          </TabsContent>
+            <TabsContent value="customers" className="space-y-6">
+              <CustomerManagement />
+            </TabsContent>
 
-          <TabsContent value="contact-notifications" className="space-y-6">
-            <ContactNotifications />
-          </TabsContent>
+            <TabsContent value="contact-notifications" className="space-y-6">
+              <ContactNotifications />
+            </TabsContent>
 
-          <TabsContent value="projects" className="space-y-6">
-            <ProjectManagement />
-          </TabsContent>
+            <TabsContent value="projects" className="space-y-6">
+              <ProjectManagement />
+            </TabsContent>
 
-          <TabsContent value="kits" className="space-y-6">
-            <IrrigationKitsManagement />
-          </TabsContent>
+            <TabsContent value="kits" className="space-y-6">
+              <IrrigationKitsManagement />
+            </TabsContent>
 
-          <TabsContent value="team" className="space-y-6">
-            <TeamManagement />
-          </TabsContent>
+            <TabsContent value="team" className="space-y-6">
+              <TeamManagement />
+            </TabsContent>
 
-          <TabsContent value="success-stories" className="space-y-6">
-            <SuccessStoriesManagement />
-          </TabsContent>
+            <TabsContent value="success-stories" className="space-y-6">
+              <SuccessStoriesManagement />
+            </TabsContent>
 
-          <TabsContent value="documents" className="space-y-6">
-            <DocumentManagement />
-          </TabsContent>
+            <TabsContent value="documents" className="space-y-6">
+              <DocumentManagement />
+            </TabsContent>
 
-          <TabsContent value="discounts" className="space-y-6">
-            <DiscountManagement />
-          </TabsContent>
+            <TabsContent value="discounts" className="space-y-6">
+              <DiscountManagement />
+            </TabsContent>
 
-          <TabsContent value="mpesa" className="space-y-6">
-            <MpesaIntegration />
-          </TabsContent>
+            <TabsContent value="mpesa" className="space-y-6">
+              <MpesaIntegration />
+            </TabsContent>
 
-          <TabsContent value="payments" className="space-y-6">
-            <PaymentIntegrations />
-          </TabsContent>
+            <TabsContent value="payments" className="space-y-6">
+              <PaymentIntegrations />
+            </TabsContent>
 
-          <TabsContent value="newsletter" className="space-y-6">
-            <NewsletterManagement />
-          </TabsContent>
+            <TabsContent value="newsletter" className="space-y-6">
+              <NewsletterManagement />
+            </TabsContent>
 
-          <TabsContent value="whatsapp" className="space-y-6">
-            <WhatsAppManagement />
-          </TabsContent>
+            <TabsContent value="whatsapp" className="space-y-6">
+              <WhatsAppManagement />
+            </TabsContent>
 
-          <TabsContent value="settings" className="space-y-6">
-            <SystemSettings />
-          </TabsContent>
+            <TabsContent value="settings" className="space-y-6">
+              <SystemSettings />
+            </TabsContent>
 
-          <TabsContent value="sync" className="space-y-6">
-            <SyncDashboard />
-          </TabsContent>
+            <TabsContent value="sync" className="space-y-6">
+              <SyncDashboard />
+            </TabsContent>
 
-          <TabsContent value="ai-research" className="space-y-6">
-            <AIProductResearch />
-          </TabsContent>
+            <TabsContent value="ai-research" className="space-y-6">
+              <AIProductResearch />
+            </TabsContent>
+          </Suspense>
         </Tabs>
       </div>
     </div>

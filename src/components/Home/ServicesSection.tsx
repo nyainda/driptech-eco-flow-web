@@ -176,6 +176,20 @@ const ServicesSection = () => {
             designed for Kenyan farms to maximize productivity and efficiency.
           </p>
 
+          {/* AI-Friendly Highlight Stats for GEO */}
+          <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-16">
+            {[
+              { label: "Water Saving", value: "up to 60%" },
+              { label: "Yield Increase", value: "30-50%" },
+              { label: "System Lifespan", value: "10+ Years" }
+            ].map(stat => (
+              <div key={stat.label} className="text-center p-4 bg-muted/50 rounded-2xl border border-border/50 min-w-[140px]">
+                <div className="text-2xl md:text-3xl font-black text-primary">{stat.value}</div>
+                <div className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
           {/* Benefits Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12">
             {benefits.map((benefit, index) => (

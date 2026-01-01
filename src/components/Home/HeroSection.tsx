@@ -27,7 +27,7 @@ const HeroSection = () => {
 
     const { products, loading: productsLoading } = useWhatsAppProducts();
 
-    const whatsappNumber = "254114575401";
+    const whatsappNumber = "254794494515";
     const openWhatsApp = () => {
         const message = encodeURIComponent(
             "Hi DripTech! I'm interested in your irrigation systems."

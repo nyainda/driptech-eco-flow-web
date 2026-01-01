@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import SEOHead from "@/components/common/SEOHead";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +45,10 @@ const Team = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Our Expert Irrigation Team & Specialists Kenya | DripTech"
+        description="Meet the certified irrigation experts at DripTech. Our team provides professional design, installation, and technical support across Kenya."
+      />
       <Header />
       <main className="relative">
         {/* Hero Section */}

@@ -475,10 +475,10 @@ const Cookies = () => {
                     <p>
                       <strong>Phone:</strong>{" "}
                       <a
-                        href="tel:+254114575401"
+                        href="tel:0794494515"
                         className="text-primary hover:underline"
                       >
-                        +254 111409454
+                        0794494515
                       </a>
                     </p>
                   </div>

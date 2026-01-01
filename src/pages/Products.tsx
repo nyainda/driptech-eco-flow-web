@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { dataService } from "@/services/dataService";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import Breadcrumbs from "@/components/Layout/Breadcrumbs";
+import SEOHead from "@/components/common/SEOHead";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -48,6 +51,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Grid3x3,
+  Scale,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
@@ -111,6 +115,8 @@ const Products = () => {
   const [productsPerPage] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [compareList, setCompareList] = useState<Product[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
 
   const { data: products = [], isLoading: loading, error: queryError } = useQuery({
     queryKey: ["products", category],
@@ -371,6 +377,24 @@ const Products = () => {
     });
   };
 
+  const toggleCompare = (product: Product) => {
+    setCompareList((prev) => {
+      const exists = prev.find((p) => p.id === product.id);
+      if (exists) {
+        return prev.filter((p) => p.id !== product.id);
+      }
+      if (prev.length >= 4) {
+        toast({
+          title: "Comparison limit reached",
+          description: "You can compare up to 4 products at a time.",
+          variant: "destructive",
+        });
+        return prev;
+      }
+      return [...prev, product];
+    });
+  };
+
   const getVariantPriceRange = (variants: Variant[] | null) => {
     if (!variants || variants.length === 0) return null;
     const prices = variants.map((v) => v.price);
@@ -457,50 +481,56 @@ const Products = () => {
         category={product.category}
         className="h-full"
       >
-        <Card className="group h-full flex flex-col bg-background border-border shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300">
-          <CardHeader className="p-0">
-            <div className="relative aspect-video bg-muted rounded-t-xl overflow-hidden">
+        <Card className="group h-full flex flex-col bg-background border-border hover:border-primary/50 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
+          <CardHeader className="p-0 relative">
+            <div className="relative aspect-[4/3] bg-gradient-to-br from-muted to-muted/50 overflow-hidden">
               {product.images && product.images[0] ? (
                 <OptimizedImage
                   src={product.images[0]}
                   alt={product.name}
-                  className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   priority={false}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <Package className="h-12 w-12 text-muted-foreground" />
+                  <Package className="h-16 w-16 text-muted-foreground/50" />
                 </div>
               )}
 
-              <div className="absolute top-2 left-2 flex flex-col gap-1">
+              {/* Gradient overlay on hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* Badges with better positioning */}
+              <div className="absolute top-3 left-3 flex flex-col gap-2">
                 {product.featured && (
-                  <Badge className="bg-muted/30 border-border text-foreground text-xs">
-                    <Star className="h-3 w-3 mr-1" />
+                  <Badge className="bg-primary/90 backdrop-blur-sm text-primary-foreground border-0 shadow-lg">
+                    <Star className="h-3 w-3 mr-1 fill-current" />
                     Featured
                   </Badge>
                 )}
                 {isInStock && (
-                  <Badge className="bg-green-500/20 border-green-500/50 text-green-700 text-xs">
+                  <Badge className="bg-green-600/90 backdrop-blur-sm text-white border-0 shadow-lg">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     In Stock
                   </Badge>
                 )}
                 {hasVariants && (
-                  <Badge className="bg-muted/30 border-border text-foreground text-xs">
+                  <Badge className="bg-background/90 backdrop-blur-sm text-foreground border-0 shadow-lg">
                     <Layers className="h-3 w-3 mr-1" />
                     {product.variants!.length} Variants
                   </Badge>
                 )}
               </div>
 
-              <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {/* Quick action buttons - show on hover with slide animation */}
+              <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
                 <Button
                   size="icon"
-                  className="w-8 h-8 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                  className="w-9 h-9 bg-background/90 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground rounded-full shadow-lg transition-all"
                   onClick={() => toggleFavorite(product.id)}
+                  title={favorites.includes(product.id) ? "Remove from favorites" : "Add to favorites"}
                 >
                   <Heart
                     className={`h-4 w-4 ${favorites.includes(product.id) ? "fill-current text-red-500" : ""}`}
@@ -508,8 +538,9 @@ const Products = () => {
                 </Button>
                 <Button
                   size="icon"
-                  className="w-8 h-8 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                  className="w-9 h-9 bg-background/90 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground rounded-full shadow-lg transition-all"
                   onClick={() => shareProduct(product)}
+                  title="Share product"
                 >
                   <Share2 className="h-4 w-4" />
                 </Button>
@@ -517,7 +548,8 @@ const Products = () => {
                   <DialogTrigger asChild>
                     <Button
                       size="icon"
-                      className="w-8 h-8 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
+                      className="w-9 h-9 bg-background/90 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground rounded-full shadow-lg transition-all"
+                      title="Quick view"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -527,35 +559,49 @@ const Products = () => {
                       <DialogTitle className="text-lg sm:text-2xl pr-8 text-foreground">
                         {product.name}
                       </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        Detailed information about {product.name}
+                      </DialogDescription>
                     </DialogHeader>
                     <ProductDetailModal product={product} />
                   </DialogContent>
                 </Dialog>
+                <Button
+                  size="icon"
+                  className={cn(
+                    "w-9 h-9 bg-background/90 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground rounded-full shadow-lg transition-all",
+                    compareList.some(p => p.id === product.id) && "bg-primary text-primary-foreground"
+                  )}
+                  onClick={() => toggleCompare(product)}
+                  title="Compare product"
+                >
+                  <Scale className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
+          <CardContent className="p-5 flex-1 flex flex-col">
             <div className="flex-1 flex flex-col gap-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-1 flex-wrap">
-                  <Badge className="capitalize text-xs bg-muted/30 border-border text-foreground">
-                    {product.category.replace("_", " ")}
+              {/* Category badges */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge variant="outline" className="capitalize text-xs">
+                  {product.category.replace("_", " ")}
+                </Badge>
+                {product.subcategory && (
+                  <Badge variant="outline" className="text-xs capitalize">
+                    {product.subcategory.replace("_", " ")}
                   </Badge>
-                  {product.subcategory && (
-                    <Badge className="text-xs capitalize bg-muted/30 border-border text-foreground">
-                      {product.subcategory.replace("_", " ")}
-                    </Badge>
-                  )}
-                </div>
+                )}
                 {product.model_number && (
-                  <span className="text-xs sm:text-sm text-muted-foreground font-mono">
+                  <span className="text-xs text-muted-foreground font-mono ml-auto">
                     {product.model_number}
                   </span>
                 )}
               </div>
 
-              <h3 className="text-lg sm:text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+              {/* Product name with better typography */}
+              <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
                 {product.name}
               </h3>
 
@@ -634,6 +680,9 @@ const Products = () => {
                           <DialogTitle className="pr-8 text-foreground">
                             {product.name} - Description
                           </DialogTitle>
+                          <DialogDescription className="sr-only">
+                            Full description of {product.name}
+                          </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                           <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
@@ -776,6 +825,9 @@ const Products = () => {
                     <DialogTitle className="text-lg sm:text-2xl pr-8 text-foreground">
                       {product.name}
                     </DialogTitle>
+                    <DialogDescription className="sr-only">
+                      Detailed information about {product.name}
+                    </DialogDescription>
                   </DialogHeader>
                   <ProductDetailModal product={product} />
                 </DialogContent>
@@ -1444,21 +1496,139 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title={category ? `${getCategoryTitle(category)} Irrigation Solutions | DripTech` : "Advanced Irrigation Products & Kits Kenya | DripTech"}
+        description={category ? `Explore our professional ${getCategoryTitle(category).toLowerCase()} range in Kenya. Performance-driven irrigation equipment.` : "Discover Kenya's largest catalog of smart drip irrigation kits, sprinklers, water pumps, and high-efficiency water solutions."}
+      />
       <Header />
       <WhatsAppContact
         filterCategory={category}
         variant="floating"
         className="shadow-2xl hover:shadow-3xl"
       />
+
+      {/* Floating Comparison Bar */}
+      {compareList.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 duration-500">
+          <div className="bg-background/95 backdrop-blur-md border border-primary/20 shadow-2xl rounded-2xl p-4 flex items-center gap-6 min-w-[320px] max-w-[95vw]">
+            <div className="flex -space-x-3 overflow-hidden">
+              {compareList.map((p) => (
+                <div key={p.id} className="w-12 h-12 rounded-xl border-2 border-background bg-muted flex-shrink-0 relative group">
+                  {p.images?.[0] ? (
+                    <img src={p.images[0]} alt="" className="w-full h-full object-cover rounded-lg" />
+                  ) : (
+                    <Package className="w-6 h-6 m-3 opacity-20" />
+                  )}
+                  <button
+                    onClick={() => toggleCompare(p)}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {compareList.length < 4 && (
+                <div className="w-12 h-12 rounded-xl border-2 border-dashed border-muted-foreground/30 flex items-center justify-center text-muted-foreground/50">
+                  <span className="text-xl">+</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1">
+              <p className="text-sm font-bold">{compareList.length} Selected</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Comparison Mode</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setCompareList([])}>
+                Clear
+              </Button>
+              <Button
+                size="sm"
+                className="bg-primary hover:bg-primary/90"
+                disabled={compareList.length < 2}
+                onClick={() => setShowComparison(true)}
+              >
+                Compare Now
+                <Scale className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comparison Dialog */}
+      <Dialog open={showComparison} onOpenChange={setShowComparison}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Scale className="h-6 w-6 text-primary" />
+              Product Comparison
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            {compareList.map((p) => (
+              <div key={p.id} className="space-y-6">
+                <div className="aspect-square rounded-2xl bg-muted overflow-hidden">
+                  {p.images?.[0] && (
+                    <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
+                  )}
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg line-clamp-2 min-h-[3.5rem]">{p.name}</h4>
+                  <p className="text-primary font-black text-xl">
+                    {p.price ? `KSh ${p.price.toLocaleString()}` : "Price on Request"}
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground mb-2">Specifications</p>
+                    <div className="space-y-2">
+                      {p.specifications ? (
+                        Object.entries(p.specifications).slice(0, 5).map(([key, val]) => (
+                          <div key={key} className="text-sm">
+                            <span className="text-muted-foreground capitalize">{key.replace('_', ' ')}:</span>
+                            <span className="font-medium ml-1">{formatSpecValue(val)}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-muted-foreground italic">No detailed specs available</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground mb-2">Features</p>
+                    <div className="flex flex-wrap gap-1">
+                      {p.features?.slice(0, 5).map((f, i) => (
+                        <Badge key={i} variant="secondary" className="text-[10px]">{f}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <Button className="w-full" size="sm">Get Quote</Button>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
       <main>
-        <section className="py-12 sm:py-16 lg:py-20 bg-background border-b border-border">
+        {/* Enhanced Hero Section with Gradient and Breadcrumbs */}
+        <section className="relative bg-gradient-to-br from-background via-background to-primary/5 border-b border-border py-8 sm:py-12">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-4xl mx-auto mb-8 sm:mb-12">
-              <Badge className="mb-4 bg-muted text-foreground border-border">
+            {/* Hero-like Breadcrumb and Title Section */}
+            <Breadcrumbs className="mb-8" />
+
+            {/* Title Section */}
+            <div className="text-center max-w-4xl mx-auto">
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
                 <Package className="w-4 h-4 mr-2" />
                 Product Catalog
               </Badge>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4">
                 {category ? (
                   getCategoryTitle(category)
                 ) : (
@@ -1467,121 +1637,141 @@ const Products = () => {
                   </>
                 )}
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                {filteredProducts.length} of {products.length} products
+              <p className="text-lg sm:text-xl text-muted-foreground mb-2">
+                Discover our range of professional irrigation solutions
               </p>
-            </div>
-
-            <div
-              className={`mb-8 sm:mb-12 bg-background shadow-md rounded-xl border border-border p-6 ${showFilters ? "block" : "hidden sm:block"}`}
-            >
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
-                  <Input
-                    placeholder="Search products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-10 bg-background border-border hover:bg-muted/30 rounded-xl text-sm sm:text-base transition-colors"
-                  />
-                  {searchTerm && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSearchTerm("")}
-                      className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
-                    >
-                      <X className="h-4 w-4 text-primary" />
-                    </Button>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-full sm:w-[140px] bg-background border-border hover:bg-muted/30 rounded-xl text-sm sm:text-base transition-colors">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="name">Name</SelectItem>
-                      <SelectItem value="price">Price</SelectItem>
-                      <SelectItem value="created_at">Date Added</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Button
-                    className="px-3 bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-                    size="sm"
-                    onClick={() =>
-                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-                    }
-                  >
-                    {sortOrder === "asc" ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-
-                <div className="flex border border-border rounded-xl bg-muted/30 overflow-hidden">
-                  <Button
-                    className={`h-8 w-8 p-0 ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "bg-muted/30 hover:bg-accent hover:text-accent-foreground"} rounded-l-full`}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                  >
-                    <Grid3x3 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    className={`h-8 w-8 p-0 ${viewMode === "list" ? "bg-primary text-primary-foreground" : "bg-muted/30 hover:bg-accent hover:text-accent-foreground"} rounded-r-full`}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <Button
-                  className="sm:hidden bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filters
-                </Button>
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Badge variant="outline" className="font-normal">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
+                </Badge>
+                {products.length > filteredProducts.length && (
+                  <span>• {products.length} total</span>
+                )}
               </div>
+            </div>
+          </div>
+        </section>
 
-              <div className="flex flex-wrap gap-2 mt-4">
-                <Button
-                  className={`${showFeaturedOnly ? "bg-primary text-primary-foreground" : "bg-muted/30 border-border"} hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-xs sm:text-sm`}
-                  size="sm"
-                  onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
-                >
-                  <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  Featured
-                </Button>
+        {/* Main Content Section */}
+        <section className="py-8 sm:py-12 bg-background">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
-                <Button
-                  className={`${showInStockOnly ? "bg-primary text-primary-foreground" : "bg-muted/30 border-border"} hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-xs sm:text-sm`}
-                  size="sm"
-                  onClick={() => setShowInStockOnly(!showInStockOnly)}
-                >
-                  <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  In Stock
-                </Button>
+            {/* Enhanced Sticky Filter Bar */}
+            <div className="sticky top-16 z-20 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm mb-8">
+              <div className={`py-4 ${showFilters ? "block" : "hidden sm:block"}`}>
+                {/* Search and Controls Row */}
+                <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                  {/* Enhanced Search */}
+                  <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary" />
+                    <Input
+                      placeholder="Search by name, model, or features..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-12 pr-12 h-12 bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl text-base transition-all"
+                    />
+                    {searchTerm && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSearchTerm("")}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-muted"
+                      >
+                        <X className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    )}
+                  </div>
 
-                {(searchTerm ||
-                  showFeaturedOnly ||
-                  showInStockOnly ||
-                  subcategoryFilter) && (
+                  {/* Sort and View Controls */}
+                  <div className="flex gap-2">
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="w-full sm:w-[160px] h-12 bg-background border-border hover:border-primary/50 rounded-xl text-base transition-all">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="name">Sort: Name</SelectItem>
+                        <SelectItem value="price">Sort: Price</SelectItem>
+                        <SelectItem value="created_at">Sort: Newest</SelectItem>
+                      </SelectContent>
+                    </Select>
+
                     <Button
-                      className="bg-muted/30 border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-xs sm:text-sm"
+                      className="px-4 h-12 bg-background border border-border hover:border-primary/50 hover:bg-muted rounded-xl transition-all"
+                      onClick={() =>
+                        setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                      }
+                      title={sortOrder === "asc" ? "Ascending" : "Descending"}
+                    >
+                      {sortOrder === "asc" ? (
+                        <ChevronUp className="h-5 w-5" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5" />
+                      )}
+                    </Button>
+
+                    <div className="hidden sm:flex border border-border rounded-xl bg-background overflow-hidden">
+                      <Button
+                        className={`h-12 w-12 p-0 rounded-none ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-muted"} transition-all`}
+                        onClick={() => setViewMode("grid")}
+                        title="Grid View"
+                      >
+                        <Grid3x3 className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        className={`h-12 w-12 p-0 rounded-none ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-muted"} transition-all`}
+                        onClick={() => setViewMode("list")}
+                        title="List View"
+                      >
+                        <List className="h-5 w-5" />
+                      </Button>
+                    </div>
+
+                    <Button
+                      className="sm:hidden h-12 px-4 bg-background border border-border hover:border-primary/50 hover:bg-muted rounded-xl transition-all"
+                      onClick={() => setShowFilters(!showFilters)}
+                    >
+                      <Filter className="h-5 w-5 mr-2" />
+                      Filters
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Filter Chips Row */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm text-muted-foreground font-medium">Filters:</span>
+
+                  <Button
+                    variant="outline"
+                    className={`h-9 ${showFeaturedOnly ? "bg-primary text-primary-foreground border-primary" : ""} hover:bg-primary/10 rounded-full transition-all`}
+                    size="sm"
+                    onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
+                  >
+                    <Star className={`h-4 w-4 mr-2 ${showFeaturedOnly ? "fill-current" : ""}`} />
+                    Featured
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className={`h-9 ${showInStockOnly ? "bg-primary text-primary-foreground border-primary" : ""} hover:bg-primary/10 rounded-full transition-all`}
+                    size="sm"
+                    onClick={() => setShowInStockOnly(!showInStockOnly)}
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    In Stock
+                  </Button>
+
+                  {(searchTerm || showFeaturedOnly || showInStockOnly || subcategoryFilter) && (
+                    <Button
+                      variant="outline"
+                      className="h-9 hover:bg-destructive/10 hover:text-destructive hover:border-destructive rounded-full transition-all"
                       size="sm"
                       onClick={clearAllFilters}
                     >
-                      <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      <X className="h-4 w-4 mr-2" />
                       Clear All
                     </Button>
                   )}
+                </div>
               </div>
             </div>
 
@@ -1607,21 +1797,34 @@ const Products = () => {
                 <hr className="border-border w-full max-w-3xl mx-auto mt-12" />
               </div>
             ) : (
-              <div className="text-center py-12 bg-background shadow-md rounded-xl p-6">
-                <Package className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
-                  No Products Found
-                </h3>
-                <p className="text-muted-foreground text-sm sm:text-base mb-6">
-                  Try adjusting your filters or search terms.
-                </p>
-                <Button
-                  className="bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md"
-                  onClick={clearAllFilters}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Clear Filters
-                </Button>
+              <div className="text-center py-16 bg-gradient-to-br from-background to-muted/20 rounded-2xl border-2 border-dashed border-border">
+                <div className="max-w-md mx-auto px-6">
+                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Package className="h-10 w-10 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">
+                    No Products Found
+                  </h3>
+                  <p className="text-muted-foreground text-base mb-8">
+                    We couldn't find any products matching your criteria. Try adjusting your filters or search terms.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-md"
+                      onClick={clearAllFilters}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Clear All Filters
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="rounded-xl"
+                      onClick={() => window.location.href = '/products'}
+                    >
+                      View All Products
+                    </Button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

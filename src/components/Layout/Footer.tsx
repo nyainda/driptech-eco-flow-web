@@ -116,18 +116,18 @@ const Footer = () => {
                 <div className="text-sm text-muted-foreground">
                   <div className="flex items-center gap-2 mb-1">
                     <a
-                      href="tel:0114575401"
+                      href="tel:0794494515"
                       className="hover:text-foreground transition-colors"
-                      aria-label="Call us at 0114575401"
+                      aria-label="Call us at 0794494515"
                     >
-                      0114575401
+                      0794494515
                     </a>
                     <a
-                      href="https://wa.me/0114575401"
+                      href="https://wa.me/254794494515"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-green-600 hover:text-green-700 transition-colors"
-                      aria-label="WhatsApp 0114575401"
+                      aria-label="WhatsApp 0794494515"
                     >
                       <MessageCircle className="h-4 w-4" />
                     </a>

@@ -14,9 +14,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 import QuoteModal from "@/components/Home/QuoteModal";
-import { Helmet } from 'react-helmet-async';
+import Breadcrumbs from "@/components/Layout/Breadcrumbs";
+import SEOHead from "@/components/common/SEOHead";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
+import IrrigationROICalculator from "@/components/Calculators/IrrigationROICalculator";
+import ScrollReveal from "@/components/common/ScrollReveal";
 
 const Services = () => {
   const services = [
@@ -84,12 +87,14 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Irrigation Services Kenya | Installation, Maintenance & Design - DripTech</title>
-        <meta name="description" content="Professional irrigation services in Kenya: drip irrigation installation, sprinkler system setup, maintenance, design, consultation. Expert irrigation contractors for farms, greenhouses, commercial properties. Nationwide service." />
-        <meta name="keywords" content="irrigation services Kenya, irrigation installation, drip irrigation contractors, sprinkler installation Kenya, irrigation maintenance, irrigation system design, irrigation consultation, farm irrigation services, greenhouse irrigation installation, irrigation repair Kenya, professional irrigation services" />
-      </Helmet>
+      <SEOHead
+        title="Irrigation Services Kenya | Installation, Maintenance & Design - DripTech"
+        description="Professional irrigation services in Kenya: drip irrigation installation, sprinkler system setup, maintenance, design, consultation. Expert irrigation contractors for farms, greenhouses, commercial properties. Nationwide service."
+      />
       <Header />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <Breadcrumbs />
+      </div>
       <main>
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
@@ -155,6 +160,24 @@ const Services = () => {
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+
+        {/* ROI Calculator Section */}
+        <section className="py-20 bg-muted/30 border-y border-border">
+          <div className="container mx-auto px-4">
+            <ScrollReveal animation="slide-up">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">
+                  Calculate Your <span className="text-primary">Sustainable Growth</span>
+                </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  See how professional irrigation can transform your farm's productivity and profitability.
+                </p>
+              </div>
+              <IrrigationROICalculator />
+            </ScrollReveal>
           </div>
         </section>
 

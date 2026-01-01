@@ -10,6 +10,13 @@ import ProductSearch from "./Product/ProductSearch";
 import ProductPagination from "./Product/ProductPagination";
 import AIMarketResearch from "./AI/AIMarketResearch";
 import { Product, ProductFormData, PRODUCT_CATEGORIES } from "@/types/Product";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const ProductManagement = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -402,18 +409,28 @@ const ProductManagement = () => {
         </div>
 
         {/* Add/Edit Form */}
-        {showAddForm && (
-          <ProductForm
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={handleSubmit}
-            onCancel={resetForm}
-            onImageUpload={handleImageUpload}
-            onRemoveImage={removeImage}
-            editingProduct={editingProduct}
-            uploading={uploading}
-          />
-        )}
+        <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 border-0 bg-transparent shadow-none">
+            <DialogHeader className="sr-only">
+              <DialogTitle>
+                {editingProduct ? "Edit Product" : "Add New Product"}
+              </DialogTitle>
+              <DialogDescription>
+                Fill in the product details below.
+              </DialogDescription>
+            </DialogHeader>
+            <ProductForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleSubmit}
+              onCancel={resetForm}
+              onImageUpload={handleImageUpload}
+              onRemoveImage={removeImage}
+              editingProduct={editingProduct}
+              uploading={uploading}
+            />
+          </DialogContent>
+        </Dialog>
 
         {/* Search and Filter */}
         <ProductSearch

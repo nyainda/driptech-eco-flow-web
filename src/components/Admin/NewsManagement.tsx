@@ -14,6 +14,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -500,6 +501,11 @@ const NewsManagement = () => {
                     <DialogTitle className="text-lg sm:text-xl font-semibold text-foreground">
                       {editingArticle ? "Edit Article" : "Create New Article"}
                     </DialogTitle>
+                    <DialogDescription>
+                      {editingArticle
+                        ? "Update the content and settings of your news article below."
+                        : "Write and publish a new article for your readers."}
+                    </DialogDescription>
                   </DialogHeader>
 
                   <div className="overflow-y-auto flex-1 p-4 sm:p-6">

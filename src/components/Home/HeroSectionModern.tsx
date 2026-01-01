@@ -26,7 +26,7 @@ const HeroSectionModern = () => {
         return () => window.removeEventListener("mousemove", handleMouseMove);
     }, []);
 
-    const whatsappNumber = "254114575401";
+    const whatsappNumber = "254794494515";
     const openWhatsApp = () => {
         const message = encodeURIComponent(
             "Hi DripTech! I'm interested in your irrigation systems."

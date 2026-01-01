@@ -270,7 +270,7 @@ export const generatePrintContent = (
                 <div class="text-white text-opacity-90 text-xs font-medium">Smart Irrigation Systems</div>
                 <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
                   <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
-                  <div>📞 0794494515 / 0114575401</div>
+                  <div>📞 0794494515</div>
                   <div>✉️ driptech2025@gmail.com</div>
                 </div>
               </div>
@@ -314,7 +314,7 @@ export const generatePrintContent = (
                   <div class="font-bold text-gray-900">DripTech Solutions</div>
                   <div class="text-gray-600">P.O. Box 12345, Nairobi, Kenya</div>
                   <div class="flex items-center gap-1 text-gray-600">
-                    <span class="opacity-70">📞</span> 0794494515 / 0114575401
+                    <span class="opacity-70">📞</span> 0794494515
                   </div>
                   <div class="flex items-center gap-1 text-gray-600">
                     <span class="opacity-70">✉️</span> driptech2025@gmail.com

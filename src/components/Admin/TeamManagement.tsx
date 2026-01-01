@@ -237,6 +237,11 @@ const TeamManagement = () => {
               <DialogTitle>
                 {editingMember ? "Edit Team Member" : "Add New Team Member"}
               </DialogTitle>
+              <DialogDescription>
+                {editingMember
+                  ? "Update the information for this team member."
+                  : "Enter the details for a new team member."}
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">

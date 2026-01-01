@@ -44,7 +44,7 @@ interface WhatsAppContactProps {
 const WhatsAppContact = ({
   currentProduct,
   filterCategory,
-  phoneNumber = '+254114575401',
+  phoneNumber = '+254794494515',
   variant = 'button',
   className = '',
 }: WhatsAppContactProps) => {

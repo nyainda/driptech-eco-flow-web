@@ -22,16 +22,16 @@ const Contact = () => {
       icon: Phone,
       title: "Call Us",
       subtitle: "Speak with our irrigation experts",
-      details: ["0114 575 401"],
-      action: "tel:+254114575401",
+      details: ["0794494515"],
+      action: "tel:0794494515",
       actionText: "Call Now",
     },
     {
       icon: MessageCircle,
       title: "WhatsApp",
       subtitle: "Quick responses & support",
-      details: ["0114 575 401"],
-      action: "https://wa.me/0114575401",
+      details: ["0794494515"],
+      action: "https://wa.me/254794494515",
       actionText: "Chat on WhatsApp",
     },
     {
@@ -287,7 +287,7 @@ const Contact = () => {
                           Get Directions <ArrowRight className="h-3 w-3 ml-1" />
                         </a>
                         <a
-                          href="https://wa.me/254114575401?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
+                          href="https://wa.me/254794494515?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full hover:bg-muted/50 transition-colors"

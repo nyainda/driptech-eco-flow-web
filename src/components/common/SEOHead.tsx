@@ -10,7 +10,7 @@ interface SEOHeadProps {
   author?: string;
   publishedTime?: string;
   modifiedTime?: string;
-  schema?: any;
+  schema?: any; // Single schema object or array of schema objects
 }
 
 export default function SEOHead({
@@ -35,7 +35,7 @@ export default function SEOHead({
     image: "https://www.dripstech.co.ke/driptech-logo.png",
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+254-700-000-000",
+      telephone: "+254-794-494-515",
       contactType: "Customer Service",
       areaServed: "KE",
       availableLanguage: ["English", "Swahili"],
@@ -48,7 +48,7 @@ export default function SEOHead({
     ],
     address: {
       "@type": "PostalAddress",
-      streetAddress: "123 Innovation Drive",
+      streetAddress: "Industrial Area",
       addressLocality: "Nairobi",
       addressRegion: "Nairobi",
       postalCode: "00100",
@@ -57,6 +57,7 @@ export default function SEOHead({
   };
 
   const schemaData = schema || defaultSchema;
+  const schemas = Array.isArray(schemaData) ? schemaData : [schemaData];
 
   return (
     <Helmet>
@@ -121,7 +122,11 @@ export default function SEOHead({
       />
 
       {/* Structured Data */}
-      <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
+      {schemas.map((s, idx) => (
+        <script key={idx} type="application/ld+json">
+          {JSON.stringify(s)}
+        </script>
+      ))}
     </Helmet>
   );
 }

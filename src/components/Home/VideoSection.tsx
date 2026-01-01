@@ -275,6 +275,9 @@ const VideoModal = ({
             <DialogTitle className="text-base sm:text-xl font-semibold text-foreground pr-8 line-clamp-2">
               {video.title}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Watch {video.title} video tutorial
+            </DialogDescription>
             <Button
               variant="ghost"
               size="icon"

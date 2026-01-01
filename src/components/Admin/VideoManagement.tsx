@@ -8,6 +8,13 @@ import { supabase } from "@/integrations/supabase/client";
 import VideoForm from "./Video/VideoForm";
 import VideoList from "./Video/VideoList";
 import VideoStats from "./Video/VideoStats";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // TypeScript interfaces for better type safety
 interface Video {
@@ -477,82 +484,94 @@ const VideoManagement = () => {
 
   return (
     <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 space-y-6">
-      {showForm ? (
-        <VideoForm
-          formData={formData}
-          setFormData={setFormData}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!formData.title) {
-              toast({
-                title: "Error",
-                description: "Title is required",
-                variant: "destructive",
-              });
-              return;
-            }
-            if (
-              uploadMode === "file" &&
-              !formData.video_file &&
-              !editingVideo
-            ) {
-              toast({
-                title: "Error",
-                description: "Please select a video file",
-                variant: "destructive",
-              });
-              return;
-            }
-            if (uploadMode === "url" && !formData.video_url) {
-              toast({
-                title: "Error",
-                description: "Video URL is required",
-                variant: "destructive",
-              });
-              return;
-            }
-            saveVideoMutation.mutate(formData);
-          }}
-          onCancel={resetForm}
-          editingVideo={editingVideo}
-          isUploading={isUploading}
-          uploadProgress={uploadProgress}
-          uploadMode={uploadMode}
-          setUploadMode={setUploadMode}
-          videoFileRef={videoFileRef}
-          thumbnailFileRef={thumbnailFileRef}
-          onVideoFileChange={handleVideoFileChange}
-          onThumbnailFileChange={handleThumbnailFileChange}
-          isSaving={saveVideoMutation.isPending}
-        />
-      ) : (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight">Video Management</h1>
-              <p className="text-muted-foreground">
-                Manage your video content and tutorials
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <AIVideoGenerator onGenerate={handleAIGenerated} />
-              <Button onClick={() => setShowForm(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Video
-              </Button>
-            </div>
-          </div>
-          <VideoStats stats={videoStats} />
-          <VideoList
-            videos={videos}
-            isLoading={isLoading}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onShowForm={() => setShowForm(true)}
-            isDeleting={deleteVideoMutation.isPending}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingVideo ? "Edit Video" : "Add New Video"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingVideo
+                ? "Update the details and settings for this video."
+                : "Enter the details to upload or link a new video."}
+            </DialogDescription>
+          </DialogHeader>
+          <VideoForm
+            formData={formData}
+            setFormData={setFormData}
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!formData.title) {
+                toast({
+                  title: "Error",
+                  description: "Title is required",
+                  variant: "destructive",
+                });
+                return;
+              }
+              if (
+                uploadMode === "file" &&
+                !formData.video_file &&
+                !editingVideo
+              ) {
+                toast({
+                  title: "Error",
+                  description: "Please select a video file",
+                  variant: "destructive",
+                });
+                return;
+              }
+              if (uploadMode === "url" && !formData.video_url) {
+                toast({
+                  title: "Error",
+                  description: "Video URL is required",
+                  variant: "destructive",
+                });
+                return;
+              }
+              saveVideoMutation.mutate(formData);
+            }}
+            onCancel={resetForm}
+            editingVideo={editingVideo}
+            isUploading={isUploading}
+            uploadProgress={uploadProgress}
+            uploadMode={uploadMode}
+            setUploadMode={setUploadMode}
+            videoFileRef={videoFileRef}
+            thumbnailFileRef={thumbnailFileRef}
+            onVideoFileChange={handleVideoFileChange}
+            onThumbnailFileChange={handleThumbnailFileChange}
+            isSaving={saveVideoMutation.isPending}
           />
+        </DialogContent>
+      </Dialog>
+
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">Video Management</h1>
+            <p className="text-muted-foreground">
+              Manage your video content and tutorials
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <AIVideoGenerator onGenerate={handleAIGenerated} />
+            <Button onClick={() => setShowForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Video
+            </Button>
+          </div>
         </div>
-      )}
+        <VideoStats stats={videoStats} />
+        <VideoList
+          videos={videos}
+          isLoading={isLoading}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onShowForm={() => setShowForm(true)}
+          isDeleting={deleteVideoMutation.isPending}
+        />
+      </div>
     </div>
   );
 };

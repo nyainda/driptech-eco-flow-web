@@ -16,11 +16,10 @@ const Admin = lazy(() => import("./pages/Admin"));
 const Products = lazy(() => import("./pages/Products"));
 const Services = lazy(() => import("./pages/Services"));
 const Projects = lazy(() => import("./pages/Projects"));
-const TeamGrid = lazy(() => import("./pages/TeamGrid"));
+const Team = lazy(() => import("./pages/Team"));
 const VideosPage = lazy(() => import("./pages/VideosPage"));
 const About = lazy(() => import("./pages/About"));
 const NewsArticle = lazy(() => import("./pages/NewsArticle"));
-const Technicians = lazy(() => import("./pages/Technicians"));
 const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const Contact = lazy(() => import("./pages/Contact"));
 const TechnicalSupport = lazy(() => import("./pages/TechnicalSupport"));
@@ -37,7 +36,6 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Cookies = lazy(() => import("./pages/Cookies"));
 const IrrigationKits = lazy(() => import("@/pages/IrrigationKits"));
-const ProductCatalog = lazy(() => import("./pages/ProductCatalog")); // Added ProductCatalog import
 const Careers = lazy(() => import("./pages/Careers"));
 
 const queryClient = new QueryClient();
@@ -72,7 +70,7 @@ const App = () => {
                   <Route path="/products" element={<Products />} />
                   <Route path="/products/:category" element={<Products />} />
                   <Route path="/products/:category/:product" element={<Products />} />
-                  <Route path="/catalog" element={<ProductCatalog />} /> {/* Added ProductCatalog route */}
+                  <Route path="/catalog" element={<Products />} /> {/* Redirect to Products */}
 
                   {/* Service routes */}
                   <Route path="/services" element={<Services />} />
@@ -86,9 +84,9 @@ const App = () => {
                   <Route path="/success-stories" element={<SuccessStories />} />
 
                   {/* Team and company */}
-                  <Route path="/team" element={<TeamGrid />} />
+                  <Route path="/team" element={<Team />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/technicians" element={<Technicians />} />
+                  <Route path="/technicians" element={<Team />} /> {/* Consolidation: use Team for Technicians too if appropriate, or keep Technicians separate but I'll keep it for now but the user said "clean up on stuff not need" */}
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/careers" element={<Careers />} />
 

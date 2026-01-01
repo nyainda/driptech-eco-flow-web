@@ -102,7 +102,7 @@ const WhatsAppManagement = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const [config, setConfig] = useState<WhatsAppConfig>({
-        business_phone_number: "254114575401",
+        business_phone_number: "254794494515",
         business_name: "DripTech EcoFlow",
         provider: "twilio",
         is_active: false,
@@ -560,8 +560,8 @@ const WhatsAppManagement = () => {
                                         key={conversation.id}
                                         onClick={() => setSelectedConversation(conversation.id)}
                                         className={`p-4 cursor-pointer hover:bg-muted/50 transition-colors ${selectedConversation === conversation.id
-                                                ? "bg-muted"
-                                                : ""
+                                            ? "bg-muted"
+                                            : ""
                                             }`}
                                     >
                                         <div className="flex items-start gap-3">
@@ -645,14 +645,14 @@ const WhatsAppManagement = () => {
                                             <div
                                                 key={message.id}
                                                 className={`flex ${message.direction === "outbound"
-                                                        ? "justify-end"
-                                                        : "justify-start"
+                                                    ? "justify-end"
+                                                    : "justify-start"
                                                     }`}
                                             >
                                                 <div
                                                     className={`max-w-[70%] rounded-lg p-3 ${message.direction === "outbound"
-                                                            ? "bg-primary text-primary-foreground"
-                                                            : "bg-muted"
+                                                        ? "bg-primary text-primary-foreground"
+                                                        : "bg-muted"
                                                         }`}
                                                 >
                                                     {getMessageIcon(message.message_type) && (

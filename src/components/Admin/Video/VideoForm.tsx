@@ -66,15 +66,7 @@ const VideoForm = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold">
-          {editingVideo ? "Edit Video" : "Add New Video"}
-        </h3>
-        <Button variant="outline" onClick={onCancel} disabled={isUploading}>
-          <X className="h-4 w-4 mr-2" />
-          Cancel
-        </Button>
-      </div>
+
 
       <Card>
         <CardContent className="p-6 space-y-6">

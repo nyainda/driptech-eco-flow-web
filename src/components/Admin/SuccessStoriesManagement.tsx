@@ -18,6 +18,7 @@ import { Plus, Edit, Trash2, Trophy, Image } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -264,6 +265,11 @@ const SuccessStoriesManagement = () => {
               <DialogTitle>
                 {editingStory ? "Edit Success Story" : "Add New Success Story"}
               </DialogTitle>
+              <DialogDescription>
+                {editingStory
+                  ? "Update the details of your customer success story below."
+                  : "Fill in the details to showcase a new customer success story."}
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

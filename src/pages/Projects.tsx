@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import SEOHead from "@/components/common/SEOHead";
+import Breadcrumbs from "@/components/Layout/Breadcrumbs";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -328,7 +330,7 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
               const message = encodeURIComponent(
                 `Hi DripTech! I'm interested in the "${project.name}" project${project.location ? ` in ${project.location}` : ''}. Can you share more details?`
               );
-              window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
+              window.open(`https://wa.me/254794494515?text=${message}`, "_blank");
             }}
             className="w-full mt-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all text-sm font-semibold py-3"
           >
@@ -902,7 +904,14 @@ const Projects: React.FC<ProjectsProps> = ({ supabaseClient = supabase }) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title="Irrigation Projects & Success Stories Kenya | DripTech Showcase"
+        description="View our portfolio of successful irrigation projects across Kenya. See how DripTech helps farmers achieve higher yields and water efficiency."
+      />
       <Header />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <Breadcrumbs />
+      </div>
       <main>
         <ProjectHero onGoBack={handleGoBack} />
         <FilterControls
