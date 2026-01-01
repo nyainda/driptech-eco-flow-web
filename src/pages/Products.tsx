@@ -64,6 +64,7 @@ import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { trackSearch } from "@/services/aiProductService";
+import { cn } from "@/lib/utils";
 
 interface Variant {
   name: string;
