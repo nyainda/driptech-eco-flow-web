@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import AIBlogGenerator from "./AI/AIBlogGenerator";
+import AIAutonomousSEOEngine from "./AI/AIAutonomousSEOEngine";
+import AutoBlogScheduler from "./AutoBlogScheduler";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus } from "lucide-react";
+import { FileText, Plus, Settings } from "lucide-react";
 import BlogEditorRich from "./BlogEditorRich";
 import BlogStats from "./Blog/BlogStats";
 import BlogFilters from "./Blog/BlogFilters";
@@ -65,11 +67,14 @@ const BlogManagement = () => {
     totalLikes: 0,
     totalComments: 0,
   });
+  const [pendingDraftsCount, setPendingDraftsCount] = useState(0);
+  const [showScheduler, setShowScheduler] = useState(false);
 
   useEffect(() => {
     fetchPosts();
     fetchCategories();
     fetchStats();
+    fetchPendingDrafts();
   }, [currentPage, searchQuery, selectedCategory, statusFilter, sortBy]);
 
   const fetchStats = async () => {
@@ -105,6 +110,21 @@ const BlogManagement = () => {
       });
     }
   };
+
+  const fetchPendingDrafts = async () => {
+    try {
+      const { count, error } = await supabase
+        .from("blog_posts")
+        .select("*", { count: "exact", head: true })
+        .eq("published", false);
+
+      if (error) throw error;
+      setPendingDraftsCount(count || 0);
+    } catch (error) {
+      console.error("Error fetching pending drafts:", error);
+    }
+  };
+
 
   const fetchPosts = async () => {
     try {
@@ -405,10 +425,31 @@ const BlogManagement = () => {
               Create, manage, and publish compelling content
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowScheduler(!showScheduler)}
+              className="relative"
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              Automation
+              {pendingDraftsCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                  {pendingDraftsCount}
+                </span>
+              )}
+            </Button>
+            <AIAutonomousSEOEngine onGenerate={handleAIGenerated} />
             <AIBlogGenerator onGenerate={handleAIGenerated} />
           </div>
         </div>
+
+        {/* Automation Scheduler */}
+        {showScheduler && (
+          <div className="mt-6">
+            <AutoBlogScheduler />
+          </div>
+        )}
 
         {/* Statistics Cards */}
         <BlogStats stats={stats} />

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { dataService } from "@/services/dataService";
-import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
   CardContent,
@@ -44,13 +43,7 @@ const BlogSection = () => {
   const { data: totalPosts = 0 } = useQuery({
     queryKey: ["blog-posts-count"],
     queryFn: async () => {
-      const { count, error } = await supabase
-        .from("blog_posts")
-        .select("*", { count: "exact", head: true })
-        .eq("published", true);
-
-      if (error) throw error;
-      return count || 0;
+      return await dataService.getBlogPostCount();
     },
   });
 

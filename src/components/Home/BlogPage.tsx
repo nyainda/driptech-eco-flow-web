@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { dataService } from "@/services/dataService";
-import { supabase } from "@/integrations/supabase/client";
 import {
   Card,
   CardContent,
@@ -78,13 +77,7 @@ const BlogPage = () => {
   const { data: categories = [] } = useQuery({
     queryKey: ["blog-categories"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blog_categories")
-        .select("*")
-        .order("name");
-
-      if (error) throw error;
-      return data as BlogCategory[];
+      return await dataService.getBlogCategories() as BlogCategory[];
     },
   });
 

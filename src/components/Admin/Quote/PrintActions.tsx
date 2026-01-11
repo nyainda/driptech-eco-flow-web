@@ -335,7 +335,9 @@ export const generatePrintContent = (
           </div>
 
           <!-- Project Details Section -->
-          ${projectDetailsSection}
+          <div class="avoid-break">
+            ${projectDetailsSection}
+          </div>
 
           <!-- BOQ Table Section -->
           <div class="mb-4">
@@ -378,7 +380,9 @@ export const generatePrintContent = (
           </div>
 
           <!-- Notes Section -->
-          ${notesSection}
+          <div class="avoid-break">
+            ${notesSection}
+          </div>
         </div>
       </div>
     </body>

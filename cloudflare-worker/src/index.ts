@@ -57,6 +57,11 @@ export default {
             // Blog
             if (path === '/api/blog') return handleBlog(env, url, ctx);
             if (path === '/api/blog/search') return handleBlogSearch(env, url, ctx);
+
+            // Special blog endpoints (must come before slug matcher)
+            if (path === '/api/blog/categories') return handleBlogCategories(env, ctx);
+            if (path === '/api/blog/count') return handleBlogPostCount(env, ctx);
+
             if (path.match(/^\/api\/blog\/[\w-]+$/)) {
                 const slug = path.split('/').pop()!;
                 return handleBlogBySlug(env, slug, ctx);
@@ -937,4 +942,18 @@ function cachedJsonResponse(data: any, cacheTime: number, ctx: ExecutionContext)
             'CDN-Cache-Control': `max-age=${cacheTime}`,
         },
     });
+}
+
+async function handleBlogCategories(env: Env, ctx: ExecutionContext): Promise<Response> {
+    const { results } = await env.DB.prepare(
+        `SELECT * FROM blog_categories ORDER BY name ASC`
+    ).all();
+    return cachedJsonResponse(results, CACHE_TIMES.blog, ctx);
+}
+
+async function handleBlogPostCount(env: Env, ctx: ExecutionContext): Promise<Response> {
+    const { results } = await env.DB.prepare(
+        `SELECT COUNT(*) as count FROM blog_posts WHERE published = 1`
+    ).all();
+    return cachedJsonResponse(results[0], CACHE_TIMES.blog, ctx);
 }

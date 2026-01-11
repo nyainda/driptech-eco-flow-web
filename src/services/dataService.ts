@@ -177,6 +177,39 @@ export const dataService = {
         }
     },
 
+
+
+    async getBlogCategories() {
+        if (USE_D1) {
+            const response = await fetch(`${WORKER_URL}/api/blog/categories`);
+            if (!response.ok) throw new Error('Failed to fetch categories from D1');
+            return await response.json();
+        } else {
+            const { data, error } = await supabase
+                .from('blog_categories')
+                .select('*')
+                .order('name');
+            if (error) throw error;
+            return data;
+        }
+    },
+
+    async getBlogPostCount() {
+        if (USE_D1) {
+            const response = await fetch(`${WORKER_URL}/api/blog/count`);
+            if (!response.ok) throw new Error('Failed to fetch blog count from D1');
+            const data = await response.json();
+            return data.count;
+        } else {
+            const { count, error } = await supabase
+                .from('blog_posts')
+                .select('*', { count: 'exact', head: true })
+                .eq('published', true);
+            if (error) throw error;
+            return count || 0;
+        }
+    },
+
     // ============================================
     // VIDEOS
     // ============================================
