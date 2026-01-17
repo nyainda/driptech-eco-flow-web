@@ -775,8 +775,8 @@ async function handleSupabaseWebhook(request: Request, env: Env): Promise<Respon
 
 // D1 Schema - defines which columns exist in each D1 table
 const D1_SCHEMA: Record<string, string[]> = {
-    products: ['id', 'name', 'description', 'price', 'category', 'subcategory', 'images', 'technical_specs', 'features', 'applications', 'specifications', 'variants', 'in_stock', 'featured', 'is_featured', 'model_number', 'created_at', 'updated_at'],
-    blog_posts: ['id', 'title', 'slug', 'content', 'excerpt', 'author_id', 'category_id', 'tags', 'featured_image', 'likes', 'published', 'published_at', 'views', 'created_at', 'updated_at'],
+    products: ['id', 'name', 'description', 'price', 'category', 'subcategory', 'images', 'technical_specs', 'features', 'applications', 'specifications', 'variants', 'in_stock', 'featured', 'is_featured', 'model_number', 'brochure_url', 'installation_guide_url', 'maintenance_manual_url', 'video_url', 'created_at', 'updated_at'],
+    blog_posts: ['id', 'title', 'slug', 'content', 'excerpt', 'author_id', 'category_id', 'tags', 'featured_image', 'featured_image_url', 'likes', 'published', 'published_at', 'views', 'created_at', 'updated_at'],
     videos: ['id', 'title', 'description', 'video_url', 'thumbnail_url', 'category', 'tags', 'file_size', 'published', 'featured', 'views', 'duration', 'created_at', 'updated_at'],
     projects: ['id', 'name', 'location', 'completion_date', 'deadline', 'project_type', 'area_covered', 'water_saved', 'before_images', 'after_images', 'project_images', 'featured', 'created_at', 'updated_at', 'testimonial', 'status', 'start_date', 'yield_improvement', 'customer_id', 'quote_id'],
     success_stories: ['id', 'title', 'description', 'client_name', 'client_company', 'image_url', 'before_image', 'after_image', 'results', 'featured', 'created_at', 'updated_at'],

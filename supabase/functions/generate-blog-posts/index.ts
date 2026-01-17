@@ -4,6 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 }
 
 // Topic categories for rotation
@@ -185,6 +186,11 @@ serve(async (req) => {
                     status: 'success'
                 })
 
+                // Send email notification (fire and forget)
+                if (settings.notification_email) {
+                    sendEmailNotification(newPost, settings.notification_email, schedule.topic_category).catch(console.error)
+                }
+
             } catch (error) {
                 console.error(`Error generating post for schedule ${schedule.id}:`, error)
 
@@ -255,6 +261,17 @@ async function generateBlogContent(apiKey: string, topic: any) {
 - Kenyan context: KES currency, local crops (tomatoes, peppers, kale, cabbage, onions, maize), Kenyan climate and regions
 - No fluff, no generic AI phrasing
 - Actionable advice
+- **Use emojis** 🌿💧☀️ where appropriate to make content engaging (in headings and lists)
+- **Short paragraphs**: 2-3 sentences max per paragraph for easy reading on mobile
+
+=== STYLE REFERENCE ===
+Structure your content similar to this style:
+"a) Automated Drip Irrigation for Vegetables and Greenhouses 🍅
+This is arguably the most popular and efficient choice for crops like tomatoes, peppers, kale (sukuma wiki), cabbage, onions, and fruit trees. Water is delivered slowly, drop by drop, directly to the plant roots.
+
+Components: Drip lines with emitters, a main supply line, a filter, pressure regulator, automated valves, and a smart controller with soil moisture sensors.
+Ideal for: Small to medium-scale farms, greenhouse operations, horticulture.
+Cost Insight: The drip irrigation cost per acre Kenya can range from KES 50,000 to KES 150,000, depending on system complexity, water source, and type of emitters."
 
 === SEO REQUIREMENTS ===
 - Target keywords: ${topic.keywords}
@@ -264,17 +281,17 @@ async function generateBlogContent(apiKey: string, topic: any) {
 - Problem-solving focus
 
 === CONTENT STRUCTURE (CRITICAL - PROPER HTML) ===
-1. **Introduction** (150-200 words)
+1. **Introduction** (100-150 words)
    - Problem-focused hook
    - Use <p> tags with proper spacing
    - Include primary keyword naturally
 
-2. **Main Content** (3-5 sections)
-   - Each section with <h2> heading
+2. **Main Content** (3-4 sections)
+   - Use <h2> headings with relevant emojis
    - Subsections with <h3> where needed
-   - Use <p> tags for paragraphs
-   - Use <ul><li> or <ol><li> for lists
-   - Use <strong> for emphasis, <em> for subtle emphasis
+   - Use <p> tags for short paragraphs
+   - Use <ul><li> for lists with emojis as bullets where fit
+   - Use <strong> for emphasis on key terms (like "Components:", "Ideal for:", "Cost Insight:")
    - Include practical tips and real-world examples
 
 3. **FAQ Section** (CRITICAL - Accordion-Ready Format)
@@ -282,7 +299,7 @@ async function generateBlogContent(apiKey: string, topic: any) {
    - Structure EXACTLY as follows:
    
    <div class="faq-section">
-     <h2>Frequently Asked Questions</h2>
+     <h2>Frequently Asked Questions ❓</h2>
      <div class="faq-item">
        <h3 class="faq-question">Question 1 here?</h3>
        <div class="faq-answer">
@@ -304,7 +321,7 @@ async function generateBlogContent(apiKey: string, topic: any) {
    - Include WhatsApp consultation offer
    - Professional irrigation assessment mention
    - Use <div class="cta-section"> wrapper
-   - Example CTA text: "Ready to transform your farm with efficient irrigation? Contact DripTech today for a free consultation. Call us or WhatsApp for a professional irrigation assessment tailored to your farm's needs."
+   - **REQUIRED CTA TEXT**: "Ready to transform your farm with efficient irrigation? Contact DripTech today for a free consultation. Call us or WhatsApp us at **0794494515** for a professional irrigation assessment tailored to your farm's unique needs. Let's grow together! 🚀"
 
 === INTERNAL LINKING (MANDATORY) ===
 Naturally include 3-4 internal links with relevant anchor text:
@@ -315,27 +332,26 @@ Naturally include 3-4 internal links with relevant anchor text:
 
 === KENYA-SPECIFIC REQUIREMENTS ===
 - Reference local crops: tomatoes, kale (sukuma wiki), peppers, cabbage, onions, maize
-- Use KES for pricing (if mentioned, use estimates like "KES 50,000 - 150,000")
+- Use KES for pricing (matches reference style: "KES 50,000 to KES 150,000")
 - Mention Kenyan regions where relevant (e.g., Rift Valley, Central Kenya)
 - Reference Kenyan climate challenges (dry seasons, water scarcity)
-- NO fabricated statistics - use general best practices
 
 === WORD COUNT ===
-1,200 - 1,800 words total
+800 - 1,200 words total (Keep it concise and punchy)
 
 === OUTPUT FORMAT (JSON ONLY, NO MARKDOWN) ===
 {
-  "title": "Compelling, SEO-friendly title (50-60 characters)",
+  "title": "Compelling, SEO-friendly title with Emoji (50-60 characters)",
   "slug": "url-friendly-slug-from-title",
   "excerpt": "Engaging 150-160 character summary that hooks readers and includes primary keyword",
   "content": "Full blog post in HTML format with proper structure as specified above. MUST include properly formatted FAQ section and CTA section.",
   "tags": ["5-8 relevant tags", "irrigation", "kenya", "farming", "drip-systems"],
   "seo_title": "SEO-optimized title with primary keyword (55-60 characters)",
   "seo_description": "Meta description with keywords and value proposition (150-160 characters)",
-  "reading_time": 7
+  "reading_time": 5
 }
 
-Generate professional, valuable content that educates and engages Kenyan farmers. Focus on practical solutions and actionable advice.`
+Generate professional, valuable content that educates and engages Kenyan farmers. Focus on practical solutions and actionable advice.`;
 
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
@@ -399,5 +415,52 @@ async function syncToCloudflareD1(post: any) {
     } catch (error) {
         console.error('D1 sync error:', error)
         throw error
+    }
+}
+
+// Send email notification using Resend
+async function sendEmailNotification(post: any, toEmail: string, topic: string) {
+    const resendApiKey = Deno.env.get('RESEND_API_KEY')
+    if (!resendApiKey || !toEmail) return
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${resendApiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: 'DripTech Blog <info@dripstech.co.ke>',
+                to: [toEmail],
+                subject: `🎯 New Blog Post Generated: ${post.title}`,
+                html: `
+                    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h1 style="color: #16a34a;">New Content Generated 🌿</h1>
+                        <p>The SEO Content Engine has just created a new draft.</p>
+                        
+                        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h2 style="margin-top: 0;">${post.title}</h2>
+                            <p><strong>Topic:</strong> ${topic}</p>
+                            <p><strong>Excerpt:</strong> ${post.excerpt}</p>
+                            <p><strong>Status:</strong> Ready for Review</p>
+                        </div>
+                        
+                        <a href="https://dripstech.co.ke/admin/blog" 
+                           style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                           Review and Publish Now
+                        </a>
+                    </div>
+                `
+            })
+        })
+
+        if (!response.ok) {
+            console.error('Failed to send email:', await response.text())
+        } else {
+            console.log(`Email notification sent to ${toEmail}`)
+        }
+    } catch (error) {
+        console.error('Email sending error:', error)
     }
 }

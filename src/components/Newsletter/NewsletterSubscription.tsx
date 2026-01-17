@@ -42,69 +42,29 @@ const NewsletterSubscription: React.FC<NewsletterSubscriptionProps> = ({
         setError("");
 
         try {
-            // Check if email already exists
-            const { data: existing, error: checkError } = await supabase
-                .from("newsletter_subscribers")
-                .select("id, status")
-                .eq("email", email.toLowerCase())
-                .single();
+            // Call Edge Function to handle subscription and email
+            const { data, error: functionError } = await supabase.functions.invoke('newsletter-subscribe', {
+                body: { email: email.toLowerCase() }
+            });
 
-            if (existing) {
-                if (existing.status === "active") {
-                    setError("You're already subscribed!");
-                    toast({
-                        title: "Already Subscribed",
-                        description: "This email is already on our mailing list.",
-                    });
-                    setIsLoading(false);
-                    return;
-                } else if (existing.status === "unsubscribed") {
-                    // Reactivate subscription
-                    const { error: updateError } = await supabase
-                        .from("newsletter_subscribers")
-                        .update({
-                            status: "active",
-                            subscribed_at: new Date().toISOString(),
-                            unsubscribed_at: null,
-                        })
-                        .eq("id", existing.id);
+            if (functionError) throw functionError;
 
-                    if (updateError) throw updateError;
-
-                    toast({
-                        title: "Welcome Back! 🎉",
-                        description: "Your subscription has been reactivated.",
-                    });
-                }
-            } else {
-                // New subscription
-                const { error: insertError } = await supabase
-                    .from("newsletter_subscribers")
-                    .insert({
-                        email: email.toLowerCase(),
-                        status: "active",
-                        source: "website",
-                        metadata: {
-                            subscribed_from: window.location.pathname,
-                            user_agent: navigator.userAgent,
-                        },
-                    });
-
-                if (insertError) throw insertError;
-
-                // Send welcome email
-                try {
-                    await emailService.sendWelcomeEmail(email.toLowerCase());
-                } catch (emailError) {
-                    console.error("Failed to send welcome email:", emailError);
-                    // Don't fail the subscription if email fails
-                }
-
+            // Handle response
+            if (data?.message === 'Already subscribed') {
+                setError("You're already subscribed!");
                 toast({
-                    title: "Successfully Subscribed! 🎉",
-                    description: "Check your email for a welcome message!",
+                    title: "Already Subscribed",
+                    description: "This email is already on our mailing list.",
                 });
+                setIsLoading(false);
+                return;
             }
+
+            // Success
+            toast({
+                title: "Successfully Subscribed! 🎉",
+                description: "Check your email for a welcome message!",
+            });
 
             setIsSubscribed(true);
             setEmail("");
