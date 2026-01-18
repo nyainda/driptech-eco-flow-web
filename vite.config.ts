@@ -1,3 +1,4 @@
+import { VitePWA } from 'vite-plugin-pwa';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
@@ -11,6 +12,30 @@ export default defineConfig(({ mode }) => {
       png: { quality: 80 },
       jpeg: { quality: 80 },
       webp: { quality: 80, lossless: true },
+    }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg', 'robots.txt', 'sitemap.xml'],
+      manifest: {
+        name: 'DripTech EcoFlow',
+        short_name: 'DripTech',
+        description: 'Smart irrigation solutions for sustainable agriculture',
+        theme_color: '#10b981',
+        background_color: '#ffffff',
+        display: 'standalone',
+        start_url: '/',
+        icons: [
+          {
+            src: 'favicon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml'
+          }
+        ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,txt,xml}'],
+        cleanupOutdatedCaches: true
+      }
     }),
   ];
 

@@ -1,48 +1,15 @@
 {
-  "name": "DripTech EcoFlow - Professional Irrigation Solutions",
   "short_name": "DripTech",
-  "description": "Professional irrigation solutions and smart drip systems for sustainable farming in Kenya",
+  "name": "DripTech EcoFlow",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#10b981",
-  "background_color": "#ffffff",
-  "orientation": "portrait-primary",
-  "categories": ["business", "productivity", "utilities"],
-  "lang": "en-US",
-  "scope": "/",
-  "icons": [],
-  "screenshots": [
-    {
-      "src": "/screenshots/mobile-home.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/desktop-home.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Products",
-      "short_name": "Products",
-      "description": "Browse irrigation products",
-      "url": "/products"
-    },
-    {
-      "name": "Contact",
-      "short_name": "Contact",
-      "description": "Get in touch with us",
-      "url": "/contact"
-    },
-    {
-      "name": "News",
-      "short_name": "News",
-      "description": "Latest irrigation news",
-      "url": "/news"
-    }
-  ]
+  "background_color": "#ffffff"
 }
