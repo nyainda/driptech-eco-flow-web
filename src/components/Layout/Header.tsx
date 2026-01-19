@@ -437,7 +437,7 @@ const Header = () => {
       )}
 
       {/* Premium Top Bar */}
-      <div className="bg-background/95 backdrop-blur-md border-b border-border/50 hidden sm:block">
+      <div className="bg-background/95 backdrop-blur-md border-b border-border hidden sm:block">
         <div className="container mx-auto px-4">
           <div className="flex h-10 items-center justify-between text-xs font-medium text-muted-foreground">
             <div className="flex items-center gap-6">
@@ -478,7 +478,7 @@ const Header = () => {
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="bg-background/80 backdrop-blur-xl border-b border-border/50 sticky top-0 z-50">
+      <div className="bg-background/95 backdrop-blur-xl border-b border-border shadow-sm dark:shadow-none sticky top-0 z-50">
         <div className="container mx-auto px-4 flex h-20 items-center justify-between">
           {/* Logo */}
           <Link
@@ -612,7 +612,7 @@ const Header = () => {
                 className="w-full sm:w-[400px] p-0 bg-background/98 backdrop-blur-xl border-l shadow-2xl flex flex-col"
               >
                 {/* Mobile Header */}
-                <SheetHeader className="p-5 border-b border-border/50 text-left sm:text-left space-y-0">
+                <SheetHeader className="p-5 border-b border-border text-left sm:text-left space-y-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-blue-700 rounded-xl shadow-lg">
@@ -726,7 +726,7 @@ const Header = () => {
                 </div>
 
                 {/* Fixed Mobile Bottom Actions */}
-                <div className="p-6 border-t border-border/50 bg-background/95 backdrop-blur-md">
+                <div className="p-6 border-t border-border bg-background/95 backdrop-blur-md">
                   <div className="flex gap-3 mb-6">
                     <QuoteModal>
                       <Button variant="outline" className="flex-1 h-12 rounded-xl border-primary/20 text-primary font-bold">

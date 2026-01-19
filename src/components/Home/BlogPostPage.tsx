@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
+import DOMPurify from "dompurify";
 
 const BlogPostPage = () => {
   const { slug } = useParams();
@@ -180,7 +181,7 @@ const BlogPostPage = () => {
             {/* Content */}
             <div
               className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:text-accent bg-background p-6 rounded-xl shadow-md"
-              dangerouslySetInnerHTML={{ __html: post.content || "" }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }}
             />
 
             {/* Footer */}

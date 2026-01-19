@@ -110,30 +110,18 @@ export const useVisitorTracking = () => {
             created_at: new Date().toISOString(),
           };
 
-          // Direct insert with conflict handling
+          // Direct insert with conflict handling using upsert
           const { error } = await supabase
             .from("visitor_sessions")
-            .insert(sessionData);
+            .upsert(sessionData, { onConflict: "id", ignoreDuplicates: true });
 
           if (error) {
-            // If duplicate key error, session already exists - that's fine
-            if (
-              error.code === "23505" ||
-              error.message?.includes("duplicate key") ||
-              error.message?.includes("409")
-            ) {
-              // Silently continue - this is expected in development with React Strict Mode
-              isSessionInitialized.current = true;
-              return;
-            } else {
-              throw error;
-            }
+            throw error;
           }
 
           isSessionInitialized.current = true;
         } catch (error) {
-          console.log("Session initialization error:", error);
-          // Mark as initialized anyway to prevent infinite retries
+          // Silent failure for session initialization
           isSessionInitialized.current = true;
         }
       })();
@@ -213,7 +201,7 @@ export const useVisitorTracking = () => {
       const { error } = await supabase.from("page_views").insert(pageViewData);
 
       if (error) {
-        console.log("Page view tracking error:", error);
+        // Silent error
       }
 
       // Update current page tracking
@@ -229,7 +217,7 @@ export const useVisitorTracking = () => {
         // Ignore RPC errors
       }
     } catch (error) {
-      console.log("Page view tracking failed:", error);
+      // Silent error
     }
   };
 
@@ -265,10 +253,10 @@ export const useVisitorTracking = () => {
         .insert(interactionData);
 
       if (error) {
-        console.log("Product interaction tracking error:", error);
+        // Silent error
       }
     } catch (error) {
-      console.log("Product interaction tracking failed:", error);
+      // Silent error
     }
   };
 

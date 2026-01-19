@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { dataService } from "@/services/dataService";
 import {
   Calendar,
   MapPin,
@@ -55,9 +55,7 @@ interface Filters {
   location: string;
 }
 
-interface ProjectsProps {
-  supabaseClient?: typeof supabase;
-}
+
 
 interface FilterOptions {
   types: string[];
@@ -767,7 +765,7 @@ const ProjectsList = ({
 );
 
 // Main Component
-const Projects: React.FC<ProjectsProps> = ({ supabaseClient = supabase }) => {
+const Projects: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -787,13 +785,7 @@ const Projects: React.FC<ProjectsProps> = ({ supabaseClient = supabase }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const { data, error } = await supabaseClient
-          .from("projects")
-          .select("*")
-          .eq("featured", true)
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
+        const data = await dataService.getProjects({ featured: true });
         setProjects(data || []);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -804,7 +796,7 @@ const Projects: React.FC<ProjectsProps> = ({ supabaseClient = supabase }) => {
     };
 
     fetchProjects();
-  }, [supabaseClient]);
+  }, []);
 
   // Filter options
   const filterOptions = useMemo<FilterOptions>(
