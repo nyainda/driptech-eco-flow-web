@@ -111,12 +111,22 @@ const Services = () => {
               comprehensive irrigation services to ensure your system performs
               at its best.
             </p>
-            <QuoteModal>
-              <Button size="lg" className="mr-4">
-                Schedule Consultation
+            <div className="flex flex-wrap gap-4 justify-center">
+              <QuoteModal>
+                <Button size="lg">
+                  Schedule Consultation
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </QuoteModal>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => window.location.href = "/technician-services"}
+              >
+                Book a Technician
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-            </QuoteModal>
+            </div>
           </div>
         </section>
 

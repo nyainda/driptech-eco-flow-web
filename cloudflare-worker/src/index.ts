@@ -28,6 +28,9 @@ const CACHE_TIMES = {
     documents: 300,      // 5 minutes
     kitDocuments: 300,   // 5 minutes
     team: 300,           // 5 minutes
+    services: 300,       // 5 minutes
+    technicians: 300,    // 5 minutes
+    bookings: 60,        // 1 minute (more dynamic)
 };
 
 export default {
@@ -88,6 +91,13 @@ export default {
 
             // Team
             if (path === '/api/team') return handleTeam(env, url, ctx);
+
+            // Technician Services
+            if (path === '/api/service-categories') return handleServiceCategories(env, url, ctx);
+            if (path === '/api/service-packages') return handleServicePackages(env, url, ctx);
+            if (path === '/api/technicians') return handleTechnicians(env, url, ctx);
+            if (path === '/api/service-bookings') return handleServiceBookings(env, url, ctx);
+            if (path === '/api/service-reviews') return handleServiceReviews(env, url, ctx);
 
             // Sync endpoints (for Phase 3)
             if (request.method === 'POST' && url.pathname.startsWith('/api/sync/')) {
@@ -956,4 +966,177 @@ async function handleBlogPostCount(env: Env, ctx: ExecutionContext): Promise<Res
         `SELECT COUNT(*) as count FROM blog_posts WHERE published = 1`
     ).all();
     return cachedJsonResponse(results[0], CACHE_TIMES.blog, ctx);
+}
+
+// ============================================
+// TECHNICIAN SERVICES HANDLERS
+// ============================================
+
+async function handleServiceCategories(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
+    const active = url.searchParams.get('active');
+
+    let query = 'SELECT * FROM service_categories';
+    const params: any[] = [];
+
+    if (active === 'true') {
+        query += ' WHERE is_active = 1';
+    }
+
+    query += ' ORDER BY display_order ASC';
+
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+    const categories = results.map(parseServiceCategoryJson);
+
+    return cachedJsonResponse(categories, CACHE_TIMES.services, ctx);
+}
+
+async function handleServicePackages(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
+    const categoryId = url.searchParams.get('category_id');
+    const active = url.searchParams.get('active');
+
+    let query = 'SELECT * FROM service_packages WHERE 1=1';
+    const params: any[] = [];
+
+    if (categoryId) {
+        query += ' AND service_category_id = ?';
+        params.push(categoryId);
+    }
+
+    if (active === 'true') {
+        query += ' AND is_active = 1';
+    }
+
+    query += ' ORDER BY price ASC';
+
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+    const packages = results.map(parseServicePackageJson);
+
+    return cachedJsonResponse(packages, CACHE_TIMES.services, ctx);
+}
+
+async function handleTechnicians(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
+    const active = url.searchParams.get('active');
+    const specialization = url.searchParams.get('specialization');
+
+    let query = 'SELECT * FROM technicians WHERE 1=1';
+    const params: any[] = [];
+
+    if (active === 'true') {
+        query += ' AND is_active = 1';
+    }
+
+    if (specialization) {
+        query += ' AND specializations LIKE ?';
+        params.push(`%"${specialization}"%`);
+    }
+
+    query += ' ORDER BY rating DESC, total_jobs_completed DESC';
+
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+    const technicians = results.map(parseTechnicianJson);
+
+    return cachedJsonResponse(technicians, CACHE_TIMES.technicians, ctx);
+}
+
+async function handleServiceBookings(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
+    const customerEmail = url.searchParams.get('customer_email');
+    const status = url.searchParams.get('status');
+    const technicianId = url.searchParams.get('technician_id');
+
+    let query = 'SELECT * FROM service_bookings WHERE 1=1';
+    const params: any[] = [];
+
+    if (customerEmail) {
+        query += ' AND customer_email = ?';
+        params.push(customerEmail);
+    }
+
+    if (status) {
+        query += ' AND status = ?';
+        params.push(status);
+    }
+
+    if (technicianId) {
+        query += ' AND assigned_technician_id = ?';
+        params.push(technicianId);
+    }
+
+    query += ' ORDER BY created_at DESC';
+
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+    const bookings = results.map(parseServiceBookingJson);
+
+    return cachedJsonResponse(bookings, CACHE_TIMES.bookings, ctx);
+}
+
+async function handleServiceReviews(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
+    const technicianId = url.searchParams.get('technician_id');
+    const approved = url.searchParams.get('approved');
+
+    let query = 'SELECT * FROM service_reviews WHERE 1=1';
+    const params: any[] = [];
+
+    if (technicianId) {
+        query += ' AND technician_id = ?';
+        params.push(technicianId);
+    }
+
+    if (approved === 'true') {
+        query += ' AND is_approved = 1';
+    }
+
+    query += ' ORDER BY created_at DESC';
+
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+    const reviews = results.map(parseServiceReviewJson);
+
+    return cachedJsonResponse(reviews, CACHE_TIMES.services, ctx);
+}
+
+// ============================================
+// SERVICE JSON PARSERS
+// ============================================
+
+function parseServiceCategoryJson(row: any): any {
+    return {
+        ...row,
+        features: tryParseJson(row.features, []),
+        pricing_details: tryParseJson(row.pricing_details, {}),
+        is_active: Boolean(row.is_active),
+    };
+}
+
+function parseServicePackageJson(row: any): any {
+    return {
+        ...row,
+        included_services: tryParseJson(row.included_services, []),
+        is_featured: Boolean(row.is_featured),
+        is_active: Boolean(row.is_active),
+    };
+}
+
+function parseTechnicianJson(row: any): any {
+    return {
+        ...row,
+        specializations: tryParseJson(row.specializations, []),
+        certifications: tryParseJson(row.certifications, []),
+        service_areas: tryParseJson(row.service_areas, []),
+        availability_schedule: tryParseJson(row.availability_schedule, {}),
+        is_active: Boolean(row.is_active),
+    };
+}
+
+function parseServiceBookingJson(row: any): any {
+    return {
+        ...row,
+        location_coordinates: tryParseJson(row.location_coordinates, null),
+    };
+}
+
+function parseServiceReviewJson(row: any): any {
+    return {
+        ...row,
+        is_approved: Boolean(row.is_approved),
+        is_featured: Boolean(row.is_featured),
+    };
 }

@@ -265,6 +265,7 @@ const Header = () => {
         { title: "Installation", href: "/services/installation" },
         { title: "Maintenance", href: "/services/maintenance" },
         { title: "Training", href: "/services/training" },
+        { title: "Technician Services", href: "/technician-services" },
         { title: "Consultation", href: "/services/consultation" },
       ],
     },

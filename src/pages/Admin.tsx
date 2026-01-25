@@ -24,6 +24,7 @@ import {
   Newspaper,
   Database,
   MessageCircle,
+  Calendar,
 } from "lucide-react";
 import {
   AdminAuthProvider,
@@ -59,6 +60,8 @@ const AIProductResearch = lazy(() => import("@/components/Admin/AIProductResearc
 const NewsletterManagement = lazy(() => import("@/components/Admin/NewsletterManagement"));
 const PaymentIntegrations = lazy(() => import("@/components/Admin/PaymentIntegrations"));
 const WhatsAppManagement = lazy(() => import("@/components/Admin/WhatsAppManagement"));
+const TechnicianManagement = lazy(() => import("@/components/Admin/TechnicianManagement"));
+const ServiceBookingManagement = lazy(() => import("@/components/Admin/ServiceBookingManagement"));
 
 const AdminLoading = () => (
   <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -196,6 +199,18 @@ const AdminContent = () => {
       label: "Newsletter",
       icon: Mail,
       description: "Email subscriber management",
+    },
+    {
+      id: "technicians",
+      label: "Technicians",
+      icon: UsersIcon,
+      description: "Manage irrigation technicians",
+    },
+    {
+      id: "service-bookings",
+      label: "Service Bookings",
+      icon: Calendar,
+      description: "Manage service requests",
     },
     {
       id: "whatsapp",
@@ -356,6 +371,14 @@ const AdminContent = () => {
 
             <TabsContent value="sync" className="space-y-6">
               <SyncDashboard />
+            </TabsContent>
+
+            <TabsContent value="technicians" className="space-y-6">
+              <TechnicianManagement />
+            </TabsContent>
+
+            <TabsContent value="service-bookings" className="space-y-6">
+              <ServiceBookingManagement />
             </TabsContent>
 
             <TabsContent value="ai-research" className="space-y-6">

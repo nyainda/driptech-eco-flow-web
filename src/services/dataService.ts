@@ -581,7 +581,173 @@ export const dataService = {
         }
     },
 
+    // ============================================
+    // TECHNICIAN SERVICES
+    // ============================================
 
+    async getServiceCategories(filters?: { active?: boolean }) {
+        const fetchFromD1 = async () => {
+            const params = new URLSearchParams();
+            if (filters?.active) params.set('active', 'true');
+
+            const response = await fetch(`${WORKER_URL}/api/service-categories?${params}`);
+            if (!response.ok) throw new Error('Failed to fetch service categories from D1');
+            return await response.json();
+        };
+
+        const fetchFromSupabase = async () => {
+            let query = supabase.from('service_categories').select('*').order('display_order');
+            if (filters?.active) query = query.eq('is_active', true);
+
+            const { data, error } = await query;
+            if (error) throw error;
+            return data;
+        };
+
+        return await fetchWithFailover(fetchFromD1, fetchFromSupabase);
+    },
+
+    async getServicePackages(filters?: { categoryId?: string; active?: boolean }) {
+        const fetchFromD1 = async () => {
+            const params = new URLSearchParams();
+            if (filters?.categoryId) params.set('category_id', filters.categoryId);
+            if (filters?.active) params.set('active', 'true');
+
+            const response = await fetch(`${WORKER_URL}/api/service-packages?${params}`);
+            if (!response.ok) throw new Error('Failed to fetch service packages from D1');
+            return await response.json();
+        };
+
+        const fetchFromSupabase = async () => {
+            let query = supabase.from('service_packages').select('*, service_categories(name, slug)');
+            if (filters?.categoryId) query = query.eq('service_category_id', filters.categoryId);
+            if (filters?.active) query = query.eq('is_active', true);
+
+            const { data, error } = await query.order('price');
+            if (error) throw error;
+            return data;
+        };
+
+        return await fetchWithFailover(fetchFromD1, fetchFromSupabase);
+    },
+
+    async getTechnicians(filters?: { active?: boolean; specialization?: string }) {
+        const fetchFromD1 = async () => {
+            const params = new URLSearchParams();
+            if (filters?.active) params.set('active', 'true');
+            if (filters?.specialization) params.set('specialization', filters.specialization);
+
+            const response = await fetch(`${WORKER_URL}/api/technicians?${params}`);
+            if (!response.ok) throw new Error('Failed to fetch technicians from D1');
+            return await response.json();
+        };
+
+        const fetchFromSupabase = async () => {
+            let query = supabase.from('technicians').select('*').order('rating', { ascending: false });
+            if (filters?.active) query = query.eq('is_active', true);
+            if (filters?.specialization) {
+                query = query.contains('specializations', [filters.specialization]);
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+            return data;
+        };
+
+        return await fetchWithFailover(fetchFromD1, fetchFromSupabase);
+    },
+
+    async createServiceBooking(bookingData: {
+        customer_name: string;
+        customer_email: string;
+        customer_phone: string;
+        service_category_id: string;
+        service_type: string;
+        service_description?: string;
+        location_address: string;
+        farm_name?: string;
+        farm_size_acres?: number;
+        preferred_date?: string;
+        preferred_time_slot?: string;
+        special_requirements?: string;
+        priority?: string;
+    }) {
+        // Always use Supabase for creating bookings (write operations)
+        const { data, error } = await supabase
+            .from('service_bookings')
+            .insert([bookingData])
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    },
+
+    async getServiceBookings(filters?: {
+        customerEmail?: string;
+        status?: string;
+        technicianId?: string;
+    }) {
+        const fetchFromD1 = async () => {
+            const params = new URLSearchParams();
+            if (filters?.customerEmail) params.set('customer_email', filters.customerEmail);
+            if (filters?.status) params.set('status', filters.status);
+            if (filters?.technicianId) params.set('technician_id', filters.technicianId);
+
+            const response = await fetch(`${WORKER_URL}/api/service-bookings?${params}`);
+            if (!response.ok) throw new Error('Failed to fetch service bookings from D1');
+            return await response.json();
+        };
+
+        const fetchFromSupabase = async () => {
+            let query = supabase
+                .from('service_bookings')
+                .select(`
+                    *,
+                    service_categories(name, slug),
+                    technicians(full_name, phone, profile_image_url)
+                `)
+                .order('created_at', { ascending: false });
+
+            if (filters?.customerEmail) query = query.eq('customer_email', filters.customerEmail);
+            if (filters?.status) query = query.eq('status', filters.status);
+            if (filters?.technicianId) query = query.eq('assigned_technician_id', filters.technicianId);
+
+            const { data, error } = await query;
+            if (error) throw error;
+            return data;
+        };
+
+        return await fetchWithFailover(fetchFromD1, fetchFromSupabase);
+    },
+
+    async getServiceReviews(filters?: { technicianId?: string; approved?: boolean }) {
+        const fetchFromD1 = async () => {
+            const params = new URLSearchParams();
+            if (filters?.technicianId) params.set('technician_id', filters.technicianId);
+            if (filters?.approved) params.set('approved', 'true');
+
+            const response = await fetch(`${WORKER_URL}/api/service-reviews?${params}`);
+            if (!response.ok) throw new Error('Failed to fetch service reviews from D1');
+            return await response.json();
+        };
+
+        const fetchFromSupabase = async () => {
+            let query = supabase
+                .from('service_reviews')
+                .select('*, technicians(full_name)')
+                .order('created_at', { ascending: false });
+
+            if (filters?.technicianId) query = query.eq('technician_id', filters.technicianId);
+            if (filters?.approved) query = query.eq('is_approved', true);
+
+            const { data, error } = await query;
+            if (error) throw error;
+            return data;
+        };
+
+        return await fetchWithFailover(fetchFromD1, fetchFromSupabase);
+    },
 
 
 

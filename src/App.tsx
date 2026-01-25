@@ -37,6 +37,7 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Cookies = lazy(() => import("./pages/Cookies"));
 const IrrigationKits = lazy(() => import("@/pages/IrrigationKits"));
 const Careers = lazy(() => import("./pages/Careers"));
+const TechnicianServices = lazy(() => import("./pages/TechnicianServices"));
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,8 @@ const App = () => {
                   {/* Service routes */}
                   <Route path="/services" element={<Services />} />
                   <Route path="/services/:service" element={<Services />} />
+                  <Route path="/technician-services" element={<TechnicianServices />} />
+                  <Route path="/book-technician" element={<TechnicianServices />} />
 
                   {/* Support and info pages */}
                   <Route path="/installation-guides" element={<InstallationGuides />} />
