@@ -588,7 +588,7 @@ const Header = () => {
               </Button>
             </QuoteModal>
 
-            <Link to="/contact">
+            <Link to="/contact" className="hidden sm:block">
               <Button
                 variant="premium"
                 className="h-10 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 font-bold"
