@@ -1,15 +1,11 @@
 import { useState, useEffect } from "react";
 import {
-    ArrowRight,
     Phone,
     Mail,
     Droplets,
-    Award,
     Users,
     CheckCircle,
-    Play,
     Star,
-    Sprout,
     Leaf,
     Zap,
     ShieldCheck,
@@ -26,6 +22,16 @@ const HeroSection = () => {
     const [fadeProduct, setFadeProduct] = useState(true);
 
     const { products, loading: productsLoading } = useWhatsAppProducts();
+
+    const backgroundImages = [
+        "/hero-bg-new.jpg",
+        "/hero-bg-1.jpg",
+        "/hero-bg-2.jpg",
+        "/hero-bg-3.jpg",
+        "/hero-bg-4.jpg"
+    ];
+
+    const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
     const whatsappNumber = "254794494515";
     const openWhatsApp = () => {
@@ -57,6 +63,14 @@ const HeroSection = () => {
         },
     ];
 
+    // Rotate background images
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentBgIndex((prev) => (prev + 1) % backgroundImages.length);
+        }, 6000); // Change every 6 seconds
+        return () => clearInterval(interval);
+    }, []);
+
     // Rotate products
     useEffect(() => {
         if (products.length > 0) {
@@ -75,22 +89,23 @@ const HeroSection = () => {
 
     return (
         <section className="relative min-h-[90vh] flex items-center bg-slate-50 dark:bg-slate-950 font-sans overflow-hidden transition-colors duration-300">
-            {/* Background Image - Optimized for LCP */}
+            {/* Background Image Carousel - Optimized for LCP */}
             <div className="absolute inset-0 z-0">
-                <img
-                    srcSet="
-                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=75&w=640&auto=format&fit=crop 640w,
-                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=75&w=1024&auto=format&fit=crop 1024w,
-                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1920&auto=format&fit=crop 1920w,
-                        https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop 2070w
-                    "
-                    sizes="100vw"
-                    src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1920&auto=format&fit=crop"
-                    alt="Modern agricultural irrigation system in Kenya"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-10000 ease-in-out hover:scale-105"
-                    fetchpriority="high"
-                    loading="eager"
-                />
+                {backgroundImages.map((bg, index) => (
+                    <div
+                        key={bg}
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentBgIndex ? "opacity-100" : "opacity-0"
+                            }`}
+                    >
+                        <img
+                            src={bg}
+                            alt="Modern agricultural irrigation system in Kenya"
+                            className="w-full h-full object-cover transform scale-105 animate-subtle-zoom"
+                            fetchpriority={index === 0 ? "high" : "low"}
+                            loading={index === 0 ? "eager" : "lazy"}
+                        />
+                    </div>
+                ))}
                 {/* Professional Gradient Overlay - Adapts to Dark Mode */}
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40 dark:from-slate-950/95 dark:via-slate-950/90 dark:to-slate-950/60" />
             </div>
@@ -350,6 +365,13 @@ const HeroSection = () => {
         }
         .animate-fade-in-up {
           animation: fade-in-up 0.8s ease-out forwards;
+        }
+        .animate-subtle-zoom {
+            animation: subtle-zoom 20s infinite alternate;
+        }
+        @keyframes subtle-zoom {
+            from { transform: scale(1.0); }
+            to { transform: scale(1.1); }
         }
       `}</style>
         </section>

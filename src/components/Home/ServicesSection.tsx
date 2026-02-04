@@ -6,6 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -57,7 +66,23 @@ interface ComponentsData {
   included_services?: string[];
 }
 
-const ServicesSection = () => {
+interface ServicesSectionProps {
+  hideHero?: boolean;
+  hideMarquee?: boolean;
+  hideKits?: boolean;
+  hideProcess?: boolean;
+  hideCTA?: boolean;
+  compact?: boolean;
+}
+
+const ServicesSection = ({
+  hideHero = false,
+  hideMarquee = false,
+  hideKits = false,
+  hideProcess = false,
+  hideCTA = false,
+  compact = false,
+}: ServicesSectionProps = {}) => {
   // Fetch products for marquee using Cloudflare D1 service
   const { data: products = [] } = useQuery({
     queryKey: ["home-products-marquee"],
@@ -154,500 +179,648 @@ const ServicesSection = () => {
   };
 
   return (
-    <section className="py-24 bg-background border-t border-border relative overflow-hidden">
+    <section className={`${compact ? "py-8" : "py-24 border-t"} bg-background border-border relative overflow-hidden`}>
       <div className="container mx-auto px-4 relative z-10">
         {/* Hero Section */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 mb-6">
-            <Badge
-              variant="secondary"
-              className="px-4 py-2 text-sm font-medium bg-muted text-foreground border-border"
-            >
-              <Droplets className="w-4 h-4 mr-2" />
-              Our Solutions
-            </Badge>
-          </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground leading-tight">
-            Complete
-            <span className="block text-primary">Irrigation Solutions</span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Discover our professional irrigation kits and comprehensive services
-            designed for Kenyan farms to maximize productivity and efficiency.
-          </p>
-
-          {/* AI-Friendly Highlight Stats for GEO */}
-          <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-16">
-            {[
-              { label: "Water Saving", value: "up to 60%" },
-              { label: "Yield Increase", value: "30-50%" },
-              { label: "System Lifespan", value: "10+ Years" }
-            ].map(stat => (
-              <div key={stat.label} className="text-center p-4 bg-muted/50 rounded-2xl border border-border/50 min-w-[140px]">
-                <div className="text-2xl md:text-3xl font-black text-primary">{stat.value}</div>
-                <div className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Benefits Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center gap-2 text-left">
-                <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                <span className="text-sm font-medium text-foreground">
-                  {benefit}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Product Marquee Section */}
-        <div className="mb-24 overflow-hidden">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
-              Our Premium Products
-            </h3>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore our wide range of high-quality irrigation equipment and accessories.
+        {!hideHero && (
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center gap-2 mb-6">
+              <Badge
+                variant="secondary"
+                className="px-4 py-2 text-sm font-medium bg-muted text-foreground border-border"
+              >
+                <Droplets className="w-4 h-4 mr-2" />
+                Our Solutions
+              </Badge>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground leading-tight">
+              Complete
+              <span className="block text-primary">Irrigation Solutions</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Discover our professional irrigation kits and comprehensive services
+              designed for Kenyan farms to maximize productivity and efficiency.
             </p>
-          </div>
 
-          <div className="relative w-full">
-            {/* Gradient Masks */}
-            <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+            {/* AI-Friendly Highlight Stats for GEO */}
+            <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-16">
+              {[
+                { label: "Water Saving", value: "up to 60%" },
+                { label: "Yield Increase", value: "30-50%" },
+                { label: "System Lifespan", value: "10+ Years" }
+              ].map(stat => (
+                <div key={stat.label} className="text-center p-4 bg-muted/50 rounded-2xl border border-border/50 min-w-[140px]">
+                  <div className="text-2xl md:text-3xl font-black text-primary">{stat.value}</div>
+                  <div className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{stat.label}</div>
+                </div>
+              ))}
+            </div>
 
-            {/* Marquee Container */}
-            <div className="flex animate-marquee pause-on-hover gap-6 w-max py-4">
-              {marqueeProducts.map((product, index) => (
-                <Card
-                  key={`${product.id}-${index}`}
-                  className="w-[280px] md:w-[320px] flex-shrink-0 bg-background border-border hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
-                >
-                  <div className="aspect-[4/3] relative overflow-hidden bg-muted rounded-t-lg">
-                    {product.images && product.images.length > 0 ? (
-                      <img
-                        src={typeof product.images[0] === 'string' ? product.images[0] : ''}
-                        alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted/50">
-                        <Package className="w-12 h-12 opacity-20" />
-                      </div>
-                    )}
-                    <div className="absolute top-3 right-3">
-                      <Badge className="bg-white/90 text-black backdrop-blur-sm shadow-sm hover:bg-white">
-                        {product.category?.replace('_', ' ') || 'Product'}
-                      </Badge>
-                    </div>
-                    {product.in_stock === false && (
-                      <div className="absolute bottom-3 right-3">
-                        <Badge variant="destructive">Out of Stock</Badge>
-                      </div>
-                    )}
-                  </div>
-
-                  <CardContent className="p-5">
-                    <h4 className="font-bold text-lg mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-                      {product.name}
-                    </h4>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10">
-                      {product.description || "High-quality irrigation product."}
-                    </p>
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="font-bold text-primary text-lg">
-                        {product.price ? formatCurrency(product.price) : 'Contact us'}
-                      </span>
-                      <Button size="sm" variant="outline" className="rounded-full" asChild>
-                        <Link to="/products">View Details</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+            {/* Benefits Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12">
+              {benefits.map((benefit, index) => (
+                <div key={index} className="flex items-center gap-2 text-left">
+                  <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-sm font-medium text-foreground">
+                    {benefit}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Featured Kits Grid */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl md:text-3xl font-bold text-foreground">
-              Featured Irrigation Kits
-            </h3>
-            <Button
-              variant="outline"
-              className="border-border hover:bg-accent hover:text-accent-foreground"
-              asChild
-            >
-              <Link to="/irrigation-kits">
-                View All Kits
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-
-          {isLoading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading kits...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Unable to load kits. Please try again later.
+        {/* Product Marquee Section */}
+        {!hideMarquee && (
+          <div className="mb-24 overflow-hidden">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
+                Our Premium Products
+              </h3>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Explore our wide range of high-quality irrigation equipment and accessories.
               </p>
             </div>
-          ) : kits.length === 0 ? (
-            <div className="text-center py-12">
-              <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                No featured kits available at the moment.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {kits.map((kit) => {
-                const components = parseComponents(kit.components);
-                const images = parseImages(kit.images);
-                const imageUrl = images[0];
-                const hasPricingTiers =
-                  components.pricing_tiers &&
-                  components.pricing_tiers.length > 0;
 
-                return (
+            <div className="relative w-full">
+              {/* Gradient Masks */}
+              <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+
+              {/* Marquee Container */}
+              <div className="flex animate-marquee pause-on-hover gap-6 w-max py-4">
+                {marqueeProducts.map((product, index) => (
                   <Card
-                    key={kit.id}
-                    className="group relative overflow-hidden bg-background border-border hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:border-primary/50"
+                    key={`${product.id}-${index}`}
+                    className="w-[280px] md:w-[320px] flex-shrink-0 bg-background border-border hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
                   >
-                    {/* Image Section */}
-                    {images.length > 0 && (
-                      <div className="aspect-[4/3] relative overflow-hidden bg-muted">
-                        <AutoRotatingGallery
-                          images={images}
-                          interval={3000}
-                          autoPlay={true}
-                          className="w-full h-full"
+                    <div className="aspect-[4/3] relative overflow-hidden bg-muted rounded-t-lg">
+                      {product.images && product.images.length > 0 ? (
+                        <img
+                          src={typeof product.images[0] === 'string' ? product.images[0] : ''}
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent dark:from-background/70 dark:via-background/20 pointer-events-none" />
-                        {kit.featured && (
-                          <div className="absolute top-4 right-4 z-10">
-                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800 shadow-sm">
-                              <Star className="h-3 w-3 mr-1" />
-                              Featured
-                            </Badge>
-                          </div>
-                        )}
-                        <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-none">
-                          <div className="text-white dark:text-foreground">
-                            <h3 className="text-xl font-bold mb-1 drop-shadow-md">
-                              {kit.name}
-                            </h3>
-                            <Badge className="bg-white/90 text-gray-900 border-white/50 dark:bg-muted dark:text-muted-foreground dark:border-border shadow-sm">
-                              {kit.kit_type?.replace("_", " ") ||
-                                "Standard Kit"}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <CardContent className="p-6 space-y-4">
-                      {images.length === 0 && (
-                        <div className="flex items-center justify-between mb-4">
-                          <div>
-                            <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
-                              {kit.name}
-                            </h3>
-                            <Badge className="mt-1 capitalize bg-muted text-muted-foreground border-border">
-                              {kit.kit_type?.replace("_", " ") || "Standard"}
-                            </Badge>
-                          </div>
-                          {kit.featured && (
-                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800">
-                              <Star className="h-3 w-3 mr-1" />
-                              Featured
-                            </Badge>
-                          )}
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted/50">
+                          <Package className="w-12 h-12 opacity-20" />
                         </div>
                       )}
-
-                      {kit.description && (
-                        <p className="text-muted-foreground line-clamp-2">
-                          {kit.description}
-                        </p>
-                      )}
-
-                      {/* Specifications */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="text-center p-3 bg-muted/30 rounded-lg border border-border">
-                          <MapPin className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <div className="font-semibold text-foreground">
-                            {kit.coverage_area || "TBD"}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            acres
-                          </div>
-                        </div>
-                        <div className="text-center p-3 bg-muted/30 rounded-lg border border-border">
-                          <Droplets className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <div className="font-semibold text-foreground">
-                            {kit.water_efficiency_percentage || 0}%
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            efficiency
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Pricing Options */}
-                      <div>
-                        <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
-                          <TrendingUp className="h-4 w-4 text-primary" />
-                          Pricing Options
-                        </div>
-                        {hasPricingTiers ? (
-                          <div className="space-y-2">
-                            {components
-                              .pricing_tiers!.slice(0, 2)
-                              .map((tier, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center justify-between p-2 bg-muted/30 rounded border border-border"
-                                >
-                                  <div className="text-sm text-foreground">
-                                    {tier.name}
-                                  </div>
-                                  <div className="text-sm font-semibold text-primary">
-                                    {formatCurrency(tier.price)}
-                                  </div>
-                                </div>
-                              ))}
-                            {components.pricing_tiers!.length > 2 && (
-                              <div className="text-center text-xs text-muted-foreground">
-                                +{components.pricing_tiers!.length - 2} more
-                                options
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="text-center p-2 bg-muted/30 rounded border border-border">
-                            <div className="text-lg font-bold text-primary">
-                              {formatCurrency(kit.price)}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Complete kit price
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Included Components */}
-                      {components.main_components &&
-                        components.main_components.length > 0 && (
-                          <div>
-                            <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
-                              <Package className="h-4 w-4 text-primary" />
-                              Included Components
-                            </div>
-                            <ul className="space-y-1">
-                              {components.main_components
-                                .slice(0, 3)
-                                .map((component, index) => (
-                                  <li
-                                    key={index}
-                                    className="flex items-center gap-2 text-sm text-foreground"
-                                  >
-                                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                                    {component}
-                                  </li>
-                                ))}
-                              {components.main_components.length > 3 && (
-                                <li className="text-xs text-muted-foreground text-center">
-                                  +{components.main_components.length - 3} more
-                                  components
-                                </li>
-                              )}
-                            </ul>
-                          </div>
-                        )}
-
-                      {/* Included Services */}
-                      {components.included_services &&
-                        components.included_services.length > 0 && (
-                          <div>
-                            <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
-                              <Settings className="h-4 w-4 text-primary" />
-                              Included Services
-                            </div>
-                            <ul className="space-y-1">
-                              {components.included_services
-                                .slice(0, 3)
-                                .map((service, index) => (
-                                  <li
-                                    key={index}
-                                    className="flex items-center gap-2 text-sm text-foreground"
-                                  >
-                                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                                    {service}
-                                  </li>
-                                ))}
-                              {components.included_services.length > 3 && (
-                                <li className="text-xs text-muted-foreground text-center">
-                                  +{components.included_services.length - 3}{" "}
-                                  more services
-                                </li>
-                              )}
-                            </ul>
-                          </div>
-                        )}
-
-                      {/* Recommended Crops */}
-                      {kit.recommended_crops &&
-                        kit.recommended_crops.length > 0 && (
-                          <div>
-                            <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
-                              <Leaf className="h-4 w-4 text-primary" />
-                              Best for
-                            </div>
-                            <div className="flex flex-wrap gap-1">
-                              {kit.recommended_crops
-                                .slice(0, 3)
-                                .map((crop, index) => (
-                                  <Badge
-                                    key={index}
-                                    className="text-xs bg-muted text-muted-foreground border-border"
-                                  >
-                                    {crop}
-                                  </Badge>
-                                ))}
-                              {kit.recommended_crops.length > 3 && (
-                                <Badge className="text-xs bg-muted text-muted-foreground border-border">
-                                  +{kit.recommended_crops.length - 3} more
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                      {/* Badges */}
-                      <div className="flex flex-wrap gap-2">
-                        {kit.installation_complexity && (
-                          <Badge
-                            className={getComplexityColor(
-                              kit.installation_complexity,
-                            )}
-                          >
-                            {kit.installation_complexity} install
-                          </Badge>
-                        )}
-                        <Badge className="bg-muted text-muted-foreground border-border">
-                          <Shield className="h-3 w-3 mr-1" />
-                          {kit.warranty_months || 12}mo warranty
+                      <div className="absolute top-3 right-3">
+                        <Badge className="bg-white/90 text-black backdrop-blur-sm shadow-sm hover:bg-white">
+                          {product.category?.replace('_', ' ') || 'Product'}
                         </Badge>
+                      </div>
+                      {product.in_stock === false && (
+                        <div className="absolute bottom-3 right-3">
+                          <Badge variant="destructive">Out of Stock</Badge>
+                        </div>
+                      )}
+                    </div>
+
+                    <CardContent className="p-5">
+                      <h4 className="font-bold text-lg mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+                        {product.name}
+                      </h4>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10">
+                        {product.description || "High-quality irrigation product."}
+                      </p>
+                      <div className="flex items-center justify-between mt-auto">
+                        <span className="font-bold text-primary text-lg">
+                          {product.price ? formatCurrency(product.price) : 'Contact us'}
+                        </span>
+                        <Button size="sm" variant="outline" className="rounded-full" asChild>
+                          <Link to="/products">View Details</Link>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Featured Kits Grid */}
+        {!hideKits && (
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground">
+                Featured Irrigation Kits
+              </h3>
+              <Button
+                variant="outline"
+                className="border-border hover:bg-accent hover:text-accent-foreground"
+                asChild
+              >
+                <Link to="/irrigation-kits">
+                  View All Kits
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading kits...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Unable to load kits. Please try again later.
+                </p>
+              </div>
+            ) : kits.length === 0 ? (
+              <div className="text-center py-12">
+                <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  No featured kits available at the moment.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {kits.map((kit) => {
+                  const components = parseComponents(kit.components);
+                  const images = parseImages(kit.images);
+                  const imageUrl = images[0];
+                  const hasPricingTiers =
+                    components.pricing_tiers &&
+                    components.pricing_tiers.length > 0;
+
+                  return (
+                    <Dialog key={kit.id}>
+                      <Card
+                        className="group relative overflow-hidden bg-background border-border hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:border-primary/50 flex flex-col h-full"
+                      >
+                        {/* Image Section */}
+                        {images.length > 0 && (
+                          <div className="aspect-[4/3] relative overflow-hidden bg-muted">
+                            <AutoRotatingGallery
+                              images={images}
+                              interval={3000}
+                              autoPlay={true}
+                              className="w-full h-full"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent dark:from-background/70 dark:via-background/20 pointer-events-none" />
+                            {kit.featured && (
+                              <div className="absolute top-4 right-4 z-10">
+                                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800 shadow-sm">
+                                  <Star className="h-3 w-3 mr-1" />
+                                  Featured
+                                </Badge>
+                              </div>
+                            )}
+                            <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-none">
+                              <div className="text-white dark:text-foreground">
+                                <h3 className="text-xl font-bold mb-1 drop-shadow-md">
+                                  {kit.name}
+                                </h3>
+                                <Badge className="bg-white/90 text-gray-900 border-white/50 dark:bg-muted dark:text-muted-foreground dark:border-border shadow-sm">
+                                  {kit.kit_type?.replace("_", " ") ||
+                                    "Standard Kit"}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <CardContent className="p-6 space-y-4">
+                          {images.length === 0 && (
+                            <div className="flex items-center justify-between mb-4">
+                              <div>
+                                <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
+                                  {kit.name}
+                                </h3>
+                                <Badge className="mt-1 capitalize bg-muted text-muted-foreground border-border">
+                                  {kit.kit_type?.replace("_", " ") || "Standard"}
+                                </Badge>
+                              </div>
+                              {kit.featured && (
+                                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800">
+                                  <Star className="h-3 w-3 mr-1" />
+                                  Featured
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+
+                          {kit.description && (
+                            <p className="text-muted-foreground line-clamp-2">
+                              {kit.description}
+                            </p>
+                          )}
+
+                          {/* Specifications */}
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border">
+                              <MapPin className="h-5 w-5 text-primary mx-auto mb-1" />
+                              <div className="font-semibold text-foreground">
+                                {kit.coverage_area || "TBD"}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                acres
+                              </div>
+                            </div>
+                            <div className="text-center p-3 bg-muted/30 rounded-lg border border-border">
+                              <Droplets className="h-5 w-5 text-primary mx-auto mb-1" />
+                              <div className="font-semibold text-foreground">
+                                {kit.water_efficiency_percentage || 0}%
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                efficiency
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pricing Options */}
+                          <div>
+                            <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
+                              <TrendingUp className="h-4 w-4 text-primary" />
+                              Pricing Options
+                            </div>
+                            {hasPricingTiers ? (
+                              <div className="space-y-2">
+                                {components
+                                  .pricing_tiers!.slice(0, 2)
+                                  .map((tier, index) => (
+                                    <div
+                                      key={index}
+                                      className="flex items-center justify-between p-2 bg-muted/30 rounded border border-border"
+                                    >
+                                      <div className="text-sm text-foreground">
+                                        {tier.name}
+                                      </div>
+                                      <div className="text-sm font-semibold text-primary">
+                                        {formatCurrency(tier.price)}
+                                      </div>
+                                    </div>
+                                  ))}
+                                {components.pricing_tiers!.length > 2 && (
+                                  <div className="text-center text-xs text-muted-foreground">
+                                    +{components.pricing_tiers!.length - 2} more
+                                    options
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-center p-2 bg-muted/30 rounded border border-border">
+                                <div className="text-lg font-bold text-primary">
+                                  {formatCurrency(kit.price)}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  Complete kit price
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Included Components */}
+                          {components.main_components &&
+                            components.main_components.length > 0 && (
+                              <div>
+                                <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
+                                  <Package className="h-4 w-4 text-primary" />
+                                  Included Components
+                                </div>
+                                <ul className="space-y-1">
+                                  {components.main_components
+                                    .slice(0, 3)
+                                    .map((component, index) => (
+                                      <li
+                                        key={index}
+                                        className="flex items-center gap-2 text-sm text-foreground"
+                                      >
+                                        <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                                        {component}
+                                      </li>
+                                    ))}
+                                  {components.main_components.length > 3 && (
+                                    <li className="text-xs text-muted-foreground text-center">
+                                      +{components.main_components.length - 3} more
+                                      components
+                                    </li>
+                                  )}
+                                </ul>
+                              </div>
+                            )}
+
+                          {/* Included Services */}
+                          {components.included_services &&
+                            components.included_services.length > 0 && (
+                              <div>
+                                <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
+                                  <Settings className="h-4 w-4 text-primary" />
+                                  Included Services
+                                </div>
+                                <ul className="space-y-1">
+                                  {components.included_services
+                                    .slice(0, 3)
+                                    .map((service, index) => (
+                                      <li
+                                        key={index}
+                                        className="flex items-center gap-2 text-sm text-foreground"
+                                      >
+                                        <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                                        {service}
+                                      </li>
+                                    ))}
+                                  {components.included_services.length > 3 && (
+                                    <li className="text-xs text-muted-foreground text-center">
+                                      +{components.included_services.length - 3}{" "}
+                                      more services
+                                    </li>
+                                  )}
+                                </ul>
+                              </div>
+                            )}
+
+                          {/* Recommended Crops */}
+                          {kit.recommended_crops &&
+                            kit.recommended_crops.length > 0 && (
+                              <div>
+                                <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
+                                  <Leaf className="h-4 w-4 text-primary" />
+                                  Best for
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {kit.recommended_crops
+                                    .slice(0, 3)
+                                    .map((crop, index) => (
+                                      <Badge
+                                        key={index}
+                                        className="text-xs bg-muted text-muted-foreground border-border"
+                                      >
+                                        {crop}
+                                      </Badge>
+                                    ))}
+                                  {kit.recommended_crops.length > 3 && (
+                                    <Badge className="text-xs bg-muted text-muted-foreground border-border">
+                                      +{kit.recommended_crops.length - 3} more
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                          {/* Badges */}
+                          <div className="flex flex-wrap gap-2">
+                            {kit.installation_complexity && (
+                              <Badge
+                                className={getComplexityColor(
+                                  kit.installation_complexity,
+                                )}
+                              >
+                                {kit.installation_complexity} install
+                              </Badge>
+                            )}
+                            <Badge className="bg-muted text-muted-foreground border-border">
+                              <Shield className="h-3 w-3 mr-1" />
+                              {kit.warranty_months || 12}mo warranty
+                            </Badge>
+                          </div>
+
+                          <DialogTrigger asChild>
+                            <Button className="w-full mt-auto">
+                              View Details
+                            </Button>
+                          </DialogTrigger>
+                        </CardContent>
+                      </Card>
+
+                      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-full">
+                        <DialogHeader>
+                          <DialogTitle className="text-2xl font-bold flex items-center justify-between">
+                            {kit.name}
+                            <Badge className="ml-2 bg-primary text-primary-foreground">
+                              {kit.kit_type?.replace("_", " ") || "Standard Kit"}
+                            </Badge>
+                          </DialogTitle>
+                          <DialogDescription>
+                            {kit.description}
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                          {/* Left Column: Images & Key Specs */}
+                          <div className="space-y-6">
+                            <div className="aspect-video relative overflow-hidden rounded-lg border border-border bg-muted">
+                              {images.length > 0 ? (
+                                <AutoRotatingGallery
+                                  images={images}
+                                  interval={4000}
+                                  autoPlay={true}
+                                  className="w-full h-full"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                  <Package className="w-16 h-16 opacity-20" />
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="p-3 bg-muted/50 rounded-lg border border-border text-center">
+                                <MapPin className="h-5 w-5 text-primary mx-auto mb-1" />
+                                <div className="font-semibold">{kit.coverage_area || "TBD"} acres</div>
+                                <div className="text-xs text-muted-foreground">Coverage</div>
+                              </div>
+                              <div className="p-3 bg-muted/50 rounded-lg border border-border text-center">
+                                <Droplets className="h-5 w-5 text-primary mx-auto mb-1" />
+                                <div className="font-semibold">{kit.water_efficiency_percentage || 0}%</div>
+                                <div className="text-xs text-muted-foreground">Efficiency</div>
+                              </div>
+                              <div className="p-3 bg-muted/50 rounded-lg border border-border text-center">
+                                <Shield className="h-5 w-5 text-primary mx-auto mb-1" />
+                                <div className="font-semibold">{kit.warranty_months || 12} mo</div>
+                                <div className="text-xs text-muted-foreground">Warranty</div>
+                              </div>
+                              <div className="p-3 bg-muted/50 rounded-lg border border-border text-center">
+                                <Wrench className="h-5 w-5 text-primary mx-auto mb-1" />
+                                <div className="font-semibold capitalize">{kit.installation_complexity || "Medium"}</div>
+                                <div className="text-xs text-muted-foreground">Install</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right Column: Components, Services, Pricing */}
+                          <div className="space-y-6">
+
+                            {/* Pricing Tiers */}
+                            {hasPricingTiers ? (
+                              <div className="space-y-3">
+                                <h4 className="font-semibold flex items-center gap-2">
+                                  <TrendingUp className="h-4 w-4 text-primary" /> Pricing Options
+                                </h4>
+                                {components.pricing_tiers!.map((tier, idx) => (
+                                  <div key={idx} className="flex flex-col p-3 bg-muted/30 rounded-lg border border-border">
+                                    <div className="flex justify-between items-center mb-1">
+                                      <span className="font-medium">{tier.name}</span>
+                                      <span className="font-bold text-primary">{formatCurrency(tier.price)}</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">{tier.description}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="p-4 bg-muted/30 rounded-lg border border-border text-center">
+                                <div className="text-3xl font-bold text-primary mb-1">{formatCurrency(kit.price)}</div>
+                                <p className="text-sm text-muted-foreground">Complete Kit Price (Installation Included)</p>
+                              </div>
+                            )}
+
+                            {/* Components List */}
+                            {components.main_components && components.main_components.length > 0 && (
+                              <div>
+                                <h4 className="font-semibold flex items-center gap-2 mb-2">
+                                  <Package className="h-4 w-4 text-primary" /> What's Included
+                                </h4>
+                                <ul className="grid grid-cols-1 gap-1">
+                                  {components.main_components.map((comp, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-sm">
+                                      <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                                      <span>{comp}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Recommended Crops */}
+                            {kit.recommended_crops && kit.recommended_crops.length > 0 && (
+                              <div>
+                                <h4 className="font-semibold flex items-center gap-2 mb-2">
+                                  <Leaf className="h-4 w-4 text-primary" /> Recommended Crops
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {kit.recommended_crops.map((crop, i) => (
+                                    <Badge key={i} variant="secondary">{crop}</Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <DialogFooter className="mt-6 sm:justify-center">
+                          <Button size="lg" className="w-full sm:w-auto px-8" asChild>
+                            <Link to="/contact">Request Custom Quote</Link>
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  );
+                })}
+              </div>
+            )}
+
+            {compact && !hideKits && (
+              <div className="text-center mt-8">
+                <Link to="/irrigation-kits">
+                  <Button variant="outline" className="rounded-full px-6">
+                    View All Kits <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Process Section */}
-        <div className="bg-muted/30 rounded-2xl p-8 md:p-12 border border-border">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
-              Our Proven Process
-            </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We follow a systematic approach to deliver and support your
-              irrigation kit and services for optimal results.
-            </p>
-          </div>
+        {!hideProcess && (
+          <div className="bg-muted/30 rounded-2xl p-8 md:p-12 border border-border">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
+                Our Proven Process
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                We follow a systematic approach to deliver and support your
+                irrigation kit and services for optimal results.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Consultation",
-                desc: "Free site visit and needs assessment",
-              },
-              {
-                step: "02",
-                title: "Design",
-                desc: "Custom kit and system design",
-              },
-              {
-                step: "03",
-                title: "Installation",
-                desc: "Professional setup and testing",
-              },
-              {
-                step: "04",
-                title: "Support",
-                desc: "Ongoing maintenance and optimization",
-              },
-            ].map((process, index) => (
-              <div key={index} className="text-center relative">
-                <div className="w-16 h-16 bg-muted text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
-                  {process.step}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {[
+                {
+                  step: "01",
+                  title: "Consultation",
+                  desc: "Free site visit and needs assessment",
+                },
+                {
+                  step: "02",
+                  title: "Design",
+                  desc: "Custom kit and system design",
+                },
+                {
+                  step: "03",
+                  title: "Installation",
+                  desc: "Professional setup and testing",
+                },
+                {
+                  step: "04",
+                  title: "Support",
+                  desc: "Ongoing maintenance and optimization",
+                },
+              ].map((process, index) => (
+                <div key={index} className="text-center relative">
+                  <div className="w-16 h-16 bg-muted text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                    {process.step}
+                  </div>
+                  <h4 className="text-lg font-semibold mb-2 text-foreground">
+                    {process.title}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">{process.desc}</p>
+                  {index < 3 && (
+                    <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-border transform -translate-x-1/2"></div>
+                  )}
                 </div>
-                <h4 className="text-lg font-semibold mb-2 text-foreground">
-                  {process.title}
-                </h4>
-                <p className="text-sm text-muted-foreground">{process.desc}</p>
-                {index < 3 && (
-                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-border transform -translate-x-1/2"></div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* CTA */}
-        <div className="text-center mt-16">
-          <h3 className="text-2xl font-bold mb-4 text-foreground">
-            Ready to Get Started?
-          </h3>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Schedule a free consultation to find the perfect irrigation kit and
-            services for your farm.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
-              asChild
-            >
-              <Link to="/contact">
-                Schedule Free Consultation
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-border hover:bg-accent hover:text-accent-foreground"
-              asChild
-            >
-              <Link to="/irrigation-kits">Explore All Kits</Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-border hover:bg-accent hover:text-accent-foreground"
-              asChild
-            >
-              <Link to="/services">View All Services</Link>
-            </Button>
+        {!hideCTA && (
+          <div className="text-center mt-16">
+            <h3 className="text-2xl font-bold mb-4 text-foreground">
+              Ready to Get Started?
+            </h3>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Schedule a free consultation to find the perfect irrigation kit and
+              services for your farm.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground"
+                asChild
+              >
+                <Link to="/contact">
+                  Schedule Free Consultation
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-border hover:bg-accent hover:text-accent-foreground"
+                asChild
+              >
+                <Link to="/irrigation-kits">Explore All Kits</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-border hover:bg-accent hover:text-accent-foreground"
+                asChild
+              >
+                <Link to="/services">View All Services</Link>
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

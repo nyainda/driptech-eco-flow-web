@@ -1,7 +1,5 @@
 import HeroSection from "@/components/Home/HeroSection";
-import ServicesSection from "@/components/Home/ServicesSection";
-import ProductsShowcase from "@/components/Home/ProductsShowcase";
-import ProjectsSection from "@/components/Home/ProjectsSection";
+import HomeOfferings from "@/components/Home/HomeOfferings";
 import BlogSection from "@/components/Home/BlogSection";
 import SuccessStoriesSection from "@/components/Home/SuccessStoriesSection";
 import TeamSection from "@/components/Home/TeamSection";
@@ -20,15 +18,7 @@ const Home = () => {
       <HeroSection />
 
       <ScrollReveal>
-        <ServicesSection />
-      </ScrollReveal>
-
-      <ScrollReveal delay={200}>
-        <ProductsShowcase />
-      </ScrollReveal>
-
-      <ScrollReveal>
-        <ProjectsSection />
+        <HomeOfferings />
       </ScrollReveal>
 
       <ScrollReveal delay={200}>

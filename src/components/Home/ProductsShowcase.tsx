@@ -75,14 +75,29 @@ interface Product {
   variants?: Variant[];
 }
 
-const ProductsShowcase = () => {
+
+interface ProductsShowcaseProps {
+  hideHeader?: boolean;
+  hideStats?: boolean;
+  hideBenefits?: boolean;
+  limit?: number;
+  compact?: boolean;
+}
+
+const ProductsShowcase = ({
+  hideHeader = false,
+  hideStats = false,
+  hideBenefits = false,
+  limit = 6,
+  compact = false,
+}: ProductsShowcaseProps = {}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await dataService.getProducts({ featured: true, limit: 6 });
+        const data = await dataService.getProducts({ featured: true, limit });
         console.log("Fetched products:", data);
         setProducts(data || []);
       } catch (error) {
@@ -652,43 +667,47 @@ const ProductsShowcase = () => {
   };
 
   return (
-    <section className="py-24 bg-background border-t border-border relative overflow-hidden">
+    <section className={`${compact ? "py-8" : "py-24 border-t"} bg-background border-border relative overflow-hidden`}>
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
-        <div className="text-center max-w-5xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 mb-8">
-            <Badge
-              variant="secondary"
-              className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
-            >
-              <Package className="w-4 h-4 mr-2" />
-              Product Innovation
-            </Badge>
+        {!hideHeader && (
+          <div className="text-center max-w-5xl mx-auto mb-20">
+            <div className="inline-flex items-center gap-2 mb-8">
+              <Badge
+                variant="secondary"
+                className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
+              >
+                <Package className="w-4 h-4 mr-2" />
+                Product Innovation
+              </Badge>
+            </div>
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-[0.9] tracking-tight">
+              <span className="block mb-2">Complete</span>
+              <span className="block text-primary">Irrigation Solutions</span>
+            </h2>
+            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+              Complete range of irrigation materials: driplines with 15cm, 20cm, and 30cm spacing, sprinkler systems, irrigation pipes, filters, water pumps, fittings, emitters, valves, and pressure regulators. Everything you need for efficient farm irrigation that transforms agriculture.
+            </p>
           </div>
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-[0.9] tracking-tight">
-            <span className="block mb-2">Complete</span>
-            <span className="block text-primary">Irrigation Solutions</span>
-          </h2>
-          <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            Complete range of irrigation materials: driplines with 15cm, 20cm, and 30cm spacing, sprinkler systems, irrigation pipes, filters, water pumps, fittings, emitters, valves, and pressure regulators. Everything you need for efficient farm irrigation that transforms agriculture.
-          </p>
-        </div>
+        )}
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="text-center p-6 rounded-2xl bg-background border border-border hover:border-primary/20 transition-colors duration-300"
-            >
-              <stat.icon className="h-8 w-8 text-primary mx-auto mb-3" />
-              <div className="text-2xl font-bold text-foreground mb-1">
-                {stat.number}
+        {!hideStats && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="text-center p-6 rounded-2xl bg-background border border-border hover:border-primary/20 transition-colors duration-300"
+              >
+                <stat.icon className="h-8 w-8 text-primary mx-auto mb-3" />
+                <div className="text-2xl font-bold text-foreground mb-1">
+                  {stat.number}
+                </div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
               </div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
@@ -749,54 +768,72 @@ const ProductsShowcase = () => {
         </div>
 
         {/* Benefits Section */}
-        <div className="bg-muted/30 rounded-3xl p-8 md:p-16 border border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <div className="text-center mb-16">
-              <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Why Choose
-                <span className="text-primary"> DripTech?</span>
-              </h3>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Proven results that make a difference to your bottom line and
-                environmental impact
-              </p>
-            </div>
+        {!hideBenefits && (
+          <div className="bg-muted/30 rounded-3xl p-8 md:p-16 border border-border relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="text-center mb-16">
+                <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                  Why Choose
+                  <span className="text-primary"> DripTech?</span>
+                </h3>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  Proven results that make a difference to your bottom line and
+                  environmental impact
+                </p>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {benefits.map((benefit, index) => (
-                <div key={index} className="text-center space-y-6 group">
-                  <div className="inline-flex p-6 bg-muted rounded-2xl group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
-                    <benefit.icon className="h-10 w-10 text-primary" />
-                  </div>
-                  <div>
-                    <div className="text-4xl font-bold text-foreground mb-2">
-                      {benefit.stat}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="text-center space-y-6 group">
+                    <div className="inline-flex p-6 bg-muted rounded-2xl group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
+                      <benefit.icon className="h-10 w-10 text-primary" />
                     </div>
-                    <h4 className="text-xl font-bold text-foreground mb-3">
-                      {benefit.title}
-                    </h4>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {benefit.description}
-                    </p>
+                    <div>
+                      <div className="text-4xl font-bold text-foreground mb-2">
+                        {benefit.stat}
+                      </div>
+                      <h4 className="text-xl font-bold text-foreground mb-3">
+                        {benefit.title}
+                      </h4>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {benefit.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            {/* CTA */}
-            <div className="text-center mt-16">
-              <Link to="/products">
-                <Button
-                  size="lg"
-                  className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
-                >
-                  Explore All Products
-                  <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
+              {/* CTA */}
+              <div className="text-center mt-16">
+                <Link to="/products">
+                  <Button
+                    size="lg"
+                    className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+                  >
+                    Explore All Products
+                    <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+
+        {/* Compact CTA */}
+        {compact && (
+          <div className="text-center mt-12">
+            <Link to="/products">
+              <Button
+                variant="outline"
+                className="px-8 py-6 text-lg rounded-full border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+              >
+                Explore All Products
+                <ArrowRight className="ml-3 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Custom scrollbar styles */}

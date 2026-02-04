@@ -35,7 +35,18 @@ interface Project {
   quote_id: string | null;
 }
 
-const ProjectsSection = () => {
+
+interface ProjectsSectionProps {
+  hideHeader?: boolean;
+  hideCTA?: boolean;
+  compact?: boolean;
+}
+
+const ProjectsSection = ({
+  hideHeader = false,
+  hideCTA = false,
+  compact = false,
+}: ProjectsSectionProps = {}) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -144,28 +155,30 @@ const ProjectsSection = () => {
   }
 
   return (
-    <section className="py-24 bg-background border-t border-border relative">
+    <section className={`${compact ? "py-8" : "py-24 border-t"} bg-background border-border relative`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center max-w-4xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 mb-8">
-            <Badge
-              variant="secondary"
-              className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
-            >
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Featured Projects
-            </Badge>
+        {!hideHeader && (
+          <div className="text-center max-w-4xl mx-auto mb-20">
+            <div className="inline-flex items-center gap-2 mb-8">
+              <Badge
+                variant="secondary"
+                className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Featured Projects
+              </Badge>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 lg:mb-8 leading-tight tracking-tight">
+              <span className="block mb-1 sm:mb-2">Empowering Kenyan Farms,</span>
+              <span className="block text-primary">Transforming Agriculture</span>
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              Discover how our innovative irrigation solutions, rooted in Kenyan
+              expertise, enable farmers and businesses to thrive sustainably.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 lg:mb-8 leading-tight tracking-tight">
-            <span className="block mb-1 sm:mb-2">Empowering Kenyan Farms,</span>
-            <span className="block text-primary">Transforming Agriculture</span>
-          </h2>
-          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Discover how our innovative irrigation solutions, rooted in Kenyan
-            expertise, enable farmers and businesses to thrive sustainably.
-          </p>
-        </div>
+        )}
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -290,17 +303,19 @@ const ProjectsSection = () => {
         </div>
 
         {/* CTA */}
-        <div className="text-center">
-          <Link to="/projects">
-            <Button
-              size="lg"
-              className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
-            >
-              View All Projects
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
+        {!hideCTA && (
+          <div className="text-center">
+            <Link to="/projects">
+              <Button
+                size="lg"
+                className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+              >
+                View All Projects
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
