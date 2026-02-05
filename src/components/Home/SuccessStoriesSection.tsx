@@ -47,7 +47,7 @@ const SuccessStoriesSection = () => {
         </div>
 
         {/* Stories Grid */}
-        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12 overflow-x-auto pb-6 sm:pb-0 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12 overflow-x-auto pb-6 sm:pb-0 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
           {loading ? (
             // Loading skeleton
             Array.from({ length: 3 }).map((_, index) => (
@@ -72,7 +72,7 @@ const SuccessStoriesSection = () => {
 
               <Card
                 key={story.id}
-                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 bg-background border-border shadow-md sm:shadow-lg overflow-hidden min-w-[280px] sm:min-w-0 snap-center"
+                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 bg-background border-border shadow-md sm:shadow-lg overflow-hidden w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] sm:min-w-0 flex-shrink-0 snap-center"
               >
                 <CardContent className="p-0">
                   {/* Image */}

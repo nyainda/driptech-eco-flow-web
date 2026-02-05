@@ -43,14 +43,15 @@ const queryClient = new QueryClient();
 
 const App = () => {
   // Monitor Web Vitals in production
-  useWebVitals((metric) => {
-    // Log to console in development
-    if (import.meta.env.DEV) {
-      console.log(`📊 ${metric.name}:`, metric);
-    }
-    // In production, you could send to analytics
-    // analytics.send(metric);
-  });
+  // Temporarily disabled due to React hook error
+  // useWebVitals((metric) => {
+  //   // Log to console in development
+  //   if (import.meta.env.DEV) {
+  //     console.log(`📊 ${metric.name}:`, metric);
+  //   }
+  //   // In production, you could send to analytics
+  //   // analytics.send(metric);
+  // });
 
   return (
     <HelmetProvider> {/* Add HelmetProvider here */}

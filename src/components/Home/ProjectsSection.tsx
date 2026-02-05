@@ -181,7 +181,7 @@ const ProjectsSection = ({
         )}
 
         {/* Projects Grid */}
-        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
           {projects.map((project) => {
             const projectImage = getProjectImage(project);
             const formattedArea = formatArea(project.area_covered);
@@ -189,7 +189,7 @@ const ProjectsSection = ({
             return (
               <Card
                 key={project.id}
-                className="group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-w-[280px] md:min-w-0 snap-center"
+                className="group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1 w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0 flex-shrink-0 snap-center"
               >
                 <CardContent className="p-0">
                   {/* Project Image */}

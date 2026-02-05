@@ -341,7 +341,7 @@ const ServicesSection = ({
                 </p>
               </div>
             ) : (
-              <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
+              <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
                 {kits.map((kit) => {
                   const components = parseComponents(kit.components);
                   const images = parseImages(kit.images);
@@ -353,7 +353,7 @@ const ServicesSection = ({
                   return (
                     <Dialog key={kit.id}>
                       <Card
-                        className="group relative overflow-hidden bg-background border-border hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:border-primary/50 flex flex-col h-full min-w-[280px] md:min-w-0 snap-center"
+                        className="group relative overflow-hidden bg-background border-border hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:border-primary/50 flex flex-col h-full w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0 flex-shrink-0 snap-center"
                       >
                         {/* Image Section */}
                         {images.length > 0 && (
