@@ -87,11 +87,11 @@ const BlogSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
           {blogPosts.map((post) => (
             <Card
               key={post.id}
-              className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-background border-border"
+              className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-background border-border min-w-[280px] md:min-w-0 snap-center"
             >
               {post.featured_image_url && (
                 <div className="relative aspect-video overflow-hidden">
@@ -139,12 +139,12 @@ const BlogSection = () => {
                   {post.title}
                 </CardTitle>
 
-                <CardDescription className="text-base line-clamp-3 flex-1 text-muted-foreground">
+                <CardDescription className="text-base line-clamp-3 flex-1 text-muted-foreground hidden md:block">
                   {getExcerpt(post)}
                 </CardDescription>
 
                 {post.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
+                  <div className="flex flex-wrap gap-2 mt-4 hidden md:flex">
                     {post.tags.slice(0, 3).map((tag) => (
                       <Badge
                         key={tag}

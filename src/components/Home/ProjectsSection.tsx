@@ -181,7 +181,7 @@ const ProjectsSection = ({
         )}
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
           {projects.map((project) => {
             const projectImage = getProjectImage(project);
             const formattedArea = formatArea(project.area_covered);
@@ -189,7 +189,7 @@ const ProjectsSection = ({
             return (
               <Card
                 key={project.id}
-                className="group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-w-[280px] md:min-w-0 snap-center"
               >
                 <CardContent className="p-0">
                   {/* Project Image */}
@@ -232,7 +232,7 @@ const ProjectsSection = ({
                     </h3>
 
                     {project.location && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                      <div className="flex items-center gap-2 text-muted-foreground hidden md:flex">
                         <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
                         <span className="text-sm truncate">
                           {project.location}
@@ -241,7 +241,7 @@ const ProjectsSection = ({
                     )}
 
                     {project.completion_date && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                      <div className="flex items-center gap-2 text-muted-foreground hidden md:flex">
                         <Calendar className="h-4 w-4 flex-shrink-0 text-primary" />
                         <span className="text-sm">
                           Completed:{" "}
@@ -254,7 +254,7 @@ const ProjectsSection = ({
 
                     {/* Project Stats */}
                     {(formattedArea || project.water_saved) && (
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-3 hidden md:grid">
                         {formattedArea && (
                           <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
                             <div className="text-lg font-bold text-foreground">
@@ -279,7 +279,7 @@ const ProjectsSection = ({
                     )}
 
                     {project.yield_improvement && (
-                      <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
+                      <div className="text-center p-4 bg-muted/30 rounded-xl border border-border hidden md:block">
                         <div className="flex items-center justify-center gap-1 text-lg font-bold text-foreground">
                           <TrendingUp className="h-4 w-4 text-primary" />+
                           {project.yield_improvement}%
@@ -291,7 +291,7 @@ const ProjectsSection = ({
                     )}
 
                     {project.testimonial && (
-                      <blockquote className="text-sm text-muted-foreground italic border-l-4 border-border pl-3 py-1 line-clamp-3">
+                      <blockquote className="text-sm text-muted-foreground italic border-l-4 border-border pl-3 py-1 line-clamp-3 hidden md:block">
                         "{project.testimonial}"
                       </blockquote>
                     )}

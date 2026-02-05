@@ -273,7 +273,7 @@ const ProductsShowcase = ({
     const priceRange = getPriceRange();
 
     return (
-      <Card className="group relative hover:shadow-xl transition-all duration-300 bg-background border-border">
+      <Card className="group relative hover:shadow-xl transition-all duration-300 bg-background border-border min-w-[280px] md:min-w-0 snap-center">
         <CardContent className="p-0 relative">
           {/* Product Image */}
           <div className="relative overflow-hidden">
@@ -296,7 +296,7 @@ const ProductsShowcase = ({
             {/* Floating badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {product.featured && (
-                <Badge className="bg-muted text-foreground border-border">
+                <Badge className="bg-muted text-foreground border-border hidden sm:flex">
                   <Star className="h-3 w-3 mr-1" fill="currentColor" />
                   Featured
                 </Badge>
@@ -319,8 +319,9 @@ const ProductsShowcase = ({
             <div className="absolute top-4 right-4">
               {displayStock ? (
                 <Badge className="bg-muted text-foreground border-border">
-                  <div className="h-2 w-2 bg-primary rounded-full mr-2 animate-pulse" />
-                  In Stock
+                  <div className="h-2 w-2 bg-primary rounded-full mr-1 md:mr-2 animate-pulse" />
+                  <span className="hidden sm:inline">In Stock</span>
+                  <span className="sm:hidden">Stock</span>
                 </Badge>
               ) : (
                 <Badge className="bg-muted text-foreground border-border">
@@ -372,8 +373,8 @@ const ProductsShowcase = ({
               )}
             </div>
 
-            {/* Description */}
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+            {/* Description - Hidden on mobile */}
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 hidden md:block">
               {product.description ||
                 "Advanced irrigation solution designed for modern agriculture and efficient water management."}
             </p>
@@ -466,9 +467,9 @@ const ProductsShowcase = ({
               </div>
             )}
 
-            {/* Features */}
+            {/* Features - Hidden on mobile */}
             {product.features && product.features.length > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-3 hidden md:block">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary">
                     <Check
@@ -513,9 +514,9 @@ const ProductsShowcase = ({
               </div>
             )}
 
-            {/* Applications */}
+            {/* Applications - Hidden on mobile */}
             {product.applications && product.applications.length > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-3 hidden md:block">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary">
                     <Target
@@ -710,7 +711,7 @@ const ProductsShowcase = ({
         )}
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12 md:mb-24 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
               <Card

@@ -341,7 +341,7 @@ const ServicesSection = ({
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
                 {kits.map((kit) => {
                   const components = parseComponents(kit.components);
                   const images = parseImages(kit.images);
@@ -353,7 +353,7 @@ const ServicesSection = ({
                   return (
                     <Dialog key={kit.id}>
                       <Card
-                        className="group relative overflow-hidden bg-background border-border hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:border-primary/50 flex flex-col h-full"
+                        className="group relative overflow-hidden bg-background border-border hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:border-primary/50 flex flex-col h-full min-w-[280px] md:min-w-0 snap-center"
                       >
                         {/* Image Section */}
                         {images.length > 0 && (
@@ -408,13 +408,13 @@ const ServicesSection = ({
                           )}
 
                           {kit.description && (
-                            <p className="text-muted-foreground line-clamp-2">
+                            <p className="text-muted-foreground line-clamp-2 hidden md:block">
                               {kit.description}
                             </p>
                           )}
 
                           {/* Specifications */}
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-2 gap-4 hidden md:grid">
                             <div className="text-center p-3 bg-muted/30 rounded-lg border border-border">
                               <MapPin className="h-5 w-5 text-primary mx-auto mb-1" />
                               <div className="font-semibold text-foreground">
@@ -436,7 +436,7 @@ const ServicesSection = ({
                           </div>
 
                           {/* Pricing Options */}
-                          <div>
+                          <div className="hidden md:block">
                             <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
                               <TrendingUp className="h-4 w-4 text-primary" />
                               Pricing Options
@@ -480,7 +480,7 @@ const ServicesSection = ({
                           {/* Included Components */}
                           {components.main_components &&
                             components.main_components.length > 0 && (
-                              <div>
+                              <div className="hidden md:block">
                                 <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
                                   <Package className="h-4 w-4 text-primary" />
                                   Included Components
@@ -510,7 +510,7 @@ const ServicesSection = ({
                           {/* Included Services */}
                           {components.included_services &&
                             components.included_services.length > 0 && (
-                              <div>
+                              <div className="hidden md:block">
                                 <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
                                   <Settings className="h-4 w-4 text-primary" />
                                   Included Services
@@ -540,7 +540,7 @@ const ServicesSection = ({
                           {/* Recommended Crops */}
                           {kit.recommended_crops &&
                             kit.recommended_crops.length > 0 && (
-                              <div>
+                              <div className="hidden md:block">
                                 <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
                                   <Leaf className="h-4 w-4 text-primary" />
                                   Best for
@@ -566,7 +566,7 @@ const ServicesSection = ({
                             )}
 
                           {/* Badges */}
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-2 mt-auto">
                             {kit.installation_complexity && (
                               <Badge
                                 className={getComplexityColor(
