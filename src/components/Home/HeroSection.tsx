@@ -24,11 +24,36 @@ const HeroSection = () => {
     const { products, loading: productsLoading } = useWhatsAppProducts();
 
     const backgroundImages = [
-        "/hero-bg-new.jpg",
-        "/hero-bg-1.jpg",
-        "/hero-bg-2.jpg",
-        "/hero-bg-3.jpg",
-        "/hero-bg-4.jpg"
+        {
+            mobile: "/hero-bg-new-mobile.webp",
+            tablet: "/hero-bg-new-tablet.webp",
+            desktop: "/hero-bg-new-desktop.webp",
+            fallback: "/hero-bg-new.jpg"
+        },
+        {
+            mobile: "/hero-bg-1-mobile.webp",
+            tablet: "/hero-bg-1-tablet.webp",
+            desktop: "/hero-bg-1-desktop.webp",
+            fallback: "/hero-bg-1.jpg"
+        },
+        {
+            mobile: "/hero-bg-2-mobile.webp",
+            tablet: "/hero-bg-2-tablet.webp",
+            desktop: "/hero-bg-2-desktop.webp",
+            fallback: "/hero-bg-2.jpg"
+        },
+        {
+            mobile: "/hero-bg-3-mobile.webp",
+            tablet: "/hero-bg-3-tablet.webp",
+            desktop: "/hero-bg-3-desktop.webp",
+            fallback: "/hero-bg-3.jpg"
+        },
+        {
+            mobile: "/hero-bg-4-mobile.webp",
+            tablet: "/hero-bg-4-tablet.webp",
+            desktop: "/hero-bg-4-desktop.webp",
+            fallback: "/hero-bg-4.jpg"
+        }
     ];
 
     const [currentBgIndex, setCurrentBgIndex] = useState(0);
@@ -89,21 +114,43 @@ const HeroSection = () => {
 
     return (
         <section className="relative min-h-[90vh] flex items-center bg-slate-50 dark:bg-slate-950 font-sans overflow-hidden transition-colors duration-300">
-            {/* Background Image Carousel - Optimized for LCP */}
+            {/* Background Image Carousel - Optimized for LCP with WebP and Responsive Images */}
             <div className="absolute inset-0 z-0">
                 {backgroundImages.map((bg, index) => (
                     <div
-                        key={bg}
+                        key={index}
                         className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentBgIndex ? "opacity-100" : "opacity-0"
                             }`}
                     >
-                        <img
-                            src={bg}
-                            alt="Modern agricultural irrigation system in Kenya"
-                            className="w-full h-full object-cover transform scale-105 animate-subtle-zoom"
-                            fetchpriority={index === 0 ? "high" : "low"}
-                            loading={index === 0 ? "eager" : "lazy"}
-                        />
+                        <picture>
+                            {/* Mobile: 640px wide WebP */}
+                            <source
+                                media="(max-width: 640px)"
+                                srcSet={bg.mobile}
+                                type="image/webp"
+                            />
+                            {/* Tablet: 1024px wide WebP */}
+                            <source
+                                media="(min-width: 641px) and (max-width: 1024px)"
+                                srcSet={bg.tablet}
+                                type="image/webp"
+                            />
+                            {/* Desktop: 1920px wide WebP */}
+                            <source
+                                media="(min-width: 1025px)"
+                                srcSet={bg.desktop}
+                                type="image/webp"
+                            />
+                            {/* Fallback for browsers that don't support WebP */}
+                            <img
+                                src={bg.fallback}
+                                alt="Modern agricultural irrigation system in Kenya"
+                                className="w-full h-full object-cover transform scale-105 animate-subtle-zoom"
+                                fetchpriority={index === 0 ? "high" : "low"}
+                                loading={index === 0 ? "eager" : "lazy"}
+                                decoding={index === 0 ? "sync" : "async"}
+                            />
+                        </picture>
                     </div>
                 ))}
                 {/* Professional Gradient Overlay - Adapts to Dark Mode */}

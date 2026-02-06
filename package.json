@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0 --port 5000",
     "test": "echo \"No tests yet\" && exit 0",
-    "sync:d1": "tsx migration-scripts/sync-to-d1.ts"
+    "sync:d1": "tsx migration-scripts/sync-to-d1.ts",
+    "optimize:images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -96,6 +97,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
     "postcss": "^8.4.47",
+    "sharp": "^0.34.5",
     "svgo": "^4.0.0",
     "tailwindcss": "^3.4.11",
     "ts-node": "^10.9.2",
