@@ -80,15 +80,23 @@ export default defineConfig(({ mode }) => {
         output: {
           // Aggressive code splitting for better caching and smaller initial load
           manualChunks: (id) => {
-            // Core React libraries
-            if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            // CRITICAL: Keep React and ReactDOM together to avoid duplicate instances
+            // This prevents the "Cannot read properties of undefined (reading 'useLayoutEffect')" error
+            if (id.includes('node_modules/react/') ||
+              id.includes('node_modules/react-dom/') ||
+              id.includes('/react/') && id.includes('node_modules') ||
+              id.includes('/react-dom/') && id.includes('node_modules')) {
               return 'react-core';
             }
             // React Router
-            if (id.includes('node_modules/react-router-dom')) {
+            if (id.includes('react-router')) {
               return 'react-router';
             }
-            // Radix UI components - split by component for better caching
+            // Radix UI components - Keep react-use-layout-effect with react-core
+            if (id.includes('@radix-ui/react-use-layout-effect')) {
+              return 'react-core'; // IMPORTANT: Keep with React
+            }
+            // Other Radix UI components - split by component for better caching
             if (id.includes('@radix-ui')) {
               const component = id.split('@radix-ui/')[1]?.split('/')[0];
               return `radix-${component}`;
