@@ -80,13 +80,16 @@ export default defineConfig(({ mode }) => {
         output: {
           // Aggressive code splitting for better caching and smaller initial load
           manualChunks: (id) => {
-            // CRITICAL: Keep React, ReactDOM, and React Query together to avoid duplicate instances
-            // This prevents the "Cannot read properties of undefined (reading 'createContext')\" error
+            // CRITICAL: Keep React, ReactDOM, React Query, and all React hooks together
+            // This prevents the "Cannot read properties of undefined (reading 'createContext')" error
             if (id.includes('node_modules/react/') ||
               id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/react-is/') ||
               id.includes('/react/') && id.includes('node_modules') ||
               id.includes('/react-dom/') && id.includes('node_modules') ||
-              id.includes('@tanstack/react-query')) {
+              id.includes('@tanstack/react-query') ||
+              id.includes('react-helmet-async') ||
+              id.includes('next-themes')) {
               return 'react-core';
             }
             // React Router
@@ -168,6 +171,7 @@ export default defineConfig(({ mode }) => {
         'react',
         'react-dom',
         'react-router-dom',
+        '@tanstack/react-query',
       ],
       exclude: ['@tanstack/react-query-devtools'],
     },

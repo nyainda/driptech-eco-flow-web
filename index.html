@@ -28,14 +28,17 @@
       if (!isHomePage) return;
 
       const width = window.innerWidth || document.documentElement.clientWidth;
-      let heroImage;
+      let heroImage, mediaQuery;
 
       if (width <= 640) {
         heroImage = '/hero-bg-new-mobile.webp';
+        mediaQuery = '(max-width: 640px)';
       } else if (width <= 1024) {
         heroImage = '/hero-bg-new-tablet.webp';
+        mediaQuery = '(min-width: 641px) and (max-width: 1024px)';
       } else {
         heroImage = '/hero-bg-new-desktop.webp';
+        mediaQuery = '(min-width: 1025px)';
       }
 
       const link = document.createElement('link');
@@ -44,8 +47,7 @@
       link.href = heroImage;
       link.type = 'image/webp';
       link.fetchpriority = 'high';
-      // Add imagesrcset to help browser match with picture element
-      link.imagesrcset = heroImage;
+      link.media = mediaQuery;
       document.head.appendChild(link);
     })();
   </script>
