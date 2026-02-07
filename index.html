@@ -43,6 +43,9 @@
       link.as = 'image';
       link.href = heroImage;
       link.type = 'image/webp';
+      link.fetchpriority = 'high';
+      // Add imagesrcset to help browser match with picture element
+      link.imagesrcset = heroImage;
       document.head.appendChild(link);
     })();
   </script>

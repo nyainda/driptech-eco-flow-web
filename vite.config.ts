@@ -80,12 +80,13 @@ export default defineConfig(({ mode }) => {
         output: {
           // Aggressive code splitting for better caching and smaller initial load
           manualChunks: (id) => {
-            // CRITICAL: Keep React and ReactDOM together to avoid duplicate instances
-            // This prevents the "Cannot read properties of undefined (reading 'useLayoutEffect')" error
+            // CRITICAL: Keep React, ReactDOM, and React Query together to avoid duplicate instances
+            // This prevents the "Cannot read properties of undefined (reading 'createContext')\" error
             if (id.includes('node_modules/react/') ||
               id.includes('node_modules/react-dom/') ||
               id.includes('/react/') && id.includes('node_modules') ||
-              id.includes('/react-dom/') && id.includes('node_modules')) {
+              id.includes('/react-dom/') && id.includes('node_modules') ||
+              id.includes('@tanstack/react-query')) {
               return 'react-core';
             }
             // React Router
@@ -109,21 +110,21 @@ export default defineConfig(({ mode }) => {
             if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) {
               return 'forms';
             }
-            // Chart libraries
+            // PDF libraries - VERY HEAVY
+            if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('html2canvas')) {
+              return 'pdf';
+            }
+            // Chart libraries - HEAVY
             if (id.includes('chart.js') || id.includes('recharts') || id.includes('react-chartjs')) {
               return 'charts';
             }
-            // PDF libraries
-            if (id.includes('jspdf') || id.includes('html2pdf')) {
-              return 'pdf';
-            }
-            // Rich text editors
-            if (id.includes('react-quill') || id.includes('tinymce')) {
+            // Rich text editors - HEAVY
+            if (id.includes('react-quill') || id.includes('tinymce') || id.includes('quill')) {
               return 'editors';
             }
-            // Supabase and React Query
-            if (id.includes('@supabase') || id.includes('@tanstack/react-query')) {
-              return 'data-fetching';
+            // Supabase
+            if (id.includes('@supabase')) {
+              return 'supabase';
             }
             // Date utilities
             if (id.includes('date-fns')) {
