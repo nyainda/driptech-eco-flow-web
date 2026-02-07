@@ -79,66 +79,35 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           // Aggressive code splitting for better caching and smaller initial load
+          // Simplified code splitting to prevent React context errors
           manualChunks: (id) => {
-            // CRITICAL: Keep React, ReactDOM, React Query, and all React hooks together
-            // This prevents the "Cannot read properties of undefined (reading 'createContext')" error
-            if (id.includes('node_modules/react/') ||
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/react-is/') ||
-              id.includes('/react/') && id.includes('node_modules') ||
-              id.includes('/react-dom/') && id.includes('node_modules') ||
-              id.includes('@tanstack/react-query') ||
-              id.includes('react-helmet-async') ||
-              id.includes('next-themes')) {
-              return 'react-core';
-            }
-            // React Router
-            if (id.includes('react-router')) {
-              return 'react-router';
-            }
-            // Radix UI components - Keep react-use-layout-effect with react-core
-            if (id.includes('@radix-ui/react-use-layout-effect')) {
-              return 'react-core'; // IMPORTANT: Keep with React
-            }
-            // Other Radix UI components - split by component for better caching
-            if (id.includes('@radix-ui')) {
-              const component = id.split('@radix-ui/')[1]?.split('/')[0];
-              return `radix-${component}`;
-            }
-            // Lucide icons
-            if (id.includes('lucide-react')) {
-              return 'icons';
-            }
-            // Form libraries
-            if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) {
-              return 'forms';
-            }
-            // PDF libraries - VERY HEAVY
-            if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('html2canvas')) {
-              return 'pdf';
-            }
-            // Chart libraries - HEAVY
-            if (id.includes('chart.js') || id.includes('recharts') || id.includes('react-chartjs')) {
-              return 'charts';
-            }
-            // Rich text editors - HEAVY
-            if (id.includes('react-quill') || id.includes('tinymce') || id.includes('quill')) {
-              return 'editors';
-            }
-            // Supabase
-            if (id.includes('@supabase')) {
-              return 'supabase';
-            }
-            // Date utilities
-            if (id.includes('date-fns')) {
-              return 'date-utils';
-            }
-            // Utility libraries
-            if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
-              return 'utils';
-            }
-            // Other node_modules
+            // Keep ALL React-related packages together in one chunk
             if (id.includes('node_modules')) {
+              // React ecosystem - MUST stay together
+              if (id.includes('react') ||
+                id.includes('@tanstack/react-query') ||
+                id.includes('react-router') ||
+                id.includes('react-helmet') ||
+                id.includes('next-themes') ||
+                id.includes('@radix-ui')) {
+                return 'react-vendor';
+              }
+
+              // Heavy libraries in separate chunks
+              if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('html2canvas')) {
+                return 'pdf';
+              }
+              if (id.includes('chart.js') || id.includes('recharts')) {
+                return 'charts';
+              }
+              if (id.includes('react-quill') || id.includes('tinymce') || id.includes('quill')) {
+                return 'editors';
+              }
+              if (id.includes('@supabase')) {
+                return 'supabase';
+              }
+
+              // Everything else
               return 'vendor';
             }
           },
