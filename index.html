@@ -21,36 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
   <!-- Dynamically preload the correct hero image based on viewport (only on home page) -->
-  <script>
-    (function () {
-      // Only preload hero image on home page
-      const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
-      if (!isHomePage) return;
 
-      const width = window.innerWidth || document.documentElement.clientWidth;
-      let heroImage, mediaQuery;
-
-      if (width <= 640) {
-        heroImage = '/hero-bg-new-mobile.webp';
-        mediaQuery = '(max-width: 640px)';
-      } else if (width <= 1024) {
-        heroImage = '/hero-bg-new-tablet.webp';
-        mediaQuery = '(min-width: 641px) and (max-width: 1024px)';
-      } else {
-        heroImage = '/hero-bg-new-desktop.webp';
-        mediaQuery = '(min-width: 1025px)';
-      }
-
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = heroImage;
-      link.type = 'image/webp';
-      link.fetchpriority = 'high';
-      link.media = mediaQuery;
-      document.head.appendChild(link);
-    })();
-  </script>
 
   <!-- Primary Meta Tags -->
 

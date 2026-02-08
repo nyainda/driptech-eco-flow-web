@@ -33,8 +33,8 @@ export default defineConfig(({ mode }) => {
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,txt,xml}'],
-        cleanupOutdatedCaches: true
+        globPatterns: ['**/*.{js,css,html,ico,png,json,txt,xml}'], // Removed svg to avoid conflict with favicon.svg in includeAssets
+        globIgnores: ['**/favicon.svg'], // Explicitly ignore favicon.svg in glob generation        cleanupOutdatedCaches: true
       }
     }),
   ];
@@ -78,39 +78,6 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         output: {
-          // Aggressive code splitting for better caching and smaller initial load
-          // Simplified code splitting to prevent React context errors
-          manualChunks: (id) => {
-            // Keep ALL React-related packages together in one chunk
-            if (id.includes('node_modules')) {
-              // React ecosystem - MUST stay together
-              if (id.includes('react') ||
-                id.includes('@tanstack/react-query') ||
-                id.includes('react-router') ||
-                id.includes('react-helmet') ||
-                id.includes('next-themes') ||
-                id.includes('@radix-ui')) {
-                return 'react-vendor';
-              }
-
-              // Heavy libraries in separate chunks
-              if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('html2canvas')) {
-                return 'pdf';
-              }
-              if (id.includes('chart.js') || id.includes('recharts')) {
-                return 'charts';
-              }
-              if (id.includes('react-quill') || id.includes('tinymce') || id.includes('quill')) {
-                return 'editors';
-              }
-              if (id.includes('@supabase')) {
-                return 'supabase';
-              }
-
-              // Everything else
-              return 'vendor';
-            }
-          },
           // Optimize chunk file names for better caching
           chunkFileNames: (chunkInfo) => {
             const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
