@@ -4,13 +4,13 @@ import { useTheme } from "./ThemeProvider";
 import { useCallback } from "react";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { darkMode, setDarkMode } = useTheme();
 
   const toggleTheme = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setTheme(theme === "light" ? "dark" : "light");
-  }, [theme, setTheme]);
+    setDarkMode(!darkMode);
+  }, [darkMode, setDarkMode]);
 
   return (
     <Button

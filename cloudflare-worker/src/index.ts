@@ -448,6 +448,43 @@ async function handleNews(env: Env, url: URL, ctx: ExecutionContext): Promise<Re
 }
 
 // ============================================
+// DOCUMENTS HANDLERS
+// ============================================
+
+async function handleDocuments(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
+    const category = url.searchParams.get('category');
+    const limit = parseInt(url.searchParams.get('limit') || '0');
+
+    let query = 'SELECT * FROM documents WHERE 1=1';
+    const params: any[] = [];
+
+    if (category && category !== 'all') {
+        query += ' AND category = ?';
+        params.push(category);
+    }
+
+    query += ' ORDER BY created_at DESC';
+
+    if (limit > 0) {
+        query += ' LIMIT ?';
+        params.push(limit);
+    }
+
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+    const documents = results.map(parseDocumentJson);
+
+    return cachedJsonResponse(documents, CACHE_TIMES.documents, ctx);
+}
+
+async function handleKitDocuments(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
+    const { results } = await env.DB.prepare(
+        "SELECT * FROM documents WHERE category = 'kits' OR category = 'installation'"
+    ).all();
+    const documents = results.map(parseDocumentJson);
+    return cachedJsonResponse(documents, CACHE_TIMES.kitDocuments, ctx);
+}
+
+// ============================================
 // IRRIGATION KITS HANDLERS
 // ============================================
 
@@ -793,7 +830,12 @@ const D1_SCHEMA: Record<string, string[]> = {
     news_articles: ['id', 'title', 'slug', 'content', 'excerpt', 'featured_image', 'featured_image_url', 'category', 'tags', 'author', 'published', 'published_at', 'views', 'likes', 'comments_count', 'reading_time', 'created_at', 'updated_at'],
     irrigation_kits: ['id', 'name', 'description', 'category', 'coverage_area', 'target_area', 'target_crop', 'components', 'price', 'in_stock', 'featured', 'maintenance_level', 'created_at', 'updated_at', 'active', 'images', 'installation_complexity', 'installation_time_hours', 'kit_type', 'recommended_crops', 'warranty_months', 'water_efficiency_percentage'],
     documents: ['id', 'title', 'description', 'file_url', 'file_type', 'file_size', 'category', 'tags', 'download_count', 'requires_login', 'created_at', 'updated_at'],
-    team: ['id', 'name', 'position', 'bio', 'image_url', 'linkedin_url', 'email', 'phone', 'featured', 'created_at', 'updated_at']
+    team: ['id', 'name', 'position', 'bio', 'image_url', 'linkedin_url', 'email', 'phone', 'featured', 'created_at', 'updated_at'],
+    service_categories: ['id', 'name', 'slug', 'description', 'icon', 'image_url', 'features', 'pricing_details', 'display_order', 'is_active', 'created_at', 'updated_at'],
+    service_packages: ['id', 'service_category_id', 'name', 'slug', 'description', 'price', 'duration_minutes', 'included_services', 'is_featured', 'is_active', 'created_at', 'updated_at'],
+    technicians: ['id', 'user_id', 'name', 'phone', 'email', 'bio', 'profile_image_url', 'specializations', 'certifications', 'service_areas', 'availability_status', 'availability_schedule', 'rating', 'total_jobs_completed', 'is_active', 'verified_at', 'created_at', 'updated_at'],
+    service_bookings: ['id', 'service_package_id', 'customer_id', 'customer_name', 'customer_email', 'customer_phone', 'status', 'scheduled_date', 'scheduled_time', 'location_address', 'location_coordinates', 'notes', 'assigned_technician_id', 'completed_at', 'cancelled_at', 'cancellation_reason', 'created_at', 'updated_at'],
+    service_reviews: ['id', 'booking_id', 'technician_id', 'customer_id', 'rating', 'comment', 'is_approved', 'is_featured', 'created_at', 'updated_at']
 };
 
 async function upsertRecord(env: Env, table: string, record: any): Promise<void> {
@@ -896,6 +938,14 @@ function parseNewsJson(row: any): any {
         ...row,
         tags: tryParseJson(row.tags, []),
         published: Boolean(row.published),
+    };
+}
+
+function parseDocumentJson(row: any): any {
+    return {
+        ...row,
+        tags: tryParseJson(row.tags, []),
+        requires_login: Boolean(row.requires_login),
     };
 }
 

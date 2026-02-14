@@ -610,10 +610,10 @@ const Header = () => {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-full sm:w-[400px] p-0 bg-background/98 backdrop-blur-xl border-l shadow-2xl flex flex-col"
+                className="w-full sm:w-[400px] p-0 bg-background border-l shadow-2xl flex flex-col"
               >
                 {/* Mobile Header */}
-                <SheetHeader className="p-5 border-b border-border text-left sm:text-left space-y-0">
+                <SheetHeader className="p-5 border-b border-border/80 text-left sm:text-left space-y-0 bg-card">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-blue-700 rounded-xl shadow-lg">
@@ -623,7 +623,7 @@ const Header = () => {
                         <SheetTitle className="font-extrabold text-foreground text-lg tracking-tight leading-none">
                           DripTech
                         </SheetTitle>
-                        <SheetDescription className="text-[10px] font-medium text-primary uppercase tracking-wider mt-1">
+                        <SheetDescription className="text-[10px] font-bold text-primary uppercase tracking-wider mt-1">
                           Eco Flow
                         </SheetDescription>
                       </div>
@@ -634,7 +634,7 @@ const Header = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="h-9 w-9 rounded-xl hover:bg-muted/50"
+                        className="h-9 w-9 rounded-xl hover:bg-muted text-foreground"
                       >
                         <X className="h-5 w-5" />
                       </Button>
@@ -643,30 +643,30 @@ const Header = () => {
                 </SheetHeader>
 
                 {/* Scrollable Navigation */}
-                <div className="flex-1 overflow-y-auto pt-6 pb-20 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto pt-6 pb-20 custom-scrollbar bg-background">
                   <div className="px-6 space-y-8">
                     {/* Active Offers Section if any */}
                     {visibleBanners.length > 0 && (
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                          <h3 className="text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em]">
                             Active Offers
                           </h3>
                         </div>
-                        <div className={`p-5 rounded-2xl border ${isExpiringSoon(currentBanner?.valid_until) ? "bg-red-50/50 dark:bg-red-950/20 border-red-100 dark:border-red-900/30" : "bg-primary/5 border-primary/10"} relative overflow-hidden group`}>
+                        <div className={`p-5 rounded-2xl border ${isExpiringSoon(currentBanner?.valid_until) ? "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50" : "bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30"} relative overflow-hidden group`}>
                           <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
-                              <Badge className={isExpiringSoon(currentBanner?.valid_until) ? "bg-red-600" : "bg-primary"}>
+                              <Badge className={isExpiringSoon(currentBanner?.valid_until) ? "bg-red-600 text-white" : "bg-primary text-white"}>
                                 {currentBanner?.discount} OFF
                               </Badge>
                               {currentBanner?.valid_until && (
-                                <span className={`text-[10px] font-bold ${isExpiringSoon(currentBanner.valid_until) ? "text-red-600 animate-pulse" : "text-primary"}`}>
+                                <span className={`text-[10px] font-bold ${isExpiringSoon(currentBanner.valid_until) ? "text-red-600 dark:text-red-400 animate-pulse" : "text-primary dark:text-primary"}`}>
                                   {formatDate(currentBanner.valid_until)}
                                 </span>
                               )}
                             </div>
                             <h4 className="font-bold text-sm text-foreground mb-1 leading-tight">{currentBanner?.title}</h4>
-                            <p className="text-xs text-muted-foreground leading-relaxed">{currentBanner?.description}</p>
+                            <p className="text-xs text-foreground/70 leading-relaxed">{currentBanner?.description}</p>
                           </div>
                         </div>
                       </div>
@@ -676,7 +676,7 @@ const Header = () => {
                     <nav className="space-y-6">
                       {navigation.map((item) => (
                         <div key={item.title} className="space-y-3">
-                          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] px-1">
+                          <h3 className="text-[11px] font-bold text-foreground/70 uppercase tracking-[0.2em] px-1">
                             {item.title}
                           </h3>
                           <div className="grid gap-1">
@@ -685,14 +685,14 @@ const Header = () => {
                                 <Link
                                   key={subItem.href}
                                   to={subItem.href}
-                                  className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted/50 transition-all group"
+                                  className="flex items-center gap-4 p-3 rounded-xl hover:bg-muted transition-all group border border-transparent hover:border-border"
                                   onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                   {subItem.icon && (
-                                    <div className="w-9 h-9 rounded-lg bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+                                    <div className="w-9 h-9 rounded-lg bg-muted/50 dark:bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
                                       {(() => {
                                         const Icon = subItem.icon;
-                                        return Icon ? <Icon className="h-4.5 w-4.5 text-muted-foreground group-hover:text-primary" /> : null;
+                                        return Icon ? <Icon className="h-4.5 w-4.5 text-foreground/60 group-hover:text-primary" /> : null;
                                       })()}
                                     </div>
                                   )}
@@ -700,23 +700,23 @@ const Header = () => {
                                     <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
                                       {subItem.title}
                                     </div>
-                                    <div className="text-[11px] text-muted-foreground truncate">
+                                    <div className="text-[11px] text-foreground/60 truncate">
                                       {subItem.description || "Learn more"}
                                     </div>
                                   </div>
-                                  <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                  <ChevronRight className="h-4 w-4 text-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                                 </Link>
                               ))
                             ) : (
                               <Link
                                 to={item.href || '#'}
-                                className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-all group"
+                                className="flex items-center justify-between p-3 rounded-xl hover:bg-muted transition-all group border border-transparent hover:border-border"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 <div className="text-sm font-bold text-foreground group-hover:text-primary">
                                   {item.title}
                                 </div>
-                                <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                <ChevronRight className="h-4 w-4 text-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                               </Link>
                             )}
                           </div>
@@ -727,10 +727,10 @@ const Header = () => {
                 </div>
 
                 {/* Fixed Mobile Bottom Actions */}
-                <div className="p-6 border-t border-border bg-background/95 backdrop-blur-md">
+                <div className="p-6 border-t border-border/80 bg-card">
                   <div className="flex gap-3 mb-6">
                     <QuoteModal>
-                      <Button variant="outline" className="flex-1 h-12 rounded-xl border-primary/20 text-primary font-bold">
+                      <Button variant="outline" className="flex-1 h-12 rounded-xl border-primary/30 text-primary hover:bg-primary/10 font-bold">
                         Quote
                       </Button>
                     </QuoteModal>
@@ -742,26 +742,26 @@ const Header = () => {
                   </div>
                   <div className="flex items-center justify-around">
                     <a href="tel:0794494515" className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
                         <Phone className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="text-[10px] font-bold text-muted-foreground">Call</span>
+                      <span className="text-[10px] font-bold text-foreground/70">Call</span>
                     </a>
                     <a href="mailto:info@driptech.co.ke" className="flex flex-col items-center gap-1.5 group">
-                      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
                         <Mail className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="text-[10px] font-bold text-muted-foreground">Email</span>
+                      <span className="text-[10px] font-bold text-foreground/70">Email</span>
                     </a>
                     <button
                       className="flex flex-col items-center gap-1.5 group cursor-pointer border-none bg-transparent p-0 outline-none"
                       onClick={() => document.getElementById('search-trigger')?.click()}
                       aria-label="Search"
                     >
-                      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
                         <Search className="h-4 w-4 text-primary" />
                       </div>
-                      <span className="text-[10px] font-bold text-muted-foreground">Search</span>
+                      <span className="text-[10px] font-bold text-foreground/70">Search</span>
                     </button>
                   </div>
                 </div>

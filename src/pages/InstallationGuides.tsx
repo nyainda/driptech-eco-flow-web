@@ -457,7 +457,7 @@ const InstallationGuides = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/30">
       <SEOHead
         title="Drip Irrigation Installation Guides & Technical Manuals | DripTech"
         description="Comprehensive step-by-step guides and technical documentation for installing and maintaining DripTech irrigation systems. Expert support for farmers."
@@ -555,7 +555,7 @@ const InstallationGuides = () => {
           </div>
 
           {/* Installation Process Overview */}
-          <div className="mb-12 bg-muted/30 rounded-3xl p-8">
+          <div className="mb-12 bg-background/80 backdrop-blur-sm border border-border/50 rounded-3xl p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-center mb-8">
               Installation Process Overview
             </h2>

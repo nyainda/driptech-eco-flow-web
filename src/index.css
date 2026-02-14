@@ -404,15 +404,13 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  /* Surgical Smooth Theme Transitions */
+  /* Instant Theme Transitions */
   html,
   body {
     @apply bg-background text-foreground;
-    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Target major layout components for cohesive fade */
+  /* No transitions on theme changes for instant feedback */
   header,
   main,
   footer,
@@ -422,10 +420,7 @@ All colors MUST be HSL.
   .card,
   [role="dialog"],
   [data-state] {
-    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Removed theme transitions for instant toggle */
   }
 
   /* Custom Scrollbar Utility */
