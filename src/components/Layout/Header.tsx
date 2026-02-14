@@ -99,7 +99,7 @@ const Header = () => {
     refetchInterval: 5 * 60 * 1000,
   });
 
-  // Load dismissed banners
+  // Load 
   useEffect(() => {
     const dismissed = getDismissedBanners();
     setDismissedBanners(dismissed);
@@ -656,8 +656,8 @@ const Header = () => {
                       >
                         <div className="flex items-center gap-3">
                           <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${isDesktopMode
-                              ? "bg-primary/20 text-primary"
-                              : "bg-muted-foreground/10 text-muted-foreground"
+                            ? "bg-primary/20 text-primary"
+                            : "bg-muted-foreground/10 text-muted-foreground"
                             }`}>
                             {isDesktopMode ? (
                               <Monitor className="h-4.5 w-4.5" />
