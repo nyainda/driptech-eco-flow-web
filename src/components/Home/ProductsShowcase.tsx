@@ -374,7 +374,7 @@ const ProductsShowcase = ({
             </div>
 
             {/* Description - Hidden on mobile */}
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 hidden md:block">
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 hidden md:block hui-truncate-lines">
               {product.description ||
                 "Advanced irrigation solution designed for modern agriculture and efficient water management."}
             </p>

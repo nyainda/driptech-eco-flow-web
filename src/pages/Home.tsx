@@ -1,4 +1,4 @@
-import HeroSection from "@/components/Home/HeroSection";
+import HeroSectionVibe from "@/components/Home/HeroSectionVibe";
 import HomeOfferings from "@/components/Home/HomeOfferings";
 import BlogSection from "@/components/Home/BlogSection";
 import SuccessStoriesSection from "@/components/Home/SuccessStoriesSection";
@@ -15,7 +15,7 @@ import ScrollReveal from "@/components/common/ScrollReveal";
 const Home = () => {
   return (
     <>
-      <HeroSection />
+      <HeroSectionVibe />
 
       <ScrollReveal>
         <HomeOfferings />
