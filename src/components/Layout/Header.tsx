@@ -27,6 +27,8 @@ import {
   BarChart3,
   Users,
   Search,
+  Monitor,
+  Smartphone,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import SearchManager from "./SearchManager";
@@ -34,6 +36,7 @@ import { Link } from "react-router-dom";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useDesktopMode } from "@/hooks/use-desktop-mode";
 
 import {
   NavigationMenu,
@@ -69,6 +72,9 @@ const Header = () => {
   const [showBanner, setShowBanner] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+
+  // Desktop mode toggle for mobile devices
+  const { isDesktopMode, showToggle, toggleDesktopMode } = useDesktopMode();
 
   // Fetch active banners
   const { data: banners = [] } = useQuery({
@@ -640,6 +646,53 @@ const Header = () => {
                       </Button>
                     </div>
                   </div>
+
+                  {/* Desktop Mode Toggle - Only visible on mobile */}
+                  {showToggle && (
+                    <div className="mt-4 pt-4 border-t border-border/50">
+                      <button
+                        onClick={toggleDesktopMode}
+                        className="w-full flex items-center justify-between p-3 rounded-xl bg-muted/50 hover:bg-muted transition-all group border border-border/50 hover:border-primary/30"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${isDesktopMode
+                              ? "bg-primary/20 text-primary"
+                              : "bg-muted-foreground/10 text-muted-foreground"
+                            }`}>
+                            {isDesktopMode ? (
+                              <Monitor className="h-4.5 w-4.5" />
+                            ) : (
+                              <Smartphone className="h-4.5 w-4.5" />
+                            )}
+                          </div>
+                          <div className="text-left">
+                            <div className="text-sm font-bold text-foreground flex items-center gap-2">
+                              Desktop View
+                              {isDesktopMode && (
+                                <Badge variant="default" className="text-[9px] px-1.5 py-0 h-4 bg-primary">
+                                  Active
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground">
+                              {isDesktopMode ? "Switch to mobile view" : "View full desktop site"}
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`relative w-11 h-6 rounded-full transition-colors ${isDesktopMode ? "bg-primary" : "bg-muted-foreground/20"
+                          }`}>
+                          <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-transform ${isDesktopMode ? "translate-x-5" : "translate-x-0"
+                            }`} />
+                        </div>
+                      </button>
+                      {isDesktopMode && (
+                        <p className="text-[10px] text-muted-foreground mt-2 px-1 flex items-start gap-1.5">
+                          <span className="text-primary mt-0.5">ℹ️</span>
+                          <span>Desktop mode is active. The page will reload when you toggle this setting.</span>
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </SheetHeader>
 
                 {/* Scrollable Navigation */}

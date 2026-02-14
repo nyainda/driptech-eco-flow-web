@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/components/Layout/ThemeProvider";
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import useWebVitals from "./hooks/useWebVitals";
+import { DesktopModeIndicator } from "./components/common/DesktopModeIndicator";
+import { useDesktopMode } from "./hooks/use-desktop-mode";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
@@ -42,6 +44,9 @@ const TechnicianServices = lazy(() => import("./pages/TechnicianServices"));
 const queryClient = new QueryClient();
 
 const App = () => {
+  // Initialize desktop mode effects globally
+  useDesktopMode();
+
   // Monitor Web Vitals in production
   // Temporarily disabled due to React hook error
   // useWebVitals((metric) => {
@@ -60,6 +65,7 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
+            <DesktopModeIndicator />
             <BrowserRouter
               future={{
                 v7_startTransition: true,

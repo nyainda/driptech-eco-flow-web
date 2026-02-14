@@ -785,7 +785,7 @@ const IrrigationKits = () => {
                       )}
 
                       {kit.description && (
-                        <p className="text-muted-foreground line-clamp-2">
+                        <p className="text-muted-foreground line-clamp-3 text-sm sm:text-base leading-relaxed">
                           {kit.description}
                         </p>
                       )}
@@ -815,7 +815,7 @@ const IrrigationKits = () => {
                                         </div>
                                       )}
                                     </div>
-                                    <div className="text-primary font-bold text-lg">
+                                    <div className="text-primary font-bold text-base sm:text-lg">
                                       {formatCurrency(tier.price)}
                                     </div>
                                   </div>
@@ -830,7 +830,7 @@ const IrrigationKits = () => {
                           </div>
                         ) : (
                           <div className="text-center">
-                            <div className="text-3xl font-bold text-primary mb-1">
+                            <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">
                               {formatCurrency(kit.price)}
                             </div>
                             <div className="text-sm text-muted-foreground">
@@ -840,11 +840,11 @@ const IrrigationKits = () => {
                         )}
                       </div>
 
-                      {/* Specifications */}
-                      <div className="grid grid-cols-2 gap-4">
+                      {/* Specifications - Enhanced with Installation Time */}
+                      <div className="grid grid-cols-3 gap-3 sm:gap-4">
                         <div className="text-center p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border">
                           <MapPin className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <div className="font-semibold text-foreground">
+                          <div className="font-semibold text-foreground text-sm sm:text-base">
                             {kit.coverage_area || "TBD"}
                           </div>
                           <div className="text-xs text-muted-foreground">
@@ -853,14 +853,49 @@ const IrrigationKits = () => {
                         </div>
                         <div className="text-center p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border">
                           <Droplets className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <div className="font-semibold text-foreground">
+                          <div className="font-semibold text-foreground text-sm sm:text-base">
                             {kit.water_efficiency_percentage || 0}%
                           </div>
                           <div className="text-xs text-muted-foreground">
                             efficient
                           </div>
                         </div>
+                        <div className="text-center p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border">
+                          <Clock className="h-5 w-5 text-primary mx-auto mb-1" />
+                          <div className="font-semibold text-foreground text-sm sm:text-base">
+                            {kit.installation_time_hours || "2-4"}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            hours
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Main Components Preview */}
+                      {components.main_components && components.main_components.length > 0 && (
+                        <div className="bg-gray-50 dark:bg-muted/20 rounded-lg p-3 border border-border">
+                          <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
+                            <Settings className="h-4 w-4 text-primary" />
+                            <span>Includes:</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {components.main_components.slice(0, 3).map((component: string, index: number) => (
+                              <Badge
+                                key={index}
+                                className="text-xs bg-white dark:bg-background text-foreground border-border"
+                              >
+                                <CheckCircle className="h-3 w-3 mr-1 text-primary" />
+                                {component}
+                              </Badge>
+                            ))}
+                            {components.main_components.length > 3 && (
+                              <Badge className="text-xs bg-gray-100 dark:bg-muted text-muted-foreground border-border">
+                                +{components.main_components.length - 3} more
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Badges */}
                       <div className="flex flex-wrap gap-2">
@@ -904,13 +939,14 @@ const IrrigationKits = () => {
                           </div>
                         )}
 
+                      {/* Enhanced CTA Buttons */}
                       <div className="flex gap-3 pt-2">
-                        <Button className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0">
+                        <Button className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0 h-11 text-base font-semibold shadow-md hover:shadow-lg transition-all">
                           <Eye className="h-4 w-4 mr-2" />
-                          View Details
+                          View Full Details
                         </Button>
-                        <Button className="bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/50 text-muted-foreground border-border">
-                          <ShoppingCart className="h-4 w-4" />
+                        <Button className="bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/50 text-muted-foreground border-border h-11 px-4">
+                          <ShoppingCart className="h-5 w-5" />
                         </Button>
                       </div>
                     </CardContent>
