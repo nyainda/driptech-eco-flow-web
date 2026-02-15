@@ -81,7 +81,7 @@ const HeroSectionImproved = () => {
                 <div className="absolute inset-0 z-0">
                     {/* YOUR Hero Image with Parallax */}
                     <div
-                        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[2000ms] ease-out will-change-transform opacity-80 dark:opacity-60"
+                        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[2000ms] ease-out will-change-transform opacity-80 dark:opacity-80"
                         style={{
                             backgroundImage: `url('/hero-bg-new-desktop.webp')`,
                             transform: `scale(1.1) translate(${mousePosition.x * -1}px, ${mousePosition.y * -1}px)`
@@ -94,7 +94,7 @@ const HeroSectionImproved = () => {
 
                     {/* Better Dark Theme - Consistent with App Theme */}
                     <div className="hidden dark:block absolute inset-0">
-                        <div className="absolute inset-0 bg-gradient-to-br from-background/85 via-background/75 to-background/85" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/40 to-background/80" />
 
                         {/* Natural glow from corners using Theme Colors */}
                         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px]" />

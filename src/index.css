@@ -1,5 +1,6 @@
 /* Import responsive utilities FIRST */
 @import "./styles/responsive.css";
+@import "./styles/theme-transitions.css";
 
 @tailwind base;
 @tailwind components;

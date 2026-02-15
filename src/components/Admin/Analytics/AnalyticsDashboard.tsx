@@ -66,6 +66,14 @@ interface PeriodStats {
   sessions: number;
   avgDuration: number;
   bounceRate: number;
+  // New enhanced metrics
+  pagesPerSession: number;
+  engagementRate: number;
+  newVisitors: number;
+  returningVisitors: number;
+  peakHour: number;
+  peakDay: string;
+  avgTimeOnSite: number;
   topPages: Array<{
     page_path: string;
     page_title: string;
@@ -110,21 +118,16 @@ const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState("30d");
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // --- Fetch Logic ---
 
   const fetchAnalytics = async () => {
     try {
       setRefreshing(true);
+      console.log('🔄 Fetching analytics data...');
 
       // 1. Fetch Lifetime Stats (Cumulative)
-      const { count: totalVisitors } = await supabase
-        .from("visitor_sessions")
-        .select("visitor_id", { count: "exact", head: true }); // Approximate unique visitors via sessions is tricky without distinct, using session count as proxy or fetching all IDs. 
-      // Better: Select distinct visitor_id if possible, or distinct on client side for smaller datasets. 
-      // For scalability, we'll assume filtered unique visitors. 
-      // Let's grab raw counts for simple lifetime metrics.
-
       const { count: totalSessions } = await supabase
         .from("visitor_sessions")
         .select("*", { count: "exact", head: true });
@@ -133,29 +136,38 @@ const AnalyticsDashboard: React.FC = () => {
         .from("page_views")
         .select("*", { count: "exact", head: true });
 
-      // We really want unique visitors count. doing a distinct count is expensive on large tables without RPC. 
-      // For now, we will do a rough estimate or fetch distinct visitor_ids for accurate count if dataset is small.
-      // Let's improve this by actually fetching distinct visitor_ids in a performant way if we can't trust simple counts.
-      // Optimization: We will just set it based on sessions for now or use the stats from the period fetch if range is "all".
-      // Actually, we can fetch all visitor_ids only (lightweight) to count unique.
-      const { data: allVisitorIds } = await supabase
+      // Fetch unique visitor IDs (limit to prevent timeout)
+      const { data: allVisitorIds, error: visitorError } = await supabase
         .from("visitor_sessions")
-        .select("visitor_id");
+        .select("visitor_id")
+        .limit(50000); // Prevent timeout on huge datasets
 
-      const realTotalVisitors = new Set(allVisitorIds?.map(v => v.visitor_id)).size;
+      if (visitorError) {
+        console.error('❌ Error fetching visitor IDs:', visitorError);
+      }
 
-      setLifetimeData({
-        totalVisitors: realTotalVisitors || 0,
+      console.log(`📊 Raw Data - Sessions: ${totalSessions}, PageViews: ${totalPageViews}, Visitor Records: ${allVisitorIds?.length || 0}`);
+
+      const realTotalVisitors = allVisitorIds ? new Set(allVisitorIds.map(v => v.visitor_id)).size : 0;
+
+      console.log(`✅ Unique Visitors: ${realTotalVisitors}`);
+
+      const lifetimeStats = {
+        totalVisitors: realTotalVisitors,
         totalSessions: totalSessions || 0,
         totalPageViews: totalPageViews || 0,
-      });
+      };
+
+      setLifetimeData(lifetimeStats);
+      console.log('💾 Lifetime stats updated:', lifetimeStats);
 
       // 2. Fetch Period Stats
       const stats = await fetchPeriodStats(dateRange);
       setPeriodData(stats);
+      console.log('📅 Period stats updated for range:', dateRange);
 
     } catch (error) {
-      console.error("Error fetching analytics:", error);
+      console.error("❌ Critical error fetching analytics:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -351,12 +363,72 @@ const AnalyticsDashboard: React.FC = () => {
       percentage: Math.round((c / totalSessions) * 100)
     }));
 
+    // === NEW ENHANCED METRICS ===
+
+    // Pages Per Session
+    const pagesPerSession = totalSessions > 0 ? totalPageViews / totalSessions : 0;
+
+    // Engagement Rate (sessions with more than 1 page view)
+    const engagedSessions = Object.values(sessionPageCounts).filter(c => c > 1).length;
+    const engagementRate = Object.keys(sessionPageCounts).length > 0
+      ? (engagedSessions / Object.keys(sessionPageCounts).length) * 100
+      : 0;
+
+    // New vs Returning Visitors
+    const visitorFirstSeen = new Map<string, string>();
+    sessions.forEach(s => {
+      if (!visitorFirstSeen.has(s.visitor_id)) {
+        visitorFirstSeen.set(s.visitor_id, s.session_start);
+      }
+    });
+
+    const newVisitorSessions = sessions.filter(s =>
+      s.session_start === visitorFirstSeen.get(s.visitor_id)
+    );
+    const newVisitors = new Set(newVisitorSessions.map(s => s.visitor_id)).size;
+    const returningVisitors = uniqueVisitors - newVisitors;
+
+    // Peak Activity Hour
+    const hourCounts = new Array(24).fill(0);
+    sessions.forEach(s => {
+      const hour = new Date(s.session_start).getHours();
+      hourCounts[hour]++;
+    });
+    const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
+
+    // Peak Day
+    const dayMap: Record<string, number> = {};
+    sessions.forEach(s => {
+      const dayStr = s.session_start.split('T')[0];
+      dayMap[dayStr] = (dayMap[dayStr] || 0) + 1;
+    });
+    const peakDay = Object.entries(dayMap).sort(([, a], [, b]) => b - a)[0]?.[0] || 'N/A';
+
+    // Average Time on Site (same as avgDuration but more explicit)
+    const avgTimeOnSite = avgDuration;
+
+    console.log('📈 Calculated enhanced metrics:', {
+      pagesPerSession: pagesPerSession.toFixed(2),
+      engagementRate: engagementRate.toFixed(1) + '%',
+      newVisitors,
+      returningVisitors,
+      peakHour: `${peakHour}:00`,
+      peakDay
+    });
+
     return {
       visitors: uniqueVisitors,
       pageViews: totalPageViews,
       sessions: totalSessions,
       avgDuration,
       bounceRate,
+      pagesPerSession,
+      engagementRate,
+      newVisitors,
+      returningVisitors,
+      peakHour,
+      peakDay,
+      avgTimeOnSite,
       topPages,
       topProducts,
       deviceBreakdown,
@@ -367,8 +439,10 @@ const AnalyticsDashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('🔄 useEffect triggered - dateRange:', dateRange, 'refreshTrigger:', refreshTrigger);
     fetchAnalytics();
-  }, [dateRange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateRange, refreshTrigger]);
 
   // --- Render ---
 
@@ -391,7 +465,15 @@ const AnalyticsDashboard: React.FC = () => {
           <p className="text-muted-foreground mt-1">Comprehensive overview of system performance and user engagement.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={fetchAnalytics} disabled={refreshing} variant="outline" className="shadow-sm">
+          <Button
+            onClick={() => {
+              console.log('🔄 Refresh button clicked');
+              setRefreshTrigger(prev => prev + 1);
+            }}
+            disabled={refreshing}
+            variant="outline"
+            className="shadow-sm"
+          >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
             Refresh Data
           </Button>
@@ -405,7 +487,7 @@ const AnalyticsDashboard: React.FC = () => {
             <Database className="h-5 w-5 text-primary" />
             <h2 className="text-xl font-semibold">Lifetime Performance</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-none shadow-xl">
               <CardHeader className="pb-2">
                 <CardDescription className="text-indigo-100 flex items-center gap-2">
@@ -475,8 +557,8 @@ const AnalyticsDashboard: React.FC = () => {
             </Select>
           </div>
 
-          {/* Period Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Period Cards - Basic Metrics */}
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">Visitors</CardTitle>
@@ -515,6 +597,62 @@ const AnalyticsDashboard: React.FC = () => {
             </Card>
           </div>
 
+          {/* Enhanced Metrics Cards */}
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-4">
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <BarChart4 className="h-4 w-4 text-purple-500" />
+                  Pages/Session
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{periodData.pagesPerSession.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground mt-1">Average depth</p>
+              </CardContent>
+            </Card>
+            <Card className="border-l-4 border-l-green-500">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-500" />
+                  Engagement
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{periodData.engagementRate.toFixed(1)}%</div>
+                <p className="text-xs text-muted-foreground mt-1">Multi-page sessions</p>
+              </CardContent>
+            </Card>
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Users className="h-4 w-4 text-blue-500" />
+                  New vs Returning
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-baseline gap-2">
+                  <div className="text-xl font-bold text-green-600">{periodData.newVisitors}</div>
+                  <span className="text-xs text-muted-foreground">/</span>
+                  <div className="text-xl font-bold text-blue-600">{periodData.returningVisitors}</div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">New / Returning</p>
+              </CardContent>
+            </Card>
+            <Card className="border-l-4 border-l-orange-500">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-orange-500" />
+                  Peak Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{periodData.peakHour}:00</div>
+                <p className="text-xs text-muted-foreground mt-1">Busiest hour</p>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Main Chart */}
           <Card className="col-span-4">
             <CardHeader>
@@ -522,30 +660,63 @@ const AnalyticsDashboard: React.FC = () => {
               <CardDescription>Visualizing visitors and page views over the selected range.</CardDescription>
             </CardHeader>
             <CardContent className="pl-0">
-              <ResponsiveContainer width="100%" height={350}>
-                <AreaChart data={periodData.dailyActivity} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="date" tickFormatter={(str) => {
-                    const d = new Date(str);
-                    return `${d.getDate()}/${d.getMonth() + 1}`;
-                  }} />
-                  <YAxis />
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                  <Area type="monotone" dataKey="page_views" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorPv)" name="Page Views" strokeWidth={2} />
-                  <Area type="monotone" dataKey="visitors" stroke="#10b981" fillOpacity={1} fill="url(#colorUv)" name="Visitors" strokeWidth={2} />
-                  <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                </AreaChart>
-              </ResponsiveContainer>
+              <div className="w-full overflow-x-auto">
+                <div className="min-w-[300px]">
+                  <ResponsiveContainer width="100%" height={350}>
+                    <AreaChart data={periodData.dailyActivity} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.9} />
+                          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.9} />
+                          <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+                        </linearGradient>
+                      </defs>
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={(str) => {
+                          const d = new Date(str);
+                          return `${d.getDate()}/${d.getMonth() + 1}`;
+                        }}
+                        stroke="#94a3b8"
+                      />
+                      <YAxis stroke="#94a3b8" />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
+                      <Tooltip
+                        contentStyle={{
+                          borderRadius: '12px',
+                          border: 'none',
+                          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                          padding: '12px'
+                        }}
+                      />
+                      <Area
+                        type="natural"
+                        dataKey="page_views"
+                        stroke="#8b5cf6"
+                        fillOpacity={1}
+                        fill="url(#colorPv)"
+                        name="Page Views"
+                        strokeWidth={3}
+                        animationDuration={1500}
+                      />
+                      <Area
+                        type="natural"
+                        dataKey="visitors"
+                        stroke="#10b981"
+                        fillOpacity={1}
+                        fill="url(#colorUv)"
+                        name="Visitors"
+                        strokeWidth={3}
+                        animationDuration={1500}
+                      />
+                      <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -618,21 +789,74 @@ const AnalyticsDashboard: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="tech">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader><CardTitle>Device Breakdown</CardTitle></CardHeader>
-                  <CardContent className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={periodData.deviceBreakdown} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="total_sessions">
-                          {periodData.deviceBreakdown.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <Card className="overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+                    <CardTitle className="flex items-center gap-2">
+                      <Monitor className="h-5 w-5 text-primary" />
+                      Device Breakdown
+                    </CardTitle>
+                    <CardDescription>Sessions by device type</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    {periodData.deviceBreakdown.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        No device data available
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {periodData.deviceBreakdown.map((device, index) => {
+                          const totalDeviceSessions = periodData.deviceBreakdown.reduce((sum, d) => sum + d.total_sessions, 0);
+                          const percentage = totalDeviceSessions > 0
+                            ? Math.round((device.total_sessions / totalDeviceSessions) * 100)
+                            : 0;
+
+                          // Determine device icon
+                          const DeviceIcon = device.device_type.toLowerCase().includes('mobile') || device.device_type.toLowerCase().includes('phone')
+                            ? Smartphone
+                            : device.device_type.toLowerCase().includes('tablet')
+                              ? Tablet
+                              : Monitor;
+
+                          // Determine color
+                          const color = index === 0 ? 'bg-blue-500'
+                            : index === 1 ? 'bg-green-500'
+                              : index === 2 ? 'bg-purple-500'
+                                : 'bg-orange-500';
+
+                          return (
+                            <div key={index} className="group">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-3">
+                                  <div className={`p-2 rounded-lg ${color} bg-opacity-10`}>
+                                    <DeviceIcon className={`h-4 w-4 ${color.replace('bg-', 'text-')}`} />
+                                  </div>
+                                  <div>
+                                    <div className="font-semibold text-sm capitalize">
+                                      {device.device_type || 'Unknown'}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {device.total_sessions.toLocaleString()} sessions
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <Badge variant="secondary" className="font-bold">
+                                    {percentage}%
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full ${color} transition-all duration-500 ease-out`}
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
                 <Card>

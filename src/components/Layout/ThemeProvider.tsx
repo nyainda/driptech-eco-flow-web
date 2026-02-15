@@ -1,46 +1,103 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useLayoutEffect, useMemo, useRef } from 'react';
 
-const ThemeContext = createContext({
+type Theme = 'light' | 'dark';
+
+interface ThemeContextType {
+  theme: Theme;
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextType>({
+  theme: 'light',
   darkMode: false,
-  setDarkMode: (value: boolean) => { },
+  setDarkMode: () => { },
+  toggleTheme: () => { },
 });
 
+// Debounced localStorage write
+const debouncedSaveTheme = (() => {
+  let timeout: NodeJS.Timeout;
+  return (theme: Theme) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      localStorage.setItem('theme', theme);
+    }, 300);
+  };
+})();
+
+// Get initial theme
+const getInitialTheme = (): Theme => {
+  if (typeof window === 'undefined') return 'light';
+
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark' || saved === 'light') return saved;
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
-    if (saved !== null) return saved === 'true';
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const isInitialMount = useRef(true);
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+  // Apply theme changes instantly
+  const applyTheme = (newTheme: Theme) => {
+    const html = document.documentElement;
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('darkMode', 'true');
+    // Instant apply - no animations
+    if (newTheme === 'dark') {
+      html.classList.add('dark');
+      html.classList.remove('light');
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('darkMode', 'false');
+      html.classList.add('light');
+      html.classList.remove('dark');
     }
-  }, [darkMode]);
 
-  useEffect(() => {
+    // Debounced save to localStorage
+    debouncedSaveTheme(newTheme);
+  };
+
+  // Use layoutEffect to prevent flash of wrong theme
+  useLayoutEffect(() => {
+    applyTheme(theme);
+    isInitialMount.current = false;
+  }, [theme]);
+
+  // Listen to system preference changes
+  useLayoutEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
     const handleChange = (e: MediaQueryListEvent) => {
-      if (localStorage.getItem('darkMode') === null) {
-        setDarkMode(e.matches);
+      // Only auto-switch if user hasn't set a preference
+      if (!localStorage.getItem('theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
       }
     };
+
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo<ThemeContextType>(() => ({
+    theme,
+    darkMode: theme === 'dark',
+    setDarkMode: (value: boolean) => setTheme(value ? 'dark' : 'light'),
+    toggleTheme: () => setTheme(prev => prev === 'dark' ? 'light' : 'dark'),
+  }), [theme]);
+
   return (
-    <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
 export function useTheme() {
-  return useContext(ThemeContext);
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within ThemeProvider');
+  }
+  return context;
 }

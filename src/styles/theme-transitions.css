@@ -1,0 +1,23 @@
+/* Theme Instant Switch - No Transitions for Maximum Speed */
+
+/* Prevent flash of unstyled content */
+html:not(.dark):not(.light) {
+    visibility: hidden;
+}
+
+html.dark,
+html.light {
+    visibility: visible;
+}
+
+/* Respect reduced motion preference - disable all animations */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
