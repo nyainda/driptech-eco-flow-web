@@ -320,7 +320,7 @@ const Header = () => {
   const hasMultipleBanners = visibleBanners.length > 1;
 
   return (
-    <header className="sticky top-0 z-50 w-full">
+    <header className="sticky top-0 z-50 w-full" role="banner">
       {/* Enhanced Discount Banner */}
       {showBanner && currentBanner && (
         <div
@@ -348,13 +348,13 @@ const Header = () => {
           )}
 
           <div
-            className={`relative py-1.5 px-4 transition-all duration-500 ${isTransitioning
+            className={`relative py-1 sm:py-1.5 px-2 sm:px-4 transition-all duration-500 ${isTransitioning
               ? "opacity-0 translate-y-2"
               : "opacity-100 translate-y-0"
               }`}
           >
-            <div className="container mx-auto flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+            <div className="container mx-auto flex items-center justify-between gap-2 sm:gap-4">
+              <div className="flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0 overflow-hidden">
                 {hasMultipleBanners && (
                   <div className="flex items-center gap-1">
                     <button
@@ -374,13 +374,13 @@ const Header = () => {
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                  <div className="hidden sm:flex items-center justify-center w-6 h-6 rounded-full bg-white/20">
+                <div className="flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0">
+                  <div className="hidden sm:flex items-center justify-center w-6 h-6 rounded-full bg-white/20 flex-shrink-0">
                     <Gift className="h-3.5 w-3.5 animate-bounce" />
                   </div>
                   <Badge
                     variant="secondary"
-                    className={`font-bold text-[10px] sm:text-xs px-2 py-0.5 whitespace-nowrap ${isExpiringSoon(currentBanner.valid_until)
+                    className={`font-bold text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 whitespace-nowrap flex-shrink-0 ${isExpiringSoon(currentBanner.valid_until)
                       ? "bg-white text-red-600"
                       : "bg-white text-primary"
                       }`}
@@ -389,10 +389,10 @@ const Header = () => {
                   </Badge>
 
                   <div className="flex-1 min-w-0 flex items-center gap-2">
-                    <span className="font-semibold text-xs sm:text-sm truncate">
+                    <span className="font-semibold text-[11px] sm:text-sm truncate leading-tight">
                       {currentBanner.title}
                     </span>
-                    <span className="opacity-80 text-xs hidden lg:inline-block border-l border-white/30 pl-2">
+                    <span className="opacity-80 text-xs hidden xl:inline-block border-l border-white/30 pl-2 truncate">
                       {currentBanner.description}
                     </span>
                   </div>
@@ -480,20 +480,20 @@ const Header = () => {
 
       {/* Main Navigation Bar */}
       <div className="bg-background/95 backdrop-blur-xl border-b border-border shadow-sm dark:shadow-none sticky top-0 z-50">
-        <div className="container mx-auto px-4 flex h-20 items-center justify-between">
+        <div className="container mx-auto px-3 sm:px-4 flex h-16 sm:h-[72px] lg:h-20 items-center justify-between gap-3 sm:gap-4">
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-3 lg:gap-4 hover:opacity-90 transition-all duration-300 group flex-shrink-0"
+            className="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition-all duration-300 group flex-shrink-0"
           >
-            <div className="flex items-center justify-center w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-primary via-blue-700 to-primary rounded-2xl shadow-xl group-hover:shadow-primary/30 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105 border border-white/20">
-              <Droplets className="h-7 w-7 lg:h-8 lg:w-8 text-white animate-pulse" />
+            <div className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 lg:w-14 lg:h-14 bg-gradient-to-br from-primary via-blue-700 to-primary rounded-xl sm:rounded-2xl shadow-lg group-hover:shadow-primary/30 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105 border border-white/20">
+              <Droplets className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white animate-pulse" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl lg:text-2xl font-black text-foreground tracking-tighter leading-none">
+              <span className="text-lg sm:text-xl lg:text-2xl font-black text-foreground tracking-tighter leading-none">
                 DripTech
               </span>
-              <span className="text-[10px] lg:text-[11px] font-bold text-primary uppercase tracking-[0.3em] mt-1.5">
+              <span className="text-[9px] sm:text-[10px] lg:text-[11px] font-bold text-primary uppercase tracking-[0.25em] sm:tracking-[0.3em] mt-1">
                 Eco Flow
               </span>
             </div>
@@ -573,8 +573,8 @@ const Header = () => {
           </NavigationMenu>
 
           {/* CTA Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="flex items-center gap-1 sm:gap-2 pr-1 sm:pr-2 border-r border-border/50 mr-0.5 sm:mr-1">
+          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
+            <div className="flex items-center gap-0.5 sm:gap-1.5 pr-1.5 sm:pr-2 border-r border-border/50 mr-0.5">
               <SearchManager />
               <ThemeToggle />
             </div>
@@ -582,16 +582,16 @@ const Header = () => {
             <QuoteModal>
               <Button
                 variant="outline"
-                className="hidden lg:flex h-10 px-6 rounded-xl border-primary/20 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary transition-all duration-300 font-bold"
+                className="hidden lg:flex h-9 xl:h-10 px-4 xl:px-6 rounded-xl border-primary/20 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary transition-all duration-300 font-bold text-sm"
               >
                 Get Quote
               </Button>
             </QuoteModal>
 
-            <Link to="/contact" className="hidden sm:block">
+            <Link to="/contact" className="hidden lg:block">
               <Button
                 variant="premium"
-                className="h-10 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 font-bold"
+                className="h-9 xl:h-10 px-4 xl:px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 font-bold text-sm"
               >
                 Contact Us
               </Button>
@@ -603,14 +603,15 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="lg:hidden hover:bg-muted/50 h-10 w-10 rounded-xl"
+                  className="lg:hidden hover:bg-muted/50 h-9 w-9 sm:h-10 sm:w-10 rounded-xl"
+                  aria-label="Open navigation menu"
                 >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-full sm:w-[400px] p-0 bg-background border-l shadow-2xl flex flex-col"
+                className="w-[min(100vw,420px)] p-0 bg-background border-l shadow-2xl flex flex-col"
               >
                 {/* Mobile Header */}
                 <SheetHeader className="p-5 border-b border-border/80 text-left sm:text-left space-y-0 bg-card">
