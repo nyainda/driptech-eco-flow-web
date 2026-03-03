@@ -1034,10 +1034,14 @@ async function handleServiceCategories(env: Env, url: URL, ctx: ExecutionContext
 
     query += ' ORDER BY display_order ASC';
 
-    const { results } = await env.DB.prepare(query).bind(...params).all();
-    const categories = results.map(parseServiceCategoryJson);
-
-    return cachedJsonResponse(categories, CACHE_TIMES.services, ctx);
+    try {
+        const { results } = await env.DB.prepare(query).bind(...params).all();
+        const categories = results.map(parseServiceCategoryJson);
+        return cachedJsonResponse(categories, CACHE_TIMES.services, ctx);
+    } catch {
+        // Table may not exist in D1 yet — return empty array so app falls back to Supabase
+        return cachedJsonResponse([], CACHE_TIMES.services, ctx);
+    }
 }
 
 async function handleServicePackages(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
@@ -1058,10 +1062,13 @@ async function handleServicePackages(env: Env, url: URL, ctx: ExecutionContext):
 
     query += ' ORDER BY price ASC';
 
-    const { results } = await env.DB.prepare(query).bind(...params).all();
-    const packages = results.map(parseServicePackageJson);
-
-    return cachedJsonResponse(packages, CACHE_TIMES.services, ctx);
+    try {
+        const { results } = await env.DB.prepare(query).bind(...params).all();
+        const packages = results.map(parseServicePackageJson);
+        return cachedJsonResponse(packages, CACHE_TIMES.services, ctx);
+    } catch {
+        return cachedJsonResponse([], CACHE_TIMES.services, ctx);
+    }
 }
 
 async function handleTechnicians(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
@@ -1082,10 +1089,13 @@ async function handleTechnicians(env: Env, url: URL, ctx: ExecutionContext): Pro
 
     query += ' ORDER BY rating DESC, total_jobs_completed DESC';
 
-    const { results } = await env.DB.prepare(query).bind(...params).all();
-    const technicians = results.map(parseTechnicianJson);
-
-    return cachedJsonResponse(technicians, CACHE_TIMES.technicians, ctx);
+    try {
+        const { results } = await env.DB.prepare(query).bind(...params).all();
+        const technicians = results.map(parseTechnicianJson);
+        return cachedJsonResponse(technicians, CACHE_TIMES.technicians, ctx);
+    } catch {
+        return cachedJsonResponse([], CACHE_TIMES.technicians, ctx);
+    }
 }
 
 async function handleServiceBookings(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
@@ -1113,10 +1123,13 @@ async function handleServiceBookings(env: Env, url: URL, ctx: ExecutionContext):
 
     query += ' ORDER BY created_at DESC';
 
-    const { results } = await env.DB.prepare(query).bind(...params).all();
-    const bookings = results.map(parseServiceBookingJson);
-
-    return cachedJsonResponse(bookings, CACHE_TIMES.bookings, ctx);
+    try {
+        const { results } = await env.DB.prepare(query).bind(...params).all();
+        const bookings = results.map(parseServiceBookingJson);
+        return cachedJsonResponse(bookings, CACHE_TIMES.bookings, ctx);
+    } catch {
+        return cachedJsonResponse([], CACHE_TIMES.bookings, ctx);
+    }
 }
 
 async function handleServiceReviews(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
@@ -1137,10 +1150,13 @@ async function handleServiceReviews(env: Env, url: URL, ctx: ExecutionContext): 
 
     query += ' ORDER BY created_at DESC';
 
-    const { results } = await env.DB.prepare(query).bind(...params).all();
-    const reviews = results.map(parseServiceReviewJson);
-
-    return cachedJsonResponse(reviews, CACHE_TIMES.services, ctx);
+    try {
+        const { results } = await env.DB.prepare(query).bind(...params).all();
+        const reviews = results.map(parseServiceReviewJson);
+        return cachedJsonResponse(reviews, CACHE_TIMES.services, ctx);
+    } catch {
+        return cachedJsonResponse([], CACHE_TIMES.services, ctx);
+    }
 }
 
 // ============================================
