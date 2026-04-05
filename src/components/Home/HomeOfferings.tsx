@@ -6,55 +6,55 @@ import { Package, Droplets, TrendingUp, Sprout } from "lucide-react";
 
 const HomeOfferings = () => {
     return (
-        <section className="py-24 bg-background border-t border-border relative overflow-hidden">
+        <section className="py-12 sm:py-20 bg-background border-t border-border relative overflow-hidden">
             <div className="container mx-auto px-4 relative z-10">
-                <div className="text-center max-w-5xl mx-auto mb-16">
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-[0.9] tracking-tight">
-                        <span className="block mb-2">Everything You Need</span>
+                <div className="text-center max-w-5xl mx-auto mb-8 sm:mb-14">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 sm:mb-5 leading-tight tracking-tight">
+                        <span className="block">Everything You Need</span>
                         <span className="block text-primary">To Grow</span>
                     </h2>
-                    <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-                        From premium irrigation products to expert installation and support.
+                    <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                        Premium irrigation products, expert installation, and ongoing support.
                     </p>
                 </div>
 
                 <Tabs defaultValue="products" className="w-full">
-                    <div className="flex justify-center mb-12">
-                        <TabsList className="grid w-full max-w-lg grid-cols-4 h-auto p-1 bg-muted/50 rounded-full border border-border">
+                    <div className="flex justify-center mb-6 sm:mb-10">
+                        <TabsList className="grid w-full max-w-sm sm:max-w-lg grid-cols-4 h-auto p-1 bg-muted/50 rounded-2xl border border-border">
                             <TabsTrigger
                                 value="products"
-                                className="rounded-full py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
+                                className="rounded-xl py-2.5 sm:py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
                                     <Package className="w-4 h-4" />
-                                    <span className="font-semibold hidden sm:inline">Products</span>
+                                    <span className="font-semibold text-[10px] sm:text-sm">Products</span>
                                 </div>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="kits"
-                                className="rounded-full py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
+                                className="rounded-xl py-2.5 sm:py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
                                     <Sprout className="w-4 h-4" />
-                                    <span className="font-semibold hidden sm:inline">Kits</span>
+                                    <span className="font-semibold text-[10px] sm:text-sm">Kits</span>
                                 </div>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="services"
-                                className="rounded-full py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
+                                className="rounded-xl py-2.5 sm:py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
                                     <Droplets className="w-4 h-4" />
-                                    <span className="font-semibold hidden sm:inline">Services</span>
+                                    <span className="font-semibold text-[10px] sm:text-sm">Services</span>
                                 </div>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="projects"
-                                className="rounded-full py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
+                                className="rounded-xl py-2.5 sm:py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary transition-all duration-300"
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
                                     <TrendingUp className="w-4 h-4" />
-                                    <span className="font-semibold hidden sm:inline">Projects</span>
+                                    <span className="font-semibold text-[10px] sm:text-sm">Projects</span>
                                 </div>
                             </TabsTrigger>
                         </TabsList>
