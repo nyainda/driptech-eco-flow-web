@@ -231,67 +231,52 @@ const ProjectsSection = ({
                       {project.name}
                     </h3>
 
-                    {project.location && (
-                      <div className="flex items-center gap-2 text-muted-foreground hidden md:flex">
-                        <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
-                        <span className="text-sm truncate">
-                          {project.location}
-                        </span>
-                      </div>
-                    )}
+                    {/* Location + Date row — visible on all screens */}
+                    <div className="flex items-center gap-3 flex-wrap">
+                      {project.location && (
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+                          <span className="text-xs sm:text-sm truncate max-w-[130px] sm:max-w-none">
+                            {project.location}
+                          </span>
+                        </div>
+                      )}
+                      {project.completion_date && (
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Calendar className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+                          <span className="text-xs sm:text-sm">
+                            {new Date(project.completion_date).toLocaleDateString("en-KE", { year: "numeric", month: "short" })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
 
-                    {project.completion_date && (
-                      <div className="flex items-center gap-2 text-muted-foreground hidden md:flex">
-                        <Calendar className="h-4 w-4 flex-shrink-0 text-primary" />
-                        <span className="text-sm">
-                          Completed:{" "}
-                          {new Date(
-                            project.completion_date,
-                          ).toLocaleDateString()}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Project Stats */}
-                    {(formattedArea || project.water_saved) && (
-                      <div className="grid grid-cols-2 gap-3 hidden md:grid">
+                    {/* Project Stats grid — visible on all screens */}
+                    {(formattedArea || project.water_saved || project.yield_improvement) && (
+                      <div className="grid grid-cols-3 gap-2">
                         {formattedArea && (
-                          <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
-                            <div className="text-lg font-bold text-foreground">
-                              {formattedArea}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Area Covered
-                            </div>
+                          <div className="text-center p-2.5 bg-muted/40 rounded-xl border border-border">
+                            <div className="text-sm sm:text-base font-bold text-foreground">{formattedArea}</div>
+                            <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Area</div>
                           </div>
                         )}
                         {project.water_saved && (
-                          <div className="text-center p-4 bg-muted/30 rounded-xl border border-border">
-                            <div className="text-lg font-bold text-foreground">
-                              {project.water_saved}%
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Water Saved
-                            </div>
+                          <div className="text-center p-2.5 bg-muted/40 rounded-xl border border-border">
+                            <div className="text-sm sm:text-base font-bold text-foreground">{project.water_saved}%</div>
+                            <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Water Saved</div>
                           </div>
                         )}
-                      </div>
-                    )}
-
-                    {project.yield_improvement && (
-                      <div className="text-center p-4 bg-muted/30 rounded-xl border border-border hidden md:block">
-                        <div className="flex items-center justify-center gap-1 text-lg font-bold text-foreground">
-                          <TrendingUp className="h-4 w-4 text-primary" />+
-                          {project.yield_improvement}%
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Yield Improvement
-                        </div>
+                        {project.yield_improvement && (
+                          <div className="text-center p-2.5 bg-muted/40 rounded-xl border border-border">
+                            <div className="text-sm sm:text-base font-bold text-primary">+{project.yield_improvement}%</div>
+                            <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Yield Up</div>
+                          </div>
+                        )}
                       </div>
                     )}
 
                     {project.testimonial && (
-                      <blockquote className="text-sm text-muted-foreground italic border-l-4 border-border pl-3 py-1 line-clamp-3 hidden md:block">
+                      <blockquote className="text-xs sm:text-sm text-muted-foreground italic border-l-2 border-primary/40 pl-3 py-1 line-clamp-2">
                         "{project.testimonial}"
                       </blockquote>
                     )}

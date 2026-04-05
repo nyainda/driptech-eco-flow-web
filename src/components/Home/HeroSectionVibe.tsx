@@ -22,7 +22,7 @@ const CATEGORY_CONFIG: Record<string, {
     label: string; icon: LucideIcon; badge: string;
     headline: string; headlineAccent: string; description: string;
     stats: { value: string; label: string }[]; link: string;
-    color: string;
+    color: string; fallbackImage: string;
 }> = {
     drip_irrigation: {
         label: "Drip", icon: Droplets, badge: "Kenya's #1 Choice",
@@ -30,6 +30,7 @@ const CATEGORY_CONFIG: Record<string, {
         description: "Water delivered directly to roots. Near-zero evaporation. From ¼ acre to 100+ acres.",
         stats: [{ value: "50%", label: "Less Water" }, { value: "60%", label: "More Yield" }, { value: "5yr", label: "Warranty" }],
         link: "/products/drip", color: "#10b981",
+        fallbackImage: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80",
     },
     sprinkler_systems: {
         label: "Sprinklers", icon: Zap, badge: "Wide Area Coverage",
@@ -37,6 +38,7 @@ const CATEGORY_CONFIG: Record<string, {
         description: "Blanket large fields evenly with precision pressure regulation and smart scheduling.",
         stats: [{ value: "5×", label: "Coverage" }, { value: "40%", label: "Water Saved" }, { value: "360°", label: "Rotation" }],
         link: "/products/sprinklers", color: "#06b6d4",
+        fallbackImage: "https://images.unsplash.com/photo-1563880748-3e4bfe0dae5b?w=1920&q=80",
     },
     filtration_systems: {
         label: "Filtration", icon: Filter, badge: "Protect Your System",
@@ -44,6 +46,7 @@ const CATEGORY_CONFIG: Record<string, {
         description: "Multi-stage filtration removes 99.9% of sediment. Protects drippers, extends system lifespan.",
         stats: [{ value: "99.9%", label: "Filtration" }, { value: "3×", label: "System Life" }, { value: "Low", label: "Maintenance" }],
         link: "/products/filtration", color: "#8b5cf6",
+        fallbackImage: "https://images.unsplash.com/photo-1553530666-aa57c929c8a0?w=1920&q=80",
     },
     control_systems: {
         label: "Controls", icon: Settings, badge: "Smart Farm Tech",
@@ -51,6 +54,7 @@ const CATEGORY_CONFIG: Record<string, {
         description: "Run your farm from your phone. IoT valves, soil sensors, and auto-timers — 24/7.",
         stats: [{ value: "24/7", label: "Automation" }, { value: "80%", label: "Labour Saved" }, { value: "IoT", label: "Connected" }],
         link: "/products/controls", color: "#f59e0b",
+        fallbackImage: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=80",
     },
     accessories: {
         label: "Full Kits", icon: LayoutGrid, badge: "Ready in a Day",
@@ -58,6 +62,7 @@ const CATEGORY_CONFIG: Record<string, {
         description: "Everything in one box — drippers, pipes, fittings, filter, valve. Ready within 24 hours.",
         stats: [{ value: "1 Day", label: "Install" }, { value: "All-In", label: "One Box" }, { value: "Free", label: "Site Visit" }],
         link: "/irrigation-kits", color: "#10b981",
+        fallbackImage: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1920&q=80",
     },
 };
 
@@ -188,13 +193,13 @@ export default function HeroSectionVibe() {
                         return (
                             <div key={s.category} className="absolute inset-0"
                                 style={{ opacity: i === current ? (isTransitioning ? 0 : 1) : 0, transition: "opacity 0.55s ease" }}>
-                                {img
-                                    ? <img src={img} alt={s.label}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                        style={{ objectPosition: "center 35%" }}
-                                        loading={i === 0 ? "eager" : "lazy"} />
-                                    : <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 to-neutral-950" />
-                                }
+                                <img
+                                    src={img || s.config.fallbackImage}
+                                    alt={s.label}
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                    style={{ objectPosition: "center 40%" }}
+                                    loading={i === 0 ? "eager" : "lazy"}
+                                />
                             </div>
                         );
                     })}

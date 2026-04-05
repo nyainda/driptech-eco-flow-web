@@ -4,6 +4,29 @@ import ServicesSection from "@/components/Home/ServicesSection";
 import ProjectsSection from "@/components/Home/ProjectsSection";
 import { Package, Droplets, TrendingUp, Sprout } from "lucide-react";
 
+const TAB_INFO: Record<string, { title: string; subtitle: string; color: string }> = {
+    products: {
+        title: "Our Product Range",
+        subtitle: "Drip lines, sprinklers, pumps, filters & control valves. Everything your farm needs for precision irrigation.",
+        color: "#10b981",
+    },
+    kits: {
+        title: "Complete Irrigation Kits",
+        subtitle: "All-in-one boxed kits — drippers, pipes, fittings, filter, valve. Delivered and installed within 24 hours.",
+        color: "#06b6d4",
+    },
+    services: {
+        title: "Expert Installation & Support",
+        subtitle: "Design, supply, installation, and maintenance by DripTech engineers. Free site assessment included.",
+        color: "#8b5cf6",
+    },
+    projects: {
+        title: "Proven Field Results",
+        subtitle: "Real projects, real yields. See how Kenyan farmers have transformed their operations with DripTech.",
+        color: "#f59e0b",
+    },
+};
+
 const HomeOfferings = () => {
     return (
         <section className="py-12 sm:py-20 bg-background border-t border-border relative overflow-hidden">
@@ -19,7 +42,7 @@ const HomeOfferings = () => {
                 </div>
 
                 <Tabs defaultValue="products" className="w-full">
-                    <div className="flex justify-center mb-6 sm:mb-10">
+                    <div className="flex justify-center mb-3 sm:mb-6">
                         <TabsList className="grid w-full max-w-sm sm:max-w-lg grid-cols-4 h-auto p-1 bg-muted/50 rounded-2xl border border-border">
                             <TabsTrigger
                                 value="products"
@@ -60,29 +83,28 @@ const HomeOfferings = () => {
                         </TabsList>
                     </div>
 
-                    <TabsContent value="products" className="mt-0 animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
-                        <div className="bg-background/50 rounded-3xl border border-border/50 overflow-hidden shadow-sm">
-                            <ProductsShowcase hideHeader hideStats hideBenefits compact />
-                        </div>
-                    </TabsContent>
-
-                    <TabsContent value="kits" className="mt-0 animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
-                        <div className="bg-background/50 rounded-3xl border border-border/50 overflow-hidden shadow-sm">
-                            <ServicesSection hideHero hideMarquee hideProcess hideCTA compact />
-                        </div>
-                    </TabsContent>
-
-                    <TabsContent value="services" className="mt-0 animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
-                        <div className="bg-background/50 rounded-3xl border border-border/50 overflow-hidden shadow-sm">
-                            <ServicesSection hideHero hideMarquee hideKits compact />
-                        </div>
-                    </TabsContent>
-
-                    <TabsContent value="projects" className="mt-0 animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
-                        <div className="bg-background/50 rounded-3xl border border-border/50 overflow-hidden shadow-sm">
-                            <ProjectsSection hideHeader compact />
-                        </div>
-                    </TabsContent>
+                    {/* Tab teaser — visible on mobile to give context before scrolling into content */}
+                    {(["products", "kits", "services", "projects"] as const).map(tab => (
+                        <TabsContent key={tab} value={tab} className="mt-0">
+                            <div className="mb-4 sm:mb-6 px-1">
+                                <div className="rounded-2xl px-4 py-3.5 border sm:hidden"
+                                    style={{ background: `${TAB_INFO[tab].color}10`, borderColor: `${TAB_INFO[tab].color}25` }}>
+                                    <p className="text-xs font-bold uppercase tracking-wide mb-0.5" style={{ color: TAB_INFO[tab].color }}>
+                                        {TAB_INFO[tab].title}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                        {TAB_INFO[tab].subtitle}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="bg-background/50 rounded-3xl border border-border/50 overflow-hidden shadow-sm animate-in fade-in-50 slide-in-from-bottom-4 duration-400">
+                                {tab === "products" && <ProductsShowcase hideHeader hideStats hideBenefits compact />}
+                                {tab === "kits" && <ServicesSection hideHero hideMarquee hideProcess hideCTA compact />}
+                                {tab === "services" && <ServicesSection hideHero hideMarquee hideKits compact />}
+                                {tab === "projects" && <ProjectsSection hideHeader compact />}
+                            </div>
+                        </TabsContent>
+                    ))}
                 </Tabs>
             </div>
         </section>
