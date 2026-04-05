@@ -39,20 +39,13 @@ export default defineConfig(({ mode }) => {
     }),
   ];
 
-  // Only load componentTagger in development mode
-  if (mode === 'development') {
-    try {
-      const { componentTagger } = require("lovable-tagger");
-      plugins.push(componentTagger.componentTagger());
-    } catch (error) {
-      console.warn('lovable-tagger not available:', error);
-    }
-  }
+  // componentTagger removed for Replit compatibility (ESM doesn't support require())
 
   return {
     server: {
       host: "0.0.0.0",
       port: 5000,
+      allowedHosts: true,
     },
     plugins,
     resolve: {
