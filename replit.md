@@ -58,4 +58,16 @@ Set in Replit's shared environment:
 
 ## Admin Access
 
-Navigate to `/admin` — login with your Supabase admin credentials. Admin users are managed via the `admin_users` and `user_roles` tables in Supabase.
+Navigate to `/admin` — login with your Supabase admin credentials. Admin uses Supabase Auth (`signInWithPassword`), restricted to `@driptech.com` email addresses. The `is_admin()` function in Supabase checks either app_metadata role or email domain.
+
+## Analytics Dashboard
+
+The Business Intelligence Dashboard (`Dashboard.tsx`) fetches real data from these tables:
+- **Primary KPIs**: customers, products, blog_posts, documents, quotes, videos, projects, contact_submissions
+- **Extended KPIs**: service_bookings, newsletter_subscribers, news_articles, mpesa_transactions, email_campaigns, whatsapp_conversations, technicians, service_reviews, success_stories
+- **Revenue**: Quotes pipeline (KES) + M-Pesa completed transactions
+- **Visitor Analytics**: visitor_sessions, page_views, product_interactions (via AnalyticsDashboard.tsx tab)
+
+**IMPORTANT**: If the dashboard shows zeros, run the migration `supabase/migrations/20260413000000_fix_analytics_read_rls.sql` in the Supabase SQL editor. This fixes RLS policies to allow authenticated admins to read all analytics tables.
+
+**Fixed bug**: The dashboard previously queried a non-existent `invoices` table, which caused a silent crash leaving all stats at zero. This has been replaced with `mpesa_transactions`.

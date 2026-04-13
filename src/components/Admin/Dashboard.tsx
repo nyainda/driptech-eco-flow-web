@@ -51,6 +51,7 @@ import {
   Tablet,
   RefreshCw,
   Filter,
+  MessageSquare,
 } from "lucide-react";
 import {
   PieChart as RechartsPieChart,
@@ -83,6 +84,16 @@ interface DashboardStats {
   avgProjectValue: number;
   conversionRate: number;
   customerSatisfaction: number;
+  totalServiceBookings: number;
+  totalNewsletterSubscribers: number;
+  totalNewsArticles: number;
+  totalMpesaTransactions: number;
+  mpesaRevenue: number;
+  totalEmailCampaigns: number;
+  totalWhatsappConversations: number;
+  totalTechnicians: number;
+  totalServiceReviews: number;
+  totalSuccessStories: number;
   analytics: {
     monthlyGrowth: {
       customers: number;
@@ -171,6 +182,16 @@ const Dashboard = () => {
     avgProjectValue: 0,
     conversionRate: 0,
     customerSatisfaction: 0,
+    totalServiceBookings: 0,
+    totalNewsletterSubscribers: 0,
+    totalNewsArticles: 0,
+    totalMpesaTransactions: 0,
+    mpesaRevenue: 0,
+    totalEmailCampaigns: 0,
+    totalWhatsappConversations: 0,
+    totalTechnicians: 0,
+    totalServiceReviews: 0,
+    totalSuccessStories: 0,
     analytics: {
       monthlyGrowth: {
         customers: 0,
@@ -215,24 +236,47 @@ const Dashboard = () => {
         videosResult,
         projectsResult,
         contactSubmissionsResult,
-        invoicesResult,
+        serviceBookingsResult,
+        newsletterResult,
+        newsArticlesResult,
+        mpesaResult,
         sessionsResult,
         pageViewsResult,
         productInteractionsResult,
-      ] = await Promise.all([
-        supabase.from("customers").select("*", { count: "exact" }),
-        supabase.from("products").select("*", { count: "exact" }),
-        supabase.from("blog_posts").select("*", { count: "exact" }),
-        supabase.from("documents").select("*", { count: "exact" }),
-        supabase.from("quotes").select("*", { count: "exact" }),
-        supabase.from("videos").select("*", { count: "exact" }),
-        supabase.from("projects").select("*", { count: "exact" }),
-        supabase.from("contact_submissions").select("*", { count: "exact" }),
-        supabase.from("invoices").select("*", { count: "exact" }),
-        supabase.from("visitor_sessions").select("*", { count: "exact" }),
-        supabase.from("page_views").select("*", { count: "exact" }),
-        supabase.from("product_interactions").select("*", { count: "exact" }),
+        emailCampaignsResult,
+        whatsappResult,
+        techniciansResult,
+        serviceReviewsResult,
+        successStoriesResult,
+      ] = await Promise.allSettled([
+        supabase.from("customers").select("*", { count: "exact", head: true }),
+        supabase.from("products").select("*", { count: "exact", head: true }),
+        supabase.from("blog_posts").select("*", { count: "exact", head: true }),
+        supabase.from("documents").select("*", { count: "exact", head: true }),
+        supabase.from("quotes").select("*", { count: "exact", head: true }),
+        supabase.from("videos").select("*", { count: "exact", head: true }),
+        supabase.from("projects").select("*", { count: "exact", head: true }),
+        supabase.from("contact_submissions").select("*", { count: "exact", head: true }),
+        supabase.from("service_bookings").select("*", { count: "exact", head: true }),
+        supabase.from("newsletter_subscribers").select("*", { count: "exact", head: true }),
+        supabase.from("news_articles").select("*", { count: "exact", head: true }),
+        supabase.from("mpesa_transactions").select("*", { count: "exact", head: true }),
+        supabase.from("visitor_sessions").select("*", { count: "exact", head: true }),
+        supabase.from("page_views").select("*", { count: "exact", head: true }),
+        supabase.from("product_interactions").select("*", { count: "exact", head: true }),
+        supabase.from("email_campaigns").select("*", { count: "exact", head: true }),
+        supabase.from("whatsapp_conversations").select("*", { count: "exact", head: true }),
+        supabase.from("technicians").select("*", { count: "exact", head: true }),
+        supabase.from("service_reviews").select("*", { count: "exact", head: true }),
+        supabase.from("success_stories").select("*", { count: "exact", head: true }),
       ]);
+
+      const safeCount = (result: PromiseSettledResult<any>): number => {
+        if (result.status === "fulfilled" && !result.value.error) {
+          return result.value.count || 0;
+        }
+        return 0;
+      };
 
       const [
         quotesData,
@@ -241,124 +285,97 @@ const Dashboard = () => {
         customersData,
         videosData,
         blogData,
-        invoicesData,
+        mpesaData,
         sessionsData,
         pageViewsData,
         productInteractionsData,
-      ] = await Promise.all([
-        supabase
-          .from("quotes")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("projects")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("products")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("customers")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("videos")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("blog_posts")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("invoices")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("visitor_sessions")
-          .select("*")
-          .order("session_start", { ascending: false })
-          .limit(1000),
-        supabase
-          .from("page_views")
-          .select("*")
-          .order("timestamp", { ascending: false })
-          .limit(1000),
-        supabase
-          .from("product_interactions")
-          .select("*")
-          .order("timestamp", { ascending: false })
-          .limit(500),
+        documentsData,
+      ] = await Promise.allSettled([
+        supabase.from("quotes").select("*").order("created_at", { ascending: false }),
+        supabase.from("projects").select("*").order("created_at", { ascending: false }),
+        supabase.from("products").select("*").order("created_at", { ascending: false }),
+        supabase.from("customers").select("*").order("created_at", { ascending: false }),
+        supabase.from("videos").select("*").order("created_at", { ascending: false }),
+        supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
+        supabase.from("mpesa_transactions").select("*").order("created_at", { ascending: false }).limit(500),
+        supabase.from("visitor_sessions").select("*").order("session_start", { ascending: false }).limit(1000),
+        supabase.from("page_views").select("*").order("timestamp", { ascending: false }).limit(1000),
+        supabase.from("product_interactions").select("*").order("timestamp", { ascending: false }).limit(500),
+        supabase.from("documents").select("id,download_count").order("created_at", { ascending: false }),
       ]);
 
-      if (
-        customersResult.error ||
-        productsResult.error ||
-        blogPostsResult.error ||
-        documentsResult.error ||
-        quotesResult.error ||
-        videosResult.error ||
-        projectsResult.error ||
-        contactSubmissionsResult.error ||
-        invoicesResult.error ||
-        sessionsResult.error ||
-        pageViewsResult.error ||
-        productInteractionsResult.error
-      ) {
-        throw new Error("Failed to fetch some data from the database");
-      }
-      const totalRevenue =
-        quotesData.data?.reduce(
-          (sum, quote) => sum + (quote.total_amount || 0),
-          0,
-        ) || 0;
-      const totalDownloads =
-        documentsResult.data?.reduce(
-          (sum, doc) => sum + (doc.download_count || 0),
-          0,
-        ) || 0;
-      const totalBlogViews =
-        blogData.data?.reduce((sum, blog) => sum + (blog.views || 0), 0) || 0;
-      const totalVideoViews =
-        videosData.data?.reduce((sum, video) => sum + (video.views || 0), 0) ||
-        0;
-      const avgProjectValue =
-        projectsData.data?.length > 0
-          ? totalRevenue / projectsData.data.length
-          : 0;
-      const conversionRate =
-        customersResult.count > 0
-          ? ((quotesResult.count || 0) / customersResult.count) * 100
-          : 0;
+      const safeData = (result: PromiseSettledResult<any>): any[] => {
+        if (result.status === "fulfilled" && !result.value.error) {
+          return result.value.data || [];
+        }
+        if (result.status === "fulfilled" && result.value.error) {
+          console.warn("Query error:", result.value.error.message);
+        }
+        return [];
+      };
+      const quotesArr = safeData(quotesData);
+      const projectsArr = safeData(projectsData);
+      const productsArr = safeData(productsData);
+      const customersArr = safeData(customersData);
+      const videosArr = safeData(videosData);
+      const blogsArr = safeData(blogData);
+      const mpesaArr = safeData(mpesaData);
+      const sessionsArr = safeData(sessionsData);
+      const pageViewsArr = safeData(pageViewsData);
+      const productInteractionsArr = safeData(productInteractionsData);
+      const documentsArr = safeData(documentsData);
+
+      const totalQuoteRevenue = quotesArr.reduce((sum, q) => sum + (q.total_amount || 0), 0);
+      const mpesaRevenue = mpesaArr
+        .filter((t: any) => t.status === "completed" || t.result_code === 0)
+        .reduce((sum: number, t: any) => sum + (t.amount || 0), 0);
+      const totalRevenue = totalQuoteRevenue;
+      const totalDownloads = documentsArr.reduce((sum, doc) => sum + (doc.download_count || 0), 0);
+      const totalBlogViews = blogsArr.reduce((sum, blog) => sum + (blog.views || 0), 0);
+      const totalVideoViews = videosArr.reduce((sum, video) => sum + (video.views || 0), 0);
+      const avgProjectValue = projectsArr.length > 0 ? totalRevenue / projectsArr.length : 0;
+      const totalCustomers = safeCount(customersResult);
+      const totalQuotes = safeCount(quotesResult);
+      const conversionRate = totalCustomers > 0 ? (totalQuotes / totalCustomers) * 100 : 0;
 
       const analytics = calculateAnalytics(
-        productsData.data || [],
-        quotesData.data || [],
-        projectsData.data || [],
-        customersData.data || [],
-        videosData.data || [],
-        blogData.data || [],
-        invoicesData.data || [],
-        sessionsData.data || [],
-        pageViewsData.data || [],
-        productInteractionsData.data || [],
+        productsArr,
+        quotesArr,
+        projectsArr,
+        customersArr,
+        videosArr,
+        blogsArr,
+        mpesaArr,
+        sessionsArr,
+        pageViewsArr,
+        productInteractionsArr,
       );
 
       setStats({
-        totalCustomers: customersResult.count || 0,
-        totalProducts: productsResult.count || 0,
-        totalBlogPosts: blogPostsResult.count || 0,
-        totalDocuments: documentsResult.count || 0,
-        totalQuotes: quotesResult.count || 0,
-        totalVideos: videosResult.count || 0,
-        totalProjects: projectsResult.count || 0,
-        totalContactSubmissions: contactSubmissionsResult.count || 0,
+        totalCustomers,
+        totalProducts: safeCount(productsResult),
+        totalBlogPosts: safeCount(blogPostsResult),
+        totalDocuments: safeCount(documentsResult),
+        totalQuotes,
+        totalVideos: safeCount(videosResult),
+        totalProjects: safeCount(projectsResult),
+        totalContactSubmissions: safeCount(contactSubmissionsResult),
+        totalServiceBookings: safeCount(serviceBookingsResult),
+        totalNewsletterSubscribers: safeCount(newsletterResult),
+        totalNewsArticles: safeCount(newsArticlesResult),
+        totalMpesaTransactions: safeCount(mpesaResult),
+        mpesaRevenue,
+        totalEmailCampaigns: safeCount(emailCampaignsResult),
+        totalWhatsappConversations: safeCount(whatsappResult),
+        totalTechnicians: safeCount(techniciansResult),
+        totalServiceReviews: safeCount(serviceReviewsResult),
+        totalSuccessStories: safeCount(successStoriesResult),
         totalDownloads,
         totalViews: totalBlogViews + totalVideoViews,
         totalRevenue,
         avgProjectValue,
         conversionRate,
-        customerSatisfaction: 0, // No satisfaction data in DB
+        customerSatisfaction: 0,
         analytics,
       });
     } catch (error) {
@@ -381,7 +398,7 @@ const Dashboard = () => {
     customers: any[],
     videos: any[],
     blogs: any[],
-    invoices: any[],
+    mpesaTransactions: any[],
     sessions: any[],
     pageViews: any[],
     productInteractions: any[],
@@ -610,10 +627,10 @@ const Dashboard = () => {
       p.created_at?.startsWith(currentMonthStr),
     ).length;
 
-    const lastMonthRevenue = [...quotes, ...invoices]
+    const lastMonthRevenue = quotes
       .filter((item) => item.created_at?.startsWith(lastMonthStr))
       .reduce((sum, item) => sum + (item.total_amount || 0), 0);
-    const currentMonthRevenue = [...quotes, ...invoices]
+    const currentMonthRevenue = quotes
       .filter((item) => item.created_at?.startsWith(currentMonthStr))
       .reduce((sum, item) => sum + (item.total_amount || 0), 0);
 
@@ -710,20 +727,15 @@ const Dashboard = () => {
       revenueByCategory,
       popularPages,
       productInteractionSummary,
-      invoiceMetrics: {
-        totalInvoices: invoices.length,
-        paidInvoices: invoices.filter((i) => i.status === "paid").length,
-        pendingInvoices: invoices.filter(
-          (i) => i.status === "pending" || i.status === "sent",
-        ).length,
-        overdueInvoices: invoices.filter((i) => i.status === "overdue").length,
-        totalInvoiceAmount: invoices.reduce(
-          (sum, i) => sum + (i.total_amount || 0),
-          0,
-        ),
-        paidAmount: invoices
-          .filter((i) => i.status === "paid")
-          .reduce((sum, i) => sum + (i.total_amount || 0), 0),
+      mpesaMetrics: {
+        totalTransactions: mpesaTransactions.length,
+        completedTransactions: mpesaTransactions.filter((t) => t.result_code === 0 || t.status === "completed").length,
+        pendingTransactions: mpesaTransactions.filter((t) => t.status === "pending").length,
+        failedTransactions: mpesaTransactions.filter((t) => t.result_code !== 0 && t.status !== "completed" && t.status !== "pending").length,
+        totalAmount: mpesaTransactions.reduce((sum, t) => sum + (t.amount || 0), 0),
+        completedAmount: mpesaTransactions
+          .filter((t) => t.result_code === 0 || t.status === "completed")
+          .reduce((sum, t) => sum + (t.amount || 0), 0),
       },
       sessionMetrics: {
         totalSessions: sessions.length,
@@ -917,6 +929,110 @@ const Dashboard = () => {
               <p className="text-2xl font-bold">{stats.totalProducts}</p>
               <p className="text-sm text-muted-foreground">Total Products</p>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Extended Business KPIs */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+        <Card className="shadow border-0 bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/20 dark:to-emerald-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">M-Pesa Revenue</p>
+            </div>
+            <p className="text-lg font-bold text-emerald-700">{formatCurrency(stats.mpesaRevenue)}</p>
+            <p className="text-[10px] text-muted-foreground">{stats.totalMpesaTransactions} transactions</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/20 dark:to-sky-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Calendar className="h-3.5 w-3.5 text-sky-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Service Bookings</p>
+            </div>
+            <p className="text-lg font-bold text-sky-700">{stats.totalServiceBookings}</p>
+            <p className="text-[10px] text-muted-foreground">All-time bookings</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950/20 dark:to-violet-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Users className="h-3.5 w-3.5 text-violet-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Newsletter Subs</p>
+            </div>
+            <p className="text-lg font-bold text-violet-700">{stats.totalNewsletterSubscribers}</p>
+            <p className="text-[10px] text-muted-foreground">Active subscribers</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/20 dark:to-amber-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <FileText className="h-3.5 w-3.5 text-amber-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">News Articles</p>
+            </div>
+            <p className="text-lg font-bold text-amber-700">{stats.totalNewsArticles}</p>
+            <p className="text-[10px] text-muted-foreground">Published articles</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950/20 dark:to-rose-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Star className="h-3.5 w-3.5 text-rose-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Service Reviews</p>
+            </div>
+            <p className="text-lg font-bold text-rose-700">{stats.totalServiceReviews}</p>
+            <p className="text-[10px] text-muted-foreground">{stats.totalTechnicians} technicians</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950/20 dark:to-indigo-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Globe className="h-3.5 w-3.5 text-indigo-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">WhatsApp Chats</p>
+            </div>
+            <p className="text-lg font-bold text-indigo-700">{stats.totalWhatsappConversations}</p>
+            <p className="text-[10px] text-muted-foreground">Conversations</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950/20 dark:to-cyan-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Activity className="h-3.5 w-3.5 text-cyan-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Email Campaigns</p>
+            </div>
+            <p className="text-lg font-bold text-cyan-700">{stats.totalEmailCampaigns}</p>
+            <p className="text-[10px] text-muted-foreground">Sent campaigns</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950/20 dark:to-yellow-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Award className="h-3.5 w-3.5 text-yellow-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Success Stories</p>
+            </div>
+            <p className="text-lg font-bold text-yellow-700">{stats.totalSuccessStories}</p>
+            <p className="text-[10px] text-muted-foreground">Case studies</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950/20 dark:to-pink-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <MessageSquare className="h-3.5 w-3.5 text-pink-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Contacts</p>
+            </div>
+            <p className="text-lg font-bold text-pink-700">{stats.totalContactSubmissions}</p>
+            <p className="text-[10px] text-muted-foreground">Form submissions</p>
+          </CardContent>
+        </Card>
+        <Card className="shadow border-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950/20 dark:to-slate-900/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Eye className="h-3.5 w-3.5 text-slate-600" />
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Content Views</p>
+            </div>
+            <p className="text-lg font-bold text-slate-700">{stats.totalViews.toLocaleString()}</p>
+            <p className="text-[10px] text-muted-foreground">{stats.totalDownloads} downloads</p>
           </CardContent>
         </Card>
       </div>
@@ -1130,6 +1246,38 @@ const Dashboard = () => {
 
         {/* Revenue Tab */}
         <TabsContent value="revenue" className="space-y-6">
+          {/* M-Pesa Summary Row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <Card className="border-l-4 border-l-green-500 shadow-sm">
+              <CardContent className="p-4">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">M-Pesa Collected</p>
+                <p className="text-xl font-bold text-green-600 mt-1">{formatCurrency(stats.mpesaRevenue)}</p>
+                <p className="text-xs text-muted-foreground">{stats.totalMpesaTransactions} total transactions</p>
+              </CardContent>
+            </Card>
+            <Card className="border-l-4 border-l-blue-500 shadow-sm">
+              <CardContent className="p-4">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Quote Pipeline</p>
+                <p className="text-xl font-bold text-blue-600 mt-1">{formatCurrency(stats.totalRevenue)}</p>
+                <p className="text-xs text-muted-foreground">{stats.totalQuotes} quotes issued</p>
+              </CardContent>
+            </Card>
+            <Card className="border-l-4 border-l-purple-500 shadow-sm">
+              <CardContent className="p-4">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Avg Project Value</p>
+                <p className="text-xl font-bold text-purple-600 mt-1">{formatCurrency(stats.avgProjectValue)}</p>
+                <p className="text-xs text-muted-foreground">{stats.totalProjects} projects</p>
+              </CardContent>
+            </Card>
+            <Card className="border-l-4 border-l-orange-500 shadow-sm">
+              <CardContent className="p-4">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Conversion Rate</p>
+                <p className="text-xl font-bold text-orange-600 mt-1">{stats.conversionRate.toFixed(1)}%</p>
+                <p className="text-xs text-muted-foreground">Visitors → Customers</p>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Revenue by Category */}
             <Card className="shadow-lg border-0">
