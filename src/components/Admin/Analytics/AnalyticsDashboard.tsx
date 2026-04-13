@@ -119,55 +119,84 @@ const AnalyticsDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState("30d");
   const [refreshing, setRefreshing] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [secondsAgo, setSecondsAgo] = useState(0);
+
+  // Auto-update the "seconds ago" counter every second
+  useEffect(() => {
+    if (!lastUpdated) return;
+    const interval = setInterval(() => {
+      setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [lastUpdated]);
+
+  // Auto-refresh every 90 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRefreshTrigger(prev => prev + 1);
+    }, 90000);
+    return () => clearInterval(interval);
+  }, []);
 
   // --- Fetch Logic ---
 
   const fetchAnalytics = async () => {
     try {
       setRefreshing(true);
-      console.log('🔄 Fetching analytics data...');
+      setFetchError(null);
 
-      // 1. Fetch Lifetime Stats (Cumulative)
-      const { count: totalSessions } = await supabase
-        .from("visitor_sessions")
-        .select("*", { count: "exact", head: true });
+      // 1. Lifetime Stats — use exact COUNT queries (bypasses row limits)
+      const [sessionCountRes, pageViewCountRes] = await Promise.all([
+        supabase.from("visitor_sessions").select("*", { count: "exact", head: true }),
+        supabase.from("page_views").select("*", { count: "exact", head: true }),
+      ]);
 
-      const { count: totalPageViews } = await supabase
-        .from("page_views")
-        .select("*", { count: "exact", head: true });
+      // Fetch visitor_ids in pages to correctly count unique visitors
+      // Supabase REST default is 1000 rows — we page through to get all
+      let allVisitorIds: { visitor_id: string }[] = [];
+      let pageOffset = 0;
+      const PAGE_SIZE = 5000;
+      let hasMore = true;
 
-      // Fetch unique visitor IDs (limit to prevent timeout)
-      const { data: allVisitorIds, error: visitorError } = await supabase
-        .from("visitor_sessions")
-        .select("visitor_id")
-        .limit(50000); // Prevent timeout on huge datasets
+      while (hasMore) {
+        const { data: page, error: pageError } = await supabase
+          .from("visitor_sessions")
+          .select("visitor_id")
+          .range(pageOffset, pageOffset + PAGE_SIZE - 1);
 
-      if (visitorError) {
-        console.error('❌ Error fetching visitor IDs:', visitorError);
+        if (pageError) {
+          setFetchError(`Visitor data: ${pageError.message}`);
+          break;
+        }
+        if (!page || page.length === 0) {
+          hasMore = false;
+        } else {
+          allVisitorIds = allVisitorIds.concat(page);
+          pageOffset += PAGE_SIZE;
+          if (page.length < PAGE_SIZE) hasMore = false;
+        }
       }
 
-      console.log(`📊 Raw Data - Sessions: ${totalSessions}, PageViews: ${totalPageViews}, Visitor Records: ${allVisitorIds?.length || 0}`);
+      const realTotalVisitors = new Set(allVisitorIds.map(v => v.visitor_id)).size;
 
-      const realTotalVisitors = allVisitorIds ? new Set(allVisitorIds.map(v => v.visitor_id)).size : 0;
-
-      console.log(`✅ Unique Visitors: ${realTotalVisitors}`);
-
-      const lifetimeStats = {
+      const lifetimeStats: LifetimeStats = {
         totalVisitors: realTotalVisitors,
-        totalSessions: totalSessions || 0,
-        totalPageViews: totalPageViews || 0,
+        totalSessions: sessionCountRes.count || 0,
+        totalPageViews: pageViewCountRes.count || 0,
       };
 
       setLifetimeData(lifetimeStats);
-      console.log('💾 Lifetime stats updated:', lifetimeStats);
 
-      // 2. Fetch Period Stats
+      // 2. Period Stats
       const stats = await fetchPeriodStats(dateRange);
       setPeriodData(stats);
-      console.log('📅 Period stats updated for range:', dateRange);
 
-    } catch (error) {
-      console.error("❌ Critical error fetching analytics:", error);
+      setLastUpdated(new Date());
+      setSecondsAgo(0);
+    } catch (error: any) {
+      setFetchError(error?.message || "Unknown error fetching analytics");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -180,50 +209,54 @@ const AnalyticsDashboard: React.FC = () => {
     let isAllTime = false;
 
     switch (range) {
-      case "1d":
-        startDate.setDate(endDate.getDate() - 1);
-        break;
-      case "7d":
-        startDate.setDate(endDate.getDate() - 7);
-        break;
-      case "30d":
-        startDate.setDate(endDate.getDate() - 30);
-        break;
-      case "90d":
-        startDate.setDate(endDate.getDate() - 90);
-        break;
-      case "year":
-        startDate.setFullYear(endDate.getFullYear(), 0, 1); // Start of this year
-        break;
+      case "1d": startDate.setDate(endDate.getDate() - 1); break;
+      case "7d": startDate.setDate(endDate.getDate() - 7); break;
+      case "30d": startDate.setDate(endDate.getDate() - 30); break;
+      case "90d": startDate.setDate(endDate.getDate() - 90); break;
+      case "year": startDate.setFullYear(endDate.getFullYear(), 0, 1); break;
       case "all":
         isAllTime = true;
-        startDate.setFullYear(2020); // Arbitrary past date
+        startDate.setFullYear(2020);
         break;
     }
 
     const startDateStr = startDate.toISOString();
     const endDateStr = endDate.toISOString();
 
-    // Queries
-    let sessionsQuery = supabase.from("visitor_sessions").select("*");
-    let pageViewsQuery = supabase.from("page_views").select("*");
-    let interactionsQuery = supabase.from("product_interactions").select("*");
+    // Use paginated fetches — Supabase REST API caps at 1000 rows by default.
+    // Without explicit pagination, queries silently truncate and stats look "frozen".
+    const fetchAllPages = async (
+      table: string,
+      dateColumn: string,
+      selectCols: string = "*"
+    ): Promise<any[]> => {
+      const CHUNK = 5000;
+      let results: any[] = [];
+      let offset = 0;
+      let more = true;
 
-    if (!isAllTime) {
-      sessionsQuery = sessionsQuery.gte("session_start", startDateStr).lte("session_start", endDateStr);
-      pageViewsQuery = pageViewsQuery.gte("timestamp", startDateStr).lte("timestamp", endDateStr);
-      interactionsQuery = interactionsQuery.gte("timestamp", startDateStr).lte("timestamp", endDateStr);
-    }
+      while (more) {
+        let q = supabase.from(table).select(selectCols).range(offset, offset + CHUNK - 1);
+        if (!isAllTime) {
+          q = q.gte(dateColumn, startDateStr).lte(dateColumn, endDateStr);
+        }
+        const { data, error } = await q;
+        if (error || !data || data.length === 0) {
+          more = false;
+        } else {
+          results = results.concat(data);
+          offset += CHUNK;
+          if (data.length < CHUNK) more = false;
+        }
+      }
+      return results;
+    };
 
-    const [sessionsRes, pageViewsRes, interactionsRes] = await Promise.all([
-      sessionsQuery,
-      pageViewsQuery,
-      interactionsQuery
+    const [sessions, pageViews, interactions] = await Promise.all([
+      fetchAllPages("visitor_sessions", "session_start"),
+      fetchAllPages("page_views", "timestamp"),
+      fetchAllPages("product_interactions", "timestamp"),
     ]);
-
-    const sessions = sessionsRes.data || [];
-    const pageViews = pageViewsRes.data || [];
-    const interactions = interactionsRes.data || [];
 
     return processPeriodData(sessions, pageViews, interactions, range);
   };
