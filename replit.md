@@ -1,60 +1,64 @@
-# DripTech EcoFlow
+# DripTech EcoFlow — Replit Project
 
-Smart irrigation solutions web application for a Kenyan irrigation company. Built with React + Vite frontend and Supabase backend.
+## Overview
+DripTech is a smart irrigation solutions web application for Kenyan farmers. It provides a public-facing marketing site, a blog, product catalogue, service bookings, and a full admin dashboard.
 
-## Architecture
+## Tech Stack
+- **Frontend**: React 18 + TypeScript, Vite 5
+- **Styling**: Tailwind CSS, shadcn/ui (Radix UI), lucide-react icons
+- **Routing**: react-router-dom v6
+- **Data Fetching**: @tanstack/react-query
+- **Backend/Database**: Supabase (Auth, PostgreSQL, Edge Functions, Storage)
+- **Forms**: react-hook-form + zod
+- **Charts**: recharts, chart.js
 
-- **Frontend**: React 18 + TypeScript + Vite, styled with Tailwind CSS and Radix UI (Shadcn pattern)
-- **Routing**: React Router DOM v6
-- **State/Data**: TanStack Query v5
-- **Backend**: Supabase (Auth, PostgreSQL database, Edge Functions, Storage)
-- **Forms**: React Hook Form + Zod
-
-## Running the App
-
-```bash
-npm install
+## Running the Project
+The project runs as a pure frontend Vite dev server:
+```
 npm run dev
 ```
-
-Dev server runs on port 5000 with `host: "0.0.0.0"` and `allowedHosts: true` — configured for Replit's proxy environment.
+Served on port **5000**.
 
 ## Required Secrets
-
-Set these in Replit Secrets (already configured):
-
+These must be set in Replit Secrets (Settings → Secrets):
 | Secret | Description |
-|--------|-------------|
-| `VITE_SUPABASE_URL` | Supabase project URL (https://cnvtnxesywbzwsxwpejw.supabase.co) |
-| `VITE_SUPABASE_ANON_KEY` | Supabase project anon/public key |
+|---|---|
+| `VITE_SUPABASE_URL` | Your Supabase project URL (https://xxxx.supabase.co) |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase public anon key |
 
-## Data Flow
+## Project Structure
+```
+src/
+  components/       # UI components (Admin/, Home/, Layout/, ui/)
+  pages/            # Route-level page components
+  integrations/
+    supabase/       # Supabase client, types, table definitions
+  hooks/            # Custom React hooks
+  services/         # Business logic (AI, email, analytics)
+  lib/              # Utilities (PDF, SEO config)
+supabase/
+  functions/        # Edge Functions (blog generation, newsletter, notifications)
+  migrations/       # SQL migration files for the Supabase database
+public/             # Static assets, PWA manifest
+```
 
-- **Public pages** (Products, Blog, Home): Fetch directly from Supabase
-- **Admin panel** (`/admin`): Supabase Auth + full CRUD operations, analytics dashboard
-- **Auth**: Supabase Auth with PKCE flow
+## Key Features
+- Public website: Home, Products, Blog, Services, Contact, Success Stories
+- Admin dashboard: Products, Blog, Customers, Quotes, Analytics, WhatsApp, Email campaigns
+- SEO-optimised blog with AI-powered auto-generation (Gemini API via Supabase Edge Function)
+- M-Pesa payment tracking
+- Visitor analytics tracking
+- Newsletter subscription (Resend email API)
+- Technician service booking system
+- PDF quote/invoice generation
 
-## Key Directories
+## Supabase Edge Functions
+Located in `supabase/functions/`:
+- `generate-blog-posts` — AI blog post generation via Gemini API
+- `newsletter-subscribe` — Newsletter signup with welcome email via Resend
+- `service-booking-notifications` — Email/SMS/WhatsApp notifications for bookings
 
-- `src/pages/` — Page-level components (Home, Products, Blog, Admin, etc.)
-- `src/components/` — Reusable UI components (admin dashboard, layout, common)
-- `src/integrations/supabase/` — Supabase client and TypeScript types
-- `src/hooks/` — Custom React hooks (visitor tracking, etc.)
-- `src/services/` — API and data services
-- `supabase/migrations/` — All database schema migrations
-- `supabase/functions/` — Supabase Edge Functions (blog generation, newsletter, notifications)
-- `public/` — Static assets
+These run on Supabase's servers and are invoked from the frontend.
 
-## Admin Access
-
-Navigate to `/admin` — login with your Supabase admin credentials. Admin uses Supabase Auth (`signInWithPassword`). The `is_admin()` function in Supabase checks either app_metadata role or email domain (`@driptech.com`).
-
-## Analytics Dashboard
-
-The Business Intelligence Dashboard (`Dashboard.tsx`) fetches real data from these tables:
-- **Primary KPIs**: customers, products, blog_posts, documents, quotes, videos, projects, contact_submissions
-- **Extended KPIs**: service_bookings, newsletter_subscribers, news_articles, mpesa_transactions, email_campaigns, whatsapp_conversations, technicians, service_reviews, success_stories
-- **Revenue**: Quotes pipeline (KES) + M-Pesa completed transactions
-- **Visitor Analytics**: visitor_sessions, page_views, product_interactions (via AnalyticsDashboard.tsx tab)
-
-**NOTE**: If the dashboard shows zeros, run `supabase/migrations/20260413000000_fix_analytics_read_rls.sql` in the Supabase SQL editor to fix RLS policies for authenticated admin reads.
+## Database
+All schema migrations are in `supabase/migrations/`. The Supabase PostgreSQL database holds all application data including products, blog posts, customers, quotes, analytics, and more.
