@@ -87,6 +87,13 @@ export const dataService = {
                     valves: "valves_regulators",
                     storage: "water_storage",
                     "rain-guns": "rain_guns",
+                    "filters-strainers": "filters_strainers",
+                    controllers: "controllers_timers",
+                    mulching: "mulching_materials",
+                    "greenhouse-accessories": "greenhouse_accessories",
+                    "growing-media": "growing_media",
+                    seedlings: "seedling_trays_nursery",
+                    borehole: "borehole_equipment",
                 };
                 const dbCategory = categoryMap[filters.category] || filters.category;
                 query = query.eq('category', dbCategory);

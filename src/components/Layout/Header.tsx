@@ -312,6 +312,48 @@ const Header = () => {
           icon: Box,
         },
         {
+          title: "Filters & Strainers",
+          href: "/products/filters-strainers",
+          description: "Screen and disc filters for clean water",
+          icon: Package,
+        },
+        {
+          title: "Controllers & Timers",
+          href: "/products/controllers",
+          description: "Automated irrigation scheduling",
+          icon: Package,
+        },
+        {
+          title: "Mulching Materials",
+          href: "/products/mulching",
+          description: "Plastic mulch film for moisture retention",
+          icon: Package,
+        },
+        {
+          title: "Greenhouse Accessories",
+          href: "/products/greenhouse-accessories",
+          description: "Nets, shading and greenhouse fittings",
+          icon: Package,
+        },
+        {
+          title: "Growing Media",
+          href: "/products/growing-media",
+          description: "Coco peat, perlite and substrates",
+          icon: Package,
+        },
+        {
+          title: "Seedling Trays & Nursery",
+          href: "/products/seedlings",
+          description: "Propagation trays and nursery supplies",
+          icon: Package,
+        },
+        {
+          title: "Borehole Equipment",
+          href: "/products/borehole",
+          description: "Submersible pumps and borehole fittings",
+          icon: Package,
+        },
+        {
           title: "Irrigation Kits",
           href: "/irrigation-kits",
           description: "All-in-one solutions for quick setup",

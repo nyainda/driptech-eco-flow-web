@@ -91,7 +91,14 @@ interface Product {
   | "emitters_drippers"
   | "valves_regulators"
   | "water_storage"
-  | "rain_guns";
+  | "rain_guns"
+  | "filters_strainers"
+  | "controllers_timers"
+  | "mulching_materials"
+  | "greenhouse_accessories"
+  | "growing_media"
+  | "seedling_trays_nursery"
+  | "borehole_equipment";
   subcategory: string | null;
   model_number: string | null;
   images: string[] | null;
@@ -149,6 +156,13 @@ const Products = () => {
           valves: "valves_regulators",
           storage: "water_storage",
           "rain-guns": "rain_guns",
+          "filters-strainers": "filters_strainers",
+          controllers: "controllers_timers",
+          mulching: "mulching_materials",
+          "greenhouse-accessories": "greenhouse_accessories",
+          "growing-media": "growing_media",
+          seedlings: "seedling_trays_nursery",
+          borehole: "borehole_equipment",
         };
         dbCategory = categoryMap[category] || category;
       }
@@ -318,6 +332,13 @@ const Products = () => {
       valves: "Valves & Regulators",
       storage: "Water Storage",
       "rain-guns": "Rain Guns",
+      "filters-strainers": "Filters & Strainers",
+      controllers: "Controllers & Timers",
+      mulching: "Mulching Materials",
+      "greenhouse-accessories": "Greenhouse Accessories",
+      "growing-media": "Growing Media",
+      seedlings: "Seedling Trays & Nursery",
+      borehole: "Borehole Equipment",
     };
     return titles[cat] || "All Products";
   };

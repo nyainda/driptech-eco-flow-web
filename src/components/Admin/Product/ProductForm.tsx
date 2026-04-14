@@ -79,6 +79,13 @@ const categories = [
   { value: "water_storage", label: "Water Storage" },
   { value: "rain_guns", label: "Rain Guns" },
   { value: "accessories", label: "Accessories" },
+  { value: "filters_strainers", label: "Filters & Strainers" },
+  { value: "controllers_timers", label: "Controllers & Timers" },
+  { value: "mulching_materials", label: "Mulching Materials" },
+  { value: "greenhouse_accessories", label: "Greenhouse Accessories" },
+  { value: "growing_media", label: "Growing Media" },
+  { value: "seedling_trays_nursery", label: "Seedling Trays & Nursery" },
+  { value: "borehole_equipment", label: "Borehole Equipment" },
 ];
 
 const ProductForm: React.FC<ProductFormProps> = ({
