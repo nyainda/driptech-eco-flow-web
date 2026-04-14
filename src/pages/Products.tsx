@@ -82,7 +82,16 @@ interface Product {
   | "drip_irrigation"
   | "sprinkler_systems"
   | "filtration_systems"
-  | "control_systems";
+  | "control_systems"
+  | "pumps_motors"
+  | "pipes_fittings"
+  | "solar_irrigation"
+  | "fertigation_systems"
+  | "greenhouse_systems"
+  | "emitters_drippers"
+  | "valves_regulators"
+  | "water_storage"
+  | "rain_guns";
   subcategory: string | null;
   model_number: string | null;
   images: string[] | null;
@@ -300,6 +309,15 @@ const Products = () => {
       filtration: "Filtration Systems",
       controls: "Control Systems",
       accessories: "Accessories",
+      pumps: "Pumps & Motors",
+      pipes: "Pipes & Fittings",
+      solar: "Solar Irrigation",
+      fertigation: "Fertigation Systems",
+      greenhouse: "Greenhouse Systems",
+      emitters: "Emitters & Drippers",
+      valves: "Valves & Regulators",
+      storage: "Water Storage",
+      "rain-guns": "Rain Guns",
     };
     return titles[cat] || "All Products";
   };

@@ -1,0 +1,10 @@
+-- Extend the product_category enum with 9 new categories
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'pumps_motors';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'pipes_fittings';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'solar_irrigation';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'fertigation_systems';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'greenhouse_systems';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'emitters_drippers';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'valves_regulators';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'water_storage';
+ALTER TYPE public.product_category ADD VALUE IF NOT EXISTS 'rain_guns';
