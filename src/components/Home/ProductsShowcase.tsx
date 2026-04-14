@@ -296,8 +296,8 @@ const ProductsShowcase = ({
     const priceRange = getPriceRange();
 
     return (
-      <Card className="group relative hover:shadow-xl transition-all duration-300 bg-background border-border w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0 flex-shrink-0 snap-center">
-        <CardContent className="p-0 relative">
+      <Card className="group relative hover:shadow-xl transition-all duration-300 bg-background border-border w-[80vw] sm:w-[300px] md:w-auto min-w-[260px] md:min-w-0 flex-shrink-0 snap-center snap-always flex flex-col h-full">
+        <CardContent className="p-0 relative flex flex-col flex-1">
           {/* Product Image */}
           <div className="relative overflow-hidden">
             {product.images && product.images.length > 0 ? (
@@ -365,7 +365,7 @@ const ProductsShowcase = ({
           </div>
 
           {/* Content */}
-          <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+          <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3">
             {/* Header */}
             <div className="space-y-2 sm:space-y-3">
               <div className="flex items-start justify-between gap-3">
@@ -650,8 +650,8 @@ const ProductsShowcase = ({
               )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-2 pt-1">
+            {/* Action Buttons — always pinned at bottom */}
+            <div className="flex flex-col gap-2 mt-auto pt-2 border-t border-border/40">
               <a
                 href={`https://wa.me/254794494515?text=${encodeURIComponent(`Hi DripTech! I'm interested in: ${product.name}. Please share pricing and availability.`)}`}
                 target="_blank"
@@ -789,15 +789,15 @@ const ProductsShowcase = ({
           )}
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8">
+        {/* Products Grid — mobile: horizontal scroll; desktop: 3-col grid */}
+        <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-4 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 md:mx-0 md:px-0 md:gap-6 mb-8 items-stretch">
           {loading ? (
-            Array.from({ length: 8 }).map((_, index) => (
-              <Card key={index} className="border-border bg-background shadow-lg overflow-hidden">
-                <CardContent className="p-0">
+            Array.from({ length: 6 }).map((_, index) => (
+              <Card key={index} className="border-border bg-background shadow-lg overflow-hidden flex flex-col flex-shrink-0 w-[80vw] sm:w-[320px] md:w-auto">
+                <CardContent className="p-0 flex flex-col flex-1">
                   <div className="aspect-[4/3] bg-muted animate-pulse"></div>
-                  <div className="p-5 space-y-4">
-                    <div className="animate-pulse space-y-3">
+                  <div className="p-5 flex flex-col flex-1 gap-3">
+                    <div className="animate-pulse space-y-3 flex-1">
                       <div className="flex justify-between items-start">
                         <div className="h-5 bg-muted rounded-lg w-3/4"></div>
                         <div className="h-10 w-10 bg-muted rounded-xl"></div>
@@ -807,9 +807,12 @@ const ProductsShowcase = ({
                         <div className="h-3 bg-muted rounded"></div>
                         <div className="h-3 bg-muted rounded w-4/5"></div>
                       </div>
-                      <div className="flex gap-3 pt-1">
+                    </div>
+                    <div className="mt-auto animate-pulse">
+                      <div className="h-10 bg-muted rounded-xl w-full mb-2"></div>
+                      <div className="flex gap-2">
                         <div className="h-9 bg-muted rounded-xl flex-1"></div>
-                        <div className="h-9 bg-muted rounded-xl w-20"></div>
+                        <div className="h-9 bg-muted rounded-xl w-12"></div>
                       </div>
                     </div>
                   </div>
