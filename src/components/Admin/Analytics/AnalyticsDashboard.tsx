@@ -472,7 +472,6 @@ const AnalyticsDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log('🔄 useEffect triggered - dateRange:', dateRange, 'refreshTrigger:', refreshTrigger);
     fetchAnalytics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange, refreshTrigger]);
@@ -495,30 +494,54 @@ const AnalyticsDashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">Analytics Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Comprehensive overview of system performance and user engagement.</p>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <p className="text-muted-foreground">Comprehensive overview of system performance and user engagement.</p>
+            {lastUpdated && !refreshing && (
+              <span className="inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full font-medium">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                Live · updated {secondsAgo < 5 ? "just now" : `${secondsAgo}s ago`}
+              </span>
+            )}
+            {refreshing && (
+              <span className="inline-flex items-center gap-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">
+                <RefreshCw className="h-3 w-3 animate-spin" />
+                Fetching live data…
+              </span>
+            )}
+          </div>
+          {fetchError && (
+            <div className="mt-2 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded px-3 py-1.5">
+              Data error: {fetchError} — some figures may be incomplete. Check RLS policies or run the analytics migration.
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-end gap-1">
           <Button
-            onClick={() => {
-              console.log('🔄 Refresh button clicked');
-              setRefreshTrigger(prev => prev + 1);
-            }}
+            onClick={() => setRefreshTrigger(prev => prev + 1)}
             disabled={refreshing}
             variant="outline"
             className="shadow-sm"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
-            Refresh Data
+            {refreshing ? "Refreshing…" : "Refresh Now"}
           </Button>
+          <p className="text-xs text-muted-foreground">Auto-refreshes every 90 seconds</p>
         </div>
       </div>
 
       {/* Lifetime Stats - "Cumulative even after year" */}
       {lifetimeData && (
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Database className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">Lifetime Performance</h2>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Database className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Lifetime Performance</h2>
+            </div>
+            {lastUpdated && (
+              <p className="text-xs text-muted-foreground hidden sm:block">
+                Data as of {lastUpdated.toLocaleTimeString("en-KE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-none shadow-xl">
@@ -526,12 +549,22 @@ const AnalyticsDashboard: React.FC = () => {
                 <CardDescription className="text-indigo-100 flex items-center gap-2">
                   <Users className="h-4 w-4" /> Total Unique Visitors
                 </CardDescription>
-                <CardTitle className="text-4xl font-bold">{lifetimeData.totalVisitors.toLocaleString()}</CardTitle>
+                <CardTitle className="text-4xl font-bold">
+                  {refreshing
+                    ? <RefreshCw className="h-8 w-8 animate-spin opacity-60" />
+                    : lifetimeData.totalVisitors.toLocaleString()
+                  }
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-1">
                 <div className="text-xs text-indigo-100 bg-white/10 inline-block px-2 py-1 rounded-full">
-                  All-time cumulative
+                  Unique browser IDs · all-time
                 </div>
+                <p className="text-xs text-indigo-200">
+                  {lifetimeData.totalSessions > 0 && lifetimeData.totalVisitors > 0
+                    ? `${(lifetimeData.totalSessions / lifetimeData.totalVisitors).toFixed(1)} sessions per visitor`
+                    : "No session data yet"}
+                </p>
               </CardContent>
             </Card>
             <Card className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-none shadow-xl">
@@ -539,12 +572,22 @@ const AnalyticsDashboard: React.FC = () => {
                 <CardDescription className="text-emerald-100 flex items-center gap-2">
                   <Eye className="h-4 w-4" /> Total Page Views
                 </CardDescription>
-                <CardTitle className="text-4xl font-bold">{lifetimeData.totalPageViews.toLocaleString()}</CardTitle>
+                <CardTitle className="text-4xl font-bold">
+                  {refreshing
+                    ? <RefreshCw className="h-8 w-8 animate-spin opacity-60" />
+                    : lifetimeData.totalPageViews.toLocaleString()
+                  }
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-1">
                 <div className="text-xs text-emerald-100 bg-white/10 inline-block px-2 py-1 rounded-full">
-                  All-time cumulative
+                  All pages tracked · all-time
                 </div>
+                <p className="text-xs text-emerald-200">
+                  {lifetimeData.totalSessions > 0
+                    ? `${(lifetimeData.totalPageViews / lifetimeData.totalSessions).toFixed(1)} pages per session`
+                    : "No session data yet"}
+                </p>
               </CardContent>
             </Card>
             <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-none shadow-xl">
@@ -552,12 +595,20 @@ const AnalyticsDashboard: React.FC = () => {
                 <CardDescription className="text-blue-100 flex items-center gap-2">
                   <Activity className="h-4 w-4" /> Total Sessions
                 </CardDescription>
-                <CardTitle className="text-4xl font-bold">{lifetimeData.totalSessions.toLocaleString()}</CardTitle>
+                <CardTitle className="text-4xl font-bold">
+                  {refreshing
+                    ? <RefreshCw className="h-8 w-8 animate-spin opacity-60" />
+                    : lifetimeData.totalSessions.toLocaleString()
+                  }
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-1">
                 <div className="text-xs text-blue-100 bg-white/10 inline-block px-2 py-1 rounded-full">
-                  All-time cumulative
+                  Browser sessions · all-time
                 </div>
+                <p className="text-xs text-blue-200">
+                  Exact count · not sampling
+                </p>
               </CardContent>
             </Card>
           </div>
