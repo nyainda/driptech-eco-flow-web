@@ -78,8 +78,17 @@ const CATEGORIES = [
   { key: "all", label: "All Products" },
   { key: "drip_irrigation", label: "Drip Irrigation" },
   { key: "sprinkler_systems", label: "Sprinklers" },
+  { key: "pumps_motors", label: "Pumps & Motors" },
+  { key: "pipes_fittings", label: "Pipes & Fittings" },
   { key: "filtration_systems", label: "Filtration" },
   { key: "control_systems", label: "Controls" },
+  { key: "solar_irrigation", label: "Solar Irrigation" },
+  { key: "fertigation_systems", label: "Fertigation" },
+  { key: "greenhouse_systems", label: "Greenhouse" },
+  { key: "emitters_drippers", label: "Emitters & Drippers" },
+  { key: "valves_regulators", label: "Valves & Regulators" },
+  { key: "water_storage", label: "Water Storage" },
+  { key: "rain_guns", label: "Rain Guns" },
   { key: "accessories", label: "Accessories" },
 ];
 
@@ -141,6 +150,26 @@ const ProductsShowcase = ({
         return Filter;
       case "control_systems":
         return Settings;
+      case "pumps_motors":
+        return Zap;
+      case "pipes_fittings":
+        return Wrench;
+      case "solar_irrigation":
+        return Sparkles;
+      case "fertigation_systems":
+        return Leaf;
+      case "greenhouse_systems":
+        return TreePine;
+      case "emitters_drippers":
+        return Droplet;
+      case "valves_regulators":
+        return Shield;
+      case "water_storage":
+        return Package;
+      case "rain_guns":
+        return Gauge;
+      case "accessories":
+        return Cpu;
       default:
         return Droplets;
     }
@@ -156,6 +185,24 @@ const ProductsShowcase = ({
         return "filtration";
       case "control_systems":
         return "controls";
+      case "pumps_motors":
+        return "pumps";
+      case "pipes_fittings":
+        return "pipes";
+      case "solar_irrigation":
+        return "solar";
+      case "fertigation_systems":
+        return "fertigation";
+      case "greenhouse_systems":
+        return "greenhouse";
+      case "emitters_drippers":
+        return "emitters";
+      case "valves_regulators":
+        return "valves";
+      case "water_storage":
+        return "storage";
+      case "rain_guns":
+        return "rain-guns";
       case "accessories":
         return "accessories";
       default:

@@ -28,7 +28,16 @@ export interface Product {
     | "sprinkler_systems"
     | "filtration_systems"
     | "control_systems"
-    | "accessories";
+    | "accessories"
+    | "pumps_motors"
+    | "pipes_fittings"
+    | "solar_irrigation"
+    | "fertigation_systems"
+    | "greenhouse_systems"
+    | "emitters_drippers"
+    | "valves_regulators"
+    | "water_storage"
+    | "rain_guns";
   subcategory?: string;
   description?: string;
   technical_specs?: TechnicalSpec;
@@ -69,5 +78,14 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
   { value: "sprinkler_systems", label: "Sprinkler Systems" },
   { value: "filtration_systems", label: "Filtration Systems" },
   { value: "control_systems", label: "Control Systems" },
+  { value: "pumps_motors", label: "Pumps & Motors" },
+  { value: "pipes_fittings", label: "Pipes & Fittings" },
+  { value: "solar_irrigation", label: "Solar Irrigation" },
+  { value: "fertigation_systems", label: "Fertigation Systems" },
+  { value: "greenhouse_systems", label: "Greenhouse Systems" },
+  { value: "emitters_drippers", label: "Emitters & Drippers" },
+  { value: "valves_regulators", label: "Valves & Regulators" },
+  { value: "water_storage", label: "Water Storage" },
+  { value: "rain_guns", label: "Rain Guns" },
   { value: "accessories", label: "Accessories" },
 ];

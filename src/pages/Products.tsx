@@ -131,6 +131,15 @@ const Products = () => {
           filtration: "filtration_systems",
           controls: "control_systems",
           accessories: "accessories",
+          pumps: "pumps_motors",
+          pipes: "pipes_fittings",
+          solar: "solar_irrigation",
+          fertigation: "fertigation_systems",
+          greenhouse: "greenhouse_systems",
+          emitters: "emitters_drippers",
+          valves: "valves_regulators",
+          storage: "water_storage",
+          "rain-guns": "rain_guns",
         };
         dbCategory = categoryMap[category] || category;
       }

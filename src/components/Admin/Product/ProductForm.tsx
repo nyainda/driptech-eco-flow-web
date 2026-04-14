@@ -69,6 +69,15 @@ const categories = [
   { value: "sprinkler_systems", label: "Sprinkler Systems" },
   { value: "filtration_systems", label: "Filtration Systems" },
   { value: "control_systems", label: "Control Systems" },
+  { value: "pumps_motors", label: "Pumps & Motors" },
+  { value: "pipes_fittings", label: "Pipes & Fittings" },
+  { value: "solar_irrigation", label: "Solar Irrigation" },
+  { value: "fertigation_systems", label: "Fertigation Systems" },
+  { value: "greenhouse_systems", label: "Greenhouse Systems" },
+  { value: "emitters_drippers", label: "Emitters & Drippers" },
+  { value: "valves_regulators", label: "Valves & Regulators" },
+  { value: "water_storage", label: "Water Storage" },
+  { value: "rain_guns", label: "Rain Guns" },
   { value: "accessories", label: "Accessories" },
 ];
 

@@ -27,6 +27,13 @@ import {
   BarChart3,
   Users,
   Search,
+  Wrench,
+  Leaf,
+  TreePine,
+  Shield,
+  Package,
+  Droplet,
+  Sun,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import SearchManager from "./SearchManager";
@@ -233,6 +240,18 @@ const Header = () => {
           icon: Zap,
         },
         {
+          title: "Pumps & Motors",
+          href: "/products/pumps",
+          description: "Reliable water pumping solutions",
+          icon: Zap,
+        },
+        {
+          title: "Pipes & Fittings",
+          href: "/products/pipes",
+          description: "Durable pipes and connectors",
+          icon: Wrench,
+        },
+        {
           title: "Filtration Systems",
           href: "/products/filtration",
           description: "Clean water for system longevity",
@@ -243,6 +262,48 @@ const Header = () => {
           href: "/products/controls",
           description: "Smart automation for your farm",
           icon: Settings,
+        },
+        {
+          title: "Solar Irrigation",
+          href: "/products/solar",
+          description: "Off-grid solar-powered irrigation",
+          icon: Sun,
+        },
+        {
+          title: "Fertigation Systems",
+          href: "/products/fertigation",
+          description: "Fertilizer injection with irrigation",
+          icon: Leaf,
+        },
+        {
+          title: "Greenhouse Systems",
+          href: "/products/greenhouse",
+          description: "Complete greenhouse irrigation",
+          icon: TreePine,
+        },
+        {
+          title: "Emitters & Drippers",
+          href: "/products/emitters",
+          description: "Precision drip emitters and tape",
+          icon: Droplet,
+        },
+        {
+          title: "Valves & Regulators",
+          href: "/products/valves",
+          description: "Flow control and pressure regulation",
+          icon: Shield,
+        },
+        {
+          title: "Water Storage",
+          href: "/products/storage",
+          description: "Tanks and reservoirs for farms",
+          icon: Package,
+        },
+        {
+          title: "Rain Guns",
+          href: "/products/rain-guns",
+          description: "High-impact rotating sprinklers",
+          icon: Droplets,
         },
         {
           title: "Accessories",
