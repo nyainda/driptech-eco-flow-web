@@ -76,11 +76,22 @@ interface Product {
 }
 
 
+const CATEGORIES = [
+  { key: "all", label: "All Products" },
+  { key: "drip_irrigation", label: "Drip Irrigation" },
+  { key: "sprinkler_systems", label: "Sprinklers" },
+  { key: "filtration_systems", label: "Filtration" },
+  { key: "control_systems", label: "Controls" },
+  { key: "accessories", label: "Accessories" },
+];
+
+const INITIAL_SHOW = 8;
+const LOAD_MORE_COUNT = 4;
+
 interface ProductsShowcaseProps {
   hideHeader?: boolean;
   hideStats?: boolean;
   hideBenefits?: boolean;
-  limit?: number;
   compact?: boolean;
 }
 
@@ -88,27 +99,39 @@ const ProductsShowcase = ({
   hideHeader = false,
   hideStats = false,
   hideBenefits = false,
-  limit = 6,
   compact = false,
 }: ProductsShowcaseProps = {}) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(INITIAL_SHOW);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await dataService.getProducts({ featured: true, limit });
-        console.log("Fetched products:", data);
-        setProducts(data || []);
+        const data = await dataService.getProducts({ limit: 300 });
+        setAllProducts(data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
+
+  // Reset visible count when switching category
+  useEffect(() => {
+    setVisibleCount(INITIAL_SHOW);
+  }, [activeCategory]);
+
+  const filteredProducts = activeCategory === "all"
+    ? allProducts
+    : allProducts.filter(p => p.category === activeCategory);
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProducts.length;
+  const products = visibleProducts;
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -720,34 +743,73 @@ const ProductsShowcase = ({
           </div>
         )}
 
+        {/* Category Tabs */}
+        <div className="mb-8 md:mb-12">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
+            {CATEGORIES.map((cat) => {
+              const count = cat.key === "all"
+                ? allProducts.length
+                : allProducts.filter(p => p.category === cat.key).length;
+              if (count === 0 && cat.key !== "all") return null;
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setActiveCategory(cat.key)}
+                  className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${
+                    activeCategory === cat.key
+                      ? "bg-primary text-primary-foreground border-primary shadow-md"
+                      : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                  }`}
+                >
+                  {cat.label}
+                  {count > 0 && (
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
+                      activeCategory === cat.key
+                        ? "bg-white/20 text-white"
+                        : "bg-muted text-muted-foreground"
+                    }`}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Count line */}
+          {!loading && (
+            <p className="text-sm text-muted-foreground mt-3">
+              Showing <span className="font-semibold text-foreground">{visibleProducts.length}</span> of{" "}
+              <span className="font-semibold text-foreground">{filteredProducts.length}</span>{" "}
+              {activeCategory === "all" ? "products" : CATEGORIES.find(c => c.key === activeCategory)?.label.toLowerCase() + " products"}
+              {allProducts.length > 0 && activeCategory !== "all" && (
+                <> &nbsp;·&nbsp; <span className="text-primary font-medium">{allProducts.length} total in catalog</span></>
+              )}
+            </p>
+          )}
+        </div>
+
         {/* Products Grid */}
-        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12 md:mb-24 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8">
           {loading ? (
-            Array.from({ length: 6 }).map((_, index) => (
-              <Card
-                key={index}
-                className="border-border bg-background shadow-lg overflow-hidden"
-              >
+            Array.from({ length: 8 }).map((_, index) => (
+              <Card key={index} className="border-border bg-background shadow-lg overflow-hidden">
                 <CardContent className="p-0">
                   <div className="aspect-[4/3] bg-muted animate-pulse"></div>
-                  <div className="p-7 space-y-5">
-                    <div className="animate-pulse space-y-4">
+                  <div className="p-5 space-y-4">
+                    <div className="animate-pulse space-y-3">
                       <div className="flex justify-between items-start">
-                        <div className="h-6 bg-muted rounded-lg w-3/4"></div>
-                        <div className="h-12 w-12 bg-muted rounded-xl"></div>
+                        <div className="h-5 bg-muted rounded-lg w-3/4"></div>
+                        <div className="h-10 w-10 bg-muted rounded-xl"></div>
                       </div>
                       <div className="h-4 bg-muted rounded w-1/2"></div>
                       <div className="space-y-2">
-                        <div className="h-4 bg-muted rounded"></div>
-                        <div className="h-4 bg-muted rounded w-4/5"></div>
+                        <div className="h-3 bg-muted rounded"></div>
+                        <div className="h-3 bg-muted rounded w-4/5"></div>
                       </div>
-                      <div className="flex gap-2">
-                        <div className="h-6 bg-muted rounded-full w-20"></div>
-                        <div className="h-6 bg-muted rounded-full w-24"></div>
-                      </div>
-                      <div className="flex gap-3">
-                        <div className="h-10 bg-muted rounded-xl flex-1"></div>
-                        <div className="h-10 bg-muted rounded-xl w-24"></div>
+                      <div className="flex gap-3 pt-1">
+                        <div className="h-9 bg-muted rounded-xl flex-1"></div>
+                        <div className="h-9 bg-muted rounded-xl w-20"></div>
                       </div>
                     </div>
                   </div>
@@ -759,24 +821,51 @@ const ProductsShowcase = ({
               <ProductCard key={product.id} product={product} />
             ))
           ) : (
-            <div className="col-span-full text-center py-24">
+            <div className="col-span-full text-center py-20">
               <div className="max-w-md mx-auto">
-                <div className="bg-muted rounded-full p-8 w-32 h-32 mx-auto mb-8 flex items-center justify-center">
-                  <Package className="h-16 w-16 text-primary" />
+                <div className="bg-muted rounded-full p-8 w-28 h-28 mx-auto mb-6 flex items-center justify-center">
+                  <Package className="h-14 w-14 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">
-                  No Featured Products
-                </h3>
-                <p className="text-muted-foreground mb-6 text-lg">
-                  No featured products available at the moment.
+                <h3 className="text-xl font-bold text-foreground mb-3">No products in this category</h3>
+                <p className="text-muted-foreground mb-5">
+                  Try a different category or browse the full catalog.
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  Products can be marked as featured in the admin dashboard.
-                </p>
+                <button
+                  onClick={() => setActiveCategory("all")}
+                  className="text-primary font-semibold hover:underline text-sm"
+                >
+                  View all products →
+                </button>
               </div>
             </div>
           )}
         </div>
+
+        {/* Load more + View all CTA */}
+        {!loading && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-24">
+            {hasMore && (
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setVisibleCount(v => v + LOAD_MORE_COUNT)}
+                className="rounded-full px-8 border-border hover:border-primary/40 hover:bg-accent"
+              >
+                Load {Math.min(LOAD_MORE_COUNT, filteredProducts.length - visibleCount)} more products
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+            <Link to="/products">
+              <Button
+                size="lg"
+                className="rounded-full px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
+              >
+                Browse all {allProducts.length > 0 ? `${allProducts.length} ` : ""}products
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        )}
 
         {/* Benefits Section */}
         {!hideBenefits && (
