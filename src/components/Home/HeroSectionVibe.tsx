@@ -12,6 +12,10 @@ import {
     MessageCircle,
     Star,
     ShieldCheck,
+    CalendarDays,
+    Package,
+    MapPin,
+    TrendingUp,
 } from "lucide-react";
 import { useWhatsAppProducts } from "@/hooks/useWhatsAppProducts";
 import { Link } from "react-router-dom";
@@ -294,10 +298,17 @@ export default function HeroSectionVibe() {
                                 <MessageCircle className="w-4 h-4" />
                                 WhatsApp — Free Quote
                             </button>
+                            <a
+                                href="#book-site-visit"
+                                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl font-bold text-[0.88rem] border transition-transform active:scale-95"
+                                style={{ background: "rgba(255,255,255,0.10)", borderColor: accentColor + "55", color: "#fff" }}>
+                                <CalendarDays className="w-3.5 h-3.5" style={{ color: accentColor }} />
+                                Book Free Site Visit
+                            </a>
                             <button
                                 onClick={phoneCall}
-                                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl font-semibold text-[0.88rem] border transition-transform active:scale-95"
-                                style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.13)", color: "rgba(255,255,255,0.85)" }}>
+                                className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl font-semibold text-[0.82rem] border transition-transform active:scale-95"
+                                style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.10)", color: "rgba(255,255,255,0.70)" }}>
                                 <Phone className="w-3.5 h-3.5" />
                                 Call 0794 494 515
                             </button>
@@ -404,16 +415,22 @@ export default function HeroSectionVibe() {
                             )}
 
                             {/* CTAs */}
-                            <div className="hfu d5 flex items-center gap-3">
+                            <div className="hfu d5 flex flex-wrap items-center gap-3">
                                 <button onClick={whatsappOpen}
                                     className="cta-main flex items-center gap-2.5 px-7 py-4 rounded-2xl font-bold text-sm text-white transition-transform hover:scale-[1.03] active:scale-95"
                                     style={{ background: `linear-gradient(135deg, ${accentColor} 0%, #059669 100%)` }}>
                                     <MessageCircle className="w-4 h-4" />
                                     WhatsApp Free Quote
                                 </button>
+                                <a href="#book-site-visit"
+                                    className="flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-sm border transition-all hover:bg-white/10 active:scale-95"
+                                    style={{ borderColor: accentColor + "60", color: "#fff", background: "rgba(255,255,255,0.06)" }}>
+                                    <CalendarDays className="w-4 h-4" style={{ color: accentColor }} />
+                                    Book Site Visit
+                                </a>
                                 <Link to={config?.link ?? "/products"}
-                                    className="flex items-center gap-2 px-6 py-4 rounded-2xl font-semibold text-sm border transition-all hover:bg-white/8 active:scale-95"
-                                    style={{ borderColor: "rgba(255,255,255,0.16)", color: "rgba(255,255,255,0.82)" }}>
+                                    className="flex items-center gap-2 px-5 py-4 rounded-2xl font-semibold text-sm border transition-all hover:bg-white/8 active:scale-95"
+                                    style={{ borderColor: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.65)" }}>
                                     View Products
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
@@ -514,6 +531,48 @@ export default function HeroSectionVibe() {
                     </div>
                 </div>
             </section>
+
+            {/* ═══ STATS STRIP ═══ */}
+            <div className="bg-neutral-900 border-b border-white/8">
+                <div className="container mx-auto px-4 sm:px-6">
+                    <div className="flex items-center justify-between gap-4 py-3.5 overflow-x-auto scrollbar-hide">
+                        {[
+                            { icon: Package, value: "53+", label: "Products Available", color: "#10b981" },
+                            { icon: TrendingUp, value: "21", label: "Categories", color: "#06b6d4" },
+                            { icon: MapPin, value: "47", label: "Counties Served", color: "#f59e0b" },
+                            { icon: CalendarDays, value: "Free", label: "Site Visit", color: "#8b5cf6", link: "#book-site-visit" },
+                            { icon: ShieldCheck, value: "5 yr", label: "Warranty", color: "#10b981" },
+                        ].map((s) => {
+                            const Icon = s.icon;
+                            const inner = (
+                                <div className="flex items-center gap-2.5 flex-shrink-0 group">
+                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+                                        style={{ background: s.color + "1A" }}>
+                                        <Icon className="w-4 h-4" style={{ color: s.color }} />
+                                    </div>
+                                    <div>
+                                        <span className="font-black text-white text-sm">{s.value} </span>
+                                        <span className="text-white/40 text-xs font-medium">{s.label}</span>
+                                    </div>
+                                </div>
+                            );
+                            return s.link ? (
+                                <a key={s.label} href={s.link} className="hover:opacity-80 transition-opacity">{inner}</a>
+                            ) : (
+                                <div key={s.label}>{inner}</div>
+                            );
+                        })}
+
+                        {/* Right: Book CTA */}
+                        <a href="#book-site-visit"
+                            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs text-white border ml-auto transition-all hover:bg-white/10"
+                            style={{ borderColor: accentColor + "55", background: accentColor + "14" }}>
+                            <CalendarDays className="w-3.5 h-3.5" style={{ color: accentColor }} />
+                            Book Free Site Visit
+                        </a>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
