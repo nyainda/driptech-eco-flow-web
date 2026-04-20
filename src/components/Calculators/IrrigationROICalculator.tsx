@@ -58,12 +58,12 @@ export const IrrigationROICalculator = () => {
                 {/* Inputs Section */}
                 <div className="lg:col-span-2 p-6 sm:p-8 bg-muted/30 border-r border-border">
                     <div className="flex items-center gap-3 mb-8">
-                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                            <Calculator className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                            <Calculator className="h-6 w-6 text-primary" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">ROI Calculator</h3>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Estimate your farm's potential</p>
+                            <h3 className="text-xl font-bold text-foreground leading-tight">ROI Calculator</h3>
+                            <p className="text-sm text-muted-foreground">Estimate your farm's potential</p>
                         </div>
                     </div>
 
@@ -83,7 +83,7 @@ export const IrrigationROICalculator = () => {
                                 step={0.5}
                                 className="py-4"
                             />
-                            <div className="flex justify-between text-[10px] text-slate-400 font-medium">
+                            <div className="flex justify-between text-[10px] text-muted-foreground font-medium">
                                 <span>0.5 Acre</span>
                                 <span>20 Acres</span>
                             </div>
@@ -162,7 +162,7 @@ export const IrrigationROICalculator = () => {
                                 </div>
                             </div>
                             <Button
-                                className="w-full sm:w-auto bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 h-14 px-8 rounded-xl font-bold text-base shadow-xl transition-all hover:translate-x-1"
+                                className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 h-14 px-8 rounded-xl font-bold text-base shadow-xl transition-all hover:translate-x-1"
                                 onClick={() => window.location.href = '/contact'}
                             >
                                 Get Custom Plan

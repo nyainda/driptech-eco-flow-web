@@ -41,8 +41,8 @@ const AutoRotatingGallery = ({
 
   if (!images || images.length === 0) {
     return (
-      <div className={cn('relative aspect-square bg-gray-100', className)}>
-        <div className="flex h-full items-center justify-center text-gray-400">
+      <div className={cn('relative aspect-square bg-muted', className)}>
+        <div className="flex h-full items-center justify-center text-muted-foreground">
           No images available
         </div>
       </div>
@@ -104,7 +104,7 @@ const AutoRotatingGallery = ({
                 'relative h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0 overflow-hidden rounded border-2 transition-all touch-friendly',
                 currentIndex === index
                   ? 'border-primary ring-2 ring-primary/20'
-                  : 'border-transparent hover:border-gray-300'
+                  : 'border-transparent hover:border-border'
               )}
             >
               <OptimizedImage

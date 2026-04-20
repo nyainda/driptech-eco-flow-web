@@ -26,14 +26,14 @@ const CATEGORY_CONFIG: Record<string, {
     label: string; icon: LucideIcon; badge: string;
     headline: string; headlineAccent: string; description: string;
     stats: { value: string; label: string }[]; link: string;
-    color: string; fallbackImage: string;
+    fallbackImage: string;
 }> = {
     drip_irrigation: {
         label: "Drip", icon: Droplets, badge: "Kenya's #1 Choice",
         headline: "Precision Watering,", headlineAccent: "Maximum Yield",
         description: "Water delivered directly to roots. Near-zero evaporation. From ¼ acre to 100+ acres.",
         stats: [{ value: "50%", label: "Less Water" }, { value: "60%", label: "More Yield" }, { value: "5yr", label: "Warranty" }],
-        link: "/products/drip", color: "#10b981",
+        link: "/products/drip",
         fallbackImage: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80",
     },
     sprinkler_systems: {
@@ -41,7 +41,7 @@ const CATEGORY_CONFIG: Record<string, {
         headline: "Uniform Coverage,", headlineAccent: "Zero Waste",
         description: "Blanket large fields evenly with precision pressure regulation and smart scheduling.",
         stats: [{ value: "5×", label: "Coverage" }, { value: "40%", label: "Water Saved" }, { value: "360°", label: "Rotation" }],
-        link: "/products/sprinklers", color: "#06b6d4",
+        link: "/products/sprinklers",
         fallbackImage: "https://images.unsplash.com/photo-1563880748-3e4bfe0dae5b?w=1920&q=80",
     },
     filtration_systems: {
@@ -49,7 +49,7 @@ const CATEGORY_CONFIG: Record<string, {
         headline: "Clean Water,", headlineAccent: "Longer Life",
         description: "Multi-stage filtration removes 99.9% of sediment. Protects drippers, extends system lifespan.",
         stats: [{ value: "99.9%", label: "Filtration" }, { value: "3×", label: "System Life" }, { value: "Low", label: "Maintenance" }],
-        link: "/products/filtration", color: "#8b5cf6",
+        link: "/products/filtration",
         fallbackImage: "https://images.unsplash.com/photo-1553530666-aa57c929c8a0?w=1920&q=80",
     },
     control_systems: {
@@ -57,7 +57,7 @@ const CATEGORY_CONFIG: Record<string, {
         headline: "Automate Everything,", headlineAccent: "Farm Smarter",
         description: "Run your farm from your phone. IoT valves, soil sensors, and auto-timers — 24/7.",
         stats: [{ value: "24/7", label: "Automation" }, { value: "80%", label: "Labour Saved" }, { value: "IoT", label: "Connected" }],
-        link: "/products/controls", color: "#f59e0b",
+        link: "/products/controls",
         fallbackImage: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=80",
     },
     accessories: {
@@ -65,7 +65,7 @@ const CATEGORY_CONFIG: Record<string, {
         headline: "All-In-One Kits,", headlineAccent: "Installed Fast",
         description: "Everything in one box — drippers, pipes, fittings, filter, valve. Ready within 24 hours.",
         stats: [{ value: "1 Day", label: "Install" }, { value: "All-In", label: "One Box" }, { value: "Free", label: "Site Visit" }],
-        link: "/irrigation-kits", color: "#10b981",
+        link: "/irrigation-kits",
         fallbackImage: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1920&q=80",
     },
 };
@@ -130,7 +130,7 @@ export default function HeroSectionVibe() {
 
     const slide = slides[current];
     const config = slide?.config;
-    const accentColor = config?.color ?? "#10b981";
+    const accentColor = "hsl(var(--primary))";
 
     const whatsappOpen = () => window.open("https://wa.me/254794494515", "_blank");
     const phoneCall = () => window.open("tel:+254794494515");
@@ -139,11 +139,11 @@ export default function HeroSectionVibe() {
     if (isLoading || slides.length === 0) {
         return (
             <section className="relative w-full bg-neutral-950" style={{ height: "100svh", minHeight: 580 }}>
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-neutral-950 to-neutral-950 animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-neutral-950 to-neutral-950 animate-pulse" />
                 <div className="absolute inset-x-0 bottom-0 p-6">
                     <div className="h-3 bg-white/10 rounded-full w-28 mb-5" />
                     <div className="h-10 bg-white/10 rounded-xl w-3/4 mb-2" />
-                    <div className="h-10 bg-emerald-500/25 rounded-xl w-1/2 mb-6" />
+                    <div className="h-10 bg-primary/25 rounded-xl w-1/2 mb-6" />
                     <div className="flex gap-2 mb-5">
                         {[1, 2, 3].map(i => <div key={i} className="flex-1 h-14 bg-white/8 rounded-xl" />)}
                     </div>
@@ -166,8 +166,8 @@ export default function HeroSectionVibe() {
                     to   { width:100%; }
                 }
                 @keyframes ctaPulse {
-                    0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,.45); }
-                    60%     { box-shadow:0 0 0 10px rgba(16,185,129,0); }
+                    0%,100% { box-shadow:0 0 0 0 hsl(148 54% 40% / 0.45); }
+                    60%     { box-shadow:0 0 0 10px hsl(148 54% 40% / 0); }
                 }
                 .hfu  { animation:fadeUp .52s cubic-bezier(.16,1,.3,1) both; }
                 .d1   { animation-delay:0ms; }
@@ -249,7 +249,7 @@ export default function HeroSectionVibe() {
                         {config && (
                             <div className="hfu d1">
                                 <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
-                                    style={{ background: `${accentColor}22`, border: `1px solid ${accentColor}44`, color: accentColor }}>
+                                    style={{ background: "hsl(var(--primary) / 0.13)", border: "1px solid hsl(var(--primary) / 0.27)", color: accentColor }}>
                                     <Star className="w-2.5 h-2.5" fill="currentColor" />
                                     {config.badge}
                                 </span>
@@ -294,14 +294,14 @@ export default function HeroSectionVibe() {
                             <button
                                 onClick={whatsappOpen}
                                 className="cta-main flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-bold text-[0.92rem] text-white transition-transform active:scale-95"
-                                style={{ background: `linear-gradient(135deg, ${accentColor} 0%, #059669 100%)` }}>
+                                style={{ background: "hsl(var(--primary))" }}>
                                 <MessageCircle className="w-4 h-4" />
                                 WhatsApp — Free Quote
                             </button>
                             <a
                                 href="#book-site-visit"
                                 className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl font-bold text-[0.88rem] border transition-transform active:scale-95"
-                                style={{ background: "rgba(255,255,255,0.10)", borderColor: accentColor + "55", color: "#fff" }}>
+                                style={{ background: "rgba(255,255,255,0.10)", borderColor: "hsl(var(--primary) / 0.33)", color: "#fff" }}>
                                 <CalendarDays className="w-3.5 h-3.5" style={{ color: accentColor }} />
                                 Book Free Site Visit
                             </a>
@@ -375,7 +375,7 @@ export default function HeroSectionVibe() {
                             {config && (
                                 <div className="hfu d2">
                                     <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full"
-                                        style={{ background: `${accentColor}1E`, border: `1px solid ${accentColor}45`, color: accentColor }}>
+                                        style={{ background: "hsl(var(--primary) / 0.12)", border: "1px solid hsl(var(--primary) / 0.27)", color: accentColor }}>
                                         <Star className="w-3 h-3" fill="currentColor" />
                                         {config.badge}
                                     </span>
@@ -418,13 +418,13 @@ export default function HeroSectionVibe() {
                             <div className="hfu d5 flex flex-wrap items-center gap-3">
                                 <button onClick={whatsappOpen}
                                     className="cta-main flex items-center gap-2.5 px-7 py-4 rounded-2xl font-bold text-sm text-white transition-transform hover:scale-[1.03] active:scale-95"
-                                    style={{ background: `linear-gradient(135deg, ${accentColor} 0%, #059669 100%)` }}>
+                                    style={{ background: "hsl(var(--primary))" }}>
                                     <MessageCircle className="w-4 h-4" />
                                     WhatsApp Free Quote
                                 </button>
                                 <a href="#book-site-visit"
                                     className="flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-sm border transition-all hover:bg-white/10 active:scale-95"
-                                    style={{ borderColor: accentColor + "60", color: "#fff", background: "rgba(255,255,255,0.06)" }}>
+                                    style={{ borderColor: "hsl(var(--primary) / 0.38)", color: "#fff", background: "rgba(255,255,255,0.06)" }}>
                                     <CalendarDays className="w-4 h-4" style={{ color: accentColor }} />
                                     Book Site Visit
                                 </a>
@@ -495,7 +495,7 @@ export default function HeroSectionVibe() {
 
                                         <button onClick={whatsappOpen}
                                             className="w-full py-3 rounded-xl font-bold text-sm text-white transition-transform hover:scale-[1.02] active:scale-95"
-                                            style={{ background: `linear-gradient(135deg, ${accentColor} 0%, #059669 100%)` }}>
+                                            style={{ background: "hsl(var(--primary))" }}>
                                             Inquire on WhatsApp
                                         </button>
                                     </div>
@@ -537,18 +537,17 @@ export default function HeroSectionVibe() {
                 <div className="container mx-auto px-4 sm:px-6">
                     <div className="flex items-center justify-between gap-4 py-3.5 overflow-x-auto scrollbar-hide">
                         {[
-                            { icon: Package, value: "53+", label: "Products Available", color: "#10b981" },
-                            { icon: TrendingUp, value: "21", label: "Categories", color: "#06b6d4" },
-                            { icon: MapPin, value: "47", label: "Counties Served", color: "#f59e0b" },
-                            { icon: CalendarDays, value: "Free", label: "Site Visit", color: "#8b5cf6", link: "#book-site-visit" },
-                            { icon: ShieldCheck, value: "5 yr", label: "Warranty", color: "#10b981" },
+                            { icon: Package, value: "53+", label: "Products Available" },
+                            { icon: TrendingUp, value: "21", label: "Categories" },
+                            { icon: MapPin, value: "47", label: "Counties Served" },
+                            { icon: CalendarDays, value: "Free", label: "Site Visit", link: "#book-site-visit" },
+                            { icon: ShieldCheck, value: "5 yr", label: "Warranty" },
                         ].map((s) => {
                             const Icon = s.icon;
                             const inner = (
                                 <div className="flex items-center gap-2.5 flex-shrink-0 group">
-                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                                        style={{ background: s.color + "1A" }}>
-                                        <Icon className="w-4 h-4" style={{ color: s.color }} />
+                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary/15">
+                                        <Icon className="w-4 h-4 text-primary" />
                                     </div>
                                     <div>
                                         <span className="font-black text-white text-sm">{s.value} </span>
@@ -566,7 +565,7 @@ export default function HeroSectionVibe() {
                         {/* Right: Book CTA */}
                         <a href="#book-site-visit"
                             className="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs text-white border ml-auto transition-all hover:bg-white/10"
-                            style={{ borderColor: accentColor + "55", background: accentColor + "14" }}>
+                            style={{ borderColor: "hsl(var(--primary) / 0.33)", background: "hsl(var(--primary) / 0.08)" }}>
                             <CalendarDays className="w-3.5 h-3.5" style={{ color: accentColor }} />
                             Book Free Site Visit
                         </a>

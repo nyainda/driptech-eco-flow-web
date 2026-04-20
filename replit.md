@@ -62,3 +62,30 @@ These run on Supabase's servers and are invoked from the frontend.
 
 ## Database
 All schema migrations are in `supabase/migrations/`. The Supabase PostgreSQL database holds all application data including products, blog posts, customers, quotes, analytics, and more.
+
+## Design System (DripsTech Unification Guide)
+The app uses a unified design token system defined in `src/index.css`:
+
+### Color Tokens
+- `--dt-green-*` — Forest green primary palette (500 = `hsl(148 54% 40%)`)
+- `--dt-gold-*` — Harvest gold accent palette (500 = `hsl(43 96% 56%)`)
+- `--dt-stone-*` — Warm neutral palette
+- `--dt-whatsapp` — WhatsApp green isolated to WhatsApp CTAs only (`hsl(142 70% 45%)`)
+
+### Utility Classes
+- `dt-card` — Standard card style (rounded-lg, border, bg-card, shadow)
+- `dt-btn-primary`, `dt-btn-secondary`, `dt-btn-whatsapp` — CTA buttons
+- `dt-section-label` — Small label above headings (gold accent)
+- `dt-badge-*` — Product badges (primary, gold, stone)
+- `dt-price` — JetBrains Mono price display
+
+### Typography
+- **Headings**: Syne (loaded via Google Fonts)
+- **Body**: Plus Jakarta Sans
+- **Prices/Mono**: JetBrains Mono
+
+### Rules
+- No `emerald-*`, `teal-*`, `blue-*`, `gray-*`, `slate-*` Tailwind classes in non-Admin components
+- No hardcoded hex colors (`#10b981`, `#059669`, etc.) outside `src/index.css`
+- `--dt-whatsapp` only for actual WhatsApp button backgrounds
+- Admin components (`src/components/Admin/`) are excluded from unification

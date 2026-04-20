@@ -105,7 +105,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                 onClick={() => handleShare('facebook')}
                 title="Share on Facebook"
                 aria-label="Share on Facebook"
-                className="h-9 w-9 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
+                className="h-9 w-9 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
             >
                 <Facebook className="h-4 w-4" />
             </Button>
@@ -129,7 +129,7 @@ export const SocialShare: React.FC<SocialShareProps> = ({
                 onClick={() => handleShare('linkedin')}
                 title="Share on LinkedIn"
                 aria-label="Share on LinkedIn"
-                className="h-9 w-9 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300"
+                className="h-9 w-9 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
             >
                 <Linkedin className="h-4 w-4" />
             </Button>

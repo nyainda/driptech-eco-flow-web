@@ -219,7 +219,7 @@ const WhatsAppContact = ({
         return (
           <Button
             size="icon"
-            className={`bg-green-500 hover:bg-green-600 text-white ${className}`}
+            className={`bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)] text-white ${className}`}
             onClick={currentProduct ? openWhatsApp : undefined}
           >
             <MessageCircle className="h-5 w-5" />
@@ -229,7 +229,7 @@ const WhatsAppContact = ({
         return (
           <button
             onClick={currentProduct ? openWhatsApp : () => setIsDialogOpen(true)}
-            className="fixed bottom-8 right-8 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
+            className="fixed bottom-8 right-8 z-50 bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)] text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
             aria-label="Contact us on WhatsApp"
           >
             <MessageCircle className="h-8 w-8" />
@@ -241,7 +241,7 @@ const WhatsAppContact = ({
       default:
         return (
           <Button
-            className={`bg-green-500 hover:bg-green-600 text-white ${className}`}
+            className={`bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)] text-white ${className}`}
             onClick={currentProduct ? openWhatsApp : undefined}
           >
             <MessageCircle className="h-4 w-4 mr-2" />
@@ -265,7 +265,7 @@ const WhatsAppContact = ({
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col p-0">
         <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <MessageCircle className="h-6 w-6 text-green-500" />
+            <MessageCircle className="h-6 w-6 text-[hsl(var(--dt-whatsapp))]" />
             Start WhatsApp Inquiry
           </DialogTitle>
           <DialogDescription>
@@ -322,14 +322,14 @@ const WhatsAppContact = ({
               {selectedProducts.length > 0 && (
                 <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-green-900 dark:text-green-100">
+                    <h3 className="font-semibold text-foreground">
                       Selected ({selectedProducts.length})
                     </h3>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={clearSelection}
-                      className="text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100"
+                      className="text-primary hover:text-primary/80"
                     >
                       <X className="h-4 w-4 mr-1" />
                       Clear
@@ -342,12 +342,12 @@ const WhatsAppContact = ({
                         <Badge
                           key={product.id}
                           variant="secondary"
-                          className="bg-green-100 dark:bg-green-900 text-green-900 dark:text-green-100 border-green-300 dark:border-green-700 px-3 py-1"
+                          className="bg-primary/10 text-primary border-primary/30 px-3 py-1"
                         >
                           {product.name}
                           <button
                             onClick={() => toggleProduct(product.id)}
-                            className="ml-2 hover:text-green-700 dark:hover:text-green-300"
+                            className="ml-2 hover:text-primary"
                           >
                             <X className="h-3 w-3" />
                           </button>
@@ -379,8 +379,8 @@ const WhatsAppContact = ({
                         key={product.id}
                         onClick={() => toggleProduct(product.id)}
                         className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${isSelected
-                          ? 'border-green-500 bg-green-50 dark:bg-green-950 ring-2 ring-green-500'
-                          : 'border-border hover:border-green-300'
+                          ? 'border-primary bg-primary/5 ring-2 ring-primary'
+                          : 'border-border hover:border-primary/40'
                           }`}
                       >
                         <CardContent className="p-0">
@@ -400,14 +400,14 @@ const WhatsAppContact = ({
 
                             {isSelected && (
                               <div className="absolute top-3 right-3">
-                                <div className="bg-green-500 rounded-full p-2 shadow-lg">
+                                <div className="bg-[hsl(var(--dt-whatsapp))] rounded-full p-2 shadow-lg">
                                   <Check className="h-5 w-5 text-white" strokeWidth={3} />
                                 </div>
                               </div>
                             )}
 
                             <div className="absolute top-3 left-3">
-                              <Badge variant="secondary" className="text-xs bg-white/90 dark:bg-gray-900/90">
+                              <Badge variant="secondary" className="text-xs bg-card">
                                 {formatCategoryName(product.category)}
                               </Badge>
                             </div>
@@ -432,7 +432,7 @@ const WhatsAppContact = ({
                               )}
 
                               <div className={`text-xs px-2 py-1 rounded-full ${isSelected
-                                ? 'bg-green-500 text-white'
+                                ? 'bg-[hsl(var(--dt-whatsapp))] text-white'
                                 : 'bg-muted text-muted-foreground'
                                 }`}>
                                 {isSelected ? 'Selected' : 'Select'}
@@ -526,14 +526,14 @@ const WhatsAppContact = ({
                               key={pkg.id}
                               onClick={() => setSelectedPackage(isSelected ? null : pkg)}
                               className={`cursor-pointer transition-all ${isSelected
-                                ? 'border-green-500 bg-green-50 dark:bg-green-950 ring-2 ring-green-500'
+                                ? 'border-primary bg-primary/5 ring-2 ring-primary'
                                 : 'hover:border-primary'
                                 }`}
                             >
                               <CardContent className="p-5">
                                 <div className="flex justify-between items-start mb-2">
                                   <h4 className="font-bold">{pkg.name}</h4>
-                                  {isSelected && <Check className="h-5 w-5 text-green-500" />}
+                                  {isSelected && <Check className="h-5 w-5 text-[hsl(var(--dt-whatsapp))]" />}
                                 </div>
                                 <p className="text-2xl font-bold text-primary mb-3">
                                   KES {pkg.price.toLocaleString()}
@@ -542,7 +542,7 @@ const WhatsAppContact = ({
                                   {pkg.description || "Comprehensive service package for your farm."}
                                 </p>
                                 <div className={`text-center py-2 rounded-md text-sm font-medium ${isSelected
-                                  ? 'bg-green-500 text-white'
+                                  ? 'bg-[hsl(var(--dt-whatsapp))] text-white'
                                   : 'bg-secondary text-secondary-foreground'
                                   }`}>
                                   {isSelected ? 'Selected' : 'Select Package'}
@@ -557,7 +557,7 @@ const WhatsAppContact = ({
                           <p className="mb-4">No specific packages found for this category.</p>
                           <Button
                             onClick={() => openWhatsApp()}
-                            className="bg-green-500 hover:bg-green-600 text-white"
+                            className="bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)] text-white"
                           >
                             <MessageCircle className="h-4 w-4 mr-2" />
                             Inquire about {serviceCategories.find(c => c.id === selectedServiceCategory)?.name}
@@ -604,7 +604,7 @@ const WhatsAppContact = ({
 
             <Button
               onClick={openWhatsApp}
-              className="bg-green-500 hover:bg-green-600 text-white"
+              className="bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)] text-white"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               {activeTab === "products" && selectedProducts.length > 0

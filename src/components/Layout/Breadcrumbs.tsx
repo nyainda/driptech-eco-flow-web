@@ -12,7 +12,6 @@ const Breadcrumbs = ({ className }: BreadcrumbsProps) => {
 
     if (pathnames.length === 0) return null;
 
-    // Generate schema data for GEO
     const schemaData = {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
@@ -41,14 +40,14 @@ const Breadcrumbs = ({ className }: BreadcrumbsProps) => {
     };
 
     return (
-        <nav className={`flex items-center space-x-2 text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400 py-4 ${className}`}>
+        <nav className={`flex items-center space-x-2 text-xs md:text-sm font-medium text-muted-foreground py-4 ${className}`}>
             <script type="application/ld+json">
                 {JSON.stringify(schemaData)}
             </script>
 
             <Link
                 to="/"
-                className="flex items-center hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                className="flex items-center hover:text-primary transition-colors"
             >
                 <Home className="h-3.5 w-3.5 mr-1" />
                 <span className="hidden sm:inline">Home</span>
@@ -63,15 +62,15 @@ const Breadcrumbs = ({ className }: BreadcrumbsProps) => {
 
                 return (
                     <React.Fragment key={name}>
-                        <ChevronRight className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600" />
+                        <ChevronRight className="h-3.5 w-3.5 text-border" />
                         {isLast ? (
-                            <span className="text-slate-900 dark:text-white font-bold truncate max-w-[150px] sm:max-w-none">
+                            <span className="text-foreground font-bold truncate max-w-[150px] sm:max-w-none">
                                 {displayName}
                             </span>
                         ) : (
                             <Link
                                 to={routeTo}
-                                className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors capitalize"
+                                className="hover:text-primary transition-colors capitalize"
                             >
                                 {displayName}
                             </Link>

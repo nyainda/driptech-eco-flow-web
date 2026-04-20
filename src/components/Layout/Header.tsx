@@ -429,7 +429,7 @@ const Header = () => {
         <div
           className={`relative overflow-hidden group transition-all duration-500 ${isExpiringSoon(currentBanner.valid_until)
             ? "bg-gradient-to-r from-red-600 via-orange-500 to-red-600"
-            : "bg-gradient-to-r from-primary via-blue-600 to-primary"
+            : "bg-primary"
             } text-primary-foreground shadow-inner`}
         >
           {/* Animated Glow Effect */}
@@ -589,7 +589,7 @@ const Header = () => {
             to="/"
             className="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition-all duration-300 group flex-shrink-0"
           >
-            <div className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 lg:w-14 lg:h-14 bg-gradient-to-br from-primary via-blue-700 to-primary rounded-xl sm:rounded-2xl shadow-lg group-hover:shadow-primary/30 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105 border border-white/20">
+            <div className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 lg:w-14 lg:h-14 bg-primary rounded-xl sm:rounded-2xl shadow-lg group-hover:shadow-primary/30 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105 border border-white/20">
               <Droplets className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white animate-pulse" />
             </div>
             <div className="flex flex-col">
@@ -720,7 +720,7 @@ const Header = () => {
                 <SheetHeader className="p-5 border-b border-border/80 text-left sm:text-left space-y-0 bg-card">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-blue-700 rounded-xl shadow-lg">
+                      <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-xl shadow-lg">
                         <Droplets className="h-5.5 w-5.5 text-white animate-pulse" />
                       </div>
                       <div>

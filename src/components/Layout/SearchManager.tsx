@@ -197,12 +197,12 @@ const SearchManager = () => {
                         <>
                             <CommandGroup heading="AI Quick Actions">
                                 <CommandItem onSelect={() => onSelect("/services")}>
-                                    <TrendingUp className="mr-3 h-5 w-5 text-emerald-500" />
+                                    <TrendingUp className="mr-3 h-5 w-5 text-primary" />
                                     <span>Calculate ROI & Savings</span>
                                     <CommandShortcut>ROI</CommandShortcut>
                                 </CommandItem>
                                 <CommandItem onSelect={() => onSelect("/installation-guides")}>
-                                    <BookOpen className="mr-3 h-5 w-5 text-blue-500" />
+                                    <BookOpen className="mr-3 h-5 w-5 text-primary" />
                                     <span>Browse Installation Guides</span>
                                     <CommandShortcut>Guides</CommandShortcut>
                                 </CommandItem>
@@ -220,12 +220,12 @@ const SearchManager = () => {
 
                             <CommandGroup heading="Quick Suggestions">
                                 <CommandItem onSelect={() => onSelect("/products")}>
-                                    <Package className="mr-3 h-5 w-5 text-emerald-500" />
+                                    <Package className="mr-3 h-5 w-5 text-primary" />
                                     <span>All Products</span>
                                     <CommandShortcut>Browse</CommandShortcut>
                                 </CommandItem>
                                 <CommandItem onSelect={() => onSelect("/irrigation-kits")}>
-                                    <Droplets className="mr-3 h-5 w-5 text-blue-500" />
+                                    <Droplets className="mr-3 h-5 w-5 text-primary" />
                                     <span>Irrigation Kits</span>
                                     <CommandShortcut>Explore</CommandShortcut>
                                 </CommandItem>
@@ -235,7 +235,7 @@ const SearchManager = () => {
                                     <CommandShortcut>Read</CommandShortcut>
                                 </CommandItem>
                                 <CommandItem onSelect={() => onSelect("/videos")}>
-                                    <Video className="mr-3 h-5 w-5 text-purple-500" />
+                                    <Video className="mr-3 h-5 w-5 text-accent" />
                                     <span>Video Tutorials</span>
                                     <CommandShortcut>Watch</CommandShortcut>
                                 </CommandItem>
@@ -311,10 +311,10 @@ const SearchResultItem = ({
     }[result.type];
 
     const colorClass = {
-        product: "text-emerald-500",
-        blog: "text-amber-500",
-        video: "text-purple-500",
-        kit: "text-blue-500",
+        product: "text-primary",
+        blog: "text-[hsl(var(--dt-gold-500))]",
+        video: "text-accent",
+        kit: "text-primary",
     }[result.type];
 
     return (

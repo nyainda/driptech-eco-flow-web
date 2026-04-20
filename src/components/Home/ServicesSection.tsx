@@ -378,7 +378,7 @@ const ServicesSection = ({
                                 <h3 className="text-xl font-bold mb-1 drop-shadow-md">
                                   {kit.name}
                                 </h3>
-                                <Badge className="bg-white/90 text-gray-900 border-white/50 dark:bg-muted dark:text-muted-foreground dark:border-border shadow-sm">
+                                <Badge className="bg-white/90 text-foreground border-white/50 dark:bg-muted dark:text-muted-foreground dark:border-border shadow-sm">
                                   {kit.kit_type?.replace("_", " ") ||
                                     "Standard Kit"}
                                 </Badge>

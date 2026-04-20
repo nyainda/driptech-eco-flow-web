@@ -23,12 +23,17 @@
   }
 
   body {
+    font-family: var(--font-body);
     font-feature-settings:
       "rlig" 1,
       "calt" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
   }
 }
 
@@ -41,7 +46,7 @@
 
   /* Gradient text utilities */
   .text-gradient {
-    @apply bg-gradient-to-r from-emerald-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent;
   }
 
   .text-gradient-warm {
@@ -50,7 +55,7 @@
 
   /* Enhanced card styles */
   .card-enhanced {
-    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1;
+    @apply bg-card/80 backdrop-blur-sm border border-border rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1;
   }
 
   /* Smooth animations */
@@ -64,6 +69,85 @@
 
   .animate-scale-in {
     animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  /* ── DripsTech Shared Layout ──────────────────── */
+  .dt-section {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+  .dt-section-tight {
+    @apply py-10 sm:py-14 lg:py-16;
+  }
+  .dt-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ── DripsTech Section Header ─────────────────── */
+  .dt-section-label {
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-primary;
+  }
+  .dt-section-title {
+    @apply font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight tracking-tight;
+  }
+  .dt-section-subtitle {
+    @apply text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl;
+  }
+
+  /* ── DripsTech Card ───────────────────────────── */
+  .dt-card {
+    @apply bg-card border border-border rounded-lg shadow-[var(--shadow-card)]
+           hover:shadow-[var(--shadow-float)] hover:-translate-y-0.5
+           transition-all duration-200;
+  }
+
+  /* ── DripsTech Button (CTA) ───────────────────── */
+  .dt-btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground
+           font-semibold rounded-md px-6 py-2.5
+           transition-colors duration-150;
+  }
+  .dt-btn-accent {
+    @apply bg-accent hover:bg-accent/90 text-accent-foreground
+           font-semibold rounded-md px-6 py-2.5
+           transition-colors duration-150;
+  }
+  .dt-btn-ghost {
+    @apply border border-border hover:bg-muted text-foreground
+           font-semibold rounded-md px-6 py-2.5
+           transition-colors duration-150;
+  }
+
+  /* ── WhatsApp Button ──────────────────────────── */
+  .dt-btn-whatsapp {
+    @apply bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)]
+           text-white font-semibold rounded-md px-5 py-2.5
+           transition-colors duration-150;
+  }
+
+  /* ── Price Display ────────────────────────────── */
+  .dt-price {
+    @apply font-mono text-xl font-black text-foreground;
+  }
+  .dt-price-sm {
+    @apply font-mono text-base font-bold text-foreground;
+  }
+
+  /* ── Badge variants ───────────────────────────── */
+  .dt-badge-primary {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-primary/10 text-primary rounded;
+  }
+  .dt-badge-accent {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-accent/15 text-accent-foreground rounded;
+  }
+  .dt-badge-success {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-primary/10 text-primary rounded;
+  }
+  .dt-badge-muted {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-muted text-muted-foreground rounded;
   }
 }
 
@@ -127,7 +211,7 @@
   /* Enhanced scrollbar */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgb(203 213 225) transparent;
+    scrollbar-color: hsl(var(--dt-stone-200)) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -139,12 +223,12 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: rgb(203 213 225);
+    background-color: hsl(var(--dt-stone-200));
     border-radius: 3px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(148 163 184);
+    background-color: hsl(var(--dt-stone-400));
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
@@ -155,19 +239,17 @@
   /* Hide scrollbar for IE, Edge and Firefox */
   .scrollbar-hide {
     -ms-overflow-style: none;
-    /* IE and Edge */
     scrollbar-width: none;
-    /* Firefox */
   }
 
   /* Glass morphism effect */
   .glass {
-    @apply bg-white/10 dark:bg-slate-900/10 backdrop-blur-md border border-white/20 dark:border-slate-700/20;
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
   }
 
   /* Improved focus styles */
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
   /* Utilities */
@@ -258,145 +340,151 @@
   }
 }
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ═══════════════════════════════════════════════════════
+   DRIPSTECH DESIGN TOKENS — THE ONLY SOURCE OF TRUTH
+   All colors MUST reference these vars.
+   Never use raw Tailwind color classes (emerald-*, teal-*,
+   gray-*, slate-*) in user-facing components.
+   ═══════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* DripTech Premium Color System */
-    --background: 0 0% 98%;
-    --foreground: 220 9% 18%;
+    /* ── Brand Palette ──────────────────────────── */
+    /* Forest green: credible, agricultural, not Material-green */
+    --dt-green-900:   160 60% 12%;
+    --dt-green-800:   158 55% 18%;
+    --dt-green-700:   156 48% 26%;
+    --dt-green-600:   152 52% 32%;
+    --dt-green-500:   148 54% 40%;
+    --dt-green-400:   145 48% 50%;
+    --dt-green-300:   143 44% 62%;
+    --dt-green-100:   140 40% 92%;
+    --dt-green-50:    138 35% 97%;
 
-    /* Card System */
-    --card: 0 0% 100%;
-    --card-foreground: 220 9% 18%;
+    /* Gold: harvest warmth, CTA contrast, premium feel */
+    --dt-gold-600:    38 90% 38%;
+    --dt-gold-500:    40 92% 46%;
+    --dt-gold-400:    42 90% 55%;
+    --dt-gold-100:    44 80% 92%;
 
-    /* Popover System */
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 9% 18%;
+    /* Neutral: warm gray, not cold slate */
+    --dt-stone-900:   25 12% 14%;
+    --dt-stone-800:   22 10% 22%;
+    --dt-stone-600:   20  8% 42%;
+    --dt-stone-400:   18  6% 62%;
+    --dt-stone-200:   16  5% 88%;
+    --dt-stone-100:   15  4% 94%;
+    --dt-stone-50:    14  3% 98%;
 
-    /* Primary - Deep Blue */
-    --primary: 220 91% 25%;
-    --primary-foreground: 0 0% 98%;
-    --primary-hover: 220 91% 30%;
+    /* WhatsApp green — isolated, only for WhatsApp elements */
+    --dt-whatsapp:    142 70% 37%;
 
-    /* Secondary - Light Grey */
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 9% 18%;
+    /* ── Semantic System Tokens ─────────────────── */
+    --background:               var(--dt-stone-50);
+    --foreground:               var(--dt-stone-900);
 
-    /* Muted - Medium Grey */
-    --muted: 220 13% 91%;
-    --muted-foreground: 220 9% 46%;
+    --card:                     0 0% 100%;
+    --card-foreground:          var(--dt-stone-900);
 
-    /* Accent - Eco Green */
-    --accent: 158 64% 52%;
-    --accent-foreground: 0 0% 98%;
-    --accent-hover: 158 64% 47%;
+    --popover:                  0 0% 100%;
+    --popover-foreground:       var(--dt-stone-900);
 
-    /* Destructive */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    /* Primary = DripsTech forest green */
+    --primary:                  var(--dt-green-500);
+    --primary-foreground:       0 0% 100%;
+    --primary-hover:            var(--dt-green-600);
 
-    /* Border & Input */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 220 91% 25%;
+    /* Secondary = warm off-white / light stone */
+    --secondary:                var(--dt-stone-100);
+    --secondary-foreground:     var(--dt-stone-800);
 
-    /* Premium Design Tokens */
-    --radius: 0.75rem;
+    /* Accent = harvest gold */
+    --accent:                   var(--dt-gold-500);
+    --accent-foreground:        var(--dt-stone-900);
+    --accent-hover:             var(--dt-gold-600);
 
-    /* Typography Scale */
-    --font-heading: "Inter", sans-serif;
-    --font-body: "Inter", sans-serif;
+    --muted:                    var(--dt-stone-100);
+    --muted-foreground:         var(--dt-stone-600);
 
-    /* Shadows */
+    --destructive:              0 84% 60%;
+    --destructive-foreground:   0 0% 98%;
+
+    --border:                   var(--dt-stone-200);
+    --input:                    var(--dt-stone-200);
+    --ring:                     var(--dt-green-400);
+
+    /* ── Typography ─────────────────────────────── */
+    --font-heading: "Syne", "Georgia", serif;
+    --font-body:    "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-mono:    "JetBrains Mono", "Fira Code", monospace;
+
+    /* ── Radius ─────────────────────────────────── */
+    --radius: 0.5rem;
+
+    /* ── Shadows ─────────────────────────────────── */
+    --shadow-card:  0 1px 3px 0 hsl(var(--dt-stone-900) / 0.08), 0 1px 2px -1px hsl(var(--dt-stone-900) / 0.06);
+    --shadow-float: 0 4px 12px 0 hsl(var(--dt-green-600) / 0.12), 0 2px 4px -1px hsl(var(--dt-stone-900) / 0.08);
+
+    /* Legacy shadow aliases (keep for admin/shadcn) */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md:
-      0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg:
-      0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl:
-      0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg,
-        hsl(var(--primary)),
-        hsl(var(--primary-hover)));
-    --gradient-accent: linear-gradient(135deg,
-        hsl(var(--accent)),
-        hsl(var(--accent-hover)));
-    --gradient-hero: linear-gradient(135deg,
-        hsl(var(--primary) / 0.95),
-        hsl(var(--accent) / 0.95));
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    /* Sidebar Variables */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 220 9% 18%;
-    --sidebar-primary: 220 91% 25%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 210 20% 96%;
-    --sidebar-accent-foreground: 220 9% 18%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 220 91% 25%;
+    /* ── Sidebar (admin only) ──────── */
+    --sidebar-background:           var(--background);
+    --sidebar-foreground:           var(--foreground);
+    --sidebar-primary:              var(--primary);
+    --sidebar-primary-foreground:   var(--primary-foreground);
+    --sidebar-accent:               var(--secondary);
+    --sidebar-accent-foreground:    var(--secondary-foreground);
+    --sidebar-border:               var(--border);
+    --sidebar-ring:                 var(--ring);
   }
 
   .dark {
-    /* DripTech Dark Mode */
-    --background: 220 15% 8%;
-    --foreground: 210 40% 98%;
+    --background:               var(--dt-green-900);
+    --foreground:               var(--dt-stone-50);
 
-    --card: 220 13% 11%;
-    --card-foreground: 210 40% 98%;
+    --card:                     var(--dt-green-800);
+    --card-foreground:          var(--dt-stone-50);
 
-    --popover: 220 13% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover:                  var(--dt-green-800);
+    --popover-foreground:       var(--dt-stone-50);
 
-    --primary: 220 91% 35%;
-    --primary-foreground: 0 0% 98%;
-    --primary-hover: 220 91% 40%;
+    --primary:                  var(--dt-green-300);
+    --primary-foreground:       var(--dt-stone-900);
+    --primary-hover:            var(--dt-green-400);
 
-    --secondary: 220 13% 15%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary:                var(--dt-green-700);
+    --secondary-foreground:     var(--dt-stone-100);
 
-    --muted: 220 13% 15%;
-    --muted-foreground: 220 9% 65%;
+    --accent:                   var(--dt-gold-400);
+    --accent-foreground:        var(--dt-stone-900);
+    --accent-hover:             var(--dt-gold-500);
 
-    --accent: 158 64% 42%;
-    --accent-foreground: 0 0% 98%;
-    --accent-hover: 158 64% 47%;
+    --muted:                    var(--dt-green-700);
+    --muted-foreground:         var(--dt-stone-400);
 
-    --destructive: 0 62% 45%;
-    --destructive-foreground: 0 0% 98%;
+    --border:                   var(--dt-green-700);
+    --input:                    var(--dt-green-700);
+    --ring:                     var(--dt-green-300);
 
-    --border: 220 13% 15%;
-    --input: 220 13% 15%;
-    --ring: 220 91% 35%;
+    --shadow-card:  0 1px 3px 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-float: 0 4px 12px 0 hsl(0 0% 0% / 0.4);
 
-    /* Dark Mode Gradients */
-    --gradient-primary: linear-gradient(135deg,
-        hsl(var(--primary)),
-        hsl(var(--primary-hover)));
-    --gradient-accent: linear-gradient(135deg,
-        hsl(var(--accent)),
-        hsl(var(--accent-hover)));
-    --gradient-hero: linear-gradient(135deg,
-        hsl(var(--primary) / 0.9),
-        hsl(var(--accent) / 0.9));
-
-    /* Dark Sidebar */
-    --sidebar-background: 220 15% 6%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 220 91% 35%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 220 13% 13%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 13% 13%;
-    --sidebar-ring: 220 91% 35%;
+    --sidebar-background:           var(--dt-green-900);
+    --sidebar-foreground:           var(--dt-stone-100);
+    --sidebar-primary:              var(--dt-green-300);
+    --sidebar-primary-foreground:   var(--dt-stone-900);
+    --sidebar-accent:               var(--dt-green-700);
+    --sidebar-accent-foreground:    var(--dt-stone-100);
+    --sidebar-border:               var(--dt-green-700);
+    --sidebar-ring:                 var(--dt-green-300);
   }
 }
 
@@ -405,23 +493,9 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  /* Instant Theme Transitions */
   html,
   body {
     @apply bg-background text-foreground;
-  }
-
-  /* No transitions on theme changes for instant feedback */
-  header,
-  main,
-  footer,
-  nav,
-  aside,
-  section,
-  .card,
-  [role="dialog"],
-  [data-state] {
-    /* Removed theme transitions for instant toggle */
   }
 
   /* Custom Scrollbar Utility */

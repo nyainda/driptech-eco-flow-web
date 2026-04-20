@@ -78,14 +78,14 @@ const PWAInstallPrompt = () => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:w-80">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border p-4 flex items-center justify-between">
+      <div className="bg-white dark:bg-card rounded-lg shadow-lg border p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-            <Download className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <div className="bg-primary/10 p-2 rounded-full">
+            <Download className="h-5 w-5 text-primary" />
           </div>
           <div>
             <h3 className="font-semibold text-sm">Install App</h3>
-            <p className="text-xs text-gray-600 dark:text-gray-300">
+            <p className="text-xs text-muted-foreground">
               Install our app for a better experience
             </p>
           </div>

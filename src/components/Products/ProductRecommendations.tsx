@@ -406,7 +406,7 @@ const ProductRecommendations = ({
       {complementaryProducts.length > 0 && (
         <div className="space-y-4 sm:space-y-6">
           <div className="flex items-center gap-2">
-            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
+            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             <h2 className="text-xl sm:text-2xl font-bold">Complete Your Setup</h2>
             <Badge variant="secondary" className="ml-2">
               <Zap className="h-3 w-3 mr-1" />

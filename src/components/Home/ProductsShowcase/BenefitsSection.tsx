@@ -7,21 +7,18 @@ const benefits = [
     title: "50% Energy Savings",
     description: "Reduce operational costs with our energy-efficient systems",
     stat: "50%",
-    gradient: "from-yellow-500 to-orange-500",
   },
   {
     icon: Leaf,
     title: "40% Water Conservation",
     description: "Minimize water waste while maximizing crop yields",
     stat: "40%",
-    gradient: "from-green-500 to-emerald-500",
   },
   {
     icon: Shield,
     title: "10-Year Warranty",
     description: "Industry-leading warranty on all premium products",
     stat: "10Y",
-    gradient: "from-blue-500 to-indigo-500",
   },
 ];
 
@@ -31,15 +28,13 @@ export const BenefitsSection = () => {
       {benefits.map((benefit, index) => (
         <Card
           key={index}
-          className="text-center group hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-primary/20"
+          className="dt-card text-center group hover:scale-[1.02] border-2 hover:border-primary/20"
         >
           <CardContent className="p-8">
-            <div
-              className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
-            >
-              <benefit.icon className="h-8 w-8 text-white" />
+            <div className="w-16 h-16 mx-auto mb-6 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <benefit.icon className="h-8 w-8 text-primary" />
             </div>
-            <div className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <div className="text-3xl font-bold mb-2 text-primary">
               {benefit.stat}
             </div>
             <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">

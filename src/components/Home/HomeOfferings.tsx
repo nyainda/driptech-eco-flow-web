@@ -4,26 +4,22 @@ import ServicesSection from "@/components/Home/ServicesSection";
 import ProjectsSection from "@/components/Home/ProjectsSection";
 import { Package, Droplets, TrendingUp, Sprout } from "lucide-react";
 
-const TAB_INFO: Record<string, { title: string; subtitle: string; color: string }> = {
+const TAB_INFO: Record<string, { title: string; subtitle: string }> = {
     products: {
         title: "Our Product Range",
         subtitle: "Drip lines, sprinklers, pumps, filters & control valves. Everything your farm needs for precision irrigation.",
-        color: "#10b981",
     },
     kits: {
         title: "Complete Irrigation Kits",
         subtitle: "All-in-one boxed kits — drippers, pipes, fittings, filter, valve. Delivered and installed within 24 hours.",
-        color: "#06b6d4",
     },
     services: {
         title: "Expert Installation & Support",
         subtitle: "Design, supply, installation, and maintenance by DripTech engineers. Free site assessment included.",
-        color: "#8b5cf6",
     },
     projects: {
         title: "Proven Field Results",
         subtitle: "Real projects, real yields. See how Kenyan farmers have transformed their operations with DripTech.",
-        color: "#f59e0b",
     },
 };
 
@@ -89,7 +85,7 @@ const HomeOfferings = () => {
                             <div className="mb-4 sm:mb-6 px-1">
                                 <div className="rounded-2xl px-4 py-3.5 border sm:hidden"
                                     style={{ background: `${TAB_INFO[tab].color}10`, borderColor: `${TAB_INFO[tab].color}25` }}>
-                                    <p className="text-xs font-bold uppercase tracking-wide mb-0.5" style={{ color: TAB_INFO[tab].color }}>
+                                    <p className="dt-section-label mb-0.5">
                                         {TAB_INFO[tab].title}
                                     </p>
                                     <p className="text-xs text-muted-foreground leading-relaxed">

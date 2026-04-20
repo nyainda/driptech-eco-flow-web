@@ -86,9 +86,9 @@ const OptimizedImage = ({
   const fallbackSrc = 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop&fm=webp&q=80';
 
   return (
-    <div ref={imgRef} className={cn('relative overflow-hidden bg-gray-100', className)}>
+    <div ref={imgRef} className={cn('relative overflow-hidden bg-muted', className)}>
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200" />
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-muted via-muted-foreground/10 to-muted" />
       )}
       {isInView && (
         <picture>
