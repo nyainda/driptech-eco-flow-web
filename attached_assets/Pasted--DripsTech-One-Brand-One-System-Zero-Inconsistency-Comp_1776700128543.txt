@@ -1,0 +1,816 @@
+# DripsTech — One Brand. One System. Zero Inconsistency.
+## Complete Frontend Unification Guide
+
+> **The problem in one sentence:** Every section of this site was written by a different AI session with zero awareness of each other — 3 hero variants, 6+ different green shades, `gray-*` vs `slate-*` vs `muted` used randomly, hardcoded hex colors sitting next to CSS variables. This guide kills all of that with one unified system.
+
+---
+
+## PART 1: THE ROOT CAUSE AUDIT
+
+Here is exactly what was found in the codebase. Every item below is a real inconsistency that needs to die.
+
+### 1.1 Dead Components (Delete These Files)
+These components exist in the repo but are **not being used**. They are design waste from previous AI sessions:
+
+```
+DELETE: src/components/Home/HeroSection.tsx       ← uses emerald-600, slate-900 hardcodes
+DELETE: src/components/Home/HeroSectionModern.tsx ← uses emerald-500, Unsplash images, parallax gimmick
+KEEP:   src/components/Home/HeroSectionVibe.tsx   ← this is the active one (used in Home.tsx)
+```
+
+Keeping dead components around means future AI sessions will accidentally reuse their color patterns. Delete them.
+
+### 1.2 The Color Chaos (Found in Production Code)
+
+| File | Hardcoded Color | Should Be |
+|---|---|---|
+| `HeroSection.tsx` | `text-emerald-400`, `bg-emerald-600`, `text-blue-400` | `text-primary`, `bg-primary` |
+| `HeroSectionVibe.tsx` | `color: "#10b981"`, `color: "#06b6d4"`, `color: "#8b5cf6"`, `color: "#f59e0b"` | `var(--primary)` etc |
+| `ProductCard.tsx` | `bg-emerald-500 hover:bg-emerald-600` (WhatsApp button) | `bg-brand-whatsapp` |
+| `ProductsShowcase.tsx` | `bg-emerald-100 text-emerald-800`, `bg-blue-100 text-blue-800` | `bg-primary/10 text-primary` |
+| `BenefitsSection.tsx` | `text-emerald-600`, `text-teal-600`, `text-blue-600` | `text-primary` |
+| `ServicesSection.tsx` | `text-gray-600`, `text-slate-700` mixed | `text-muted-foreground` |
+| `SectionHeader.tsx` | `text-gray-900`, `text-gray-600` | `text-foreground`, `text-muted-foreground` |
+| `WhatsAppContact.tsx` | `bg-gray-100` | `bg-muted` |
+| `HomeOfferings.tsx` | inline `style={{ color: TAB_INFO[tab].color }}` per-tab different color | single `text-primary` |
+| `Footer.tsx` | `bg-background border-t border-border` — blends into page, invisible footer | dark background needed |
+| `Header.tsx` | `bg-gradient-to-br from-primary via-blue-700 to-primary` on logo icon | solid `bg-primary` |
+
+### 1.3 The Font Problem
+
+In `src/index.css`, the design system declares:
+```css
+--font-heading: "Inter", sans-serif;
+--font-body: "Inter", sans-serif;
+```
+
+**Inter for everything = instant AI tell.** There is no font differentiation between headings and body copy anywhere.
+
+### 1.4 The Border Radius Problem
+
+`tailwind.config.ts` sets `--radius: 0.75rem` and every shadcn component inherits it. The result: **everything is rounded-xl**. Cards, buttons, badges, inputs, dropdowns — all identically soft. This is the single biggest visual cue that screams "AI default."
+
+### 1.5 The Footer Problem
+
+```tsx
+// Current footer — invisible, blends with page
+<footer className="bg-background border-t border-border">
+```
+
+White footer on a white page. Zero visual grounding. No brand anchor at the bottom.
+
+---
+
+## PART 2: THE UNIFIED DESIGN SYSTEM
+
+One source of truth. Everything flows from these two files.
+
+### 2.1 `src/index.css` — Full Replacement
+
+Replace the entire `:root` block with this:
+
+```css
+@layer base {
+  :root {
+    /* ═══════════════════════════════════════════════
+       DRIPSTECH DESIGN TOKENS — THE ONLY SOURCE OF TRUTH
+       All colors in this project MUST reference these vars.
+       Never use raw Tailwind color classes (emerald-*, teal-*, gray-*, slate-*) in components.
+       ═══════════════════════════════════════════════ */
+
+    /* ── Brand Palette ──────────────────────────── */
+    /* Forest green: credible, agricultural, not Material-green */
+    --dt-green-900:   160 60% 12%;   /* #0D2B20 — deepest dark bg */
+    --dt-green-800:   158 55% 18%;   /* #152F24 — dark sections */
+    --dt-green-700:   156 48% 26%;   /* #223D2D — subtle dark tone */
+    --dt-green-600:   152 52% 32%;   /* #27553C — primary dark */
+    --dt-green-500:   148 54% 40%;   /* #2E6E4A — primary base */
+    --dt-green-400:   145 48% 50%;   /* #40916C — primary mid */
+    --dt-green-300:   143 44% 62%;   /* #6AB187 — light accent */
+    --dt-green-100:   140 40% 92%;   /* #DFF0E6 — bg tint */
+    --dt-green-50:    138 35% 97%;   /* #F2FAF5 — subtle bg */
+
+    /* Gold: harvest warmth, CTA contrast, premium feel */
+    --dt-gold-600:    38 90% 38%;    /* #B77A09 — dark gold */
+    --dt-gold-500:    40 92% 46%;    /* #DC9A0D — primary gold */
+    --dt-gold-400:    42 90% 55%;    /* #E8B430 — highlight */
+    --dt-gold-100:    44 80% 92%;    /* #FAF0D2 — gold tint */
+
+    /* Neutral: warm gray, not cold slate */
+    --dt-stone-900:   25 12% 14%;    /* #231F1A — near-black */
+    --dt-stone-800:   22 10% 22%;    /* #372F28 — dark text */
+    --dt-stone-600:   20  8% 42%;    /* #6D5F56 — body text */
+    --dt-stone-400:   18  6% 62%;    /* #9E9088 — muted text */
+    --dt-stone-200:   16  5% 88%;    /* #E0DAD5 — borders */
+    --dt-stone-100:   15  4% 94%;    /* #EEE9E5 — light bg */
+    --dt-stone-50:    14  3% 98%;    /* #F9F7F5 — off-white bg */
+
+    /* WhatsApp green — isolated, only for WhatsApp elements */
+    --dt-whatsapp:    142 70% 37%;   /* #25D366 official green */
+
+    /* ── Semantic System Tokens ─────────────────── */
+    --background:               var(--dt-stone-50);
+    --foreground:               var(--dt-stone-900);
+
+    --card:                     0 0% 100%;
+    --card-foreground:          var(--dt-stone-900);
+
+    --popover:                  0 0% 100%;
+    --popover-foreground:       var(--dt-stone-900);
+
+    /* Primary = DripsTech forest green */
+    --primary:                  var(--dt-green-500);
+    --primary-foreground:       0 0% 100%;
+    --primary-hover:            var(--dt-green-600);
+
+    /* Secondary = warm off-white / light stone */
+    --secondary:                var(--dt-stone-100);
+    --secondary-foreground:     var(--dt-stone-800);
+
+    /* Accent = harvest gold — for CTAs, badges, highlights */
+    --accent:                   var(--dt-gold-500);
+    --accent-foreground:        var(--dt-stone-900);
+    --accent-hover:             var(--dt-gold-600);
+
+    --muted:                    var(--dt-stone-100);
+    --muted-foreground:         var(--dt-stone-600);
+
+    --destructive:              0 84% 60%;
+    --destructive-foreground:   0 0% 98%;
+
+    --border:                   var(--dt-stone-200);
+    --input:                    var(--dt-stone-200);
+    --ring:                     var(--dt-green-400);
+
+    /* ── Typography ─────────────────────────────── */
+    /* Headings: editorial weight, distinct from body */
+    --font-heading: "Syne", "Georgia", serif;
+    /* Body: clean, readable, modern without being generic */
+    --font-body:    "Plus Jakarta Sans", system-ui, sans-serif;
+    /* Mono: for prices, specs, part numbers */
+    --font-mono:    "JetBrains Mono", "Fira Code", monospace;
+
+    /* ── Radius ─────────────────────────────────── */
+    /* Reduce the aggressive rounding. Irrigation = precision, not bubbly */
+    --radius: 0.5rem;   /* was 0.75rem — this single change sharpens the whole UI */
+
+    /* ── Shadows ─────────────────────────────────── */
+    --shadow-card:  0 1px 3px 0 hsl(var(--dt-stone-900) / 0.08), 0 1px 2px -1px hsl(var(--dt-stone-900) / 0.06);
+    --shadow-float: 0 4px 12px 0 hsl(var(--dt-green-600) / 0.12), 0 2px 4px -1px hsl(var(--dt-stone-900) / 0.08);
+
+    /* ── Sidebar (unchanged — admin only) ──────── */
+    --sidebar-background:           var(--background);
+    --sidebar-foreground:           var(--foreground);
+    --sidebar-primary:              var(--primary);
+    --sidebar-primary-foreground:   var(--primary-foreground);
+    --sidebar-accent:               var(--secondary);
+    --sidebar-accent-foreground:    var(--secondary-foreground);
+    --sidebar-border:               var(--border);
+    --sidebar-ring:                 var(--ring);
+  }
+
+  .dark {
+    --background:               var(--dt-green-900);
+    --foreground:               var(--dt-stone-50);
+
+    --card:                     var(--dt-green-800);
+    --card-foreground:          var(--dt-stone-50);
+
+    --popover:                  var(--dt-green-800);
+    --popover-foreground:       var(--dt-stone-50);
+
+    --primary:                  var(--dt-green-300);
+    --primary-foreground:       var(--dt-stone-900);
+    --primary-hover:            var(--dt-green-400);
+
+    --secondary:                var(--dt-green-700);
+    --secondary-foreground:     var(--dt-stone-100);
+
+    --accent:                   var(--dt-gold-400);
+    --accent-foreground:        var(--dt-stone-900);
+    --accent-hover:             var(--dt-gold-500);
+
+    --muted:                    var(--dt-green-700);
+    --muted-foreground:         var(--dt-stone-400);
+
+    --border:                   var(--dt-green-700);
+    --input:                    var(--dt-green-700);
+    --ring:                     var(--dt-green-300);
+
+    --shadow-card:  0 1px 3px 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-float: 0 4px 12px 0 hsl(0 0% 0% / 0.4);
+
+    --sidebar-background:           var(--dt-green-900);
+    --sidebar-foreground:           var(--dt-stone-100);
+    --sidebar-primary:              var(--dt-green-300);
+    --sidebar-primary-foreground:   var(--dt-stone-900);
+    --sidebar-accent:               var(--dt-green-700);
+    --sidebar-accent-foreground:    var(--dt-stone-100);
+    --sidebar-border:               var(--dt-green-700);
+    --sidebar-ring:                 var(--dt-green-300);
+  }
+}
+```
+
+Add these **utility classes** at the bottom of `@layer components`:
+
+```css
+@layer components {
+  /* ── DripsTech Shared Layout ──────────────────── */
+  .dt-section {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+  .dt-section-tight {
+    @apply py-10 sm:py-14 lg:py-16;
+  }
+  .dt-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ── DripsTech Section Header ─────────────────── */
+  /* USE THIS everywhere instead of inline text styles */
+  .dt-section-label {
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-primary;
+  }
+  .dt-section-title {
+    @apply font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight tracking-tight;
+  }
+  .dt-section-subtitle {
+    @apply text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl;
+  }
+
+  /* ── DripsTech Card ───────────────────────────── */
+  /* USE THIS for ALL product cards, service cards, blog cards */
+  .dt-card {
+    @apply bg-card border border-border rounded-lg shadow-[var(--shadow-card)]
+           hover:shadow-[var(--shadow-float)] hover:-translate-y-0.5
+           transition-all duration-200;
+  }
+
+  /* ── DripsTech Button (CTA) ───────────────────── */
+  .dt-btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground
+           font-semibold rounded-md px-6 py-2.5
+           transition-colors duration-150;
+  }
+  .dt-btn-accent {
+    @apply bg-accent hover:bg-accent/90 text-accent-foreground
+           font-semibold rounded-md px-6 py-2.5
+           transition-colors duration-150;
+  }
+  .dt-btn-ghost {
+    @apply border border-border hover:bg-muted text-foreground
+           font-semibold rounded-md px-6 py-2.5
+           transition-colors duration-150;
+  }
+
+  /* ── WhatsApp Button ──────────────────────────── */
+  /* ONLY use this for WhatsApp CTAs — keeps the colour isolated */
+  .dt-btn-whatsapp {
+    @apply bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)]
+           text-white font-semibold rounded-md px-5 py-2.5
+           transition-colors duration-150;
+  }
+
+  /* ── Price Display ────────────────────────────── */
+  .dt-price {
+    @apply font-mono text-xl font-black text-foreground;
+  }
+  .dt-price-sm {
+    @apply font-mono text-base font-bold text-foreground;
+  }
+
+  /* ── Badge variants ───────────────────────────── */
+  .dt-badge-primary {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-primary/10 text-primary rounded;
+  }
+  .dt-badge-accent {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-accent/15 text-accent-foreground rounded;
+  }
+  .dt-badge-success {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-primary/10 text-primary rounded;
+  }
+  .dt-badge-muted {
+    @apply text-[10px] font-bold uppercase tracking-wide px-2 py-0.5
+           bg-muted text-muted-foreground rounded;
+  }
+}
+```
+
+---
+
+### 2.2 `index.html` — Font Loading
+
+Replace any existing Google Fonts link with:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+```
+
+**Why these fonts:**
+- **Syne** — geometric, bold, African-editorial energy. Used by agencies and premium brands. Completely unexpected for irrigation.
+- **Plus Jakarta Sans** — clean and modern but not Inter. Has personality, great at small sizes, excellent Swahili character support.
+- **JetBrains Mono** — exclusively for prices and specs. Makes "KSh 12,500" look precise and trustworthy.
+
+---
+
+### 2.3 `tailwind.config.ts` — Font and Radius Update
+
+In the `extend` block, update:
+
+```ts
+fontFamily: {
+  heading: ['Syne', 'Georgia', 'serif'],
+  body:    ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+  mono:    ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+  // REMOVE: sans, the default Inter mapping
+},
+```
+
+Set the body font in `src/index.css`:
+
+```css
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+```
+
+---
+
+## PART 3: FILE-BY-FILE CHANGES
+
+Now apply the system. These are the exact changes for every file with problems.
+
+---
+
+### 3.1 `src/components/common/SectionHeader.tsx` — REWRITE
+
+This is used on every page. Fix it once, fix everything.
+
+```tsx
+import React from "react";
+
+interface SectionHeaderProps {
+  label?: string;        // Small ALL-CAPS label above title e.g. "Our Products"
+  title: string;
+  subtitle?: string;
+  align?: "left" | "center";
+  className?: string;
+}
+
+const SectionHeader: React.FC<SectionHeaderProps> = ({
+  label,
+  title,
+  subtitle,
+  align = "center",
+  className = "",
+}) => {
+  const alignClass = align === "left" ? "text-left items-start" : "text-center items-center";
+
+  return (
+    <div className={`flex flex-col gap-3 mb-10 sm:mb-14 ${alignClass} ${className}`}>
+      {label && (
+        <span className="dt-section-label">{label}</span>
+      )}
+      <h2 className="dt-section-title">{title}</h2>
+      {subtitle && (
+        <p className={`dt-section-subtitle ${align === "center" ? "mx-auto" : ""}`}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default SectionHeader;
+```
+
+---
+
+### 3.2 `src/components/Home/ProductsShowcase/ProductCard.tsx` — Fix Colors
+
+Replace the hardcoded color classes:
+
+```tsx
+// FIND: bg-emerald-500 hover:bg-emerald-600
+// REPLACE WITH:
+className="dt-btn-whatsapp flex items-center justify-center gap-2 w-full"
+
+// FIND: bg-gradient-to-r from-yellow-500 to-orange-500  (featured badge)
+// REPLACE WITH:
+className="dt-badge-accent"
+
+// FIND: bg-emerald-500/90 text-white  (in-stock badge)
+// REPLACE WITH:
+className="dt-badge-success"
+
+// FIND: bg-red-500/90 text-white  (out-of-stock badge)
+// REPLACE WITH:
+className="bg-destructive/90 text-destructive-foreground text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+
+// FIND: bg-white/90 dark:bg-gray-900/90 text-gray-900 dark:text-gray-100  (category badge)
+// REPLACE WITH:
+className="dt-badge-muted backdrop-blur-sm"
+
+// FIND: <Card className="group hover:shadow-xl...hover:border-primary/20">
+// REPLACE WITH:
+<Card className="dt-card group flex flex-col h-full overflow-hidden">
+
+// FIND: text-lg sm:text-xl font-black text-primary  (price)
+// REPLACE WITH:
+<span className="dt-price">KSh {product.price.toLocaleString()}</span>
+```
+
+---
+
+### 3.3 `src/components/Home/HeroSectionVibe.tsx` — Fix Hardcoded Colors
+
+This is the **active hero**. The `CATEGORY_CONFIG` object has per-category inline hex colors. Replace them all:
+
+```tsx
+// FIND the CATEGORY_CONFIG object and remove ALL `color` properties.
+// They are used as: style={{ color: TAB_INFO[tab].color }}
+// These create a different colored text for every tab = inconsistent.
+// REPLACE WITH: all items use text-primary. The active tab is differentiated by weight, not color.
+
+// FIND: <p ... style={{ color: TAB_INFO[tab].color }}>
+// REPLACE:
+<p className="dt-section-label">{TAB_INFO[tab].title}</p>
+
+// The color hex values "#10b981", "#06b6d4", "#8b5cf6", "#f59e0b" in CATEGORY_CONFIG
+// are only used for the mobile tab teaser border. Replace the inline style with:
+// FIND: style={{ background: `${TAB_INFO[tab].color}10`, borderColor: `${TAB_INFO[tab].color}25` }}
+// REPLACE: className="bg-primary/5 border border-primary/15"
+```
+
+---
+
+### 3.4 `src/components/Home/HomeOfferings.tsx` — Fix Tab Teaser Inline Styles
+
+```tsx
+// FIND the entire inline style block on the mobile teaser div:
+// style={{ background: `${TAB_INFO[tab].color}10`, borderColor: `${TAB_INFO[tab].color}25` }}
+// REPLACE WITH: className="bg-primary/5 border border-primary/15 rounded-xl px-4 py-3.5"
+
+// FIND: style={{ color: TAB_INFO[tab].color }} on the label
+// REPLACE WITH: className="dt-section-label"
+```
+
+---
+
+### 3.5 `src/components/Layout/Footer.tsx` — OVERHAUL
+
+The current footer is invisible (white on white). Replace the outer wrapper:
+
+```tsx
+// FIND:
+<footer className="bg-background border-t border-border">
+
+// REPLACE WITH:
+<footer className="bg-[hsl(var(--dt-green-900))] text-[hsl(var(--dt-stone-200))]">
+```
+
+Inside the footer, update text colors:
+
+```tsx
+// All heading text (company name, column headings):
+// FIND: text-foreground  →  REPLACE: text-[hsl(var(--dt-stone-50))]
+
+// All body/link text:
+// FIND: text-muted-foreground  →  REPLACE: text-[hsl(var(--dt-stone-400))]
+
+// All link hover:
+// FIND: hover:text-primary  →  REPLACE: hover:text-[hsl(var(--dt-green-300))]
+
+// Newsletter section bg:
+// FIND: bg-muted/30 border-b border-border
+// REPLACE: bg-[hsl(var(--dt-green-800))] border-b border-[hsl(var(--dt-green-700))]
+
+// Bottom copyright bar:
+// ADD: className="border-t border-[hsl(var(--dt-green-700))] mt-12 pt-8"
+```
+
+---
+
+### 3.6 `src/components/Layout/Header.tsx` — Fix Logo Gradient + Banner
+
+```tsx
+// Logo icon div — FIND:
+className="...bg-gradient-to-br from-primary via-blue-700 to-primary..."
+// REPLACE WITH:
+className="...bg-primary..."
+
+// The banner gradient — FIND:
+"bg-gradient-to-r from-primary via-blue-600 to-primary"
+// REPLACE WITH:
+"bg-primary"
+
+// Focus ring in the search/interactions:
+// Any focus-visible:ring-emerald-* → focus-visible:ring-ring
+```
+
+---
+
+### 3.7 `src/components/Home/BookSiteVisit.tsx` — Fix Raw Color Classes
+
+```tsx
+// Find all: text-emerald-*, bg-emerald-*, text-teal-*, bg-teal-*
+// Replace with: text-primary, bg-primary, etc.
+
+// Find: text-blue-* (if used for info elements)
+// Replace with: text-muted-foreground or text-foreground
+
+// Find: bg-gradient-to-r from-emerald-* to-teal-*
+// Replace with: bg-primary (flat, not gradient)
+```
+
+---
+
+### 3.8 `src/components/Home/ServicesSection.tsx` — Fix Raw Colors
+
+```tsx
+// Find: text-gray-600, text-slate-700, text-gray-500 anywhere
+// Replace: text-muted-foreground
+
+// Find: text-gray-900, text-slate-900
+// Replace: text-foreground
+
+// Find: bg-emerald-100, bg-blue-100, bg-purple-100 (icon backgrounds)
+// Replace: bg-primary/10
+
+// Find: text-emerald-600, text-blue-600, text-purple-600 (icons)
+// Replace: text-primary
+```
+
+---
+
+### 3.9 `src/components/Home/ProductsShowcase/BenefitsSection.tsx` — Fix Colors
+
+```tsx
+// Find: text-emerald-600, text-teal-600, text-blue-600, text-cyan-600
+// Replace: text-primary
+
+// Find: bg-emerald-50, bg-teal-50, bg-blue-50
+// Replace: bg-primary/5
+
+// Find: border-emerald-200, border-teal-200
+// Replace: border-primary/20
+```
+
+---
+
+### 3.10 `src/components/common/WhatsAppContact.tsx` — Fix Colors
+
+```tsx
+// Find: bg-gray-100, bg-gray-200
+// Replace: bg-muted
+
+// Find: text-gray-600, text-gray-700
+// Replace: text-muted-foreground
+
+// The WhatsApp green button itself: keep it but use the token:
+// Find: bg-green-500, bg-green-600, bg-[#25D366]
+// Replace: bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)]
+```
+
+---
+
+### 3.11 `src/components/Home/HeroSectionVibe.tsx` — Fix `fallbackImage` Stat Colors
+
+In the stats display (where it shows "50% Less Water", "60% More Yield"), each category currently uses a different accent color. Unify them:
+
+```tsx
+// Find: any bg-emerald-*, bg-cyan-*, bg-purple-*, bg-amber-* on stat badges/labels
+// Replace: bg-primary/10 text-primary (consistent across all categories)
+
+// The category icon color: each uses its own `config.color` inline style
+// Replace all with: className="text-primary" (or text-accent for the CTA category)
+```
+
+---
+
+## PART 4: PAGE-LEVEL CONSISTENCY
+
+### 4.1 Consistent Page Structure Rule
+
+Every public page must follow this layout pattern. No exceptions:
+
+```tsx
+<>
+  <Header />           {/* sticky, bg-background/95 backdrop-blur */}
+  
+  {/* Page Hero — every inner page needs one */}
+  <section className="bg-[hsl(var(--dt-green-900))] dt-section-tight">
+    <div className="dt-container">
+      <SectionHeader
+        label="Page Category"
+        title="Page Title"
+        subtitle="One sentence description"
+        align="center"
+      />
+    </div>
+  </section>
+
+  {/* Page Content sections */}
+  <main>
+    <section className="dt-section bg-background">
+      <div className="dt-container">
+        {/* content */}
+      </div>
+    </section>
+
+    {/* Alternating sections use bg-muted for rhythm */}
+    <section className="dt-section bg-muted">
+      <div className="dt-container">
+        {/* content */}
+      </div>
+    </section>
+  </main>
+
+  <Footer />           {/* dark green bg */}
+</>
+```
+
+### 4.2 Pages Missing Their Page Hero
+
+These pages drop straight into content with no visual anchor. Add the dark green page hero section to each:
+
+- `src/pages/Products.tsx`
+- `src/pages/About.tsx`
+- `src/pages/Contact.tsx`
+- `src/pages/Services.tsx`
+- `src/pages/Projects.tsx`
+- `src/pages/Blog.tsx` (via `BlogPage.tsx`)
+- `src/pages/IrrigationKits.tsx`
+
+---
+
+## PART 5: THE GLOBAL FIND & REPLACE PASS
+
+After doing the file-by-file changes above, run one final sweep across all `src/` files:
+
+### Replace These — **Never** Use Again in User-Facing Components
+
+| Find (regex-safe) | Replace With | Rule |
+|---|---|---|
+| `text-emerald-[0-9]+` | `text-primary` | |
+| `bg-emerald-[0-9]+` | `bg-primary` (buttons) or `bg-primary/10` (backgrounds) | |
+| `text-teal-[0-9]+` | `text-primary` | |
+| `bg-teal-[0-9]+` | `bg-primary/10` | |
+| `text-blue-[0-9]+` | `text-muted-foreground` or `text-primary` | |
+| `bg-blue-[0-9]+` | `bg-primary/10` | |
+| `text-gray-900` | `text-foreground` | |
+| `text-gray-800` | `text-foreground` | |
+| `text-gray-700` | `text-foreground` | |
+| `text-gray-600` | `text-muted-foreground` | |
+| `text-gray-500` | `text-muted-foreground` | |
+| `text-gray-400` | `text-muted-foreground` | |
+| `bg-gray-50` | `bg-muted` | |
+| `bg-gray-100` | `bg-muted` | |
+| `bg-gray-200` | `bg-muted` | |
+| `text-slate-[0-9]+` | `text-foreground` or `text-muted-foreground` | |
+| `bg-slate-[0-9]+` | `bg-background` or `bg-muted` | |
+| `dark:bg-slate-[0-9]+` | `dark:bg-card` or remove | |
+| `dark:text-slate-[0-9]+` | `dark:text-foreground` or remove | |
+| `via-blue-[0-9]+` (gradients) | Remove the via step, use flat `bg-primary` | |
+| `from-emerald-.*to-teal` | `bg-primary` (flat) | |
+| `ring-emerald-[0-9]+` | `ring-ring` | |
+| `focus.*emerald` | `focus-visible:ring-ring` | |
+| `color: "#10b981"` | Remove, use `text-primary` | |
+| `color: "#06b6d4"` | Remove, use `text-primary` | |
+| `color: "#8b5cf6"` | Remove, use `text-primary` | |
+| `color: "#f59e0b"` | Remove, use `text-accent` | |
+| `color: "#4CAF50"` | Remove, use `text-primary` | |
+
+### Allowed Exceptions (Do NOT Replace)
+
+- `bg-[hsl(var(--dt-whatsapp))]` — WhatsApp buttons only
+- `bg-[hsl(var(--dt-green-900))]` — Footer and dark hero backgrounds
+- Any color class inside `src/components/Admin/` — admin styles are out of scope
+- `bg-destructive` / `text-destructive` — error states, that's correct
+
+---
+
+## PART 6: IMPLEMENTATION ORDER
+
+Do these in sequence. Each step is testable before moving to the next.
+
+```
+Step 1 ── index.css           ← CSS var replacement (30 min)
+          Verify: open any page, primary color should shift to forest green
+
+Step 2 ── index.html          ← Font links (5 min)
+          Verify: headings should show Syne, body shows Plus Jakarta Sans
+
+Step 3 ── tailwind.config.ts  ← Font family + radius (10 min)
+          Verify: all cards/buttons slightly sharper corners
+
+Step 4 ── SectionHeader.tsx   ← Rewrite with dt- classes (15 min)
+          Verify: all section headings now use Syne font
+
+Step 5 ── Footer.tsx          ← Dark background (20 min)
+          Verify: footer should be deep forest green
+
+Step 6 ── Header.tsx          ← Remove via-blue-700 gradient on logo (5 min)
+
+Step 7 ── ProductCard.tsx     ← Fix WhatsApp btn + badge colors (20 min)
+
+Step 8 ── BenefitsSection.tsx + ServicesSection.tsx + BookSiteVisit.tsx (20 min)
+
+Step 9 ── HeroSectionVibe.tsx ← Remove per-category inline colors (20 min)
+          DELETE: HeroSection.tsx + HeroSectionModern.tsx
+
+Step 10 ─ Global find & replace pass using table in Part 5 (45 min)
+
+Step 11 ─ Add page hero sections to inner pages in Part 4.2 (1 hr)
+
+Step 12 ─ Visual QA pass (see checklist below)
+```
+
+**Total estimated time: ~5 hours of focused work**
+
+---
+
+## PART 7: ACCEPTANCE CHECKLIST
+
+The site is done when ALL of these pass:
+
+### Color Consistency
+- [ ] Every primary action (non-WhatsApp) button is `bg-primary` (forest green)
+- [ ] Every CTA / highlight element uses `bg-accent` (harvest gold)
+- [ ] WhatsApp buttons use `bg-[hsl(var(--dt-whatsapp))]` — no other element uses this green
+- [ ] Zero instances of `emerald-*`, `teal-*`, `cyan-*`, `blue-*`, `gray-*`, `slate-*` in user-facing components
+- [ ] Footer is dark green (`dt-green-900`), not white
+
+### Typography Consistency
+- [ ] Every H1, H2, H3 displays in **Syne** (geometric, bold)
+- [ ] All body copy and nav text is in **Plus Jakarta Sans**
+- [ ] All prices and technical specs use **JetBrains Mono**
+- [ ] Zero Inter font anywhere on user-facing pages
+
+### Layout Consistency
+- [ ] Every page has a dark-green hero banner at the top (except Home page which has HeroSectionVibe)
+- [ ] Sections alternate between `bg-background` and `bg-muted` — never random colors
+- [ ] All section headings use `<SectionHeader>` component — no inline heading styles
+- [ ] All product/service/blog cards use `dt-card` class
+
+### Component Consistency
+- [ ] `HeroSection.tsx` deleted
+- [ ] `HeroSectionModern.tsx` deleted
+- [ ] No per-section inline `style={{ color: '#...' }}` anywhere
+- [ ] No gradient multi-color `from-emerald-* via-teal-* to-blue-*` anywhere
+- [ ] Card border-radius visually matches across all pages (same `--radius`)
+
+### Visual QA by Page
+- [ ] Home → Hero → HomeOfferings → Footer all feel like ONE product
+- [ ] Products page matches Home page visual language
+- [ ] Contact page matches Products page visual language
+- [ ] About page matches Contact page visual language
+- [ ] Mobile nav (Sheet) uses dark canopy background
+- [ ] Dark mode: all text readable, no white-on-white or black-on-black
+
+---
+
+## PART 8: RULES FOR FUTURE AI SESSIONS
+
+Copy this into any future AI prompt for this project:
+
+```
+DripsTech design rules — follow these or the design breaks:
+
+1. ALL colors go through CSS variables. Never write text-emerald-*, bg-teal-*, 
+   text-gray-*, bg-slate-* etc. in user-facing components.
+   Use: text-foreground, text-muted-foreground, text-primary, text-accent, bg-background, bg-muted, bg-card
+
+2. WhatsApp buttons ONLY: bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)]
+   No other element uses this color.
+
+3. Font classes:
+   - Headings → font-heading (Syne)
+   - Body → font-body (Plus Jakarta Sans, default)
+   - Prices/specs → font-mono (JetBrains Mono)
+   Never write font-sans, never add Inter or Roboto.
+
+4. Section headings → always use <SectionHeader> component from src/components/common/SectionHeader.tsx
+   Never write inline h2 with text-gray-900 or text-slate-900.
+
+5. Cards → always add className="dt-card" to any card component.
+
+6. Admin components in src/components/Admin/ are EXCLUDED from these rules.
+```
+
+---
+
+*DripsTech Design System v2.0 — Built from full codebase audit of nyainda/driptech-eco-flow-web*
+*Primary color: forest green (not Material #4CAF50, not emerald-500)*
+*Font: Syne + Plus Jakarta Sans (not Inter, not Roboto)*
+*Consistent. Intentional. Kenyan.*
