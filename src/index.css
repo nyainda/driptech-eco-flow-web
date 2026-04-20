@@ -46,7 +46,7 @@
 
   /* Gradient text utilities */
   .text-gradient {
-    @apply bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent;
   }
 
   .text-gradient-warm {
@@ -455,44 +455,45 @@
   }
 
   .dark {
-    --background:               var(--dt-green-900);
+    /* Deep charcoal — NOT green. Green is only for primary/accent pops. */
+    --background:               20 5% 9%;
     --foreground:               var(--dt-stone-50);
 
-    --card:                     var(--dt-green-800);
+    --card:                     20 5% 13%;
     --card-foreground:          var(--dt-stone-50);
 
-    --popover:                  var(--dt-green-800);
+    --popover:                  20 5% 13%;
     --popover-foreground:       var(--dt-stone-50);
 
-    --primary:                  var(--dt-green-300);
-    --primary-foreground:       var(--dt-stone-900);
-    --primary-hover:            var(--dt-green-400);
+    --primary:                  var(--dt-green-400);
+    --primary-foreground:       20 5% 9%;
+    --primary-hover:            var(--dt-green-300);
 
-    --secondary:                var(--dt-green-700);
-    --secondary-foreground:     var(--dt-stone-100);
+    --secondary:                20 5% 18%;
+    --secondary-foreground:     var(--dt-stone-200);
 
     --accent:                   var(--dt-gold-400);
-    --accent-foreground:        var(--dt-stone-900);
+    --accent-foreground:        20 5% 9%;
     --accent-hover:             var(--dt-gold-500);
 
-    --muted:                    var(--dt-green-700);
+    --muted:                    20 5% 18%;
     --muted-foreground:         var(--dt-stone-400);
 
-    --border:                   var(--dt-green-700);
-    --input:                    var(--dt-green-700);
-    --ring:                     var(--dt-green-300);
+    --border:                   20 5% 23%;
+    --input:                    20 5% 23%;
+    --ring:                     var(--dt-gold-500);
 
-    --shadow-card:  0 1px 3px 0 hsl(0 0% 0% / 0.3), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-card:  none;
     --shadow-float: 0 4px 12px 0 hsl(0 0% 0% / 0.4);
 
-    --sidebar-background:           var(--dt-green-900);
+    --sidebar-background:           20 5% 9%;
     --sidebar-foreground:           var(--dt-stone-100);
-    --sidebar-primary:              var(--dt-green-300);
-    --sidebar-primary-foreground:   var(--dt-stone-900);
-    --sidebar-accent:               var(--dt-green-700);
+    --sidebar-primary:              var(--dt-green-400);
+    --sidebar-primary-foreground:   20 5% 9%;
+    --sidebar-accent:               20 5% 18%;
     --sidebar-accent-foreground:    var(--dt-stone-100);
-    --sidebar-border:               var(--dt-green-700);
-    --sidebar-ring:                 var(--dt-green-300);
+    --sidebar-border:               20 5% 23%;
+    --sidebar-ring:                 var(--dt-gold-500);
   }
 }
 

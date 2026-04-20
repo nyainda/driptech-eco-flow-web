@@ -104,7 +104,7 @@ const About = () => {
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
               Transforming Agriculture
-              <span className="text-primary"> Through Innovation</span>
+              <span className="text-accent"> Through Innovation</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
               Since 2023, DripTech has been Kenya's most innovative provider of

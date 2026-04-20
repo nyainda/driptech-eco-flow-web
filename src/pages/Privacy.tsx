@@ -19,7 +19,7 @@ const Privacy = () => {
               Legal Information
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Privacy <span className="text-primary">Policy</span>
+              Privacy <span className="text-accent">Policy</span>
             </h1>
             <p className="text-xl text-muted-foreground">
               How DripTech EcoFlow collects, uses, and protects your personal

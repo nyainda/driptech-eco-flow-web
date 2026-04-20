@@ -119,7 +119,7 @@ const ProjectHero = ({ onGoBack }: { onGoBack: () => void }) => (
           Our Success Stories
         </Badge>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-          Transforming <span className="text-primary">Agriculture</span>
+          Transforming <span className="text-accent">Agriculture</span>
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
           Discover how our innovative irrigation solutions have revolutionized

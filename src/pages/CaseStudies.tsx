@@ -191,7 +191,7 @@ const CaseStudies = () => {
               📊 Real Results
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Case <span className="text-primary">Studies</span>
+              Case <span className="text-accent">Studies</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Discover how our irrigation solutions have transformed farms and

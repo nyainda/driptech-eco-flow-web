@@ -1682,7 +1682,7 @@ const Products = () => {
                   getCategoryTitle(category)
                 ) : (
                   <>
-                    <span className="text-primary">All</span> Products
+                    <span className="text-accent">All</span> Products
                   </>
                 )}
               </h1>

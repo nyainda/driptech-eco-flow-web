@@ -130,7 +130,7 @@ export default function HeroSectionVibe() {
 
     const slide = slides[current];
     const config = slide?.config;
-    const accentColor = "hsl(var(--primary))";
+    const accentColor = "hsl(var(--dt-gold-500))";
 
     const whatsappOpen = () => window.open("https://wa.me/254794494515", "_blank");
     const phoneCall = () => window.open("tel:+254794494515");

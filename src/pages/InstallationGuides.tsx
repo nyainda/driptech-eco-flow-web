@@ -546,7 +546,7 @@ const InstallationGuides = () => {
               🔧 Installation Support
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Installation <span className="text-primary">Guides</span>
+              Installation <span className="text-accent">Guides</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Step-by-step installation guides, video tutorials, and technical

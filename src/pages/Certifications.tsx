@@ -153,7 +153,7 @@ const Certifications = () => {
               🏆 Certified Excellence
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Our <span className="text-primary">Certifications</span>
+              Our <span className="text-accent">Certifications</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               DripTech maintains the highest industry standards through

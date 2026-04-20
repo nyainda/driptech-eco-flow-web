@@ -104,7 +104,7 @@ const Services = () => {
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Complete Service
-              <span className="text-primary"> Portfolio</span>
+              <span className="text-accent"> Portfolio</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
               From initial design to ongoing maintenance, we provide
@@ -180,7 +180,7 @@ const Services = () => {
             <ScrollReveal animation="slide-up">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">
-                  Calculate Your <span className="text-primary">Sustainable Growth</span>
+                  Calculate Your <span className="text-accent">Sustainable Growth</span>
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   See how professional irrigation can transform your farm's productivity and profitability.

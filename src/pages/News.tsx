@@ -97,7 +97,7 @@ const HeroSection = ({
           Latest News & Insights
         </Badge>
         <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 tracking-tight text-foreground">
-          Stay <span className="text-primary">Informed</span>
+          Stay <span className="text-accent">Informed</span>
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
           Discover the latest in irrigation technology, sustainable farming
