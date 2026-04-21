@@ -649,8 +649,8 @@ const Products = () => {
                 )}
               </div>
 
-              {/* Product name with better typography */}
-              <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
+              {/* Product name - fixed 2-line height for uniform cards */}
+              <h3 className="text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[2.75rem] sm:min-h-[3.25rem] leading-snug">
                 {product.name}
               </h3>
 
@@ -708,130 +708,95 @@ const Products = () => {
                 </div>
               )}
 
-              <div className="text-sm text-muted-foreground leading-relaxed">
-                {product.description ? (
-                  <div className="space-y-2">
-                    <p className="line-clamp-2 sm:line-clamp-3 transition-all duration-300">
-                      {product.description}
-                    </p>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto p-0 text-xs text-primary hover:text-primary/80"
-                        >
-                          Read more...
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-background border-border shadow-md rounded-xl">
-                        <DialogHeader>
-                          <DialogTitle className="pr-8 text-foreground">
-                            {product.name} - Description
-                          </DialogTitle>
-                          <DialogDescription className="sr-only">
-                            Full description of {product.name}
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                            {product.description}
-                          </p>
+              {/* Description - fixed 2-line block for uniform card heights */}
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2 min-h-[2.5rem] sm:min-h-[2.75rem]">
+                {product.description
+                  ? product.description.length > 110
+                    ? product.description.slice(0, 107).trimEnd() + "…"
+                    : product.description
+                  : "Premium irrigation solution for efficient water management."}
+              </p>
 
-                          {product.applications &&
-                            product.applications.length > 0 && (
-                              <div>
-                                <h4 className="font-semibold mb-2 text-sm text-foreground">
-                                  Applications
-                                </h4>
-                                <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                                  {product.applications.map((app, index) => (
-                                    <li
-                                      key={index}
-                                      className="flex items-center gap-2"
-                                    >
-                                      <CheckCircle className="h-4 w-4 text-green-500" />
-                                      {app}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-
-                          {product.features && product.features.length > 0 && (
-                            <div>
-                              <h4 className="font-semibold mb-2 text-sm text-foreground">
-                                Key Features
-                              </h4>
-                              <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                                {product.features.map((feature, index) => (
-                                  <li
-                                    key={index}
-                                    className="flex items-center gap-2"
-                                  >
-                                    <CheckCircle className="h-4 w-4 text-primary" />
-                                    {feature}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+              {/* Compact highlights row — top feature OR top application (always 1 line for uniformity) */}
+              <div className="min-h-[1.5rem] flex items-center gap-2 text-xs text-muted-foreground">
+                {product.features && product.features.length > 0 ? (
+                  <>
+                    <CheckCircle className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                    <span className="truncate">{product.features[0]}</span>
+                    {product.features.length > 1 && (
+                      <span className="text-[10px] font-bold text-primary flex-shrink-0">+{product.features.length - 1}</span>
+                    )}
+                  </>
+                ) : product.applications && product.applications.length > 0 ? (
+                  <>
+                    <CheckCircle className="h-3.5 w-3.5 text-accent flex-shrink-0" />
+                    <span className="truncate">{product.applications[0]}</span>
+                    {product.applications.length > 1 && (
+                      <span className="text-[10px] font-bold text-accent flex-shrink-0">+{product.applications.length - 1}</span>
+                    )}
+                  </>
                 ) : (
-                  <p className="text-muted-foreground/60 italic">
-                    No description available.
-                  </p>
+                  <span className="text-muted-foreground/60 italic">View details for full specs</span>
                 )}
               </div>
 
-              {product.applications && product.applications.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">
-                    Applications:
-                  </h4>
-                  <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                    {product.applications.slice(0, 2).map((app, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        {app}
-                      </li>
-                    ))}
-                    {product.applications.length > 2 && (
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />+
-                        {product.applications.length - 2} more
-                      </li>
-                    )}
-                  </ul>
-                </div>
+              {/* Read more dialog — accessible via Quick View eye icon, but kept here for description detail */}
+              {product.description && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto p-0 text-[11px] font-semibold text-primary hover:text-primary/80 self-start"
+                    >
+                      Read more →
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-background border-border shadow-md rounded-xl">
+                    <DialogHeader>
+                      <DialogTitle className="pr-8 text-foreground">
+                        {product.name}
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        Full description of {product.name}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+                        {product.description}
+                      </p>
+                      {product.applications && product.applications.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-2 text-sm text-foreground">Applications</h4>
+                          <ul className="list-none space-y-1 text-sm text-muted-foreground">
+                            {product.applications.map((app, index) => (
+                              <li key={index} className="flex items-center gap-2">
+                                <CheckCircle className="h-4 w-4 text-accent" />
+                                {app}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {product.features && product.features.length > 0 && (
+                        <div>
+                          <h4 className="font-semibold mb-2 text-sm text-foreground">Key Features</h4>
+                          <ul className="list-none space-y-1 text-sm text-muted-foreground">
+                            {product.features.map((feature, index) => (
+                              <li key={index} className="flex items-center gap-2">
+                                <CheckCircle className="h-4 w-4 text-primary" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
               )}
 
-              {product.features && product.features.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-xs sm:text-sm font-medium text-muted-foreground">
-                    Key Features:
-                  </h4>
-                  <ul className="list-none space-y-1 text-sm text-muted-foreground">
-                    {product.features.slice(0, 3).map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-primary" />
-                        {feature}
-                      </li>
-                    ))}
-                    {product.features.length > 3 && (
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-primary" />+
-                        {product.features.length - 3} more
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              )}
-
-              <div className="mt-auto flex flex-row items-center justify-between gap-2 pt-2">
+              <div className="mt-auto flex flex-row items-center justify-between gap-2 pt-3 border-t border-border/40">
                 <div className="text-lg sm:text-xl font-bold text-primary">
                   {hasVariants &&
                     variantPriceRange &&
