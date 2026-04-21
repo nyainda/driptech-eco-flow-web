@@ -55,13 +55,13 @@ const Footer = () => {
     { icon: Instagram, href: "https://instagram.com/driptech-eco-flow", label: "Instagram" },
   ];
 
-  const col = "text-[hsl(var(--dt-stone-50))] font-semibold mb-4";
-  const link = "text-sm text-[hsl(var(--dt-stone-400))] hover:text-[hsl(var(--dt-gold-500))] transition-colors block";
+  const col = "text-foreground font-semibold mb-4";
+  const link = "text-sm text-muted-foreground hover:text-accent transition-colors block";
 
   return (
-    <footer className="bg-[hsl(var(--dt-stone-900))] text-[hsl(var(--dt-stone-200))]">
+    <footer className="bg-card text-foreground border-t border-border">
       {/* Newsletter Section */}
-      <div className="bg-[hsl(var(--dt-stone-800))] border-b border-[hsl(var(--dt-stone-700))]">
+      <div className="bg-muted/40 border-b border-border">
         <div className="container mx-auto px-4 py-12">
           <NewsletterSubscription variant="default" showDescription={true} />
         </div>
@@ -73,10 +73,10 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-[hsl(var(--dt-stone-50))] mb-2">
+              <h3 className="text-xl font-bold text-foreground mb-2">
                 DripTech
               </h3>
-              <p className="text-[hsl(var(--dt-stone-400))] leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed text-sm">
                 Leading provider of advanced irrigation solutions, helping
                 farmers and growers maximize efficiency while conserving water
                 resources.
@@ -86,21 +86,21 @@ const Footer = () => {
             {/* Contact Info */}
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-[hsl(var(--dt-gold-500))] mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-[hsl(var(--dt-stone-400))]">
-                  <p className="font-medium text-[hsl(var(--dt-stone-50))]">Driptech</p>
+                <MapPin className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-muted-foreground">
+                  <p className="font-medium text-foreground">Driptech</p>
                   <p>Agricultural Technology</p>
                   <p>Nairobi, Kenya</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-[hsl(var(--dt-gold-500))] mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-[hsl(var(--dt-stone-400))]">
+                <Phone className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-muted-foreground">
                   <div className="flex items-center gap-2 mb-1">
                     <a
                       href="tel:0794494515"
-                      className="hover:text-[hsl(var(--dt-stone-50))] transition-colors"
+                      className="hover:text-foreground transition-colors"
                     >
                       0794494515
                     </a>
@@ -116,7 +116,7 @@ const Footer = () => {
                   <div className="flex items-center gap-2">
                     <a
                       href="tel:0114575401"
-                      className="hover:text-[hsl(var(--dt-stone-50))] transition-colors"
+                      className="hover:text-foreground transition-colors"
                     >
                       0114575401
                     </a>
@@ -133,17 +133,17 @@ const Footer = () => {
               </div>
 
               <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-[hsl(var(--dt-gold-500))] mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-[hsl(var(--dt-stone-400))]">
+                <Mail className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-muted-foreground">
                   <a
                     href="mailto:driptechs.info@gmail.com"
-                    className="hover:text-[hsl(var(--dt-stone-50))] transition-colors block py-1"
+                    className="hover:text-foreground transition-colors block py-1"
                   >
                     driptechs.info@gmail.com
                   </a>
                   <a
                     href="mailto:info@dripstech.co.ke"
-                    className="hover:text-[hsl(var(--dt-stone-50))] transition-colors block py-1"
+                    className="hover:text-foreground transition-colors block py-1"
                   >
                     info@dripstech.co.ke
                   </a>
@@ -151,8 +151,8 @@ const Footer = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-[hsl(var(--dt-gold-500))] flex-shrink-0" />
-                <span className="text-sm text-[hsl(var(--dt-stone-400))]">
+                <Clock className="h-5 w-5 text-accent flex-shrink-0" />
+                <span className="text-sm text-muted-foreground">
                   Mon–Fri: 8AM–6PM | Sat: 8AM–1PM
                 </span>
               </div>
@@ -166,7 +166,7 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-[hsl(var(--dt-stone-700))] hover:bg-[hsl(var(--dt-stone-600))] text-[hsl(var(--dt-stone-200))] transition-colors"
+                  className="p-2 rounded-lg bg-muted hover:bg-muted/70 text-foreground transition-colors border border-border"
                   aria-label={social.label}
                 >
                   <social.icon className="h-4 w-4" />
@@ -218,10 +218,10 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-[hsl(var(--dt-stone-700))]">
+      <div className="border-t border-border">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-[hsl(var(--dt-stone-400))]">
+            <div className="text-sm text-muted-foreground">
               © {currentYear} DripTech Irrigation Solutions. All rights reserved.
             </div>
             <div className="flex gap-6 text-sm">

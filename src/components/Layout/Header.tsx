@@ -678,7 +678,7 @@ const Header = () => {
           {/* CTA Buttons */}
           <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
             <div className="flex items-center gap-0.5 sm:gap-1.5 pr-1.5 sm:pr-2 border-r border-border/50 mr-0.5">
-              <SearchManager />
+              <span className="flex md:hidden xl:flex"><SearchManager /></span>
               <ThemeToggle />
             </div>
 
