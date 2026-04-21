@@ -83,16 +83,41 @@
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  /* ── DripsTech Section Header ─────────────────── */
-  .dt-section-label {
-    @apply text-[10px] font-bold uppercase tracking-[0.2em];
+  /* ── DripsTech Typography Scale ───────────────── */
+  /* Section group headers (small all-caps eyebrows) */
+  .dt-section-label,
+  .dt-group-header {
+    @apply text-[10px] font-extrabold uppercase tracking-widest;
     color: hsl(var(--dt-gold-500));
   }
+  /* Page/section headings (h2): 24px bold per spec */
   .dt-section-title {
-    @apply font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight tracking-tight;
+    @apply font-heading text-2xl sm:text-3xl font-bold text-foreground leading-tight tracking-tight;
   }
-  .dt-section-subtitle {
-    @apply text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl;
+  /* Body / descriptions */
+  .dt-section-subtitle,
+  .dt-body {
+    @apply text-sm font-normal text-muted-foreground leading-relaxed max-w-2xl;
+  }
+  /* Card titles */
+  .dt-card-title {
+    @apply text-sm sm:text-base font-bold text-foreground leading-snug;
+  }
+  /* Nav items, tab labels */
+  .dt-nav-item {
+    @apply text-xs font-semibold;
+  }
+  /* Metadata, dates, secondary info */
+  .dt-meta {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+  /* Small labels, badges, pills */
+  .dt-pill {
+    @apply text-[11px] font-bold;
+  }
+  /* Micro labels (status, "active") */
+  .dt-micro {
+    @apply text-[9px] font-extrabold uppercase tracking-wider;
   }
 
   /* ── DripsTech Card ───────────────────────────── */
@@ -378,6 +403,7 @@
     /* Neutral: warm stone, cream-tinted (ProCV-style: #F8F7F4 equivalent) */
     --dt-stone-900:   25 12% 14%;
     --dt-stone-800:   22 10% 22%;
+    --dt-stone-700:   22  9% 30%;
     --dt-stone-600:   20  8% 42%;
     --dt-stone-400:   18  6% 62%;
     --dt-stone-200:   30  8% 87%;
@@ -422,8 +448,8 @@
     --ring:                     var(--dt-gold-500);
 
     /* ── Typography ─────────────────────────────── */
-    --font-heading: "Syne", "Georgia", serif;
-    --font-body:    "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-heading: "Playfair Display", "Georgia", serif;
+    --font-body:    "DM Sans", system-ui, sans-serif;
     --font-mono:    "JetBrains Mono", "Fira Code", monospace;
 
     /* ── Radius ─────────────────────────────────── */

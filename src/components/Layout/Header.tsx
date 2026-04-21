@@ -603,13 +603,13 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <NavigationMenu className="hidden lg:flex">
-            <NavigationMenuList className="gap-2">
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList className="gap-0.5 lg:gap-2">
               {navigation.map((item) => (
                 <NavigationMenuItem key={item.title}>
                   {item.items ? (
                     <>
-                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-4 py-2 font-semibold text-foreground hover:text-primary">
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-2 lg:px-4 py-2 text-xs lg:text-sm font-semibold text-foreground hover:text-primary">
                         {item.title}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
@@ -664,7 +664,7 @@ const Header = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         to={item.href || '#'}
-                        className="group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-4 py-2 text-sm font-semibold transition-all duration-300 hover:bg-muted/50 text-foreground hover:text-primary focus:outline-none"
+                        className="group inline-flex h-10 w-max items-center justify-center rounded-xl bg-transparent px-2 lg:px-4 py-2 text-xs lg:text-sm font-semibold transition-all duration-300 hover:bg-muted/50 text-foreground hover:text-primary focus:outline-none"
                       >
                         {item.title}
                       </Link>
@@ -685,16 +685,16 @@ const Header = () => {
             <QuoteModal>
               <Button
                 variant="outline"
-                className="hidden lg:flex h-9 xl:h-10 px-4 xl:px-6 rounded-xl border-primary/20 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary transition-all duration-300 font-bold text-sm"
+                className="hidden md:flex h-9 xl:h-10 px-3 lg:px-4 xl:px-6 rounded-xl border-primary/20 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary transition-all duration-300 font-bold text-xs lg:text-sm"
               >
                 Get Quote
               </Button>
             </QuoteModal>
 
-            <Link to="/contact" className="hidden lg:block">
+            <Link to="/contact" className="hidden md:block">
               <Button
                 variant="premium"
-                className="h-9 xl:h-10 px-4 xl:px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 font-bold text-sm"
+                className="h-9 xl:h-10 px-3 lg:px-4 xl:px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 font-bold text-xs lg:text-sm"
               >
                 Contact Us
               </Button>
@@ -706,7 +706,7 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="lg:hidden hover:bg-muted/50 h-9 w-9 sm:h-10 sm:w-10 rounded-xl"
+                  className="md:hidden hover:bg-muted/50 h-9 w-9 sm:h-10 sm:w-10 rounded-xl"
                   aria-label="Open navigation menu"
                 >
                   <Menu className="h-5 w-5" />

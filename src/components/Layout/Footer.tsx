@@ -56,12 +56,12 @@ const Footer = () => {
   ];
 
   const col = "text-[hsl(var(--dt-stone-50))] font-semibold mb-4";
-  const link = "text-sm text-[hsl(var(--dt-stone-400))] hover:text-[hsl(var(--dt-green-300))] transition-colors block";
+  const link = "text-sm text-[hsl(var(--dt-stone-400))] hover:text-[hsl(var(--dt-gold-500))] transition-colors block";
 
   return (
-    <footer className="bg-[hsl(var(--dt-green-900))] text-[hsl(var(--dt-stone-200))]">
+    <footer className="bg-[hsl(var(--dt-stone-900))] text-[hsl(var(--dt-stone-200))]">
       {/* Newsletter Section */}
-      <div className="bg-[hsl(var(--dt-green-800))] border-b border-[hsl(var(--dt-green-700))]">
+      <div className="bg-[hsl(var(--dt-stone-800))] border-b border-[hsl(var(--dt-stone-700))]">
         <div className="container mx-auto px-4 py-12">
           <NewsletterSubscription variant="default" showDescription={true} />
         </div>
@@ -86,7 +86,7 @@ const Footer = () => {
             {/* Contact Info */}
             <div className="space-y-4 mb-6">
               <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-[hsl(var(--dt-green-300))] mt-0.5 flex-shrink-0" />
+                <MapPin className="h-5 w-5 text-[hsl(var(--dt-gold-500))] mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-[hsl(var(--dt-stone-400))]">
                   <p className="font-medium text-[hsl(var(--dt-stone-50))]">Driptech</p>
                   <p>Agricultural Technology</p>
@@ -95,7 +95,7 @@ const Footer = () => {
               </div>
 
               <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-[hsl(var(--dt-green-300))] mt-0.5 flex-shrink-0" />
+                <Phone className="h-5 w-5 text-[hsl(var(--dt-gold-500))] mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-[hsl(var(--dt-stone-400))]">
                   <div className="flex items-center gap-2 mb-1">
                     <a
@@ -133,7 +133,7 @@ const Footer = () => {
               </div>
 
               <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-[hsl(var(--dt-green-300))] mt-0.5 flex-shrink-0" />
+                <Mail className="h-5 w-5 text-[hsl(var(--dt-gold-500))] mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-[hsl(var(--dt-stone-400))]">
                   <a
                     href="mailto:driptechs.info@gmail.com"
@@ -151,7 +151,7 @@ const Footer = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-[hsl(var(--dt-green-300))] flex-shrink-0" />
+                <Clock className="h-5 w-5 text-[hsl(var(--dt-gold-500))] flex-shrink-0" />
                 <span className="text-sm text-[hsl(var(--dt-stone-400))]">
                   Mon–Fri: 8AM–6PM | Sat: 8AM–1PM
                 </span>
@@ -166,7 +166,7 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-[hsl(var(--dt-green-700))] hover:bg-[hsl(var(--dt-green-600))] text-[hsl(var(--dt-stone-200))] transition-colors"
+                  className="p-2 rounded-lg bg-[hsl(var(--dt-stone-700))] hover:bg-[hsl(var(--dt-stone-600))] text-[hsl(var(--dt-stone-200))] transition-colors"
                   aria-label={social.label}
                 >
                   <social.icon className="h-4 w-4" />
@@ -218,7 +218,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-[hsl(var(--dt-green-700))]">
+      <div className="border-t border-[hsl(var(--dt-stone-700))]">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-[hsl(var(--dt-stone-400))]">

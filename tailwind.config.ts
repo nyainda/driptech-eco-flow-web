@@ -67,8 +67,8 @@ export default {
                                 }
                         },
                         fontFamily: {
-                                heading: ['Syne', 'Georgia', 'serif'],
-                                body:    ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                                heading: ['"Playfair Display"', 'Georgia', 'serif'],
+                                body:    ['"DM Sans"', 'system-ui', 'sans-serif'],
                                 mono:    ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
                         },
                         backgroundImage: {
