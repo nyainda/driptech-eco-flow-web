@@ -441,10 +441,12 @@ const ProductsShowcase = ({
               )}
             </div>
 
-            {/* Description - Hidden on mobile */}
-            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 hidden md:block hui-truncate-lines">
-              {product.description ||
-                "Advanced irrigation solution designed for modern agriculture and efficient water management."}
+            {/* Description - truncated to keep card heights consistent */}
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 hidden md:block min-h-[2.5rem]">
+              {(() => {
+                const desc = product.description || "Advanced irrigation solution designed for modern agriculture and efficient water management.";
+                return desc.length > 110 ? desc.slice(0, 107).trimEnd() + "…" : desc;
+              })()}
             </p>
 
             {/* Variants Section */}
