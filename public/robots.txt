@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://driptech.co.ke/sitemap.xml
+Sitemap: https://www.dripstech.co.ke/sitemap.xml
