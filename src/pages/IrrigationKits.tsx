@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SEOHead from "@/components/common/SEOHead";
 import {
   Card,
   CardContent,
@@ -216,6 +217,57 @@ const IrrigationKits = () => {
     sortBy,
   ]);
 
+  // Market-informed fallback prices (KES), used only until real kits load from
+  // the database or if a kit has no price set yet. Based on July 2026 competitor
+  // benchmarking (Grekkon, Hortitechno, Aqua Hub) for equivalent kit sizes.
+  const MARKET_FALLBACK_PRICES: Record<string, { min: number; max: number }> = {
+    "1/8": { min: 16000, max: 24000 },
+    "1/4": { min: 38000, max: 50000 },
+    "1/2": { min: 55000, max: 69000 },
+    "1": { min: 100000, max: 169000 },
+  };
+
+  const kitsSchema = React.useMemo(() => {
+    const sourceKits = kits.length > 0 ? kits : [];
+    if (sourceKits.length === 0) return null;
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "Drip Irrigation Kits Kenya",
+      itemListElement: sourceKits.slice(0, 20).map((kit, index) => {
+        const acreLabel = kit.coverage_area
+          ? String(kit.coverage_area)
+          : null;
+        const fallback = acreLabel
+          ? MARKET_FALLBACK_PRICES[acreLabel]
+          : undefined;
+        const price = kit.price || fallback?.min || undefined;
+
+        return {
+          "@type": "Product",
+          position: index + 1,
+          name: kit.name,
+          description:
+            kit.description ||
+            `Drip irrigation kit covering ${acreLabel || "custom"} acre(s), suited for Kenyan farms.`,
+          brand: { "@type": "Brand", name: "DripTech" },
+          ...(price
+            ? {
+                offers: {
+                  "@type": "Offer",
+                  price: String(price),
+                  priceCurrency: "KES",
+                  availability: "https://schema.org/InStock",
+                  url: "https://www.dripstech.co.ke/irrigation-kits",
+                },
+              }
+            : {}),
+        };
+      }),
+    };
+  }, [kits]);
+
   const formatCurrency = (amount: number | null) => {
     if (!amount) return "Contact for Price";
     return new Intl.NumberFormat("en-KE", {
@@ -305,6 +357,34 @@ const IrrigationKits = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEOHead
+        title="Drip Irrigation Kit Prices Kenya (1/8, 1/4, 1/2, 1 Acre) | DripTech"
+        description="Buy drip irrigation kits in Kenya for 1/8 acre, 1/4 acre, 1/2 acre and 1 acre farms. Complete kits with driplines, filters, fittings and installation support. Transparent pricing, nationwide delivery."
+        keywords="drip irrigation kit price kenya, 1 acre drip irrigation kit, 1/4 acre drip kit, 1/2 acre drip kit, buy drip irrigation kit online kenya, irrigation kits for sale kenya, drip kit for tomatoes kenya, drip kit for onions kenya"
+        url="https://www.dripstech.co.ke/irrigation-kits"
+        type="product"
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.dripstech.co.ke/",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Irrigation Kits",
+                item: "https://www.dripstech.co.ke/irrigation-kits",
+              },
+            ],
+          },
+          ...(kitsSchema ? [kitsSchema] : []),
+        ]}
+      />
       <Header />
 
       <main className="py-12 sm:py-16 lg:py-20">
