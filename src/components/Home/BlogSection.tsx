@@ -77,11 +77,12 @@ const BlogSection = () => {
   return (
     <section className="py-10 sm:py-16 bg-background border-t border-border">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8 sm:mb-14">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
+        <div className="flex flex-col items-center text-center mb-10 sm:mb-14">
+          <span className="dt-section-label mb-3">Resources</span>
+          <h2 className="dt-section-title">
             Latest Insights & <span className="text-primary">News</span>
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="dt-section-subtitle mx-auto mt-3">
             Irrigation trends, tips, and industry insights for Kenyan farmers
           </p>
         </div>
