@@ -18,6 +18,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+  <!-- LCP: preload hero image (desktop default; picture sources handle mobile) -->
+  <link rel="preload" as="image" href="/hero-bg-new-desktop.webp" type="image/webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="/hero-bg-new-mobile.webp" type="image/webp" media="(max-width: 640px)" />
+
   <!-- DripsTech Brand Fonts: Playfair Display (headings) + DM Sans (body) + JetBrains Mono (prices) -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 

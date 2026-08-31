@@ -9,8 +9,9 @@ import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import useWebVitals from "./hooks/useWebVitals";
 
-// Lazy load pages
-const Index = lazy(() => import("./pages/Index"));
+// Homepage is eager-loaded for faster LCP; other routes stay lazy
+import Index from "./pages/Index";
+
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Products = lazy(() => import("./pages/Products"));

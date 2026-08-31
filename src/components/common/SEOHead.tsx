@@ -15,7 +15,7 @@ interface SEOHeadProps {
 
 export default function SEOHead({
   title = "Smart Drip Irrigation Systems & Water Solutions Kenya | DripTech EcoFlow",
-  description = "Kenya's leading provider of specific smart drip irrigation kits, sprinklers, water pumps, and greenhouse solutions. Affordable, water-efficient farming systems for smallholder and commercial farmers.",
+  description = "Drip irrigation kits, driplines, sprinklers, pumps and filters for Kenyan farms. Help with sizing, supply and installation.",
   keywords = "drip irrigation kenya, smart irrigation systems, irrigation kits prices kenya, water pumps for farming, sprinkler systems kenya, greenhouse irrigation, drip lines, agricultural water solutions, solar water pumps, precision farming kenya, smallholder irrigation, automated irrigation controller, soil moisture sensors",
   image = "https://www.dripstech.co.ke/driptech-social-image.jpg",
   url = "https://www.dripstech.co.ke",
@@ -29,13 +29,13 @@ export default function SEOHead({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "DripTech",
-    description: "Advanced Irrigation Solutions for Modern Agriculture",
+    description: "Irrigation equipment supplier in Kenya — driplines, kits, sprinklers, pumps and filters.",
     url: "https://www.dripstech.co.ke",
     logo: "https://www.dripstech.co.ke/driptech-logo.png",
     image: "https://www.dripstech.co.ke/driptech-logo.png",
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+254-723-407-849",
+      telephone: "+254794494515",
       contactType: "Customer Service",
       areaServed: "KE",
       availableLanguage: ["English", "Swahili"],

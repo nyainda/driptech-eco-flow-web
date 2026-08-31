@@ -5,7 +5,7 @@ export const SEO_CONFIG = {
     siteName: "DripTech EcoFlow",
     siteUrl: "https://www.dripstech.co.ke",
     defaultTitle: "Irrigation Materials Kenya | Driplines, Sprinklers, Irrigation Kits - DripTech",
-    defaultDescription: "Buy quality irrigation materials in Kenya: driplines (15cm, 20cm, 30cm spacing), sprinkler systems, irrigation pipes, filters, water pumps, fittings, farm irrigation kits. Affordable prices, professional installation, fast delivery nationwide.",
+    defaultDescription: "Drip irrigation kits, driplines, sprinklers, pumps and filters for farms in Kenya. Sizing help, supply and installation across the country.",
     defaultImage: "https://images.unsplash.com/photo-1574263867128-a3d5c1b1deac?w=1200&h=630&fit=crop",
     twitterHandle: "@driptech_eco",
     phone: "",

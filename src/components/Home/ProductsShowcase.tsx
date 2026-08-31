@@ -350,8 +350,8 @@ const ProductsShowcase = ({
               <div className="aspect-[4/3] bg-muted overflow-hidden relative">
                 <AutoRotatingGallery
                   images={product.images}
-                  interval={3000}
-                  autoPlay={true}
+                  interval={5000}
+                  autoPlay={false}
                   className="w-full h-full"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
@@ -738,35 +738,47 @@ const ProductsShowcase = ({
     );
   };
 
+  // Schema.org ItemList for products visible on the homepage (helps product SEO)
+  const productListSchemaItems = products
+    .filter((p) => p.name)
+    .slice(0, 12)
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description || undefined,
+      category: p.category?.replace(/_/g, " "),
+      image: p.images?.[0] || undefined,
+      url: `https://www.dripstech.co.ke/products/${p.id}`,
+      price: p.price ?? (p.variants?.[0]?.price ?? undefined),
+      currency: "KES",
+      inStock: p.in_stock ?? true,
+    }));
+
   return (
-    <section className={`${compact ? "py-6 sm:py-8" : "py-12 sm:py-24 border-t"} bg-background border-border relative overflow-hidden`}>
-      {!loading && filteredProducts.length > 0 && (
+    <section className={`${compact ? "py-6 sm:py-8" : "dt-section border-t"} bg-background border-border relative overflow-hidden`}>
+      {!loading && productListSchemaItems.length > 0 && (
         <StructuredData
-          type="itemList"
+          type="itemlist"
           data={{
-            name: activeCategory === "all" ? "DripTech irrigation products" : `${formatCategoryName(activeCategory)} products`,
-            items: filteredProducts.map((p) => ({
-              id: p.id,
-              name: p.name,
-              description: p.description,
-              category: p.category.replace(/_/g, " "),
-              image: p.images?.[0],
-              price: p.price,
-              inStock: p.in_stock,
-            })),
+            name: "DripTech Irrigation Products",
+            description:
+              "Irrigation products for Kenyan farms — driplines, sprinklers, pumps, filters, fittings and complete kits.",
+            items: productListSchemaItems,
           }}
         />
       )}
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
+      <div className="dt-container relative z-10">
+        {/* Header — aligned to site design system */}
         {!hideHeader && (
-          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <span className="dt-section-label mb-3">Product Innovation</span>
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+            <p className="dt-section-label mb-3">Products in stock</p>
             <h2 className="dt-section-title">
-              Complete <span className="text-primary">Irrigation Solutions</span>
+              Browse what we sell —{" "}
+              <span className="text-primary">then pick what fits your field</span>
             </h2>
             <p className="dt-section-subtitle mx-auto mt-3">
-              Driplines (15cm, 20cm, 30cm spacing), sprinkler systems, pipes, filters, water pumps, fittings, emitters, valves, and pressure regulators — everything you need for efficient farm irrigation.
+              Driplines in 15cm, 20cm and 30cm spacing, sprinklers, pumps, filters, pipes and full kits. Filter by type, check price, or message us if you are not sure.
+
             </p>
           </div>
         )}

@@ -12,11 +12,12 @@ const Home = () => {
     <>
       <HeroSectionVibe />
 
+      {/* Products first — the main reason people visit */}
       <ScrollReveal>
         <HomeOfferings />
       </ScrollReveal>
 
-      <ScrollReveal delay={100}>
+      <ScrollReveal delay={80}>
         <BlogSection />
       </ScrollReveal>
 
