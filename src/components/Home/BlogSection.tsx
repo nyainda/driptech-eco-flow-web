@@ -78,13 +78,13 @@ const BlogSection = () => {
     <section className="dt-section-tight bg-background border-t border-border">
       <div className="dt-container">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <p className="dt-section-label mb-3">From the blog</p>
+          <p className="dt-section-label mb-3">Blog</p>
           <h2 className="dt-section-title">
-            Practical reads for{" "}
-            <span className="text-primary">farmers and growers</span>
+            Guides and notes for{" "}
+            <span className="text-primary">growers</span>
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
-            Sizing tips, kit guides and field notes — written for people who actually water crops.
+            Kit sizing, field tips and product notes — written for people who water crops.
 
           </p>
         </div>
@@ -186,7 +186,7 @@ const BlogSection = () => {
             >
               <Link to="/blog">
                 <BookOpen className="h-5 w-5 mr-2" />
-                View All Articles ({totalPosts} total)
+                Browse all articles
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Link>
             </Button>

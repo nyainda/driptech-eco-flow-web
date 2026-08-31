@@ -494,7 +494,7 @@ const ProductsShowcase = ({
             {/* Description - truncated to keep card heights consistent */}
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 hidden md:block min-h-[2.5rem]">
               {(() => {
-                const desc = product.description || "Advanced irrigation solution designed for modern agriculture and efficient water management.";
+                const desc = product.description || "Irrigation equipment from DripTech. Ask us for sizing help if you need it.";
                 return desc.length > 110 ? desc.slice(0, 107).trimEnd() + "…" : desc;
               })()}
             </p>
@@ -752,7 +752,7 @@ const ProductsShowcase = ({
               <div className="grid grid-cols-3 gap-1.5">
                 {/* WhatsApp — primary, green */}
                 <a
-                  href={`https://wa.me/254723407849?text=${encodeURIComponent(`Hi DripTech! I'm interested in: ${product.name}. Please share pricing and availability.`)}`}
+                  href={`https://wa.me/254723407849?text=${encodeURIComponent(`Hi DripTech — I'm interested in ${product.name}. Please share price and availability.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`WhatsApp inquiry for ${product.name}`}
@@ -820,13 +820,13 @@ const ProductsShowcase = ({
         {/* Header — aligned to site design system */}
         {!hideHeader && (
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <p className="dt-section-label mb-3">Products in stock</p>
+            <p className="dt-section-label mb-3">Products</p>
             <h2 className="dt-section-title">
-              Browse what we sell —{" "}
-              <span className="text-primary">then pick what fits your field</span>
+              Equipment for the field —{" "}
+              <span className="text-primary">pick what fits</span>
             </h2>
             <p className="dt-section-subtitle mx-auto mt-3">
-              Driplines in 15cm, 20cm and 30cm spacing, sprinklers, pumps, filters, pipes and full kits. Filter by type, check price, or message us if you are not sure.
+              Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes and full kits. Filter by type, check the price, or message us if you are unsure.
 
             </p>
           </div>
@@ -970,7 +970,7 @@ const ProductsShowcase = ({
                 size="lg"
                 className="rounded-full px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
               >
-                Browse all {allProducts.length > 0 ? `${allProducts.length} ` : ""}products
+                Browse all products
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -1020,7 +1020,7 @@ const ProductsShowcase = ({
                     size="lg"
                     className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
                   >
-                    Explore All Products
+                    Browse all products
                     <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
@@ -1038,7 +1038,7 @@ const ProductsShowcase = ({
                 variant="outline"
                 className="px-8 py-6 text-lg rounded-full border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300"
               >
-                Explore All Products
+                Browse all products
                 <ArrowRight className="ml-3 h-5 w-5" />
               </Button>
             </Link>

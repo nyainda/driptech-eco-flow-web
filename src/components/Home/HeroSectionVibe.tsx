@@ -15,7 +15,7 @@ export default function HeroSectionVibe() {
     >
       <div className="dt-container grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:py-20">
         <div className="max-w-2xl">
-          <p className="dt-section-label mb-4">Irrigation supplies · Kenya</p>
+          <p className="dt-section-label mb-4">Supplies · Kenya</p>
           <h1
             id="home-hero-title"
             className="font-heading text-4xl font-bold leading-[1.06] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
@@ -33,15 +33,15 @@ export default function HeroSectionVibe() {
               to="/products"
               className="dt-btn-primary inline-flex min-h-11 items-center justify-center gap-2 shadow-sm"
             >
-              See products <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              Browse products <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
-              href="https://wa.me/254723407849?text=Hello%20DripTech%2C%20I%20need%20help%20choosing%20irrigation%20equipment."
+              href="https://wa.me/254723407849?text=Hi%20DripTech%20%E2%80%94%20I%20need%20help%20choosing%20irrigation%20equipment."
               target="_blank"
               rel="noreferrer"
               className="dt-btn-whatsapp inline-flex min-h-11 items-center justify-center gap-2"
             >
-              <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp us
+              <MessageCircle className="h-4 w-4" aria-hidden="true" /> Chat on WhatsApp
             </a>
           </div>
 

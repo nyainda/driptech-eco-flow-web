@@ -30,13 +30,13 @@ const SuccessStoriesSection = () => {
     <section className="dt-section bg-background border-t border-border">
       <div className="dt-container">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <p className="dt-section-label mb-3">On the ground</p>
+          <p className="dt-section-label mb-3">Projects</p>
           <h2 className="dt-section-title">
-            Farms that put the{" "}
-            <span className="text-primary">equipment to work</span>
+            Farms using the{" "}
+            <span className="text-primary">equipment</span>
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
-            A few projects where the right driplines or kit made watering simpler and more reliable.
+            Real installs where the right driplines or kit made watering simpler.
 
           </p>
         </div>
@@ -159,7 +159,7 @@ const SuccessStoriesSection = () => {
               className="px-6 sm:px-8 md:px-10 py-3 sm:py-4 text-sm sm:text-base md:text-lg bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:scale-105 transition-all duration-300 rounded-xl shadow-md group w-full sm:w-auto"
             >
               <Award className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 group-hover:scale-110 transition-transform" />
-              View All Success Stories
+              Browse all projects
               <ArrowRight className="ml-1.5 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>

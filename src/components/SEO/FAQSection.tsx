@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 
 export interface FAQItem {
@@ -53,17 +52,22 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
             />
 
             {/* Visual FAQ section */}
-            <section className={`py-20 bg-background ${className}`}>
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-12">
-                        <Badge variant="secondary" className="mb-4">
-                            ❓ Got Questions?
-                        </Badge>
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                            {title}
+            <section className={`dt-section bg-background border-t border-border ${className}`}>
+                <div className="dt-container">
+                    <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+                        <p className="dt-section-label mb-3">Questions</p>
+                        <h2 className="dt-section-title">
+                            {title === "Frequently Asked Questions" ? (
+                                <>
+                                    Common questions about{" "}
+                                    <span className="text-primary">our products</span>
+                                </>
+                            ) : (
+                                title
+                            )}
                         </h2>
-                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                            Find answers to common questions about our irrigation systems and services
+                        <p className="dt-section-subtitle mx-auto mt-3">
+                            Straight answers on kits, driplines, install and delivery in Kenya.
                         </p>
                     </div>
 
