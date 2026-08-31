@@ -5,14 +5,11 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const USE_D1 = import.meta.env.VITE_USE_D1 === 'true';
 
-// Only require Supabase credentials if D1 is not enabled
-if (!USE_D1 && (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY)) {
-  throw new Error(
-    "Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.",
-  );
-}
-
-// Create a mock client if using D1 and Supabase is not configured
+// The public catalogue must still render when Supabase variables are absent.
+// A top-level throw is also unsafe: Vite can statically fold it during a
+// production build, eliminate the client declaration, and leave an invalid
+// `export { supabase }` in the generated module. The fallback lets the D1/API
+// data path serve the site while protected Supabase-only actions fail safely.
 const createMockSupabaseClient = () => {
   // Create a chainable mock query builder
   const createMockQueryBuilder = () => {
