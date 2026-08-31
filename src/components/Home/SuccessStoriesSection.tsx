@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { dataService } from "@/services/dataService";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Award, Building } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -31,16 +30,12 @@ const SuccessStoriesSection = () => {
     <section className="py-12 sm:py-16 md:py-20 bg-background border-t border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
-          <Badge className="mb-3 sm:mb-4 bg-muted text-foreground border-border text-xs sm:text-sm">
-            <Award className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            Success Stories
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 px-2">
-            Proven{" "}
-            <span className="text-primary">Results</span>
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <span className="dt-section-label mb-3">Success Stories</span>
+          <h2 className="dt-section-title">
+            Proven <span className="text-primary">Results</span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed px-4">
+          <p className="dt-section-subtitle mx-auto mt-3">
             See how our irrigation solutions have transformed agricultural
             operations and delivered exceptional results for our clients.
           </p>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type SchemaType = 'faq' | 'product' | 'howto' | 'article' | 'breadcrumb' | 'organization';
+export type SchemaType = 'faq' | 'product' | 'itemList' | 'howto' | 'article' | 'breadcrumb' | 'organization';
 
 export interface StructuredDataProps {
     type: SchemaType;
@@ -56,6 +56,38 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
                             "reviewCount": data.rating.count
                         }
                     })
+                };
+
+            case 'itemList':
+                // Marks up a visible list of products (e.g. a homepage or catalogue
+                // grid) so search engines see names, categories, images and live
+                // prices for each item — no invented reviews or ratings.
+                return {
+                    "@context": "https://schema.org",
+                    "@type": "ItemList",
+                    "name": data.name,
+                    "numberOfItems": data.items?.length || 0,
+                    "itemListElement": data.items?.map((product: any, index: number) => {
+                        const item: Record<string, unknown> = {
+                            "@type": "Product",
+                            "name": product.name,
+                            "sku": product.id,
+                            "description": product.description || `${product.name} irrigation equipment from DripTech Kenya.`,
+                            "category": product.category,
+                            "brand": { "@type": "Brand", "name": "DripTech" }
+                        };
+                        if (product.image) item.image = product.image;
+                        if (typeof product.price === "number" && product.price > 0) {
+                            item.offers = {
+                                "@type": "Offer",
+                                "price": product.price,
+                                "priceCurrency": "KES",
+                                "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                                "seller": { "@type": "Organization", "name": "DripTech" }
+                            };
+                        }
+                        return { "@type": "ListItem", "position": index + 1, "item": item };
+                    }) || []
                 };
 
             case 'howto':
