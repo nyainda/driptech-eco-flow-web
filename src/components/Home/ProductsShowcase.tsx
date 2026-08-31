@@ -43,6 +43,7 @@ import {
 import { Link } from "react-router-dom";
 import QuoteModal from "./QuoteModal";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
+import StructuredData from "@/components/SEO/StructuredData";
 
 interface Variant {
   name: string;
@@ -737,27 +738,44 @@ const ProductsShowcase = ({
     );
   };
 
+  // Schema.org ItemList for products visible on the homepage (helps product SEO)
+  const productListSchemaItems = products
+    .filter((p) => p.name)
+    .slice(0, 12)
+    .map((p) => ({
+      name: p.name,
+      description: p.description || undefined,
+      image: p.images?.[0] || undefined,
+      url: `https://www.dripstech.co.ke/products/${p.id}`,
+      price: p.price ?? (p.variants?.[0]?.price ?? undefined),
+      currency: "KES",
+      inStock: p.in_stock ?? true,
+    }));
+
   return (
-    <section className={`${compact ? "py-6 sm:py-8" : "py-12 sm:py-24 border-t"} bg-background border-border relative overflow-hidden`}>
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
+    <section className={`${compact ? "py-6 sm:py-8" : "dt-section border-t"} bg-background border-border relative overflow-hidden`}>
+      {!loading && productListSchemaItems.length > 0 && (
+        <StructuredData
+          type="itemlist"
+          data={{
+            name: "DripTech Irrigation Products",
+            description:
+              "Quality irrigation products for Kenyan farms — driplines, sprinklers, pumps, filters, fittings and complete kits.",
+            items: productListSchemaItems,
+          }}
+        />
+      )}
+      <div className="dt-container relative z-10">
+        {/* Header — aligned to site design system */}
         {!hideHeader && (
-          <div className="text-center max-w-5xl mx-auto mb-20">
-            <div className="inline-flex items-center gap-2 mb-8">
-              <Badge
-                variant="secondary"
-                className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
-              >
-                <Package className="w-4 h-4 mr-2" />
-                Product Innovation
-              </Badge>
-            </div>
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-[0.9] tracking-tight">
-              <span className="block mb-2">Complete</span>
-              <span className="block text-primary">Irrigation Solutions</span>
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+            <p className="dt-section-label mb-3">Our products</p>
+            <h2 className="dt-section-title">
+              Irrigation equipment built for{" "}
+              <span className="text-primary">Kenyan farms</span>
             </h2>
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-              Complete range of irrigation materials: driplines with 15cm, 20cm, and 30cm spacing, sprinkler systems, irrigation pipes, filters, water pumps, fittings, emitters, valves, and pressure regulators. Everything you need for efficient farm irrigation that transforms agriculture.
+            <p className="dt-section-subtitle mx-auto mt-3">
+              Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes, fittings and complete kits — selected so you get the right system for your crop, field size and budget.
             </p>
           </div>
         )}

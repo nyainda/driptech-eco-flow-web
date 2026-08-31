@@ -75,14 +75,15 @@ const BlogSection = () => {
   const hasMorePosts = totalPosts > 6;
 
   return (
-    <section className="py-10 sm:py-16 bg-background border-t border-border">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-8 sm:mb-14">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
-            Latest Insights & <span className="text-primary">News</span>
+    <section className="dt-section-tight bg-background border-t border-border">
+      <div className="dt-container">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+          <p className="dt-section-label mb-3">Insights</p>
+          <h2 className="dt-section-title">
+            Latest insights & <span className="text-primary">news</span>
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Irrigation trends, tips, and industry insights for Kenyan farmers
+          <p className="dt-section-subtitle mx-auto mt-3">
+            Irrigation trends, practical tips and industry insights for Kenyan farmers
           </p>
         </div>
 

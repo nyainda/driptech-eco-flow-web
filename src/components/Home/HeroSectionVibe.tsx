@@ -12,17 +12,17 @@ export default function HeroSectionVibe() {
     <section className="overflow-hidden border-b border-border bg-muted/35" aria-labelledby="home-hero-title">
       <div className="dt-container grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:py-20">
         <div className="max-w-2xl">
-          <p className="dt-section-label mb-4">Irrigation solutions for Kenya</p>
+          <p className="dt-section-label mb-4">DripTech EcoFlow · Kenya</p>
           <h1 id="home-hero-title" className="font-heading text-4xl font-bold leading-[1.06] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Build a farm that uses <span className="text-primary">water wisely.</span>
+            Irrigation products that help farms use <span className="text-primary">water wisely.</span>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Quality driplines, sprinklers, pumps, filters and complete irrigation kits—chosen to fit your crop, field and budget.
+            We supply quality driplines, sprinklers, pumps, filters and complete kits — and help you choose and install the right system for your crop, field and budget.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Link to="/products" className="dt-btn-primary inline-flex min-h-11 items-center justify-center gap-2 shadow-sm">
-              Explore products <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              Browse products <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
               href="https://wa.me/254723407849?text=Hello%20DripTech%2C%20I%20need%20help%20choosing%20an%20irrigation%20product."
@@ -35,8 +35,10 @@ export default function HeroSectionVibe() {
           </div>
 
           <ul className="mt-7 grid gap-2 text-sm text-foreground sm:grid-cols-2">
-            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> Products for small and large farms</li>
-            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> Design and installation support</li>
+            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> Equipment for smallholders and commercial farms</li>
+            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> Design, supply and installation support</li>
+            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> Nationwide delivery across Kenya</li>
+            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> Practical advice before you buy</li>
           </ul>
 
           <div className="mt-8 grid gap-2 sm:grid-cols-3">
