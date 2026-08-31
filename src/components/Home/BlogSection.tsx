@@ -85,6 +85,7 @@ const BlogSection = () => {
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
             Sizing tips, kit guides and field notes — written for people who actually water crops.
+
           </p>
         </div>
 

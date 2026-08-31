@@ -29,7 +29,6 @@ const SuccessStoriesSection = () => {
   return (
     <section className="dt-section bg-background border-t border-border">
       <div className="dt-container">
-        {/* Header — aligned to site design system */}
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="dt-section-label mb-3">On the ground</p>
           <h2 className="dt-section-title">
@@ -38,6 +37,7 @@ const SuccessStoriesSection = () => {
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
             A few projects where the right driplines or kit made watering simpler and more reliable.
+
           </p>
         </div>
 

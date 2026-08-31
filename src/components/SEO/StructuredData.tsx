@@ -1,13 +1,14 @@
-import React from 'react';
+import React from "react";
 
 export type SchemaType =
   | "faq"
   | "product"
+  | "itemlist"
+  | "itemList"
   | "howto"
   | "article"
   | "breadcrumb"
-  | "organization"
-  | "itemlist";
+  | "organization";
 
 export interface StructuredDataProps {
   type: SchemaType;
@@ -67,44 +68,50 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
         };
 
       case "itemlist":
+      case "itemList":
         return {
           "@context": "https://schema.org",
           "@type": "ItemList",
           name: data.name || "DripTech Irrigation Products",
           description:
             data.description ||
-            "Quality irrigation products for farms in Kenya — driplines, sprinklers, pumps, filters and complete kits.",
+            "Irrigation products for Kenyan farms — driplines, sprinklers, pumps, filters and complete kits.",
           numberOfItems: data.items?.length || 0,
           itemListElement:
-            data.items?.map((item: any, index: number) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              item: {
+            data.items?.map((product: any, index: number) => {
+              const item: Record<string, unknown> = {
                 "@type": "Product",
-                name: item.name,
-                description: item.description || undefined,
-                image: item.image || undefined,
-                url: item.url || undefined,
+                name: product.name,
                 brand: {
                   "@type": "Brand",
-                  name: "DripTech EcoFlow",
+                  name: product.brand || "DripTech EcoFlow",
                 },
-                ...(item.price != null && {
-                  offers: {
-                    "@type": "Offer",
-                    price: item.price,
-                    priceCurrency: item.currency || "KES",
-                    availability: item.inStock
-                      ? "https://schema.org/InStock"
-                      : "https://schema.org/OutOfStock",
-                    seller: {
-                      "@type": "Organization",
-                      name: "DripTech EcoFlow",
-                    },
+              };
+              if (product.id) item.sku = product.id;
+              if (product.description) item.description = product.description;
+              if (product.category) item.category = product.category;
+              if (product.image) item.image = product.image;
+              if (product.url) item.url = product.url;
+              if (typeof product.price === "number" && product.price > 0) {
+                item.offers = {
+                  "@type": "Offer",
+                  price: product.price,
+                  priceCurrency: product.currency || "KES",
+                  availability: product.inStock
+                    ? "https://schema.org/InStock"
+                    : "https://schema.org/OutOfStock",
+                  seller: {
+                    "@type": "Organization",
+                    name: "DripTech EcoFlow",
                   },
-                }),
-              },
-            })) || [],
+                };
+              }
+              return {
+                "@type": "ListItem",
+                position: index + 1,
+                item,
+              };
+            }) || [],
         };
 
       case "howto":

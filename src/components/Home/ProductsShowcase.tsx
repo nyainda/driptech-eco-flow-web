@@ -43,7 +43,7 @@ import {
 import { Link } from "react-router-dom";
 import QuoteModal from "./QuoteModal";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
-import StructuredData from "@/components/SEO/StructuredData";
+import { StructuredData } from "@/components/SEO/StructuredData";
 
 interface Variant {
   name: string;
@@ -743,8 +743,10 @@ const ProductsShowcase = ({
     .filter((p) => p.name)
     .slice(0, 12)
     .map((p) => ({
+      id: p.id,
       name: p.name,
       description: p.description || undefined,
+      category: p.category?.replace(/_/g, " "),
       image: p.images?.[0] || undefined,
       url: `https://www.dripstech.co.ke/products/${p.id}`,
       price: p.price ?? (p.variants?.[0]?.price ?? undefined),
@@ -760,7 +762,7 @@ const ProductsShowcase = ({
           data={{
             name: "DripTech Irrigation Products",
             description:
-              "Quality irrigation products for Kenyan farms — driplines, sprinklers, pumps, filters, fittings and complete kits.",
+              "Irrigation products for Kenyan farms — driplines, sprinklers, pumps, filters, fittings and complete kits.",
             items: productListSchemaItems,
           }}
         />
@@ -776,6 +778,7 @@ const ProductsShowcase = ({
             </h2>
             <p className="dt-section-subtitle mx-auto mt-3">
               Driplines in 15cm, 20cm and 30cm spacing, sprinklers, pumps, filters, pipes and full kits. Filter by type, check price, or message us if you are not sure.
+
             </p>
           </div>
         )}
