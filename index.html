@@ -11,29 +11,28 @@
 
   <!-- Performance Optimizations -->
   <!-- DNS Prefetch for external domains -->
-  <link rel="dns-prefetch" href="https://images.unsplash.com" />
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
 
   <!-- Preconnect to critical origins -->
-  <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
   <!-- DripsTech Brand Fonts: Playfair Display (headings) + DM Sans (body) + JetBrains Mono (prices) -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-  <!-- Dynamically preload the correct hero image based on viewport (only on home page) -->
+  <!-- Local responsive hero image is the homepage's Largest Contentful Paint asset. -->
+  <link rel="preload" as="image" href="/hero-bg-new-desktop.webp" imagesrcset="/hero-bg-new-mobile.webp 640w, /hero-bg-new-tablet.webp 1024w, /hero-bg-new-desktop.webp 1920w" imagesizes="100vw" fetchpriority="high" />
 
 
   <!-- Primary Meta Tags -->
 
-  <title>Smart Drip Irrigation Systems & Water Solutions Kenya | DripTech EcoFlow</title>
-  <meta name="title" content="Smart Drip Irrigation Systems & Water Solutions Kenya | DripTech EcoFlow" />
+  <title>Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech</title>
+  <meta name="title" content="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech" />
   <meta name="description"
-    content="Kenya's leading provider of specific smart drip irrigation kits, sprinklers, water pumps, and greenhouse solutions. Affordable, water-efficient farming systems for smallholder and commercial farmers." />
+    content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech designs, supplies and installs water-efficient farm irrigation solutions nationwide." />
   <meta name="keywords"
-    content="drip irrigation kenya, smart irrigation systems, irrigation kits prices kenya, water pumps for farming, sprinkler systems kenya, greenhouse irrigation, drip lines, agricultural water solutions, solar water pumps, precision farming kenya, smallholder irrigation, automated irrigation controller, soil moisture sensors" />
+    content="drip irrigation Kenya, irrigation kits Kenya, sprinkler systems Kenya, irrigation materials Kenya, drip lines Kenya, farm irrigation Kenya, greenhouse irrigation Kenya, water pumps Kenya, irrigation installation Kenya" />
   <meta name="author" content="DripTech EcoFlow" />
   <meta name="robots" content="index, follow" />
   <meta name="language" content="English" />
@@ -47,9 +46,9 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.dripstech.co.ke/" />
-  <meta property="og:title" content="Irrigation Materials Kenya | Driplines, Sprinklers, Irrigation Kits - DripTech" />
+  <meta property="og:title" content="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech" />
   <meta property="og:description"
-    content="Buy quality irrigation materials: driplines (15cm, 20cm, 30cm), sprinkler systems, irrigation pipes, filters, pumps, fittings. Complete irrigation kits, professional installation, fast delivery nationwide." />
+    content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech designs, supplies and installs water-efficient farm irrigation solutions nationwide." />
   <meta property="og:image" content="https://www.dripstech.co.ke/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -61,9 +60,9 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://www.dripstech.co.ke/" />
-  <meta name="twitter:title" content="Irrigation Materials Kenya | Driplines, Sprinklers, Irrigation Kits - DripTech" />
+  <meta name="twitter:title" content="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech" />
   <meta name="twitter:description"
-    content="Buy quality irrigation materials: driplines (15cm, 20cm, 30cm), sprinkler systems, irrigation pipes, filters, pumps, fittings. Complete irrigation kits for farms and greenhouses." />
+    content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. Expert farm irrigation design, supply and installation nationwide." />
   <meta name="twitter:image" content="https://www.dripstech.co.ke/og-image.jpg" />
   <meta name="twitter:image:alt" content="DripTech EcoFlow - Professional Irrigation Solutions Kenya" />
   <meta name="twitter:site" content="@driptech_eco" />
@@ -78,86 +77,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="theme-color" content="#2d6a4f" />
 
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "DripTech EcoFlow",
-      "description": "Kenya's leading provider of professional irrigation solutions and smart drip systems for agriculture, greenhouses, and commercial farming",
-      "url": "https://www.dripstech.co.ke",
-      "logo": "https://www.dripstech.co.ke/driptech-logo.png",
-      "image": "https://www.dripstech.co.ke/driptech-logo.png",
-      "telephone": "+254-111-409-454",
-      "email": "driptech2025@gmail.com",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Nairobi Industrial Area",
-        "addressLocality": "Nairobi",
-        "addressCountry": "Kenya"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -1.2921,
-        "longitude": 36.8219
-      },
-      "openingHours": "Mo-Fr 08:00-17:00, Sa 08:00-13:00",
-      "priceRange": "$$",
-      "serviceArea": {
-        "@type": "Country",
-        "name": "Kenya"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "reviewCount": "127"
-      },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Irrigation Services",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Smart Drip Irrigation Systems",
-              "description": "Professional smart drip irrigation system design, installation, and maintenance for maximum water efficiency"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Automated Sprinkler Systems",
-              "description": "Advanced automated sprinkler system installation and maintenance for commercial and residential properties"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Greenhouse Irrigation Solutions",
-              "description": "Specialized greenhouse irrigation systems for optimal crop growth and water conservation"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Irrigation System Maintenance",
-              "description": "Comprehensive irrigation system maintenance and repair services across Kenya"
-            }
-          }
-        ]
-      },
-      "specialty": [
-        "Water Conservation Technology",
-        "Precision Agriculture",
-        "Smart Irrigation Systems",
-        "Sustainable Farming Solutions"
-      ]
-    }
-    </script>
+  <!-- Structured data is injected per route by SEOHead. -->
 
   <!-- Theme initialization script - prevents FOUC (Flash of Unstyled Content) -->
   <script>
