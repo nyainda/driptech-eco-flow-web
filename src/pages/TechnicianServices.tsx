@@ -82,7 +82,7 @@ const TechnicianServices = () => {
         const message = encodeURIComponent(
             `Hi DripTech! I'm interested in booking ${service.name}. Can you help me with the details?`
         );
-        window.open(`https://wa.me/254794494515?text=${message}`, "_blank");
+        window.open(`https://wa.me/254723407849?text=${message}`, "_blank");
     };
 
     const getPricingDisplay = (service: ServiceCategory) => {
@@ -134,7 +134,7 @@ const TechnicianServices = () => {
                             <Button
                                 size="lg"
                                 variant="outline"
-                                onClick={() => window.open("https://wa.me/254794494515", "_blank")}
+                                onClick={() => window.open("https://wa.me/254723407849", "_blank")}
                             >
                                 <Phone className="mr-2 h-5 w-5" />
                                 Call Now: 0794 494 515

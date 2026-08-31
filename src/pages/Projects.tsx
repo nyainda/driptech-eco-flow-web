@@ -328,7 +328,7 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
               const message = encodeURIComponent(
                 `Hi DripTech! I'm interested in the "${project.name}" project${project.location ? ` in ${project.location}` : ''}. Can you share more details?`
               );
-              window.open(`https://wa.me/254794494515?text=${message}`, "_blank");
+              window.open(`https://wa.me/254723407849?text=${message}`, "_blank");
             }}
             className="w-full mt-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all text-sm font-semibold py-3"
           >

@@ -1508,11 +1508,49 @@ const Products = () => {
     );
   }
 
+  // The catalogue is the page that visibly lists these products. Marking each
+  // listed item up here gives search engines product names, categories, images
+  // and live prices without inventing reviews or ratings that cannot be verified.
+  const productCatalogSchema = products.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: category ? `${getCategoryTitle(category)} products` : "DripTech irrigation products",
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => {
+      const item: Record<string, unknown> = {
+        "@type": "Product",
+        name: product.name,
+        sku: product.id,
+        description: product.description || `${product.name} irrigation equipment from DripTech Kenya.`,
+        category: product.category.replaceAll("_", " "),
+        brand: { "@type": "Brand", name: "DripTech" },
+      };
+
+      if (product.images?.[0]) item.image = product.images[0];
+      if (typeof product.price === "number" && product.price > 0) {
+        item.offers = {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: "KES",
+          availability: product.in_stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          seller: { "@type": "Organization", name: "DripTech" },
+        };
+      }
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item,
+      };
+    }),
+  } : undefined;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
         title={category ? `${getCategoryTitle(category)} Irrigation Solutions | DripTech` : "Advanced Irrigation Products & Kits Kenya | DripTech"}
         description={category ? `Explore our professional ${getCategoryTitle(category).toLowerCase()} range in Kenya. Performance-driven irrigation equipment.` : "Discover Kenya's largest catalog of smart drip irrigation kits, sprinklers, water pumps, and high-efficiency water solutions."}
+        schema={productCatalogSchema}
       />
       <Header />
       <WhatsAppContact

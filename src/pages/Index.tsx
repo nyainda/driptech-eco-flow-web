@@ -9,33 +9,42 @@ const Index = () => {
   return (
     <ThemeProvider>
       <SEOHead
+        title="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech"
+        description="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech designs, supplies and installs water-efficient farm irrigation solutions nationwide."
+        keywords="drip irrigation Kenya, irrigation kits Kenya, sprinkler systems Kenya, irrigation materials Kenya, drip lines Kenya, farm irrigation Kenya, greenhouse irrigation Kenya, water pumps Kenya, irrigation installation Kenya, filters and fittings Kenya"
         url="https://www.dripstech.co.ke"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "DripTech",
-          description: "Advanced Irrigation Solutions for Modern Agriculture",
-          url: "https://www.dripstech.co.ke",
-          logo: "https://www.dripstech.co.ke/driptech-logo.png",
-          contactPoint: {
-            "@type": "ContactPoint",
-            telephone: "+254-114-575-401",
-            contactType: "Customer Service",
-            areaServed: "KE",
-            availableLanguage: ["English", "Swahili"],
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": "https://www.dripstech.co.ke/#organization",
+            name: "DripTech",
+            description: "Drip irrigation products, sprinkler systems, irrigation kits and farm irrigation installation in Kenya.",
+            url: "https://www.dripstech.co.ke",
+            logo: "https://www.dripstech.co.ke/driptech-logo.png",
+            contactPoint: {
+              "@type": "ContactPoint",
+              telephone: "+254-723-407-849",
+              contactType: "sales and customer service",
+              areaServed: "KE",
+              availableLanguage: ["English", "Swahili"],
+            },
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Nairobi",
+              addressCountry: "KE",
+            },
           },
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: "Nairobi",
-            addressCountry: "KE",
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://www.dripstech.co.ke/#website",
+            name: "DripTech",
+            url: "https://www.dripstech.co.ke",
+            publisher: { "@id": "https://www.dripstech.co.ke/#organization" },
+            inLanguage: "en-KE",
           },
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.8",
-            reviewCount: "127",
-          },
-          priceRange: "KES",
-        }}
+        ]}
       />
       <div className="min-h-screen bg-background text-foreground">
         <Header />

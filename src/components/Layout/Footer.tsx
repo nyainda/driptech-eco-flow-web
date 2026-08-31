@@ -105,10 +105,27 @@ const Footer = () => {
                       0794494515
                     </a>
                     <a
-                      href="https://wa.me/254794494515"
+                      href="https://wa.me/254723407849"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <a
+                      href="tel:0723407849"
+                      className="hover:text-foreground transition-colors"
+                    >
+                      0723407849
+                    </a>
+                    <a
+                      href="https://wa.me/254723407849"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"
+                      aria-label="Chat with DripTech on WhatsApp"
                     >
                       <MessageCircle className="h-4 w-4" />
                     </a>

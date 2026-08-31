@@ -2,6 +2,10 @@ import { supabase } from '@/integrations/supabase/client';
 
 const USE_D1 = import.meta.env.VITE_USE_D1 === 'true';
 const WORKER_URL = import.meta.env.VITE_WORKER_URL;
+// Deployments that provide the Worker URL should use it even if the legacy
+// VITE_USE_D1 flag was not configured. Otherwise a missing Supabase setup can
+// silently return the mock client's empty list instead of the live catalogue.
+const HAS_D1_BACKEND = USE_D1 || Boolean(WORKER_URL);
 
 /**
  * Helper function to fetch from D1 with automatic fallback to Supabase
@@ -13,7 +17,7 @@ async function fetchWithFailover<T>(
     d1Fetcher: () => Promise<T>,
     supabaseFetcher: () => Promise<T>
 ): Promise<T> {
-    if (USE_D1) {
+    if (HAS_D1_BACKEND) {
         try {
             return await d1Fetcher();
         } catch (error) {

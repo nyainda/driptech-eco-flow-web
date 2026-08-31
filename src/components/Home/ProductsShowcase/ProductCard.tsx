@@ -27,7 +27,7 @@ export const ProductCard = ({
   onViewDetails,
   onVideoPlay,
 }: ProductCardProps) => {
-  const whatsappUrl = `https://wa.me/254794494515?text=${encodeURIComponent(`Hi DripTech! I'm interested in: ${product.name}. Please share more details and pricing.`)}`;
+  const whatsappUrl = `https://wa.me/254723407849?text=${encodeURIComponent(`Hi DripTech! I'm interested in: ${product.name}. Please share more details and pricing.`)}`;
 
   return (
     <ProductTracker
