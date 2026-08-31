@@ -78,12 +78,13 @@ const BlogSection = () => {
     <section className="dt-section-tight bg-background border-t border-border">
       <div className="dt-container">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <p className="dt-section-label mb-3">Insights</p>
+          <p className="dt-section-label mb-3">From the blog</p>
           <h2 className="dt-section-title">
-            Latest insights & <span className="text-primary">news</span>
+            Practical reads for{" "}
+            <span className="text-primary">farmers and growers</span>
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
-            Irrigation trends, practical tips and industry insights for Kenyan farmers
+            Sizing tips, kit guides and field notes — written for people who actually water crops.
           </p>
         </div>
 

@@ -31,13 +31,13 @@ const SuccessStoriesSection = () => {
       <div className="dt-container">
         {/* Header — aligned to site design system */}
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <p className="dt-section-label mb-3">Success stories</p>
+          <p className="dt-section-label mb-3">On the ground</p>
           <h2 className="dt-section-title">
-            Proven results for{" "}
-            <span className="text-primary">real farms</span>
+            Farms that put the{" "}
+            <span className="text-primary">equipment to work</span>
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
-            See how our irrigation systems help growers use water more efficiently and get more from every acre.
+            A few projects where the right driplines or kit made watering simpler and more reliable.
           </p>
         </div>
 

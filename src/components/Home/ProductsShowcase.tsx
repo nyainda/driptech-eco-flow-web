@@ -350,8 +350,8 @@ const ProductsShowcase = ({
               <div className="aspect-[4/3] bg-muted overflow-hidden relative">
                 <AutoRotatingGallery
                   images={product.images}
-                  interval={3000}
-                  autoPlay={true}
+                  interval={5000}
+                  autoPlay={false}
                   className="w-full h-full"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
@@ -769,13 +769,13 @@ const ProductsShowcase = ({
         {/* Header — aligned to site design system */}
         {!hideHeader && (
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <p className="dt-section-label mb-3">Our products</p>
+            <p className="dt-section-label mb-3">Products in stock</p>
             <h2 className="dt-section-title">
-              Irrigation equipment built for{" "}
-              <span className="text-primary">Kenyan farms</span>
+              Browse what we sell —{" "}
+              <span className="text-primary">then pick what fits your field</span>
             </h2>
             <p className="dt-section-subtitle mx-auto mt-3">
-              Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes, fittings and complete kits — selected so you get the right system for your crop, field size and budget.
+              Driplines in 15cm, 20cm and 30cm spacing, sprinklers, pumps, filters, pipes and full kits. Filter by type, check price, or message us if you are not sure.
             </p>
           </div>
         )}
