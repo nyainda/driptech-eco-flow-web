@@ -96,6 +96,54 @@ const CATEGORIES = [
 const INITIAL_SHOW = 8;
 const LOAD_MORE_COUNT = 4;
 
+/** Spread products across categories so "All" is not dominated by one type (e.g. accessories). */
+function mixProductsByCategory(list: Product[]): Product[] {
+  if (!list.length) return list;
+
+  const featured = list.filter((p) => p.featured);
+  const rest = list.filter((p) => !p.featured);
+
+  const group = (items: Product[]) => {
+    const map = new Map<string, Product[]>();
+    for (const p of items) {
+      const key = p.category || "other";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(p);
+    }
+    return map;
+  };
+
+  const interleave = (map: Map<string, Product[]>) => {
+    const queues = Array.from(map.values()).map((arr) => [...arr]);
+    // Prefer categories with more stock so big ranges still appear
+    queues.sort((a, b) => b.length - a.length);
+    const out: Product[] = [];
+    let added = true;
+    while (added) {
+      added = false;
+      for (const q of queues) {
+        if (q.length) {
+          out.push(q.shift()!);
+          added = true;
+        }
+      }
+    }
+    return out;
+  };
+
+  // Featured first (also mixed), then the rest mixed
+  const featuredMixed = interleave(group(featured));
+  const restMixed = interleave(group(rest));
+  const seen = new Set<string>();
+  const result: Product[] = [];
+  for (const p of [...featuredMixed, ...restMixed]) {
+    if (seen.has(p.id)) continue;
+    seen.add(p.id);
+    result.push(p);
+  }
+  return result;
+}
+
 interface ProductsShowcaseProps {
   hideHeader?: boolean;
   hideStats?: boolean;
@@ -133,9 +181,10 @@ const ProductsShowcase = ({
     setVisibleCount(INITIAL_SHOW);
   }, [activeCategory]);
 
-  const filteredProducts = activeCategory === "all"
-    ? allProducts
-    : allProducts.filter(p => p.category === activeCategory);
+  const filteredProducts =
+    activeCategory === "all"
+      ? mixProductsByCategory(allProducts)
+      : allProducts.filter((p) => p.category === activeCategory);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const hasMore = visibleCount < filteredProducts.length;
