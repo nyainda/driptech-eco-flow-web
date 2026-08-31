@@ -35,7 +35,7 @@ export default function SEOHead({
     image: "https://www.dripstech.co.ke/driptech-logo.png",
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+254-794-494-515",
+      telephone: "+254-723-407-849",
       contactType: "Customer Service",
       areaServed: "KE",
       availableLanguage: ["English", "Swahili"],

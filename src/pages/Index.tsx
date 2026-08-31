@@ -24,7 +24,7 @@ const Index = () => {
             logo: "https://www.dripstech.co.ke/driptech-logo.png",
             contactPoint: {
               "@type": "ContactPoint",
-              telephone: "+254-794-494-515",
+              telephone: "+254-723-407-849",
               contactType: "sales and customer service",
               areaServed: "KE",
               availableLanguage: ["English", "Swahili"],
