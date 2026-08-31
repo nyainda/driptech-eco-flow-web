@@ -52,7 +52,6 @@ import {
 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
-import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { dataService } from "@/services/dataService";
@@ -348,8 +347,6 @@ const IrrigationKits = () => {
             </Button>
           </div>
         </main>
-        <IrrigationKeywords />
-
         <Footer />
       </div>
     );
@@ -387,23 +384,17 @@ const IrrigationKits = () => {
       />
       <Header />
 
-      <main className="py-12 sm:py-16 lg:py-20">
-        <div className="container mx-auto px-4">
+      <main className="dt-section">
+        <div className="dt-container">
           {/* Hero Section */}
-          <div className="text-center mb-12 lg:mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-muted/30 rounded-lg mb-6 border border-border">
-              <Package className="h-4 w-4 text-primary" />
-              <span className="text-primary font-semibold">
-                Professional Irrigation Solutions
-              </span>
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
-              Find Your Perfect
-              <span className="block text-primary">Irrigation Kit</span>
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+            <p className="dt-section-label mb-3">Kits</p>
+            <h1 className="dt-section-title text-3xl sm:text-4xl">
+              Complete irrigation kits for{" "}
+              <span className="text-primary">Kenyan farms</span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Professional-grade irrigation systems designed for Kenyan farms.
-              Complete kits with installation, training, and ongoing support.
+            <p className="dt-section-subtitle mx-auto mt-3">
+              Ready packages for small plots through 1 acre — driplines, filters and fittings, with install support when you need it.
             </p>
           </div>
 
@@ -805,64 +796,57 @@ const IrrigationKits = () => {
                 return (
                   <Card
                     key={kit.id}
-                    className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 cursor-pointer bg-white dark:bg-background border-border text-foreground overflow-hidden hover:border-blue-500 dark:hover:border-primary/50"
+                    className="dt-card group cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
                     onClick={() => handleKitSelect(kit)}
                   >
-                    {/* Image Section */}
-                    {imageUrl && (
-                      <div className="aspect-[4/3] relative overflow-hidden">
+                    {/* Image — clear product photo, no heavy overlay */}
+                    <div className="relative aspect-[4/3] bg-muted overflow-hidden border-b border-border">
+                      {imageUrl ? (
                         <img
                           src={imageUrl}
                           alt={kit.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="h-full w-full object-contain p-3 sm:p-4 transition-transform duration-300 group-hover:scale-[1.02]"
+                          loading="lazy"
+                          decoding="async"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).style.display =
-                              "none";
+                            const el = e.target as HTMLImageElement;
+                            el.style.display = "none";
+                            const fallback = el.nextElementSibling as HTMLElement | null;
+                            if (fallback) fallback.classList.remove("hidden");
                           }}
                         />
-                        <div className="absolute inset-0 bg-gray-700/70 dark:bg-background/70" />
-                        {kit.featured && (
-                          <div className="absolute top-4 right-4">
-                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800">
-                              <Star className="h-3 w-3 mr-1" />
-                              Featured
-                            </Badge>
-                          </div>
-                        )}
-                        <div className="absolute bottom-4 left-4 right-4">
-                          <div className="text-foreground">
-                            <h3 className="text-xl font-bold mb-1">
-                              {kit.name}
-                            </h3>
-                            <Badge className="bg-gray-100 text-gray-800 border-gray-200 dark:bg-muted dark:text-muted-foreground dark:border-border">
-                              {kit.kit_type?.replace("_", " ") ||
-                                "Standard Kit"}
-                            </Badge>
-                          </div>
-                        </div>
+                      ) : null}
+                      <div
+                        className={`absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground ${imageUrl ? "hidden" : ""}`}
+                      >
+                        <Package className="h-12 w-12 text-primary/50" />
+                        <span className="text-xs font-medium">Kit photo</span>
                       </div>
-                    )}
-
-                    {/* Content Section */}
-                    <CardContent className="p-6 space-y-4">
-                      {!imageUrl && (
-                        <div className="flex items-center justify-between mb-4">
-                          <div>
-                            <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
-                              {kit.name}
-                            </h3>
-                            <Badge className="mt-1 capitalize bg-gray-100 text-gray-800 border-gray-200 dark:bg-muted dark:text-muted-foreground dark:border-border">
-                              {kit.kit_type?.replace("_", " ") || "Standard"}
-                            </Badge>
-                          </div>
-                          {kit.featured && (
-                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800">
-                              <Star className="h-3 w-3 mr-1" />
-                              Featured
-                            </Badge>
-                          )}
+                      {kit.featured && (
+                        <div className="absolute top-3 right-3 z-10">
+                          <Badge className="bg-primary text-primary-foreground border-0 shadow-sm">
+                            <Star className="h-3 w-3 mr-1" fill="currentColor" />
+                            Featured
+                          </Badge>
                         </div>
                       )}
+                    </div>
+
+                    {/* Content Section */}
+                    <CardContent className="p-5 sm:p-6 space-y-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h3 className="dt-card-title text-base sm:text-lg group-hover:text-primary transition-colors">
+                            {kit.name}
+                          </h3>
+                          <Badge
+                            variant="secondary"
+                            className="mt-1.5 capitalize text-xs"
+                          >
+                            {(kit.kit_type || "standard").replace(/_/g, " ")}
+                          </Badge>
+                        </div>
+                      </div>
 
                       {kit.description && (
                         <p className="text-muted-foreground line-clamp-3 text-sm sm:text-base leading-relaxed">
@@ -871,7 +855,7 @@ const IrrigationKits = () => {
                       )}
 
                       {/* Pricing Section */}
-                      <div className="bg-gray-100 dark:bg-muted/30 rounded-lg p-4 border border-border">
+                      <div className="rounded-lg border border-border bg-muted/40 p-4">
                         {hasPricingTiers ? (
                           <div>
                             <div className="text-sm text-muted-foreground mb-3 font-medium">
