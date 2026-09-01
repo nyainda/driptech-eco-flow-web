@@ -391,103 +391,77 @@ const ProductsShowcase = ({
     const priceRange = getPriceRange();
 
     return (
-      <Card className="group relative hover:shadow-xl transition-all duration-300 bg-background border-border w-[80vw] sm:w-[300px] md:w-auto min-w-[260px] md:min-w-0 flex-shrink-0 snap-center snap-always flex flex-col h-full">
-        <CardContent className="p-0 relative flex flex-col flex-1">
-          {/* Product Image */}
-          <div className="relative overflow-hidden">
+      <Card className="dt-card group relative flex h-full flex-col overflow-hidden shadow-sm transition-shadow duration-200 hover:shadow-md">
+        <CardContent className="relative flex flex-1 flex-col p-0">
+          {/* Product image — full product visible on small screens */}
+          <div className="relative overflow-hidden border-b border-border bg-muted">
             {product.images && product.images.length > 0 ? (
-              <div className="aspect-[4/3] bg-muted overflow-hidden relative">
-                <AutoRotatingGallery
-                  images={product.images}
-                  interval={5000}
-                  autoPlay={false}
-                  className="w-full h-full"
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  className="h-full w-full object-contain p-2 sm:p-3"
+                  loading="lazy"
+                  decoding="async"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
               </div>
             ) : (
-              <div className="aspect-[4/3] bg-muted flex items-center justify-center relative overflow-hidden">
-                <IconComponent className="h-20 w-20 text-primary opacity-70 relative z-10" />
+              <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden">
+                <IconComponent className="h-12 w-12 text-primary/60 sm:h-16 sm:w-16" />
               </div>
             )}
 
-            {/* Floating badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
+            {/* Compact badges */}
+            <div className="absolute left-2 top-2 flex max-w-[65%] flex-col gap-1">
               {product.featured && (
-                <Badge className="bg-muted text-foreground border-border hidden sm:flex">
-                  <Star className="h-3 w-3 mr-1" fill="currentColor" />
+                <Badge className="border-0 bg-primary px-1.5 py-0 text-[9px] font-bold text-primary-foreground sm:text-[10px]">
+                  <Star className="mr-0.5 h-2.5 w-2.5" fill="currentColor" />
                   Featured
                 </Badge>
               )}
               <Badge
                 variant="secondary"
-                className="text-xs bg-muted text-foreground border-border"
+                className="max-w-full truncate border-border bg-background/95 px-1.5 py-0 text-[9px] text-foreground shadow-sm sm:text-[10px]"
               >
                 {categoryName}
               </Badge>
-              {hasVariants && (
-                <Badge className="bg-muted text-foreground border-border">
-                  <Layers className="h-3 w-3 mr-1" />
-                  {product.variants!.length} Options
-                </Badge>
-              )}
             </div>
-
-            {/* Stock status */}
-            <div className="absolute top-4 right-4">
+            <div className="absolute right-2 top-2">
               {displayStock ? (
-                <Badge className="bg-muted text-foreground border-border">
-                  <div className="h-2 w-2 bg-primary rounded-full mr-1 md:mr-2 animate-pulse" />
-                  <span className="hidden sm:inline">In Stock</span>
-                  <span className="sm:hidden">Stock</span>
+                <span className="inline-flex h-2 w-2 rounded-full bg-primary shadow ring-2 ring-background sm:hidden" title="In stock" />
+              ) : (
+                <span className="inline-flex h-2 w-2 rounded-full bg-destructive shadow ring-2 ring-background sm:hidden" title="Out of stock" />
+              )}
+              {displayStock ? (
+                <Badge className="hidden border-border bg-background/95 text-[10px] text-foreground shadow-sm sm:inline-flex">
+                  <span className="mr-1.5 h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+                  In stock
                 </Badge>
               ) : (
-                <Badge className="bg-muted text-foreground border-border">
-                  <div className="h-2 w-2 bg-red-500 rounded-full mr-2" />
-                  Out of Stock
+                <Badge className="hidden border-border bg-background/95 text-[10px] text-foreground shadow-sm sm:inline-flex">
+                  Out of stock
                 </Badge>
               )}
             </div>
-
-            {/* Video indicator */}
-            {product.video_url && (
-              <div className="absolute bottom-4 right-4">
-                <div className="bg-muted rounded-full p-3">
-                  <Play className="h-4 w-4 text-primary" fill="currentColor" />
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Content */}
-          <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3">
-            {/* Header */}
-            <div className="space-y-2 sm:space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-base sm:text-xl font-bold text-foreground line-clamp-2 leading-tight">
+          <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground sm:text-base">
                   {product.name}
                 </h3>
-                <div className="p-2 sm:p-3 rounded-xl bg-muted group-hover:scale-105 transition-transform duration-300 flex-shrink-0">
-                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                <div className="hidden shrink-0 rounded-lg bg-muted p-2 sm:block">
+                  <IconComponent className="h-4 w-4 text-primary" />
                 </div>
               </div>
 
               {product.model_number && (
-                <p className="text-sm text-muted-foreground font-medium">
+                <p className="hidden text-xs font-medium text-muted-foreground sm:block">
                   Model:{" "}
-                  <span className="text-foreground">
-                    {product.model_number}
-                  </span>
+                  <span className="text-foreground">{product.model_number}</span>
                 </p>
-              )}
-
-              {product.subcategory && (
-                <Badge
-                  variant="outline"
-                  className="text-xs font-medium border-border"
-                >
-                  {product.subcategory}
-                </Badge>
               )}
             </div>
 
@@ -499,9 +473,9 @@ const ProductsShowcase = ({
               })()}
             </p>
 
-            {/* Variants Section */}
+            {/* Variants — desktop only (keeps mobile cards short) */}
             {hasVariants && (
-              <div className="space-y-3">
+              <div className="hidden space-y-3 sm:block">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center justify-center w-4 h-4 rounded-full bg-primary">
@@ -749,36 +723,36 @@ const ProductsShowcase = ({
 
             {/* Action Bar — 3-column icon + label, always pinned at bottom */}
             <div className="mt-auto pt-3 border-t border-border/40">
-              <div className="grid grid-cols-3 gap-1.5">
+              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                 {/* WhatsApp — primary, green */}
                 <a
                   href={`https://wa.me/254723407849?text=${encodeURIComponent(`Hi DripTech — I'm interested in ${product.name}. Please share price and availability.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`WhatsApp inquiry for ${product.name}`}
-                  className="flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)] active:scale-95 transition-all duration-150 group col-span-1"
+                  className="col-span-2 flex flex-row items-center justify-center gap-2 rounded-xl bg-[hsl(var(--dt-whatsapp))] py-2.5 transition-all duration-150 hover:bg-[hsl(var(--dt-whatsapp)/0.9)] active:scale-[0.98] sm:col-span-1 sm:flex-col sm:gap-1.5 sm:py-3"
                 >
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                   </svg>
-                  <span className="text-[10px] font-bold text-white leading-none tracking-wide">Chat</span>
+                  <span className="text-[11px] font-bold leading-none tracking-wide text-white sm:text-[10px]">WhatsApp</span>
                 </a>
 
-                {/* View Details */}
-                <Link to={`/products/${categoryRoute}`} className="col-span-1">
-                  <div className="flex flex-col items-center justify-center gap-1.5 py-3 w-full h-full rounded-xl border border-border bg-background hover:bg-primary/5 hover:border-primary/30 active:scale-95 transition-all duration-150 group cursor-pointer">
-                    <Eye className="h-4 w-4 text-primary group-hover:scale-110 transition-transform duration-150" />
-                    <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary leading-none tracking-wide">Details</span>
-                  </div>
-                </Link>
-
-                {/* Get Quote */}
-                <QuoteModal>
-                  <div className="flex flex-col items-center justify-center gap-1.5 py-3 w-full h-full rounded-xl border border-border bg-background hover:bg-primary/5 hover:border-primary/30 active:scale-95 transition-all duration-150 group cursor-pointer">
-                    <ShoppingCart className="h-4 w-4 text-primary group-hover:scale-110 transition-transform duration-150" />
-                    <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary leading-none tracking-wide">Quote</span>
-                  </div>
-                </QuoteModal>
+                {/* Details + Quote share one cell on mobile */}
+                <div className="col-span-1 grid grid-cols-2 gap-1.5 sm:contents">
+                  <Link to={`/products/${categoryRoute}`} className="sm:col-span-1">
+                    <div className="flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-border bg-background py-2 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5 active:scale-95 sm:gap-1.5 sm:py-3">
+                      <Eye className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
+                      <span className="text-[9px] font-bold leading-none tracking-wide text-muted-foreground sm:text-[10px]">Details</span>
+                    </div>
+                  </Link>
+                  <QuoteModal>
+                    <div className="flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-border bg-background py-2 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5 active:scale-95 sm:gap-1.5 sm:py-3">
+                      <ShoppingCart className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
+                      <span className="text-[9px] font-bold leading-none tracking-wide text-muted-foreground sm:text-[10px]">Quote</span>
+                    </div>
+                  </QuoteModal>
+                </div>
               </div>
             </div>
           </div>
@@ -852,7 +826,7 @@ const ProductsShowcase = ({
 
         {/* Category Tabs */}
         <div className="mb-8 md:mb-12">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1 sm:gap-2 sm:mx-0 sm:px-0">
             {CATEGORIES.map((cat) => {
               const count = cat.key === "all"
                 ? allProducts.length
@@ -896,32 +870,17 @@ const ProductsShowcase = ({
           )}
         </div>
 
-        {/* Products Grid — mobile: horizontal scroll; desktop: 3-col grid */}
-        <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-4 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 md:mx-0 md:px-0 md:gap-6 mb-8 items-stretch">
+        {/* Products grid — 2 cols on phone so items are visible without sideways scroll */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6 mb-8">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index} className="border-border bg-background shadow-lg overflow-hidden flex flex-col flex-shrink-0 w-[80vw] sm:w-[320px] md:w-auto">
+              <Card key={index} className="dt-card overflow-hidden flex flex-col">
                 <CardContent className="p-0 flex flex-col flex-1">
-                  <div className="aspect-[4/3] bg-muted animate-pulse"></div>
-                  <div className="p-5 flex flex-col flex-1 gap-3">
-                    <div className="animate-pulse space-y-3 flex-1">
-                      <div className="flex justify-between items-start">
-                        <div className="h-5 bg-muted rounded-lg w-3/4"></div>
-                        <div className="h-10 w-10 bg-muted rounded-xl"></div>
-                      </div>
-                      <div className="h-4 bg-muted rounded w-1/2"></div>
-                      <div className="space-y-2">
-                        <div className="h-3 bg-muted rounded"></div>
-                        <div className="h-3 bg-muted rounded w-4/5"></div>
-                      </div>
-                    </div>
-                    <div className="mt-auto animate-pulse">
-                      <div className="h-10 bg-muted rounded-xl w-full mb-2"></div>
-                      <div className="flex gap-2">
-                        <div className="h-9 bg-muted rounded-xl flex-1"></div>
-                        <div className="h-9 bg-muted rounded-xl w-12"></div>
-                      </div>
-                    </div>
+                  <div className="aspect-[4/3] bg-muted animate-pulse" />
+                  <div className="p-3 sm:p-4 space-y-2">
+                    <div className="h-4 bg-muted rounded w-4/5 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+                    <div className="h-9 bg-muted rounded-lg w-full animate-pulse mt-2" />
                   </div>
                 </CardContent>
               </Card>
