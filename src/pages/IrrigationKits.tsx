@@ -398,54 +398,23 @@ const IrrigationKits = () => {
             </p>
           </div>
 
-          {/* Stats Cards */}
           {kits.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-              <Card className="text-center bg-white dark:bg-background border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="text-3xl font-bold mb-2 text-primary">
-                    {kits.length}
-                  </div>
-                  <div className="text-muted-foreground">Available Kits</div>
-                </CardContent>
-              </Card>
-              <Card className="text-center bg-white dark:bg-background border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="text-3xl font-bold mb-2 text-primary">
-                    {kits.filter((k) => k.featured).length}
-                  </div>
-                  <div className="text-muted-foreground">Featured Kits</div>
-                </CardContent>
-              </Card>
-              <Card className="text-center bg-white dark:bg-background border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="text-3xl font-bold mb-2 text-primary">
-                    {Math.round(
-                      kits.reduce(
-                        (sum, k) => sum + (k.water_efficiency_percentage || 0),
-                        0,
-                      ) / kits.length,
-                    ) || 0}
-                    %
-                  </div>
-                  <div className="text-muted-foreground">Avg Efficiency</div>
-                </CardContent>
-              </Card>
-              <Card className="text-center bg-white dark:bg-background border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="text-3xl font-bold mb-2 text-primary">
-                    {Math.round(
-                      kits.reduce((sum, k) => sum + (k.coverage_area || 0), 0),
-                    ) || 0}
-                  </div>
-                  <div className="text-muted-foreground">Total Coverage</div>
-                </CardContent>
-              </Card>
+            <div className="mb-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground sm:mb-10">
+              <span>
+                <strong className="text-foreground">{kits.length}</strong> kits
+              </span>
+              <span className="hidden h-3 w-px bg-border sm:block" aria-hidden />
+              <span>
+                <strong className="text-foreground">
+                  {kits.filter((k) => k.featured).length}
+                </strong>{" "}
+                featured
+              </span>
             </div>
           )}
 
           {/* Filters */}
-          <Card className="mb-8 bg-white dark:bg-background border-border shadow-sm">
+          <Card className="mb-8 border border-border bg-card shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-xl text-foreground">
@@ -658,7 +627,7 @@ const IrrigationKits = () => {
 
           {/* Table View */}
           {!isLoading && processedKits.length > 0 && viewMode === "table" && (
-            <Card className="bg-white dark:bg-background border-border shadow-sm">
+            <Card className="border border-border bg-card shadow-sm">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -784,7 +753,7 @@ const IrrigationKits = () => {
 
           {/* Card Grid View */}
           {!isLoading && processedKits.length > 0 && viewMode === "cards" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6">
               {processedKits.map((kit) => {
                 const components = parseComponents(kit.components);
                 const images = parseImages(kit.images);
@@ -796,222 +765,122 @@ const IrrigationKits = () => {
                 return (
                   <Card
                     key={kit.id}
-                    className="dt-card group cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
+                    className="dt-card group relative flex h-full cursor-pointer flex-col overflow-hidden shadow-sm transition-shadow duration-200 hover:shadow-md"
                     onClick={() => handleKitSelect(kit)}
                   >
-                    {/* Image — clear product photo, no heavy overlay */}
-                    <div className="relative aspect-[4/3] bg-muted overflow-hidden border-b border-border">
-                      {imageUrl ? (
-                        <img
-                          src={imageUrl}
-                          alt={kit.name}
-                          className="h-full w-full object-contain p-3 sm:p-4 transition-transform duration-300 group-hover:scale-[1.02]"
-                          loading="lazy"
-                          decoding="async"
-                          onError={(e) => {
-                            const el = e.target as HTMLImageElement;
-                            el.style.display = "none";
-                            const fallback = el.nextElementSibling as HTMLElement | null;
-                            if (fallback) fallback.classList.remove("hidden");
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className={`absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground ${imageUrl ? "hidden" : ""}`}
-                      >
-                        <Package className="h-12 w-12 text-primary/50" />
-                        <span className="text-xs font-medium">Kit photo</span>
-                      </div>
-                      {kit.featured && (
-                        <div className="absolute top-3 right-3 z-10">
-                          <Badge className="bg-primary text-primary-foreground border-0 shadow-sm">
-                            <Star className="h-3 w-3 mr-1" fill="currentColor" />
-                            Featured
-                          </Badge>
+                    <CardContent className="relative flex flex-1 flex-col p-0">
+                      <div className="relative overflow-hidden border-b border-border bg-muted">
+                        <div className="relative aspect-[4/3] overflow-hidden">
+                          {imageUrl ? (
+                            <img
+                              src={imageUrl}
+                              alt={kit.name}
+                              className="h-full w-full object-contain p-2 sm:p-3"
+                              loading="lazy"
+                              decoding="async"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
+                              <Package className="h-12 w-12 text-primary/50" />
+                              <span className="text-xs font-medium">Kit photo</span>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-
-                    {/* Content Section */}
-                    <CardContent className="p-5 sm:p-6 space-y-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h3 className="dt-card-title text-base sm:text-lg group-hover:text-primary transition-colors">
-                            {kit.name}
-                          </h3>
+                        <div className="absolute left-2 top-2 flex max-w-[70%] flex-col gap-1">
+                          {kit.featured && (
+                            <Badge className="border-0 bg-primary px-1.5 py-0 text-[9px] font-bold text-primary-foreground sm:text-[10px]">
+                              <Star className="mr-0.5 h-2.5 w-2.5" fill="currentColor" />
+                              Featured
+                            </Badge>
+                          )}
                           <Badge
                             variant="secondary"
-                            className="mt-1.5 capitalize text-xs"
+                            className="max-w-full truncate border-border bg-background/95 px-1.5 py-0 text-[9px] capitalize text-foreground shadow-sm sm:text-[10px]"
                           >
-                            {(kit.kit_type || "standard").replace(/_/g, " ")}
+                            {(kit.kit_type || "standard kit").replace(/_/g, " ")}
                           </Badge>
                         </div>
                       </div>
 
-                      {kit.description && (
-                        <p className="text-muted-foreground line-clamp-3 text-sm sm:text-base leading-relaxed">
-                          {kit.description}
-                        </p>
-                      )}
+                      <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
+                        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground sm:text-base">
+                          {kit.name}
+                        </h3>
 
-                      {/* Pricing Section */}
-                      <div className="rounded-lg border border-border bg-muted/40 p-4">
-                        {hasPricingTiers ? (
-                          <div>
-                            <div className="text-sm text-muted-foreground mb-3 font-medium">
-                              Pricing Options:
-                            </div>
-                            <div className="space-y-2">
-                              {components
-                                .pricing_tiers!.slice(0, 3)
-                                .map((tier, index) => (
-                                  <div
-                                    key={index}
-                                    className="flex items-center justify-between py-2 px-3 bg-white dark:bg-background rounded border border-border"
-                                  >
-                                    <div className="text-sm">
-                                      <div className="font-medium text-foreground">
-                                        {tier.name}
-                                      </div>
-                                      {tier.description && (
-                                        <div className="text-xs text-muted-foreground mt-1">
-                                          {tier.description}
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="text-primary font-bold text-base sm:text-lg">
-                                      {formatCurrency(tier.price)}
-                                    </div>
-                                  </div>
-                                ))}
-                              {components.pricing_tiers!.length > 3 && (
-                                <div className="text-center text-sm text-muted-foreground py-2">
-                                  +{components.pricing_tiers!.length - 3} more
-                                  options
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="text-center">
-                            <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">
-                              {formatCurrency(kit.price)}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              Complete kit price
-                            </div>
-                          </div>
+                        {kit.description && (
+                          <p className="hidden text-sm leading-relaxed text-muted-foreground line-clamp-2 md:block">
+                            {kit.description}
+                          </p>
                         )}
-                      </div>
 
-                      {/* Specifications - Enhanced with Installation Time */}
-                      <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                        <div className="text-center p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border">
-                          <MapPin className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <div className="font-semibold text-foreground text-sm sm:text-base">
-                            {kit.coverage_area || "TBD"}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            acres
-                          </div>
-                        </div>
-                        <div className="text-center p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border">
-                          <Droplets className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <div className="font-semibold text-foreground text-sm sm:text-base">
-                            {kit.water_efficiency_percentage || 0}%
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            efficient
-                          </div>
-                        </div>
-                        <div className="text-center p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border">
-                          <Clock className="h-5 w-5 text-primary mx-auto mb-1" />
-                          <div className="font-semibold text-foreground text-sm sm:text-base">
-                            {kit.installation_time_hours || "2-4"}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            hours
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Main Components Preview */}
-                      {components.main_components && components.main_components.length > 0 && (
-                        <div className="bg-gray-50 dark:bg-muted/20 rounded-lg p-3 border border-border">
-                          <div className="text-sm font-medium mb-2 flex items-center gap-2 text-foreground">
-                            <Settings className="h-4 w-4 text-primary" />
-                            <span>Includes:</span>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {components.main_components.slice(0, 3).map((component: string, index: number) => (
-                              <Badge
-                                key={index}
-                                className="text-xs bg-white dark:bg-background text-foreground border-border"
-                              >
-                                <CheckCircle className="h-3 w-3 mr-1 text-primary" />
-                                {component}
-                              </Badge>
-                            ))}
-                            {components.main_components.length > 3 && (
-                              <Badge className="text-xs bg-gray-100 dark:bg-muted text-muted-foreground border-border">
-                                +{components.main_components.length - 3} more
-                              </Badge>
+                        <div className="mt-auto space-y-3 pt-1">
+                          <div className="flex items-baseline justify-between gap-2">
+                            {hasPricingTiers ? (
+                              <div>
+                                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                                  From
+                                </p>
+                                <p className="dt-price-sm text-primary">
+                                  {formatCurrency(
+                                    Math.min(
+                                      ...components.pricing_tiers!.map((tier) => tier.price),
+                                    ),
+                                  )}
+                                </p>
+                              </div>
+                            ) : (
+                              <p className="dt-price-sm text-primary">
+                                {formatCurrency(kit.price)}
+                              </p>
                             )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Badges */}
-                      <div className="flex flex-wrap gap-2">
-                        {kit.installation_complexity && (
-                          <Badge
-                            className={getComplexityColor(
-                              kit.installation_complexity,
-                            )}
-                          >
-                            {kit.installation_complexity} install
-                          </Badge>
-                        )}
-                        <Badge className="bg-gray-100 text-gray-800 border-gray-200 dark:bg-muted dark:text-muted-foreground dark:border-border">
-                          <Shield className="h-3 w-3 mr-1" />
-                          {kit.warranty_months || 12}mo warranty
-                        </Badge>
-                      </div>
-
-                      {/* Crops */}
-                      {kit.recommended_crops &&
-                        kit.recommended_crops.length > 0 && (
-                          <div>
-                            <div className="text-sm font-medium mb-2 flex items-center gap-2">
-                              <Leaf className="h-4 w-4 text-primary" />
-                              <span className="text-muted-foreground">
-                                Best for:
+                            {kit.coverage_area ? (
+                              <span className="text-xs text-muted-foreground">
+                                ~{kit.coverage_area} m²
                               </span>
-                            </div>
-                            <div className="flex flex-wrap gap-1">
-                              {kit.recommended_crops
-                                .slice(0, 3)
-                                .map((crop, index) => (
-                                  <Badge
-                                    key={index}
-                                    className="text-xs bg-gray-100 text-gray-800 border-gray-200 dark:bg-muted dark:text-muted-foreground dark:border-border"
-                                  >
-                                    {crop}
-                                  </Badge>
-                                ))}
-                            </div>
+                            ) : null}
                           </div>
-                        )}
 
-                      {/* Enhanced CTA Buttons */}
-                      <div className="flex gap-3 pt-2">
-                        <Button className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0 h-11 text-base font-semibold shadow-md hover:shadow-lg transition-all">
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Full Details
-                        </Button>
-                        <Button className="bg-gray-100 hover:bg-gray-200 dark:bg-muted dark:hover:bg-muted/50 text-muted-foreground border-border h-11 px-4">
-                          <ShoppingCart className="h-5 w-5" />
-                        </Button>
+                          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                            <a
+                              href={`https://wa.me/254723407849?text=${encodeURIComponent(
+                                `Hi DripTech — I'm interested in the ${kit.name} kit. Please share price and availability.`,
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="col-span-2 flex flex-row items-center justify-center gap-2 rounded-xl bg-[hsl(var(--dt-whatsapp))] py-2.5 transition-all hover:bg-[hsl(var(--dt-whatsapp)/0.9)] active:scale-[0.98] sm:col-span-1 sm:flex-col sm:gap-1.5 sm:py-3"
+                            >
+                              <span className="text-[11px] font-bold text-white sm:text-[10px]">
+                                WhatsApp
+                              </span>
+                            </a>
+                            <button
+                              type="button"
+                              className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleKitSelect(kit);
+                              }}
+                            >
+                              <Eye className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
+                              Details
+                            </button>
+                            <button
+                              type="button"
+                              className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleKitSelect(kit);
+                              }}
+                            >
+                              <ShoppingCart className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
+                              Quote
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
