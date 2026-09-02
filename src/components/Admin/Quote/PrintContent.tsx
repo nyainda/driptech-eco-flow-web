@@ -351,7 +351,7 @@ export const generatePrintContent = (
             </div>
             <div style="margin-top: 20px; font-size: 14px; color: #6b7280;">
               <p>P.O. Box 12345, Nairobi, Kenya</p>
-              <p>Phone: 0794494515 / 0114575401</p>
+              <p>Phone: 0794494515 / 0723407849</p>
               <p>Email: driptech2025@gmail.com</p>
               <p>Alt Email: driptechs.info@gmail.com</p>
             </div>
@@ -373,7 +373,7 @@ export const generatePrintContent = (
             <div class="address-block">
               <p class="font-medium">DripTech Solutions</p>
               <p>P.O. Box 12345, Nairobi, Kenya</p>
-              <p>Phone: 0794494515 / 0114575401</p>
+              <p>Phone: 0794494515 / 0723407849</p>
               <p>Email: driptech2025@gmail.com</p>
               <p>Alt Email: driptechs.info@gmail.com</p>
             </div>
@@ -448,7 +448,7 @@ export const generatePrintContent = (
         <!-- Footer Section -->
         <div class="footer">
           <p><span class="company-name">DripTech Solutions</span> - Your Partner in Smart Irrigation</p>
-          <p>Phone: 0111 / 0114575401 | Email: info@dripstech.co.ke</p>
+          <p>Phone: 0794494515 / 0723407849 | Email: info@dripstech.co.ke</p>
         </div>
       </div>
     </body>

@@ -5,6 +5,6 @@ export const Footer: React.FC = () => (
     <p className="font-semibold text-blue-900 dark:text-blue-400">
       DripTech Solutions - Your Partner in Smart Irrigation
     </p>
-    <p>Phone: 0794494515 / 0114575401 | Email: info@dripstech.co.ke</p>
+    <p>Phone: 0794494515 / 0723407849 | Email: info@dripstech.co.ke</p>
   </div>
 );
