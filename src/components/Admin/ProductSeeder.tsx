@@ -323,7 +323,7 @@ const ProductSeeder = () => {
         <CardDescription className="text-xs sm:text-sm">
           Import unique China-trade style irrigation SKUs (sizes, spacings, fittings). Skips names already in the database — no duplicates, no overwrites.
           <span className="text-orange-600 ml-1 font-medium">
-            Skips duplicate names. Safe to run again — only missing SKUs are inserted.
+            Always available. Skips names already in the database.
           </span>
         </CardDescription>
       </CardHeader>
@@ -357,7 +357,7 @@ const ProductSeeder = () => {
           <Button
             onClick={importChinaCatalog}
             disabled={isSeeding}
-            className="h-9 sm:h-10 flex items-center gap-2 w-full sm:w-auto"
+            className="h-11 w-full flex items-center justify-center gap-2 text-base font-semibold sm:w-auto sm:min-w-[280px]"
           >
             {isSeeding ? (
               <>
@@ -373,26 +373,23 @@ const ProductSeeder = () => {
           </Button>
         </div>
 
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 sm:p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 sm:p-4">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-            <div className="text-xs sm:text-sm">
-              <p className="font-medium text-yellow-800 dark:text-yellow-200">
-                Important Notes:
-              </p>
-              <ul className="mt-1 text-yellow-700 dark:text-yellow-300 space-y-1">
-                <li>• Seeding can only be done once to prevent duplicates</li>
+            <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary sm:h-5 sm:w-5" />
+            <div className="text-xs sm:text-sm text-foreground">
+              <p className="font-medium">Safe to run anytime</p>
+              <ul className="mt-1 space-y-1 text-muted-foreground">
                 <li>
-                  • China import includes stock images on every product — replace with your photos in Product
-                  Management
+                  • Only <strong className="text-foreground">new unique names</strong> are inserted — existing products are never deleted or changed
                 </li>
                 <li>
-                  • All seeded products can be edited individually in Product
-                  Management
+                  • Every imported SKU includes stock images — replace with your real photos in Product Management
                 </li>
                 <li>
-                  • Deletion is disabled here; manage products individually in
-                  Product Management
+                  • Kenya-style retail prices are pre-filled; edit any price after import
+                </li>
+                <li>
+                  • Run again after adding more catalogue data — duplicates are skipped automatically
                 </li>
               </ul>
             </div>
