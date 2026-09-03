@@ -18,52 +18,55 @@ export type CatalogProduct = {
 };
 
 /**
- * Image pools — every product gets 2 URLs (never empty).
- * Stock photos until you replace with real product shots in admin.
+ * Local seed images in /public/seed-products/ (shipped with the app).
+ * Matched by category so drip SKUs show drip/field laterals, pumps show equipment, etc.
+ * Replace any image later in Product Management with your supplier photos.
  */
-const IMG = {
-  drip: [
-    "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
-    "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
-  ],
-  farm: [
-    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
-    "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-  ],
-  green: [
-    "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80",
-    "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
-  ],
-  pump: [
-    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
-    "https://images.unsplash.com/photo-1581092918056-0c4c3faadceb?w=800&q=80",
-  ],
-  solar: [
-    "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80",
-    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
-  ],
-  pipe: [
-    "https://images.unsplash.com/photo-1581092918056-0c4c3faadceb?w=800&q=80",
-    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
-  ],
-  water: [
-    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
-    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
-  ],
+const SEED = {
+  drip: ["/seed-products/drip1.jpg", "/seed-products/drip2.jpg", "/seed-products/drip3.jpg"],
+  kit: ["/seed-products/drip2.jpg", "/seed-products/drip1.jpg", "/seed-products/drip3.jpg"].filter(Boolean),
+  farm: ["/seed-products/drip3.jpg", "/seed-products/drip1.jpg"],
+  green: ["/seed-products/green1.jpg", "/seed-products/green2.jpg"],
+  pipe: ["/seed-products/pipe2.jpg", "/seed-products/drip2.jpg"],
+  pump: ["/seed-products/pipe2.jpg", "/seed-products/solar1.jpg"],
+  solar: ["/seed-products/solar1.jpg", "/seed-products/pipe2.jpg"],
+  water: ["/seed-products/water1.jpg", "/seed-products/drip3.jpg"],
+  sprink: ["/seed-products/sprink1.jpg", "/seed-products/drip1.jpg"],
+  filter: ["/seed-products/pipe2.jpg", "/seed-products/drip2.jpg"],
 };
 
-function pickImgs(pool: string[], seed: string): string[] {
-  const i = (seed.charCodeAt(0) + seed.length) % pool.length;
-  return [pool[i], pool[(i + 1) % pool.length]];
+const CATEGORY_SEED: Record<string, string[]> = {
+  drip_irrigation: SEED.drip,
+  emitters_drippers: SEED.drip,
+  accessories: SEED.pipe,
+  pipes_fittings: SEED.pipe,
+  filtration_systems: SEED.filter,
+  filters_strainers: SEED.filter,
+  valves_regulators: SEED.pipe,
+  sprinkler_systems: SEED.sprink,
+  rain_guns: SEED.sprink,
+  pumps_motors: SEED.pump,
+  solar_irrigation: SEED.solar,
+  fertigation_systems: SEED.green,
+  greenhouse_systems: SEED.green,
+  greenhouse_accessories: SEED.green,
+  seedling_trays_nursery: SEED.green,
+  growing_media: SEED.green,
+  mulching_materials: SEED.farm,
+  water_storage: SEED.water,
+  controllers_timers: SEED.pipe,
+  control_systems: SEED.pipe,
+  borehole_equipment: SEED.pump,
+};
+
+function imagesFor(category: string, name: string): string[] {
+  const pool = CATEGORY_SEED[category] || SEED.drip;
+  const valid = pool.filter((u) => !!u);
+  const i = (name.length + name.charCodeAt(0)) % valid.length;
+  // Always 2 images, product-category matched
+  return [valid[i], valid[(i + 1) % valid.length]];
 }
 
-/**
- * Kenya retail pricing (2025–2026 market research):
- * - Dripline 1000m: ~KES 8,500–9,500 (Aqua Hub / Grekkon)
- * - Kits: 1/8 ~20–28k, 1/4 ~38–55k, 1/2 ~60–90k, 1 acre ~120–180k
- * - HDPE 100m: 16mm ~1,500–1,700 … 110mm ~40,000
- */
 function priceDripTapeRoll(wallMm: number, lengthM: number): number {
   // ~KES 8.5/m for 0.3mm, ~9.5/m for 0.4mm+ on 1000m basis
   const perM = wallMm <= 0.25 ? 7.5 : wallMm <= 0.3 ? 8.5 : wallMm <= 0.4 ? 9.5 : 11;
@@ -113,7 +116,7 @@ function p(
   features: string[],
   applications: string[],
   specs: { name: string; value: string; unit?: string }[],
-  imagePool: string[],
+  _imagePool?: string[],
 ): CatalogProduct {
   return {
     name,
@@ -125,7 +128,7 @@ function p(
     features,
     applications,
     specifications: specs,
-    images: pickImgs(imagePool, name),
+    images: imagesFor(category, name),
   };
 }
 
@@ -175,7 +178,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
                 { name: "Flow", value: String(fl), unit: "L/h" },
                 { name: "Length", value: String(roll), unit: "m" },
               ],
-              IMG.drip,
+              SEED.drip,
             ),
           );
         }
@@ -202,7 +205,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
               { name: "Spacing", value: String(sp), unit: "cm" },
               { name: "Flow", value: String(fl), unit: "L/h" },
             ],
-            IMG.drip,
+            SEED.drip,
           ),
         );
       }
@@ -226,7 +229,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             { name: "Flow", value: String(fl), unit: "L/h" },
             { name: "Pack", value: String(pack), unit: "pcs" },
           ],
-          IMG.green,
+          SEED.green,
         ),
       );
     }
@@ -249,7 +252,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             { name: "Coverage", value: acre, unit: "acre" },
             { name: "Lines per bed", value: String(lines) },
           ],
-          IMG.farm,
+          SEED.farm,
         ),
       );
     }
@@ -274,7 +277,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
               { name: "Mesh", value: String(mesh) },
               { name: "Type", value: type },
             ],
-            IMG.pipe,
+            SEED.pipe,
           ),
         );
       }
@@ -302,7 +305,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
               { name: "PN", value: String(pn), unit: "bar class" },
               { name: "Length", value: String(len), unit: "m" },
             ],
-            IMG.pipe,
+            SEED.pipe,
           ),
         );
       }
@@ -336,7 +339,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             { name: "DN", value: String(dn), unit: "mm" },
             { name: "Type", value: ft },
           ],
-          IMG.pipe,
+          SEED.pipe,
         ),
       );
     }
@@ -363,7 +366,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
           ["16mm tape", "Pack of " + pack],
           ["Drip laterals", "Kit install"],
           [{ name: "Size", value: "16", unit: "mm" }],
-          IMG.drip,
+          SEED.drip,
         ),
       );
     }
@@ -383,7 +386,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
           [vt, size + '"'],
           ["Head control", "Zone control"],
           [{ name: "Size", value: size, unit: "inch" }],
-          IMG.pipe,
+          SEED.pipe,
         ),
       );
     }
@@ -406,7 +409,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             { name: "Outlet pressure", value: out, unit: "bar" },
             { name: "Size", value: size, unit: "inch" },
           ],
-          IMG.pipe,
+          SEED.pipe,
         ),
       );
     }
@@ -439,7 +442,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
           [type],
           ["Open field", "Pasture", "Nursery"],
           [{ name: "Type", value: type }],
-          IMG.farm,
+          SEED.farm,
         ),
       );
     }
@@ -462,7 +465,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             { name: "Power", value: String(hp), unit: "HP" },
             { name: "Type", value: kind },
           ],
-          IMG.pump,
+          SEED.pump,
         ),
       );
     }
@@ -481,7 +484,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         [`${w}W`, "DC pump set"],
         ["Off-grid farms", "Drip supply"],
         [{ name: "Power", value: String(w), unit: "W" }],
-        IMG.solar,
+        SEED.solar,
       ),
     );
   }
@@ -499,7 +502,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         ["Venturi", size + '"'],
         ["Drip fertigation", "Greenhouse"],
         [{ name: "Size", value: size, unit: "inch" }],
-        IMG.green,
+        SEED.green,
       ),
     );
   }
@@ -515,7 +518,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         [`${l}L`],
         ["Fertigation"],
         [{ name: "Volume", value: String(l), unit: "L" }],
-        IMG.green,
+        SEED.green,
       ),
     );
   }
@@ -534,7 +537,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
           [`${cells} cells`],
           ["Nursery", "Greenhouse"],
           [{ name: "Cells", value: String(cells) }],
-          IMG.green,
+          SEED.green,
         ),
       );
     }
@@ -552,7 +555,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         [`${micron}µm`, "Black/silver"],
         ["Vegetables", "Open field"],
         [{ name: "Thickness", value: String(micron), unit: "micron" }],
-        IMG.farm,
+        SEED.farm,
       ),
     );
   }
@@ -570,7 +573,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         [`${l}L`, "UV plastic"],
         ["Gravity drip", "Farm store"],
         [{ name: "Volume", value: String(l), unit: "L" }],
-        IMG.farm,
+        SEED.farm,
       ),
     );
   }
@@ -588,7 +591,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         [`${zones} stations`],
         ["Automated zones", "Greenhouse"],
         [{ name: "Stations", value: String(zones) }],
-        IMG.green,
+        SEED.green,
       ),
     );
   }
@@ -610,7 +613,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             { name: "Size", value: String(inch), unit: "inch" },
             { name: "Length", value: String(m), unit: "m" },
           ],
-          IMG.pipe,
+          SEED.pipe,
         ),
       );
     }
@@ -629,7 +632,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         [size + '" bulkhead'],
         ["Gravity systems"],
         [{ name: "Size", value: size, unit: "inch" }],
-        IMG.pipe,
+        SEED.pipe,
       ),
     );
   }
@@ -647,7 +650,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         [`DN${dn}`],
         ["Borehole"],
         [{ name: "DN", value: String(dn), unit: "mm" }],
-        IMG.pump,
+        SEED.pump,
       ),
     );
   }
@@ -666,7 +669,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
         ["16mm offtake", "PE saddle style"],
         ["Drip install"],
         [{ name: "Variant", value: String(i) }],
-        IMG.drip,
+        SEED.drip,
       ),
     );
   }
@@ -693,7 +696,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
           [tool],
           ["Installation"],
           [{ name: "Type", value: String(v) }],
-          IMG.pipe,
+          SEED.pipe,
         ),
       );
     }
