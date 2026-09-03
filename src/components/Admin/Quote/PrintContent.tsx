@@ -1,3 +1,4 @@
+import { COMPANY, getLogoUrl, LOGO_SVG_MARK } from "../shared/companyBrand";
 // components/PrintContent.ts
 import { Quote, QuoteItem, Customer } from "./types";
 
@@ -343,10 +344,12 @@ export const generatePrintContent = (
         <div class="header">
           <div class="company-info">
             <div class="logo">
-              <div class="logo-icon">DT</div>
+              <div class="logo-icon" style="background:${COMPANY.primary};padding:8px;">
+                <img src="${getLogoUrl()}" alt="${COMPANY.name}" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
+              </div>
               <div>
-                <h1>DripTech Solutions</h1>
-                <p>Smart Irrigation Systems</p>
+                <h1>${COMPANY.name}</h1>
+                <p>${COMPANY.tagline}</p>
               </div>
             </div>
             <div style="margin-top: 20px; font-size: 14px; color: #6b7280;">

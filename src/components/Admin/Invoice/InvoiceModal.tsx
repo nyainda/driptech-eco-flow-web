@@ -4,6 +4,7 @@ import { X, Printer, Send, CheckCircle, Copy } from "lucide-react";
 import { Invoice } from "../types/InvoiceTypes";
 import { formatCurrency, formatDate } from "../utils/formatters";
 import StatusBadge from "./StatusBadge";
+import { COMPANY, getLogoUrl } from "../shared/companyBrand";
 
 interface InvoiceModalProps {
   invoice: Invoice;
@@ -38,15 +39,19 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
       <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors">
         <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-              <WaterDropletIcon className="w-6 h-6 text-white" />
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-primary shadow-lg">
+              <img
+                src={getLogoUrl()}
+                alt={COMPANY.name}
+                className="h-7 w-7 object-contain brightness-0 invert"
+              />
             </div>
             <div>
-              <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-2xl">
                 Invoice {invoice.invoice_number}
               </h2>
-              <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                DripTech Solutions
+              <p className="text-sm font-medium text-primary">
+                {COMPANY.name}
               </p>
             </div>
           </div>

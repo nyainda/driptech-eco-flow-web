@@ -1,11 +1,10 @@
 // components/CreateInvoiceModal.tsx
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { X, FileText, Send, Plus, Trash2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer, Quote, CreateInvoiceForm } from "../types/InvoiceTypes";
 import {
   formatCurrency,
-  generateInvoiceNumber,
   calculateItemTotal,
 } from "../utils/formatters";
 
@@ -47,6 +46,83 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
       },
     ],
   });
+  const [loadingQuoteItems, setLoadingQuoteItems] = useState(false);
+
+  // Quotes shown in dropdown: all, or filtered by selected customer
+  const availableQuotes = useMemo(() => {
+    if (!createForm.customer_id) return quotes;
+    return quotes.filter(
+      (q) => !q.customer_id || q.customer_id === createForm.customer_id,
+    );
+  }, [quotes, createForm.customer_id]);
+
+  const handleQuoteSelect = async (quoteId: string) => {
+    if (!quoteId) {
+      setCreateForm((prev) => ({ ...prev, quote_id: "" }));
+      return;
+    }
+
+    const quote = quotes.find((q) => q.id === quoteId);
+    setLoadingQuoteItems(true);
+    try {
+      const { data: items, error } = await supabase
+        .from("quote_items")
+        .select("*")
+        .eq("quote_id", quoteId)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Error loading quote items:", error);
+        alert("Could not load items from that quote. You can still add lines manually.");
+        setCreateForm((prev) => ({
+          ...prev,
+          quote_id: quoteId,
+          customer_id: quote?.customer_id || prev.customer_id,
+        }));
+        return;
+      }
+
+      const mapped =
+        (items || []).map((item: any) => ({
+          name: item.name || "",
+          description: item.description || "",
+          quantity: Number(item.quantity) || 1,
+          unit: item.unit || "pcs",
+          unit_price: Number(item.unitprice ?? item.unit_price) || 0,
+          total: Number(item.total) || 0,
+        })) || [];
+
+      setCreateForm((prev) => ({
+        ...prev,
+        quote_id: quoteId,
+        customer_id: quote?.customer_id || prev.customer_id,
+        tax_rate:
+          quote?.include_vat === false
+            ? 0
+            : quote?.vat_rate != null
+              ? Number(quote.vat_rate)
+              : prev.tax_rate,
+        notes: quote?.notes
+          ? `From quote ${quote.quote_number}${quote.notes ? ` — ${quote.notes}` : ""}`
+          : prev.notes || (quote ? `From quote ${quote.quote_number}` : prev.notes),
+        items:
+          mapped.length > 0
+            ? mapped
+            : [
+                {
+                  name: "",
+                  description: "",
+                  quantity: 1,
+                  unit: "pcs",
+                  unit_price: 0,
+                  total: 0,
+                },
+              ],
+      }));
+    } finally {
+      setLoadingQuoteItems(false);
+    }
+  };
 
   // Calculate form totals
   const calculateFormTotals = () => {
@@ -275,12 +351,21 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                 <select
                   required
                   value={createForm.customer_id}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const customerId = e.target.value;
+                    const keepQuote =
+                      createForm.quote_id &&
+                      quotes.find(
+                        (q) =>
+                          q.id === createForm.quote_id &&
+                          (!q.customer_id || q.customer_id === customerId),
+                      );
                     setCreateForm({
                       ...createForm,
-                      customer_id: e.target.value,
-                    })
-                  }
+                      customer_id: customerId,
+                      quote_id: keepQuote ? createForm.quote_id : "",
+                    });
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={creating}
                 >
@@ -293,27 +378,40 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                 </select>
               </div>
 
-              {/* Quote Reference */}
+              {/* Quote → invoice link */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Quote Reference (Optional)
+                  From quote {loadingQuoteItems && (
+                    <span className="text-xs text-muted-foreground">(loading items…)</span>
+                  )}
                 </label>
                 <select
                   value={createForm.quote_id}
-                  onChange={(e) =>
-                    setCreateForm({ ...createForm, quote_id: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  disabled={creating}
+                  onChange={(e) => handleQuoteSelect(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  disabled={creating || loadingQuoteItems}
                 >
-                  <option value="">Select Quote</option>
-                  {quotes.map((quote) => (
-                    <option key={quote.id} value={quote.id}>
-                      {quote.quote_number} -{" "}
-                      {formatCurrency(quote.total_amount || 0)}
-                    </option>
-                  ))}
+                  <option value="">No quote — enter items manually</option>
+                  {availableQuotes.map((quote) => {
+                    const who =
+                      quote.customer?.company_name ||
+                      quote.customer?.contact_person ||
+                      "";
+                    const status = quote.status ? ` · ${quote.status}` : "";
+                    return (
+                      <option key={quote.id} value={quote.id}>
+                        {quote.quote_number}
+                        {who ? ` — ${who}` : ""}
+                        {" · "}
+                        {formatCurrency(quote.total_amount || 0)}
+                        {status}
+                      </option>
+                    );
+                  })}
                 </select>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Choosing a quote fills the customer and line items automatically.
+                </p>
               </div>
 
               {/* Issue Date */}
