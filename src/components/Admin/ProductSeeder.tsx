@@ -383,7 +383,7 @@ const ProductSeeder = () => {
               <ul className="mt-1 text-yellow-700 dark:text-yellow-300 space-y-1">
                 <li>• Seeding can only be done once to prevent duplicates</li>
                 <li>
-                  • Seeded products will have no images - add images via Product
+                  • China import includes stock images on every product — replace with your photos in Product
                   Management
                 </li>
                 <li>

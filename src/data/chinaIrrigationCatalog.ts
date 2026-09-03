@@ -17,14 +17,91 @@ export type CatalogProduct = {
   images: string[];
 };
 
+/**
+ * Image pools — every product gets 2 URLs (never empty).
+ * Stock photos until you replace with real product shots in admin.
+ */
 const IMG = {
-  drip: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
-  farm: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
-  green: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80",
-  pump: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
-  solar: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80",
-  pipe: "https://images.unsplash.com/photo-1581092918056-0c4c3faadceb?w=800&q=80",
+  drip: [
+    "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
+    "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
+  ],
+  farm: [
+    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
+    "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80",
+  ],
+  green: [
+    "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&q=80",
+    "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80",
+  ],
+  pump: [
+    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
+    "https://images.unsplash.com/photo-1581092918056-0c4c3faadceb?w=800&q=80",
+  ],
+  solar: [
+    "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80",
+    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
+  ],
+  pipe: [
+    "https://images.unsplash.com/photo-1581092918056-0c4c3faadceb?w=800&q=80",
+    "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80",
+  ],
+  water: [
+    "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
+    "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
+  ],
 };
+
+function pickImgs(pool: string[], seed: string): string[] {
+  const i = (seed.charCodeAt(0) + seed.length) % pool.length;
+  return [pool[i], pool[(i + 1) % pool.length]];
+}
+
+/**
+ * Kenya retail pricing (2025–2026 market research):
+ * - Dripline 1000m: ~KES 8,500–9,500 (Aqua Hub / Grekkon)
+ * - Kits: 1/8 ~20–28k, 1/4 ~38–55k, 1/2 ~60–90k, 1 acre ~120–180k
+ * - HDPE 100m: 16mm ~1,500–1,700 … 110mm ~40,000
+ */
+function priceDripTapeRoll(wallMm: number, lengthM: number): number {
+  // ~KES 8.5/m for 0.3mm, ~9.5/m for 0.4mm+ on 1000m basis
+  const perM = wallMm <= 0.25 ? 7.5 : wallMm <= 0.3 ? 8.5 : wallMm <= 0.4 ? 9.5 : 11;
+  return Math.round(perM * lengthM);
+}
+
+function priceKit(acre: string, lines: number): number {
+  // Mid of published Kenya ranges (Grekkon / Aqua Hub / Irrihydrosol)
+  const base: Record<string, [number, number, number]> = {
+    // [1-line, 2-line, 3-line]
+    "1/8": [22000, 26000, 30000],
+    "1/4": [40000, 48000, 55000],
+    "1/2": [65000, 78000, 90000],
+    "1": [130000, 150000, 175000],
+    "2": [240000, 280000, 320000],
+  };
+  const row = base[acre] || base["1"];
+  return row[Math.min(lines, 3) - 1];
+}
+
+function priceHdpeCoil(dn: number, pn: number, lengthM: number): number {
+  // Approx KES per meter PN6-ish, scale by PN
+  const perM: Record<number, number> = {
+    16: 17,
+    20: 28,
+    25: 35,
+    32: 50,
+    40: 70,
+    50: 100,
+    63: 150,
+    75: 220,
+    90: 330,
+    110: 470,
+  };
+  const base = perM[dn] || dn * 2;
+  const pnFactor = pn <= 6 ? 1 : pn <= 10 ? 1.25 : pn <= 12.5 ? 1.45 : 1.7;
+  return Math.round(base * pnFactor * lengthM);
+}
 
 function p(
   name: string,
@@ -36,7 +113,7 @@ function p(
   features: string[],
   applications: string[],
   specs: { name: string; value: string; unit?: string }[],
-  image: string,
+  imagePool: string[],
 ): CatalogProduct {
   return {
     name,
@@ -44,11 +121,11 @@ function p(
     category,
     subcategory,
     description,
-    price,
+    price: Math.max(50, Math.round(price)),
     features,
     applications,
     specifications: specs,
-    images: [image, IMG.farm],
+    images: pickImgs(imagePool, name),
   };
 }
 
@@ -83,7 +160,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
               "drip_irrigation",
               "Drip tape",
               `Flat emitter drip tape 16mm, ${sp}cm spacing, ${th}mm wall, ${fl} L/h emitters. ${roll}m roll for open-field vegetables and onions in Kenya. UV-stabilised PE as commonly supplied from China irrigation factories.`,
-              Math.round(roll * (th * 8 + fl * 2 + sp * 0.15)),
+              priceDripTapeRoll(th, roll),
               [
                 "Inline flat emitters",
                 "UV stabilised PE",
@@ -117,7 +194,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             "drip_irrigation",
             "PC dripline",
             `Pressure-compensating round dripline 16mm with ${sp}cm emitter spacing and ${fl} L/h flow. Suitable for longer laterals and uneven Kenyan terrain.`,
-            Math.round(roll * 12 + fl * 200 + sp * 15),
+            Math.round(priceDripTapeRoll(0.5, roll) * 1.35),
             ["Pressure compensating", "Anti-clog labyrinth", "UV PE"],
             ["Orchards", "Greenhouse", "Hilly farms"],
             [
@@ -165,15 +242,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
           "drip_irrigation",
           "Complete kits",
           `Complete drip kit sized for about ${acre} acre with ${lines} dripline(s) per bed. Includes filter, mainline fittings, laterals and connectors — typical China OEM kit layout sold into East Africa.`,
-          acre === "1/8"
-            ? 18000 + lines * 4000
-            : acre === "1/4"
-              ? 32000 + lines * 6000
-              : acre === "1/2"
-                ? 55000 + lines * 10000
-                : acre === "1"
-                  ? 95000 + lines * 18000
-                  : 160000 + lines * 25000,
+          priceKit(acre, lines),
           ["Filter included", "Fittings pack", `${lines} lines/bed`],
           ["Vegetables", "Tomatoes", "Onions", "Kitchen garden"],
           [
@@ -225,7 +294,7 @@ export function buildChinaStyleCatalog(): CatalogProduct[] {
             "pipes_fittings",
             "HDPE pipe",
             `Black HDPE irrigation pipe DN${dn}, PN${pn}, ${len}m. Main and submain lines for Kenyan farms; China PE100/PE80 style export grade.`,
-            Math.round(dn * len * (0.15 + pn * 0.02)),
+            priceHdpeCoil(dn, pn, len),
             ["UV black PE", `PN${pn}`, `${len}m`],
             ["Mainline", "Submain", "Borehole delivery"],
             [
