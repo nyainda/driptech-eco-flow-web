@@ -8,7 +8,9 @@ export type SchemaType =
   | "howto"
   | "article"
   | "breadcrumb"
-  | "organization";
+  | "organization"
+  | "localbusiness"
+  | "contactpage";
 
 export interface StructuredDataProps {
   type: SchemaType;
@@ -165,6 +167,24 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
               item: item.url,
             })) || [],
         };
+
+      case "localbusiness":
+        return data && data["@type"]
+          ? data
+          : {
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              ...data,
+            };
+
+      case "contactpage":
+        return data && data["@type"]
+          ? data
+          : {
+              "@context": "https://schema.org",
+              "@type": "ContactPage",
+              ...data,
+            };
 
       case "organization":
         return {
