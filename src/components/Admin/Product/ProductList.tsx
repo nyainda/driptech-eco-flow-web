@@ -44,6 +44,8 @@ interface ProductListProps {
   categories: Array<{ value: string; label: string }>;
   onEdit: (product: Product) => void;
   onDelete: (id: string) => void;
+  onApprove?: (id: string) => void;
+  onReject?: (id: string) => void;
   currentPage: number;
   productsPerPage: number;
 }
@@ -53,6 +55,8 @@ const ProductList: React.FC<ProductListProps> = ({
   categories,
   onEdit,
   onDelete,
+  onApprove,
+  onReject,
   currentPage,
   productsPerPage,
 }) => {
@@ -115,6 +119,9 @@ const ProductList: React.FC<ProductListProps> = ({
                     </CardDescription>
                   )}
                 </div>
+                {!product.in_stock && (
+                  <Badge className="bg-amber-500/90 text-white">Pending review</Badge>
+                )}
                 {product.featured && (
                   <div className="relative">
                     <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 dark:text-yellow-400 fill-current animate-pulse" />
@@ -200,7 +207,28 @@ const ProductList: React.FC<ProductListProps> = ({
                 </div>
               )}
 
-              <div className="flex justify-end gap-1 sm:gap-2">
+              <div className="flex flex-wrap justify-end gap-1 sm:gap-2">
+                {!product.in_stock && onApprove && (
+                  <Button
+                    size="sm"
+                    className="h-8 bg-emerald-600 px-2 text-xs hover:bg-emerald-700 sm:h-9"
+                    onClick={() => onApprove(product.id)}
+                  >
+                    <CheckCircle2 className="mr-1 h-3 w-3" />
+                    Approve
+                  </Button>
+                )}
+                {!product.in_stock && onReject && (
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="h-8 px-2 text-xs sm:h-9"
+                    onClick={() => onReject(product.id)}
+                  >
+                    <XCircle className="mr-1 h-3 w-3" />
+                    Reject
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="outline"
