@@ -31,7 +31,7 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-                  <img src={getLogoUrl()} alt={COMPANY.name} className="h-12 w-12 object-contain" />
+                  <img src={getLogoUrl({ forPrint: true })} alt={COMPANY.name} className="h-12 w-12 object-contain" />
                 </div>
                 <div>
                   <h1 className="mb-1 text-2xl font-bold text-foreground">
@@ -77,7 +77,7 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-4">
                   <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-                    <img src={getLogoUrl()} alt={COMPANY.name} className="h-12 w-12 object-contain" />
+                    <img src={getLogoUrl({ forPrint: true })} alt={COMPANY.name} className="h-12 w-12 object-contain" />
                   </div>
                   <div>
                     <h1 className="mb-1 text-2xl font-bold text-foreground">
