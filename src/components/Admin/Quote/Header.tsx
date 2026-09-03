@@ -9,11 +9,11 @@ interface CompanyHeaderProps {
 export const CompanyHeader: React.FC<CompanyHeaderProps> = ({ quote }) => (
   <div className="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row">
     <div className="flex items-center gap-4">
-      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-primary shadow-md">
+      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-border">
         <img
           src={getLogoUrl()}
           alt={COMPANY.name}
-          className="h-9 w-9 object-contain brightness-0 invert"
+          className="h-10 w-10 object-contain"
           onError={(e) => {
             (e.target as HTMLImageElement).style.display = "none";
           }}

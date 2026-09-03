@@ -74,7 +74,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
       <html>
       <head>
         <meta charset="utf-8">
-        <title>Invoice ${invoice.invoice_number} - DripTech Solutions</title>
+        <title>Invoice ${invoice.invoice_number} - ${COMPANY.name}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -137,8 +137,8 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
               <div class="flex items-center gap-3 w-full md:w-auto">
-                <div class="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-8 h-8 object-contain brightness-0 invert" />
+                <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow">
+                  <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-10 h-10 object-contain" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <h1 class="text-white text-xl font-black mb-1">${COMPANY.name}</h1>
@@ -186,7 +186,7 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                 </h3>
                 <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
                   <div class="space-y-1 text-xs">
-                    <div class="font-bold text-gray-900">DripTech Solutions</div>
+                    <div class="font-bold text-gray-900">${COMPANY.name}</div>
                     <div class="text-gray-600">P.O. Box 12345, Nairobi, Kenya</div>
                     <div class="flex items-center gap-1 text-gray-600">
                       <span class="opacity-70">📞</span> 0794494515 / 0723407849

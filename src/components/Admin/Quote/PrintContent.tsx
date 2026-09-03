@@ -344,8 +344,8 @@ export const generatePrintContent = (
         <div class="header">
           <div class="company-info">
             <div class="logo">
-              <div class="logo-icon" style="background:${COMPANY.primary};padding:8px;">
-                <img src="${getLogoUrl()}" alt="${COMPANY.name}" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
+              <div class="logo-icon" style="background:#ffffff;padding:6px;border:1px solid #e5e7eb;border-radius:12px;">
+                <img src="${getLogoUrl()}" alt="${COMPANY.name}" style="width:44px;height:44px;object-fit:contain;" onerror="this.style.display='none'" />
               </div>
               <div>
                 <h1>${COMPANY.name}</h1>
@@ -374,7 +374,7 @@ export const generatePrintContent = (
           <div class="section">
             <h3>From:</h3>
             <div class="address-block">
-              <p class="font-medium">DripTech Solutions</p>
+              <p class="font-medium">${COMPANY.name}</p>
               <p>P.O. Box 12345, Nairobi, Kenya</p>
               <p>Phone: 0794494515 / 0723407849</p>
               <p>Email: driptech2025@gmail.com</p>
@@ -450,7 +450,7 @@ export const generatePrintContent = (
 
         <!-- Footer Section -->
         <div class="footer">
-          <p><span class="company-name">DripTech Solutions</span> - Your Partner in Smart Irrigation</p>
+          <p><span class="company-name">${COMPANY.name}</span> - Your Partner in Smart Irrigation</p>
           <p>Phone: 0794494515 / 0723407849 | Email: info@dripstech.co.ke</p>
         </div>
       </div>

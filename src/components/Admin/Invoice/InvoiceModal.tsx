@@ -39,11 +39,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
       <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors">
         <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-primary shadow-lg">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-border">
               <img
                 src={getLogoUrl()}
                 alt={COMPANY.name}
-                className="h-7 w-7 object-contain brightness-0 invert"
+                className="h-10 w-10 object-contain"
               />
             </div>
             <div>

@@ -12,6 +12,7 @@ import { NotesSection } from "./Quote/Notes";
 import { Footer } from "./Quote/Footer";
 import { QuotePDFProps } from "./Quote/types";
 import { usePrintHandlers } from "@/hooks/usePrintHandlers";
+import { COMPANY, getLogoUrl } from "./shared/companyBrand";
 
 export const QuotePDF: React.FC<QuotePDFProps> = ({
   quote,
@@ -29,15 +30,15 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({
           <div className="p-6 bg-muted border-b border-border">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-background border border-border rounded-xl flex items-center justify-center text-2xl font-bold text-foreground">
-                  DT
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+                  <img src={getLogoUrl()} alt={COMPANY.name} className="h-12 w-12 object-contain" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground mb-1">
-                    DripTech Solutions
+                  <h1 className="mb-1 text-2xl font-bold text-foreground">
+                    {COMPANY.name}
                   </h1>
-                  <p className="text-muted-foreground font-medium">
-                    Smart Irrigation Systems
+                  <p className="font-medium text-muted-foreground">
+                    {COMPANY.tagline}
                   </p>
                 </div>
               </div>
@@ -75,15 +76,15 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({
             <div className="p-8 bg-muted border-b border-border">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-background border border-border rounded-xl flex items-center justify-center text-2xl font-bold text-foreground">
-                    DT
+                  <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+                    <img src={getLogoUrl()} alt={COMPANY.name} className="h-12 w-12 object-contain" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-foreground mb-1">
-                      DripTech Solutions
+                    <h1 className="mb-1 text-2xl font-bold text-foreground">
+                      {COMPANY.name}
                     </h1>
-                    <p className="text-muted-foreground font-medium">
-                      Smart Irrigation Systems
+                    <p className="font-medium text-muted-foreground">
+                      {COMPANY.tagline}
                     </p>
                   </div>
                 </div>
