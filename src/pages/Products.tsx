@@ -169,7 +169,7 @@ const Products = () => {
       }
 
       // Use dataService to fetch products
-      const data = await dataService.getProducts({ category: dbCategory });
+      const data = await dataService.getProducts({ category: dbCategory, inStock: true });
 
       return (data || []).map((item: any) => {
         const variants = item.variants
