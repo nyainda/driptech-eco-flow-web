@@ -344,8 +344,8 @@ export const generatePrintContent = (
         <div class="header">
           <div class="company-info">
             <div class="logo">
-              <div class="logo-icon" style="background:${COMPANY.primary};padding:8px;">
-                <img src="${getLogoUrl()}" alt="${COMPANY.name}" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
+              <div class="logo-icon" style="background:#ffffff;padding:6px;border:1px solid #e5e7eb;border-radius:12px;">
+                <img src="${getLogoUrl()}" alt="${COMPANY.name}" style="width:44px;height:44px;object-fit:contain;" onerror="this.style.display='none'" />
               </div>
               <div>
                 <h1>${COMPANY.name}</h1>

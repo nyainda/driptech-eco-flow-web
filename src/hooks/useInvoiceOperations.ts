@@ -137,8 +137,8 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
               <div class="flex items-center gap-3 w-full md:w-auto">
-                <div class="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg flex items-center justify-center overflow-hidden">
-                  <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-8 h-8 object-contain brightness-0 invert" />
+                <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow">
+                  <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-10 h-10 object-contain" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <h1 class="text-white text-xl font-black mb-1">${COMPANY.name}</h1>
