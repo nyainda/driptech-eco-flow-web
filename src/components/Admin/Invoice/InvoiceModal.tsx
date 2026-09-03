@@ -41,7 +41,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-border">
               <img
-                src={getLogoUrl()}
+                src={getLogoUrl({ forPrint: true })}
                 alt={COMPANY.name}
                 className="h-10 w-10 object-contain"
               />

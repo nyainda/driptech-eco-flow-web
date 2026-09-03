@@ -1,77 +1,50 @@
 import React from "react";
 import { Customer } from "./types";
+import { COMPANY } from "../shared/companyBrand";
 
 interface AddressSectionProps {
   customer?: Customer;
 }
 
 export const AddressSection: React.FC<AddressSectionProps> = ({ customer }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+  <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-2">
     <div>
-      <h3 className="font-semibold mb-3 text-blue-900 dark:text-blue-400 text-lg">
-        From:
-      </h3>
-      <div className="text-sm bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600">
-        <p className="font-medium text-gray-900 dark:text-gray-200">
-          DripTech Solutions
-        </p>
-        <p className="text-gray-600 dark:text-gray-400">
-          P.O. Box 12345, Nairobi, Kenya
-        </p>
-        <p className="text-gray-600 dark:text-gray-400">
-          Phone: 0794494515
-        </p>
-        <p className="text-gray-600 dark:text-gray-400">
-          Email: driptech2025@gmail.com
-        </p>
-        <p className="text-gray-600 dark:text-gray-400">
-          Alt Email: driptechs.info@gmail.com
-        </p>
+      <h3 className="mb-3 text-lg font-semibold text-primary">From:</h3>
+      <div className="rounded-lg border border-border bg-muted/40 p-5 text-sm">
+        <p className="font-medium text-foreground">{COMPANY.name}</p>
+        <p className="text-muted-foreground">{COMPANY.address}</p>
+        <p className="text-muted-foreground">Phone: {COMPANY.phone}</p>
+        <p className="text-muted-foreground">Email: {COMPANY.email}</p>
+        <p className="text-muted-foreground">Alt Email: {COMPANY.emailAlt}</p>
       </div>
     </div>
     <div>
-      <h3 className="font-semibold mb-3 text-blue-900 dark:text-blue-400 text-lg">
-        To:
-      </h3>
-      <div className="text-sm bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border border-gray-100 dark:border-gray-600">
+      <h3 className="mb-3 text-lg font-semibold text-primary">To:</h3>
+      <div className="rounded-lg border border-border bg-muted/40 p-5 text-sm">
         {customer ? (
           <>
-            <p className="font-medium text-gray-900 dark:text-gray-200">
+            <p className="font-medium text-foreground">
               {customer.contact_person}
             </p>
             {customer.company_name && (
-              <p className="text-gray-600 dark:text-gray-400">
-                {customer.company_name}
-              </p>
+              <p className="text-muted-foreground">{customer.company_name}</p>
             )}
             {customer.address && (
-              <p className="text-gray-600 dark:text-gray-400">
-                {customer.address}
-              </p>
+              <p className="text-muted-foreground">{customer.address}</p>
             )}
             {customer.city && (
-              <p className="text-gray-600 dark:text-gray-400">
-                {customer.city}
-              </p>
+              <p className="text-muted-foreground">{customer.city}</p>
             )}
             {customer.country && (
-              <p className="text-gray-600 dark:text-gray-400">
-                {customer.country}
-              </p>
+              <p className="text-muted-foreground">{customer.country}</p>
             )}
             {customer.phone && (
-              <p className="text-gray-600 dark:text-gray-400">
-                Phone: {customer.phone}
-              </p>
+              <p className="text-muted-foreground">Phone: {customer.phone}</p>
             )}
-            <p className="text-gray-600 dark:text-gray-400">
-              Email: {customer.email}
-            </p>
+            <p className="text-muted-foreground">Email: {customer.email}</p>
           </>
         ) : (
-          <p className="text-gray-600 dark:text-gray-400">
-            Customer information not available
-          </p>
+          <p className="text-muted-foreground">Customer information not available</p>
         )}
       </div>
     </div>

@@ -69,7 +69,7 @@ export const generatePrintContent = (
     <!DOCTYPE html>
     <html>
     <head>
-      <title>Quote #${quote.quote_number} - DripTech Irrigation</title>
+      <title>Quote #${quote.quote_number} - ${COMPANY.name}</title>
       <meta charset="utf-8">
       <style>
         @media (prefers-color-scheme: dark) {
@@ -353,10 +353,10 @@ export const generatePrintContent = (
               </div>
             </div>
             <div style="margin-top: 20px; font-size: 14px; color: #6b7280;">
-              <p>P.O. Box 12345, Nairobi, Kenya</p>
-              <p>Phone: 0794494515 / 0723407849</p>
-              <p>Email: driptech2025@gmail.com</p>
-              <p>Alt Email: driptechs.info@gmail.com</p>
+              <p>${COMPANY.address}</p>
+              <p>Phone: ${COMPANY.phone}</p>
+              <p>Email: ${COMPANY.email}</p>
+              <p>Alt Email: ${COMPANY.emailAlt}</p>
             </div>
           </div>
           <div class="quote-info">
@@ -375,10 +375,10 @@ export const generatePrintContent = (
             <h3>From:</h3>
             <div class="address-block">
               <p class="font-medium">${COMPANY.name}</p>
-              <p>P.O. Box 12345, Nairobi, Kenya</p>
-              <p>Phone: 0794494515 / 0723407849</p>
-              <p>Email: driptech2025@gmail.com</p>
-              <p>Alt Email: driptechs.info@gmail.com</p>
+              <p>${COMPANY.address}</p>
+              <p>Phone: ${COMPANY.phone}</p>
+              <p>Email: ${COMPANY.email}</p>
+              <p>Alt Email: ${COMPANY.emailAlt}</p>
             </div>
           </div>
           <div class="section">
@@ -451,7 +451,7 @@ export const generatePrintContent = (
         <!-- Footer Section -->
         <div class="footer">
           <p><span class="company-name">${COMPANY.name}</span> - Your Partner in Smart Irrigation</p>
-          <p>Phone: 0794494515 / 0723407849 | Email: info@dripstech.co.ke</p>
+          <p>Phone: ${COMPANY.phone} | Email: info@dripstech.co.ke</p>
         </div>
       </div>
     </body>

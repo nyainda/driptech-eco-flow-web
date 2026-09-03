@@ -264,7 +264,7 @@ export const generatePrintContent = (
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
             <div class="flex items-center gap-3 w-full md:w-auto">
               <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow">
-                <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-11 h-11 object-contain" />
+                <img src="${getLogoUrl({ forPrint: true })}" alt="${COMPANY.name}" class="w-11 h-11 object-contain" />
               </div>
               <div class="min-w-0 flex-1">
                 <h1 class="text-white text-xl font-black mb-1">${COMPANY.name}</h1>
@@ -313,12 +313,12 @@ export const generatePrintContent = (
               <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
                 <div class="space-y-1 text-xs">
                   <div class="font-bold text-gray-900">${COMPANY.name}</div>
-                  <div class="text-gray-600">P.O. Box 12345, Nairobi, Kenya</div>
+                  <div class="text-gray-600">${COMPANY.address}</div>
                   <div class="flex items-center gap-1 text-gray-600">
-                    <span class="opacity-70">📞</span> 0794494515
+                    <span class="opacity-70">📞</span> ${COMPANY.phone}
                   </div>
                   <div class="flex items-center gap-1 text-gray-600">
-                    <span class="opacity-70">✉️</span> driptech2025@gmail.com
+                    <span class="opacity-70">✉️</span> ${COMPANY.email}
                   </div>
                 </div>
               </div>

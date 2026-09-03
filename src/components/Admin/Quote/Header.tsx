@@ -11,7 +11,7 @@ export const CompanyHeader: React.FC<CompanyHeaderProps> = ({ quote }) => (
     <div className="flex items-center gap-4">
       <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-border">
         <img
-          src={getLogoUrl()}
+          src={getLogoUrl({ forPrint: true })}
           alt={COMPANY.name}
           className="h-10 w-10 object-contain"
           onError={(e) => {
