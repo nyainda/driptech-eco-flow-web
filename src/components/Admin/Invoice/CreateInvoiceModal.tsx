@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Customer, Quote, CreateInvoiceForm } from "../types/InvoiceTypes";
 import {
   formatCurrency,
+  generateInvoiceNumber,
   calculateItemTotal,
 } from "../utils/formatters";
 
@@ -34,7 +35,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
     discount_amount: 0,
     notes: "",
     payment_details:
-      "Bank: Equity Bank\nAccount Name: DripTech Solutions\nAccount Number: 1234567890\nBranch: Nairobi\nSwift Code: EQBLKENA\n\nM-Pesa Paybill: 123456\nAccount Number: [Invoice Number]",
+      "Bank: Equity Bank\nAccount Name: DripTech Eco Flow\nAccount Number: 1234567890\nBranch: Nairobi\nSwift Code: EQBLKENA\n\nM-Pesa Paybill: 123456\nAccount Number: [Invoice Number]",
     items: [
       {
         name: "",
@@ -309,7 +310,11 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
       }
     } catch (error) {
       console.error("Error creating invoice:", error);
-      alert("Error creating invoice. Please try again.");
+      const message =
+        error instanceof Error
+          ? error.message
+          : (error as any)?.message || "Unknown error";
+      alert(`Error creating invoice: ${message}`);
     } finally {
       setCreating(false);
     }

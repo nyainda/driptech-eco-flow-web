@@ -1,7 +1,7 @@
 /** Shared company branding for quotes & invoices (UI + print). */
 
 export const COMPANY = {
-  name: "DripTech EcoFlow",
+  name: "DripTech Eco Flow",
   tagline: "Smart Irrigation Systems",
   phone: "0794494515 / 0723407849",
   email: "info@dripstech.co.ke",

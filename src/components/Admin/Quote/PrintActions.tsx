@@ -1,3 +1,4 @@
+import { COMPANY, getLogoUrl } from "../shared/companyBrand";
 import { TermsSection } from "./TermsAndConditions";
 import { Quote, QuoteItem, Customer } from "./types";
 
@@ -143,7 +144,7 @@ export const generatePrintContent = (
     <!DOCTYPE html>
     <html>
     <head>
-      <title>Quote #${quote.quote_number} - DripTech Irrigation</title>
+      <title>Quote #${quote.quote_number} - ${COMPANY.name}</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
       <script src="https://cdn.tailwindcss.com"></script>
@@ -262,16 +263,16 @@ export const generatePrintContent = (
           
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
             <div class="flex items-center gap-3 w-full md:w-auto">
-              <div class="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg flex items-center justify-center text-white text-xl font-black shine-effect">
-                DT
+              <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow">
+                <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-11 h-11 object-contain" />
               </div>
               <div class="min-w-0 flex-1">
-                <h1 class="text-white text-xl font-black mb-1">DripTech Solutions</h1>
-                <div class="text-white text-opacity-90 text-xs font-medium">Smart Irrigation Systems</div>
+                <h1 class="text-white text-xl font-black mb-1">${COMPANY.name}</h1>
+                <div class="text-white text-opacity-90 text-xs font-medium">${COMPANY.tagline}</div>
                 <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
-                  <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
-                  <div>📞 0794494515</div>
-                  <div>✉️ driptech2025@gmail.com</div>
+                  <div>📍 ${COMPANY.address}</div>
+                  <div>📞 ${COMPANY.phone}</div>
+                  <div>✉️ ${COMPANY.email}</div>
                 </div>
               </div>
             </div>
@@ -311,7 +312,7 @@ export const generatePrintContent = (
               </h3>
               <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
                 <div class="space-y-1 text-xs">
-                  <div class="font-bold text-gray-900">DripTech Solutions</div>
+                  <div class="font-bold text-gray-900">${COMPANY.name}</div>
                   <div class="text-gray-600">P.O. Box 12345, Nairobi, Kenya</div>
                   <div class="flex items-center gap-1 text-gray-600">
                     <span class="opacity-70">📞</span> 0794494515

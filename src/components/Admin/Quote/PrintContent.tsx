@@ -374,7 +374,7 @@ export const generatePrintContent = (
           <div class="section">
             <h3>From:</h3>
             <div class="address-block">
-              <p class="font-medium">DripTech Solutions</p>
+              <p class="font-medium">${COMPANY.name}</p>
               <p>P.O. Box 12345, Nairobi, Kenya</p>
               <p>Phone: 0794494515 / 0723407849</p>
               <p>Email: driptech2025@gmail.com</p>
@@ -450,7 +450,7 @@ export const generatePrintContent = (
 
         <!-- Footer Section -->
         <div class="footer">
-          <p><span class="company-name">DripTech Solutions</span> - Your Partner in Smart Irrigation</p>
+          <p><span class="company-name">${COMPANY.name}</span> - Your Partner in Smart Irrigation</p>
           <p>Phone: 0794494515 / 0723407849 | Email: info@dripstech.co.ke</p>
         </div>
       </div>
