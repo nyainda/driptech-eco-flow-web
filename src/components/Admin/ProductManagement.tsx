@@ -60,14 +60,20 @@ const ProductManagement = () => {
     if (!confirm(`Approve ${pendingReview.length} products and show them on the website?`)) return;
     try {
       const ids = pendingReview.map((p) => p.id);
-      const { error } = await supabase
-        .from("products")
-        .update({ in_stock: true })
-        .in("id", ids);
-      if (error) throw error;
+      const chunkSize = 40;
+      let approved = 0;
+      for (let i = 0; i < ids.length; i += chunkSize) {
+        const chunk = ids.slice(i, i + chunkSize);
+        const { error } = await supabase
+          .from("products")
+          .update({ in_stock: true })
+          .in("id", chunk);
+        if (error) throw error;
+        approved += chunk.length;
+      }
       toast({
         title: "Approved",
-        description: `${ids.length} products are now visible on the website.`,
+        description: `${approved} products are now visible on the website.`,
       });
       fetchProducts();
     } catch (e: any) {
@@ -94,11 +100,18 @@ const ProductManagement = () => {
     }
     try {
       const ids = pendingReview.map((p) => p.id);
-      const { error } = await supabase.from("products").delete().in("id", ids);
-      if (error) throw error;
+      // Supabase REST URL length limit — delete in small batches
+      const chunkSize = 40;
+      let deleted = 0;
+      for (let i = 0; i < ids.length; i += chunkSize) {
+        const chunk = ids.slice(i, i + chunkSize);
+        const { error } = await supabase.from("products").delete().in("id", chunk);
+        if (error) throw error;
+        deleted += chunk.length;
+      }
       toast({
         title: "Rejected",
-        description: `${ids.length} pending products removed.`,
+        description: `${deleted} pending products removed.`,
       });
       fetchProducts();
     } catch (e: any) {
