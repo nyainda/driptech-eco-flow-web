@@ -60,7 +60,6 @@ const ProductManagement = () => {
     if (!confirm(`Approve ${pendingReview.length} products and show them on the website?`)) return;
     try {
       const ids = pendingReview.map((p) => p.id);
-      // batch update
       const { error } = await supabase
         .from("products")
         .update({ in_stock: true })
@@ -75,6 +74,71 @@ const ProductManagement = () => {
       toast({
         title: "Error",
         description: e.message || "Failed to approve",
+        variant: "destructive",
+      });
+    }
+  };
+
+  /** Reject = delete pending seed products you do not want (not shown publicly). */
+  const rejectPendingProducts = async () => {
+    if (!pendingReview.length) {
+      toast({ title: "Nothing pending", description: "No products waiting for review." });
+      return;
+    }
+    if (
+      !confirm(
+        `Reject and permanently delete ${pendingReview.length} pending products? This cannot be undone. Live (in-stock) products are not affected.`,
+      )
+    ) {
+      return;
+    }
+    try {
+      const ids = pendingReview.map((p) => p.id);
+      const { error } = await supabase.from("products").delete().in("id", ids);
+      if (error) throw error;
+      toast({
+        title: "Rejected",
+        description: `${ids.length} pending products removed.`,
+      });
+      fetchProducts();
+    } catch (e: any) {
+      toast({
+        title: "Error",
+        description: e.message || "Failed to reject",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const approveOne = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from("products")
+        .update({ in_stock: true })
+        .eq("id", id);
+      if (error) throw error;
+      toast({ title: "Approved", description: "Product is now on the website." });
+      fetchProducts();
+    } catch (e: any) {
+      toast({
+        title: "Error",
+        description: e.message || "Failed to approve",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const rejectOne = async (id: string) => {
+    if (!confirm("Reject and delete this pending product?")) return;
+    try {
+      const { error } = await supabase.from("products").delete().eq("id", id);
+      if (error) throw error;
+      toast({ title: "Rejected", description: "Pending product deleted." });
+      fetchProducts();
+    } catch (e: any) {
+      toast({
+        title: "Error",
+        description: e.message || "Failed to reject",
         variant: "destructive",
       });
     }
@@ -428,13 +492,21 @@ const ProductManagement = () => {
           {/* Product Seeder Component */}
           <ProductSeeder />
           {pendingReview.length > 0 && (
-            <Button
-              variant="default"
-              className="bg-emerald-600 hover:bg-emerald-700"
-              onClick={approvePendingProducts}
-            >
-              Approve {pendingReview.length} pending for website
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="default"
+                className="bg-emerald-600 hover:bg-emerald-700"
+                onClick={approvePendingProducts}
+              >
+                Approve {pendingReview.length} pending for website
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={rejectPendingProducts}
+              >
+                Reject / delete {pendingReview.length} pending
+              </Button>
+            </div>
           )}
 
           {/* AI Market Research */}
@@ -485,7 +557,9 @@ const ProductManagement = () => {
           products={filteredProducts}
           categories={PRODUCT_CATEGORIES}
           onEdit={handleEdit}
-          onDelete={handleDelete}
+          onApprove={approveOne}
+            onReject={rejectOne}
+            onDelete={handleDelete}
           currentPage={currentPage}
           productsPerPage={productsPerPage}
         />
