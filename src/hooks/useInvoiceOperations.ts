@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Invoice } from "@/components/Admin/types/InvoiceTypes";
+import { COMPANY, getLogoUrl } from "@/components/Admin/shared/companyBrand";
 import {
   formatCurrency,
   formatDate,
@@ -136,12 +137,12 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
               <div class="flex items-center gap-3 w-full md:w-auto">
-                <div class="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg flex items-center justify-center text-white text-xl font-black shine-effect">
-                  DT
+                <div class="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-lg flex items-center justify-center overflow-hidden">
+                  <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-8 h-8 object-contain brightness-0 invert" />
                 </div>
                 <div class="min-w-0 flex-1">
-                  <h1 class="text-white text-xl font-black mb-1">DripTech Solutions</h1>
-                  <div class="text-white text-opacity-90 text-xs font-medium">Smart Irrigation Systems</div>
+                  <h1 class="text-white text-xl font-black mb-1">${COMPANY.name}</h1>
+                  <div class="text-white text-opacity-90 text-xs font-medium">${COMPANY.tagline}</div>
                   <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
                     <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
                     <div>📞 0794494515 / 0723407849</div>

@@ -61,17 +61,40 @@ export const useInvoiceData = () => {
     }
   };
 
-  // Load quotes for dropdown
+  // Load quotes for invoice dropdown (all non-cancelled, with customer)
   const loadQuotes = async () => {
     try {
       const { data: quoteData, error } = await supabase
         .from("quotes")
-        .select("*")
-        .eq("status", "accepted")
+        .select(
+          `
+          id,
+          quote_number,
+          total_amount,
+          status,
+          created_at,
+          customer_id,
+          notes,
+          vat_rate,
+          include_vat,
+          customer:customers(id, company_name, contact_person)
+        `,
+        )
+        .neq("status", "cancelled")
         .order("created_at", { ascending: false });
 
       if (error) {
         console.error("Error loading quotes:", error);
+        // Fallback without join if relation name differs
+        const { data: fallback, error: fbErr } = await supabase
+          .from("quotes")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (fbErr) {
+          console.error("Error loading quotes (fallback):", fbErr);
+          return;
+        }
+        setQuotes((fallback || []) as Quote[]);
         return;
       }
 

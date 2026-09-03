@@ -47,9 +47,18 @@ export interface InvoiceItem {
 export interface Quote {
   id: string;
   quote_number: string;
-  total_amount: number;
-  status: string;
-  created_at: string;
+  total_amount: number | null;
+  status: string | null;
+  created_at: string | null;
+  customer_id?: string | null;
+  notes?: string | null;
+  vat_rate?: number | null;
+  include_vat?: boolean | null;
+  customer?: {
+    id?: string;
+    company_name?: string | null;
+    contact_person?: string;
+  } | null;
 }
 
 export interface CreateInvoiceForm {
