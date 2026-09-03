@@ -50,6 +50,36 @@ const ProductManagement = () => {
     fetchProducts();
   }, []);
 
+
+  const pendingReview = products.filter((p) => !p.in_stock);
+  const approvePendingProducts = async () => {
+    if (!pendingReview.length) {
+      toast({ title: "Nothing pending", description: "No products waiting for review." });
+      return;
+    }
+    if (!confirm(`Approve ${pendingReview.length} products and show them on the website?`)) return;
+    try {
+      const ids = pendingReview.map((p) => p.id);
+      // batch update
+      const { error } = await supabase
+        .from("products")
+        .update({ in_stock: true })
+        .in("id", ids);
+      if (error) throw error;
+      toast({
+        title: "Approved",
+        description: `${ids.length} products are now visible on the website.`,
+      });
+      fetchProducts();
+    } catch (e: any) {
+      toast({
+        title: "Error",
+        description: e.message || "Failed to approve",
+        variant: "destructive",
+      });
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       const { data, error } = await supabase
@@ -397,6 +427,15 @@ const ProductManagement = () => {
         <div className="flex flex-wrap gap-3">
           {/* Product Seeder Component */}
           <ProductSeeder />
+          {pendingReview.length > 0 && (
+            <Button
+              variant="default"
+              className="bg-emerald-600 hover:bg-emerald-700"
+              onClick={approvePendingProducts}
+            >
+              Approve {pendingReview.length} pending for website
+            </Button>
+          )}
 
           {/* AI Market Research */}
           <AIMarketResearch

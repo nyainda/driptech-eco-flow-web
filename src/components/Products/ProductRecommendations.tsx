@@ -49,7 +49,7 @@ const ProductRecommendations = ({
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const allProducts = await dataService.getProducts();
+        const allProducts = await dataService.getProducts({ inStock: true });
 
         // Filter out current product
         const filteredProducts = currentProductId

@@ -179,7 +179,7 @@ const ProductSeeder = () => {
           subcategory: product.subcategory,
           description: product.description,
           price: product.price,
-          in_stock: true,
+          in_stock: false, // pending review — hidden on public site until approved
           featured: false,
           images: product.images,
           features: product.features,
@@ -380,7 +380,7 @@ const ProductSeeder = () => {
               <p className="font-medium">Safe to run anytime</p>
               <ul className="mt-1 space-y-1 text-muted-foreground">
                 <li>
-                  • Only <strong className="text-foreground">new unique names</strong> are inserted — existing products are never deleted or changed
+                  • Only <strong className="text-foreground">new unique names</strong> are inserted — existing products are never deleted or changed<br />• New imports are <strong className="text-foreground">pending review</strong> (not shown on the website until you set In stock / Approve)
                 </li>
                 <li>
                   • Every imported SKU includes stock images — replace with your real photos in Product Management

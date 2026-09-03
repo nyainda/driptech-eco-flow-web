@@ -66,7 +66,7 @@ const SearchManager = () => {
             setIsLoading(true);
             try {
                 const [products, kits, blogs, videos] = await Promise.all([
-                    dataService.getProducts({ search: query, limit: 5 }),
+                    dataService.getProducts({ search: query, limit: 5, inStock: true }),
                     dataService.getIrrigationKits({ search: query, limit: 5 }),
                     dataService.getBlogPostsPaginated({ search: query, limit: 5 }),
                     dataService.getVideos({ search: query, limit: 5 }),

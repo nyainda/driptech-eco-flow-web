@@ -165,7 +165,7 @@ const ProductsShowcase = ({
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await dataService.getProducts({ limit: 300 });
+        const data = await dataService.getProducts({ limit: 300, inStock: true });
         setAllProducts(data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
