@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Database, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { buildChinaStyleCatalog } from "@/data/chinaIrrigationCatalog";
 
 interface SeederStats {
   total: number;
@@ -141,6 +142,88 @@ const ProductSeeder = () => {
     }
   };
 
+
+  /** Import China-trade SKU matrix — only names not already in DB */
+  const importChinaCatalog = async () => {
+    setIsSeeding(true);
+    try {
+      const catalog = buildChinaStyleCatalog();
+      const { data: existing } = await supabase.from("products").select("name");
+      const existingNames = new Set(
+        (existing || []).map((r: any) => (r.name || "").toLowerCase().trim()),
+      );
+      const toInsert = catalog.filter(
+        (p) => !existingNames.has(p.name.toLowerCase().trim()),
+      );
+
+      if (toInsert.length === 0) {
+        toast({
+          title: "Nothing new",
+          description: "All SKUs already exist — no duplicates added.",
+        });
+        setIsSeeding(false);
+        return;
+      }
+
+      setSeedStats({ total: toInsert.length, success: 0, failed: 0, progress: 0 });
+      let successCount = 0;
+      let failedCount = 0;
+      const batchSize = 25;
+
+      for (let i = 0; i < toInsert.length; i += batchSize) {
+        const slice = toInsert.slice(i, i + batchSize);
+        const batch = slice.map((product) => ({
+          name: product.name,
+          model_number: product.model_number,
+          category: product.category as any,
+          subcategory: product.subcategory,
+          description: product.description,
+          price: product.price,
+          in_stock: true,
+          featured: false,
+          images: product.images,
+          features: product.features,
+          applications: product.applications,
+          specifications: product.specifications.reduce(
+            (acc: Record<string, string>, s) => {
+              acc[s.name] = s.unit ? `${s.value} ${s.unit}` : s.value;
+              return acc;
+            },
+            {},
+          ),
+        }));
+
+        const { error } = await supabase.from("products").insert(batch);
+        if (error) {
+          console.error(error);
+          failedCount += batch.length;
+        } else {
+          successCount += batch.length;
+        }
+        setSeedStats({
+          total: toInsert.length,
+          success: successCount,
+          failed: failedCount,
+          progress: Math.round(((i + batch.length) / toInsert.length) * 100),
+        });
+      }
+
+      setHasSeeded(true);
+      toast({
+        title: "China market import done",
+        description: `Inserted ${successCount} new unique products. ${failedCount} failed. Existing products unchanged.`,
+      });
+    } catch (e: any) {
+      toast({
+        title: "Import failed",
+        description: e.message || "Error",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSeeding(false);
+    }
+  };
+
   const seedProducts = async () => {
     if (hasProducts || hasSeeded) {
       toast({
@@ -238,10 +321,9 @@ const ProductSeeder = () => {
           Product Database Seeder
         </CardTitle>
         <CardDescription className="text-xs sm:text-sm">
-          Generate sample irrigation products for initial setup.
+          Import unique China-trade style irrigation SKUs (sizes, spacings, fittings). Skips names already in the database — no duplicates, no overwrites.
           <span className="text-orange-600 ml-1 font-medium">
-            Note: Seeding can only be done once. Edit products individually in
-            Product Management.
+            Skips duplicate names. Safe to run again — only missing SKUs are inserted.
           </span>
         </CardDescription>
       </CardHeader>
@@ -273,19 +355,19 @@ const ProductSeeder = () => {
 
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <Button
-            onClick={seedProducts}
-            disabled={isSeeding || hasSeeded || hasProducts}
+            onClick={importChinaCatalog}
+            disabled={isSeeding}
             className="h-9 sm:h-10 flex items-center gap-2 w-full sm:w-auto"
           >
             {isSeeding ? (
               <>
-                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                Seeding Products...
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Importing unique SKUs…
               </>
             ) : (
               <>
-                <Database className="h-4 w-4 sm:h-5 sm:w-5" />
-                Seed 200 Products
+                <Database className="h-4 w-4" />
+                Import China-style unique products
               </>
             )}
           </Button>
@@ -301,7 +383,7 @@ const ProductSeeder = () => {
               <ul className="mt-1 text-yellow-700 dark:text-yellow-300 space-y-1">
                 <li>• Seeding can only be done once to prevent duplicates</li>
                 <li>
-                  • Seeded products will have no images - add images via Product
+                  • China import includes stock images on every product — replace with your photos in Product
                   Management
                 </li>
                 <li>
