@@ -15,6 +15,8 @@ import {
   Zap,
 } from "lucide-react";
 import SimpleContactForm from "@/components/common/SimpleContactForm";
+import SEOHead from "@/components/common/SEOHead";
+import { buildContactPageSchema, buildLocalBusinessSchema, SITE_COMPANY } from "@/config/company";
 
 const Contact = () => {
   const contactInfo = [
@@ -59,6 +61,14 @@ const Contact = () => {
   ];
 
   return (
+    <>
+    <SEOHead
+      title={`Contact ${SITE_COMPANY.name} | Call ${SITE_COMPANY.phonePrimaryDisplay} | Drip Irrigation Kenya`}
+      description={`Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay} for drip kits, driplines and irrigation supplies in Kenya. Email ${SITE_COMPANY.email}. Nairobi-based, nationwide delivery.`}
+      keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0723407849, 0794494515"
+      url="https://www.dripstech.co.ke/contact"
+      schema={[buildLocalBusinessSchema(), buildContactPageSchema()]}
+    />
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       <main>
@@ -307,6 +317,7 @@ const Contact = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

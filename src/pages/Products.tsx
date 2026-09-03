@@ -7,6 +7,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import Breadcrumbs from "@/components/Layout/Breadcrumbs";
 import SEOHead from "@/components/common/SEOHead";
+import { buildLocalBusinessSchema, SITE_COMPANY } from "@/config/company";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -1511,46 +1512,113 @@ const Products = () => {
   // The catalogue is the page that visibly lists these products. Marking each
   // listed item up here gives search engines product names, categories, images
   // and live prices without inventing reviews or ratings that cannot be verified.
-  const productCatalogSchema = products.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: category ? `${getCategoryTitle(category)} products` : "DripTech irrigation products",
-    numberOfItems: products.length,
-    itemListElement: products.map((product, index) => {
-      const item: Record<string, unknown> = {
-        "@type": "Product",
-        name: product.name,
-        sku: product.id,
-        description: product.description || `${product.name} irrigation equipment from DripTech Kenya.`,
-        category: product.category.replaceAll("_", " "),
-        brand: { "@type": "Brand", name: "DripTech" },
-      };
+  const categoryLabel = category ? getCategoryTitle(category) : "Irrigation Products";
+  const productPageTitle = category
+    ? `${categoryLabel} for Sale Kenya | Call ${SITE_COMPANY.phonePrimaryDisplay} | ${SITE_COMPANY.name}`
+    : `Drip Irrigation Products & Kits for Sale Kenya | Call ${SITE_COMPANY.phonePrimaryDisplay}`;
+  const productPageDescription = category
+    ? `Buy ${categoryLabel.toLowerCase()} in Kenya from ${SITE_COMPANY.name}. Prices in KES, stock in Nairobi, delivery nationwide. Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} / ${SITE_COMPANY.phoneSecondaryDisplay}.`
+    : `Buy drip lines, sprinklers, pumps, filters and irrigation kits in Kenya. Clear pricing, WhatsApp support. Call ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay}.`;
+  const productPageKeywords = [
+    categoryLabel.toLowerCase() + " Kenya",
+    categoryLabel.toLowerCase() + " for sale",
+    "drip irrigation Kenya",
+    "irrigation products Kenya",
+    "buy irrigation equipment Nairobi",
+    SITE_COMPANY.phonePrimary.replace("+", ""),
+    SITE_COMPANY.phoneSecondary.replace("+", ""),
+  ].join(", ");
 
-      if (product.images?.[0]) item.image = product.images[0];
-      if (typeof product.price === "number" && product.price > 0) {
-        item.offers = {
-          "@type": "Offer",
-          price: product.price,
-          priceCurrency: "KES",
-          availability: product.in_stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-          seller: { "@type": "Organization", name: "DripTech" },
-        };
-      }
+  const productCatalogSchema =
+    products.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: category
+            ? `${categoryLabel} — ${SITE_COMPANY.name}`
+            : `Irrigation products — ${SITE_COMPANY.name}`,
+          description: productPageDescription,
+          numberOfItems: Math.min(products.length, 50),
+          itemListElement: products.slice(0, 50).map((product, index) => {
+            const item: Record<string, unknown> = {
+              "@type": "Product",
+              name: product.name,
+              sku: product.id,
+              description:
+                product.description ||
+                `${product.name} — irrigation equipment for Kenyan farms from ${SITE_COMPANY.name}.`,
+              category: (product.category || "").replaceAll("_", " "),
+              brand: { "@type": "Brand", name: SITE_COMPANY.name },
+              url: `https://www.dripstech.co.ke/products/${category || product.category || "all"}`,
+            };
 
-      return {
-        "@type": "ListItem",
-        position: index + 1,
-        item,
-      };
-    }),
-  } : undefined;
+            if (product.images?.[0]) item.image = product.images[0];
+            if (typeof product.price === "number" && product.price > 0) {
+              item.offers = {
+                "@type": "Offer",
+                price: product.price,
+                priceCurrency: "KES",
+                availability: product.in_stock
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+                url: `https://www.dripstech.co.ke/products/${category || "all"}`,
+                seller: {
+                  "@type": "Organization",
+                  name: SITE_COMPANY.name,
+                  telephone: SITE_COMPANY.phonePrimary,
+                },
+              };
+            }
+            if (product.video_url) {
+              item.subjectOf = {
+                "@type": "VideoObject",
+                name: product.name,
+                contentUrl: product.video_url,
+                thumbnailUrl: product.images?.[0],
+              };
+            }
+
+            return {
+              "@type": "ListItem",
+              position: index + 1,
+              item,
+            };
+          }),
+        }
+      : undefined;
+
+  const productsSchema = [
+    buildLocalBusinessSchema(),
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: productPageTitle,
+      description: productPageDescription,
+      url: category
+        ? `https://www.dripstech.co.ke/products/${category}`
+        : "https://www.dripstech.co.ke/products",
+      isPartOf: { "@id": "https://www.dripstech.co.ke/#website" },
+      about: {
+        "@type": "Thing",
+        name: categoryLabel,
+      },
+    },
+    ...(productCatalogSchema ? [productCatalogSchema] : []),
+  ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title={category ? `${getCategoryTitle(category)} Irrigation Solutions | DripTech` : "Advanced Irrigation Products & Kits Kenya | DripTech"}
-        description={category ? `Explore our professional ${getCategoryTitle(category).toLowerCase()} range in Kenya. Performance-driven irrigation equipment.` : "Discover Kenya's largest catalog of smart drip irrigation kits, sprinklers, water pumps, and high-efficiency water solutions."}
-        schema={productCatalogSchema}
+        title={productPageTitle}
+        description={productPageDescription}
+        keywords={productPageKeywords}
+        url={
+          category
+            ? `https://www.dripstech.co.ke/products/${category}`
+            : "https://www.dripstech.co.ke/products"
+        }
+        type="product"
+        schema={productsSchema}
       />
       <Header />
       <WhatsAppContact

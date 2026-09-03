@@ -130,23 +130,7 @@ const Footer = () => {
                       <MessageCircle className="h-4 w-4" />
                     </a>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <a
-                      href="tel:0114575401"
-                      className="hover:text-foreground transition-colors"
-                    >
-                      0114575401
-                    </a>
-                    <a
-                      href="https://wa.me/254114575401"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                    </a>
                   </div>
-                </div>
               </div>
 
               <div className="flex items-start gap-3">
@@ -239,7 +223,7 @@ const Footer = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-muted-foreground">
-              © {currentYear} DripTech Irrigation Solutions. All rights reserved.
+              © {currentYear} DripTech Eco Flow. All rights reserved.
             </div>
             <div className="flex gap-6 text-sm">
               <a href="/privacy" className={link}>Privacy Policy</a>

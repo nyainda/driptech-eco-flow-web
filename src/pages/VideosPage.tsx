@@ -1,3 +1,5 @@
+import SEOHead from "@/components/common/SEOHead";
+import { buildLocalBusinessSchema, SITE_COMPANY } from "@/config/company";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -274,8 +276,69 @@ const VideosPage = () => {
     );
   }
 
+  const videoListSchema =
+    videos.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Irrigation videos — DripTech Eco Flow",
+          description:
+            "Drip irrigation installation guides, product demos and farm tutorials from DripTech Eco Flow Kenya.",
+          numberOfItems: Math.min(videos.length, 30),
+          itemListElement: videos.slice(0, 30).map((video, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            item: {
+              "@type": "VideoObject",
+              name: video.title,
+              description:
+                video.description ||
+                `${video.title} — irrigation video from DripTech Eco Flow Kenya.`,
+              thumbnailUrl:
+                video.thumbnail_url ||
+                (video.video_url && video.video_url.includes("youtu")
+                  ? `https://img.youtube.com/vi/${(video.video_url.match(/(?:v=|be\/)([^&]+)/) || [])[1] || ""}/hqdefault.jpg`
+                  : undefined),
+              contentUrl: video.video_url,
+              embedUrl: video.video_url,
+              uploadDate: video.created_at,
+              interactionStatistic: {
+                "@type": "InteractionCounter",
+                interactionType: { "@type": "WatchAction" },
+                userInteractionCount: video.views || 0,
+              },
+              publisher: {
+                "@type": "Organization",
+                name: SITE_COMPANY.name,
+                logo: {
+                  "@type": "ImageObject",
+                  url: SITE_COMPANY.logo,
+                },
+              },
+            },
+          })),
+        }
+      : undefined;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title={`Irrigation Videos & Drip Installation Guides Kenya | ${SITE_COMPANY.name}`}
+        description={`Watch drip irrigation installation, kit demos and farm tutorials. Call ${SITE_COMPANY.phonePrimaryDisplay} for products shown in the videos. ${SITE_COMPANY.name}, Nairobi.`}
+        keywords="drip irrigation video Kenya, irrigation installation guide, dripline demo Kenya, farm irrigation tutorial, DripTech videos"
+        url="https://www.dripstech.co.ke/videos"
+        schema={[
+          buildLocalBusinessSchema(),
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Irrigation Video Library",
+            url: "https://www.dripstech.co.ke/videos",
+            about: "Drip irrigation and farm water systems",
+          },
+          ...(videoListSchema ? [videoListSchema] : []),
+        ]}
+      />
       <Header />
       <main>
         <section className="py-12 sm:py-16 lg:py-20 bg-background border-b border-border">
