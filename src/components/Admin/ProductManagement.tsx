@@ -573,6 +573,7 @@ const ProductManagement = () => {
           onApprove={approveOne}
             onReject={rejectOne}
             onDelete={handleDelete}
+            onImagesUpdated={fetchProducts}
           currentPage={currentPage}
           productsPerPage={productsPerPage}
         />
