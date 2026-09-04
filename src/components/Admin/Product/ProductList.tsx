@@ -29,6 +29,9 @@ interface Product {
   subcategory?: string;
   description?: string;
   technical_specs?: any;
+  specifications?: Record<string, string> | { name: string; value: string; unit?: string }[];
+  features?: string[];
+  applications?: string[];
   price?: number;
   images?: string[];
   in_stock: boolean;
@@ -167,6 +170,38 @@ const ProductList: React.FC<ProductListProps> = ({
               <p className="text-xs sm:text-sm text-slate-600 dark:text-gray-400 mb-3 sm:mb-4 line-clamp-3">
                 {product.description || "No description available"}
               </p>
+
+              {product.specifications && (
+                (() => {
+                  const specEntries: [string, string][] = Array.isArray(product.specifications)
+                    ? product.specifications.map((s) => [s.name, s.unit ? `${s.value} ${s.unit}` : s.value])
+                    : Object.entries(product.specifications);
+                  if (specEntries.length === 0) return null;
+                  return (
+                    <div className="mb-3 sm:mb-4 grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/50 p-2.5 text-xs">
+                      {specEntries.map(([k, v]) => (
+                        <div key={k} className="truncate">
+                          <span className="text-slate-500 dark:text-gray-500">{k}:</span>{" "}
+                          <span className="font-medium text-slate-700 dark:text-gray-300">{v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()
+              )}
+
+              {product.features && product.features.length > 0 && (
+                <div className="mb-3 sm:mb-4 flex flex-wrap gap-1.5">
+                  {product.features.slice(0, 3).map((f) => (
+                    <span
+                      key={f}
+                      className="rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 text-[11px] text-emerald-700 dark:text-emerald-300"
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {displayPrice && (
                 <div className="mb-3 sm:mb-4">
