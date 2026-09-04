@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -17,7 +17,9 @@ import {
   CheckCircle2,
   XCircle,
   Package,
+  ImagePlus,
 } from "lucide-react";
+import ImagePickerDialog from "./ImagePickerDialog";
 
 interface Product {
   id: string;
@@ -46,6 +48,7 @@ interface ProductListProps {
   onDelete: (id: string) => void;
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
+  onImagesUpdated?: () => void;
   currentPage: number;
   productsPerPage: number;
 }
@@ -57,9 +60,11 @@ const ProductList: React.FC<ProductListProps> = ({
   onDelete,
   onApprove,
   onReject,
+  onImagesUpdated,
   currentPage,
   productsPerPage,
 }) => {
+  const [imagePickerFor, setImagePickerFor] = useState<Product | null>(null);
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(
@@ -232,6 +237,15 @@ const ProductList: React.FC<ProductListProps> = ({
                 <Button
                   size="sm"
                   variant="outline"
+                  className="h-8 w-8 sm:h-9 sm:w-9 p-0 border-purple-300 dark:border-gray-600 text-purple-600 dark:text-gray-400 hover:bg-purple-50 dark:hover:bg-gray-800 hover:border-purple-500 dark:hover:border-gray-500 transition-colors"
+                  onClick={() => setImagePickerFor(product)}
+                  title="Find a real photo"
+                >
+                  <ImagePlus className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
                   className="h-8 w-8 sm:h-9 sm:w-9 p-0 border-blue-300 dark:border-gray-600 text-blue-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-gray-800 hover:border-blue-500 dark:hover:border-gray-500 transition-colors"
                   onClick={() => onEdit(product)}
                 >
@@ -250,6 +264,17 @@ const ProductList: React.FC<ProductListProps> = ({
           </Card>
         );
       })}
+
+      {imagePickerFor && (
+        <ImagePickerDialog
+          open={!!imagePickerFor}
+          onOpenChange={(open) => !open && setImagePickerFor(null)}
+          productId={imagePickerFor.id}
+          productName={imagePickerFor.name}
+          existingImages={imagePickerFor.images}
+          onSaved={onImagesUpdated}
+        />
+      )}
     </div>
   );
 };
