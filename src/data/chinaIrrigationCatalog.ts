@@ -2,8 +2,12 @@
  * DripTech irrigation product catalogue — researched Kenya/China market pricing.
  * 1000+ unique SKUs generated combinatorially from real product dimensions
  * (diameter x pressure rating x flow rate x size etc.) — no filler/placeholder rows.
- * Images are keyword-matched stock placeholders (loremflickr) — replace with real
- * product photography before publishing a SKU live.
+ *
+ * IMAGES: intentionally empty. Automated placeholder image sources (keyword-matched
+ * stock photo services, and this repo's own /public/seed-products/*.jpg files) were
+ * tested and found to return incorrect or unrelated photos for many SKUs — a wrong
+ * product photo is worse than no photo. Add real photography per-SKU via Product
+ * Management before setting a product live / in_stock.
  */
 
 export type CatalogProduct = {
@@ -30,7 +34,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 1L/h (500m Roll)",
@@ -42,7 +46,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 1L/h (1000m Roll)",
@@ -54,7 +58,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 2L/h (200m Roll)",
@@ -66,7 +70,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 2L/h (500m Roll)",
@@ -78,7 +82,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 2L/h (1000m Roll)",
@@ -90,7 +94,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 4L/h (200m Roll)",
@@ -102,7 +106,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 4L/h (500m Roll)",
@@ -114,7 +118,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 20cm Spacing 4L/h (1000m Roll)",
@@ -126,7 +130,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 1L/h (200m Roll)",
@@ -138,7 +142,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 1L/h (500m Roll)",
@@ -150,7 +154,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 1L/h (1000m Roll)",
@@ -162,7 +166,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 2L/h (200m Roll)",
@@ -174,7 +178,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 2L/h (500m Roll)",
@@ -186,7 +190,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 2L/h (1000m Roll)",
@@ -198,7 +202,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 4L/h (200m Roll)",
@@ -210,7 +214,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 4L/h (500m Roll)",
@@ -222,7 +226,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 30cm Spacing 4L/h (1000m Roll)",
@@ -234,7 +238,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 1L/h (200m Roll)",
@@ -246,7 +250,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 1L/h (500m Roll)",
@@ -258,7 +262,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 1L/h (1000m Roll)",
@@ -270,7 +274,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 2L/h (200m Roll)",
@@ -282,7 +286,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 2L/h (500m Roll)",
@@ -294,7 +298,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 2L/h (1000m Roll)",
@@ -306,7 +310,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 4L/h (200m Roll)",
@@ -318,7 +322,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 4L/h (500m Roll)",
@@ -330,7 +334,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 40cm Spacing 4L/h (1000m Roll)",
@@ -342,7 +346,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 1L/h (200m Roll)",
@@ -354,7 +358,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 1L/h (500m Roll)",
@@ -366,7 +370,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 1L/h (1000m Roll)",
@@ -378,7 +382,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 2L/h (200m Roll)",
@@ -390,7 +394,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 2L/h (500m Roll)",
@@ -402,7 +406,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 2L/h (1000m Roll)",
@@ -414,7 +418,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 4L/h (200m Roll)",
@@ -426,7 +430,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 4L/h (500m Roll)",
@@ -438,7 +442,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm Inline Drip Tape 50cm Spacing 4L/h (1000m Roll)",
@@ -450,7 +454,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 20cm Spacing 2L/h (200m Roll)",
@@ -462,7 +466,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 20cm Spacing 2L/h (500m Roll)",
@@ -474,7 +478,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 20cm Spacing 2L/h (1000m Roll)",
@@ -486,7 +490,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 20cm Spacing 4L/h (200m Roll)",
@@ -498,7 +502,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 20cm Spacing 4L/h (500m Roll)",
@@ -510,7 +514,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 20cm Spacing 4L/h (1000m Roll)",
@@ -522,7 +526,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 30cm Spacing 2L/h (200m Roll)",
@@ -534,7 +538,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 30cm Spacing 2L/h (500m Roll)",
@@ -546,7 +550,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 30cm Spacing 2L/h (1000m Roll)",
@@ -558,7 +562,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 30cm Spacing 4L/h (200m Roll)",
@@ -570,7 +574,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 30cm Spacing 4L/h (500m Roll)",
@@ -582,7 +586,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 30cm Spacing 4L/h (1000m Roll)",
@@ -594,7 +598,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 40cm Spacing 2L/h (200m Roll)",
@@ -606,7 +610,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 40cm Spacing 2L/h (500m Roll)",
@@ -618,7 +622,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 40cm Spacing 2L/h (1000m Roll)",
@@ -630,7 +634,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 40cm Spacing 4L/h (200m Roll)",
@@ -642,7 +646,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 40cm Spacing 4L/h (500m Roll)",
@@ -654,7 +658,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 40cm Spacing 4L/h (1000m Roll)",
@@ -666,7 +670,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 50cm Spacing 2L/h (200m Roll)",
@@ -678,7 +682,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 50cm Spacing 2L/h (500m Roll)",
@@ -690,7 +694,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 50cm Spacing 2L/h (1000m Roll)",
@@ -702,7 +706,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 50cm Spacing 4L/h (200m Roll)",
@@ -714,7 +718,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 50cm Spacing 4L/h (500m Roll)",
@@ -726,7 +730,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "12mm PC Dripline 50cm Spacing 4L/h (1000m Roll)",
@@ -738,7 +742,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 1L/h (200m Roll)",
@@ -750,7 +754,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 1L/h (500m Roll)",
@@ -762,7 +766,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 1L/h (1000m Roll)",
@@ -774,7 +778,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 2L/h (200m Roll)",
@@ -786,7 +790,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 2L/h (500m Roll)",
@@ -798,7 +802,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 2L/h (1000m Roll)",
@@ -810,7 +814,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 4L/h (200m Roll)",
@@ -822,7 +826,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 4L/h (500m Roll)",
@@ -834,7 +838,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 20cm Spacing 4L/h (1000m Roll)",
@@ -846,7 +850,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 1L/h (200m Roll)",
@@ -858,7 +862,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 1L/h (500m Roll)",
@@ -870,7 +874,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 1L/h (1000m Roll)",
@@ -882,7 +886,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 2L/h (200m Roll)",
@@ -894,7 +898,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 2L/h (500m Roll)",
@@ -906,7 +910,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 2L/h (1000m Roll)",
@@ -918,7 +922,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 4L/h (200m Roll)",
@@ -930,7 +934,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 4L/h (500m Roll)",
@@ -942,7 +946,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 30cm Spacing 4L/h (1000m Roll)",
@@ -954,7 +958,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 1L/h (200m Roll)",
@@ -966,7 +970,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 1L/h (500m Roll)",
@@ -978,7 +982,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 1L/h (1000m Roll)",
@@ -990,7 +994,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 2L/h (200m Roll)",
@@ -1002,7 +1006,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 2L/h (500m Roll)",
@@ -1014,7 +1018,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 2L/h (1000m Roll)",
@@ -1026,7 +1030,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 4L/h (200m Roll)",
@@ -1038,7 +1042,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 4L/h (500m Roll)",
@@ -1050,7 +1054,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 40cm Spacing 4L/h (1000m Roll)",
@@ -1062,7 +1066,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 1L/h (200m Roll)",
@@ -1074,7 +1078,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 1L/h (500m Roll)",
@@ -1086,7 +1090,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 1L/h (1000m Roll)",
@@ -1098,7 +1102,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 2L/h (200m Roll)",
@@ -1110,7 +1114,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 2L/h (500m Roll)",
@@ -1122,7 +1126,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 2L/h (1000m Roll)",
@@ -1134,7 +1138,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 4L/h (200m Roll)",
@@ -1146,7 +1150,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 4L/h (500m Roll)",
@@ -1158,7 +1162,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm Inline Drip Tape 50cm Spacing 4L/h (1000m Roll)",
@@ -1170,7 +1174,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 20cm Spacing 2L/h (200m Roll)",
@@ -1182,7 +1186,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 20cm Spacing 2L/h (500m Roll)",
@@ -1194,7 +1198,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 20cm Spacing 2L/h (1000m Roll)",
@@ -1206,7 +1210,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 20cm Spacing 4L/h (200m Roll)",
@@ -1218,7 +1222,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 20cm Spacing 4L/h (500m Roll)",
@@ -1230,7 +1234,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 20cm Spacing 4L/h (1000m Roll)",
@@ -1242,7 +1246,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 30cm Spacing 2L/h (200m Roll)",
@@ -1254,7 +1258,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 30cm Spacing 2L/h (500m Roll)",
@@ -1266,7 +1270,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 30cm Spacing 2L/h (1000m Roll)",
@@ -1278,7 +1282,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 30cm Spacing 4L/h (200m Roll)",
@@ -1290,7 +1294,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 30cm Spacing 4L/h (500m Roll)",
@@ -1302,7 +1306,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 30cm Spacing 4L/h (1000m Roll)",
@@ -1314,7 +1318,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 40cm Spacing 2L/h (200m Roll)",
@@ -1326,7 +1330,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 40cm Spacing 2L/h (500m Roll)",
@@ -1338,7 +1342,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 40cm Spacing 2L/h (1000m Roll)",
@@ -1350,7 +1354,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 40cm Spacing 4L/h (200m Roll)",
@@ -1362,7 +1366,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 40cm Spacing 4L/h (500m Roll)",
@@ -1374,7 +1378,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 40cm Spacing 4L/h (1000m Roll)",
@@ -1386,7 +1390,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 50cm Spacing 2L/h (200m Roll)",
@@ -1398,7 +1402,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 50cm Spacing 2L/h (500m Roll)",
@@ -1410,7 +1414,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 50cm Spacing 2L/h (1000m Roll)",
@@ -1422,7 +1426,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 50cm Spacing 4L/h (200m Roll)",
@@ -1434,7 +1438,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 50cm Spacing 4L/h (500m Roll)",
@@ -1446,7 +1450,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "16mm PC Dripline 50cm Spacing 4L/h (1000m Roll)",
@@ -1458,7 +1462,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 1L/h (200m Roll)",
@@ -1470,7 +1474,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 1L/h (500m Roll)",
@@ -1482,7 +1486,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 1L/h (1000m Roll)",
@@ -1494,7 +1498,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 2L/h (200m Roll)",
@@ -1506,7 +1510,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 2L/h (500m Roll)",
@@ -1518,7 +1522,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 2L/h (1000m Roll)",
@@ -1530,7 +1534,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 4L/h (200m Roll)",
@@ -1542,7 +1546,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 4L/h (500m Roll)",
@@ -1554,7 +1558,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 20cm Spacing 4L/h (1000m Roll)",
@@ -1566,7 +1570,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 1L/h (200m Roll)",
@@ -1578,7 +1582,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 1L/h (500m Roll)",
@@ -1590,7 +1594,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 1L/h (1000m Roll)",
@@ -1602,7 +1606,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 2L/h (200m Roll)",
@@ -1614,7 +1618,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 2L/h (500m Roll)",
@@ -1626,7 +1630,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 2L/h (1000m Roll)",
@@ -1638,7 +1642,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 4L/h (200m Roll)",
@@ -1650,7 +1654,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 4L/h (500m Roll)",
@@ -1662,7 +1666,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 30cm Spacing 4L/h (1000m Roll)",
@@ -1674,7 +1678,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 1L/h (200m Roll)",
@@ -1686,7 +1690,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 1L/h (500m Roll)",
@@ -1698,7 +1702,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 1L/h (1000m Roll)",
@@ -1710,7 +1714,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 2L/h (200m Roll)",
@@ -1722,7 +1726,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 2L/h (500m Roll)",
@@ -1734,7 +1738,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 2L/h (1000m Roll)",
@@ -1746,7 +1750,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 4L/h (200m Roll)",
@@ -1758,7 +1762,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 4L/h (500m Roll)",
@@ -1770,7 +1774,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 40cm Spacing 4L/h (1000m Roll)",
@@ -1782,7 +1786,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 1L/h (200m Roll)",
@@ -1794,7 +1798,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 1L/h (500m Roll)",
@@ -1806,7 +1810,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 1L/h (1000m Roll)",
@@ -1818,7 +1822,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "1", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 2L/h (200m Roll)",
@@ -1830,7 +1834,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 2L/h (500m Roll)",
@@ -1842,7 +1846,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 2L/h (1000m Roll)",
@@ -1854,7 +1858,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 4L/h (200m Roll)",
@@ -1866,7 +1870,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 4L/h (500m Roll)",
@@ -1878,7 +1882,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm Inline Drip Tape 50cm Spacing 4L/h (1000m Roll)",
@@ -1890,7 +1894,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.15", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 20cm Spacing 2L/h (200m Roll)",
@@ -1902,7 +1906,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 20cm Spacing 2L/h (500m Roll)",
@@ -1914,7 +1918,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 20cm Spacing 2L/h (1000m Roll)",
@@ -1926,7 +1930,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 20cm Spacing 4L/h (200m Roll)",
@@ -1938,7 +1942,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 20cm Spacing 4L/h (500m Roll)",
@@ -1950,7 +1954,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 20cm Spacing 4L/h (1000m Roll)",
@@ -1962,7 +1966,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "20", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 30cm Spacing 2L/h (200m Roll)",
@@ -1974,7 +1978,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 30cm Spacing 2L/h (500m Roll)",
@@ -1986,7 +1990,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 30cm Spacing 2L/h (1000m Roll)",
@@ -1998,7 +2002,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 30cm Spacing 4L/h (200m Roll)",
@@ -2010,7 +2014,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 30cm Spacing 4L/h (500m Roll)",
@@ -2022,7 +2026,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 30cm Spacing 4L/h (1000m Roll)",
@@ -2034,7 +2038,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "30", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 40cm Spacing 2L/h (200m Roll)",
@@ -2046,7 +2050,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 40cm Spacing 2L/h (500m Roll)",
@@ -2058,7 +2062,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 40cm Spacing 2L/h (1000m Roll)",
@@ -2070,7 +2074,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 40cm Spacing 4L/h (200m Roll)",
@@ -2082,7 +2086,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 40cm Spacing 4L/h (500m Roll)",
@@ -2094,7 +2098,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 40cm Spacing 4L/h (1000m Roll)",
@@ -2106,7 +2110,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "40", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 50cm Spacing 2L/h (200m Roll)",
@@ -2118,7 +2122,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 50cm Spacing 2L/h (500m Roll)",
@@ -2130,7 +2134,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 50cm Spacing 2L/h (1000m Roll)",
@@ -2142,7 +2146,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "2", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 50cm Spacing 4L/h (200m Roll)",
@@ -2154,7 +2158,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "200", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 50cm Spacing 4L/h (500m Roll)",
@@ -2166,7 +2170,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "500", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "20mm PC Dripline 50cm Spacing 4L/h (1000m Roll)",
@@ -2178,7 +2182,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Wall Thickness", value: "0.3", unit: "mm" }, { name: "Emitter Spacing", value: "50", unit: "cm" }, { name: "Flow Rate", value: "4", unit: "L/h" }, { name: "Roll Length", value: "1000", unit: "m" }, { name: "Working Pressure", value: "0.5-1.2", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/dripline,irrigation,agriculture", "https://loremflickr.com/640/480/dripline,irrigation,agriculture"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 2L/h (Pack of 10)",
@@ -2190,7 +2194,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 2L/h (Pack of 25)",
@@ -2202,7 +2206,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 2L/h (Pack of 50)",
@@ -2214,7 +2218,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 2L/h (Pack of 100)",
@@ -2226,7 +2230,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 4L/h (Pack of 10)",
@@ -2238,7 +2242,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 4L/h (Pack of 25)",
@@ -2250,7 +2254,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 4L/h (Pack of 50)",
@@ -2262,7 +2266,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 4L/h (Pack of 100)",
@@ -2274,7 +2278,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 8L/h (Pack of 10)",
@@ -2286,7 +2290,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 8L/h (Pack of 25)",
@@ -2298,7 +2302,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 8L/h (Pack of 50)",
@@ -2310,7 +2314,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 8L/h (Pack of 100)",
@@ -2322,7 +2326,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 16L/h (Pack of 10)",
@@ -2334,7 +2338,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "16L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 16L/h (Pack of 25)",
@@ -2346,7 +2350,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "16L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 16L/h (Pack of 50)",
@@ -2358,7 +2362,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "16L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Compensating Dripper 16L/h (Pack of 100)",
@@ -2370,7 +2374,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "16L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 2L/h (Pack of 10)",
@@ -2382,7 +2386,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 2L/h (Pack of 25)",
@@ -2394,7 +2398,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 2L/h (Pack of 50)",
@@ -2406,7 +2410,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 2L/h (Pack of 100)",
@@ -2418,7 +2422,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 4L/h (Pack of 10)",
@@ -2430,7 +2434,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 4L/h (Pack of 25)",
@@ -2442,7 +2446,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 4L/h (Pack of 50)",
@@ -2454,7 +2458,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 4L/h (Pack of 100)",
@@ -2466,7 +2470,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 8L/h (Pack of 10)",
@@ -2478,7 +2482,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 8L/h (Pack of 25)",
@@ -2490,7 +2494,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 8L/h (Pack of 50)",
@@ -2502,7 +2506,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Button Dripper 8L/h (Pack of 100)",
@@ -2514,7 +2518,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 0-70L/h Adjustable (Pack of 10)",
@@ -2526,7 +2530,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "0-70L/h Adjustable" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 0-70L/h Adjustable (Pack of 25)",
@@ -2538,7 +2542,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "0-70L/h Adjustable" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 0-70L/h Adjustable (Pack of 50)",
@@ -2550,7 +2554,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "0-70L/h Adjustable" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 0-70L/h Adjustable (Pack of 100)",
@@ -2562,7 +2566,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "0-70L/h Adjustable" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 70L/h (Pack of 10)",
@@ -2574,7 +2578,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 70L/h (Pack of 25)",
@@ -2586,7 +2590,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 70L/h (Pack of 50)",
@@ -2598,7 +2602,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Adjustable Flow Dripper 70L/h (Pack of 100)",
@@ -2610,7 +2614,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 2L/h (Pack of 10)",
@@ -2622,7 +2626,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 2L/h (Pack of 25)",
@@ -2634,7 +2638,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 2L/h (Pack of 50)",
@@ -2646,7 +2650,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 2L/h (Pack of 100)",
@@ -2658,7 +2662,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "2L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 4L/h (Pack of 10)",
@@ -2670,7 +2674,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 4L/h (Pack of 25)",
@@ -2682,7 +2686,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 4L/h (Pack of 50)",
@@ -2694,7 +2698,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 4L/h (Pack of 100)",
@@ -2706,7 +2710,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "4L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 8L/h (Pack of 10)",
@@ -2718,7 +2722,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 8L/h (Pack of 25)",
@@ -2730,7 +2734,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 8L/h (Pack of 50)",
@@ -2742,7 +2746,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "In-line Barb Dripper 8L/h (Pack of 100)",
@@ -2754,7 +2758,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "8L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 35L/h (Pack of 10)",
@@ -2766,7 +2770,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "35L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 35L/h (Pack of 25)",
@@ -2778,7 +2782,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "35L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 35L/h (Pack of 50)",
@@ -2790,7 +2794,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "35L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 35L/h (Pack of 100)",
@@ -2802,7 +2806,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "35L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 70L/h (Pack of 10)",
@@ -2814,7 +2818,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 70L/h (Pack of 25)",
@@ -2826,7 +2830,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 70L/h (Pack of 50)",
@@ -2838,7 +2842,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 70L/h (Pack of 100)",
@@ -2850,7 +2854,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "70L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 140L/h (Pack of 10)",
@@ -2862,7 +2866,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "140L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 140L/h (Pack of 25)",
@@ -2874,7 +2878,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "140L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 140L/h (Pack of 50)",
@@ -2886,7 +2890,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "140L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Jet Emitter 140L/h (Pack of 100)",
@@ -2898,7 +2902,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "140L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 60L/h (Pack of 10)",
@@ -2910,7 +2914,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "60L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 60L/h (Pack of 25)",
@@ -2922,7 +2926,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "60L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 60L/h (Pack of 50)",
@@ -2934,7 +2938,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "60L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 60L/h (Pack of 100)",
@@ -2946,7 +2950,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "60L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 120L/h (Pack of 10)",
@@ -2958,7 +2962,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "120L/h" }, { name: "Pack Size", value: "10", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 120L/h (Pack of 25)",
@@ -2970,7 +2974,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "120L/h" }, { name: "Pack Size", value: "25", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 120L/h (Pack of 50)",
@@ -2982,7 +2986,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "120L/h" }, { name: "Pack Size", value: "50", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Bubbler Emitter 120L/h (Pack of 100)",
@@ -2994,7 +2998,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Orchards & fruit trees"],
     specifications: [{ name: "Flow Rate", value: "120L/h" }, { name: "Pack Size", value: "100", unit: "units" }, { name: "Operating Pressure", value: "0.5-4.0", unit: "Bar" }, { name: "Filtration Required", value: "120", unit: "mesh" }],
-    images: ["https://loremflickr.com/640/480/drip-emitter,irrigation", "https://loremflickr.com/640/480/drip-emitter,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1/2 in - 4m Radius",
@@ -3006,7 +3010,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1/2 in - 6m Radius",
@@ -3018,7 +3022,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1/2 in - 8m Radius",
@@ -3030,7 +3034,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1/2 in - 10m Radius",
@@ -3042,7 +3046,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1/2 in - 12m Radius",
@@ -3054,7 +3058,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1/2 in - 15m Radius",
@@ -3066,7 +3070,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 3/4 in - 4m Radius",
@@ -3078,7 +3082,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 3/4 in - 6m Radius",
@@ -3090,7 +3094,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 3/4 in - 8m Radius",
@@ -3102,7 +3106,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 3/4 in - 10m Radius",
@@ -3114,7 +3118,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 3/4 in - 12m Radius",
@@ -3126,7 +3130,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 3/4 in - 15m Radius",
@@ -3138,7 +3142,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1 in - 4m Radius",
@@ -3150,7 +3154,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1 in - 6m Radius",
@@ -3162,7 +3166,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1 in - 8m Radius",
@@ -3174,7 +3178,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1 in - 10m Radius",
@@ -3186,7 +3190,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1 in - 12m Radius",
@@ -3198,7 +3202,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Brass Impact Sprinkler 1 in - 15m Radius",
@@ -3210,7 +3214,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 1/2 in - 4m Radius",
@@ -3222,7 +3226,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 1/2 in - 6m Radius",
@@ -3234,7 +3238,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 1/2 in - 8m Radius",
@@ -3246,7 +3250,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 1/2 in - 10m Radius",
@@ -3258,7 +3262,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 1/2 in - 12m Radius",
@@ -3270,7 +3274,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 1/2 in - 15m Radius",
@@ -3282,7 +3286,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 3/4 in - 4m Radius",
@@ -3294,7 +3298,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 3/4 in - 6m Radius",
@@ -3306,7 +3310,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 3/4 in - 8m Radius",
@@ -3318,7 +3322,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 3/4 in - 10m Radius",
@@ -3330,7 +3334,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 3/4 in - 12m Radius",
@@ -3342,7 +3346,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Plastic Impact Sprinkler 3/4 in - 15m Radius",
@@ -3354,7 +3358,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1/2 in - 4m Radius",
@@ -3366,7 +3370,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1/2 in - 6m Radius",
@@ -3378,7 +3382,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1/2 in - 8m Radius",
@@ -3390,7 +3394,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1/2 in - 10m Radius",
@@ -3402,7 +3406,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1/2 in - 12m Radius",
@@ -3414,7 +3418,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1/2 in - 15m Radius",
@@ -3426,7 +3430,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 3/4 in - 4m Radius",
@@ -3438,7 +3442,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 3/4 in - 6m Radius",
@@ -3450,7 +3454,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 3/4 in - 8m Radius",
@@ -3462,7 +3466,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 3/4 in - 10m Radius",
@@ -3474,7 +3478,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 3/4 in - 12m Radius",
@@ -3486,7 +3490,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 3/4 in - 15m Radius",
@@ -3498,7 +3502,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1 in - 4m Radius",
@@ -3510,7 +3514,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1 in - 6m Radius",
@@ -3522,7 +3526,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1 in - 8m Radius",
@@ -3534,7 +3538,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1 in - 10m Radius",
@@ -3546,7 +3550,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1 in - 12m Radius",
@@ -3558,7 +3562,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Gear-Drive Rotor Sprinkler 1 in - 15m Radius",
@@ -3570,7 +3574,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 2 in - 4m Radius",
@@ -3582,7 +3586,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 2 in - 6m Radius",
@@ -3594,7 +3598,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 2 in - 8m Radius",
@@ -3606,7 +3610,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 2 in - 10m Radius",
@@ -3618,7 +3622,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 2 in - 12m Radius",
@@ -3630,7 +3634,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 2 in - 15m Radius",
@@ -3642,7 +3646,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 4 in - 4m Radius",
@@ -3654,7 +3658,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 4 in - 6m Radius",
@@ -3666,7 +3670,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 4 in - 8m Radius",
@@ -3678,7 +3682,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 4 in - 10m Radius",
@@ -3690,7 +3694,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 4 in - 12m Radius",
@@ -3702,7 +3706,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 4 in - 15m Radius",
@@ -3714,7 +3718,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 6 in - 4m Radius",
@@ -3726,7 +3730,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "6 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 6 in - 6m Radius",
@@ -3738,7 +3742,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "6 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 6 in - 8m Radius",
@@ -3750,7 +3754,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "6 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 6 in - 10m Radius",
@@ -3762,7 +3766,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "6 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 6 in - 12m Radius",
@@ -3774,7 +3778,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "6 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Pop-Up Spray Sprinkler 6 in - 15m Radius",
@@ -3786,7 +3790,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "6 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/4 in - 4m Radius",
@@ -3798,7 +3802,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/4 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/4 in - 6m Radius",
@@ -3810,7 +3814,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/4 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/4 in - 8m Radius",
@@ -3822,7 +3826,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/4 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/4 in - 10m Radius",
@@ -3834,7 +3838,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/4 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/4 in - 12m Radius",
@@ -3846,7 +3850,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/4 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/4 in - 15m Radius",
@@ -3858,7 +3862,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/4 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/2 in - 4m Radius",
@@ -3870,7 +3874,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/2 in - 6m Radius",
@@ -3882,7 +3886,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/2 in - 8m Radius",
@@ -3894,7 +3898,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/2 in - 10m Radius",
@@ -3906,7 +3910,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/2 in - 12m Radius",
@@ -3918,7 +3922,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Micro Sprinkler on Stake 1/2 in - 15m Radius",
@@ -3930,7 +3934,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Micro-Sprinkler 1/2 in - 4m Radius",
@@ -3942,7 +3946,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Micro-Sprinkler 1/2 in - 6m Radius",
@@ -3954,7 +3958,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Micro-Sprinkler 1/2 in - 8m Radius",
@@ -3966,7 +3970,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Micro-Sprinkler 1/2 in - 10m Radius",
@@ -3978,7 +3982,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Micro-Sprinkler 1/2 in - 12m Radius",
@@ -3990,7 +3994,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Micro-Sprinkler 1/2 in - 15m Radius",
@@ -4002,7 +4006,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 1/2 in - 4m Radius",
@@ -4014,7 +4018,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 1/2 in - 6m Radius",
@@ -4026,7 +4030,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 1/2 in - 8m Radius",
@@ -4038,7 +4042,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 1/2 in - 10m Radius",
@@ -4050,7 +4054,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 1/2 in - 12m Radius",
@@ -4062,7 +4066,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 1/2 in - 15m Radius",
@@ -4074,7 +4078,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1/2 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 3/4 in - 4m Radius",
@@ -4086,7 +4090,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "4", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 3/4 in - 6m Radius",
@@ -4098,7 +4102,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "6", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 3/4 in - 8m Radius",
@@ -4110,7 +4114,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "8", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 3/4 in - 10m Radius",
@@ -4122,7 +4126,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "10", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Adjustable 0-360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 3/4 in - 12m Radius",
@@ -4134,7 +4138,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "12", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Part Circle" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Mini Rotor Sprinkler 3/4 in - 15m Radius",
@@ -4146,7 +4150,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Landscaping & lawns", "Golf courses", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3/4 in" }, { name: "Throw Radius", value: "15", unit: "m" }, { name: "Operating Pressure", value: "1.5-4.0", unit: "Bar" }, { name: "Arc Pattern", value: "Full Circle 360" }],
-    images: ["https://loremflickr.com/640/480/sprinkler,irrigation", "https://loremflickr.com/640/480/sprinkler,irrigation"],
+    images: [],
   },
   {
     name: "Rain Gun Sprinkler 20m Throw Radius",
@@ -4158,7 +4162,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "20", unit: "m" }, { name: "Flow Rate", value: "18.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Rain Gun Sprinkler 25m Throw Radius",
@@ -4170,7 +4174,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "25", unit: "m" }, { name: "Flow Rate", value: "22.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Rain Gun Sprinkler 30m Throw Radius",
@@ -4182,7 +4186,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "30", unit: "m" }, { name: "Flow Rate", value: "27.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Rain Gun Sprinkler 35m Throw Radius",
@@ -4194,7 +4198,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "35", unit: "m" }, { name: "Flow Rate", value: "31.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Rain Gun Sprinkler 40m Throw Radius",
@@ -4206,7 +4210,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "40", unit: "m" }, { name: "Flow Rate", value: "36.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Rain Gun Sprinkler 45m Throw Radius",
@@ -4218,7 +4222,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "45", unit: "m" }, { name: "Flow Rate", value: "40.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Rain Gun Sprinkler 50m Throw Radius",
@@ -4230,7 +4234,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "50", unit: "m" }, { name: "Flow Rate", value: "45.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Brass Heavy Duty Rain Gun 20m Throw Radius",
@@ -4242,7 +4246,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "20", unit: "m" }, { name: "Flow Rate", value: "18.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Brass Heavy Duty Rain Gun 25m Throw Radius",
@@ -4254,7 +4258,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "25", unit: "m" }, { name: "Flow Rate", value: "22.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Brass Heavy Duty Rain Gun 30m Throw Radius",
@@ -4266,7 +4270,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "30", unit: "m" }, { name: "Flow Rate", value: "27.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Brass Heavy Duty Rain Gun 35m Throw Radius",
@@ -4278,7 +4282,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "35", unit: "m" }, { name: "Flow Rate", value: "31.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Brass Heavy Duty Rain Gun 40m Throw Radius",
@@ -4290,7 +4294,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "40", unit: "m" }, { name: "Flow Rate", value: "36.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Brass Heavy Duty Rain Gun 45m Throw Radius",
@@ -4302,7 +4306,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "45", unit: "m" }, { name: "Flow Rate", value: "40.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Brass Heavy Duty Rain Gun 50m Throw Radius",
@@ -4314,7 +4318,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "50", unit: "m" }, { name: "Flow Rate", value: "45.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Long Range Rain Gun 20m Throw Radius",
@@ -4326,7 +4330,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "20", unit: "m" }, { name: "Flow Rate", value: "18.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Long Range Rain Gun 25m Throw Radius",
@@ -4338,7 +4342,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "25", unit: "m" }, { name: "Flow Rate", value: "22.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Long Range Rain Gun 30m Throw Radius",
@@ -4350,7 +4354,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "30", unit: "m" }, { name: "Flow Rate", value: "27.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Long Range Rain Gun 35m Throw Radius",
@@ -4362,7 +4366,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "35", unit: "m" }, { name: "Flow Rate", value: "31.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Long Range Rain Gun 40m Throw Radius",
@@ -4374,7 +4378,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "40", unit: "m" }, { name: "Flow Rate", value: "36.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Long Range Rain Gun 45m Throw Radius",
@@ -4386,7 +4390,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "45", unit: "m" }, { name: "Flow Rate", value: "40.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Long Range Rain Gun 50m Throw Radius",
@@ -4398,7 +4402,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "50", unit: "m" }, { name: "Flow Rate", value: "45.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Mini Rain Gun 20m Throw Radius",
@@ -4410,7 +4414,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "20", unit: "m" }, { name: "Flow Rate", value: "18.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Mini Rain Gun 25m Throw Radius",
@@ -4422,7 +4426,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "25", unit: "m" }, { name: "Flow Rate", value: "22.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Mini Rain Gun 30m Throw Radius",
@@ -4434,7 +4438,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "30", unit: "m" }, { name: "Flow Rate", value: "27.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Mini Rain Gun 35m Throw Radius",
@@ -4446,7 +4450,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "35", unit: "m" }, { name: "Flow Rate", value: "31.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Mini Rain Gun 40m Throw Radius",
@@ -4458,7 +4462,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "40", unit: "m" }, { name: "Flow Rate", value: "36.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Mini Rain Gun 45m Throw Radius",
@@ -4470,7 +4474,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "45", unit: "m" }, { name: "Flow Rate", value: "40.5", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Mini Rain Gun 50m Throw Radius",
@@ -4482,7 +4486,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "50", unit: "m" }, { name: "Flow Rate", value: "45.0", unit: "m3/h" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Disc Filter 1 in 80 Mesh",
@@ -4494,7 +4498,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 1 in 100 Mesh",
@@ -4506,7 +4510,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 1 in 120 Mesh",
@@ -4518,7 +4522,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 1 in 150 Mesh",
@@ -4530,7 +4534,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 1.5 in 80 Mesh",
@@ -4542,7 +4546,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 1.5 in 100 Mesh",
@@ -4554,7 +4558,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 1.5 in 120 Mesh",
@@ -4566,7 +4570,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 1.5 in 150 Mesh",
@@ -4578,7 +4582,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 2 in 80 Mesh",
@@ -4590,7 +4594,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 2 in 100 Mesh",
@@ -4602,7 +4606,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 2 in 120 Mesh",
@@ -4614,7 +4618,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 2 in 150 Mesh",
@@ -4626,7 +4630,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 3 in 80 Mesh",
@@ -4638,7 +4642,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 3 in 100 Mesh",
@@ -4650,7 +4654,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 3 in 120 Mesh",
@@ -4662,7 +4666,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Disc Filter 3 in 150 Mesh",
@@ -4674,7 +4678,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 2 in 100 Mesh",
@@ -4686,7 +4690,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 2 in 120 Mesh",
@@ -4698,7 +4702,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 2 in 150 Mesh",
@@ -4710,7 +4714,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 3 in 100 Mesh",
@@ -4722,7 +4726,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 3 in 120 Mesh",
@@ -4734,7 +4738,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 3 in 150 Mesh",
@@ -4746,7 +4750,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 4 in 100 Mesh",
@@ -4758,7 +4762,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "60", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 4 in 120 Mesh",
@@ -4770,7 +4774,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "60", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Automatic Backflush Disc Filter 4 in 150 Mesh",
@@ -4782,7 +4786,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "60", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1 in 80 Mesh",
@@ -4794,7 +4798,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1 in 100 Mesh",
@@ -4806,7 +4810,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1 in 130 Mesh",
@@ -4818,7 +4822,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "130", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1 in 150 Mesh",
@@ -4830,7 +4834,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1.5 in 80 Mesh",
@@ -4842,7 +4846,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1.5 in 100 Mesh",
@@ -4854,7 +4858,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1.5 in 130 Mesh",
@@ -4866,7 +4870,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "130", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 1.5 in 150 Mesh",
@@ -4878,7 +4882,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 2 in 80 Mesh",
@@ -4890,7 +4894,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 2 in 100 Mesh",
@@ -4902,7 +4906,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 2 in 130 Mesh",
@@ -4914,7 +4918,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "130", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 2 in 150 Mesh",
@@ -4926,7 +4930,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "30", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 3 in 80 Mesh",
@@ -4938,7 +4942,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "80", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 3 in 100 Mesh",
@@ -4950,7 +4954,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 3 in 130 Mesh",
@@ -4962,7 +4966,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "130", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Screen Filter 3 in 150 Mesh",
@@ -4974,7 +4978,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Mesh Rating", value: "150", unit: "mesh" }, { name: "Max Flow", value: "45", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Filter Tank 18 in",
@@ -4986,7 +4990,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Tank Diameter", value: "18", unit: "in" }, { name: "Max Flow", value: "144", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Filter Tank 24 in",
@@ -4998,7 +5002,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Tank Diameter", value: "24", unit: "in" }, { name: "Max Flow", value: "192", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Filter Tank 30 in",
@@ -5010,7 +5014,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Tank Diameter", value: "30", unit: "in" }, { name: "Max Flow", value: "240", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Filter Tank 36 in",
@@ -5022,7 +5026,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Tank Diameter", value: "36", unit: "in" }, { name: "Max Flow", value: "288", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Y-Type Screen Filter 0.75 in 100 Mesh",
@@ -5034,7 +5038,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "11", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Y-Type Screen Filter 0.75 in 120 Mesh",
@@ -5046,7 +5050,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "11", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Y-Type Screen Filter 1 in 100 Mesh",
@@ -5058,7 +5062,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Y-Type Screen Filter 1 in 120 Mesh",
@@ -5070,7 +5074,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "15", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Y-Type Screen Filter 1.5 in 100 Mesh",
@@ -5082,7 +5086,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "100", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Y-Type Screen Filter 1.5 in 120 Mesh",
@@ -5094,7 +5098,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Mesh Rating", value: "120", unit: "mesh" }, { name: "Max Flow", value: "22", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Hydrocyclone Sand Separator 1.5 in",
@@ -5106,7 +5110,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Tank Diameter", value: "1.5", unit: "in" }, { name: "Max Flow", value: "12", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Hydrocyclone Sand Separator 2 in",
@@ -5118,7 +5122,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Tank Diameter", value: "2", unit: "in" }, { name: "Max Flow", value: "16", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Hydrocyclone Sand Separator 3 in",
@@ -5130,7 +5134,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Tank Diameter", value: "3", unit: "in" }, { name: "Max Flow", value: "24", unit: "m3/h" }, { name: "Working Pressure", value: "\u22646", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/water-filter,irrigation", "https://loremflickr.com/640/480/water-filter,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve 24V AC 0.75 in",
@@ -5142,7 +5146,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve 24V AC 1 in",
@@ -5154,7 +5158,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve 24V AC 1.5 in",
@@ -5166,7 +5170,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve 24V AC 2 in",
@@ -5178,7 +5182,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve 24V AC 3 in",
@@ -5190,7 +5194,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Manual Ball Valve PVC 0.5 in",
@@ -5202,7 +5206,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Brass" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Manual Ball Valve PVC 0.75 in",
@@ -5214,7 +5218,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Manual Ball Valve PVC 1 in",
@@ -5226,7 +5230,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Manual Ball Valve PVC 1.5 in",
@@ -5238,7 +5242,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Manual Ball Valve PVC 2 in",
@@ -5250,7 +5254,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Brass" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Manual Ball Valve PVC 3 in",
@@ -5262,7 +5266,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Regulator 0.75 in",
@@ -5274,7 +5278,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Regulator 1 in",
@@ -5286,7 +5290,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Regulator 1.5 in",
@@ -5298,7 +5302,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Pressure Regulator 2 in",
@@ -5310,7 +5314,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Brass" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Gate Valve 1 in",
@@ -5322,7 +5326,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Brass" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Gate Valve 1.5 in",
@@ -5334,7 +5338,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Gate Valve 2 in",
@@ -5346,7 +5350,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Brass" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Gate Valve 3 in",
@@ -5358,7 +5362,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Gate Valve 4 in",
@@ -5370,7 +5374,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Air Release Valve 0.5 in",
@@ -5382,7 +5386,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Air Release Valve 1 in",
@@ -5394,7 +5398,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Air Release Valve 1.5 in",
@@ -5406,7 +5410,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Check / Non-Return Valve 0.75 in",
@@ -5418,7 +5422,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Check / Non-Return Valve 1 in",
@@ -5430,7 +5434,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Brass" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Check / Non-Return Valve 1.5 in",
@@ -5442,7 +5446,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "PVC" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Check / Non-Return Valve 2 in",
@@ -5454,7 +5458,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Brass" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Valve 2 in",
@@ -5466,7 +5470,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Valve 3 in",
@@ -5478,7 +5482,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Cast Iron" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Valve 4 in",
@@ -5490,7 +5494,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "Butterfly Valve 6 in",
@@ -5502,7 +5506,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "6", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }, { name: "Body Material", value: "Nylon Composite" }],
-    images: ["https://loremflickr.com/640/480/solenoid-valve,irrigation", "https://loremflickr.com/640/480/solenoid-valve,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 16mm PN6 (100m Roll)",
@@ -5514,7 +5518,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 16mm PN10 (100m Roll)",
@@ -5526,7 +5530,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 20mm PN6 (100m Roll)",
@@ -5538,7 +5542,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 20mm PN10 (100m Roll)",
@@ -5550,7 +5554,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 25mm PN6 (100m Roll)",
@@ -5562,7 +5566,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "25", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 25mm PN10 (100m Roll)",
@@ -5574,7 +5578,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "25", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 32mm PN6 (100m Roll)",
@@ -5586,7 +5590,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "32", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 32mm PN10 (100m Roll)",
@@ -5598,7 +5602,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "32", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 32mm PN16 (100m Roll)",
@@ -5610,7 +5614,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "32", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 40mm PN6 (50m Roll)",
@@ -5622,7 +5626,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "40", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 40mm PN10 (50m Roll)",
@@ -5634,7 +5638,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "40", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 40mm PN16 (50m Roll)",
@@ -5646,7 +5650,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "40", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 50mm PN6 (50m Roll)",
@@ -5658,7 +5662,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 50mm PN10 (50m Roll)",
@@ -5670,7 +5674,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 50mm PN16 (50m Roll)",
@@ -5682,7 +5686,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 63mm PN6 (50m Roll)",
@@ -5694,7 +5698,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 63mm PN10 (50m Roll)",
@@ -5706,7 +5710,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 63mm PN16 (50m Roll)",
@@ -5718,7 +5722,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 75mm PN6 (6m Length)",
@@ -5730,7 +5734,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 75mm PN10 (6m Length)",
@@ -5742,7 +5746,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 75mm PN16 (6m Length)",
@@ -5754,7 +5758,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 90mm PN6 (6m Length)",
@@ -5766,7 +5770,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 90mm PN10 (6m Length)",
@@ -5778,7 +5782,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 90mm PN16 (6m Length)",
@@ -5790,7 +5794,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 110mm PN6 (6m Length)",
@@ -5802,7 +5806,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 110mm PN10 (6m Length)",
@@ -5814,7 +5818,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Pipe 110mm PN16 (6m Length)",
@@ -5826,7 +5830,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "HDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 16mm PN6 (100m Roll)",
@@ -5838,7 +5842,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 16mm PN10 (100m Roll)",
@@ -5850,7 +5854,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 20mm PN6 (100m Roll)",
@@ -5862,7 +5866,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 20mm PN10 (100m Roll)",
@@ -5874,7 +5878,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 25mm PN6 (100m Roll)",
@@ -5886,7 +5890,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "25", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 25mm PN10 (100m Roll)",
@@ -5898,7 +5902,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "25", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 32mm PN6 (100m Roll)",
@@ -5910,7 +5914,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "32", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 32mm PN10 (100m Roll)",
@@ -5922,7 +5926,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "32", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 32mm PN16 (100m Roll)",
@@ -5934,7 +5938,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "32", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "100", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 40mm PN6 (50m Roll)",
@@ -5946,7 +5950,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "40", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 40mm PN10 (50m Roll)",
@@ -5958,7 +5962,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "40", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 40mm PN16 (50m Roll)",
@@ -5970,7 +5974,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "40", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 50mm PN6 (50m Roll)",
@@ -5982,7 +5986,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 50mm PN10 (50m Roll)",
@@ -5994,7 +5998,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 50mm PN16 (50m Roll)",
@@ -6006,7 +6010,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 63mm PN6 (50m Roll)",
@@ -6018,7 +6022,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 63mm PN10 (50m Roll)",
@@ -6030,7 +6034,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 63mm PN16 (50m Roll)",
@@ -6042,7 +6046,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "50", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 75mm PN6 (6m Length)",
@@ -6054,7 +6058,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 75mm PN10 (6m Length)",
@@ -6066,7 +6070,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 75mm PN16 (6m Length)",
@@ -6078,7 +6082,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 90mm PN6 (6m Length)",
@@ -6090,7 +6094,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 90mm PN10 (6m Length)",
@@ -6102,7 +6106,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 90mm PN16 (6m Length)",
@@ -6114,7 +6118,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 110mm PN6 (6m Length)",
@@ -6126,7 +6130,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Pressure Rating", value: "PN6" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 110mm PN10 (6m Length)",
@@ -6138,7 +6142,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Pressure Rating", value: "PN10" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "LDPE Pipe 110mm PN16 (6m Length)",
@@ -6150,7 +6154,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Pressure Rating", value: "PN16" }, { name: "Length", value: "6", unit: "m" }, { name: "Material", value: "LDPE" }],
-    images: ["https://loremflickr.com/640/480/hdpe-pipe,irrigation", "https://loremflickr.com/640/480/hdpe-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 50mm Class B (6m Length)",
@@ -6162,7 +6166,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Class", value: "Class B" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 50mm Class C (6m Length)",
@@ -6174,7 +6178,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Class", value: "Class C" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 50mm Class D (6m Length)",
@@ -6186,7 +6190,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "50", unit: "mm" }, { name: "Class", value: "Class D" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 63mm Class B (6m Length)",
@@ -6198,7 +6202,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Class", value: "Class B" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 63mm Class C (6m Length)",
@@ -6210,7 +6214,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Class", value: "Class C" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 63mm Class D (6m Length)",
@@ -6222,7 +6226,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "63", unit: "mm" }, { name: "Class", value: "Class D" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 75mm Class B (6m Length)",
@@ -6234,7 +6238,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Class", value: "Class B" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 75mm Class C (6m Length)",
@@ -6246,7 +6250,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Class", value: "Class C" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 75mm Class D (6m Length)",
@@ -6258,7 +6262,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "75", unit: "mm" }, { name: "Class", value: "Class D" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 90mm Class B (6m Length)",
@@ -6270,7 +6274,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Class", value: "Class B" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 90mm Class C (6m Length)",
@@ -6282,7 +6286,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Class", value: "Class C" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 90mm Class D (6m Length)",
@@ -6294,7 +6298,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "90", unit: "mm" }, { name: "Class", value: "Class D" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 110mm Class B (6m Length)",
@@ -6306,7 +6310,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Class", value: "Class B" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 110mm Class C (6m Length)",
@@ -6318,7 +6322,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Class", value: "Class C" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 110mm Class D (6m Length)",
@@ -6330,7 +6334,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "110", unit: "mm" }, { name: "Class", value: "Class D" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 140mm Class B (6m Length)",
@@ -6342,7 +6346,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "140", unit: "mm" }, { name: "Class", value: "Class B" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 140mm Class C (6m Length)",
@@ -6354,7 +6358,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "140", unit: "mm" }, { name: "Class", value: "Class C" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 140mm Class D (6m Length)",
@@ -6366,7 +6370,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "140", unit: "mm" }, { name: "Class", value: "Class D" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 160mm Class B (6m Length)",
@@ -6378,7 +6382,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "160", unit: "mm" }, { name: "Class", value: "Class B" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 160mm Class C (6m Length)",
@@ -6390,7 +6394,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "160", unit: "mm" }, { name: "Class", value: "Class C" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "PVC Pressure Pipe 160mm Class D (6m Length)",
@@ -6402,7 +6406,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Diameter", value: "160", unit: "mm" }, { name: "Class", value: "Class D" }, { name: "Length", value: "6", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pvc-pipe,irrigation", "https://loremflickr.com/640/480/pvc-pipe,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 16mm",
@@ -6414,7 +6418,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 20mm",
@@ -6426,7 +6430,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 25mm",
@@ -6438,7 +6442,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 32mm",
@@ -6450,7 +6454,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 40mm",
@@ -6462,7 +6466,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 50mm",
@@ -6474,7 +6478,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 63mm",
@@ -6486,7 +6490,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 75mm",
@@ -6498,7 +6502,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 90mm",
@@ -6510,7 +6514,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 90\u00b0 110mm",
@@ -6522,7 +6526,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Elbow 90\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 16mm",
@@ -6534,7 +6538,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 20mm",
@@ -6546,7 +6550,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 25mm",
@@ -6558,7 +6562,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 32mm",
@@ -6570,7 +6574,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 40mm",
@@ -6582,7 +6586,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 50mm",
@@ -6594,7 +6598,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 63mm",
@@ -6606,7 +6610,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 75mm",
@@ -6618,7 +6622,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 90mm",
@@ -6630,7 +6634,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Elbow 45\u00b0 110mm",
@@ -6642,7 +6646,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Elbow 45\u00b0" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 16mm",
@@ -6654,7 +6658,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 20mm",
@@ -6666,7 +6670,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 25mm",
@@ -6678,7 +6682,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 32mm",
@@ -6690,7 +6694,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 40mm",
@@ -6702,7 +6706,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 50mm",
@@ -6714,7 +6718,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 63mm",
@@ -6726,7 +6730,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 75mm",
@@ -6738,7 +6742,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 90mm",
@@ -6750,7 +6754,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Tee 110mm",
@@ -6762,7 +6766,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Tee" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 16mm",
@@ -6774,7 +6778,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 20mm",
@@ -6786,7 +6790,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 25mm",
@@ -6798,7 +6802,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 32mm",
@@ -6810,7 +6814,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 40mm",
@@ -6822,7 +6826,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 50mm",
@@ -6834,7 +6838,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 63mm",
@@ -6846,7 +6850,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 75mm",
@@ -6858,7 +6862,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 90mm",
@@ -6870,7 +6874,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Coupler 110mm",
@@ -6882,7 +6886,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Coupler" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 16mm",
@@ -6894,7 +6898,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 20mm",
@@ -6906,7 +6910,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 25mm",
@@ -6918,7 +6922,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 32mm",
@@ -6930,7 +6934,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 40mm",
@@ -6942,7 +6946,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 50mm",
@@ -6954,7 +6958,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 63mm",
@@ -6966,7 +6970,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 75mm",
@@ -6978,7 +6982,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 90mm",
@@ -6990,7 +6994,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Reducing Bushing 110mm",
@@ -7002,7 +7006,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Reducing Bushing" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 16mm",
@@ -7014,7 +7018,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 20mm",
@@ -7026,7 +7030,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 25mm",
@@ -7038,7 +7042,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 32mm",
@@ -7050,7 +7054,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 40mm",
@@ -7062,7 +7066,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 50mm",
@@ -7074,7 +7078,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 63mm",
@@ -7086,7 +7090,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 75mm",
@@ -7098,7 +7102,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 90mm",
@@ -7110,7 +7114,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression End Cap 110mm",
@@ -7122,7 +7126,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "End Cap" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 16mm",
@@ -7134,7 +7138,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 20mm",
@@ -7146,7 +7150,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 25mm",
@@ -7158,7 +7162,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 32mm",
@@ -7170,7 +7174,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 40mm",
@@ -7182,7 +7186,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 50mm",
@@ -7194,7 +7198,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 63mm",
@@ -7206,7 +7210,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 75mm",
@@ -7218,7 +7222,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 90mm",
@@ -7230,7 +7234,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Union Joint 110mm",
@@ -7242,7 +7246,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Union Joint" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 16mm",
@@ -7254,7 +7258,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 20mm",
@@ -7266,7 +7270,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 25mm",
@@ -7278,7 +7282,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 32mm",
@@ -7290,7 +7294,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 40mm",
@@ -7302,7 +7306,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 50mm",
@@ -7314,7 +7318,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 63mm",
@@ -7326,7 +7330,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 75mm",
@@ -7338,7 +7342,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 90mm",
@@ -7350,7 +7354,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Threaded Adapter 110mm",
@@ -7362,7 +7366,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Threaded Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 16mm",
@@ -7374,7 +7378,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 20mm",
@@ -7386,7 +7390,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 25mm",
@@ -7398,7 +7402,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 32mm",
@@ -7410,7 +7414,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 40mm",
@@ -7422,7 +7426,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 50mm",
@@ -7434,7 +7438,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 63mm",
@@ -7446,7 +7450,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 75mm",
@@ -7458,7 +7462,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 90mm",
@@ -7470,7 +7474,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Flange Adapter 110mm",
@@ -7482,7 +7486,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Flange Adapter" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 16mm",
@@ -7494,7 +7498,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 20mm",
@@ -7506,7 +7510,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 25mm",
@@ -7518,7 +7522,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 32mm",
@@ -7530,7 +7534,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 40mm",
@@ -7542,7 +7546,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 50mm",
@@ -7554,7 +7558,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 63mm",
@@ -7566,7 +7570,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "63", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 75mm",
@@ -7578,7 +7582,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "75", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 90mm",
@@ -7590,7 +7594,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "90", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Compression Cross Fitting 110mm",
@@ -7602,7 +7606,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Size", value: "110", unit: "mm" }, { name: "Fitting Type", value: "Cross Fitting" }, { name: "Connection", value: "Compression" }],
-    images: ["https://loremflickr.com/640/480/pipe-fittings,irrigation", "https://loremflickr.com/640/480/pipe-fittings,irrigation"],
+    images: [],
   },
   {
     name: "Submersible Borehole Pump 0.5HP",
@@ -7614,7 +7618,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "21", unit: "m" }, { name: "Max Flow", value: "3", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/pump,submersible", "https://loremflickr.com/640/480/pump,submersible"],
+    images: [],
   },
   {
     name: "Submersible Borehole Pump 0.75HP",
@@ -7626,7 +7630,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.75", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "24", unit: "m" }, { name: "Max Flow", value: "4", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/pump,submersible", "https://loremflickr.com/640/480/pump,submersible"],
+    images: [],
   },
   {
     name: "Submersible Borehole Pump 1HP",
@@ -7638,7 +7642,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "27", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/pump,submersible", "https://loremflickr.com/640/480/pump,submersible"],
+    images: [],
   },
   {
     name: "Submersible Borehole Pump 1.5HP",
@@ -7650,7 +7654,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "33", unit: "m" }, { name: "Max Flow", value: "7", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/pump,submersible", "https://loremflickr.com/640/480/pump,submersible"],
+    images: [],
   },
   {
     name: "Submersible Borehole Pump 2HP",
@@ -7662,7 +7666,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "39", unit: "m" }, { name: "Max Flow", value: "9", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/pump,submersible", "https://loremflickr.com/640/480/pump,submersible"],
+    images: [],
   },
   {
     name: "Submersible Borehole Pump 3HP",
@@ -7674,7 +7678,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "51", unit: "m" }, { name: "Max Flow", value: "12", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/pump,submersible", "https://loremflickr.com/640/480/pump,submersible"],
+    images: [],
   },
   {
     name: "Submersible Borehole Pump 5HP",
@@ -7686,7 +7690,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "5", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "75", unit: "m" }, { name: "Max Flow", value: "19", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/pump,submersible", "https://loremflickr.com/640/480/pump,submersible"],
+    images: [],
   },
   {
     name: "Surface Centrifugal Pump 0.5HP",
@@ -7698,7 +7702,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "21", unit: "m" }, { name: "Max Flow", value: "3", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/centrifugal-pump,irrigation", "https://loremflickr.com/640/480/centrifugal-pump,irrigation"],
+    images: [],
   },
   {
     name: "Surface Centrifugal Pump 0.75HP",
@@ -7710,7 +7714,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.75", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "24", unit: "m" }, { name: "Max Flow", value: "4", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/centrifugal-pump,irrigation", "https://loremflickr.com/640/480/centrifugal-pump,irrigation"],
+    images: [],
   },
   {
     name: "Surface Centrifugal Pump 1HP",
@@ -7722,7 +7726,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "27", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/centrifugal-pump,irrigation", "https://loremflickr.com/640/480/centrifugal-pump,irrigation"],
+    images: [],
   },
   {
     name: "Surface Centrifugal Pump 1.5HP",
@@ -7734,7 +7738,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "33", unit: "m" }, { name: "Max Flow", value: "7", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/centrifugal-pump,irrigation", "https://loremflickr.com/640/480/centrifugal-pump,irrigation"],
+    images: [],
   },
   {
     name: "Surface Centrifugal Pump 2HP",
@@ -7746,7 +7750,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "39", unit: "m" }, { name: "Max Flow", value: "9", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/centrifugal-pump,irrigation", "https://loremflickr.com/640/480/centrifugal-pump,irrigation"],
+    images: [],
   },
   {
     name: "Surface Centrifugal Pump 3HP",
@@ -7758,7 +7762,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "51", unit: "m" }, { name: "Max Flow", value: "12", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/centrifugal-pump,irrigation", "https://loremflickr.com/640/480/centrifugal-pump,irrigation"],
+    images: [],
   },
   {
     name: "Self-Priming Petrol Pump 1HP",
@@ -7770,7 +7774,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "27", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/petrol-pump,water", "https://loremflickr.com/640/480/petrol-pump,water"],
+    images: [],
   },
   {
     name: "Self-Priming Petrol Pump 2HP",
@@ -7782,7 +7786,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "39", unit: "m" }, { name: "Max Flow", value: "9", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/petrol-pump,water", "https://loremflickr.com/640/480/petrol-pump,water"],
+    images: [],
   },
   {
     name: "Self-Priming Petrol Pump 3HP",
@@ -7794,7 +7798,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "51", unit: "m" }, { name: "Max Flow", value: "12", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/petrol-pump,water", "https://loremflickr.com/640/480/petrol-pump,water"],
+    images: [],
   },
   {
     name: "3-Phase Booster Pump 1.5HP",
@@ -7806,7 +7810,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "33", unit: "m" }, { name: "Max Flow", value: "7", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,irrigation", "https://loremflickr.com/640/480/booster-pump,irrigation"],
+    images: [],
   },
   {
     name: "3-Phase Booster Pump 2HP",
@@ -7818,7 +7822,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "39", unit: "m" }, { name: "Max Flow", value: "9", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,irrigation", "https://loremflickr.com/640/480/booster-pump,irrigation"],
+    images: [],
   },
   {
     name: "3-Phase Booster Pump 3HP",
@@ -7830,7 +7834,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "51", unit: "m" }, { name: "Max Flow", value: "12", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,irrigation", "https://loremflickr.com/640/480/booster-pump,irrigation"],
+    images: [],
   },
   {
     name: "3-Phase Booster Pump 5HP",
@@ -7842,7 +7846,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "5", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "75", unit: "m" }, { name: "Max Flow", value: "19", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,irrigation", "https://loremflickr.com/640/480/booster-pump,irrigation"],
+    images: [],
   },
   {
     name: "3-Phase Booster Pump 7.5HP",
@@ -7854,7 +7858,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "7.5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "105", unit: "m" }, { name: "Max Flow", value: "28", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,irrigation", "https://loremflickr.com/640/480/booster-pump,irrigation"],
+    images: [],
   },
   {
     name: "Diesel Powered Irrigation Pump 3HP",
@@ -7866,7 +7870,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "51", unit: "m" }, { name: "Max Flow", value: "12", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,irrigation", "https://loremflickr.com/640/480/diesel-pump,irrigation"],
+    images: [],
   },
   {
     name: "Diesel Powered Irrigation Pump 5HP",
@@ -7878,7 +7882,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "75", unit: "m" }, { name: "Max Flow", value: "19", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,irrigation", "https://loremflickr.com/640/480/diesel-pump,irrigation"],
+    images: [],
   },
   {
     name: "Diesel Powered Irrigation Pump 7.5HP",
@@ -7890,7 +7894,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "7.5", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "105", unit: "m" }, { name: "Max Flow", value: "28", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,irrigation", "https://loremflickr.com/640/480/diesel-pump,irrigation"],
+    images: [],
   },
   {
     name: "Diesel Powered Irrigation Pump 10HP",
@@ -7902,7 +7906,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "10", unit: "HP" }, { name: "Phase", value: "Three Phase" }, { name: "Max Head", value: "135", unit: "m" }, { name: "Max Flow", value: "37", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,irrigation", "https://loremflickr.com/640/480/diesel-pump,irrigation"],
+    images: [],
   },
   {
     name: "Diaphragm Dosing Pump 0.25HP",
@@ -7914,7 +7918,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.25", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "18", unit: "m" }, { name: "Max Flow", value: "2", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,irrigation", "https://loremflickr.com/640/480/dosing-pump,irrigation"],
+    images: [],
   },
   {
     name: "Diaphragm Dosing Pump 0.5HP",
@@ -7926,7 +7930,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "21", unit: "m" }, { name: "Max Flow", value: "3", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,irrigation", "https://loremflickr.com/640/480/dosing-pump,irrigation"],
+    images: [],
   },
   {
     name: "Deep Well Jet Pump 0.5HP",
@@ -7938,7 +7942,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "21", unit: "m" }, { name: "Max Flow", value: "3", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/jet-pump,water", "https://loremflickr.com/640/480/jet-pump,water"],
+    images: [],
   },
   {
     name: "Deep Well Jet Pump 1HP",
@@ -7950,7 +7954,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "27", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/jet-pump,water", "https://loremflickr.com/640/480/jet-pump,water"],
+    images: [],
   },
   {
     name: "Deep Well Jet Pump 1.5HP",
@@ -7962,7 +7966,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "33", unit: "m" }, { name: "Max Flow", value: "7", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/jet-pump,water", "https://loremflickr.com/640/480/jet-pump,water"],
+    images: [],
   },
   {
     name: "Peripheral Pump 0.5HP",
@@ -7974,7 +7978,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "21", unit: "m" }, { name: "Max Flow", value: "3", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/water-pump,agriculture", "https://loremflickr.com/640/480/water-pump,agriculture"],
+    images: [],
   },
   {
     name: "Peripheral Pump 0.75HP",
@@ -7986,7 +7990,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.75", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "24", unit: "m" }, { name: "Max Flow", value: "4", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/water-pump,agriculture", "https://loremflickr.com/640/480/water-pump,agriculture"],
+    images: [],
   },
   {
     name: "Peripheral Pump 1HP",
@@ -7998,7 +8002,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Phase", value: "Single Phase" }, { name: "Max Head", value: "27", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/water-pump,agriculture", "https://loremflickr.com/640/480/water-pump,agriculture"],
+    images: [],
   },
   {
     name: "Solar Submersible Pump Kit 0.5HP",
@@ -8010,7 +8014,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Panel Wattage", value: "650", unit: "W" }, { name: "Max Head", value: "27", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-water-pump,panel", "https://loremflickr.com/640/480/solar-water-pump,panel"],
+    images: [],
   },
   {
     name: "Solar Surface Pump Kit 0.5HP",
@@ -8022,7 +8026,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Panel Wattage", value: "650", unit: "W" }, { name: "Max Head", value: "27", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-pump,irrigation", "https://loremflickr.com/640/480/solar-pump,irrigation"],
+    images: [],
   },
   {
     name: "Solar Submersible Pump Kit 0.75HP",
@@ -8034,7 +8038,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.75", unit: "HP" }, { name: "Panel Wattage", value: "775", unit: "W" }, { name: "Max Head", value: "31", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-water-pump,panel", "https://loremflickr.com/640/480/solar-water-pump,panel"],
+    images: [],
   },
   {
     name: "Solar Surface Pump Kit 0.75HP",
@@ -8046,7 +8050,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.75", unit: "HP" }, { name: "Panel Wattage", value: "775", unit: "W" }, { name: "Max Head", value: "31", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-pump,irrigation", "https://loremflickr.com/640/480/solar-pump,irrigation"],
+    images: [],
   },
   {
     name: "Solar Submersible Pump Kit 1HP",
@@ -8058,7 +8062,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Panel Wattage", value: "900", unit: "W" }, { name: "Max Head", value: "35", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-water-pump,panel", "https://loremflickr.com/640/480/solar-water-pump,panel"],
+    images: [],
   },
   {
     name: "Solar Surface Pump Kit 1HP",
@@ -8070,7 +8074,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Panel Wattage", value: "900", unit: "W" }, { name: "Max Head", value: "35", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-pump,irrigation", "https://loremflickr.com/640/480/solar-pump,irrigation"],
+    images: [],
   },
   {
     name: "Solar Submersible Pump Kit 1.5HP",
@@ -8082,7 +8086,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Panel Wattage", value: "1150", unit: "W" }, { name: "Max Head", value: "42", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-water-pump,panel", "https://loremflickr.com/640/480/solar-water-pump,panel"],
+    images: [],
   },
   {
     name: "Solar Surface Pump Kit 1.5HP",
@@ -8094,7 +8098,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Panel Wattage", value: "1150", unit: "W" }, { name: "Max Head", value: "42", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-pump,irrigation", "https://loremflickr.com/640/480/solar-pump,irrigation"],
+    images: [],
   },
   {
     name: "Solar Submersible Pump Kit 2HP",
@@ -8106,7 +8110,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Panel Wattage", value: "1400", unit: "W" }, { name: "Max Head", value: "50", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-water-pump,panel", "https://loremflickr.com/640/480/solar-water-pump,panel"],
+    images: [],
   },
   {
     name: "Solar Surface Pump Kit 2HP",
@@ -8118,7 +8122,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Panel Wattage", value: "1400", unit: "W" }, { name: "Max Head", value: "50", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-pump,irrigation", "https://loremflickr.com/640/480/solar-pump,irrigation"],
+    images: [],
   },
   {
     name: "Solar Submersible Pump Kit 3HP",
@@ -8130,7 +8134,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Panel Wattage", value: "1900", unit: "W" }, { name: "Max Head", value: "65", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-water-pump,panel", "https://loremflickr.com/640/480/solar-water-pump,panel"],
+    images: [],
   },
   {
     name: "Solar Surface Pump Kit 3HP",
@@ -8142,7 +8146,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Panel Wattage", value: "1900", unit: "W" }, { name: "Max Head", value: "65", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-pump,irrigation", "https://loremflickr.com/640/480/solar-pump,irrigation"],
+    images: [],
   },
   {
     name: "Solar Submersible Pump Kit 5HP",
@@ -8154,7 +8158,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "5", unit: "HP" }, { name: "Panel Wattage", value: "2900", unit: "W" }, { name: "Max Head", value: "95", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-water-pump,panel", "https://loremflickr.com/640/480/solar-water-pump,panel"],
+    images: [],
   },
   {
     name: "Solar Surface Pump Kit 5HP",
@@ -8166,7 +8170,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "5", unit: "HP" }, { name: "Panel Wattage", value: "2900", unit: "W" }, { name: "Max Head", value: "95", unit: "m" }, { name: "Includes", value: "Pump, panels, controller, cabling" }],
-    images: ["https://loremflickr.com/640/480/solar-pump,irrigation", "https://loremflickr.com/640/480/solar-pump,irrigation"],
+    images: [],
   },
   {
     name: "Monocrystalline Solar Panel 150W for Irrigation",
@@ -8178,7 +8182,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Wattage", value: "150", unit: "W" }, { name: "Type", value: "Monocrystalline" }],
-    images: ["https://loremflickr.com/640/480/solar-panel,agriculture", "https://loremflickr.com/640/480/solar-panel,agriculture"],
+    images: [],
   },
   {
     name: "Monocrystalline Solar Panel 250W for Irrigation",
@@ -8190,7 +8194,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Wattage", value: "250", unit: "W" }, { name: "Type", value: "Monocrystalline" }],
-    images: ["https://loremflickr.com/640/480/solar-panel,agriculture", "https://loremflickr.com/640/480/solar-panel,agriculture"],
+    images: [],
   },
   {
     name: "Monocrystalline Solar Panel 350W for Irrigation",
@@ -8202,7 +8206,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Wattage", value: "350", unit: "W" }, { name: "Type", value: "Monocrystalline" }],
-    images: ["https://loremflickr.com/640/480/solar-panel,agriculture", "https://loremflickr.com/640/480/solar-panel,agriculture"],
+    images: [],
   },
   {
     name: "Monocrystalline Solar Panel 450W for Irrigation",
@@ -8214,7 +8218,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Wattage", value: "450", unit: "W" }, { name: "Type", value: "Monocrystalline" }],
-    images: ["https://loremflickr.com/640/480/solar-panel,agriculture", "https://loremflickr.com/640/480/solar-panel,agriculture"],
+    images: [],
   },
   {
     name: "Monocrystalline Solar Panel 550W for Irrigation",
@@ -8226,7 +8230,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Wattage", value: "550", unit: "W" }, { name: "Type", value: "Monocrystalline" }],
-    images: ["https://loremflickr.com/640/480/solar-panel,agriculture", "https://loremflickr.com/640/480/solar-panel,agriculture"],
+    images: [],
   },
   {
     name: "Solar Pump MPPT Controller 10A",
@@ -8238,7 +8242,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Current Rating", value: "10", unit: "A" }, { name: "Type", value: "MPPT" }],
-    images: ["https://loremflickr.com/640/480/solar-controller,irrigation", "https://loremflickr.com/640/480/solar-controller,irrigation"],
+    images: [],
   },
   {
     name: "Solar Pump MPPT Controller 20A",
@@ -8250,7 +8254,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Current Rating", value: "20", unit: "A" }, { name: "Type", value: "MPPT" }],
-    images: ["https://loremflickr.com/640/480/solar-controller,irrigation", "https://loremflickr.com/640/480/solar-controller,irrigation"],
+    images: [],
   },
   {
     name: "Solar Pump MPPT Controller 30A",
@@ -8262,7 +8266,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Current Rating", value: "30", unit: "A" }, { name: "Type", value: "MPPT" }],
-    images: ["https://loremflickr.com/640/480/solar-controller,irrigation", "https://loremflickr.com/640/480/solar-controller,irrigation"],
+    images: [],
   },
   {
     name: "Solar Pump MPPT Controller 40A",
@@ -8274,7 +8278,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Current Rating", value: "40", unit: "A" }, { name: "Type", value: "MPPT" }],
-    images: ["https://loremflickr.com/640/480/solar-controller,irrigation", "https://loremflickr.com/640/480/solar-controller,irrigation"],
+    images: [],
   },
   {
     name: "Digital Irrigation Timer 1-Station",
@@ -8286,7 +8290,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "1" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-controller,timer", "https://loremflickr.com/640/480/irrigation-controller,timer"],
+    images: [],
   },
   {
     name: "Smart WiFi Irrigation Controller 1-Station",
@@ -8298,7 +8302,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "1" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/smart-irrigation,controller", "https://loremflickr.com/640/480/smart-irrigation,controller"],
+    images: [],
   },
   {
     name: "Digital Irrigation Timer 2-Station",
@@ -8310,7 +8314,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "2" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-controller,timer", "https://loremflickr.com/640/480/irrigation-controller,timer"],
+    images: [],
   },
   {
     name: "Smart WiFi Irrigation Controller 2-Station",
@@ -8322,7 +8326,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "2" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/smart-irrigation,controller", "https://loremflickr.com/640/480/smart-irrigation,controller"],
+    images: [],
   },
   {
     name: "Digital Irrigation Timer 4-Station",
@@ -8334,7 +8338,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "4" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-controller,timer", "https://loremflickr.com/640/480/irrigation-controller,timer"],
+    images: [],
   },
   {
     name: "Smart WiFi Irrigation Controller 4-Station",
@@ -8346,7 +8350,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "4" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/smart-irrigation,controller", "https://loremflickr.com/640/480/smart-irrigation,controller"],
+    images: [],
   },
   {
     name: "Digital Irrigation Timer 6-Station",
@@ -8358,7 +8362,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "6" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-controller,timer", "https://loremflickr.com/640/480/irrigation-controller,timer"],
+    images: [],
   },
   {
     name: "Smart WiFi Irrigation Controller 6-Station",
@@ -8370,7 +8374,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "6" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/smart-irrigation,controller", "https://loremflickr.com/640/480/smart-irrigation,controller"],
+    images: [],
   },
   {
     name: "Digital Irrigation Timer 8-Station",
@@ -8382,7 +8386,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "8" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-controller,timer", "https://loremflickr.com/640/480/irrigation-controller,timer"],
+    images: [],
   },
   {
     name: "Smart WiFi Irrigation Controller 8-Station",
@@ -8394,7 +8398,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "8" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/smart-irrigation,controller", "https://loremflickr.com/640/480/smart-irrigation,controller"],
+    images: [],
   },
   {
     name: "Digital Irrigation Timer 12-Station",
@@ -8406,7 +8410,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "12" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-controller,timer", "https://loremflickr.com/640/480/irrigation-controller,timer"],
+    images: [],
   },
   {
     name: "Smart WiFi Irrigation Controller 12-Station",
@@ -8418,7 +8422,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "12" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/smart-irrigation,controller", "https://loremflickr.com/640/480/smart-irrigation,controller"],
+    images: [],
   },
   {
     name: "Digital Irrigation Timer 16-Station",
@@ -8430,7 +8434,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "16" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-controller,timer", "https://loremflickr.com/640/480/irrigation-controller,timer"],
+    images: [],
   },
   {
     name: "Smart WiFi Irrigation Controller 16-Station",
@@ -8442,7 +8446,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Stations", value: "16" }, { name: "Power Source", value: "Battery / AC Adapter" }],
-    images: ["https://loremflickr.com/640/480/smart-irrigation,controller", "https://loremflickr.com/640/480/smart-irrigation,controller"],
+    images: [],
   },
   {
     name: "Soil Moisture Sensor Controller - Basic",
@@ -8454,7 +8458,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Basic" }, { name: "Connectivity", value: "Wired" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Soil Moisture Sensor Controller - Standard",
@@ -8466,7 +8470,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Standard" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Soil Moisture Sensor Controller - Advanced",
@@ -8478,7 +8482,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Advanced" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Rain Sensor Shutoff Device - Basic",
@@ -8490,7 +8494,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Basic" }, { name: "Connectivity", value: "Wired" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Rain Sensor Shutoff Device - Standard",
@@ -8502,7 +8506,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Standard" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Rain Sensor Shutoff Device - Advanced",
@@ -8514,7 +8518,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Advanced" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Fertigation Automation Controller - Basic",
@@ -8526,7 +8530,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Basic" }, { name: "Connectivity", value: "Wired" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Fertigation Automation Controller - Standard",
@@ -8538,7 +8542,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Standard" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Fertigation Automation Controller - Advanced",
@@ -8550,7 +8554,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Advanced" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Flow Meter Controller - Basic",
@@ -8562,7 +8566,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Basic" }, { name: "Connectivity", value: "Wired" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Flow Meter Controller - Standard",
@@ -8574,7 +8578,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Standard" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Flow Meter Controller - Advanced",
@@ -8586,7 +8590,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Advanced" }, { name: "Connectivity", value: "Wireless" }],
-    images: ["https://loremflickr.com/640/480/irrigation-sensor,controller", "https://loremflickr.com/640/480/irrigation-sensor,controller"],
+    images: [],
   },
   {
     name: "Venturi Fertilizer Injector 0.75 in",
@@ -8598,7 +8602,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Injection Rate", value: "0.2-2%" }],
-    images: ["https://loremflickr.com/640/480/fertigation,venturi-injector", "https://loremflickr.com/640/480/fertigation,venturi-injector"],
+    images: [],
   },
   {
     name: "Venturi Fertilizer Injector 1 in",
@@ -8610,7 +8614,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Injection Rate", value: "0.2-2%" }],
-    images: ["https://loremflickr.com/640/480/fertigation,venturi-injector", "https://loremflickr.com/640/480/fertigation,venturi-injector"],
+    images: [],
   },
   {
     name: "Venturi Fertilizer Injector 1.5 in",
@@ -8622,7 +8626,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Injection Rate", value: "0.2-2%" }],
-    images: ["https://loremflickr.com/640/480/fertigation,venturi-injector", "https://loremflickr.com/640/480/fertigation,venturi-injector"],
+    images: [],
   },
   {
     name: "Venturi Fertilizer Injector 2 in",
@@ -8634,7 +8638,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Injection Rate", value: "0.2-2%" }],
-    images: ["https://loremflickr.com/640/480/fertigation,venturi-injector", "https://loremflickr.com/640/480/fertigation,venturi-injector"],
+    images: [],
   },
   {
     name: "Venturi Fertilizer Injector 3 in",
@@ -8646,7 +8650,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Injection Rate", value: "0.2-2%" }],
-    images: ["https://loremflickr.com/640/480/fertigation,venturi-injector", "https://loremflickr.com/640/480/fertigation,venturi-injector"],
+    images: [],
   },
   {
     name: "Fertigation Dosing Pump 5L/h",
@@ -8658,7 +8662,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Dosing Rate", value: "5", unit: "L/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,fertigation", "https://loremflickr.com/640/480/dosing-pump,fertigation"],
+    images: [],
   },
   {
     name: "Fertigation Dosing Pump 10L/h",
@@ -8670,7 +8674,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Dosing Rate", value: "10", unit: "L/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,fertigation", "https://loremflickr.com/640/480/dosing-pump,fertigation"],
+    images: [],
   },
   {
     name: "Fertigation Dosing Pump 20L/h",
@@ -8682,7 +8686,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Dosing Rate", value: "20", unit: "L/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,fertigation", "https://loremflickr.com/640/480/dosing-pump,fertigation"],
+    images: [],
   },
   {
     name: "Fertigation Dosing Pump 40L/h",
@@ -8694,7 +8698,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Dosing Rate", value: "40", unit: "L/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,fertigation", "https://loremflickr.com/640/480/dosing-pump,fertigation"],
+    images: [],
   },
   {
     name: "Fertilizer Mixing Tank 50L",
@@ -8706,7 +8710,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Capacity", value: "50", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/fertilizer-tank,irrigation", "https://loremflickr.com/640/480/fertilizer-tank,irrigation"],
+    images: [],
   },
   {
     name: "Fertilizer Mixing Tank 100L",
@@ -8718,7 +8722,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Capacity", value: "100", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/fertilizer-tank,irrigation", "https://loremflickr.com/640/480/fertilizer-tank,irrigation"],
+    images: [],
   },
   {
     name: "Fertilizer Mixing Tank 200L",
@@ -8730,7 +8734,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Capacity", value: "200", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/fertilizer-tank,irrigation", "https://loremflickr.com/640/480/fertilizer-tank,irrigation"],
+    images: [],
   },
   {
     name: "Fertilizer Mixing Tank 500L",
@@ -8742,7 +8746,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Capacity", value: "500", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/fertilizer-tank,irrigation", "https://loremflickr.com/640/480/fertilizer-tank,irrigation"],
+    images: [],
   },
   {
     name: "Fertilizer Mixing Tank 1000L",
@@ -8754,7 +8758,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Vegetable farming", "Maize & row crops", "Greenhouse crops"],
     specifications: [{ name: "Capacity", value: "1000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/fertilizer-tank,irrigation", "https://loremflickr.com/640/480/fertilizer-tank,irrigation"],
+    images: [],
   },
   {
     name: "EC/pH Dosing Controller (Basic)",
@@ -8766,7 +8770,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Tier", value: "Basic" }],
-    images: ["https://loremflickr.com/640/480/fertigation-controller,irrigation", "https://loremflickr.com/640/480/fertigation-controller,irrigation"],
+    images: [],
   },
   {
     name: "EC/pH Dosing Controller (Pro)",
@@ -8778,7 +8782,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Tier", value: "Pro" }],
-    images: ["https://loremflickr.com/640/480/fertigation-controller,irrigation", "https://loremflickr.com/640/480/fertigation-controller,irrigation"],
+    images: [],
   },
   {
     name: "Chemical Injection Kit (Basic)",
@@ -8790,7 +8794,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Tier", value: "Basic" }],
-    images: ["https://loremflickr.com/640/480/fertigation-controller,irrigation", "https://loremflickr.com/640/480/fertigation-controller,irrigation"],
+    images: [],
   },
   {
     name: "Chemical Injection Kit (Pro)",
@@ -8802,7 +8806,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Tier", value: "Pro" }],
-    images: ["https://loremflickr.com/640/480/fertigation-controller,irrigation", "https://loremflickr.com/640/480/fertigation-controller,irrigation"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 8x15m (Standard Galvanized)",
@@ -8814,7 +8818,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "8x15" }, { name: "Area", value: "120", unit: "m2" }, { name: "Frame Grade", value: "Standard Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 8x15m (Heavy Duty Galvanized)",
@@ -8826,7 +8830,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "8x15" }, { name: "Area", value: "120", unit: "m2" }, { name: "Frame Grade", value: "Heavy Duty Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 8x30m (Standard Galvanized)",
@@ -8838,7 +8842,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "8x30" }, { name: "Area", value: "240", unit: "m2" }, { name: "Frame Grade", value: "Standard Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 8x30m (Heavy Duty Galvanized)",
@@ -8850,7 +8854,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "8x30" }, { name: "Area", value: "240", unit: "m2" }, { name: "Frame Grade", value: "Heavy Duty Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 8x45m (Standard Galvanized)",
@@ -8862,7 +8866,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "8x45" }, { name: "Area", value: "360", unit: "m2" }, { name: "Frame Grade", value: "Standard Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 8x45m (Heavy Duty Galvanized)",
@@ -8874,7 +8878,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "8x45" }, { name: "Area", value: "360", unit: "m2" }, { name: "Frame Grade", value: "Heavy Duty Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 10x30m (Standard Galvanized)",
@@ -8886,7 +8890,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "10x30" }, { name: "Area", value: "300", unit: "m2" }, { name: "Frame Grade", value: "Standard Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 10x30m (Heavy Duty Galvanized)",
@@ -8898,7 +8902,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "10x30" }, { name: "Area", value: "300", unit: "m2" }, { name: "Frame Grade", value: "Heavy Duty Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 10x50m (Standard Galvanized)",
@@ -8910,7 +8914,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "10x50" }, { name: "Area", value: "500", unit: "m2" }, { name: "Frame Grade", value: "Standard Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 10x50m (Heavy Duty Galvanized)",
@@ -8922,7 +8926,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "10x50" }, { name: "Area", value: "500", unit: "m2" }, { name: "Frame Grade", value: "Heavy Duty Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 16x30m (Standard Galvanized)",
@@ -8934,7 +8938,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "16x30" }, { name: "Area", value: "480", unit: "m2" }, { name: "Frame Grade", value: "Standard Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 16x30m (Heavy Duty Galvanized)",
@@ -8946,7 +8950,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "16x30" }, { name: "Area", value: "480", unit: "m2" }, { name: "Frame Grade", value: "Heavy Duty Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 16x60m (Standard Galvanized)",
@@ -8958,7 +8962,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "16x60" }, { name: "Area", value: "960", unit: "m2" }, { name: "Frame Grade", value: "Standard Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "Greenhouse Frame Kit 16x60m (Heavy Duty Galvanized)",
@@ -8970,7 +8974,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Dimensions", value: "16x60" }, { name: "Area", value: "960", unit: "m2" }, { name: "Frame Grade", value: "Heavy Duty Galvanized" }],
-    images: ["https://loremflickr.com/640/480/greenhouse,polytunnel", "https://loremflickr.com/640/480/greenhouse,polytunnel"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 150micron (100m2)",
@@ -8982,7 +8986,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "150", unit: "micron" }, { name: "Coverage", value: "100", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 150micron (200m2)",
@@ -8994,7 +8998,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "150", unit: "micron" }, { name: "Coverage", value: "200", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 150micron (500m2)",
@@ -9006,7 +9010,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "150", unit: "micron" }, { name: "Coverage", value: "500", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 150micron (1000m2)",
@@ -9018,7 +9022,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "150", unit: "micron" }, { name: "Coverage", value: "1000", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 180micron (100m2)",
@@ -9030,7 +9034,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "180", unit: "micron" }, { name: "Coverage", value: "100", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 180micron (200m2)",
@@ -9042,7 +9046,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "180", unit: "micron" }, { name: "Coverage", value: "200", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 180micron (500m2)",
@@ -9054,7 +9058,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "180", unit: "micron" }, { name: "Coverage", value: "500", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 180micron (1000m2)",
@@ -9066,7 +9070,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "180", unit: "micron" }, { name: "Coverage", value: "1000", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 200micron (100m2)",
@@ -9078,7 +9082,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "200", unit: "micron" }, { name: "Coverage", value: "100", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 200micron (200m2)",
@@ -9090,7 +9094,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "200", unit: "micron" }, { name: "Coverage", value: "200", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 200micron (500m2)",
@@ -9102,7 +9106,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "200", unit: "micron" }, { name: "Coverage", value: "500", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 200micron (1000m2)",
@@ -9114,7 +9118,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "200", unit: "micron" }, { name: "Coverage", value: "1000", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 250micron (100m2)",
@@ -9126,7 +9130,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "250", unit: "micron" }, { name: "Coverage", value: "100", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 250micron (200m2)",
@@ -9138,7 +9142,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "250", unit: "micron" }, { name: "Coverage", value: "200", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 250micron (500m2)",
@@ -9150,7 +9154,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "250", unit: "micron" }, { name: "Coverage", value: "500", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "UV-Treated Greenhouse Polythene 250micron (1000m2)",
@@ -9162,7 +9166,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Thickness", value: "250", unit: "micron" }, { name: "Coverage", value: "1000", unit: "m2" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-plastic,polythene", "https://loremflickr.com/640/480/greenhouse-plastic,polythene"],
+    images: [],
   },
   {
     name: "Shade Net 30% (per 50m roll)",
@@ -9174,7 +9178,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries", "Flower farming"],
     specifications: [{ name: "Shade Factor", value: "30%" }, { name: "Roll Length", value: "50", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/shade-net,greenhouse", "https://loremflickr.com/640/480/shade-net,greenhouse"],
+    images: [],
   },
   {
     name: "Shade Net 50% (per 50m roll)",
@@ -9186,7 +9190,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries", "Flower farming"],
     specifications: [{ name: "Shade Factor", value: "50%" }, { name: "Roll Length", value: "50", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/shade-net,greenhouse", "https://loremflickr.com/640/480/shade-net,greenhouse"],
+    images: [],
   },
   {
     name: "Shade Net 75% (per 50m roll)",
@@ -9198,7 +9202,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries", "Flower farming"],
     specifications: [{ name: "Shade Factor", value: "75%" }, { name: "Roll Length", value: "50", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/shade-net,greenhouse", "https://loremflickr.com/640/480/shade-net,greenhouse"],
+    images: [],
   },
   {
     name: "Shade Net 90% (per 50m roll)",
@@ -9210,7 +9214,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries", "Flower farming"],
     specifications: [{ name: "Shade Factor", value: "90%" }, { name: "Roll Length", value: "50", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/shade-net,greenhouse", "https://loremflickr.com/640/480/shade-net,greenhouse"],
+    images: [],
   },
   {
     name: "Insect Screen Net 40 mesh (per 50m roll)",
@@ -9222,7 +9226,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Mesh", value: "40 mesh" }],
-    images: ["https://loremflickr.com/640/480/insect-net,greenhouse", "https://loremflickr.com/640/480/insect-net,greenhouse"],
+    images: [],
   },
   {
     name: "Insect Screen Net 50 mesh (per 50m roll)",
@@ -9234,7 +9238,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Mesh", value: "50 mesh" }],
-    images: ["https://loremflickr.com/640/480/insect-net,greenhouse", "https://loremflickr.com/640/480/insect-net,greenhouse"],
+    images: [],
   },
   {
     name: "Insect Screen Net 60 mesh (per 50m roll)",
@@ -9246,7 +9250,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Mesh", value: "60 mesh" }],
-    images: ["https://loremflickr.com/640/480/insect-net,greenhouse", "https://loremflickr.com/640/480/insect-net,greenhouse"],
+    images: [],
   },
   {
     name: "Greenhouse Ventilation Fan 3000CFM",
@@ -9258,7 +9262,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Airflow", value: "3000", unit: "CFM" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-fan,ventilation", "https://loremflickr.com/640/480/greenhouse-fan,ventilation"],
+    images: [],
   },
   {
     name: "Greenhouse Ventilation Fan 6000CFM",
@@ -9270,7 +9274,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Airflow", value: "6000", unit: "CFM" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-fan,ventilation", "https://loremflickr.com/640/480/greenhouse-fan,ventilation"],
+    images: [],
   },
   {
     name: "Greenhouse Ventilation Fan 9000CFM",
@@ -9282,7 +9286,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Airflow", value: "9000", unit: "CFM" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-fan,ventilation", "https://loremflickr.com/640/480/greenhouse-fan,ventilation"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 500L (Vertical)",
@@ -9294,7 +9298,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "500", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 500L (Horizontal)",
@@ -9306,7 +9310,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "500", unit: "L" }, { name: "Orientation", value: "Horizontal" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 1000L (Vertical)",
@@ -9318,7 +9322,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "1000", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 1000L (Horizontal)",
@@ -9330,7 +9334,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "1000", unit: "L" }, { name: "Orientation", value: "Horizontal" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 2500L (Vertical)",
@@ -9342,7 +9346,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "2500", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 2500L (Horizontal)",
@@ -9354,7 +9358,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "2500", unit: "L" }, { name: "Orientation", value: "Horizontal" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 5000L (Vertical)",
@@ -9366,7 +9370,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "5000", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 5000L (Horizontal)",
@@ -9378,7 +9382,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "5000", unit: "L" }, { name: "Orientation", value: "Horizontal" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 10000L (Vertical)",
@@ -9390,7 +9394,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "10000", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 10000L (Horizontal)",
@@ -9402,7 +9406,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "10000", unit: "L" }, { name: "Orientation", value: "Horizontal" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 15000L (Vertical)",
@@ -9414,7 +9418,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "15000", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 15000L (Horizontal)",
@@ -9426,7 +9430,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "15000", unit: "L" }, { name: "Orientation", value: "Horizontal" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 20000L (Vertical)",
@@ -9438,7 +9442,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "20000", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 24000L (Vertical)",
@@ -9450,7 +9454,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "24000", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Plastic Water Storage Tank 30000L (Vertical)",
@@ -9462,7 +9466,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "30000", unit: "L" }, { name: "Orientation", value: "Vertical" }, { name: "Material", value: "UV-Stabilized HDPE" }],
-    images: ["https://loremflickr.com/640/480/water-tank,plastic", "https://loremflickr.com/640/480/water-tank,plastic"],
+    images: [],
   },
   {
     name: "Underground Water Storage Tank 5000L",
@@ -9474,7 +9478,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "5000", unit: "L" }, { name: "Installation", value: "Underground" }],
-    images: ["https://loremflickr.com/640/480/underground-tank,water-storage", "https://loremflickr.com/640/480/underground-tank,water-storage"],
+    images: [],
   },
   {
     name: "Underground Water Storage Tank 10000L",
@@ -9486,7 +9490,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "10000", unit: "L" }, { name: "Installation", value: "Underground" }],
-    images: ["https://loremflickr.com/640/480/underground-tank,water-storage", "https://loremflickr.com/640/480/underground-tank,water-storage"],
+    images: [],
   },
   {
     name: "Underground Water Storage Tank 20000L",
@@ -9498,7 +9502,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "20000", unit: "L" }, { name: "Installation", value: "Underground" }],
-    images: ["https://loremflickr.com/640/480/underground-tank,water-storage", "https://loremflickr.com/640/480/underground-tank,water-storage"],
+    images: [],
   },
   {
     name: "Collapsible Water Storage Bladder 5000L",
@@ -9510,7 +9514,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Capacity", value: "5000", unit: "L" }, { name: "Material", value: "Reinforced PVC Tarpaulin" }],
-    images: ["https://loremflickr.com/640/480/water-bladder,irrigation", "https://loremflickr.com/640/480/water-bladder,irrigation"],
+    images: [],
   },
   {
     name: "Collapsible Water Storage Bladder 10000L",
@@ -9522,7 +9526,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Capacity", value: "10000", unit: "L" }, { name: "Material", value: "Reinforced PVC Tarpaulin" }],
-    images: ["https://loremflickr.com/640/480/water-bladder,irrigation", "https://loremflickr.com/640/480/water-bladder,irrigation"],
+    images: [],
   },
   {
     name: "Collapsible Water Storage Bladder 20000L",
@@ -9534,7 +9538,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Capacity", value: "20000", unit: "L" }, { name: "Material", value: "Reinforced PVC Tarpaulin" }],
-    images: ["https://loremflickr.com/640/480/water-bladder,irrigation", "https://loremflickr.com/640/480/water-bladder,irrigation"],
+    images: [],
   },
   {
     name: "Collapsible Water Storage Bladder 50000L",
@@ -9546,7 +9550,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Capacity", value: "50000", unit: "L" }, { name: "Material", value: "Reinforced PVC Tarpaulin" }],
-    images: ["https://loremflickr.com/640/480/water-bladder,irrigation", "https://loremflickr.com/640/480/water-bladder,irrigation"],
+    images: [],
   },
   {
     name: "Steel Reinforced Water Tank 10000L",
@@ -9558,7 +9562,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "10000", unit: "L" }, { name: "Material", value: "Galvanized Steel + Liner" }],
-    images: ["https://loremflickr.com/640/480/steel-tank,water-storage", "https://loremflickr.com/640/480/steel-tank,water-storage"],
+    images: [],
   },
   {
     name: "Steel Reinforced Water Tank 20000L",
@@ -9570,7 +9574,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "20000", unit: "L" }, { name: "Material", value: "Galvanized Steel + Liner" }],
-    images: ["https://loremflickr.com/640/480/steel-tank,water-storage", "https://loremflickr.com/640/480/steel-tank,water-storage"],
+    images: [],
   },
   {
     name: "Steel Reinforced Water Tank 50000L",
@@ -9582,7 +9586,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Capacity", value: "50000", unit: "L" }, { name: "Material", value: "Galvanized Steel + Liner" }],
-    images: ["https://loremflickr.com/640/480/steel-tank,water-storage", "https://loremflickr.com/640/480/steel-tank,water-storage"],
+    images: [],
   },
   {
     name: "Quick Connector Hose Coupling 12mm",
@@ -9594,7 +9598,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Quick Connector Hose Coupling" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Quick Connector Hose Coupling 16mm",
@@ -9606,7 +9610,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Quick Connector Hose Coupling" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Quick Connector Hose Coupling 20mm",
@@ -9618,7 +9622,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Quick Connector Hose Coupling" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Quick Connector Hose Coupling 25mm",
@@ -9630,7 +9634,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Quick Connector Hose Coupling" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Drip Tape Punch Tool",
@@ -9642,7 +9646,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Drip Tape Punch Tool" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Hose Repair Clamp 16mm",
@@ -9654,7 +9658,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Hose Repair Clamp" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Hose Repair Clamp 20mm",
@@ -9666,7 +9670,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Hose Repair Clamp" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Hose Repair Clamp 25mm",
@@ -9678,7 +9682,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Hose Repair Clamp" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Hose Repair Clamp 32mm",
@@ -9690,7 +9694,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Hose Repair Clamp" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Grommet & Take-Off Kit (pack of 50) 16mm",
@@ -9702,7 +9706,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Grommet & Take-Off Kit (pack of 50)" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Riser Stake with Adjustable Nozzle",
@@ -9714,7 +9718,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Riser Stake with Adjustable Nozzle" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Pressure Gauge 0-6 Bar",
@@ -9726,7 +9730,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Pressure Gauge" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Pressure Gauge 0-10 Bar",
@@ -9738,7 +9742,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Pressure Gauge" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Pressure Gauge 0-16 Bar",
@@ -9750,7 +9754,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Pressure Gauge" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Filter Washer / O-Ring Kit",
@@ -9762,7 +9766,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Filter Washer / O-Ring Kit" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Pipe Cutter Ratchet",
@@ -9774,7 +9778,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Pipe Cutter Ratchet" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Goof Plug (pack of 100) 16mm",
@@ -9786,7 +9790,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Goof Plug (pack of 100)" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Barbed Joiner (pack of 100) 16mm",
@@ -9798,7 +9802,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Barbed Joiner (pack of 100)" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Barbed Tee (pack of 50) 16mm",
@@ -9810,7 +9814,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Barbed Tee (pack of 50)" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Barbed Elbow (pack of 50) 16mm",
@@ -9822,7 +9826,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Barbed Elbow (pack of 50)" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Hose Bib Adapter 12mm",
@@ -9834,7 +9838,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Hose Bib Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Hose Bib Adapter 20mm",
@@ -9846,7 +9850,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Hose Bib Adapter" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Irrigation Timer Battery Pack",
@@ -9858,7 +9862,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Irrigation Timer Battery Pack" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Drip Line Stakes (pack of 100)",
@@ -9870,7 +9874,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Drip Line Stakes (pack of 100)" }],
-    images: ["https://loremflickr.com/640/480/irrigation-fittings,connectors", "https://loremflickr.com/640/480/irrigation-fittings,connectors"],
+    images: [],
   },
   {
     name: "Trolley-Mounted Rain Gun 22m Throw Radius",
@@ -9882,7 +9886,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "22", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2.5 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Trolley-Mounted Rain Gun 28m Throw Radius",
@@ -9894,7 +9898,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "28", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2.5 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Trolley-Mounted Rain Gun 33m Throw Radius",
@@ -9906,7 +9910,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "33", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Trolley-Mounted Rain Gun 38m Throw Radius",
@@ -9918,7 +9922,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "38", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Trolley-Mounted Rain Gun 44m Throw Radius",
@@ -9930,7 +9934,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "44", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2.5 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Trolley-Mounted Rain Gun 48m Throw Radius",
@@ -9942,7 +9946,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "48", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "PVC Body Rain Gun 22m Throw Radius",
@@ -9954,7 +9958,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "22", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "PVC Body Rain Gun 28m Throw Radius",
@@ -9966,7 +9970,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "28", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "PVC Body Rain Gun 33m Throw Radius",
@@ -9978,7 +9982,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "33", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "PVC Body Rain Gun 38m Throw Radius",
@@ -9990,7 +9994,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "38", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "PVC Body Rain Gun 44m Throw Radius",
@@ -10002,7 +10006,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "44", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2.5 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "PVC Body Rain Gun 48m Throw Radius",
@@ -10014,7 +10018,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "48", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Sector Rain Gun (Adjustable Arc) 22m Throw Radius",
@@ -10026,7 +10030,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "22", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Sector Rain Gun (Adjustable Arc) 28m Throw Radius",
@@ -10038,7 +10042,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "28", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "3 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Sector Rain Gun (Adjustable Arc) 33m Throw Radius",
@@ -10050,7 +10054,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "33", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Sector Rain Gun (Adjustable Arc) 38m Throw Radius",
@@ -10062,7 +10066,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "38", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Sector Rain Gun (Adjustable Arc) 44m Throw Radius",
@@ -10074,7 +10078,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "44", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Sector Rain Gun (Adjustable Arc) 48m Throw Radius",
@@ -10086,7 +10090,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Adjustable spray pattern", "Corrosion-resistant nozzle", "Even coverage radius", "Anti-drain check valve"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Throw Radius", value: "48", unit: "m" }, { name: "Operating Pressure", value: "3-6", unit: "Bar" }, { name: "Inlet Size", value: "2.5 in" }],
-    images: ["https://loremflickr.com/640/480/rain-gun,sprinkler-cannon", "https://loremflickr.com/640/480/rain-gun,sprinkler-cannon"],
+    images: [],
   },
   {
     name: "Electric Actuated Ball Valve 1 in",
@@ -10098,7 +10102,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Electric Actuated Ball Valve 1.5 in",
@@ -10110,7 +10114,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Electric Actuated Ball Valve 2 in",
@@ -10122,7 +10126,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Electric Actuated Ball Valve 3 in",
@@ -10134,7 +10138,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Hydraulic Control Valve 1 in",
@@ -10146,7 +10150,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Hydraulic Control Valve 1.5 in",
@@ -10158,7 +10162,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Hydraulic Control Valve 2 in",
@@ -10170,7 +10174,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Hydraulic Control Valve 3 in",
@@ -10182,7 +10186,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Hydraulic Control Valve 4 in",
@@ -10194,7 +10198,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "4", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Foot Valve with Strainer 1 in",
@@ -10206,7 +10210,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Foot Valve with Strainer 1.5 in",
@@ -10218,7 +10222,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Foot Valve with Strainer 2 in",
@@ -10230,7 +10234,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Foot Valve with Strainer 3 in",
@@ -10242,7 +10246,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Pressure Sustaining Valve 1.5 in",
@@ -10254,7 +10258,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Pressure Sustaining Valve 2 in",
@@ -10266,7 +10270,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Pressure Sustaining Valve 3 in",
@@ -10278,7 +10282,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "3", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Flow Control Valve 0.75 in",
@@ -10290,7 +10294,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Flow Control Valve 1 in",
@@ -10302,7 +10306,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Flow Control Valve 1.5 in",
@@ -10314,7 +10318,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Flow Control Valve 2 in",
@@ -10326,7 +10330,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "2", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Vacuum Breaker Valve 0.5 in",
@@ -10338,7 +10342,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.5", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Vacuum Breaker Valve 0.75 in",
@@ -10350,7 +10354,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "0.75", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Vacuum Breaker Valve 1 in",
@@ -10362,7 +10366,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Vegetable farming", "Maize & row crops", "Sugarcane fields"],
     specifications: [{ name: "Connection Size", value: "1", unit: "in" }, { name: "Working Pressure", value: "\u226410", unit: "Bar" }],
-    images: ["https://loremflickr.com/640/480/irrigation-valve,control", "https://loremflickr.com/640/480/irrigation-valve,control"],
+    images: [],
   },
   {
     name: "Solar-Ready DC Submersible Pump 0.5HP",
@@ -10374,7 +10378,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Max Head", value: "17", unit: "m" }, { name: "Max Flow", value: "3", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/submersible-pump,solar", "https://loremflickr.com/640/480/submersible-pump,solar"],
+    images: [],
   },
   {
     name: "Solar-Ready DC Submersible Pump 1HP",
@@ -10386,7 +10390,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Max Head", value: "23", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/submersible-pump,solar", "https://loremflickr.com/640/480/submersible-pump,solar"],
+    images: [],
   },
   {
     name: "Solar-Ready DC Submersible Pump 1.5HP",
@@ -10398,7 +10402,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Max Head", value: "28", unit: "m" }, { name: "Max Flow", value: "6", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/submersible-pump,solar", "https://loremflickr.com/640/480/submersible-pump,solar"],
+    images: [],
   },
   {
     name: "Solar-Ready DC Submersible Pump 2HP",
@@ -10410,7 +10414,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Max Head", value: "34", unit: "m" }, { name: "Max Flow", value: "8", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/submersible-pump,solar", "https://loremflickr.com/640/480/submersible-pump,solar"],
+    images: [],
   },
   {
     name: "Solar-Ready DC Submersible Pump 3HP",
@@ -10422,7 +10426,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Max Head", value: "45", unit: "m" }, { name: "Max Flow", value: "11", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/submersible-pump,solar", "https://loremflickr.com/640/480/submersible-pump,solar"],
+    images: [],
   },
   {
     name: "High Pressure Multistage Pump 1HP",
@@ -10434,7 +10438,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Max Head", value: "23", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/multistage-pump,irrigation", "https://loremflickr.com/640/480/multistage-pump,irrigation"],
+    images: [],
   },
   {
     name: "High Pressure Multistage Pump 2HP",
@@ -10446,7 +10450,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Max Head", value: "34", unit: "m" }, { name: "Max Flow", value: "8", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/multistage-pump,irrigation", "https://loremflickr.com/640/480/multistage-pump,irrigation"],
+    images: [],
   },
   {
     name: "High Pressure Multistage Pump 3HP",
@@ -10458,7 +10462,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Max Head", value: "45", unit: "m" }, { name: "Max Flow", value: "11", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/multistage-pump,irrigation", "https://loremflickr.com/640/480/multistage-pump,irrigation"],
+    images: [],
   },
   {
     name: "High Pressure Multistage Pump 5HP",
@@ -10470,7 +10474,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "5", unit: "HP" }, { name: "Max Head", value: "67", unit: "m" }, { name: "Max Flow", value: "17", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/multistage-pump,irrigation", "https://loremflickr.com/640/480/multistage-pump,irrigation"],
+    images: [],
   },
   {
     name: "Trailer-Mounted Diesel Pump Set 5HP",
@@ -10482,7 +10486,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "5", unit: "HP" }, { name: "Max Head", value: "67", unit: "m" }, { name: "Max Flow", value: "17", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,trailer", "https://loremflickr.com/640/480/diesel-pump,trailer"],
+    images: [],
   },
   {
     name: "Trailer-Mounted Diesel Pump Set 7.5HP",
@@ -10494,7 +10498,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "7.5", unit: "HP" }, { name: "Max Head", value: "94", unit: "m" }, { name: "Max Flow", value: "24", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,trailer", "https://loremflickr.com/640/480/diesel-pump,trailer"],
+    images: [],
   },
   {
     name: "Trailer-Mounted Diesel Pump Set 10HP",
@@ -10506,7 +10510,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "10", unit: "HP" }, { name: "Max Head", value: "122", unit: "m" }, { name: "Max Flow", value: "32", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,trailer", "https://loremflickr.com/640/480/diesel-pump,trailer"],
+    images: [],
   },
   {
     name: "Trailer-Mounted Diesel Pump Set 15HP",
@@ -10518,7 +10522,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "15", unit: "HP" }, { name: "Max Head", value: "177", unit: "m" }, { name: "Max Flow", value: "47", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/diesel-pump,trailer", "https://loremflickr.com/640/480/diesel-pump,trailer"],
+    images: [],
   },
   {
     name: "Split-Phase Motor (bare motor) 0.5HP",
@@ -10530,7 +10534,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.5", unit: "HP" }, { name: "Max Head", value: "17", unit: "m" }, { name: "Max Flow", value: "3", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/electric-motor,pump", "https://loremflickr.com/640/480/electric-motor,pump"],
+    images: [],
   },
   {
     name: "Split-Phase Motor (bare motor) 0.75HP",
@@ -10542,7 +10546,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.75", unit: "HP" }, { name: "Max Head", value: "20", unit: "m" }, { name: "Max Flow", value: "4", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/electric-motor,pump", "https://loremflickr.com/640/480/electric-motor,pump"],
+    images: [],
   },
   {
     name: "Split-Phase Motor (bare motor) 1HP",
@@ -10554,7 +10558,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Max Head", value: "23", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/electric-motor,pump", "https://loremflickr.com/640/480/electric-motor,pump"],
+    images: [],
   },
   {
     name: "Split-Phase Motor (bare motor) 1.5HP",
@@ -10566,7 +10570,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Max Head", value: "28", unit: "m" }, { name: "Max Flow", value: "6", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/electric-motor,pump", "https://loremflickr.com/640/480/electric-motor,pump"],
+    images: [],
   },
   {
     name: "Split-Phase Motor (bare motor) 2HP",
@@ -10578,7 +10582,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "2", unit: "HP" }, { name: "Max Head", value: "34", unit: "m" }, { name: "Max Flow", value: "8", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/electric-motor,pump", "https://loremflickr.com/640/480/electric-motor,pump"],
+    images: [],
   },
   {
     name: "Split-Phase Motor (bare motor) 3HP",
@@ -10590,7 +10594,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "3", unit: "HP" }, { name: "Max Head", value: "45", unit: "m" }, { name: "Max Flow", value: "11", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/electric-motor,pump", "https://loremflickr.com/640/480/electric-motor,pump"],
+    images: [],
   },
   {
     name: "Sprinkler Booster Pump 0.75HP",
@@ -10602,7 +10606,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "0.75", unit: "HP" }, { name: "Max Head", value: "20", unit: "m" }, { name: "Max Flow", value: "4", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,sprinkler", "https://loremflickr.com/640/480/booster-pump,sprinkler"],
+    images: [],
   },
   {
     name: "Sprinkler Booster Pump 1HP",
@@ -10614,7 +10618,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1", unit: "HP" }, { name: "Max Head", value: "23", unit: "m" }, { name: "Max Flow", value: "5", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,sprinkler", "https://loremflickr.com/640/480/booster-pump,sprinkler"],
+    images: [],
   },
   {
     name: "Sprinkler Booster Pump 1.5HP",
@@ -10626,7 +10630,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Thermal overload protection", "High energy efficiency", "Corrosion-resistant impeller", "Continuous duty rated"],
     applications: ["Sugarcane fields", "Large-scale commercial farms", "Smallholder farms"],
     specifications: [{ name: "Power", value: "1.5", unit: "HP" }, { name: "Max Head", value: "28", unit: "m" }, { name: "Max Flow", value: "6", unit: "m3/h" }],
-    images: ["https://loremflickr.com/640/480/booster-pump,sprinkler", "https://loremflickr.com/640/480/booster-pump,sprinkler"],
+    images: [],
   },
   {
     name: "Solar Powered Drip Irrigation Kit (1/8 Acre)",
@@ -10638,7 +10642,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1/8 acre" }, { name: "Includes", value: "Pump, panel, driplines, filter, fittings" }],
-    images: ["https://loremflickr.com/640/480/solar-irrigation-kit,farm", "https://loremflickr.com/640/480/solar-irrigation-kit,farm"],
+    images: [],
   },
   {
     name: "Solar Powered Drip Irrigation Kit (1/4 Acre)",
@@ -10650,7 +10654,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1/4 acre" }, { name: "Includes", value: "Pump, panel, driplines, filter, fittings" }],
-    images: ["https://loremflickr.com/640/480/solar-irrigation-kit,farm", "https://loremflickr.com/640/480/solar-irrigation-kit,farm"],
+    images: [],
   },
   {
     name: "Solar Powered Drip Irrigation Kit (1/2 Acre)",
@@ -10662,7 +10666,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1/2 acre" }, { name: "Includes", value: "Pump, panel, driplines, filter, fittings" }],
-    images: ["https://loremflickr.com/640/480/solar-irrigation-kit,farm", "https://loremflickr.com/640/480/solar-irrigation-kit,farm"],
+    images: [],
   },
   {
     name: "Solar Powered Drip Irrigation Kit (1 Acre)",
@@ -10674,7 +10678,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1 acre" }, { name: "Includes", value: "Pump, panel, driplines, filter, fittings" }],
-    images: ["https://loremflickr.com/640/480/solar-irrigation-kit,farm", "https://loremflickr.com/640/480/solar-irrigation-kit,farm"],
+    images: [],
   },
   {
     name: "Solar Powered Drip Irrigation Kit (2 Acre)",
@@ -10686,7 +10690,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "2 acre" }, { name: "Includes", value: "Pump, panel, driplines, filter, fittings" }],
-    images: ["https://loremflickr.com/640/480/solar-irrigation-kit,farm", "https://loremflickr.com/640/480/solar-irrigation-kit,farm"],
+    images: [],
   },
   {
     name: "Solar Powered Drip Irrigation Kit (5 Acre)",
@@ -10698,7 +10702,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "5 acre" }, { name: "Includes", value: "Pump, panel, driplines, filter, fittings" }],
-    images: ["https://loremflickr.com/640/480/solar-irrigation-kit,farm", "https://loremflickr.com/640/480/solar-irrigation-kit,farm"],
+    images: [],
   },
   {
     name: "Solar Panel Mounting Structure (Standard)",
@@ -10710,7 +10714,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Standard" }],
-    images: ["https://loremflickr.com/640/480/solar-mount,structure", "https://loremflickr.com/640/480/solar-mount,structure"],
+    images: [],
   },
   {
     name: "Solar Panel Mounting Structure (Heavy Duty)",
@@ -10722,7 +10726,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Heavy Duty" }],
-    images: ["https://loremflickr.com/640/480/solar-mount,structure", "https://loremflickr.com/640/480/solar-mount,structure"],
+    images: [],
   },
   {
     name: "Solar Water Pump Float Switch (Standard)",
@@ -10734,7 +10738,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Standard" }],
-    images: ["https://loremflickr.com/640/480/float-switch,solar-pump", "https://loremflickr.com/640/480/float-switch,solar-pump"],
+    images: [],
   },
   {
     name: "Solar Water Pump Float Switch (Heavy Duty)",
@@ -10746,7 +10750,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Heavy Duty" }],
-    images: ["https://loremflickr.com/640/480/float-switch,solar-pump", "https://loremflickr.com/640/480/float-switch,solar-pump"],
+    images: [],
   },
   {
     name: "Solar Battery Backup Unit 100Ah (Standard)",
@@ -10758,7 +10762,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Standard" }],
-    images: ["https://loremflickr.com/640/480/solar-battery,agriculture", "https://loremflickr.com/640/480/solar-battery,agriculture"],
+    images: [],
   },
   {
     name: "Solar Battery Backup Unit 100Ah (Heavy Duty)",
@@ -10770,7 +10774,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["MPPT charge optimisation", "No fuel / grid cost", "Low maintenance", "20+ year panel lifespan"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Tier", value: "Heavy Duty" }],
-    images: ["https://loremflickr.com/640/480/solar-battery,agriculture", "https://loremflickr.com/640/480/solar-battery,agriculture"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 1-Zone",
@@ -10782,7 +10786,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "1" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 2-Zone",
@@ -10794,7 +10798,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "2" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 4-Zone",
@@ -10806,7 +10810,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "4" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 6-Zone",
@@ -10818,7 +10822,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "6" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 8-Zone",
@@ -10830,7 +10834,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "8" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 12-Zone",
@@ -10842,7 +10846,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "12" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 16-Zone",
@@ -10854,7 +10858,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "16" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Solenoid Valve Junction Box 24-Zone",
@@ -10866,7 +10870,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Zones", value: "24" }],
-    images: ["https://loremflickr.com/640/480/valve-box,irrigation", "https://loremflickr.com/640/480/valve-box,irrigation"],
+    images: [],
   },
   {
     name: "Irrigation Control Wire 18 AWG (100m)",
@@ -10878,7 +10882,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Gauge", value: "18 AWG" }, { name: "Length", value: "100", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/irrigation-wire,cable", "https://loremflickr.com/640/480/irrigation-wire,cable"],
+    images: [],
   },
   {
     name: "Irrigation Control Wire 18 AWG (250m)",
@@ -10890,7 +10894,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Gauge", value: "18 AWG" }, { name: "Length", value: "250", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/irrigation-wire,cable", "https://loremflickr.com/640/480/irrigation-wire,cable"],
+    images: [],
   },
   {
     name: "Irrigation Control Wire 18 AWG (500m)",
@@ -10902,7 +10906,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Gauge", value: "18 AWG" }, { name: "Length", value: "500", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/irrigation-wire,cable", "https://loremflickr.com/640/480/irrigation-wire,cable"],
+    images: [],
   },
   {
     name: "Irrigation Control Wire 14 AWG (100m)",
@@ -10914,7 +10918,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Gauge", value: "14 AWG" }, { name: "Length", value: "100", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/irrigation-wire,cable", "https://loremflickr.com/640/480/irrigation-wire,cable"],
+    images: [],
   },
   {
     name: "Irrigation Control Wire 14 AWG (250m)",
@@ -10926,7 +10930,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Gauge", value: "14 AWG" }, { name: "Length", value: "250", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/irrigation-wire,cable", "https://loremflickr.com/640/480/irrigation-wire,cable"],
+    images: [],
   },
   {
     name: "Irrigation Control Wire 14 AWG (500m)",
@@ -10938,7 +10942,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Rain delay function", "Multiple program schedules", "Weather-resistant enclosure", "Manual & auto modes"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Gauge", value: "14 AWG" }, { name: "Length", value: "500", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/irrigation-wire,cable", "https://loremflickr.com/640/480/irrigation-wire,cable"],
+    images: [],
   },
   {
     name: "Venturi Fertilizer Injector 4 in Industrial",
@@ -10950,7 +10954,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection Size", value: "4", unit: "in" }],
-    images: ["https://loremflickr.com/640/480/fertigation,venturi-injector", "https://loremflickr.com/640/480/fertigation,venturi-injector"],
+    images: [],
   },
   {
     name: "Venturi Fertilizer Injector 6 in Industrial",
@@ -10962,7 +10966,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection Size", value: "6", unit: "in" }],
-    images: ["https://loremflickr.com/640/480/fertigation,venturi-injector", "https://loremflickr.com/640/480/fertigation,venturi-injector"],
+    images: [],
   },
   {
     name: "Industrial Fertigation Dosing Pump 60L/h",
@@ -10974,7 +10978,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Dosing Rate", value: "60", unit: "L/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,fertigation", "https://loremflickr.com/640/480/dosing-pump,fertigation"],
+    images: [],
   },
   {
     name: "Industrial Fertigation Dosing Pump 100L/h",
@@ -10986,7 +10990,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Dosing Rate", value: "100", unit: "L/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,fertigation", "https://loremflickr.com/640/480/dosing-pump,fertigation"],
+    images: [],
   },
   {
     name: "Industrial Fertigation Dosing Pump 150L/h",
@@ -10998,7 +11002,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Dosing Rate", value: "150", unit: "L/h" }],
-    images: ["https://loremflickr.com/640/480/dosing-pump,fertigation", "https://loremflickr.com/640/480/dosing-pump,fertigation"],
+    images: [],
   },
   {
     name: "Fertilizer Mixing Tank 2000L (Industrial)",
@@ -11010,7 +11014,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Capacity", value: "2000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/fertilizer-tank,industrial", "https://loremflickr.com/640/480/fertilizer-tank,industrial"],
+    images: [],
   },
   {
     name: "Fertilizer Mixing Tank 5000L (Industrial)",
@@ -11022,7 +11026,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Capacity", value: "5000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/fertilizer-tank,industrial", "https://loremflickr.com/640/480/fertilizer-tank,industrial"],
+    images: [],
   },
   {
     name: "Automatic Fertigation Skid System (4-Tank)",
@@ -11034,7 +11038,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Configuration", value: "4-Tank" }],
-    images: ["https://loremflickr.com/640/480/fertigation-system,agriculture", "https://loremflickr.com/640/480/fertigation-system,agriculture"],
+    images: [],
   },
   {
     name: "Automatic Fertigation Skid System (8-Tank)",
@@ -11046,7 +11050,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Configuration", value: "8-Tank" }],
-    images: ["https://loremflickr.com/640/480/fertigation-system,agriculture", "https://loremflickr.com/640/480/fertigation-system,agriculture"],
+    images: [],
   },
   {
     name: "Multi-Tank Fertigation Station (4-Tank)",
@@ -11058,7 +11062,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Configuration", value: "4-Tank" }],
-    images: ["https://loremflickr.com/640/480/fertigation-system,agriculture", "https://loremflickr.com/640/480/fertigation-system,agriculture"],
+    images: [],
   },
   {
     name: "Multi-Tank Fertigation Station (8-Tank)",
@@ -11070,7 +11074,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Configuration", value: "8-Tank" }],
-    images: ["https://loremflickr.com/640/480/fertigation-system,agriculture", "https://loremflickr.com/640/480/fertigation-system,agriculture"],
+    images: [],
   },
   {
     name: "Nutrient Dosing Manifold (4-Tank)",
@@ -11082,7 +11086,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Configuration", value: "4-Tank" }],
-    images: ["https://loremflickr.com/640/480/fertigation-system,agriculture", "https://loremflickr.com/640/480/fertigation-system,agriculture"],
+    images: [],
   },
   {
     name: "Nutrient Dosing Manifold (8-Tank)",
@@ -11094,7 +11098,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Precise dosing ratio", "Corrosion-resistant chemical contact parts", "Easy calibration", "Compatible with common fertilizers"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Configuration", value: "8-Tank" }],
-    images: ["https://loremflickr.com/640/480/fertigation-system,agriculture", "https://loremflickr.com/640/480/fertigation-system,agriculture"],
+    images: [],
   },
   {
     name: "Water Tank Steel Stand 1000L Capacity Rating",
@@ -11106,7 +11110,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Rated Capacity", value: "1000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/tank-stand,water-storage", "https://loremflickr.com/640/480/tank-stand,water-storage"],
+    images: [],
   },
   {
     name: "Water Tank Steel Stand 5000L Capacity Rating",
@@ -11118,7 +11122,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Rated Capacity", value: "5000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/tank-stand,water-storage", "https://loremflickr.com/640/480/tank-stand,water-storage"],
+    images: [],
   },
   {
     name: "Water Tank Steel Stand 10000L Capacity Rating",
@@ -11130,7 +11134,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Rated Capacity", value: "10000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/tank-stand,water-storage", "https://loremflickr.com/640/480/tank-stand,water-storage"],
+    images: [],
   },
   {
     name: "Water Tank Steel Stand 20000L Capacity Rating",
@@ -11142,7 +11146,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Rated Capacity", value: "20000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/tank-stand,water-storage", "https://loremflickr.com/640/480/tank-stand,water-storage"],
+    images: [],
   },
   {
     name: "Pond / Reservoir Liner HDPE (50m2)",
@@ -11154,7 +11158,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Coverage", value: "50", unit: "m2" }, { name: "Material", value: "HDPE Geomembrane" }],
-    images: ["https://loremflickr.com/640/480/pond-liner,water-storage", "https://loremflickr.com/640/480/pond-liner,water-storage"],
+    images: [],
   },
   {
     name: "Pond / Reservoir Liner HDPE (100m2)",
@@ -11166,7 +11170,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Coverage", value: "100", unit: "m2" }, { name: "Material", value: "HDPE Geomembrane" }],
-    images: ["https://loremflickr.com/640/480/pond-liner,water-storage", "https://loremflickr.com/640/480/pond-liner,water-storage"],
+    images: [],
   },
   {
     name: "Pond / Reservoir Liner HDPE (200m2)",
@@ -11178,7 +11182,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Coverage", value: "200", unit: "m2" }, { name: "Material", value: "HDPE Geomembrane" }],
-    images: ["https://loremflickr.com/640/480/pond-liner,water-storage", "https://loremflickr.com/640/480/pond-liner,water-storage"],
+    images: [],
   },
   {
     name: "Pond / Reservoir Liner HDPE (500m2)",
@@ -11190,7 +11194,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Coverage", value: "500", unit: "m2" }, { name: "Material", value: "HDPE Geomembrane" }],
-    images: ["https://loremflickr.com/640/480/pond-liner,water-storage", "https://loremflickr.com/640/480/pond-liner,water-storage"],
+    images: [],
   },
   {
     name: "Water Level Indicator/Float Gauge for 1000L Tank",
@@ -11202,7 +11206,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Compatible Tank Size", value: "1000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/water-level-gauge,tank", "https://loremflickr.com/640/480/water-level-gauge,tank"],
+    images: [],
   },
   {
     name: "Water Level Indicator/Float Gauge for 5000L Tank",
@@ -11214,7 +11218,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Compatible Tank Size", value: "5000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/water-level-gauge,tank", "https://loremflickr.com/640/480/water-level-gauge,tank"],
+    images: [],
   },
   {
     name: "Water Level Indicator/Float Gauge for 10000L Tank",
@@ -11226,7 +11230,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Compatible Tank Size", value: "10000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/water-level-gauge,tank", "https://loremflickr.com/640/480/water-level-gauge,tank"],
+    images: [],
   },
   {
     name: "Water Level Indicator/Float Gauge for 20000L Tank",
@@ -11238,7 +11242,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Food-grade UV-stabilized material", "Leak-proof welded seams", "Algae-resistant liner", "Wide inlet for easy cleaning"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Compatible Tank Size", value: "20000", unit: "L" }],
-    images: ["https://loremflickr.com/640/480/water-level-gauge,tank", "https://loremflickr.com/640/480/water-level-gauge,tank"],
+    images: [],
   },
   {
     name: "Knapsack Sprayer 16L Manual",
@@ -11250,7 +11254,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Knapsack Sprayer 16L Manual" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Knapsack Sprayer 20L Battery",
@@ -11262,7 +11266,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Knapsack Sprayer 20L Battery" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Soil Moisture Meter (Analog)",
@@ -11274,7 +11278,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Soil Moisture Meter (Analog)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Soil Moisture Meter (Digital)",
@@ -11286,7 +11290,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Soil Moisture Meter (Digital)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Backflow Preventer 1 inch",
@@ -11298,7 +11302,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Backflow Preventer 1 inch" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Drip Line Flush Cap (pack of 20)",
@@ -11310,7 +11314,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Drip Line Flush Cap (pack of 20)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Hose Reel Cart (heavy duty)",
@@ -11322,7 +11326,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Hose Reel Cart (heavy duty)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Garden Hose 3/4in (50m)",
@@ -11334,7 +11338,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Garden Hose 3/4in (50m)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Irrigation Toolkit (complete field kit)",
@@ -11346,7 +11350,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Irrigation Toolkit (complete field kit)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Pipe Thread Sealant Tape (pack of 10)",
@@ -11358,7 +11362,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Pipe Thread Sealant Tape (pack of 10)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Anti-Siphon Device 3/4 in",
@@ -11370,7 +11374,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Anti-Siphon Device 3/4 in" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Rain Gauge (analog)",
@@ -11382,7 +11386,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Durable field-tested design", "Tool-free or simple-tool install", "Compatible with standard fittings", "Reusable / long service life"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Type", value: "Rain Gauge (analog)" }],
-    images: ["https://loremflickr.com/640/480/farm-tools,irrigation", "https://loremflickr.com/640/480/farm-tools,irrigation"],
+    images: [],
   },
   {
     name: "Greenhouse Drip Irrigation Kit (100m2)",
@@ -11394,7 +11398,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Greenhouse Drip Irrigation Kit (100m2)" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-drip,irrigation", "https://loremflickr.com/640/480/greenhouse-drip,irrigation"],
+    images: [],
   },
   {
     name: "Greenhouse Drip Irrigation Kit (500m2)",
@@ -11406,7 +11410,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Greenhouse Drip Irrigation Kit (500m2)" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-drip,irrigation", "https://loremflickr.com/640/480/greenhouse-drip,irrigation"],
+    images: [],
   },
   {
     name: "Greenhouse Drip Irrigation Kit (1000m2)",
@@ -11418,7 +11422,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Greenhouse Drip Irrigation Kit (1000m2)" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-drip,irrigation", "https://loremflickr.com/640/480/greenhouse-drip,irrigation"],
+    images: [],
   },
   {
     name: "Greenhouse Misting System Kit",
@@ -11430,7 +11434,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Greenhouse Misting System Kit" }],
-    images: ["https://loremflickr.com/640/480/misting-system,greenhouse", "https://loremflickr.com/640/480/misting-system,greenhouse"],
+    images: [],
   },
   {
     name: "Greenhouse Heating Fan Unit",
@@ -11442,7 +11446,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Greenhouse Heating Fan Unit" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-heater,farm", "https://loremflickr.com/640/480/greenhouse-heater,farm"],
+    images: [],
   },
   {
     name: "Greenhouse Door & Frame Kit",
@@ -11454,7 +11458,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Greenhouse Door & Frame Kit" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-door,structure", "https://loremflickr.com/640/480/greenhouse-door,structure"],
+    images: [],
   },
   {
     name: "Greenhouse Roll-Up Side Wall Kit",
@@ -11466,7 +11470,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Greenhouse Roll-Up Side Wall Kit" }],
-    images: ["https://loremflickr.com/640/480/greenhouse-sidewall,ventilation", "https://loremflickr.com/640/480/greenhouse-sidewall,ventilation"],
+    images: [],
   },
   {
     name: "Nursery Seedling Propagation Tray Rack",
@@ -11478,7 +11482,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Galvanized steel frame", "High light transmission cover", "Wind & UV resistant", "Modular expandable design"],
     applications: ["Greenhouse crops", "Nurseries"],
     specifications: [{ name: "Type", value: "Nursery Seedling Propagation Tray Rack" }],
-    images: ["https://loremflickr.com/640/480/nursery-rack,greenhouse", "https://loremflickr.com/640/480/nursery-rack,greenhouse"],
+    images: [],
   },
   {
     name: "Complete Drip Irrigation Farm Kit (1/8 Acre)",
@@ -11490,7 +11494,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1/8 acre" }, { name: "Includes", value: "Filter, mainline, dripline, fittings" }],
-    images: ["https://loremflickr.com/640/480/drip-kit,farm-irrigation", "https://loremflickr.com/640/480/drip-kit,farm-irrigation"],
+    images: [],
   },
   {
     name: "Complete Drip Irrigation Farm Kit (1/4 Acre)",
@@ -11502,7 +11506,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1/4 acre" }, { name: "Includes", value: "Filter, mainline, dripline, fittings" }],
-    images: ["https://loremflickr.com/640/480/drip-kit,farm-irrigation", "https://loremflickr.com/640/480/drip-kit,farm-irrigation"],
+    images: [],
   },
   {
     name: "Complete Drip Irrigation Farm Kit (1/2 Acre)",
@@ -11514,7 +11518,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1/2 acre" }, { name: "Includes", value: "Filter, mainline, dripline, fittings" }],
-    images: ["https://loremflickr.com/640/480/drip-kit,farm-irrigation", "https://loremflickr.com/640/480/drip-kit,farm-irrigation"],
+    images: [],
   },
   {
     name: "Complete Drip Irrigation Farm Kit (1 Acre)",
@@ -11526,7 +11530,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "1 acre" }, { name: "Includes", value: "Filter, mainline, dripline, fittings" }],
-    images: ["https://loremflickr.com/640/480/drip-kit,farm-irrigation", "https://loremflickr.com/640/480/drip-kit,farm-irrigation"],
+    images: [],
   },
   {
     name: "Complete Drip Irrigation Farm Kit (2 Acre)",
@@ -11538,7 +11542,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "2 acre" }, { name: "Includes", value: "Filter, mainline, dripline, fittings" }],
-    images: ["https://loremflickr.com/640/480/drip-kit,farm-irrigation", "https://loremflickr.com/640/480/drip-kit,farm-irrigation"],
+    images: [],
   },
   {
     name: "Complete Drip Irrigation Farm Kit (5 Acre)",
@@ -11550,7 +11554,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Vegetable farming", "Maize & row crops", "Smallholder farms"],
     specifications: [{ name: "Coverage", value: "5 acre" }, { name: "Includes", value: "Filter, mainline, dripline, fittings" }],
-    images: ["https://loremflickr.com/640/480/drip-kit,farm-irrigation", "https://loremflickr.com/640/480/drip-kit,farm-irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Pre-Filter Tank 1 in Inlet",
@@ -11562,7 +11566,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Inlet Size", value: "1", unit: "in" }],
-    images: ["https://loremflickr.com/640/480/sand-filter,irrigation", "https://loremflickr.com/640/480/sand-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Pre-Filter Tank 1.5 in Inlet",
@@ -11574,7 +11578,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Inlet Size", value: "1.5", unit: "in" }],
-    images: ["https://loremflickr.com/640/480/sand-filter,irrigation", "https://loremflickr.com/640/480/sand-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Pre-Filter Tank 2 in Inlet",
@@ -11586,7 +11590,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Inlet Size", value: "2", unit: "in" }],
-    images: ["https://loremflickr.com/640/480/sand-filter,irrigation", "https://loremflickr.com/640/480/sand-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Pre-Filter Tank 3 in Inlet",
@@ -11598,7 +11602,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Inlet Size", value: "3", unit: "in" }],
-    images: ["https://loremflickr.com/640/480/sand-filter,irrigation", "https://loremflickr.com/640/480/sand-filter,irrigation"],
+    images: [],
   },
   {
     name: "Sand Media Pre-Filter Tank 4 in Inlet",
@@ -11610,7 +11614,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Inlet Size", value: "4", unit: "in" }],
-    images: ["https://loremflickr.com/640/480/sand-filter,irrigation", "https://loremflickr.com/640/480/sand-filter,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 1in 2-Unit",
@@ -11622,7 +11626,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "1", unit: "in" }, { name: "Stages", value: "2" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 1in 3-Unit",
@@ -11634,7 +11638,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "1", unit: "in" }, { name: "Stages", value: "3" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 1in 4-Unit",
@@ -11646,7 +11650,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "1", unit: "in" }, { name: "Stages", value: "4" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 1.5in 2-Unit",
@@ -11658,7 +11662,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "1.5", unit: "in" }, { name: "Stages", value: "2" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 1.5in 3-Unit",
@@ -11670,7 +11674,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "1.5", unit: "in" }, { name: "Stages", value: "3" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 1.5in 4-Unit",
@@ -11682,7 +11686,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "1.5", unit: "in" }, { name: "Stages", value: "4" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 2in 2-Unit",
@@ -11694,7 +11698,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "2", unit: "in" }, { name: "Stages", value: "2" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 2in 3-Unit",
@@ -11706,7 +11710,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "2", unit: "in" }, { name: "Stages", value: "3" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "Multi-Stage Disc Filter Battery 2in 4-Unit",
@@ -11718,7 +11722,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Backflush capable", "Low pressure loss", "High debris capacity", "Corrosion-resistant housing"],
     applications: ["Sugarcane fields", "Large-scale commercial farms"],
     specifications: [{ name: "Connection", value: "2", unit: "in" }, { name: "Stages", value: "4" }],
-    images: ["https://loremflickr.com/640/480/filter-battery,irrigation", "https://loremflickr.com/640/480/filter-battery,irrigation"],
+    images: [],
   },
   {
     name: "HDPE Saddle Clamp Off-take 16mm",
@@ -11730,7 +11734,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "16", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/saddle-clamp,pipe-fitting", "https://loremflickr.com/640/480/saddle-clamp,pipe-fitting"],
+    images: [],
   },
   {
     name: "HDPE Saddle Clamp Off-take 20mm",
@@ -11742,7 +11746,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/saddle-clamp,pipe-fitting", "https://loremflickr.com/640/480/saddle-clamp,pipe-fitting"],
+    images: [],
   },
   {
     name: "HDPE Saddle Clamp Off-take 25mm",
@@ -11754,7 +11758,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/saddle-clamp,pipe-fitting", "https://loremflickr.com/640/480/saddle-clamp,pipe-fitting"],
+    images: [],
   },
   {
     name: "HDPE Saddle Clamp Off-take 32mm",
@@ -11766,7 +11770,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/saddle-clamp,pipe-fitting", "https://loremflickr.com/640/480/saddle-clamp,pipe-fitting"],
+    images: [],
   },
   {
     name: "HDPE Saddle Clamp Off-take 40mm",
@@ -11778,7 +11782,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/saddle-clamp,pipe-fitting", "https://loremflickr.com/640/480/saddle-clamp,pipe-fitting"],
+    images: [],
   },
   {
     name: "PVC Ball Valve Threaded 20mm",
@@ -11790,7 +11794,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "20", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/ball-valve,irrigation", "https://loremflickr.com/640/480/ball-valve,irrigation"],
+    images: [],
   },
   {
     name: "PVC Ball Valve Threaded 25mm",
@@ -11802,7 +11806,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "25", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/ball-valve,irrigation", "https://loremflickr.com/640/480/ball-valve,irrigation"],
+    images: [],
   },
   {
     name: "PVC Ball Valve Threaded 32mm",
@@ -11814,7 +11818,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "32", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/ball-valve,irrigation", "https://loremflickr.com/640/480/ball-valve,irrigation"],
+    images: [],
   },
   {
     name: "PVC Ball Valve Threaded 40mm",
@@ -11826,7 +11830,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "40", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/ball-valve,irrigation", "https://loremflickr.com/640/480/ball-valve,irrigation"],
+    images: [],
   },
   {
     name: "PVC Ball Valve Threaded 50mm",
@@ -11838,7 +11842,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Leak-free seal", "Manual override", "Chemical-resistant body", "Wide temperature tolerance"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Size", value: "50", unit: "mm" }],
-    images: ["https://loremflickr.com/640/480/ball-valve,irrigation", "https://loremflickr.com/640/480/ball-valve,irrigation"],
+    images: [],
   },
   {
     name: "12mm PE Mainline Coil (250m)",
@@ -11850,7 +11854,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Coil Length", value: "250", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "12mm PE Mainline Coil (500m)",
@@ -11862,7 +11866,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Coil Length", value: "500", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "12mm PE Mainline Coil (1000m)",
@@ -11874,7 +11878,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "12", unit: "mm" }, { name: "Coil Length", value: "1000", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "16mm PE Mainline Coil (250m)",
@@ -11886,7 +11890,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Coil Length", value: "250", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "16mm PE Mainline Coil (500m)",
@@ -11898,7 +11902,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Coil Length", value: "500", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "16mm PE Mainline Coil (1000m)",
@@ -11910,7 +11914,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "16", unit: "mm" }, { name: "Coil Length", value: "1000", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "20mm PE Mainline Coil (250m)",
@@ -11922,7 +11926,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Coil Length", value: "250", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "20mm PE Mainline Coil (500m)",
@@ -11934,7 +11938,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Coil Length", value: "500", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "20mm PE Mainline Coil (1000m)",
@@ -11946,7 +11950,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["High tensile strength", "UV & chemical resistant", "Smooth bore low friction loss", "Long service life 15+ years"],
     applications: ["Smallholder farms", "Commercial farms"],
     specifications: [{ name: "Diameter", value: "20", unit: "mm" }, { name: "Coil Length", value: "1000", unit: "m" }],
-    images: ["https://loremflickr.com/640/480/pe-coil,mainline", "https://loremflickr.com/640/480/pe-coil,mainline"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 30L/h (Pack of 10)",
@@ -11958,7 +11962,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "30", unit: "L/h" }, { name: "Pack Size", value: "10" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 60L/h (Pack of 10)",
@@ -11970,7 +11974,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "60", unit: "L/h" }, { name: "Pack Size", value: "10" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 90L/h (Pack of 10)",
@@ -11982,7 +11986,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "90", unit: "L/h" }, { name: "Pack Size", value: "10" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 30L/h (Pack of 25)",
@@ -11994,7 +11998,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "30", unit: "L/h" }, { name: "Pack Size", value: "25" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 60L/h (Pack of 25)",
@@ -12006,7 +12010,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "60", unit: "L/h" }, { name: "Pack Size", value: "25" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 90L/h (Pack of 25)",
@@ -12018,7 +12022,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "90", unit: "L/h" }, { name: "Pack Size", value: "25" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 30L/h (Pack of 50)",
@@ -12030,7 +12034,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "30", unit: "L/h" }, { name: "Pack Size", value: "50" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 60L/h (Pack of 50)",
@@ -12042,7 +12046,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "60", unit: "L/h" }, { name: "Pack Size", value: "50" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
   {
     name: "Micro-Spray Jet Stake 90L/h (Pack of 50)",
@@ -12054,7 +12058,7 @@ export const CATALOG_PRODUCTS: CatalogProduct[] = [
     features: ["Self-flushing anti-clog design", "UV-stabilized for outdoor durability", "Uniform water distribution", "Low water-hammer resistant"],
     applications: ["Orchards & fruit trees", "Coffee & tea plantations", "Greenhouse crops"],
     specifications: [{ name: "Flow Rate", value: "90", unit: "L/h" }, { name: "Pack Size", value: "50" }],
-    images: ["https://loremflickr.com/640/480/micro-spray,irrigation", "https://loremflickr.com/640/480/micro-spray,irrigation"],
+    images: [],
   },
 ];
 
