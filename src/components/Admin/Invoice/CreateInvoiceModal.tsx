@@ -8,6 +8,11 @@ import {
   generateInvoiceNumber,
   calculateItemTotal,
 } from "../utils/formatters";
+import {
+  encodeProjectDescription,
+  encodeNotesWithDownPayment,
+  DEFAULT_INVOICE_TERMS,
+} from "../utils/invoiceProjects";
 
 interface CreateInvoiceModalProps {
   customers: Customer[];
@@ -36,6 +41,8 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
     notes: "",
     payment_details:
       "Bank: Equity Bank\nAccount Name: DripTech Eco Flow\nAccount Number: 1234567890\nBranch: Nairobi\nSwift Code: EQBLKENA\n\nM-Pesa Paybill: 123456\nAccount Number: [Invoice Number]",
+    down_payment_amount: 0,
+    terms_conditions: DEFAULT_INVOICE_TERMS,
     items: [
       {
         name: "",
@@ -44,6 +51,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
         unit: "pcs",
         unit_price: 0,
         total: 0,
+        project_title: "Project 1",
       },
     ],
   });
@@ -167,7 +175,11 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
   };
 
   // Add new item to create form
-  const addCreateFormItem = () => {
+  const addCreateFormItem = (projectTitle?: string) => {
+    const lastTitle =
+      projectTitle ||
+      createForm.items[createForm.items.length - 1]?.project_title ||
+      `Project ${createForm.items.length + 1}`;
     setCreateForm({
       ...createForm,
       items: [
@@ -179,6 +191,34 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
           unit: "pcs",
           unit_price: 0,
           total: 0,
+          project_title: lastTitle,
+        },
+      ],
+    });
+  };
+
+  const addProjectSection = () => {
+    const existingTitles = new Set(
+      createForm.items.map((i) => (i.project_title || "").trim()).filter(Boolean),
+    );
+    let n = existingTitles.size + 1;
+    let title = `Project ${n}`;
+    while (existingTitles.has(title)) {
+      n += 1;
+      title = `Project ${n}`;
+    }
+    setCreateForm({
+      ...createForm,
+      items: [
+        ...createForm.items,
+        {
+          name: "",
+          description: "",
+          quantity: 1,
+          unit: "pcs",
+          unit_price: 0,
+          total: 0,
+          project_title: title,
         },
       ],
     });
@@ -227,7 +267,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
     try {
       const itemsWithInvoiceId = items.map((item) => ({
         name: item.name,
-        description: item.description || null,
+        description: encodeProjectDescription(item.project_title, item.description),
         quantity: item.quantity,
         unit_price: item.unit_price,
         total: item.total,
@@ -275,6 +315,12 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
       setCreating(true);
       const totals = calculateFormTotals();
 
+      const termsBlock = (createForm.terms_conditions || "").trim();
+      const userNotes = (createForm.notes || "").trim();
+      const combinedNotes = [userNotes, termsBlock ? `---TERMS---\n${termsBlock}` : ""]
+        .filter(Boolean)
+        .join("\n\n");
+
       const invoiceData = {
         customer_id: createForm.customer_id,
         quote_id: createForm.quote_id || null,
@@ -286,7 +332,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
         discount_amount: totals.discountAmount,
         subtotal: totals.subtotal,
         total_amount: totals.total,
-        notes: createForm.notes || null,
+        notes: encodeNotesWithDownPayment(combinedNotes, createForm.down_payment_amount),
         payment_details: createForm.payment_details || null,
         status: sendImmediately ? "sent" : "draft",
         ...(sendImmediately && { sent_at: new Date().toISOString() }),
@@ -453,12 +499,13 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                 />
               </div>
 
-              {/* Payment Terms */}
+              {/* Payment Terms (short schedule) */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Payment Terms
+                  Payment schedule
                 </label>
-                <select
+                <input
+                  type="text"
                   value={createForm.payment_terms}
                   onChange={(e) =>
                     setCreateForm({
@@ -466,14 +513,10 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
                       payment_terms: e.target.value,
                     })
                   }
+                  placeholder="e.g. 50% deposit, 50% on completion"
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   disabled={creating}
-                >
-                  <option value="30 days">Net 30</option>
-                  <option value="15 days">Net 15</option>
-                  <option value="7 days">Net 7</option>
-                  <option value="Due on receipt">Due on Receipt</option>
-                </select>
+                />
               </div>
 
               {/* Tax Rate */}
@@ -499,251 +542,230 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({
               </div>
             </div>
 
-            {/* Invoice Items Section */}
+            {/* Invoice Items — multi-project */}
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Invoice Items
-                </h3>
-                <button
-                  type="button"
-                  onClick={addCreateFormItem}
-                  disabled={creating}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Item
-                </button>
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Invoice Items by Project
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    Group lines under Project 1, Project 2, … Each project gets its own heading and subtotal on the invoice.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => addCreateFormItem()}
+                    disabled={creating}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Item
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addProjectSection}
+                    disabled={creating}
+                    className="flex items-center gap-2 px-3 py-1.5 border border-blue-600 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 disabled:opacity-50 text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Project Section
+                  </button>
+                </div>
               </div>
 
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-gray-700">
-                      <tr>
-                        <th className="px-3 sm:px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">
-                          Description
-                        </th>
-                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
-                          Qty
-                        </th>
-                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
-                          Unit
-                        </th>
-                        <th className="px-3 sm:px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">
-                          Unit Price
-                        </th>
-                        <th className="px-3 sm:px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">
-                          Total
-                        </th>
-                        <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {createForm.items.map((item, index) => (
-                        <tr
-                          key={index}
-                          className="border-t border-gray-200 dark:border-gray-700"
-                        >
-                          <td className="px-3 sm:px-4 py-3">
-                            <input
-                              type="text"
-                              placeholder="Item name"
-                              value={item.name}
-                              onChange={(e) =>
-                                updateCreateFormItem(
-                                  index,
-                                  "name",
-                                  e.target.value,
-                                )
-                              }
-                              className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent mb-1 transition-colors"
-                              required
-                              disabled={creating}
-                            />
-                            <input
-                              type="text"
-                              placeholder="Description (optional)"
-                              value={item.description}
-                              onChange={(e) =>
-                                updateCreateFormItem(
-                                  index,
-                                  "description",
-                                  e.target.value,
-                                )
-                              }
-                              className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
-                              disabled={creating}
-                            />
-                          </td>
-                          <td className="px-3 sm:px-4 py-3">
-                            <input
-                              type="number"
-                              min="1"
-                              value={item.quantity}
-                              onChange={(e) =>
-                                updateCreateFormItem(
-                                  index,
-                                  "quantity",
-                                  parseInt(e.target.value) || 1,
-                                )
-                              }
-                              className="w-16 sm:w-20 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm text-center focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
-                              disabled={creating}
-                            />
-                          </td>
-                          <td className="px-3 sm:px-4 py-3">
-                            <select
-                              value={item.unit}
-                              onChange={(e) =>
-                                updateCreateFormItem(
-                                  index,
-                                  "unit",
-                                  e.target.value,
-                                )
-                              }
-                              className="w-16 sm:w-20 px-1 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
-                              disabled={creating}
-                            >
-                              <option value="pcs">pcs</option>
-                              <option value="set">set</option>
-                              <option value="m">m</option>
-                              <option value="m²">m²</option>
-                              <option value="hrs">hrs</option>
-                            </select>
-                          </td>
-                          <td className="px-3 sm:px-4 py-3">
-                            <input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              value={item.unit_price}
-                              onChange={(e) =>
-                                updateCreateFormItem(
-                                  index,
-                                  "unit_price",
-                                  parseFloat(e.target.value) || 0,
-                                )
-                              }
-                              className="w-20 sm:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm text-right focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
-                              disabled={creating}
-                            />
-                          </td>
-                          <td className="px-3 sm:px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">
+              <div className="space-y-4">
+                {createForm.items.map((item, index) => {
+                  const prevTitle =
+                    index > 0
+                      ? (createForm.items[index - 1].project_title || "").trim()
+                      : null;
+                  const title = (item.project_title || "").trim() || "General";
+                  const showHeader = index === 0 || title !== prevTitle;
+                  const projectSubtotal = createForm.items
+                    .filter((i) => (i.project_title || "").trim() === (item.project_title || "").trim())
+                    .reduce((s, i) => s + (Number(i.total) || 0), 0);
+
+                  return (
+                    <div key={index}>
+                      {showHeader && (
+                        <div className="flex flex-wrap items-center gap-2 mb-2 mt-2 px-1">
+                          <input
+                            type="text"
+                            value={item.project_title || ""}
+                            onChange={(e) => {
+                              const newTitle = e.target.value;
+                              const oldTitle = item.project_title || "";
+                              setCreateForm({
+                                ...createForm,
+                                items: createForm.items.map((it) =>
+                                  (it.project_title || "") === oldTitle
+                                    ? { ...it, project_title: newTitle }
+                                    : it,
+                                ),
+                              });
+                            }}
+                            placeholder="Project name e.g. Greenhouse – Kiambu"
+                            className="flex-1 min-w-[200px] px-3 py-2 border-2 border-blue-200 dark:border-blue-800 rounded-lg font-semibold text-sm bg-blue-50 dark:bg-gray-700 dark:text-white"
+                            disabled={creating}
+                          />
+                          <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                            Subtotal: {formatCurrency(projectSubtotal)}
+                          </span>
+                        </div>
+                      )}
+                      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 grid grid-cols-1 sm:grid-cols-12 gap-2 items-end bg-white dark:bg-gray-800">
+                        <div className="sm:col-span-3">
+                          <label className="text-xs text-gray-500">Item / Service</label>
+                          <input
+                            type="text"
+                            value={item.name}
+                            onChange={(e) =>
+                              updateCreateFormItem(index, "name", e.target.value)
+                            }
+                            className="w-full px-2 py-1.5 border rounded-md text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                            disabled={creating}
+                            required
+                          />
+                        </div>
+                        <div className="sm:col-span-3">
+                          <label className="text-xs text-gray-500">Description</label>
+                          <input
+                            type="text"
+                            value={item.description}
+                            onChange={(e) =>
+                              updateCreateFormItem(index, "description", e.target.value)
+                            }
+                            className="w-full px-2 py-1.5 border rounded-md text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                            disabled={creating}
+                          />
+                        </div>
+                        <div className="sm:col-span-1">
+                          <label className="text-xs text-gray-500">Qty</label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              updateCreateFormItem(
+                                index,
+                                "quantity",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="w-full px-2 py-1.5 border rounded-md text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                            disabled={creating}
+                          />
+                        </div>
+                        <div className="sm:col-span-1">
+                          <label className="text-xs text-gray-500">Unit</label>
+                          <input
+                            type="text"
+                            value={item.unit}
+                            onChange={(e) =>
+                              updateCreateFormItem(index, "unit", e.target.value)
+                            }
+                            className="w-full px-2 py-1.5 border rounded-md text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                            disabled={creating}
+                          />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="text-xs text-gray-500">Unit price</label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={item.unit_price}
+                            onChange={(e) =>
+                              updateCreateFormItem(
+                                index,
+                                "unit_price",
+                                parseFloat(e.target.value) || 0,
+                              )
+                            }
+                            className="w-full px-2 py-1.5 border rounded-md text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                            disabled={creating}
+                          />
+                        </div>
+                        <div className="sm:col-span-1">
+                          <label className="text-xs text-gray-500">Total</label>
+                          <div className="px-2 py-1.5 text-sm font-semibold">
                             {formatCurrency(item.total)}
-                          </td>
-                          <td className="px-3 sm:px-4 py-3 text-center">
-                            <button
-                              type="button"
-                              onClick={() => removeCreateFormItem(index)}
-                              disabled={
-                                createForm.items.length === 1 || creating
-                              }
-                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 p-1 disabled:text-gray-300 disabled:cursor-not-allowed transition-colors"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          </div>
+                        </div>
+                        <div className="sm:col-span-1 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => removeCreateFormItem(index)}
+                            disabled={creating || createForm.items.length === 1}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-40"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Totals Section */}
-            <div className="flex justify-end mb-6">
-              <div className="w-full sm:w-80 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Subtotal:
-                  </span>
-                  <span className="text-gray-900 dark:text-white">
-                    {formatCurrency(calculateFormTotals().subtotal)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Discount:
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={createForm.discount_amount}
-                      onChange={(e) =>
-                        setCreateForm({
-                          ...createForm,
-                          discount_amount: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      className="w-20 sm:w-24 px-2 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm text-right transition-colors"
-                      disabled={creating}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Tax ({createForm.tax_rate}%):
-                  </span>
-                  <span className="text-gray-900 dark:text-white">
-                    {formatCurrency(calculateFormTotals().taxAmount)}
-                  </span>
-                </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span className="text-gray-900 dark:text-white">
-                      Total:
-                    </span>
-                    <span className="text-gray-900 dark:text-white">
-                      {formatCurrency(calculateFormTotals().total)}
-                    </span>
-                  </div>
-                </div>
+            {/* Deposit, terms, notes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Down payment / deposit (KES)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={createForm.down_payment_amount}
+                  onChange={(e) =>
+                    setCreateForm({
+                      ...createForm,
+                      down_payment_amount: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg"
+                  disabled={creating}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Shown on the invoice with balance due. Leave 0 if none.
+                </p>
               </div>
+
             </div>
 
-            {/* Payment Details */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Payment Details
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Terms &amp; conditions
               </label>
               <textarea
-                rows={6}
-                placeholder="Enter bank details, M-Pesa paybill, or other payment instructions..."
-                value={createForm.payment_details}
+                rows={5}
+                value={createForm.terms_conditions}
                 onChange={(e) =>
-                  setCreateForm({
-                    ...createForm,
-                    payment_details: e.target.value,
-                  })
+                  setCreateForm({ ...createForm, terms_conditions: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg resize-y text-sm"
                 disabled={creating}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Include bank account details, M-Pesa paybill, or other payment
-                methods
-              </p>
             </div>
 
-            {/* Notes */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Notes (Optional)
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Additional notes
               </label>
               <textarea
-                rows={3}
-                placeholder="Additional notes or terms..."
+                rows={2}
+                placeholder="Internal or client notes (optional)"
                 value={createForm.notes}
                 onChange={(e) =>
                   setCreateForm({ ...createForm, notes: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg resize-none"
                 disabled={creating}
               />
             </div>

@@ -71,6 +71,10 @@ export interface CreateInvoiceForm {
   discount_amount: number;
   notes: string;
   payment_details: string;
+  /** Deposit required before work starts (KES) */
+  down_payment_amount: number;
+  /** Full terms & conditions shown on the invoice */
+  terms_conditions: string;
   items: CreateInvoiceItem[];
 }
 
@@ -81,6 +85,8 @@ export interface CreateInvoiceItem {
   unit: string;
   unit_price: number;
   total: number;
+  /** Optional project / site heading this line belongs to */
+  project_title?: string;
 }
 
 export interface EditInvoiceForm {
@@ -93,6 +99,8 @@ export interface EditInvoiceForm {
   discount_amount: number;
   notes: string;
   payment_details: string;
+  down_payment_amount: number;
+  terms_conditions: string;
   items: EditInvoiceItem[];
 }
 
@@ -104,6 +112,7 @@ export interface EditInvoiceItem {
   unit: string;
   unit_price: number;
   total: number;
+  project_title?: string;
 }
 
 export interface InvoiceStats {

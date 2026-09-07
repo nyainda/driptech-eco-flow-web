@@ -5,6 +5,7 @@ import { Invoice } from "../types/InvoiceTypes";
 import { formatCurrency, formatDate } from "../utils/formatters";
 import StatusBadge from "./StatusBadge";
 import { COMPANY, getLogoUrl } from "../shared/companyBrand";
+import { decodeProjectFromDescription, groupItemsByProject, ordinalProjectLabel, decodeDownPaymentFromNotes } from "../utils/invoiceProjects";
 
 interface InvoiceModalProps {
   invoice: Invoice;
@@ -163,9 +164,9 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
                             {item.name}
                           </p>
-                          {item.description && (
+                          {decodeProjectFromDescription(item.description).description && (
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {item.description}
+                              {decodeProjectFromDescription(item.description).description}
                             </p>
                           )}
                         </div>
@@ -260,7 +261,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                 Notes
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                {invoice.notes}
+                {decodeDownPaymentFromNotes(invoice.notes).notes.replace("---TERMS---", "\n\nTerms:\n")}
               </p>
             </div>
           )}

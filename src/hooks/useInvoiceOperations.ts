@@ -5,6 +5,12 @@ import {
   formatCurrency,
   formatDate,
 } from "@/components/Admin/utils/formatters";
+import {
+  groupItemsByProject,
+  ordinalProjectLabel,
+  decodeProjectFromDescription,
+  decodeDownPaymentFromNotes,
+} from "@/components/Admin/utils/invoiceProjects";
 
 export const useInvoiceOperations = (onSuccess?: () => void) => {
   // Handle status update
@@ -69,6 +75,94 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
 
   // Generate invoice HTML content (same for both print and PDF)
   const generateInvoiceContent = (invoice: Invoice) => {
+    const projectGroups = groupItemsByProject(invoice.invoice_items || []);
+    const multiProject = projectGroups.length > 1 || (projectGroups[0] && projectGroups[0].title !== "General");
+    const { downPayment, notes: notesClean } = decodeDownPaymentFromNotes(invoice.notes);
+    let displayNotes = notesClean;
+    let termsText = "";
+    const termsSplit = notesClean.split("---TERMS---");
+    if (termsSplit.length > 1) {
+      displayNotes = termsSplit[0].trim();
+      termsText = termsSplit.slice(1).join("---TERMS---").trim();
+    }
+    const balanceDue = Math.max(0, (invoice.total_amount || 0) - (downPayment || 0));
+
+    const itemsHtml = multiProject
+      ? projectGroups
+          .map((group, gIdx) => {
+            const rows = group.items
+              .map((item, index) => {
+                const { description } = decodeProjectFromDescription(item.description);
+                return `
+                      <tr class="border-b border-gray-100">
+                        <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
+                        <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
+                        <td class="p-1.5 text-gray-600 text-xs">${description || "—"}</td>
+                        <td class="p-1.5 text-center font-bold text-green-600 text-xs">${item.quantity}${item.unit ? " " + item.unit : ""}</td>
+                        <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${Number(item.unit_price).toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+                        <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${Number(item.total).toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+                      </tr>`;
+              })
+              .join("");
+            return `
+              <div class="mb-3">
+                <div class="bg-blue-600 text-white px-3 py-1.5 rounded-t-lg text-xs font-bold tracking-wide">
+                  ${ordinalProjectLabel(gIdx, group.title)}
+                </div>
+                <table class="w-full border border-t-0 border-gray-200 rounded-b-lg overflow-hidden">
+                  <thead class="bg-blue-50">
+                    <tr>
+                      <th class="p-2 text-left text-xs font-bold text-blue-800">#</th>
+                      <th class="p-2 text-left text-xs font-bold text-blue-800">Item / Service</th>
+                      <th class="p-2 text-left text-xs font-bold text-blue-800">Description</th>
+                      <th class="p-2 text-center text-xs font-bold text-blue-800">Qty</th>
+                      <th class="p-2 text-right text-xs font-bold text-blue-800">Unit (KES)</th>
+                      <th class="p-2 text-right text-xs font-bold text-blue-800">Total (KES)</th>
+                    </tr>
+                  </thead>
+                  <tbody>${rows}</tbody>
+                  <tfoot>
+                    <tr class="bg-gray-50">
+                      <td colspan="5" class="p-2 text-right text-xs font-semibold text-gray-700">Project subtotal</td>
+                      <td class="p-2 text-right text-xs font-bold text-gray-900">KES ${group.subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>`;
+          })
+          .join("")
+      : `
+              <div class="rounded-lg overflow-hidden shadow border border-gray-200 bg-white">
+                <table class="w-full">
+                  <thead class="bg-gradient-to-r from-blue-600 to-blue-500">
+                    <tr>
+                      <th class="p-2 text-left font-bold text-white text-xs uppercase">#</th>
+                      <th class="p-2 text-left font-bold text-white text-xs uppercase">Item/Service</th>
+                      <th class="p-2 text-left font-bold text-white text-xs uppercase">Description</th>
+                      <th class="p-2 text-center font-bold text-white text-xs uppercase">Qty</th>
+                      <th class="p-2 text-right font-bold text-white text-xs uppercase">Unit Price (KES)</th>
+                      <th class="p-2 text-right font-bold text-white text-xs uppercase">Total (KES)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-100">
+                    ${(invoice.invoice_items || [])
+                      .map((item, index) => {
+                        const { description } = decodeProjectFromDescription(item.description);
+                        return `
+                      <tr class="border-b border-gray-100">
+                        <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
+                        <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
+                        <td class="p-1.5 text-gray-600 text-xs">${description || "N/A"}</td>
+                        <td class="p-1.5 text-center font-bold text-green-600 text-xs">${item.quantity}</td>
+                        <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${Number(item.unit_price).toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+                        <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${Number(item.total).toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+                      </tr>`;
+                      })
+                      .join("") || '<tr><td colspan="6" class="p-4 text-center text-gray-500">No items found</td></tr>'}
+                  </tbody>
+                </table>
+              </div>`;
+
     return `
       <!DOCTYPE html>
       <html>
@@ -223,49 +317,22 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
             <div class="mb-4">
               <h3 class="text-blue-600 text-sm font-bold mb-2 flex items-center gap-2">
                 <div class="w-0.5 h-3 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-                Invoice Items
+                Invoice Items${multiProject ? " by Project" : ""}
               </h3>
-              
-              <div class="rounded-lg overflow-hidden shadow-lg border border-gray-200 bg-white">
-                <table class="w-full">
-                  <thead class="bg-gradient-to-r from-blue-600 to-blue-500">
-                    <tr>
-                      <th class="p-2 text-left font-bold text-white text-xs uppercase">#</th>
-                      <th class="p-2 text-left font-bold text-white text-xs uppercase">Item/Service</th>
-                      <th class="p-2 text-left font-bold text-white text-xs uppercase">Description</th>
-                      <th class="p-2 text-center font-bold text-white text-xs uppercase">Qty</th>
-                      <th class="p-2 text-right font-bold text-white text-xs uppercase">Unit Price (KES)</th>
-                      <th class="p-2 text-right font-bold text-white text-xs uppercase">Total (KES)</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-100">
-                    ${invoice.invoice_items
-        ?.map(
-          (item, index) => `
-                      <tr class="hover:bg-blue-50 border-b border-gray-100">
-                        <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
-                        <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
-                        <td class="p-1.5 text-gray-600 text-xs">${item.description || "N/A"}</td>
-                        <td class="p-1.5 text-center font-bold text-green-600 text-xs">${item.quantity}</td>
-                        <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${item.unit_price.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
-                        <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
-                      </tr>
-                    `,
-        )
-        .join("") ||
-      '<tr><td colspan="6" class="p-4 text-center text-gray-500">No items found</td></tr>'
-      }
-                  </tbody>
-                </table>
-              </div>
+              ${itemsHtml}
             </div>
 
             <!-- Totals Section -->
             <div class="flex justify-end mb-3">
-              <div class="w-full md:w-auto md:min-w-[250px] max-w-sm">
+              <div class="w-full md:w-auto md:min-w-[280px] max-w-sm">
                 <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-lg border border-gray-200">
                   <table class="w-full text-xs">
                     <tbody>
+                      ${multiProject ? projectGroups.map((g, i) => `
+                      <tr class="border-b border-gray-200">
+                        <td class="p-2 font-medium text-gray-600 text-xs">${ordinalProjectLabel(i, g.title)} subtotal</td>
+                        <td class="p-2 text-right font-mono text-gray-800 text-xs">KES ${g.subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
+                      </tr>`).join("") : ""}
                       <tr class="border-b border-gray-200">
                         <td class="p-2 font-semibold text-gray-700 text-xs">Subtotal</td>
                         <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
@@ -294,17 +361,48 @@ export const useInvoiceOperations = (onSuccess?: () => void) => {
                       `
         : ""
       }
-                      <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-                        <td class="p-2 font-extrabold text-sm">Total Amount</td>
-                        <td class="p-2 text-right font-mono font-extrabold text-sm">
+                      <tr class="bg-blue-600 text-white">
+                        <td class="p-2 font-bold text-xs">TOTAL</td>
+                        <td class="p-2 text-right font-mono font-bold text-xs">
                           KES ${invoice.total_amount.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
+                      ${downPayment > 0 ? `
+                      <tr class="border-b border-gray-200">
+                        <td class="p-2 font-semibold text-amber-800 text-xs">Down payment / deposit</td>
+                        <td class="p-2 text-right font-mono font-bold text-amber-700 text-xs">
+                          -KES ${downPayment.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                      <tr class="bg-emerald-600 text-white">
+                        <td class="p-2 font-bold text-xs">BALANCE DUE</td>
+                        <td class="p-2 text-right font-mono font-bold text-xs">
+                          KES ${balanceDue.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                      ` : ""}
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
+
+            ${invoice.payment_terms ? `
+            <div class="mb-3 text-xs text-gray-700">
+              <span class="font-semibold">Payment schedule:</span> ${invoice.payment_terms}
+            </div>` : ""}
+
+            ${termsText ? `
+            <div class="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <h4 class="text-xs font-bold text-gray-900 mb-1">Terms &amp; Conditions</h4>
+              <div class="text-xs text-gray-700 whitespace-pre-line leading-relaxed">${termsText.replace(/</g, "&lt;")}</div>
+            </div>` : ""}
+
+            ${displayNotes ? `
+            <div class="mb-3 text-xs text-gray-600">
+              <span class="font-semibold">Notes:</span>
+              <div class="whitespace-pre-line mt-1">${displayNotes.replace(/</g, "&lt;")}</div>
+            </div>` : ""}
 
             <!-- Payment Details Section -->
             ${invoice.payment_details

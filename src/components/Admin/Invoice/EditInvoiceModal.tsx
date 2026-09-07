@@ -9,6 +9,13 @@ import {
   EditInvoiceForm,
 } from "../types/InvoiceTypes";
 import { formatCurrency, calculateItemTotal } from "../utils/formatters";
+import {
+  encodeProjectDescription,
+  decodeProjectFromDescription,
+  encodeNotesWithDownPayment,
+  decodeDownPaymentFromNotes,
+  DEFAULT_INVOICE_TERMS,
+} from "../utils/invoiceProjects";
 
 interface EditInvoiceModalProps {
   invoice: Invoice;
@@ -36,6 +43,8 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
     discount_amount: 0,
     notes: "",
     payment_details: "",
+    down_payment_amount: 0,
+    terms_conditions: DEFAULT_INVOICE_TERMS,
     items: [
       {
         id: "",
@@ -45,6 +54,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         unit: "pcs",
         unit_price: 0,
         total: 0,
+        project_title: "Project 1",
       },
     ],
   });
@@ -60,17 +70,25 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         payment_terms: invoice.payment_terms || "30 days",
         tax_rate: invoice.tax_rate || 16,
         discount_amount: invoice.discount_amount || 0,
-        notes: invoice.notes || "",
+        notes: decodeDownPaymentFromNotes(invoice.notes).notes.split("---TERMS---")[0].trim(),
+        down_payment_amount: decodeDownPaymentFromNotes(invoice.notes).downPayment,
+        terms_conditions: (invoice.notes || "").includes("---TERMS---")
+          ? (invoice.notes || "").split("---TERMS---").slice(1).join("---TERMS---").trim()
+          : DEFAULT_INVOICE_TERMS,
         payment_details: invoice.payment_details || "",
-        items: invoice.invoice_items?.map((item) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description || "",
-          quantity: item.quantity,
-          unit: item.unit || "pcs",
-          unit_price: item.unit_price,
-          total: item.total,
-        })) || [
+        items: invoice.invoice_items?.map((item) => {
+          const decoded = decodeProjectFromDescription(item.description);
+          return {
+            id: item.id,
+            name: item.name,
+            description: decoded.description,
+            quantity: item.quantity,
+            unit: item.unit || "pcs",
+            unit_price: item.unit_price,
+            total: item.total,
+            project_title: decoded.projectTitle || "Project 1",
+          };
+        }) || [
           {
             id: "",
             name: "",
@@ -137,6 +155,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
           unit: "pcs",
           unit_price: 0,
           total: 0,
+          project_title:
+            editForm.items[editForm.items.length - 1]?.project_title ||
+            "Project 1",
         },
       ],
     });
@@ -195,7 +216,7 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
       // Insert new/updated items
       const itemsWithInvoiceId = items.map((item) => ({
         name: item.name,
-        description: item.description || null,
+        description: encodeProjectDescription(item.project_title, item.description),
         quantity: item.quantity,
         unit_price: item.unit_price,
         total: item.total,
@@ -254,7 +275,17 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
         discount_amount: totals.discountAmount,
         subtotal: totals.subtotal,
         total_amount: totals.total,
-        notes: editForm.notes || null,
+        notes: encodeNotesWithDownPayment(
+          [
+            (editForm.notes || "").trim(),
+            (editForm.terms_conditions || "").trim()
+              ? `---TERMS---\n${(editForm.terms_conditions || "").trim()}`
+              : "",
+          ]
+            .filter(Boolean)
+            .join("\n\n"),
+          editForm.down_payment_amount || 0,
+        ),
         payment_details: editForm.payment_details || null,
       };
 
@@ -452,7 +483,10 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                     <thead className="bg-gray-50 dark:bg-gray-700">
                       <tr>
                         <th className="px-3 sm:px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">
-                          Description
+                          Project
+                        </th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white">
+                          Item
                         </th>
                         <th className="px-3 sm:px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-white">
                           Qty
@@ -477,6 +511,22 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
                           key={index}
                           className="border-t border-gray-200 dark:border-gray-700"
                         >
+                          <td className="px-3 sm:px-4 py-3">
+                            <input
+                              type="text"
+                              placeholder="Project 1"
+                              value={item.project_title || ""}
+                              onChange={(e) =>
+                                updateEditFormItem(
+                                  index,
+                                  "project_title",
+                                  e.target.value,
+                                )
+                              }
+                              className="w-full min-w-[100px] px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                              disabled={updating}
+                            />
+                          </td>
                           <td className="px-3 sm:px-4 py-3">
                             <input
                               type="text"
@@ -657,7 +707,43 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({
             </div>
 
             {/* Notes */}
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Down payment / deposit (KES)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={editForm.down_payment_amount}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      down_payment_amount: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg"
+                  disabled={updating}
+                />
+              </div>
+            </div>
             <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Terms &amp; conditions
+              </label>
+              <textarea
+                rows={4}
+                value={editForm.terms_conditions}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, terms_conditions: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm"
+                disabled={updating}
+              />
+            </div>
+<div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Notes (Optional)
               </label>
