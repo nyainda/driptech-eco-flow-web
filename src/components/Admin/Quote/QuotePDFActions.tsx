@@ -39,7 +39,7 @@ export const QuotePDFActions = ({ quote, items, customer }: QuotePDFActionsProps
 
             toast({
                 title: 'PDF Downloaded',
-                description: `Quote #${quote.quote_number} has been downloaded successfully.`,
+                description: `Quote #${quote.quote_number} is ready to print or save as a PDF.`,
             });
 
         } catch (err: any) {
@@ -97,7 +97,7 @@ export const QuotePDFActions = ({ quote, items, customer }: QuotePDFActionsProps
 
             toast({
                 title: 'PDF Opened',
-                description: 'Quote PDF opened in a new tab.',
+                description: 'A print-ready quote opened in a new tab.',
             });
 
         } catch (err: any) {

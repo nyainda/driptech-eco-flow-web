@@ -117,8 +117,48 @@ interface Product {
   variants?: Variant[] | null;
 }
 
+const CATEGORY_PATHS: Record<string, string> = {
+  accessories: "accessories",
+  borehole_equipment: "borehole",
+  control_systems: "controls",
+  drip_irrigation: "drip",
+  emitters_drippers: "emitters",
+  fertigation_systems: "fertigation",
+  filtration_systems: "filtration",
+  greenhouse_accessories: "greenhouse-accessories",
+  greenhouse_systems: "greenhouse",
+  growing_media: "growing-media",
+  filters_strainers: "filters-strainers",
+  mulching_materials: "mulching",
+  pipes_fittings: "pipes",
+  pumps_motors: "pumps",
+  rain_guns: "rain-guns",
+  seedling_trays_nursery: "seedlings",
+  solar_irrigation: "solar",
+  sprinkler_systems: "sprinklers",
+  valves_regulators: "valves",
+  water_storage: "storage",
+  controllers_timers: "controllers",
+};
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const getProductSlug = (product: Product) =>
+  `${slugify(product.name)}-${product.id.slice(0, 8)}`;
+
+const getProductPath = (product: Product) =>
+  `/products/${CATEGORY_PATHS[product.category] || "all"}/${getProductSlug(product)}`;
+
 const Products = () => {
-  const { category } = useParams<{ category?: string }>();
+  const { category, product: productSlug } = useParams<{
+    category?: string;
+    product?: string;
+  }>();
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -392,7 +432,7 @@ const Products = () => {
       text:
         product.description ||
         `Check out this ${product.name} from our catalog!`,
-      url: window.location.href,
+      url: `${window.location.origin}${getProductPath(product)}`,
     };
 
     try {
@@ -828,25 +868,15 @@ const Products = () => {
 
 
             <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-border mt-3">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="flex-1 bg-muted/30 text-foreground border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-sm">
+                  <Button
+                    asChild
+                    className="flex-1 bg-muted/30 text-foreground border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-sm"
+                  >
+                    <Link to={getProductPath(product)}>
                     View Details
                     <Eye className="h-4 w-4 ml-2" />
+                    </Link>
                   </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[95vh] overflow-y-auto bg-background border-border shadow-md rounded-xl">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg sm:text-2xl pr-8 text-foreground">
-                      {product.name}
-                    </DialogTitle>
-                    <DialogDescription className="sr-only">
-                      Detailed information about {product.name}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <ProductDetailModal product={product} />
-                </DialogContent>
-              </Dialog>
 
               <Button
                 onClick={() => {
@@ -1529,6 +1559,10 @@ const Products = () => {
     SITE_COMPANY.phoneSecondary.replace("+", ""),
   ].join(", ");
 
+  const detailProduct = productSlug
+    ? products.find((candidate) => getProductSlug(candidate) === productSlug)
+    : undefined;
+
   const productCatalogSchema =
     products.length > 0
       ? {
@@ -1549,7 +1583,7 @@ const Products = () => {
                 `${product.name} — irrigation equipment for Kenyan farms from ${SITE_COMPANY.name}.`,
               category: (product.category || "").replaceAll("_", " "),
               brand: { "@type": "Brand", name: SITE_COMPANY.name },
-              url: `https://www.dripstech.co.ke/products/${category || product.category || "all"}`,
+              url: `https://www.dripstech.co.ke${getProductPath(product)}`,
             };
 
             if (product.images?.[0]) item.image = product.images[0];
@@ -1561,7 +1595,7 @@ const Products = () => {
                 availability: product.in_stock
                   ? "https://schema.org/InStock"
                   : "https://schema.org/OutOfStock",
-                url: `https://www.dripstech.co.ke/products/${category || "all"}`,
+                 url: `https://www.dripstech.co.ke${getProductPath(product)}`,
                 seller: {
                   "@type": "Organization",
                   name: SITE_COMPANY.name,
@@ -1605,6 +1639,124 @@ const Products = () => {
     },
     ...(productCatalogSchema ? [productCatalogSchema] : []),
   ];
+
+  if (productSlug && detailProduct) {
+    const detailUrl = `https://www.dripstech.co.ke${getProductPath(detailProduct)}`;
+    const detailTitle = `${detailProduct.name} Kenya | Price & Specifications | ${SITE_COMPANY.name}`;
+    const detailDescription =
+      detailProduct.description ||
+      `${detailProduct.name} for irrigation projects in Kenya. Check current availability, specifications and delivery support from ${SITE_COMPANY.name}.`;
+    const detailPrice =
+      detailProduct.variants && detailProduct.variants.length > 0
+        ? Math.min(...detailProduct.variants.map((variant) => variant.price))
+        : detailProduct.price;
+
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <SEOHead
+          title={detailTitle}
+          description={detailDescription}
+          url={detailUrl}
+          type="product"
+          image={detailProduct.images?.[0] || `${SITE_COMPANY.url}/driptech-logo.png`}
+          schema={[
+            buildLocalBusinessSchema(),
+            {
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: SITE_COMPANY.url },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: categoryLabel,
+                  item: `${SITE_COMPANY.url}/products/${category || "all"}`,
+                },
+                { "@type": "ListItem", position: 3, name: detailProduct.name, item: detailUrl },
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "Product",
+              name: detailProduct.name,
+              description: detailDescription,
+              image: detailProduct.images || undefined,
+              sku: detailProduct.model_number || detailProduct.id,
+              brand: { "@type": "Brand", name: SITE_COMPANY.name },
+              category: categoryLabel,
+              url: detailUrl,
+              ...(detailPrice && detailPrice > 0
+                ? {
+                    offers: {
+                      "@type": "Offer",
+                      price: detailPrice,
+                      priceCurrency: "KES",
+                      availability: detailProduct.in_stock
+                        ? "https://schema.org/InStock"
+                        : "https://schema.org/OutOfStock",
+                      seller: { "@type": "Organization", name: SITE_COMPANY.name },
+                    },
+                  }
+                : {}),
+            },
+          ]}
+        />
+        <Header />
+        <main className="flex-1">
+          <div className="dt-container py-6">
+            <nav className="text-sm text-muted-foreground" aria-label="Breadcrumb">
+              <Link to="/" className="hover:text-primary hover:underline">Home</Link>
+              <span className="mx-2">/</span>
+              <Link to={`/products/${category || "all"}`} className="hover:text-primary hover:underline">
+                {categoryLabel}
+              </Link>
+              <span className="mx-2">/</span>
+              <span className="text-foreground">{detailProduct.name}</span>
+            </nav>
+          </div>
+          <section className="dt-section pt-0">
+            <div className="dt-container">
+              <h1 className="dt-section-title max-w-4xl">{detailProduct.name}</h1>
+              <p className="dt-section-subtitle mt-3 max-w-3xl">
+                {detailDescription}
+              </p>
+              <div className="mt-8 dt-card p-4 sm:p-8">
+                <ProductDetailModal product={detailProduct} />
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (productSlug) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <SEOHead
+          title={`Product not found | ${SITE_COMPANY.name}`}
+          description={`The requested irrigation product is not available. Browse the current ${SITE_COMPANY.name} catalogue.`}
+          url={`https://www.dripstech.co.ke/products/${category || "all"}/${productSlug}`}
+        />
+        <Header />
+        <main className="flex-1">
+          <section className="dt-section">
+            <div className="dt-container text-center">
+              <h1 className="dt-section-title">Product not found</h1>
+              <p className="dt-section-subtitle mx-auto mt-3">
+                This product may be out of stock or its catalogue link may have changed.
+              </p>
+              <Link to={`/products/${category || ""}`} className="dt-btn-primary mt-6 inline-flex">
+                Browse the catalogue
+              </Link>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

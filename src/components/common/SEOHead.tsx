@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
 interface SEOHeadProps {
   title?: string;
@@ -14,49 +15,18 @@ interface SEOHeadProps {
 }
 
 export default function SEOHead({
-  title = "Drip Irrigation Kits & Products Kenya | DripTech Eco Flow",
+  title = "Drip Irrigation Kits & Products Kenya | DripTech",
   description = "Drip irrigation kits, driplines, sprinklers, pumps and filters for Kenyan farms. Help with sizing, supply and installation.",
   keywords = "drip irrigation kenya, smart irrigation systems, irrigation kits prices kenya, water pumps for farming, sprinkler systems kenya, greenhouse irrigation, drip lines, agricultural water solutions, solar water pumps, precision farming kenya, smallholder irrigation, automated irrigation controller, soil moisture sensors",
-  image = "https://www.dripstech.co.ke/driptech-social-image.jpg",
-  url = "https://www.dripstech.co.ke",
+  image = `${SITE_COMPANY.url}/driptech-logo.png`,
+  url = SITE_COMPANY.url,
   type = "website",
-  author = "DripTech Eco Flow",
+  author = SITE_COMPANY.name,
   publishedTime,
   modifiedTime,
   schema,
 }: SEOHeadProps) {
-  const defaultSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "DripTech Eco Flow",
-    description: "Irrigation equipment supplier in Kenya — driplines, kits, sprinklers, pumps and filters.",
-    url: "https://www.dripstech.co.ke",
-    logo: "https://www.dripstech.co.ke/driptech-logo.png",
-    image: "https://www.dripstech.co.ke/driptech-logo.png",
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: "+254794494515",
-      contactType: "Customer Service",
-      areaServed: "KE",
-      availableLanguage: ["English", "Swahili"],
-    },
-    sameAs: [
-      "https://www.facebook.com/driptech",
-      "https://twitter.com/driptech",
-      "https://www.linkedin.com/company/driptech",
-      "https://www.youtube.com/c/driptech",
-    ],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Industrial Area",
-      addressLocality: "Nairobi",
-      addressRegion: "Nairobi",
-      postalCode: "00100",
-      addressCountry: "KE",
-    },
-  };
-
-  const schemaData = schema || defaultSchema;
+  const schemaData = schema || buildLocalBusinessSchema();
   const schemas = Array.isArray(schemaData) ? schemaData : [schemaData];
 
   return (

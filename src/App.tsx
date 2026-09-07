@@ -39,6 +39,7 @@ const Cookies = lazy(() => import("./pages/Cookies"));
 const IrrigationKits = lazy(() => import("@/pages/IrrigationKits"));
 const Careers = lazy(() => import("./pages/Careers"));
 const TechnicianServices = lazy(() => import("./pages/TechnicianServices"));
+const SEOContentPage = lazy(() => import("./pages/SEOContentPage"));
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,10 @@ const App = () => {
                   <Route path="/products/:category" element={<Products />} />
                   <Route path="/products/:category/:product" element={<Products />} />
                   <Route path="/catalog" element={<Products />} /> {/* Redirect to Products */}
+                  <Route path="/drip-irrigation-kenya" element={<SEOContentPage />} />
+                  <Route path="/drip-irrigation-kit-price-kenya" element={<SEOContentPage />} />
+                  <Route path="/driplines-for-sale-kenya" element={<SEOContentPage />} />
+                  <Route path="/sprinkler-systems-kenya" element={<SEOContentPage />} />
 
                   {/* Service routes */}
                   <Route path="/services" element={<Services />} />

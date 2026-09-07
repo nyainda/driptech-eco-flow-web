@@ -15,7 +15,7 @@ export const SITE_COMPANY = {
   phonePrimaryDisplay: "0723 407 849",
   /** Secondary line */
   phoneSecondary: "+254794494515",
-  phoneSecondaryDisplay: "0757 716 018",
+  phoneSecondaryDisplay: "0794 494 515",
   address: {
     addressLocality: "Nairobi",
     addressRegion: "Nairobi",
@@ -77,7 +77,6 @@ export function buildLocalBusinessSchema() {
         contactType: "sales",
         areaServed: "KE",
         availableLanguage: ["en", "sw"],
-        contactOption: "TollFree",
       },
       {
         "@type": "ContactPoint",
