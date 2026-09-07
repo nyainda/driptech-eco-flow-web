@@ -321,7 +321,7 @@ Cost Insight: The drip irrigation cost per acre Kenya can range from KES 50,000 
    - Include WhatsApp consultation offer
    - Professional irrigation assessment mention
    - Use <div class="cta-section"> wrapper
-   - **REQUIRED CTA TEXT**: "Ready to transform your farm with efficient irrigation? Contact DripTech today for a free consultation. Call us or WhatsApp us at **0794494515** for a professional irrigation assessment tailored to your farm's unique needs. Let's grow together! 🚀"
+   - **REQUIRED CTA TEXT**: "Ready to transform your farm with efficient irrigation? Contact DripTech today for a free consultation. Call us or WhatsApp us at **0757716018** for a professional irrigation assessment tailored to your farm's unique needs. Let's grow together! 🚀"
 
 === INTERNAL LINKING (MANDATORY) ===
 Naturally include 3-4 internal links with relevant anchor text:

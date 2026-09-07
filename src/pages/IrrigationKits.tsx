@@ -1155,7 +1155,7 @@ const IrrigationKits = () => {
                                 Request Quote
                               </Button>
                             </a>
-                            <a href="tel:0794494515" className="w-full">
+                            <a href="tel:0757716018" className="w-full">
                               <Button
                                 variant="outline"
                                 className="w-full border-border text-muted-foreground hover:bg-gray-100 dark:hover:bg-muted hover:text-gray-800 dark:hover:text-foreground"
@@ -1305,7 +1305,7 @@ const IrrigationKits = () => {
                           className="bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
                         >
                           <Phone className="h-5 w-5 mr-2" />
-                          Call 0794494515
+                          Call 0757716018
                         </Button>
                         <Button
                           variant="outline"

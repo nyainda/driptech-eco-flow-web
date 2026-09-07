@@ -99,10 +99,10 @@ const Footer = () => {
                 <div className="text-sm text-muted-foreground">
                   <div className="flex items-center gap-2 mb-1">
                     <a
-                      href="tel:0794494515"
+                      href="tel:0757716018"
                       className="hover:text-foreground transition-colors"
                     >
-                      0794494515
+                      0757716018
                     </a>
                     <a
                       href="https://wa.me/254723407849"

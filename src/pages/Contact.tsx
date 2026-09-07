@@ -24,8 +24,8 @@ const Contact = () => {
       icon: Phone,
       title: "Call Us",
       subtitle: "Speak with our irrigation experts",
-      details: ["0794494515", "0723407849"],
-      action: "tel:0794494515",
+      details: ["0757716018", "0723407849"],
+      action: "tel:0757716018",
       actionText: "Call Now",
     },
     {
@@ -65,7 +65,7 @@ const Contact = () => {
     <SEOHead
       title={`Contact ${SITE_COMPANY.name} | Call ${SITE_COMPANY.phonePrimaryDisplay} | Drip Irrigation Kenya`}
       description={`Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay} for drip kits, driplines and irrigation supplies in Kenya. Email ${SITE_COMPANY.email}. Nairobi-based, nationwide delivery.`}
-      keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0723407849, 0794494515"
+      keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0723407849, 0757716018"
       url="https://www.dripstech.co.ke/contact"
       schema={[buildLocalBusinessSchema(), buildContactPageSchema()]}
     />

@@ -546,13 +546,13 @@ const Header = () => {
           <div className="flex h-10 items-center justify-between text-xs font-medium text-muted-foreground">
             <div className="flex items-center gap-6">
               <a
-                href="tel:0794494515"
+                href="tel:0757716018"
                 className="flex items-center gap-2 hover:text-primary transition-colors group"
               >
                 <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                   <Phone className="h-3 w-3 text-primary" />
                 </div>
-                <span>0794494515</span>
+                <span>0757716018</span>
               </a>
               <a
                 href="mailto:info@driptech.co.ke"
@@ -847,7 +847,7 @@ const Header = () => {
                     </Link>
                   </div>
                   <div className="flex items-center justify-around">
-                    <a href="tel:0794494515" className="flex flex-col items-center gap-1.5 group">
+                    <a href="tel:0757716018" className="flex flex-col items-center gap-1.5 group">
                       <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
                         <Phone className="h-4 w-4 text-primary" />
                       </div>
