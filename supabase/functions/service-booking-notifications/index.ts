@@ -60,7 +60,7 @@ serve(async (req) => {
           
           <p>For any questions, please contact us:</p>
           <ul>
-            <li>Phone: 0794 494 515</li>
+            <li>Phone: 0757 716 018</li>
             <li>Email: info@driptech.co.ke</li>
           </ul>
           

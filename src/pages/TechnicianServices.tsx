@@ -137,7 +137,7 @@ const TechnicianServices = () => {
                                 onClick={() => window.open("https://wa.me/254723407849", "_blank")}
                             >
                                 <Phone className="mr-2 h-5 w-5" />
-                                Call Now: 0794 494 515
+                                Call Now: 0757 716 018
                             </Button>
                         </div>
                     </div>

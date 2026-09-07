@@ -15,7 +15,7 @@ export const SITE_COMPANY = {
   phonePrimaryDisplay: "0723 407 849",
   /** Secondary line */
   phoneSecondary: "+254794494515",
-  phoneSecondaryDisplay: "0794 494 515",
+  phoneSecondaryDisplay: "0757 716 018",
   address: {
     addressLocality: "Nairobi",
     addressRegion: "Nairobi",
