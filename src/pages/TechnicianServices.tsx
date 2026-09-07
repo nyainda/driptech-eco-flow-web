@@ -151,7 +151,7 @@ const TechnicianServices = () => {
                                 Our <span className="text-primary">Services</span>
                             </h2>
                             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                                Choose from our comprehensive range of professional irrigation services
+                                Choose the irrigation service your farm needs
                             </p>
                         </div>
 

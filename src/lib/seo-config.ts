@@ -22,7 +22,7 @@ export const COMMON_FAQS = {
     homepage: [
         {
             question: "What irrigation services does DripTech provide in Kenya?",
-            answer: "DripTech provides comprehensive irrigation services including drip irrigation system design and installation, sprinkler system installation, irrigation maintenance and repair, greenhouse irrigation solutions, and agricultural water management consulting. We serve farms of all sizes across Kenya with professional installation and 5-year warranty."
+            answer: "DripTech provides irrigation services including drip irrigation system design and installation, sprinkler system installation, irrigation maintenance and repair, greenhouse irrigation, and farm water planning. We serve farms of all sizes across Kenya with professional installation and a 5-year warranty."
         },
         {
             question: "How much does a drip irrigation system cost in Kenya?",
@@ -34,7 +34,7 @@ export const COMMON_FAQS = {
         },
         {
             question: "How long does irrigation installation take?",
-            answer: "Installation time depends on farm size. Small farms (0.25-0.5 acre) take 1-2 days. Medium farms (1 acre) take 3-5 days. Large farms (5+ acres) take 1-2 weeks. This includes complete system design, installation, testing, and comprehensive farmer training on operation and maintenance."
+            answer: "Installation time depends on farm size. Small farms (0.25-0.5 acre) take 1-2 days. Medium farms (1 acre) take 3-5 days. Large farms (5+ acres) take 1-2 weeks. This includes system design, installation, testing, and farmer training on operation and maintenance."
         },
         {
             question: "How much water does drip irrigation save?",
@@ -53,7 +53,7 @@ export const COMMON_FAQS = {
         },
         {
             question: "Do you offer irrigation system warranties?",
-            answer: "Yes, all DripTech irrigation equipment comes with a comprehensive 5-year warranty covering manufacturing defects. Installation workmanship is guaranteed for 2 years. We also offer extended warranty options and maintenance packages to ensure long-term system performance."
+            answer: "Yes, all DripTech irrigation equipment comes with a 5-year warranty covering manufacturing defects. Installation workmanship is guaranteed for 2 years. We also offer extended warranty options and maintenance packages to keep the system working well."
         },
         {
             question: "What irrigation products are suitable for greenhouses?",
@@ -76,7 +76,7 @@ export const COMMON_FAQS = {
         },
         {
             question: "What's included in your installation service?",
-            answer: "Our installation service includes complete system design, all necessary materials and equipment, professional installation by certified technicians, system testing and commissioning, comprehensive farmer training on operation and maintenance, and a 2-year installation workmanship warranty. We also provide ongoing technical support."
+            answer: "Our installation service includes system design, the required materials and equipment, professional installation, testing, farmer training on operation and maintenance, and a 2-year installation workmanship warranty. We also provide ongoing technical support."
         }
     ]
 };

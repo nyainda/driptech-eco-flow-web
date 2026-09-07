@@ -119,7 +119,7 @@ const AIAutonomousSEOEngine = ({ onGenerate }: AIAutonomousSEOEngineProps) => {
             if (!topic) throw new Error("Invalid topic selected");
 
             // 2. Construct SEO-optimized prompt for Kenya-specific content
-            const prompt = `You are an expert SEO content writer specializing in irrigation solutions for Kenyan farmers. Generate a comprehensive, SEO-optimized blog post about "${topic.label}".
+            const prompt = `You are a practical field writer specializing in irrigation for Kenyan farmers. Write a clear, useful blog post about "${topic.label}".
 
 === TARGET AUDIENCE ===
 - Small & medium-scale farmers in Kenya

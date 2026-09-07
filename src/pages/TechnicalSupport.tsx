@@ -185,7 +185,7 @@ const TechnicalSupport = () => {
       contact: "Schedule appointment",
       hours: "By appointment",
       response: "Scheduled",
-      badge: "Comprehensive",
+      badge: "By appointment",
     },
   ];
 
@@ -723,7 +723,7 @@ ${supportForm.steps_taken}`,
                       Video <span className="text-primary">Tutorials</span>
                     </h2>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-                      Learn from our experts with comprehensive video guides
+                      Learn from our team with practical video guides
                       covering installation, maintenance, and troubleshooting.
                     </p>
                   </div>

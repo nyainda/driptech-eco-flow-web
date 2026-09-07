@@ -76,7 +76,7 @@ const IrrigationKeywords: React.FC = () => {
                     <li>Teflon tape and clamps</li>
                 </ul>
 
-                <h3>Smart Irrigation Technology</h3>
+                <h3>Controls and automation</h3>
                 <ul>
                     <li>Smart irrigation controllers and IoT irrigation systems</li>
                     <li>Soil moisture sensors for precision irrigation</li>

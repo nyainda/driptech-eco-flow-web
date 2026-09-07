@@ -97,7 +97,7 @@ const Team = () => {
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
               Our experienced professionals are dedicated to delivering{" "}
               <span className="text-foreground font-semibold">
-                innovative irrigation solutions
+                irrigation systems that fit the farm
               </span>{" "}
               and exceptional service.
             </p>

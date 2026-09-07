@@ -10,9 +10,9 @@ const values = [
   },
   {
     icon: Target,
-    title: "Innovation",
+      title: "Practical know-how",
     description:
-      "Using cutting-edge technology and smart irrigation solutions to maximize efficiency and crop yields while minimizing resource waste.",
+        "We use dependable equipment and field experience to help farms save water and grow better crops.",
   },
   {
     icon: Heart,

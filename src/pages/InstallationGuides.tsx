@@ -460,7 +460,7 @@ const InstallationGuides = () => {
     <div className="min-h-screen bg-muted/30">
       <SEOHead
         title="Drip Irrigation Installation Guides & Technical Manuals | DripTech"
-        description="Comprehensive step-by-step guides and technical documentation for installing and maintaining DripTech irrigation systems. Expert support for farmers."
+        description="Step-by-step guides and technical notes for installing and maintaining DripTech irrigation systems, with practical support for farmers."
         schema={[
           {
             "@context": "https://schema.org",

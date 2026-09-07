@@ -72,7 +72,7 @@ const AIBlogGenerator = ({ onGenerate }: AIBlogGeneratorProps) => {
             }
 
             // 2. Construct prompt for blog generation
-            const prompt = `You are an expert content writer specializing in irrigation, agriculture, and sustainable farming. Generate a comprehensive, SEO-optimized blog post based on: "${blogPrompt}"
+            const prompt = `You are a practical field writer specializing in irrigation, agriculture, and sustainable farming. Write a clear, useful blog post based on: "${blogPrompt}"
 
 === BLOG WRITING GUIDELINES ===
 1. Write engaging, informative content for farmers, agricultural businesses, and irrigation professionals
@@ -81,6 +81,7 @@ const AIBlogGenerator = ({ onGenerate }: AIBlogGeneratorProps) => {
 4. Optimize for SEO with relevant keywords naturally integrated
 5. Structure content with clear headings and subheadings
 6. Target reading time: 5-10 minutes (800-1500 words)
+7. Avoid hype and generic AI phrases. Do not use emojis in the title. Write like an experienced irrigation technician speaking to a farmer.
 
 === CONTENT TOPICS ===
 - Drip irrigation systems and techniques

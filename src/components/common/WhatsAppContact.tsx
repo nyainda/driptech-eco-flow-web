@@ -266,42 +266,39 @@ const WhatsAppContact = ({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>{renderButton()}</DialogTrigger>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-2">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+        <DialogHeader className="px-4 pt-5 pb-2 sm:px-6 sm:pt-6">
+          <DialogTitle className="flex items-center gap-2 text-xl font-bold sm:text-2xl">
             <MessageCircle className="h-6 w-6 text-[hsl(var(--dt-whatsapp))]" />
-            Start WhatsApp Inquiry
+            Ask us on WhatsApp
           </DialogTitle>
           <DialogDescription>
-            Select products or services to create a personalized inquiry
+            Pick a product or service, then send us a message.
           </DialogDescription>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
-          <div className="px-6 pb-2">
+          <div className="px-4 pb-2 sm:px-6">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="services">Services</TabsTrigger>
             </TabsList>
           </div>
 
-          {/* Category filter lives in its own static header, not inside the
-              scroll container below — previously it was `sticky top-0` on
-              top of the product grid's own scroll area, which meant the
-              top row of product cards slid up and got visually sliced by
-              this bar's opaque background as you scrolled. */}
+          {/* Keep categories in one compact horizontal row so product cards
+              and their images remain visible in the dialog on small screens. */}
           {activeTab === 'products' && (
-            <div className="px-6 pb-4 border-b border-border">
-              <div className="flex flex-wrap gap-3">
+            <div className="border-b border-border px-4 pb-3 sm:px-6">
+              <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
                 <Button
                   variant={selectedProductCategory === 'all' ? 'default' : 'outline'}
                   onClick={() => setSelectedProductCategory('all')}
                   size="sm"
-                  className="rounded-full"
+                  className="shrink-0 rounded-full"
                 >
-                  <Package className="h-4 w-4 mr-2" />
+                  <Package className="mr-1.5 h-4 w-4" />
                   All
-                  <Badge variant="secondary" className="ml-2 text-xs">
+                  <Badge variant="secondary" className="ml-1.5 text-xs">
                     {products.length}
                   </Badge>
                 </Button>
@@ -314,11 +311,11 @@ const WhatsAppContact = ({
                       variant={selectedProductCategory === category ? 'default' : 'outline'}
                       onClick={() => setSelectedProductCategory(category)}
                       size="sm"
-                      className="rounded-full"
+                      className="shrink-0 rounded-full"
                     >
-                      <IconComponent className="h-4 w-4 mr-2" />
+                      <IconComponent className="mr-1.5 h-4 w-4" />
                       {formatCategoryName(category)}
-                      <Badge variant="secondary" className="ml-2 text-xs">
+                      <Badge variant="secondary" className="ml-1.5 text-xs">
                         {categoryProducts.length}
                       </Badge>
                     </Button>
@@ -328,7 +325,7 @@ const WhatsAppContact = ({
             </div>
           )}
 
-          <div className="flex-1 overflow-y-auto px-6 pb-4">
+          <div className="flex-1 overflow-y-auto px-4 pb-4 sm:px-6">
             <TabsContent value="products" className="space-y-6 mt-0">
               {/* Selected Products Summary */}
               {selectedProducts.length > 0 && (
@@ -381,7 +378,7 @@ const WhatsAppContact = ({
                   <p className="text-lg">No products available in this category</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
                   {filteredProducts.map((product) => {
                     const isSelected = selectedProducts.includes(product.id);
                     const IconComponent = getCategoryIcon(product.category);
@@ -397,12 +394,12 @@ const WhatsAppContact = ({
                       >
                         <CardContent className="p-0">
                           {/* Product Image */}
-                          <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg">
+                          <div className="relative aspect-[1.15] overflow-hidden rounded-t-lg bg-muted sm:aspect-[4/3]">
                             {product.images && product.images.length > 0 ? (
                               <img
                                 src={product.images[0]}
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                className="h-full w-full object-contain p-2 sm:p-3"
                               />
                             ) : (
                               <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -411,22 +408,22 @@ const WhatsAppContact = ({
                             )}
 
                             {isSelected && (
-                              <div className="absolute top-3 right-3">
-                                <div className="bg-[hsl(var(--dt-whatsapp))] rounded-full p-2 shadow-lg">
-                                  <Check className="h-5 w-5 text-white" strokeWidth={3} />
+                                <div className="absolute right-2 top-2 sm:right-3 sm:top-3">
+                                <div className="rounded-full bg-[hsl(var(--dt-whatsapp))] p-1.5 shadow-lg sm:p-2">
+                                  <Check className="h-4 w-4 text-white sm:h-5 sm:w-5" strokeWidth={3} />
                                 </div>
                               </div>
                             )}
 
-                            <div className="absolute top-3 left-3">
-                              <Badge variant="secondary" className="text-xs bg-card">
+                            <div className="absolute left-2 top-2 sm:left-3 sm:top-3">
+                              <Badge variant="secondary" className="max-w-[85%] truncate bg-card text-[10px] sm:text-xs">
                                 {formatCategoryName(product.category)}
                               </Badge>
                             </div>
                           </div>
 
-                          <div className="p-4 space-y-2">
-                            <h4 className="font-semibold line-clamp-2 text-foreground">
+                          <div className="space-y-2 p-3 sm:p-4">
+                            <h4 className="line-clamp-2 text-sm font-semibold text-foreground sm:text-base">
                               {product.name}
                             </h4>
 
@@ -551,7 +548,7 @@ const WhatsAppContact = ({
                                   KES {pkg.price.toLocaleString()}
                                 </p>
                                 <p className="text-sm text-muted-foreground mb-4">
-                                  {pkg.description || "Comprehensive service package for your farm."}
+                                  {pkg.description || "A practical service package for your farm."}
                                 </p>
                                 <div className={`text-center py-2 rounded-md text-sm font-medium ${isSelected
                                   ? 'bg-[hsl(var(--dt-whatsapp))] text-white'

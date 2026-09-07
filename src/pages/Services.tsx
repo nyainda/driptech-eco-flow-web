@@ -63,7 +63,7 @@ const Services = () => {
       icon: GraduationCap,
       title: "Training",
       description:
-        "Comprehensive training programs for operators and maintenance staff.",
+        "Clear training for operators and maintenance staff.",
       features: [
         "Operator training",
         "Maintenance workshops",
@@ -107,9 +107,8 @@ const Services = () => {
               <span className="text-accent"> Portfolio</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              From initial design to ongoing maintenance, we provide
-              comprehensive irrigation services to ensure your system performs
-              at its best.
+              From initial design to ongoing maintenance, we help you keep the
+              system working properly through every growing season.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <QuoteModal>

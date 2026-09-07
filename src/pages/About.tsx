@@ -36,9 +36,9 @@ const About = () => {
     },
     {
       icon: Target,
-      title: "Innovation",
+      title: "Practical know-how",
       description:
-        "Using cutting-edge technology and smart irrigation solutions to maximize efficiency and crop yields while minimizing resource waste.",
+        "Using dependable irrigation equipment and field experience to help farms use water carefully and grow better crops.",
     },
     {
       icon: Heart,
@@ -59,19 +59,19 @@ const About = () => {
       year: "2023",
       title: "Company Founded",
       description:
-        "Started with a vision to revolutionize irrigation in Kenya with modern technology",
+        "Started to make irrigation planning and installation easier for Kenyan farms",
     },
     {
       year: "2023",
       title: "First Installations",
       description:
-        "Successfully completed our first 10 smart irrigation projects across Kenya",
+        "Successfully completed our first 10 irrigation projects across Kenya",
     },
     {
       year: "2024",
       title: "Smart Systems Launch",
       description:
-        "Introduced IoT-enabled smart irrigation monitoring systems with mobile app control",
+        "Introduced remote monitoring systems with mobile app control",
     },
     {
       year: "2024",
@@ -103,14 +103,13 @@ const About = () => {
               🌱 About DripTech
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
-              Transforming Agriculture
-              <span className="text-accent"> Through Innovation</span>
+              Irrigation that works
+              <span className="text-accent"> for Kenyan farms</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-              Since 2023, DripTech has been Kenya's most innovative provider of
-              smart irrigation solutions, helping farmers and businesses achieve
-              sustainable growth while conserving precious water resources
-              through cutting-edge technology.
+              Since 2023, DripTech has helped farmers and businesses plan,
+              source and install irrigation systems that make better use of
+              every drop.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -166,13 +165,12 @@ const About = () => {
                   Our Mission
                 </h2>
                 <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                  To revolutionize agriculture in Kenya and East Africa by
-                  providing cutting-edge irrigation solutions that maximize crop
-                  yields, conserve water resources, and empower farmers with
-                  sustainable technology.
+                  To make dependable irrigation easier to plan, buy and run
+                  across Kenya and East Africa, helping farmers save water and
+                  grow with confidence.
                 </p>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  We believe that smart irrigation is the key to food security
+                  We believe dependable irrigation is part of the foundation for food security
                   and environmental sustainability in our region.
                 </p>
               </div>
@@ -291,12 +289,9 @@ const About = () => {
                     Ready to Transform Your Farm?
                   </h2>
                   <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-                    Join over 150 satisfied farmers across Kenya who have
-                    revolutionized their operations with our cutting-edge
-                    irrigation solutions. Experience increased yields, reduced
-                    water consumption, and sustainable farming practices that
-                    ensure long-term success with our proven 2-year track
-                    record.
+                    Join over 150 farmers across Kenya who use our irrigation
+                    systems to save water, improve consistency and spend less
+                    time solving avoidable field problems.
                   </p>
                   <div className="flex flex-wrap justify-center gap-6">
                     <a

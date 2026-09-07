@@ -31,7 +31,7 @@ const TOPIC_CATEGORIES = [
     },
     {
         value: "smart_irrigation",
-        label: "Smart Irrigation & Automation",
+        label: "Irrigation Controls & Automation",
         keywords: "automated irrigation Kenya, smart farming, irrigation controller"
     },
     {
@@ -247,7 +247,7 @@ serve(async (req) => {
 
 // Generate blog content using Gemini API
 async function generateBlogContent(apiKey: string, topic: any) {
-    const prompt = `You are an expert SEO content writer specializing in irrigation solutions for Kenyan farmers. Generate a comprehensive, SEO-optimized blog post about "${topic.label}".
+    const prompt = `You are a careful field writer helping Kenyan farmers make practical irrigation decisions. Write a clear, useful blog post about "${topic.label}" without inflated marketing language.
 
 === TARGET AUDIENCE ===
 - Small & medium-scale farmers in Kenya
@@ -321,7 +321,7 @@ Cost Insight: The drip irrigation cost per acre Kenya can range from KES 50,000 
    - Include WhatsApp consultation offer
    - Professional irrigation assessment mention
    - Use <div class="cta-section"> wrapper
-   - **REQUIRED CTA TEXT**: "Ready to transform your farm with efficient irrigation? Contact DripTech today for a free consultation. Call us or WhatsApp us at **0757716018** for a professional irrigation assessment tailored to your farm's unique needs. Let's grow together! 🚀"
+   - **REQUIRED CTA TEXT**: "Need help choosing an irrigation system? Contact DripTech for a free consultation. Call or WhatsApp **0757716018** and tell us your crop, plot size and water source."
 
 === INTERNAL LINKING (MANDATORY) ===
 Naturally include 3-4 internal links with relevant anchor text:
@@ -341,7 +341,7 @@ Naturally include 3-4 internal links with relevant anchor text:
 
 === OUTPUT FORMAT (JSON ONLY, NO MARKDOWN) ===
 {
-  "title": "Compelling, SEO-friendly title with Emoji (50-60 characters)",
+  "title": "Clear, specific title without emojis or hype (50-60 characters)",
   "slug": "url-friendly-slug-from-title",
   "excerpt": "Engaging 150-160 character summary that hooks readers and includes primary keyword",
   "content": "Full blog post in HTML format with proper structure as specified above. MUST include properly formatted FAQ section and CTA section.",
@@ -351,7 +351,7 @@ Naturally include 3-4 internal links with relevant anchor text:
   "reading_time": 5
 }
 
-Generate professional, valuable content that educates and engages Kenyan farmers. Focus on practical solutions and actionable advice.`;
+Generate plain, useful content that sounds like advice from an experienced irrigation technician. Avoid phrases such as "revolutionize", "transform", "cutting-edge", "game-changing", "unlock", "empower", "bountiful harvests", and "comprehensive". Do not use emojis in the title. Focus on practical solutions and actionable advice.`;
 
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,

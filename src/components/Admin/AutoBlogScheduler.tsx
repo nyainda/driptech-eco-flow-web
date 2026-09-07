@@ -39,7 +39,7 @@ const TOPIC_LABELS: Record<string, string> = {
     solar_irrigation: "Solar Irrigation",
     irrigation_costs: "Irrigation Costs in Kenya",
     greenhouse_irrigation: "Greenhouse Irrigation",
-    smart_irrigation: "Smart Irrigation & Automation",
+    smart_irrigation: "Irrigation Controls & Automation",
     irrigation_maintenance: "Irrigation Maintenance & Mistakes",
     water_management: "Water Management for Farms",
 };

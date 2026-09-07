@@ -51,7 +51,7 @@ const PartnersSection = () => {
               <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed">
                 Leading manufacturer and exporter of agricultural drip irrigation systems, 
                 water-saving solutions, sprinkler systems, and HDPE irrigation pipes. 
-                Committed to sustainable farming through innovative irrigation technology.
+                Focused on practical equipment that helps farms use water well.
               </p>
 
               {/* Key Features */}

@@ -260,7 +260,7 @@ const Header = () => {
         {
           title: "Control Systems",
           href: "/products/controls",
-          description: "Smart automation for your farm",
+          description: "Controls and timers for your farm",
           icon: Settings,
         },
         {

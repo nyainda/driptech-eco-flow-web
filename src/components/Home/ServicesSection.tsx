@@ -198,8 +198,8 @@ const ServicesSection = ({
               <span className="block text-primary">Irrigation Solutions</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Discover our professional irrigation kits and comprehensive services
-              designed for Kenyan farms to maximize productivity and efficiency.
+              Explore irrigation kits and hands-on services designed for Kenyan
+              farms that want simpler planning and better water use.
             </p>
 
             {/* AI-Friendly Highlight Stats for GEO */}

@@ -54,7 +54,7 @@ const Careers = () => {
                                             Innovation
                                         </h3>
                                         <p className="text-sm text-muted-foreground">
-                                            Work on cutting-edge irrigation technology
+                                            Work on irrigation systems used by real farms
                                         </p>
                                     </CardContent>
                                 </Card>

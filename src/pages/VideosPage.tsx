@@ -352,8 +352,8 @@ const VideosPage = () => {
                 Irrigation <span className="text-primary">Video Library</span>
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Comprehensive collection of irrigation tutorials, system
-                demonstrations, and expert guides
+                Practical irrigation tutorials, system demonstrations and field
+                guides
               </p>
             </div>
 
