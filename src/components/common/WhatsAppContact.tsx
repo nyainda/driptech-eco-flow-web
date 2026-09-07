@@ -229,13 +229,17 @@ const WhatsAppContact = ({
         return (
           <button
             onClick={currentProduct ? openWhatsApp : () => setIsDialogOpen(true)}
-            className="fixed bottom-8 right-8 z-50 bg-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.9)] text-white rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
+            className="fixed bottom-5 right-4 z-50 inline-flex min-h-14 items-center gap-3 rounded-full bg-[hsl(var(--dt-whatsapp))] px-4 text-white shadow-[0_10px_30px_hsl(var(--dt-whatsapp)/0.28)] transition-all duration-200 hover:-translate-y-1 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-[0_14px_34px_hsl(var(--dt-whatsapp)/0.35)] sm:bottom-8 sm:right-8 sm:px-5"
             aria-label="Contact us on WhatsApp"
+            title="Open WhatsApp and choose what you need"
           >
-            <MessageCircle className="h-8 w-8" />
-            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-              !
-            </div>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
+              <MessageCircle className="h-5 w-5" />
+            </span>
+            <span className="hidden text-left sm:block">
+              <span className="block text-xs font-medium text-white/75">Need a hand?</span>
+              <span className="block text-sm font-bold leading-tight">Chat on WhatsApp</span>
+            </span>
           </button>
         );
       default:

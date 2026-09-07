@@ -49,6 +49,7 @@ import {
   List,
   TrendingUp,
   Award,
+  MessageCircle,
 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
@@ -390,11 +391,11 @@ const IrrigationKits = () => {
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
             <p className="dt-section-label mb-3">Kits</p>
             <h1 className="dt-section-title text-3xl sm:text-4xl">
-              Complete irrigation kits for{" "}
-              <span className="text-primary">Kenyan farms</span>
+              Find the right irrigation kit for{" "}
+              <span className="text-primary">your plot</span>
             </h1>
             <p className="dt-section-subtitle mx-auto mt-3">
-              Ready packages for small plots through 1 acre — driplines, filters and fittings, with install support when you need it.
+              Compare ready-to-use packages by plot size, price and crop. Every kit brings the core lines, filter and fittings together, with support if you want help installing it.
             </p>
           </div>
 
@@ -419,7 +420,7 @@ const IrrigationKits = () => {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-xl text-foreground">
                   <Filter className="h-5 w-5 text-muted-foreground" />
-                  Find Your Kit
+                  Narrow it down
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <Button
@@ -753,7 +754,7 @@ const IrrigationKits = () => {
 
           {/* Card Grid View */}
           {!isLoading && processedKits.length > 0 && viewMode === "cards" && (
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6">
+            <div className="grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
               {processedKits.map((kit) => {
                 const components = parseComponents(kit.components);
                 const images = parseImages(kit.images);
@@ -770,12 +771,12 @@ const IrrigationKits = () => {
                   >
                     <CardContent className="relative flex flex-1 flex-col p-0">
                       <div className="relative overflow-hidden border-b border-border bg-muted">
-                        <div className="relative aspect-[4/3] overflow-hidden">
+                        <div className="relative aspect-[1.12] overflow-hidden sm:aspect-[4/3] lg:aspect-[1.2]">
                           {imageUrl ? (
                             <img
                               src={imageUrl}
                               alt={kit.name}
-                              className="h-full w-full object-contain p-2 sm:p-3"
+                              className="h-full w-full object-contain p-4 sm:p-5 lg:p-6"
                               loading="lazy"
                               decoding="async"
                               onError={(e) => {
@@ -838,7 +839,7 @@ const IrrigationKits = () => {
                             )}
                             {kit.coverage_area ? (
                               <span className="text-xs text-muted-foreground">
-                                ~{kit.coverage_area} m²
+                                {kit.coverage_area} acres
                               </span>
                             ) : null}
                           </div>
@@ -853,9 +854,8 @@ const IrrigationKits = () => {
                               onClick={(e) => e.stopPropagation()}
                               className="col-span-2 flex flex-row items-center justify-center gap-2 rounded-xl bg-[hsl(var(--dt-whatsapp))] py-2.5 transition-all hover:bg-[hsl(var(--dt-whatsapp)/0.9)] active:scale-[0.98] sm:col-span-1 sm:flex-col sm:gap-1.5 sm:py-3"
                             >
-                              <span className="text-[11px] font-bold text-white sm:text-[10px]">
-                                WhatsApp
-                              </span>
+                              <MessageCircle className="h-4 w-4 text-white" aria-hidden="true" />
+                              <span className="text-[11px] font-bold text-white sm:text-[10px]">Ask on WhatsApp</span>
                             </a>
                             <button
                               type="button"
@@ -905,7 +905,7 @@ const IrrigationKits = () => {
                         </DialogTitle>
                         <DialogDescription className="text-lg mt-2 text-muted-foreground">
                           {selectedKit.description ||
-                            "Professional irrigation solution"}
+                            "A closer look at what is included in this kit."}
                         </DialogDescription>
                       </div>
                       <div className="flex items-center gap-2">

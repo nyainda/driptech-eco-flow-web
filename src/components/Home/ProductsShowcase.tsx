@@ -394,13 +394,13 @@ const ProductsShowcase = ({
       <Card className="dt-card group relative flex h-full flex-col overflow-hidden shadow-sm transition-shadow duration-200 hover:shadow-md">
         <CardContent className="relative flex flex-1 flex-col p-0">
           {/* Product image — full product visible on small screens */}
-          <div className="relative overflow-hidden border-b border-border bg-muted">
+          <div className="relative overflow-hidden border-b border-border bg-gradient-to-b from-muted/60 to-card">
             {product.images && product.images.length > 0 ? (
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[1.12] overflow-hidden sm:aspect-[4/3] lg:aspect-[1.2]">
                 <img
                   src={product.images[0]}
                   alt={product.name}
-                  className="h-full w-full object-contain p-2 sm:p-3"
+                  className="h-full w-full object-contain p-4 sm:p-5 lg:p-6"
                   loading="lazy"
                   decoding="async"
                 />
@@ -870,8 +870,8 @@ const ProductsShowcase = ({
           )}
         </div>
 
-        {/* Products grid — 2 cols on phone so items are visible without sideways scroll */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6 mb-8">
+        {/* Products grid — one card on narrow phones, then two columns when there is room */}
+        <div className="mb-8 grid grid-cols-1 gap-4 min-[460px]:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
               <Card key={index} className="dt-card overflow-hidden flex flex-col">

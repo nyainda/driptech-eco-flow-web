@@ -1,0 +1,1 @@
+- [Package install firewall](package-install-firewall.md) — the imported Node dependency tree is blocked by jspdf resolution before Vite can run.

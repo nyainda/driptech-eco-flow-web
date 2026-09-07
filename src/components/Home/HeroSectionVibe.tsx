@@ -10,7 +10,7 @@ const solutionLinks = [
 export default function HeroSectionVibe() {
   return (
     <section
-      className="overflow-hidden border-b border-border bg-muted/35"
+      className="overflow-hidden border-b border-border bg-[radial-gradient(circle_at_top_right,hsl(var(--dt-green-100)/0.65),transparent_38%),hsl(var(--background))]"
       aria-labelledby="home-hero-title"
     >
       <div className="dt-container grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:py-20">
@@ -39,9 +39,15 @@ export default function HeroSectionVibe() {
               href="https://wa.me/254723407849?text=Hi%20DripTech%20%E2%80%94%20I%20need%20help%20choosing%20irrigation%20equipment."
               target="_blank"
               rel="noreferrer"
-              className="dt-btn-whatsapp inline-flex min-h-11 items-center justify-center gap-2"
+              className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-[hsl(var(--dt-whatsapp))] px-5 py-2.5 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-lg"
             >
-              <MessageCircle className="h-4 w-4" aria-hidden="true" /> Chat on WhatsApp
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15">
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <span className="flex flex-col items-start leading-tight">
+                <span>Talk to our team</span>
+                <span className="text-[10px] font-medium text-white/75">WhatsApp · quick sizing help</span>
+              </span>
             </a>
           </div>
 
@@ -102,7 +108,7 @@ export default function HeroSectionVibe() {
               />
             </picture>
           </div>
-          <div className="absolute -bottom-4 left-4 max-w-[250px] rounded-xl border border-border bg-card p-4 shadow-md sm:-bottom-6 sm:left-6">
+          <div className="relative mt-3 max-w-[290px] rounded-xl border border-border bg-card p-4 shadow-md sm:mt-4 sm:max-w-[320px] lg:absolute lg:-bottom-6 lg:left-6 lg:mt-0">
             <p className="dt-section-label">Not sure what you need?</p>
             <p className="mt-1 text-sm font-semibold leading-snug text-foreground">
               Tell us the crop and acreage. We’ll point you to the right kit or parts list.

@@ -170,12 +170,11 @@ const ProjectsSection = ({
               </Badge>
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 lg:mb-8 leading-tight tracking-tight">
-              <span className="block mb-1 sm:mb-2">Empowering Kenyan Farms,</span>
-              <span className="block text-primary">Transforming Agriculture</span>
+              <span className="block mb-1 sm:mb-2">Better water use on</span>
+              <span className="block text-primary">real Kenyan farms</span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Discover how our innovative irrigation solutions, rooted in Kenyan
-              expertise, enable farmers and businesses to thrive sustainably.
+              See how farmers and businesses are using practical irrigation systems to grow with less water and less guesswork.
             </p>
           </div>
         )}
