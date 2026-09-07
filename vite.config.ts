@@ -34,7 +34,13 @@ export default defineConfig(({ mode }) => {
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,json,txt,xml}'], // Removed svg to avoid conflict with favicon.svg in includeAssets
-        globIgnores: ['**/favicon.svg'], // Explicitly ignore favicon.svg in glob generation        cleanupOutdatedCaches: true
+        globIgnores: ['**/favicon.svg'], // Explicitly ignore favicon.svg in glob generation
+        cleanupOutdatedCaches: true,
+        // A new SW normally waits for every open tab to close before taking
+        // over, which is why changes only showed up after clearing site
+        // data. These two make a new version take control immediately.
+        skipWaiting: true,
+        clientsClaim: true,
       }
     }),
   ];
