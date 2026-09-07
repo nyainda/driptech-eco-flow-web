@@ -12,6 +12,7 @@ export interface Invoice {
   discount_amount: number | null;
   total_amount: number;
   payment_terms: string | null;
+  terms_and_conditions?: string | null;
   notes: string | null;
   payment_details?: string;
   created_at: string | null;
@@ -42,6 +43,10 @@ export interface InvoiceItem {
   unit_price: number;
   total: number;
   unit: string | null;
+  project_name?: string | null;
+  project_subtitle?: string | null;
+  project_link?: string | null;
+  sort_order?: number | null;
 }
 
 export interface Quote {
@@ -71,6 +76,7 @@ export interface CreateInvoiceForm {
   discount_amount: number;
   notes: string;
   payment_details: string;
+  terms_and_conditions: string;
   items: CreateInvoiceItem[];
 }
 
@@ -81,6 +87,10 @@ export interface CreateInvoiceItem {
   unit: string;
   unit_price: number;
   total: number;
+  project_name?: string;
+  project_subtitle?: string;
+  project_link?: string;
+  sort_order?: number;
 }
 
 export interface EditInvoiceForm {
@@ -93,6 +103,7 @@ export interface EditInvoiceForm {
   discount_amount: number;
   notes: string;
   payment_details: string;
+  terms_and_conditions: string;
   items: EditInvoiceItem[];
 }
 
@@ -104,6 +115,25 @@ export interface EditInvoiceItem {
   unit: string;
   unit_price: number;
   total: number;
+  project_name?: string;
+  project_subtitle?: string;
+  project_link?: string;
+  sort_order?: number;
+}
+
+export interface InvoiceProjectDraft {
+  id: string;
+  name: string;
+  subtitle: string;
+  link: string;
+  items: Array<{
+    name: string;
+    description: string;
+    quantity: number;
+    unit: string;
+    unit_price: number;
+    total: number;
+  }>;
 }
 
 export interface InvoiceStats {

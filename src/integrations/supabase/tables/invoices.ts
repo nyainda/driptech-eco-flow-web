@@ -13,6 +13,7 @@ export type Invoices = {
     paid_at: string | null;
     payment_details: string | null;
     payment_terms: string | null;
+    terms_and_conditions: string | null;
     quote_id: string | null;
     sent_at: string | null;
     status: string | null;
@@ -34,6 +35,7 @@ export type Invoices = {
     paid_at?: string | null;
     payment_details?: string | null;
     payment_terms?: string | null;
+    terms_and_conditions?: string | null;
     quote_id?: string | null;
     sent_at?: string | null;
     status?: string | null;
@@ -55,6 +57,7 @@ export type Invoices = {
     paid_at?: string | null;
     payment_details?: string | null;
     payment_terms?: string | null;
+    terms_and_conditions?: string | null;
     quote_id?: string | null;
     sent_at?: string | null;
     status?: string | null;

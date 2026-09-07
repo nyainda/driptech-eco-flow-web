@@ -1,449 +1,217 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Invoice } from "@/components/Admin/types/InvoiceTypes";
 import { COMPANY, getLogoUrl } from "@/components/Admin/shared/companyBrand";
-import {
-  formatCurrency,
-  formatDate,
-} from "@/components/Admin/utils/formatters";
+import { formatCurrency, formatDate } from "@/components/Admin/utils/formatters";
+
+const escapeHtml = (value: unknown) =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+type ProjectGroup = {
+  name: string;
+  subtitle: string;
+  link: string;
+  items: NonNullable<Invoice["invoice_items"]>;
+};
+
+const groupItemsByProject = (invoice: Invoice): ProjectGroup[] => {
+  const groups: ProjectGroup[] = [];
+  [...(invoice.invoice_items || [])]
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    .forEach((item) => {
+      const name = item.project_name || "Project items";
+      const subtitle = item.project_subtitle || "";
+      const link = item.project_link || "";
+      const group = groups.find(
+        (candidate) =>
+          candidate.name === name &&
+          candidate.subtitle === subtitle &&
+          candidate.link === link,
+      );
+      if (group) group.items.push(item);
+      else groups.push({ name, subtitle, link, items: [item] });
+    });
+  return groups;
+};
 
 export const useInvoiceOperations = (onSuccess?: () => void) => {
-  // Handle status update
   const updateInvoiceStatus = async (invoiceId: string, newStatus: string) => {
     try {
-      const updateData: any = {
+      const updateData: Record<string, string> = {
         status: newStatus,
         updated_at: new Date().toISOString(),
       };
-
-      // Add specific timestamps based on status
-      if (newStatus === "paid") {
-        updateData.paid_at = new Date().toISOString();
-      } else if (newStatus === "sent") {
-        updateData.sent_at = new Date().toISOString();
-      }
+      if (newStatus === "paid") updateData.paid_at = new Date().toISOString();
+      if (newStatus === "sent") updateData.sent_at = new Date().toISOString();
 
       const { error } = await supabase
         .from("invoices")
         .update(updateData)
         .eq("id", invoiceId);
-
-      if (error) {
-        console.error("Error updating invoice status:", error);
-        return;
-      }
-
-      // Reload invoices to reflect changes
-      if (onSuccess) onSuccess();
+      if (error) throw error;
+      onSuccess?.();
     } catch (error) {
       console.error("Error updating invoice status:", error);
     }
   };
 
-  // Handle delete invoice
   const deleteInvoice = async (invoiceId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this invoice? This action cannot be undone.",
-      )
-    ) {
-      return;
-    }
-
+    if (!confirm("Are you sure you want to delete this invoice? This action cannot be undone.")) return;
     try {
-      const { error } = await supabase
-        .from("invoices")
-        .delete()
-        .eq("id", invoiceId);
-
-      if (error) {
-        console.error("Error deleting invoice:", error);
-        return;
-      }
-
-      // Reload invoices to reflect changes
-      if (onSuccess) onSuccess();
+      const { error } = await supabase.from("invoices").delete().eq("id", invoiceId);
+      if (error) throw error;
+      onSuccess?.();
     } catch (error) {
       console.error("Error deleting invoice:", error);
     }
   };
 
-  // Generate invoice HTML content (same for both print and PDF)
   const generateInvoiceContent = (invoice: Invoice) => {
-    return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Invoice ${invoice.invoice_number} - ${COMPANY.name}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-        <style>
-          body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: white !important;
-            margin: 0;
-            padding: 12px;
-            font-size: 13px;
-            line-height: 1.4;
-            color: #1f2937;
-          }
-          
-          @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-          }
-          
-          .shine-effect::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: shine 3s infinite;
-          }
-          
-          @media print {
-            @page { 
-              margin: 0.8cm; 
-              size: A4 portrait; 
-            }
-            body { 
-              background: white !important; 
-              padding: 0 !important;
-              font-size: 12px !important;
-            }
-            * { 
-              -webkit-print-color-adjust: exact !important; 
-              color-adjust: exact !important; 
-            }
-            .no-print { display: none !important; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-          
-          <!-- Header Section -->
-          <div class="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-4 relative overflow-hidden">
-            <div class="absolute inset-0 opacity-10">
-              <div class="absolute top-2 left-2 w-1 h-1 bg-white rounded-full"></div>
-              <div class="absolute top-6 right-8 w-0.5 h-0.5 bg-white rounded-full"></div>
-              <div class="absolute bottom-4 left-6 w-0.5 h-0.5 bg-white rounded-full"></div>
-              <div class="absolute bottom-8 right-4 w-1.5 h-1.5 bg-white rounded-full"></div>
-            </div>
-            
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
-              <div class="flex items-center gap-3 w-full md:w-auto">
-                <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow">
-                  <img src="${getLogoUrl()}" alt="${COMPANY.name}" class="w-10 h-10 object-contain" />
+    const projects = groupItemsByProject(invoice);
+    const customer = invoice.customer;
+    const projectMarkup = projects.length
+      ? projects
+          .map((project, projectIndex) => {
+            const projectSubtotal = project.items.reduce(
+              (sum, item) => sum + Number(item.total || 0),
+              0,
+            );
+            const rows = project.items
+              .map(
+                (item) => `
+                  <tr>
+                    <td><strong>${escapeHtml(item.name)}</strong>${item.description ? `<small>${escapeHtml(item.description)}</small>` : ""}</td>
+                    <td class="center">${escapeHtml(item.quantity)} ${escapeHtml(item.unit || "")}</td>
+                    <td class="amount">${escapeHtml(formatCurrency(item.unit_price))}</td>
+                    <td class="amount strong">${escapeHtml(formatCurrency(item.total))}</td>
+                  </tr>`,
+              )
+              .join("");
+            return `
+              <section class="project">
+                <div class="project-head">
+                  <div>
+                    <div class="eyebrow">Project ${projectIndex + 1}</div>
+                    <h3>${escapeHtml(project.name)}</h3>
+                    ${project.subtitle ? `<p>${escapeHtml(project.subtitle)}</p>` : ""}
+                    ${project.link ? `<a href="${escapeHtml(project.link)}">${escapeHtml(project.link)}</a>` : ""}
+                  </div>
+                  <div class="project-subtotal">Subtotal<br><strong>${escapeHtml(formatCurrency(projectSubtotal))}</strong></div>
                 </div>
-                <div class="min-w-0 flex-1">
-                  <h1 class="text-white text-xl font-black mb-1">${COMPANY.name}</h1>
-                  <div class="text-white text-opacity-90 text-xs font-medium">${COMPANY.tagline}</div>
-                  <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
-                    <div>📍 P.O. Box 12345, Nairobi, Kenya</div>
-                    <div>📞 0794494515 / 0723407849</div>
-                    <div>✉️ info@dripstech.co.ke</div>
-                    <div>✉️ driptechs.info@gmail.com</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="text-center md:text-right text-white w-full md:w-auto">
-                <h2 class="text-2xl font-black mb-2">INVOICE</h2>
-                <div class="bg-white bg-opacity-15 backdrop-blur-md p-3 rounded-lg border border-white border-opacity-20">
-                  <div class="flex justify-between items-center mb-1 text-xs">
-                    <span class="font-medium text-white text-opacity-90">Invoice #:</span>
-                    <span class="font-bold ml-2">${invoice.invoice_number}</span>
-                  </div>
-                  <div class="flex justify-between items-center mb-1 text-xs">
-                    <span class="font-medium text-white text-opacity-90">Issue Date:</span>
-                    <span class="font-bold ml-2">${formatDate(invoice.issue_date)}</span>
-                  </div>
-                  <div class="flex justify-between items-center mb-1 text-xs">
-                    <span class="font-medium text-white text-opacity-90">Due Date:</span>
-                    <span class="font-bold ml-2">${formatDate(invoice.due_date)}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-xs">
-                    <span class="font-medium text-white text-opacity-90">Status:</span>
-                    <span class="font-bold ml-2 uppercase">${invoice.status || "draft"}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-4">
-            <!-- Address Section -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-              <div>
-                <h3 class="text-blue-600 text-sm font-bold mb-2 flex items-center gap-2">
-                  <div class="w-0.5 h-3 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-                  From
-                </h3>
-                <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
-                  <div class="space-y-1 text-xs">
-                    <div class="font-bold text-gray-900">${COMPANY.name}</div>
-                    <div class="text-gray-600">P.O. Box 12345, Nairobi, Kenya</div>
-                    <div class="flex items-center gap-1 text-gray-600">
-                      <span class="opacity-70">📞</span> 0794494515 / 0723407849
-                    </div>
-                    <div class="flex items-center gap-1 text-gray-600">
-                      <span class="opacity-70">✉️</span> driptech2025@gmail.com
-                    </div>
-                    <div class="flex items-center gap-1 text-gray-600">
-                      <span class="opacity-70">✉️</span> driptechs.info@gmail.com
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h3 class="text-blue-600 text-sm font-bold mb-2 flex items-center gap-2">
-                  <div class="w-0.5 h-3 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-                  Bill To
-                </h3>
-                <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
-                  <div class="space-y-1 text-xs">
-                    <div class="font-bold text-gray-900 break-words">${invoice.customer?.contact_person || "N/A"}</div>
-                    ${invoice.customer?.company_name ? `<div class="text-blue-600 font-semibold break-words">${invoice.customer.company_name}</div>` : ""}
-                    ${invoice.customer?.address ? `<div class="text-gray-600 break-words">${invoice.customer.address}</div>` : ""}
-                    ${invoice.customer?.city ? `<div class="text-gray-600 break-words">${invoice.customer.city}, ${invoice.customer?.country || ""}</div>` : ""}
-                    ${invoice.customer?.phone ? `<div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">📞</span> ${invoice.customer.phone}</div>` : ""}
-                    <div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">✉️</span> ${invoice.customer?.email || "N/A"}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Items Table Section -->
-            <div class="mb-4">
-              <h3 class="text-blue-600 text-sm font-bold mb-2 flex items-center gap-2">
-                <div class="w-0.5 h-3 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-                Invoice Items
-              </h3>
-              
-              <div class="rounded-lg overflow-hidden shadow-lg border border-gray-200 bg-white">
-                <table class="w-full">
-                  <thead class="bg-gradient-to-r from-blue-600 to-blue-500">
-                    <tr>
-                      <th class="p-2 text-left font-bold text-white text-xs uppercase">#</th>
-                      <th class="p-2 text-left font-bold text-white text-xs uppercase">Item/Service</th>
-                      <th class="p-2 text-left font-bold text-white text-xs uppercase">Description</th>
-                      <th class="p-2 text-center font-bold text-white text-xs uppercase">Qty</th>
-                      <th class="p-2 text-right font-bold text-white text-xs uppercase">Unit Price (KES)</th>
-                      <th class="p-2 text-right font-bold text-white text-xs uppercase">Total (KES)</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-100">
-                    ${invoice.invoice_items
-        ?.map(
-          (item, index) => `
-                      <tr class="hover:bg-blue-50 border-b border-gray-100">
-                        <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
-                        <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
-                        <td class="p-1.5 text-gray-600 text-xs">${item.description || "N/A"}</td>
-                        <td class="p-1.5 text-center font-bold text-green-600 text-xs">${item.quantity}</td>
-                        <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${item.unit_price.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
-                        <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
-                      </tr>
-                    `,
-        )
-        .join("") ||
-      '<tr><td colspan="6" class="p-4 text-center text-gray-500">No items found</td></tr>'
-      }
-                  </tbody>
+                <table class="items">
+                  <thead><tr><th>Description</th><th class="center">Qty</th><th class="amount">Unit price</th><th class="amount">Amount</th></tr></thead>
+                  <tbody>${rows}</tbody>
                 </table>
-              </div>
-            </div>
+              </section>`;
+          })
+          .join("")
+      : `<div class="empty">No invoice items recorded.</div>`;
 
-            <!-- Totals Section -->
-            <div class="flex justify-end mb-3">
-              <div class="w-full md:w-auto md:min-w-[250px] max-w-sm">
-                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-lg border border-gray-200">
-                  <table class="w-full text-xs">
-                    <tbody>
-                      <tr class="border-b border-gray-200">
-                        <td class="p-2 font-semibold text-gray-700 text-xs">Subtotal</td>
-                        <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-                          KES ${invoice.subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
-                        </td>
-                      </tr>
-                      ${invoice.discount_amount && invoice.discount_amount > 0
-        ? `
-                      <tr class="border-b border-gray-200">
-                        <td class="p-2 font-semibold text-gray-700 text-xs">Discount</td>
-                        <td class="p-2 text-right font-mono font-bold text-red-600 text-xs">
-                          -KES ${invoice.discount_amount.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
-                        </td>
-                      </tr>
-                      `
-        : ""
-      }
-                      ${invoice.tax_amount && invoice.tax_amount > 0
-        ? `
-                      <tr class="border-b border-gray-200">
-                        <td class="p-2 font-semibold text-gray-700 text-xs">Tax (${invoice.tax_rate}%)</td>
-                        <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-                          KES ${invoice.tax_amount.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
-                        </td>
-                      </tr>
-                      `
-        : ""
-      }
-                      <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-                        <td class="p-2 font-extrabold text-sm">Total Amount</td>
-                        <td class="p-2 text-right font-mono font-extrabold text-sm">
-                          KES ${invoice.total_amount.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+    const block = (title: string, content: string) =>
+      content
+        ? `<section class="info-block"><div class="eyebrow">${title}</div><div>${content}</div></section>`
+        : "";
 
-            <!-- Payment Details Section -->
-            ${invoice.payment_details
-        ? `
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg p-3 border-l-3 border-blue-500 mb-3">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-md flex items-center justify-center text-sm">💳</div>
-                <h3 class="text-blue-800 text-sm font-bold">Payment Details</h3>
-              </div>
-              <div class="bg-white bg-opacity-50 p-2 rounded border border-blue-200">
-                <pre class="text-blue-900 text-xs font-medium break-words whitespace-pre-wrap font-mono">${invoice.payment_details}</pre>
-              </div>
-            </div>
-            `
-        : ""
-      }
-
-            <!-- Notes Section -->
-            ${invoice.notes
-        ? `
-            <div class="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-3 border-l-3 border-amber-500 mb-3">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-md flex items-center justify-center text-sm">📝</div>
-                <h3 class="text-amber-800 text-sm font-bold">Additional Notes</h3>
-              </div>
-              <div class="bg-white bg-opacity-50 p-2 rounded border border-amber-200">
-                <p class="text-amber-900 text-xs font-medium break-words">${invoice.notes}</p>
-              </div>
-            </div>
-            `
-        : ""
-      }
-
-            <!-- Payment Terms -->
-            ${invoice.payment_terms
-        ? `
-            <div class="text-center text-gray-600 text-xs mt-4 p-3 bg-gray-50 rounded-lg">
-              <p><strong>Payment Terms:</strong> ${invoice.payment_terms}</p>
-              <p class="mt-1">Thank you for your business!</p>
-            </div>
-            `
-        : ""
-      }
-          </div>
+    return `<!doctype html>
+      <html><head><meta charset="utf-8"><title>Invoice ${escapeHtml(invoice.invoice_number)} - ${escapeHtml(COMPANY.name)}</title>
+      <style>
+        @page { size: A4 portrait; margin: 13mm; }
+        :root { color-scheme: light; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { margin: 0; color: #20312a; background: #fff; font: 12px/1.45 Arial, Helvetica, sans-serif; }
+        .sheet { max-width: 190mm; margin: 0 auto; }
+        .topbar { padding: 23px 26px; color: white; background: #123b2c; border-bottom: 5px solid #d8a62a; }
+        .topbar-inner { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; }
+        .brand { display: flex; gap: 13px; align-items: center; }
+        .logo { width: 51px; height: 51px; padding: 8px; background: white; border-radius: 10px; }
+        .brand h1 { margin: 0 0 3px; font: 700 21px Georgia, serif; }
+        .tagline { color: #d7e9dc; font-size: 11px; }
+        .contact { margin-top: 8px; color: #c5dbcd; font-size: 10px; }
+        .invoice-label { text-align: right; }
+        .invoice-label h2 { margin: 0 0 8px; letter-spacing: .13em; font-size: 21px; }
+        .meta { min-width: 155px; padding: 9px 11px; border: 1px solid rgba(255,255,255,.28); border-radius: 8px; font-size: 10px; }
+        .meta-row { display: flex; justify-content: space-between; gap: 15px; padding: 2px 0; }
+        .meta-row span:first-child { color: #c5dbcd; }
+        .content { padding: 24px 26px 30px; }
+        .addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
+        .address-card { padding: 13px; border: 1px solid #dbe5df; border-radius: 8px; background: #f7faf8; min-height: 105px; }
+        .eyebrow { color: #a77708; font-size: 9px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+        .address-card h3 { margin: 5px 0 7px; font-size: 13px; }
+        .address-card p { margin: 3px 0; color: #64736b; }
+        .section-title { margin: 0 0 4px; font-size: 12px; }
+        .section-copy { margin: 0 0 12px; color: #64736b; }
+        .project { margin: 0 0 17px; overflow: hidden; border: 1px solid #dbe5df; border-radius: 8px; page-break-inside: avoid; }
+        .project-head { display: flex; justify-content: space-between; gap: 18px; padding: 12px 13px; background: #f1f6f2; border-bottom: 1px solid #dbe5df; }
+        .project-head h3 { margin: 4px 0 2px; font-size: 14px; }
+        .project-head p { margin: 0; color: #64736b; }
+        .project-head a { display: inline-block; margin-top: 3px; color: #2d6a4f; font-size: 10px; word-break: break-all; }
+        .project-subtotal { min-width: 95px; text-align: right; color: #64736b; font-size: 10px; }
+        .project-subtotal strong { color: #20312a; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 8px 10px; color: white; background: #1b503b; font-size: 9px; letter-spacing: .08em; text-align: left; text-transform: uppercase; }
+        td { padding: 8px 10px; border-bottom: 1px solid #edf1ee; vertical-align: top; }
+        td small { display: block; margin-top: 2px; color: #718078; }
+        .center { text-align: center; white-space: nowrap; }
+        .amount { text-align: right; white-space: nowrap; }
+        .strong { font-weight: 700; }
+        .empty { padding: 18px; border: 1px solid #dbe5df; color: #64736b; text-align: center; }
+        .summary-wrap { display: flex; justify-content: flex-end; margin: 4px 0 20px; }
+        .summary { width: 240px; border: 1px solid #dbe5df; border-radius: 8px; overflow: hidden; }
+        .summary-row { display: flex; justify-content: space-between; gap: 14px; padding: 8px 11px; border-bottom: 1px solid #e5ece7; }
+        .summary-row span:first-child { color: #64736b; }
+        .grand-total { display: flex; justify-content: space-between; padding: 12px 11px; color: white; background: #123b2c; font-size: 14px; font-weight: 700; }
+        .info-block { margin-top: 13px; padding: 12px 13px; border: 1px solid #dbe5df; border-radius: 8px; page-break-inside: avoid; }
+        .info-content { margin-top: 5px; white-space: pre-wrap; color: #53635b; }
+        .footer { margin-top: 26px; padding-top: 13px; border-top: 1px solid #dbe5df; color: #718078; text-align: center; font-size: 10px; }
+        @media print { .no-print { display: none !important; } }
+        @media (max-width: 650px) { .topbar-inner, .project-head { flex-direction: column; } .invoice-label { text-align: left; } .addresses { grid-template-columns: 1fr; } .summary-wrap { justify-content: stretch; } .summary { width: 100%; } }
+      </style></head>
+      <body><main class="sheet">
+        <header class="topbar"><div class="topbar-inner"><div class="brand"><img class="logo" src="${getLogoUrl()}" alt="${escapeHtml(COMPANY.name)}"><div><h1>${escapeHtml(COMPANY.name)}</h1><div class="tagline">${escapeHtml(COMPANY.tagline)}</div><div class="contact">${escapeHtml(COMPANY.address)} · ${escapeHtml(COMPANY.phone)} · ${escapeHtml(COMPANY.email)}</div></div></div><div class="invoice-label"><h2>INVOICE</h2><div class="meta"><div class="meta-row"><span>Invoice no.</span><strong>${escapeHtml(invoice.invoice_number)}</strong></div><div class="meta-row"><span>Issue date</span><strong>${escapeHtml(formatDate(invoice.issue_date))}</strong></div><div class="meta-row"><span>Due date</span><strong>${escapeHtml(formatDate(invoice.due_date))}</strong></div><div class="meta-row"><span>Status</span><strong>${escapeHtml((invoice.status || "draft").toUpperCase())}</strong></div></div></div></div></header>
+        <div class="content">
+          <div class="addresses"><div class="address-card"><div class="eyebrow">From</div><h3>${escapeHtml(COMPANY.name)}</h3><p>${escapeHtml(COMPANY.address)}</p><p>${escapeHtml(COMPANY.phone)}</p><p>${escapeHtml(COMPANY.email)}</p></div><div class="address-card"><div class="eyebrow">Bill to</div><h3>${escapeHtml(customer?.company_name || customer?.contact_person || "Customer")}</h3><p>${escapeHtml(customer?.contact_person || "")}</p><p>${escapeHtml(customer?.address || "")}</p><p>${escapeHtml([customer?.city, customer?.country].filter(Boolean).join(", "))}</p><p>${escapeHtml(customer?.email || "")}</p></div></div>
+          <h3 class="section-title">Project breakdown</h3><p class="section-copy">Services and materials are grouped by project for easier review.</p>
+          ${projectMarkup}
+          <div class="summary-wrap"><div class="summary"><div class="summary-row"><span>Subtotal</span><strong>${escapeHtml(formatCurrency(invoice.subtotal))}</strong></div>${invoice.discount_amount && invoice.discount_amount > 0 ? `<div class="summary-row"><span>Discount</span><strong>− ${escapeHtml(formatCurrency(invoice.discount_amount))}</strong></div>` : ""}<div class="summary-row"><span>${invoice.tax_amount && invoice.tax_amount > 0 ? `VAT (${escapeHtml(invoice.tax_rate || 0)}%)` : "VAT"}</span><strong>${invoice.tax_amount && invoice.tax_amount > 0 ? escapeHtml(formatCurrency(invoice.tax_amount)) : "Not applied"}</strong></div><div class="grand-total"><span>Total due</span><span>${escapeHtml(formatCurrency(invoice.total_amount))}</span></div></div></div>
+          ${invoice.payment_details ? block("Payment details", `<div class="info-content">${escapeHtml(invoice.payment_details)}</div>`) : ""}
+          ${invoice.notes ? block("Additional notes", `<div class="info-content">${escapeHtml(invoice.notes)}</div>`) : ""}
+          ${invoice.terms_and_conditions ? block("Terms and conditions", `<div class="info-content">${escapeHtml(invoice.terms_and_conditions)}</div>`) : ""}
+          <div class="footer">Thank you for your business · ${escapeHtml(COMPANY.name)} · ${escapeHtml(COMPANY.email)}</div>
         </div>
-      </body>
-      </html>
-    `;
+      </main></body></html>`;
   };
 
-  // Download invoice as PDF - uses browser's native PDF engine (no "scanned photo" look)
+  const openPrintWindow = async (invoice: Invoice, closeAfterPrint = false) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) throw new Error("Please allow pop-ups to print or download the invoice.");
+    printWindow.document.write(generateInvoiceContent(invoice));
+    printWindow.document.close();
+    await new Promise((resolve) => setTimeout(resolve, 650));
+    printWindow.focus();
+    printWindow.print();
+    if (closeAfterPrint) setTimeout(() => printWindow.close(), 500);
+  };
+
   const downloadInvoicePDF = async (invoice: Invoice) => {
     try {
-      // Create a new window with your beautiful HTML content
-      const pdfWindow = window.open("", "_blank");
-      if (!pdfWindow) throw new Error("Failed to open PDF window");
-
-      const htmlContent = generateInvoiceContent(invoice);
-      pdfWindow.document.write(htmlContent);
-      pdfWindow.document.close();
-
-      // Wait for content to load
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Check if it's mobile
-      const isMobile =
-        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent,
-        ) || window.innerWidth <= 768;
-
-      if (isMobile) {
-        // Mobile: Add helpful instruction
-        const banner = pdfWindow.document.createElement("div");
-        banner.innerHTML = `
-          <div style="
-            position: fixed; 
-            top: 10px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: #1e40af; 
-            color: white; 
-            padding: 12px 20px; 
-            border-radius: 8px; 
-            font-family: Arial, sans-serif; 
-            font-size: 14px;
-            z-index: 9999;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            text-align: center;
-          " class="no-print">
-            📱 Tap Share → Print → Save as PDF
-            <br>
-            <button onclick="this.parentElement.parentElement.remove(); window.print();" style="
-              background: rgba(255,255,255,0.2); 
-              border: none; 
-              color: white; 
-              margin-top: 8px; 
-              padding: 6px 15px; 
-              border-radius: 4px;
-              cursor: pointer;
-              font-size: 12px;
-            ">Print Now</button>
-          </div>
-        `;
-        pdfWindow.document.body.appendChild(banner);
-      }
-
-      // Always trigger print dialog (works universally)
-      setTimeout(() => {
-        pdfWindow.print();
-      }, 500);
-
-      console.log(`Invoice ${invoice.invoice_number} ready for PDF download.`);
+      await openPrintWindow(invoice);
     } catch (error) {
-      console.error("PDF Generation Error:", error);
+      console.error("PDF generation error:", error);
+      alert(error instanceof Error ? error.message : "Could not open the PDF print view.");
     }
   };
 
-  // Print invoice function
   const printInvoice = async (invoice: Invoice) => {
     try {
-      const printWindow = window.open("", "_blank");
-      if (!printWindow) throw new Error("Failed to open print window");
-
-      const htmlContent = generateInvoiceContent(invoice);
-      printWindow.document.write(htmlContent);
-      printWindow.document.close();
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      printWindow.print();
-      printWindow.close();
+      await openPrintWindow(invoice, true);
     } catch (error) {
-      console.error("Error printing invoice:", error);
+      console.error("Print error:", error);
     }
   };
 
-  return {
-    updateInvoiceStatus,
-    deleteInvoice,
-    downloadInvoicePDF,
-    printInvoice,
-  };
+  return { updateInvoiceStatus, deleteInvoice, downloadInvoicePDF, printInvoice };
 };

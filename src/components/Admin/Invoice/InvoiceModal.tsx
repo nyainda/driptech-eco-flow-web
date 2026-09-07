@@ -1,7 +1,6 @@
-// components/InvoiceModal.tsx
 import React from "react";
-import { X, Printer, Send, CheckCircle, Copy } from "lucide-react";
-import { Invoice } from "../types/InvoiceTypes";
+import { CheckCircle, Copy, Download, Link2, Printer, Send, X } from "lucide-react";
+import { Invoice, InvoiceItem } from "../types/InvoiceTypes";
 import { formatCurrency, formatDate } from "../utils/formatters";
 import StatusBadge from "./StatusBadge";
 import { COMPANY, getLogoUrl } from "../shared/companyBrand";
@@ -14,18 +13,12 @@ interface InvoiceModalProps {
   onUpdateStatus: (invoiceId: string, status: string) => void;
 }
 
-// Water Droplet Logo Component
-const WaterDropletIcon: React.FC<{ className?: string }> = ({
-  className = "w-4 h-4",
-}) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2.5c-4.97 0-9 4.03-9 9 0 4.97 4.03 9 9 9s9-4.03 9-9c0-4.97-4.03-9-9-9zm0 15.5c-3.86 0-7-3.14-7-7 0-1.85.72-3.53 1.89-4.78L12 2.5l5.11 3.72c1.17 1.25 1.89 2.93 1.89 4.78 0 3.86-3.14 7-7 7z" />
-    <path
-      d="M12 6.5c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"
-      opacity="0.7"
-    />
-  </svg>
-);
+type ProjectGroup = {
+  name: string;
+  subtitle: string;
+  link: string;
+  items: InvoiceItem[];
+};
 
 const InvoiceModal: React.FC<InvoiceModalProps> = ({
   invoice,
@@ -34,316 +27,142 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
   onPrintInvoice,
   onUpdateStatus,
 }) => {
+  const projects = (invoice.invoice_items || []).reduce<ProjectGroup[]>(
+    (groups, item) => {
+      const name = item.project_name || "Project items";
+      const subtitle = item.project_subtitle || "";
+      const link = item.project_link || "";
+      const group = groups.find(
+        (candidate) =>
+          candidate.name === name &&
+          candidate.subtitle === subtitle &&
+          candidate.link === link,
+      );
+      if (group) group.items.push(item);
+      else groups.push({ name, subtitle, link, items: [item] });
+      return groups;
+    },
+    [],
+  );
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors">
-        <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 sm:p-4">
+      <div className="max-h-[94vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-background shadow-2xl">
+        <header className="flex items-center justify-between border-b border-border bg-card px-4 py-4 sm:px-7">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-border">
-              <img
-                src={getLogoUrl({ forPrint: true })}
-                alt={COMPANY.name}
-                className="h-10 w-10 object-contain"
-              />
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-border">
+              <img src={getLogoUrl({ forPrint: true })} alt={COMPANY.name} className="h-10 w-10 object-contain" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white sm:text-2xl">
-                Invoice {invoice.invoice_number}
-              </h2>
-              <p className="text-sm font-medium text-primary">
-                {COMPANY.name}
-              </p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">{COMPANY.name}</p>
+              <h2 className="mt-1 text-xl font-bold text-foreground sm:text-2xl">Invoice {invoice.invoice_number}</h2>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-          >
-            <X className="w-6 h-6" />
+          <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground">
+            <X className="h-5 w-5" />
           </button>
-        </div>
+        </header>
 
-        <div className="p-4 sm:p-6">
-          {/* Invoice Header */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="p-4 sm:p-7">
+          <div className="mb-8 grid gap-6 lg:grid-cols-2">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Bill To:
-              </h3>
-              <div className="space-y-2">
-                <p className="font-medium text-gray-900 dark:text-white">
-                  {invoice.customer?.company_name}
-                </p>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {invoice.customer?.contact_person}
-                </p>
-                {invoice.customer?.address && (
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {invoice.customer.address}
-                  </p>
-                )}
-                <p className="text-gray-600 dark:text-gray-400">
-                  {invoice.customer?.city}, {invoice.customer?.country}
-                </p>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {invoice.customer?.email}
-                </p>
-                {invoice.customer?.phone && (
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {invoice.customer.phone}
-                  </p>
-                )}
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-accent">Bill to</p>
+              <div className="space-y-1 text-sm">
+                <p className="font-bold text-foreground">{invoice.customer?.company_name || invoice.customer?.contact_person}</p>
+                <p className="text-muted-foreground">{invoice.customer?.contact_person}</p>
+                {invoice.customer?.address && <p className="text-muted-foreground">{invoice.customer.address}</p>}
+                <p className="text-muted-foreground">{invoice.customer?.city}, {invoice.customer?.country}</p>
+                <p className="text-muted-foreground">{invoice.customer?.email}</p>
+                {invoice.customer?.phone && <p className="text-muted-foreground">{invoice.customer.phone}</p>}
               </div>
             </div>
-
-            <div className="lg:text-right">
-              <div className="space-y-2">
-                <div>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Status:{" "}
-                  </span>
-                  <StatusBadge status={invoice.status || "draft"} />
-                </div>
-                <p>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Issue Date:
-                  </span>{" "}
-                  <span className="text-gray-900 dark:text-white">
-                    {formatDate(invoice.issue_date)}
-                  </span>
-                </p>
-                <p>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Due Date:
-                  </span>{" "}
-                  <span className="text-gray-900 dark:text-white">
-                    {formatDate(invoice.due_date)}
-                  </span>
-                </p>
-                <p>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Payment Terms:
-                  </span>{" "}
-                  <span className="text-gray-900 dark:text-white">
-                    {invoice.payment_terms}
-                  </span>
-                </p>
+            <div className="rounded-xl border border-border bg-muted/40 p-4 lg:text-right">
+              <div className="mb-3 lg:flex lg:justify-end"><StatusBadge status={invoice.status || "draft"} /></div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm lg:ml-auto lg:max-w-xs">
+                <span className="text-muted-foreground">Issue date</span><span className="font-semibold text-foreground">{formatDate(invoice.issue_date)}</span>
+                <span className="text-muted-foreground">Due date</span><span className="font-semibold text-foreground">{formatDate(invoice.due_date)}</span>
+                <span className="text-muted-foreground">Payment terms</span><span className="font-semibold text-foreground">{invoice.payment_terms || "—"}</span>
               </div>
             </div>
           </div>
 
-          {/* Invoice Items */}
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Items
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
-                <thead className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-                  <tr>
-                    <th className="px-4 py-4 text-left text-sm font-semibold tracking-wide">
-                      Description
-                    </th>
-                    <th className="px-4 py-4 text-center text-sm font-semibold tracking-wide">
-                      Qty
-                    </th>
-                    <th className="px-4 py-4 text-right text-sm font-semibold tracking-wide">
-                      Unit Price
-                    </th>
-                    <th className="px-4 py-4 text-right text-sm font-semibold tracking-wide">
-                      Total
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {invoice.invoice_items?.map((item, index) => (
-                    <tr key={index}>
-                      <td className="px-4 py-3">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
-                            {item.name}
-                          </p>
-                          {item.description && (
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {item.description}
-                            </p>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-center text-sm text-gray-900 dark:text-white">
-                        {item.quantity} {item.unit}
-                      </td>
-                      <td className="px-4 py-3 text-right text-sm text-gray-900 dark:text-white">
-                        {formatCurrency(item.unit_price)}
-                      </td>
-                      <td className="px-4 py-3 text-right text-sm text-gray-900 dark:text-white">
-                        {formatCurrency(item.total)}
-                      </td>
-                    </tr>
-                  )) || (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="px-4 py-8 text-center text-gray-500 dark:text-gray-400"
-                      >
-                        No items found for this invoice
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+          <div className="mb-8 space-y-5">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">Project breakdown</p>
+              <p className="mt-1 text-sm text-muted-foreground">Project subtotals roll up into the invoice total.</p>
+            </div>
+            {projects.map((project, projectIndex) => {
+              const projectSubtotal = project.items.reduce((sum, item) => sum + Number(item.total || 0), 0);
+              return (
+                <section key={`${project.name}-${projectIndex}`} className="overflow-hidden rounded-xl border border-border">
+                  <div className="flex flex-col gap-2 bg-muted/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-primary">Project {projectIndex + 1}</p>
+                      <h3 className="font-bold text-foreground">{project.name}</h3>
+                      {project.subtitle && <p className="text-sm text-muted-foreground">{project.subtitle}</p>}
+                      {project.link && <a href={project.link} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"><Link2 className="h-3 w-3" /> {project.link}</a>}
+                    </div>
+                    <p className="font-mono text-sm font-bold text-foreground">Subtotal {formatCurrency(projectSubtotal)}</p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[620px]">
+                      <thead className="bg-[hsl(var(--dt-green-900))] text-white">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">Description</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide">Qty</th>
+                          <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide">Unit price</th>
+                          <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {project.items.map((item) => (
+                          <tr key={item.id}>
+                            <td className="px-4 py-3"><p className="text-sm font-semibold text-foreground">{item.name}</p>{item.description && <p className="text-sm text-muted-foreground">{item.description}</p>}</td>
+                            <td className="px-4 py-3 text-center text-sm text-foreground">{item.quantity} {item.unit}</td>
+                            <td className="px-4 py-3 text-right text-sm text-foreground">{formatCurrency(item.unit_price)}</td>
+                            <td className="px-4 py-3 text-right text-sm font-semibold text-foreground">{formatCurrency(item.total)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+
+          <div className="mb-8 flex justify-end">
+            <div className="w-full max-w-sm space-y-3 rounded-xl border border-border bg-muted/50 p-4">
+              <SummaryRow label="Subtotal" value={formatCurrency(invoice.subtotal)} />
+              {!!invoice.discount_amount && invoice.discount_amount > 0 && <SummaryRow label="Discount" value={`− ${formatCurrency(invoice.discount_amount)}`} negative />}
+              <SummaryRow label={invoice.tax_amount && invoice.tax_amount > 0 ? `VAT (${invoice.tax_rate || 0}%)` : "VAT"} value={invoice.tax_amount && invoice.tax_amount > 0 ? formatCurrency(invoice.tax_amount) : "Not applied"} />
+              <div className="flex items-center justify-between rounded-lg bg-[hsl(var(--dt-green-900))] p-3 text-white"><span className="font-bold">Total</span><span className="font-mono text-lg font-bold">{formatCurrency(invoice.total_amount)}</span></div>
             </div>
           </div>
 
-          {/* Totals */}
-          <div className="flex justify-end mb-8">
-            <div className="w-full sm:w-80">
-              <div className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-700 dark:to-blue-900/30 p-4 rounded-lg border border-gray-200 dark:border-gray-600 space-y-3">
-                <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
-                  <span className="font-medium text-gray-600 dark:text-gray-400">
-                    Subtotal:
-                  </span>
-                  <span className="font-mono font-semibold text-gray-900 dark:text-white">
-                    {formatCurrency(invoice.subtotal)}
-                  </span>
-                </div>
-                {invoice.discount_amount && invoice.discount_amount > 0 && (
-                  <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
-                    <span className="font-medium text-gray-600 dark:text-gray-400">
-                      Discount:
-                    </span>
-                    <span className="font-mono font-semibold text-red-600 dark:text-red-400">
-                      -{formatCurrency(invoice.discount_amount)}
-                    </span>
-                  </div>
-                )}
-                {invoice.tax_amount && invoice.tax_amount > 0 && (
-                  <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
-                    <span className="font-medium text-gray-600 dark:text-gray-400">
-                      Tax ({invoice.tax_rate}%):
-                    </span>
-                    <span className="font-mono font-semibold text-gray-900 dark:text-white">
-                      {formatCurrency(invoice.tax_amount)}
-                    </span>
-                  </div>
-                )}
-                <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-3 rounded-lg mt-2">
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Total:</span>
-                    <span className="font-mono">
-                      {formatCurrency(invoice.total_amount)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {invoice.payment_details && <InfoBlock title="Payment details"><pre className="whitespace-pre-wrap font-mono text-sm text-muted-foreground">{invoice.payment_details}</pre></InfoBlock>}
+          {invoice.notes && <InfoBlock title="Additional notes"><p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{invoice.notes}</p></InfoBlock>}
+          {invoice.terms_and_conditions && <InfoBlock title="Terms and conditions"><p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{invoice.terms_and_conditions}</p></InfoBlock>}
 
-          {/* Payment Details */}
-          {invoice.payment_details && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Payment Details
-              </h3>
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">
-                  {invoice.payment_details}
-                </pre>
-              </div>
-            </div>
-          )}
-
-          {/* Notes */}
-          {invoice.notes && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                Notes
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                {invoice.notes}
-              </p>
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex flex-wrap gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
-            {/* Enhanced Download Button with DripTech Branding */}
-            <button
-              onClick={() => onDownloadPDF(invoice)}
-              className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-700 to-cyan-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl hover:from-blue-700 hover:via-blue-800 hover:to-cyan-700 transform hover:scale-105 transition-all duration-200 group overflow-hidden"
-            >
-              {/* Animated background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-all duration-700 ease-out"></div>
-
-              {/* Water droplet logo */}
-              <WaterDropletIcon className="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-200" />
-
-              {/* Button text */}
-              <span className="relative z-10 text-sm font-semibold tracking-wide">
-                Download PDF
-              </span>
-
-              {/* Subtle glow effect */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400 to-cyan-400 opacity-0 group-hover:opacity-30 blur transition-opacity duration-200"></div>
-            </button>
-
-            <button
-              onClick={() => onPrintInvoice?.(invoice)}
-              className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-gray-600 via-gray-700 to-slate-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl hover:from-gray-700 hover:via-gray-800 hover:to-slate-700 transform hover:scale-105 transition-all duration-200 group overflow-hidden"
-            >
-              {/* Animated background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 transform -skew-x-12 group-hover:translate-x-full transition-all duration-700 ease-out"></div>
-
-              {/* Printer icon */}
-              <Printer className="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-200" />
-
-              {/* Button text */}
-              <span className="relative z-10 text-sm font-semibold tracking-wide">
-                Print Invoice
-              </span>
-
-              {/* Subtle glow effect */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-gray-400 to-slate-400 opacity-0 group-hover:opacity-30 blur transition-opacity duration-200"></div>
-            </button>
-            {invoice.status === "draft" && (
-              <button
-                onClick={() => {
-                  onUpdateStatus(invoice.id, "sent");
-                  onClose();
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                <Send className="w-4 h-4" />
-                Send Invoice
-              </button>
-            )}
-            {invoice.status === "sent" && (
-              <button
-                onClick={() => {
-                  onUpdateStatus(invoice.id, "paid");
-                  onClose();
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                <CheckCircle className="w-4 h-4" />
-                Mark as Paid
-              </button>
-            )}
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(invoice.invoice_number);
-                alert("Invoice number copied to clipboard!");
-              }}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              <Copy className="w-4 h-4" />
-              Copy Number
-            </button>
+          <div className="mt-7 flex flex-wrap gap-3 border-t border-border pt-6">
+            <button onClick={() => onDownloadPDF(invoice)} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"><Download className="h-4 w-4" /> Download PDF</button>
+            <button onClick={() => onPrintInvoice?.(invoice)} className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"><Printer className="h-4 w-4" /> Print invoice</button>
+            {invoice.status === "draft" && <button onClick={() => { onUpdateStatus(invoice.id, "sent"); onClose(); }} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"><Send className="h-4 w-4" /> Send invoice</button>}
+            {invoice.status === "sent" && <button onClick={() => { onUpdateStatus(invoice.id, "paid"); onClose(); }} className="inline-flex items-center gap-2 rounded-lg bg-[hsl(var(--dt-green-700))] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[hsl(var(--dt-green-600))]"><CheckCircle className="h-4 w-4" /> Mark as paid</button>}
+            <button onClick={() => { void navigator.clipboard.writeText(invoice.invoice_number); alert("Invoice number copied."); }} className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"><Copy className="h-4 w-4" /> Copy number</button>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const SummaryRow = ({ label, value, negative = false }: { label: string; value: string; negative?: boolean }) => (
+  <div className="flex items-center justify-between gap-4 text-sm"><span className="text-muted-foreground">{label}</span><span className={`font-mono font-semibold ${negative ? "text-destructive" : "text-foreground"}`}>{value}</span></div>
+);
+
+const InfoBlock = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="mb-5 rounded-xl border border-border bg-card p-4"><h3 className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-accent">{title}</h3>{children}</div>
+);
 
 export default InvoiceModal;

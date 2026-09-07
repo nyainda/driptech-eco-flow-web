@@ -11,6 +11,10 @@ export type InvoiceItems = {
     total: number;
     unit: string | null;
     unit_price: number;
+    project_name: string | null;
+    project_subtitle: string | null;
+    project_link: string | null;
+    sort_order: number | null;
   };
   Insert: {
     created_at?: string | null;
@@ -22,6 +26,10 @@ export type InvoiceItems = {
     total: number;
     unit?: string | null;
     unit_price: number;
+    project_name?: string | null;
+    project_subtitle?: string | null;
+    project_link?: string | null;
+    sort_order?: number | null;
   };
   Update: {
     created_at?: string | null;
@@ -33,6 +41,10 @@ export type InvoiceItems = {
     total?: number;
     unit?: string | null;
     unit_price?: number;
+    project_name?: string | null;
+    project_subtitle?: string | null;
+    project_link?: string | null;
+    sort_order?: number | null;
   };
   Relationships: [
     {
