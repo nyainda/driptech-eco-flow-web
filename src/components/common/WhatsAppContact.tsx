@@ -281,10 +281,14 @@ const WhatsAppContact = ({
             </TabsList>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-6 pb-4">
-            <TabsContent value="products" className="space-y-6 mt-0">
-              {/* Category Filter */}
-              <div className="flex flex-wrap gap-3 pb-4 border-b border-border sticky top-0 bg-background z-10 pt-2">
+          {/* Category filter lives in its own static header, not inside the
+              scroll container below — previously it was `sticky top-0` on
+              top of the product grid's own scroll area, which meant the
+              top row of product cards slid up and got visually sliced by
+              this bar's opaque background as you scrolled. */}
+          {activeTab === 'products' && (
+            <div className="px-6 pb-4 border-b border-border">
+              <div className="flex flex-wrap gap-3">
                 <Button
                   variant={selectedProductCategory === 'all' ? 'default' : 'outline'}
                   onClick={() => setSelectedProductCategory('all')}
@@ -317,7 +321,11 @@ const WhatsAppContact = ({
                   );
                 })}
               </div>
+            </div>
+          )}
 
+          <div className="flex-1 overflow-y-auto px-6 pb-4">
+            <TabsContent value="products" className="space-y-6 mt-0">
               {/* Selected Products Summary */}
               {selectedProducts.length > 0 && (
                 <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-xl p-4">
