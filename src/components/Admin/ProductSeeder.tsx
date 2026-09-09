@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Database, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
+import { Database, AlertTriangle, CheckCircle, Loader2, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { buildChinaStyleCatalog } from "@/data/chinaIrrigationCatalog";
+import { buildIrrigationCatalog } from "@/data/irrigationCatalog";
 
 interface SeederStats {
   total: number;
@@ -22,6 +22,7 @@ interface SeederStats {
 
 const ProductSeeder = () => {
   const [isSeeding, setIsSeeding] = useState(false);
+  const [isCleaning, setIsCleaning] = useState(false);
   const [hasSeeded, setHasSeeded] = useState(false);
   const [hasProducts, setHasProducts] = useState(false);
   const [seedStats, setSeedStats] = useState<SeederStats>({
@@ -55,12 +56,56 @@ const ProductSeeder = () => {
     }
   };
 
+  const removeLegacySeedRows = async () => {
+    const confirmed = window.confirm(
+      "Remove products created by the previous seed? This deletes only rows whose internal model number starts with DTK-. Other products are not changed.",
+    );
+    if (!confirmed) return;
 
-  /** Import China-trade SKU matrix — only names not already in DB */
-  const importChinaCatalog = async () => {
+    setIsCleaning(true);
+    try {
+      const { count, error: countError } = await supabase
+        .from("products")
+        .select("id", { count: "exact", head: true })
+        .like("model_number", "DTK-%");
+
+      if (countError) throw countError;
+      if (!count) {
+        toast({
+          title: "No previous seed rows found",
+          description: "No products with the old DTK- seed prefix were found.",
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .like("model_number", "DTK-%");
+
+      if (error) throw error;
+      await checkExistingProducts();
+      toast({
+        title: "Previous seed removed",
+        description: `Removed ${count} old seed products. Other product records were left unchanged.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Cleanup failed",
+        description: error.message || "Failed to remove the previous seed",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCleaning(false);
+    }
+  };
+
+
+  /** Import the review-first irrigation reference catalogue. */
+  const importIrrigationCatalog = async () => {
     setIsSeeding(true);
     try {
-      const catalog = buildChinaStyleCatalog();
+      const catalog = buildIrrigationCatalog();
       const { data: existing } = await supabase.from("products").select("name");
       const existingNames = new Set(
         (existing || []).map((r: any) => (r.name || "").toLowerCase().trim()),
@@ -123,8 +168,8 @@ const ProductSeeder = () => {
 
       setHasSeeded(true);
       toast({
-        title: "China market import done",
-        description: `Inserted ${successCount} new unique products. ${failedCount} failed. Existing products unchanged.`,
+        title: "Irrigation reference catalog imported",
+        description: `Inserted ${successCount} new review items. ${failedCount} failed. Existing products unchanged.`,
       });
     } catch (e: any) {
       toast({
@@ -145,9 +190,9 @@ const ProductSeeder = () => {
           Product Database Seeder
         </CardTitle>
         <CardDescription className="text-xs sm:text-sm">
-          Import unique China-trade style irrigation SKUs (sizes, spacings, fittings). Skips names already in the database — no duplicates, no overwrites.
+          Import real irrigation product families and standard size, flow, pack and capacity variants. Items stay hidden until you review and approve them.
           <span className="text-orange-600 ml-1 font-medium">
-            Always available. Skips names already in the database.
+            Existing products are never changed.
           </span>
         </CardDescription>
       </CardHeader>
@@ -179,19 +224,37 @@ const ProductSeeder = () => {
 
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <Button
-            onClick={importChinaCatalog}
-            disabled={isSeeding}
+            onClick={importIrrigationCatalog}
+            disabled={isSeeding || isCleaning}
             className="h-11 w-full flex items-center justify-center gap-2 text-base font-semibold sm:w-auto sm:min-w-[280px]"
           >
             {isSeeding ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Importing unique SKUs…
+                Importing irrigation reference items…
               </>
             ) : (
               <>
                 <Database className="h-4 w-4" />
-                Import China-style unique products
+                Import irrigation reference catalog
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={removeLegacySeedRows}
+            disabled={isSeeding || isCleaning}
+            variant="destructive"
+            className="h-11 w-full flex items-center justify-center gap-2 text-base font-semibold sm:w-auto"
+          >
+            {isCleaning ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Removing old seed…
+              </>
+            ) : (
+              <>
+                <Trash2 className="h-4 w-4" />
+                Remove old seed rows
               </>
             )}
           </Button>
@@ -207,13 +270,16 @@ const ProductSeeder = () => {
                   • Only <strong className="text-foreground">new unique names</strong> are inserted — existing products are never deleted or changed<br />• New imports are <strong className="text-foreground">pending review</strong> (not shown on the website until you set In stock / Approve)
                 </li>
                 <li>
-                  • Every imported SKU includes stock images — replace with your real photos in Product Management
+                  • Each item includes a category reference image; replace it with an approved product photo before publishing
                 </li>
                 <li>
-                  • Kenya-style retail prices are pre-filled; edit any price after import
+                  • Kenya reference prices are pre-filled; confirm supplier, landed cost and final price before approval
                 </li>
                 <li>
                   • Run again after adding more catalogue data — duplicates are skipped automatically
+                </li>
+                <li>
+                  • Use “Remove old seed rows” first if the previous DTK- seed is still in the database
                 </li>
               </ul>
             </div>

@@ -48,7 +48,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
           image: data.image,
           brand: {
             "@type": "Brand",
-            name: data.brand || "DripTech EcoFlow",
+            name: data.brand || "DripTech Eco Flow",
           },
           offers: {
             "@type": "Offer",
@@ -57,7 +57,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
             availability: data.availability || "https://schema.org/InStock",
             seller: {
               "@type": "Organization",
-              name: "DripTech EcoFlow",
+              name: "DripTech Eco Flow",
             },
           },
           ...(data.rating && {
@@ -86,7 +86,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
                 name: product.name,
                 brand: {
                   "@type": "Brand",
-                  name: product.brand || "DripTech EcoFlow",
+                  name: product.brand || "DripTech Eco Flow",
                 },
               };
               if (product.id) item.sku = product.id;
@@ -104,7 +104,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
                     : "https://schema.org/OutOfStock",
                   seller: {
                     "@type": "Organization",
-                    name: "DripTech EcoFlow",
+                    name: "DripTech Eco Flow",
                   },
                 };
               }
@@ -143,11 +143,11 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
           dateModified: data.dateModified || data.datePublished,
           author: {
             "@type": data.author?.type || "Person",
-            name: data.author?.name || "DripTech EcoFlow",
+            name: data.author?.name || "DripTech Eco Flow",
           },
           publisher: {
             "@type": "Organization",
-            name: "DripTech EcoFlow",
+            name: "DripTech Eco Flow",
             logo: {
               "@type": "ImageObject",
               url: "https://www.dripstech.co.ke/driptech-logo.png",
@@ -190,7 +190,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
         return {
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: data.name || "DripTech EcoFlow",
+          name: data.name || "DripTech Eco Flow",
           url: data.url || "https://www.dripstech.co.ke",
           logo: data.logo || "https://www.dripstech.co.ke/driptech-logo.png",
           description: data.description,

@@ -102,9 +102,9 @@ export const PAGE_SEO = {
     },
 
     about: {
-        title: "About DripTech EcoFlow | Leading Irrigation Solutions Provider Kenya",
-        description: "DripTech EcoFlow is Kenya's trusted irrigation solutions provider with 500+ successful projects. ISO 9001 certified, professional installation, 5-year warranty, and nationwide service coverage.",
-        keywords: "DripTech EcoFlow, irrigation company Kenya, professional irrigation, ISO certified, irrigation experts"
+        title: "About DripTech Eco Flow | Irrigation Equipment Kenya",
+        description: "DripTech Eco Flow supplies irrigation equipment and supports farm system design, installation and maintenance across Kenya.",
+        keywords: "DripTech Eco Flow, irrigation company Kenya, irrigation equipment, irrigation installation"
     },
 
     contact: {

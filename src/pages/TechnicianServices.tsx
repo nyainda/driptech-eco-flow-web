@@ -104,7 +104,7 @@ const TechnicianServices = () => {
     return (
         <div className="min-h-screen bg-background">
             <SEOHead
-                title="Professional Irrigation Technician Services Kenya | Installation, Maintenance & Repair - DripTech"
+                title="Professional Irrigation Technician Services Kenya | Installation, Maintenance & Repair - DripTech Eco Flow"
                 description="Book certified irrigation technicians in Kenya for installation, maintenance, repairs, system audits, and training. 24/7 emergency service available. Expert technicians nationwide."
             />
             <Header />
