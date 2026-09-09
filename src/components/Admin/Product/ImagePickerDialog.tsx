@@ -137,8 +137,8 @@ const ImagePickerDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[85vh] max-w-2xl flex-col gap-4 overflow-hidden p-0">
+        <DialogHeader className="px-6 pt-6">
           <DialogTitle>Find real photos</DialogTitle>
           <DialogDescription>
             Results are real product images from the web. Select one or more
@@ -152,7 +152,7 @@ const ImagePickerDialog = ({
             e.preventDefault();
             runSearch(query);
           }}
-          className="flex gap-2"
+          className="flex gap-2 px-6"
         >
           <Input
             value={query}
@@ -165,7 +165,7 @@ const ImagePickerDialog = ({
           </Button>
         </form>
 
-        <div className="min-h-[220px]">
+        <div className="min-h-[220px] flex-1 overflow-y-auto px-6">
           {loading && (
             <div className="flex items-center justify-center py-10 text-muted-foreground">
               <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Searching…
@@ -180,7 +180,7 @@ const ImagePickerDialog = ({
           )}
 
           {!loading && candidates.length > 0 && (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 pb-2 sm:grid-cols-3">
               {candidates.map((c) => {
                 const isSelected = selected.includes(c.original);
                 return (
@@ -219,7 +219,7 @@ const ImagePickerDialog = ({
           )}
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between border-t bg-background px-6 py-4">
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={saving}>
             None of these — skip
           </Button>
