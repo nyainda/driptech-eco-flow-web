@@ -46,8 +46,8 @@ const Team = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Our Expert Irrigation Team & Specialists Kenya | DripTech"
-        description="Meet the certified irrigation experts at DripTech. Our team provides professional design, installation, and technical support across Kenya."
+        title="Our Irrigation Team & Specialists Kenya | DripTech Eco Flow"
+        description="Meet the irrigation team at DripTech Eco Flow. We provide system design, installation, and technical support across Kenya."
       />
       <Header />
       <main className="relative">

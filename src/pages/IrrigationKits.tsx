@@ -251,7 +251,7 @@ const IrrigationKits = () => {
           description:
             kit.description ||
             `Drip irrigation kit covering ${acreLabel || "custom"} acre(s), suited for Kenyan farms.`,
-          brand: { "@type": "Brand", name: "DripTech" },
+          brand: { "@type": "Brand", name: SITE_COMPANY.name },
           ...(price
             ? {
                 offers: {
@@ -356,7 +356,7 @@ const IrrigationKits = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="Drip Irrigation Kit Prices Kenya (1/8, 1/4, 1/2, 1 Acre) | DripTech"
+        title="Drip Irrigation Kit Prices Kenya (1/8, 1/4, 1/2, 1 Acre) | DripTech Eco Flow"
         description="Buy drip irrigation kits in Kenya for 1/8 acre, 1/4 acre, 1/2 acre and 1 acre farms. Complete kits with driplines, filters, fittings and installation support. Call 0723 407 849 / 0757 716 018. Transparent pricing, nationwide delivery."
         keywords="drip irrigation kit price kenya, 1 acre drip irrigation kit, 1/4 acre drip kit, 1/2 acre drip kit, buy drip irrigation kit online kenya, irrigation kits for sale kenya, drip kit for tomatoes kenya, drip kit for onions kenya, 0723407849, drip irrigation contact Kenya"
         url="https://www.dripstech.co.ke/irrigation-kits"

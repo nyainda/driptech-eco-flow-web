@@ -88,7 +88,7 @@ const Services = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Irrigation Services Kenya | Installation, Maintenance & Design - DripTech"
+        title="Irrigation Services Kenya | Installation, Maintenance & Design - DripTech Eco Flow"
         description="Professional irrigation services in Kenya: drip irrigation installation, sprinkler system setup, maintenance, design, consultation. Expert irrigation contractors for farms, greenhouses, commercial properties. Nationwide service."
       />
       <Header />

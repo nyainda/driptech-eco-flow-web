@@ -897,8 +897,8 @@ const Projects: React.FC = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Irrigation Projects & Success Stories Kenya | DripTech Showcase"
-        description="View our portfolio of successful irrigation projects across Kenya. See how DripTech helps farmers achieve higher yields and water efficiency."
+        title="Irrigation Projects & Success Stories Kenya | DripTech Eco Flow"
+        description="View irrigation projects across Kenya and see the systems DripTech Eco Flow supplies and installs for farms."
       />
       <Header />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">

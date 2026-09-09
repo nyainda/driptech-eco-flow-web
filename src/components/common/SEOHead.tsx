@@ -15,7 +15,7 @@ interface SEOHeadProps {
 }
 
 export default function SEOHead({
-  title = "Drip Irrigation Kits & Products Kenya | DripTech",
+  title = "Drip Irrigation Kits & Products Kenya | DripTech Eco Flow",
   description = "Drip irrigation kits, driplines, sprinklers, pumps and filters for Kenyan farms. Help with sizing, supply and installation.",
   keywords = "drip irrigation kenya, smart irrigation systems, irrigation kits prices kenya, water pumps for farming, sprinkler systems kenya, greenhouse irrigation, drip lines, agricultural water solutions, solar water pumps, precision farming kenya, smallholder irrigation, automated irrigation controller, soil moisture sensors",
   image = `${SITE_COMPANY.url}/driptech-logo.png`,
@@ -45,7 +45,7 @@ export default function SEOHead({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
-      <meta property="og:site_name" content="DripTech Eco Flow" />
+      <meta property="og:site_name" content={SITE_COMPANY.name} />
       <meta property="og:locale" content="en_KE" />
 
       {/* Article specific tags */}

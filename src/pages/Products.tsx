@@ -881,7 +881,7 @@ const Products = () => {
               <Button
                 onClick={() => {
                   const message = encodeURIComponent(
-                    `Hi DripTech! I'm interested in: ${product.name}${hasVariants && selectedVariant ? ` (${selectedVariant.name})` : ''}. Could you provide more information?`
+                    `Hi DripTech Eco Flow! I'm interested in: ${product.name}${hasVariants && selectedVariant ? ` (${selectedVariant.name})` : ''}. Could you provide more information?`
                   );
                   window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
                 }}
