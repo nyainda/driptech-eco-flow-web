@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ProductSeeder from "./ProductSeeder";
+import ProductImporter from "./Product/ProductImporter";
 import ProductForm from "./Product/ProductForm";
 import ProductList from "./Product/ProductList";
 import ProductSearch from "./Product/ProductSearch";
@@ -504,6 +505,8 @@ const ProductManagement = () => {
         <div className="flex flex-wrap gap-3">
           {/* Product Seeder Component */}
           <ProductSeeder />
+          {/* Custom file import */}
+          <ProductImporter onImported={fetchProducts} />
           {pendingReview.length > 0 && (
             <div className="flex flex-wrap gap-2">
               <Button
