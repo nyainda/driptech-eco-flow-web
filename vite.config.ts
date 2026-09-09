@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
     }),
   ];
 
-  // componentTagger removed for Replit compatibility (ESM doesn't support require())
+  // componentTagger removed (ESM doesn't support require())
 
   return {
     server: {
