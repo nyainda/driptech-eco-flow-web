@@ -73,6 +73,9 @@ const SystemSettings = () => {
 
   const [apiKeys, setApiKeys] = useState({
     gemini_api_key: "",
+    serpapi_key: "",
+    serper_api_key: "",
+    searchapi_key: "",
   });
 
   useEffect(() => {
@@ -107,9 +110,12 @@ const SystemSettings = () => {
       if (settingsMap.seo_settings) {
         setSeoSettings({ ...seoSettings, ...settingsMap.seo_settings });
       }
-      if (settingsMap.gemini_api_key) {
-        setApiKeys({ gemini_api_key: settingsMap.gemini_api_key });
-      }
+      setApiKeys({
+        gemini_api_key: settingsMap.gemini_api_key || "",
+        serpapi_key: settingsMap.serpapi_key || "",
+        serper_api_key: settingsMap.serper_api_key || "",
+        searchapi_key: settingsMap.searchapi_key || "",
+      });
     } catch (error) {
       console.error("Error fetching settings:", error);
       toast({
@@ -173,6 +179,9 @@ const SystemSettings = () => {
       social_media: "Social media links",
       seo_settings: "SEO configuration",
       gemini_api_key: "Gemini API Key for AI features",
+      serpapi_key: "SerpAPI key for product image search (primary)",
+      serper_api_key: "Serper API key for product image search (fallback)",
+      searchapi_key: "SearchApi.io key for product image search (fallback)",
     };
     return descriptions[key] || "";
   };
@@ -256,10 +265,15 @@ const SystemSettings = () => {
   const handleSaveApiKeys = async () => {
     setSaving(true);
     try {
-      await updateSetting("gemini_api_key", apiKeys.gemini_api_key);
+      await Promise.all([
+        updateSetting("gemini_api_key", apiKeys.gemini_api_key),
+        updateSetting("serpapi_key", apiKeys.serpapi_key),
+        updateSetting("serper_api_key", apiKeys.serper_api_key),
+        updateSetting("searchapi_key", apiKeys.searchapi_key),
+      ]);
       toast({
         title: "Success",
-        description: "API key saved successfully",
+        description: "API keys saved successfully",
       });
     } catch (error) {
       toast({
@@ -779,6 +793,79 @@ const SystemSettings = () => {
                     Google AI Studio
                   </a>
                 </p>
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-semibold mb-1">Product image search</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Used by the product image picker to pull candidate photos. Configure at least
+                  one — if the primary key hits its quota or errors out, the system automatically
+                  falls back to the next one you've filled in.
+                </p>
+              </div>
+
+              <div>
+                <Label htmlFor="serpapi_key">SerpAPI Key (primary)</Label>
+                <Input
+                  id="serpapi_key"
+                  type="password"
+                  value={apiKeys.serpapi_key}
+                  onChange={(e) =>
+                    setApiKeys({
+                      ...apiKeys,
+                      serpapi_key: e.target.value,
+                    })
+                  }
+                  placeholder="Enter your SerpAPI key"
+                  className="mt-2"
+                />
+                <p className="text-sm text-muted-foreground mt-2">
+                  Get your API key from{" "}
+                  <a
+                    href="https://serpapi.com/manage-api-key"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    SerpAPI dashboard
+                  </a>
+                  . If this key is compromised, paste a new one here and save — no redeploy
+                  needed.
+                </p>
+              </div>
+
+              <div>
+                <Label htmlFor="serper_api_key">Serper API Key (fallback)</Label>
+                <Input
+                  id="serper_api_key"
+                  type="password"
+                  value={apiKeys.serper_api_key}
+                  onChange={(e) =>
+                    setApiKeys({
+                      ...apiKeys,
+                      serper_api_key: e.target.value,
+                    })
+                  }
+                  placeholder="Optional — used if SerpAPI is exhausted or errors"
+                  className="mt-2"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="searchapi_key">SearchApi.io Key (fallback)</Label>
+                <Input
+                  id="searchapi_key"
+                  type="password"
+                  value={apiKeys.searchapi_key}
+                  onChange={(e) =>
+                    setApiKeys({
+                      ...apiKeys,
+                      searchapi_key: e.target.value,
+                    })
+                  }
+                  placeholder="Optional — used if SerpAPI and Serper are both exhausted"
+                  className="mt-2"
+                />
               </div>
 
               <div className="flex justify-end">

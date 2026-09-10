@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 // Finds real candidate product photos for a given search query.
 //
@@ -14,10 +15,17 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 // browser.
 //
 // Deploy:  supabase functions deploy product-image-search
-// Secrets (configure at least one, ideally all three):
+//
+// Keys: configure at least one, ideally all three, EITHER by pasting them
+// into Admin -> System Settings -> API Keys (recommended — rotatable
+// without a redeploy) OR via CLI secrets as a fallback:
 //   supabase secrets set SERPAPI_KEY=your_serpapi_key
 //   supabase secrets set SERPER_API_KEY=your_serper_key
 //   supabase secrets set SEARCHAPI_KEY=your_searchapi_key
+//
+// This function also needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY set
+// (Supabase sets these automatically for edge functions) to read keys from
+// the system_settings table.
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -39,13 +47,52 @@ interface ProviderResult {
   candidates: CandidateImage[]
 }
 
+// --- Key lookup --------------------------------------------------------
+// Keys can be pasted into Admin -> System Settings (stored in the
+// `system_settings` table) so they're rotatable without a redeploy. If a
+// key isn't set there, we fall back to the Deno env secret of the same
+// name, so `supabase secrets set` still works for anyone who prefers that.
+
+let settingsCache: Record<string, string> | null = null
+
+async function loadSettingsKeys(): Promise<Record<string, string>> {
+  if (settingsCache) return settingsCache
+  settingsCache = {}
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!supabaseUrl || !serviceRoleKey) return settingsCache
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey)
+    const { data, error } = await supabase
+      .from('system_settings')
+      .select('setting_key, setting_value')
+      .in('setting_key', ['serpapi_key', 'serper_api_key', 'searchapi_key'])
+
+    if (error) throw error
+    for (const row of data ?? []) {
+      if (typeof row.setting_value === 'string' && row.setting_value.trim()) {
+        settingsCache[row.setting_key] = row.setting_value.trim()
+      }
+    }
+  } catch (err) {
+    console.error('product-image-search: could not load keys from system_settings —', err)
+  }
+  return settingsCache
+}
+
+async function getKey(settingKey: string, envKey: string): Promise<string | null> {
+  const settings = await loadSettingsKeys()
+  return settings[settingKey] || Deno.env.get(envKey) || null
+}
+
 // --- Per-provider fetchers -------------------------------------------------
 // Each throws on failure (bad key, non-2xx response, quota exceeded, etc.)
 // so the caller can move on to the next provider in the rotation.
 
 async function searchSerpApi(query: string): Promise<CandidateImage[]> {
-  const apiKey = Deno.env.get('SERPAPI_KEY')
-  if (!apiKey) throw new Error('SERPAPI_KEY not configured')
+  const apiKey = await getKey('serpapi_key', 'SERPAPI_KEY')
+  if (!apiKey) throw new Error('SerpAPI key not configured')
 
   const params = new URLSearchParams({
     engine: 'google_images',
@@ -76,8 +123,8 @@ async function searchSerpApi(query: string): Promise<CandidateImage[]> {
 }
 
 async function searchSerper(query: string): Promise<CandidateImage[]> {
-  const apiKey = Deno.env.get('SERPER_API_KEY')
-  if (!apiKey) throw new Error('SERPER_API_KEY not configured')
+  const apiKey = await getKey('serper_api_key', 'SERPER_API_KEY')
+  if (!apiKey) throw new Error('Serper API key not configured')
 
   const resp = await fetch('https://google.serper.dev/images', {
     method: 'POST',
@@ -108,8 +155,8 @@ async function searchSerper(query: string): Promise<CandidateImage[]> {
 }
 
 async function searchSearchApi(query: string): Promise<CandidateImage[]> {
-  const apiKey = Deno.env.get('SEARCHAPI_KEY')
-  if (!apiKey) throw new Error('SEARCHAPI_KEY not configured')
+  const apiKey = await getKey('searchapi_key', 'SEARCHAPI_KEY')
+  if (!apiKey) throw new Error('SearchApi.io key not configured')
 
   const params = new URLSearchParams({
     engine: 'google_images',
@@ -144,14 +191,14 @@ const PROVIDERS: Record<ProviderName, (query: string) => Promise<CandidateImage[
   searchapi: searchSearchApi,
 }
 
-// Only rotate across providers that actually have a key configured.
-function configuredProviders(): ProviderName[] {
-  const names: ProviderName[] = ['serpapi', 'serper', 'searchapi']
-  return names.filter((name) => {
-    if (name === 'serpapi') return !!Deno.env.get('SERPAPI_KEY')
-    if (name === 'serper') return !!Deno.env.get('SERPER_API_KEY')
-    return !!Deno.env.get('SEARCHAPI_KEY')
-  })
+// Only rotate across providers that actually have a key configured
+// (checking Admin -> System Settings first, then env secrets).
+async function configuredProviders(): Promise<ProviderName[]> {
+  const out: ProviderName[] = []
+  if (await getKey('serpapi_key', 'SERPAPI_KEY')) out.push('serpapi')
+  if (await getKey('serper_api_key', 'SERPER_API_KEY')) out.push('serper')
+  if (await getKey('searchapi_key', 'SEARCHAPI_KEY')) out.push('searchapi')
+  return out
 }
 
 // Shuffle the provider order per-request (Fisher-Yates) so load is spread
@@ -166,10 +213,10 @@ function shuffled<T>(arr: T[]): T[] {
 }
 
 async function searchWithFallback(query: string): Promise<ProviderResult> {
-  const available = configuredProviders()
+  const available = await configuredProviders()
   if (available.length === 0) {
     throw new Error(
-      'No image-search provider is configured. Set at least one of SERPAPI_KEY, SERPER_API_KEY, SEARCHAPI_KEY.',
+      'No image-search provider is configured. Add at least one key in Admin -> System Settings (SerpAPI, Serper, or SearchApi.io).',
     )
   }
 
