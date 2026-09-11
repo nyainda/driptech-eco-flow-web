@@ -321,12 +321,12 @@ const Header = () => {
     {
       title: "Services",
       items: [
-        { title: "System Design", href: "/services/design" },
-        { title: "Installation", href: "/services/installation" },
-        { title: "Maintenance", href: "/services/maintenance" },
-        { title: "Training", href: "/services/training" },
+        { title: "System Design", href: "/services#system-design" },
+        { title: "Installation", href: "/services#installation" },
+        { title: "Maintenance", href: "/services#maintenance" },
+        { title: "Training", href: "/services#training" },
         { title: "Technician Services", href: "/technician-services" },
-        { title: "Consultation", href: "/services/consultation" },
+        { title: "Consultation", href: "/services#consultation" },
       ],
     },
     { title: "Projects", href: "/projects" },

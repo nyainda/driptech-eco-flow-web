@@ -316,6 +316,16 @@ const Products = () => {
     indexOfLastProduct,
   );
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const hasActiveFilters = Boolean(
+    searchTerm ||
+      subcategoryFilter ||
+      showFeaturedOnly ||
+      showInStockOnly ||
+      category,
+  );
+  const catalogueStatus = hasActiveFilters
+    ? "Matching irrigation solutions"
+    : "Explore our irrigation collection";
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -1298,9 +1308,7 @@ const Products = () => {
   const MobilePagination = () => (
     <div className="flex flex-col items-center gap-4 mt-8">
       <div className="text-sm text-muted-foreground text-center">
-        Showing {indexOfFirstProduct + 1} to{" "}
-        {Math.min(indexOfLastProduct, filteredProducts.length)} of{" "}
-        {filteredProducts.length} products
+        {hasActiveFilters ? "Viewing matching products" : "Browse more products"} · Page {currentPage}
       </div>
 
       <div className="flex items-center gap-2">
@@ -1380,9 +1388,7 @@ const Products = () => {
   const DesktopPagination = () => (
     <div className="flex items-center justify-between mt-8">
       <div className="text-sm text-muted-foreground">
-        Showing {indexOfFirstProduct + 1} to{" "}
-        {Math.min(indexOfLastProduct, filteredProducts.length)} of{" "}
-        {filteredProducts.length} products
+        {hasActiveFilters ? "Viewing matching products" : "Explore more irrigation solutions"} · Page {currentPage}
       </div>
 
       <div className="flex items-center gap-2">
@@ -1886,11 +1892,8 @@ const Products = () => {
               </p>
               <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Badge variant="outline" className="font-normal">
-                  {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
+                  {catalogueStatus}
                 </Badge>
-                {products.length > filteredProducts.length && (
-                  <span>• {products.length} total</span>
-                )}
               </div>
             </div>
           </div>

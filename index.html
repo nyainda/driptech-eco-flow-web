@@ -9,12 +9,8 @@
   <!-- Google Site Verification -->
   <meta name="google-site-verification" content="7kfckABSquTNISxd-uCE4q3AggSMDxyCPodZhcgLX6I" />
 
-  <!-- Inline critical CSS: hides screen-reader-only SEO content (see
-       src/components/SEO/IrrigationKeywords.tsx) immediately on paint,
-       before the main stylesheet has loaded. Without this, that
-       content briefly flashes visible on a hard refresh. Matches
-       Tailwind's own .sr-only utility exactly, so once the real
-       stylesheet loads it's a no-op duplicate, not a conflict. -->
+  <!-- Inline critical CSS for content that must be available in static HTML
+       but must not flash before React takes over the page. -->
   <style>
     .sr-only {
       position: absolute;
@@ -26,6 +22,13 @@
       clip: rect(0, 0, 0, 0);
       white-space: nowrap;
       border-width: 0;
+    }
+
+    /* The build-time SEO shell gives non-JavaScript crawlers meaningful HTML.
+       JavaScript visitors receive the actual React route, so hide the shell
+       before first paint to prevent its fallback copy from flashing briefly. */
+    html.js [data-seo-shell] {
+      display: none;
     }
   </style>
 
@@ -102,9 +105,11 @@
   <!-- Theme initialization script - prevents FOUC (Flash of Unstyled Content) -->
   <script>
     (function () {
+      const root = document.documentElement;
+      root.classList.add('js');
+
       try {
         const theme = localStorage.getItem('vite-ui-theme') || 'system';
-        const root = document.documentElement;
 
         if (theme === 'system') {
           const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -113,7 +118,7 @@
           root.classList.add(theme);
         }
       } catch (e) {
-        document.documentElement.classList.add('light');
+        root.classList.add('light');
       }
     })();
   </script>

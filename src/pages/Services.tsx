@@ -136,6 +136,7 @@ const Services = () => {
               {services.map((service, index) => (
                 <Card
                   key={index}
+                  id={service.title.toLowerCase().replaceAll(" ", "-")}
                   className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
                 >
                   <CardContent className="p-8">
