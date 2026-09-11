@@ -86,19 +86,12 @@ interface Product {
   | "control_systems"
   | "pumps_motors"
   | "pipes_fittings"
-  | "solar_irrigation"
   | "fertigation_systems"
   | "greenhouse_systems"
   | "emitters_drippers"
   | "valves_regulators"
-  | "water_storage"
-  | "rain_guns"
   | "filters_strainers"
   | "controllers_timers"
-  | "mulching_materials"
-  | "greenhouse_accessories"
-  | "growing_media"
-  | "seedling_trays_nursery"
   | "borehole_equipment";
   subcategory: string | null;
   model_number: string | null;
@@ -125,19 +118,12 @@ const CATEGORY_PATHS: Record<string, string> = {
   emitters_drippers: "emitters",
   fertigation_systems: "fertigation",
   filtration_systems: "filtration",
-  greenhouse_accessories: "greenhouse-accessories",
   greenhouse_systems: "greenhouse",
-  growing_media: "growing-media",
   filters_strainers: "filters-strainers",
-  mulching_materials: "mulching",
   pipes_fittings: "pipes",
   pumps_motors: "pumps",
-  rain_guns: "rain-guns",
-  seedling_trays_nursery: "seedlings",
-  solar_irrigation: "solar",
   sprinkler_systems: "sprinklers",
   valves_regulators: "valves",
-  water_storage: "storage",
   controllers_timers: "controllers",
 };
 
@@ -190,19 +176,12 @@ const Products = () => {
           accessories: "accessories",
           pumps: "pumps_motors",
           pipes: "pipes_fittings",
-          solar: "solar_irrigation",
           fertigation: "fertigation_systems",
           greenhouse: "greenhouse_systems",
           emitters: "emitters_drippers",
           valves: "valves_regulators",
-          storage: "water_storage",
-          "rain-guns": "rain_guns",
           "filters-strainers": "filters_strainers",
           controllers: "controllers_timers",
-          mulching: "mulching_materials",
-          "greenhouse-accessories": "greenhouse_accessories",
-          "growing-media": "growing_media",
-          seedlings: "seedling_trays_nursery",
           borehole: "borehole_equipment",
         };
         dbCategory = categoryMap[category] || category;
@@ -366,19 +345,12 @@ const Products = () => {
       accessories: "Accessories",
       pumps: "Pumps & Motors",
       pipes: "Pipes & Fittings",
-      solar: "Solar Irrigation",
       fertigation: "Fertigation Systems",
       greenhouse: "Greenhouse Systems",
       emitters: "Emitters & Drippers",
       valves: "Valves & Regulators",
-      storage: "Water Storage",
-      "rain-guns": "Rain Guns",
       "filters-strainers": "Filters & Strainers",
       controllers: "Controllers & Timers",
-      mulching: "Mulching Materials",
-      "greenhouse-accessories": "Greenhouse Accessories",
-      "growing-media": "Growing Media",
-      seedlings: "Seedling Trays & Nursery",
       borehole: "Borehole Equipment",
     };
     return titles[cat] || "All Products";
