@@ -9,6 +9,26 @@
   <!-- Google Site Verification -->
   <meta name="google-site-verification" content="7kfckABSquTNISxd-uCE4q3AggSMDxyCPodZhcgLX6I" />
 
+  <!-- Inline critical CSS: hides screen-reader-only SEO content (see
+       src/components/SEO/IrrigationKeywords.tsx) immediately on paint,
+       before the main stylesheet has loaded. Without this, that
+       content briefly flashes visible on a hard refresh. Matches
+       Tailwind's own .sr-only utility exactly, so once the real
+       stylesheet loads it's a no-op duplicate, not a conflict. -->
+  <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+  </style>
+
   <!-- Performance Optimizations -->
   <!-- DNS Prefetch for external domains -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
