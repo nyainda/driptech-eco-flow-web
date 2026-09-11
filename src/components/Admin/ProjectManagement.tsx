@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AIProjectGenerator from "./AI/AIProjectGenerator";
 import ProjectImporter from "./Project/ProjectImporter";
+import ProjectImagePickerDialog from "./Project/ProjectImagePickerDialog";
 import {
   Card,
   CardContent,
@@ -76,6 +77,7 @@ const ProjectManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [imagePickerFor, setImagePickerFor] = useState<Project | null>(null);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const { toast } = useToast();
 
@@ -817,7 +819,13 @@ const ProjectManagement = () => {
 
               <div className="flex justify-between items-center mt-4">
                 <div className="flex space-x-1">
-                  <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 w-8 p-0"
+                    onClick={() => setImagePickerFor(project)}
+                    title="Find a reference photo"
+                  >
                     <Camera className="h-3 w-3" />
                   </Button>
                 </div>
@@ -862,6 +870,17 @@ const ProjectManagement = () => {
             )}
           </CardContent>
         </Card>
+      )}
+
+      {imagePickerFor && (
+        <ProjectImagePickerDialog
+          open={!!imagePickerFor}
+          onOpenChange={(open) => !open && setImagePickerFor(null)}
+          projectId={imagePickerFor.id}
+          projectName={imagePickerFor.name}
+          existingImages={imagePickerFor.project_images}
+          onSaved={fetchProjects}
+        />
       )}
     </div>
   );
