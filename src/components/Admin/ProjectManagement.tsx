@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import AIProjectGenerator from "./AI/AIProjectGenerator";
+import ProjectImporter from "./Project/ProjectImporter";
 import {
   Card,
   CardContent,
@@ -415,6 +416,11 @@ const ProjectManagement = () => {
             New Project
           </Button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        {/* Custom file import */}
+        <ProjectImporter onImported={fetchProjects} />
       </div>
 
       {showAddForm && (
