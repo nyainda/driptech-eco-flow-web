@@ -208,6 +208,269 @@ const allPages = [
   ...landingPages.map((page) => ({ ...page, route: `/${page.slug}` })),
 ];
 
+// Keep the HTML generated at build time aligned with the URLs submitted to
+// search engines. A route missing from this list would otherwise fall through
+// to the empty SPA document and lose its unique canonical and page content.
+const sitemapRoutes = [
+  ...fs
+    .readFileSync(path.join(root, "public/sitemap.xml"), "utf8")
+    .matchAll(/<loc>https:\/\/www\.dripstech\.co\.ke(\/[^<]*)?<\/loc>/g),
+].map((match) => match[1] || "/");
+
+const sitemapFallbackPages = {
+  "/products/controls": [
+    "Irrigation Controls Kenya | Timers & Automation | DripTech",
+    "Irrigation controls and automation",
+    "Browse irrigation controls, timers and automation equipment in Kenya for efficient drip and sprinkler system operation.",
+  ],
+  "/products/filters-strainers": [
+    "Irrigation Filters & Strainers Kenya | DripTech",
+    "Irrigation filters and strainers",
+    "Find irrigation filters and strainers in Kenya to protect drip emitters, sprinklers and farm water equipment from blockage.",
+  ],
+  "/products/controllers": [
+    "Irrigation Controllers Kenya | Timers & Automation | DripTech",
+    "Irrigation controllers and timers",
+    "Browse irrigation controllers and timers in Kenya to schedule reliable watering for farms, greenhouses and gardens.",
+  ],
+  "/products/emitters": [
+    "Drip Irrigation Emitters Kenya | DripTech",
+    "Drip irrigation emitters in Kenya",
+    "Browse drip irrigation emitters and related components in Kenya. DripTech can help match emitter flow and spacing to your crop and field layout.",
+  ],
+  "/products/valves": [
+    "Irrigation Valves Kenya | DripTech",
+    "Irrigation valves and controls",
+    "Browse irrigation valves and control components for drip and sprinkler systems in Kenya. Get practical help selecting compatible fittings and connections.",
+  ],
+  "/products/accessories": [
+    "Irrigation Accessories Kenya | DripTech",
+    "Irrigation accessories and fittings",
+    "Browse irrigation accessories, fittings and connectors in Kenya for reliable farm irrigation system installation and maintenance.",
+  ],
+  "/products/fertigation": [
+    "Fertigation Equipment Kenya | DripTech",
+    "Fertigation equipment for farms",
+    "Explore fertigation equipment and components for applying nutrients through irrigation systems on Kenyan farms.",
+  ],
+  "/products/storage": [
+    "Water Storage for Irrigation Kenya | DripTech",
+    "Irrigation water storage",
+    "Explore irrigation water storage options and equipment in Kenya. DripTech can help plan a dependable supply for your farm irrigation system.",
+  ],
+  "/products/rain-guns": [
+    "Rain Guns Kenya | Farm Irrigation Equipment | DripTech",
+    "Rain guns for farm irrigation",
+    "Browse rain guns and related farm irrigation equipment in Kenya, with practical support for coverage, pressure and water-source requirements.",
+  ],
+  "/products/borehole": [
+    "Borehole Irrigation Equipment Kenya | DripTech",
+    "Borehole irrigation equipment",
+    "Explore borehole irrigation equipment and components in Kenya. DripTech can help match pumping and irrigation equipment to your water source.",
+  ],
+  "/technical-support": [
+    "Irrigation Technical Support Kenya | DripTech",
+    "Irrigation technical support",
+    "Get technical support for drip irrigation, sprinklers, pumps, filters and farm irrigation systems from DripTech in Kenya.",
+  ],
+  "/certifications": [
+    "DripTech Certifications | Irrigation Solutions Kenya",
+    "DripTech certifications",
+    "Learn about DripTech's irrigation solutions and the standards that support dependable farm irrigation equipment and services in Kenya.",
+  ],
+  "/team": [
+    "DripTech Team | Irrigation Specialists Kenya",
+    "Meet the DripTech team",
+    "Meet the people behind DripTech's irrigation equipment, farm system design and installation support in Kenya.",
+  ],
+  "/careers": [
+    "Careers at DripTech | Irrigation Jobs Kenya",
+    "Careers at DripTech",
+    "Explore opportunities to work with DripTech, a Kenyan provider of irrigation equipment and farm water solutions.",
+  ],
+  "/privacy": [
+    "Privacy Policy | DripTech",
+    "DripTech privacy policy",
+    "Read the DripTech privacy policy and how we handle customer and website information.",
+  ],
+  "/terms": [
+    "Terms and Conditions | DripTech",
+    "DripTech terms and conditions",
+    "Read the terms and conditions for using the DripTech website, products and services.",
+  ],
+  "/cookies": [
+    "Cookie Policy | DripTech",
+    "DripTech cookie policy",
+    "Read how DripTech uses cookies to support website functionality and improve visitor experience.",
+  ],
+};
+
+const slugify = (value = "") =>
+  String(value)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const categoryPaths = {
+  accessories: "accessories",
+  borehole_equipment: "borehole",
+  control_systems: "controls",
+  drip_irrigation: "drip",
+  emitters_drippers: "emitters",
+  fertigation_systems: "fertigation",
+  filtration_systems: "filtration",
+  greenhouse_systems: "greenhouse",
+  filters_strainers: "filters-strainers",
+  pipes_fittings: "pipes",
+  pumps_motors: "pumps",
+  sprinkler_systems: "sprinklers",
+  valves_regulators: "valves",
+  controllers_timers: "controllers",
+};
+
+const stripHtml = (value = "") =>
+  String(value)
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const fetchJson = async (url, headers = {}) => {
+  const response = await fetch(url, { headers });
+  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+  return response.json();
+};
+
+const getDynamicContent = async () => {
+  const workerUrl = process.env.VITE_WORKER_URL?.replace(/\/$/, "");
+  const supabaseUrl = process.env.VITE_SUPABASE_URL?.replace(/\/$/, "");
+  const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+  try {
+    if (workerUrl) {
+      const [products, posts, news] = await Promise.all([
+        fetchJson(`${workerUrl}/api/products?in_stock=true&limit=1000`),
+        fetchJson(`${workerUrl}/api/blog?limit=1000`),
+        fetchJson(`${workerUrl}/api/news?limit=1000`),
+      ]);
+      return { products, posts, news };
+    }
+
+    if (supabaseUrl && supabaseKey) {
+      const headers = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
+      const endpoint = `${supabaseUrl}/rest/v1`;
+      const [products, posts, news] = await Promise.all([
+        fetchJson(`${endpoint}/products?select=*&in_stock=eq.true`, headers),
+        fetchJson(`${endpoint}/blog_posts?select=*&published=eq.true`, headers),
+        fetchJson(`${endpoint}/news_articles?select=*&published=eq.true`, headers),
+      ]);
+      return { products, posts, news };
+    }
+  } catch (error) {
+    console.warn(`Could not fetch dynamic SEO content; continuing with static pages: ${error.message}`);
+  }
+
+  return { products: [], posts: [], news: [] };
+};
+
+const dynamicContent = await getDynamicContent();
+const dynamicPages = [
+  ...dynamicContent.products
+    .filter((product) => product?.id && product?.name)
+    .map((product) => {
+      const category = categoryPaths[product.category] || "all";
+      const route = `/products/${category}/${slugify(product.name)}-${String(product.id).slice(0, 8)}`;
+      const description = stripHtml(product.description) || `${product.name} irrigation equipment from DripTech in Kenya.`;
+      const price = Number(product.price);
+      return {
+        route,
+        title: `${product.name} Kenya | Price & Specifications | DripTech`,
+        description,
+        heading: product.name,
+        intro: description,
+        schema: {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          description,
+          image: product.images?.[0],
+          sku: product.model_number || product.id,
+          brand: { "@type": "Brand", name: "DripTech Eco Flow" },
+          url: `${siteUrl}${route}`,
+          ...(price > 0
+            ? {
+                offers: {
+                  "@type": "Offer",
+                  price,
+                  priceCurrency: "KES",
+                  availability: product.in_stock
+                    ? "https://schema.org/InStock"
+                    : "https://schema.org/OutOfStock",
+                },
+              }
+            : {}),
+        },
+      };
+    }),
+  ...dynamicContent.posts
+    .filter((post) => post?.slug && post?.title)
+    .map((post) => {
+      const description = stripHtml(post.excerpt || post.content).slice(0, 300);
+      return {
+        route: `/blog/${post.slug}`,
+        title: `${post.title} | DripTech Blog`,
+        description,
+        heading: post.title,
+        intro: description,
+        schema: {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          headline: post.title,
+          description,
+          url: `${siteUrl}/blog/${post.slug}`,
+          datePublished: post.published_at || post.created_at,
+          dateModified: post.updated_at || post.published_at || post.created_at,
+          author: { "@type": "Organization", name: "DripTech Eco Flow" },
+        },
+      };
+    }),
+  ...dynamicContent.news
+    .filter((article) => article?.slug && article?.title)
+    .map((article) => {
+      const description = stripHtml(article.excerpt || article.content).slice(0, 300);
+      return {
+        route: `/news/${article.slug}`,
+        title: `${article.title} | DripTech News`,
+        description,
+        heading: article.title,
+        intro: description,
+        schema: {
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: article.title,
+          description,
+          url: `${siteUrl}/news/${article.slug}`,
+          datePublished: article.published_at || article.created_at,
+          dateModified: article.updated_at || article.published_at || article.created_at,
+          author: { "@type": "Organization", name: article.author || "DripTech Eco Flow" },
+        },
+      };
+    }),
+];
+
+for (const route of sitemapRoutes) {
+  if (allPages.some((page) => page.route === route)) continue;
+
+  const [title, heading, intro] = sitemapFallbackPages[route] || [
+    "Irrigation Solutions Kenya | DripTech",
+    "Irrigation solutions from DripTech",
+    "Explore irrigation products, farm system support and practical guidance from DripTech in Kenya.",
+  ];
+  allPages.push({ route, title, description: intro, heading, intro });
+}
+
+allPages.push(...dynamicPages);
+
 const escapeHtml = (value = "") =>
   String(value)
     .replaceAll("&", "&amp;")
@@ -289,15 +552,17 @@ const renderPage = (page) => {
 
   return `${html.replace(
     "</head>",
-    `<script type="application/ld+json">${JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      name: page.title,
-      description: page.description,
-      url: canonical,
-      isPartOf: { "@id": `${siteUrl}/#website` },
-      about: { "@type": "Thing", name: "Irrigation in Kenya" },
-    })}</script>\n</head>`,
+    `<script type="application/ld+json">${JSON.stringify(
+      page.schema || {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        name: page.title,
+        description: page.description,
+        url: canonical,
+        isPartOf: { "@id": `${siteUrl}/#website` },
+        about: { "@type": "Thing", name: "Irrigation in Kenya" },
+      },
+    )}</script>\n</head>`,
   )}`;
 };
 
@@ -307,4 +572,36 @@ for (const page of allPages) {
   fs.writeFileSync(path.join(routeDirectory, "index.html"), renderPage(page));
 }
 
-console.log(`Generated ${allPages.length} crawlable SEO pages in dist/`);
+const xmlEscape = (value) =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${[...new Set(allPages.map((page) => page.route))]
+  .map(
+    (route) => `  <url><loc>${xmlEscape(`${siteUrl}${route}`)}</loc><changefreq>weekly</changefreq><priority>${route === "/" ? "1.0" : "0.7"}</priority></url>`,
+  )
+  .join("\n")}
+</urlset>
+`;
+fs.writeFileSync(path.join(dist, "sitemap.xml"), sitemap);
+
+// /admin is intentionally a real static document so no crawler has to execute
+// React before seeing its noindex directive. Do not add it to robots.txt: bots
+// must be allowed to fetch this response in order to process the noindex.
+const adminHtml = baseHtml
+  .replace(/<title>[\s\S]*?<\/title>/i, "<title>DripTech Admin</title>")
+  .replace(/<meta\s+name=["']robots["'][^>]*>/i, '<meta name="robots" content="noindex, nofollow, noarchive" />')
+  .replace(/<link\s+rel=["']canonical["'][^>]*>/i, `<link rel="canonical" href="${siteUrl}/admin" />`)
+  .replace('<div id="root"></div>', '<div id="root"><main><h1>DripTech Admin</h1></main></div>');
+fs.mkdirSync(path.join(dist, "admin"), { recursive: true });
+fs.writeFileSync(path.join(dist, "admin", "index.html"), adminHtml);
+
+console.log(
+  `Generated ${allPages.length} crawlable SEO pages (${dynamicPages.length} dynamic) and one noindex admin page in dist/`,
+);
