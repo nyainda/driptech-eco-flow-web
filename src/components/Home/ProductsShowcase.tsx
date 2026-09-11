@@ -83,13 +83,10 @@ const CATEGORIES = [
   { key: "pipes_fittings", label: "Pipes & Fittings" },
   { key: "filtration_systems", label: "Filtration" },
   { key: "control_systems", label: "Controls" },
-  { key: "solar_irrigation", label: "Solar Irrigation" },
   { key: "fertigation_systems", label: "Fertigation" },
   { key: "greenhouse_systems", label: "Greenhouse" },
   { key: "emitters_drippers", label: "Emitters & Drippers" },
   { key: "valves_regulators", label: "Valves & Regulators" },
-  { key: "water_storage", label: "Water Storage" },
-  { key: "rain_guns", label: "Rain Guns" },
   { key: "accessories", label: "Accessories" },
 ];
 
@@ -204,8 +201,6 @@ const ProductsShowcase = ({
         return Zap;
       case "pipes_fittings":
         return Wrench;
-      case "solar_irrigation":
-        return Sparkles;
       case "fertigation_systems":
         return Leaf;
       case "greenhouse_systems":
@@ -214,10 +209,6 @@ const ProductsShowcase = ({
         return Droplet;
       case "valves_regulators":
         return Shield;
-      case "water_storage":
-        return Package;
-      case "rain_guns":
-        return Gauge;
       case "accessories":
         return Cpu;
       default:
@@ -239,8 +230,6 @@ const ProductsShowcase = ({
         return "pumps";
       case "pipes_fittings":
         return "pipes";
-      case "solar_irrigation":
-        return "solar";
       case "fertigation_systems":
         return "fertigation";
       case "greenhouse_systems":
@@ -249,10 +238,6 @@ const ProductsShowcase = ({
         return "emitters";
       case "valves_regulators":
         return "valves";
-      case "water_storage":
-        return "storage";
-      case "rain_guns":
-        return "rain-guns";
       case "accessories":
         return "accessories";
       default:

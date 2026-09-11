@@ -33,7 +33,6 @@ import {
   Shield,
   Package,
   Droplet,
-  Sun,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import SearchManager from "./SearchManager";
@@ -264,12 +263,6 @@ const Header = () => {
           icon: Settings,
         },
         {
-          title: "Solar Irrigation",
-          href: "/products/solar",
-          description: "Off-grid solar-powered irrigation",
-          icon: Sun,
-        },
-        {
           title: "Fertigation Systems",
           href: "/products/fertigation",
           description: "Fertilizer injection with irrigation",
@@ -294,18 +287,6 @@ const Header = () => {
           icon: Shield,
         },
         {
-          title: "Water Storage",
-          href: "/products/storage",
-          description: "Tanks and reservoirs for farms",
-          icon: Package,
-        },
-        {
-          title: "Rain Guns",
-          href: "/products/rain-guns",
-          description: "High-impact rotating sprinklers",
-          icon: Droplets,
-        },
-        {
           title: "Accessories",
           href: "/products/accessories",
           description: "Essential components and tools",
@@ -321,30 +302,6 @@ const Header = () => {
           title: "Controllers & Timers",
           href: "/products/controllers",
           description: "Automated irrigation scheduling",
-          icon: Package,
-        },
-        {
-          title: "Mulching Materials",
-          href: "/products/mulching",
-          description: "Plastic mulch film for moisture retention",
-          icon: Package,
-        },
-        {
-          title: "Greenhouse Accessories",
-          href: "/products/greenhouse-accessories",
-          description: "Nets, shading and greenhouse fittings",
-          icon: Package,
-        },
-        {
-          title: "Growing Media",
-          href: "/products/growing-media",
-          description: "Coco peat, perlite and substrates",
-          icon: Package,
-        },
-        {
-          title: "Seedling Trays & Nursery",
-          href: "/products/seedlings",
-          description: "Propagation trays and nursery supplies",
           icon: Package,
         },
         {
