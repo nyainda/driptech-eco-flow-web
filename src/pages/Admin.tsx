@@ -33,6 +33,7 @@ import {
 } from "@/components/Admin/AdminAuth";
 import { ThemeToggle } from "@/components/Layout/ThemeToggle";
 import NotificationSystem from "@/components/Admin/NotificationSystem";
+import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -393,11 +394,19 @@ const AdminContent = () => {
 
 const Admin = () => {
   return (
-    <AdminAuthProvider>
-      <AdminAuthGuard>
-        <AdminContent />
-      </AdminAuthGuard>
-    </AdminAuthProvider>
+    <>
+      <Helmet>
+        <title>DripTech Admin</title>
+        <meta name="robots" content="noindex, nofollow, noarchive" />
+        <meta name="googlebot" content="noindex, nofollow, noarchive" />
+        <link rel="canonical" href="https://www.dripstech.co.ke/admin" />
+      </Helmet>
+      <AdminAuthProvider>
+        <AdminAuthGuard>
+          <AdminContent />
+        </AdminAuthGuard>
+      </AdminAuthProvider>
+    </>
   );
 };
 

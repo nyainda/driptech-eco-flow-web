@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
+# /admin deliberately remains crawlable so its response-level noindex directive
+# can remove any historical admin URL from search results.
 Sitemap: https://www.dripstech.co.ke/sitemap.xml
