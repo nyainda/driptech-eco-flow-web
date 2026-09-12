@@ -32,9 +32,18 @@
       }
     ],
     "links": [
-      { "label": "Browse drip irrigation products", "href": "/products/drip" },
-      { "label": "Compare complete irrigation kits", "href": "/irrigation-kits" },
-      { "label": "See installation and service support", "href": "/services" }
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Compare complete irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "See installation and service support",
+        "href": "/services"
+      }
     ]
   },
   {
@@ -69,9 +78,18 @@
       }
     ],
     "links": [
-      { "label": "View complete irrigation kits", "href": "/irrigation-kits" },
-      { "label": "Shop drip irrigation components", "href": "/products/drip" },
-      { "label": "Request irrigation guidance", "href": "/contact" }
+      {
+        "label": "View complete irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Shop drip irrigation components",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Request irrigation guidance",
+        "href": "/contact"
+      }
     ]
   },
   {
@@ -106,9 +124,18 @@
       }
     ],
     "links": [
-      { "label": "Browse driplines and drip products", "href": "/products/drip" },
-      { "label": "Compare filters and strainers", "href": "/products/filtration" },
-      { "label": "View irrigation accessories", "href": "/products/accessories" }
+      {
+        "label": "Browse driplines and drip products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Compare filters and strainers",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "View irrigation accessories",
+        "href": "/products/accessories"
+      }
     ]
   },
   {
@@ -138,14 +165,75 @@
       {
         "heading": "Get the system sized for your farm",
         "paragraphs": [
-           "Share the field size, crop, water source and location for a more useful recommendation. DripTech Eco Flow can supply the equipment and coordinate installation support across Kenya."
+          "Share the field size, crop, water source and location for a more useful recommendation. DripTech Eco Flow can supply the equipment and coordinate installation support across Kenya."
         ]
       }
     ],
     "links": [
-      { "label": "Browse sprinkler systems", "href": "/products/sprinklers" },
-      { "label": "Compare pumps and motors", "href": "/products/pumps" },
-      { "label": "Talk to the irrigation team", "href": "/contact" }
+      {
+        "label": "Browse sprinkler systems",
+        "href": "/products/sprinklers"
+      },
+      {
+        "label": "Compare pumps and motors",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Talk to the irrigation team",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-companies-kenya",
+    "title": "Irrigation Companies in Kenya | Supply, Design & Installation | DripTech Eco Flow",
+    "description": "Comparing irrigation companies in Kenya? See what to check before you buy, and how DripTech Eco Flow supplies, designs and installs drip and sprinkler systems nationwide.",
+    "h1": "Choosing an irrigation company in Kenya",
+    "intro": "Kenya has many irrigation suppliers, and quality varies widely between them. Before committing to a company, it helps to know what separates a reliable installation from one that fails within a season. DripTech Eco Flow supplies parts, designs systems and installs them for farms, greenhouses and commercial sites across the country.",
+    "sections": [
+      {
+        "heading": "What to check before choosing an irrigation company",
+        "bullets": [
+          "Genuine, UV-treated parts rather than substandard imitations that crack or clog within months",
+          "A site visit or clear questions about your crop, acreage and water source before quoting a price",
+          "A written breakdown of what's included — driplines, filtration, fittings and installation — not just a single acreage price",
+          "Ongoing support after installation, not just a one-time sale",
+          "Clear contact channels for questions once the system is running"
+        ]
+      },
+      {
+        "heading": "What DripTech Eco Flow supplies and installs",
+        "paragraphs": [
+          "We supply drip irrigation components, sprinkler systems, filtration, pipes, fittings, pumps and complete kits, and can design a layout around your specific plot rather than a generic package.",
+          "Installation and technician support are available so the system is set up correctly the first time, with practical guidance on running and maintaining it afterwards."
+        ]
+      },
+      {
+        "heading": "Areas served",
+        "paragraphs": [
+          "DripTech Eco Flow serves farms and commercial sites across Kenya, including Nairobi, Kiambu, Nakuru, Machakos, Kajiado, Meru, Nyeri, Kisumu, Mombasa and Uasin Gishu."
+        ]
+      },
+      {
+        "heading": "Get a straight answer before you commit",
+        "paragraphs": [
+          "Send your crop, acreage and water source on WhatsApp for a practical recommendation, or request a quote and get a breakdown of what a properly sized system actually costs."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Compare drip irrigation kit prices",
+        "href": "/drip-irrigation-kit-price-kenya"
+      },
+      {
+        "label": "Browse irrigation products",
+        "href": "/products"
+      },
+      {
+        "label": "See installation and service support",
+        "href": "/services"
+      }
     ]
   }
 ]
