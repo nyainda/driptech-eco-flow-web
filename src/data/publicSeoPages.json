@@ -147,5 +147,230 @@
       { "label": "Compare pumps and motors", "href": "/products/pumps" },
       { "label": "Talk to the irrigation team", "href": "/contact" }
     ]
+  },
+  {
+    "slug": "solar-irrigation-pumps-kenya",
+    "title": "Solar Irrigation Pumps Kenya | Solar Pump Systems & Prices | DripTech Eco Flow",
+    "description": "Solar-powered irrigation pumps for farms in Kenya without reliable grid power. Compare solar pump options and get help sizing a system to your water source and field.",
+    "h1": "Solar irrigation pumps for Kenyan farms",
+    "intro": "Solar pumping lets a farm move water where grid power is unreliable or unavailable, with lower running costs than a petrol or diesel pump over time. Sizing a solar pump correctly depends on your water source depth, the flow rate you need, and how many hours of usable sunlight your site gets.",
+    "sections": [
+      {
+        "heading": "What decides the right solar pump size",
+        "bullets": [
+          "Depth to water (surface, shallow well or borehole)",
+          "Required flow rate and daily water volume",
+          "Static and dynamic head to your storage tank or field",
+          "Available panel space and daily sun hours at your site"
+        ]
+      },
+      {
+        "heading": "Solar irrigation equipment available",
+        "paragraphs": [
+          "DripTech Eco Flow supplies solar irrigation pumps and the panels, controllers and fittings needed to run them, alongside driplines, sprinklers and filtration to complete the system.",
+          "A solar pump is only one part of the system — pairing it with the right filtration and dripline or sprinkler layout keeps water use efficient once it reaches the field."
+        ]
+      },
+      {
+        "heading": "Get help sizing your system",
+        "paragraphs": [
+          "Send your water source, depth, required flow rate and site location on WhatsApp for help matching pump and panel capacity to your farm, or request a quote for a complete solar irrigation setup."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse solar irrigation products",
+        "href": "/products/solar"
+      },
+      {
+        "label": "Compare complete irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Request irrigation guidance",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "borehole-water-pumps-kenya",
+    "title": "Borehole Water Pumps Kenya | Submersible & Solar Options | DripTech Eco Flow",
+    "description": "Submersible and solar borehole water pumps for irrigation in Kenya. Compare pump options for your borehole depth and yield, and get help sizing the right system.",
+    "h1": "Borehole water pumps for irrigation",
+    "intro": "Once a borehole is drilled and its yield known, the next decision is matching a pump to that depth and yield. DripTech Eco Flow supplies the pumps, controllers and fittings for borehole-fed irrigation — not the drilling itself, which is a specialised hydrogeological service.",
+    "sections": [
+      {
+        "heading": "Matching a pump to your borehole",
+        "paragraphs": [
+          "A pump sized below your borehole's actual yield runs the risk of dry-running and early failure, while an oversized pump wastes money. Your driller's yield test result and the depth to water are the key inputs.",
+          "Submersible electric pumps suit boreholes with reliable grid power; solar submersible pumps suit sites without it, at the cost of pumping only during usable daylight hours unless paired with battery storage."
+        ]
+      },
+      {
+        "heading": "What DripTech Eco Flow supplies",
+        "bullets": [
+          "Submersible electric and solar borehole pumps",
+          "Rising main pipe, cabling and control panels",
+          "Filtration to protect downstream drip or sprinkler equipment",
+          "Fittings to connect the borehole system to your irrigation layout"
+        ]
+      },
+      {
+        "heading": "Already have a yield test result?",
+        "paragraphs": [
+          "Send your borehole depth, yield and required flow rate on WhatsApp for help choosing a pump, or request a quote for the full pump-to-field setup."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse irrigation pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Compare solar irrigation options",
+        "href": "/products/solar"
+      },
+      {
+        "label": "Request irrigation guidance",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "water-storage-tanks-kenya",
+    "title": "Water Storage Tanks for Irrigation Kenya | Sizes & Prices | DripTech Eco Flow",
+    "description": "Water storage tanks sized for drip and sprinkler irrigation in Kenya. Compare tank sizes against your plot size, pump output and buffer requirements.",
+    "h1": "Water storage tanks for farm irrigation",
+    "intro": "A storage tank buffers supply between your water source and the field, smoothing out pump downtime, solar pumping hours, or an intermittent municipal or borehole supply. Sizing it against your daily water demand avoids both running dry mid-irrigation and paying for capacity you never use.",
+    "sections": [
+      {
+        "heading": "Sizing a tank to your system",
+        "paragraphs": [
+          "A useful starting point is your system's daily water requirement across all beds or zones, plus a buffer for the hours your pump or supply is unavailable — overnight for a solar pump, for example.",
+          "Tank position also matters: a raised or elevated tank can supply a basic gravity-fed drip layout without a pump, while a ground-level tank needs a pump to reach field pressure."
+        ]
+      },
+      {
+        "heading": "What to consider before buying",
+        "bullets": [
+          "Daily water demand across your plot size and crop",
+          "Buffer hours needed if your pump or supply is intermittent",
+          "Tank placement — raised for gravity feed, or ground-level with a pump",
+          "Space and stand/foundation requirements for larger tanks"
+        ]
+      },
+      {
+        "heading": "Get help choosing a tank size",
+        "paragraphs": [
+          "Send your plot size, crop and pump or supply type on WhatsApp for help working out a practical tank size, or request a quote for tank plus the rest of your irrigation system."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Compare complete irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Browse irrigation pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Request irrigation guidance",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "greenhouse-drip-irrigation-kenya",
+    "title": "Greenhouse Drip Irrigation Kenya | Systems for Protected Crops | DripTech Eco Flow",
+    "description": "Drip irrigation systems designed for greenhouse crops in Kenya. Compare driplines, filtration and fertigation options suited to protected growing conditions.",
+    "h1": "Greenhouse drip irrigation systems",
+    "intro": "Greenhouse crops are grown in a more controlled environment than open-field crops, but that makes consistent, clog-free irrigation even more important — there's no rainfall to fall back on if a line blocks. DripTech Eco Flow supplies the drip components and filtration suited to greenhouse growing, though the greenhouse structure itself is a separate build.",
+    "sections": [
+      {
+        "heading": "What's different about greenhouse irrigation",
+        "paragraphs": [
+          "Greenhouse beds are usually smaller and more uniform than open-field rows, which suits closely-spaced emitters and precise flow control. Good filtration matters more here since a clogged line in a greenhouse can affect a crop faster than an open-field equivalent.",
+          "Many greenhouse growers also fertigate — feeding nutrients through the same drip system — which needs a compatible dosing setup alongside the dripline itself."
+        ]
+      },
+      {
+        "heading": "Equipment for greenhouse irrigation",
+        "bullets": [
+          "Driplines and emitters sized for greenhouse bed spacing",
+          "Filtration to protect against clogging in a closed system",
+          "Fertigation components for feeding through the drip line",
+          "Control and timing equipment for consistent scheduling"
+        ]
+      },
+      {
+        "heading": "Planning a greenhouse system",
+        "paragraphs": [
+          "Send your greenhouse dimensions, crop and bed layout on WhatsApp for help putting together a parts list, or request a quote for the full irrigation setup."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse greenhouse irrigation products",
+        "href": "/products/greenhouse"
+      },
+      {
+        "label": "Compare drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Request irrigation guidance",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "fertigation-systems-kenya",
+    "title": "Fertigation Systems Kenya | Feed Nutrients Through Drip Irrigation | DripTech Eco Flow",
+    "description": "Fertigation systems for Kenyan farms and greenhouses, feeding fertiliser through drip irrigation for even nutrient delivery. Compare dosing equipment and get setup help.",
+    "h1": "Fertigation systems for drip irrigation",
+    "intro": "Fertigation feeds water-soluble fertiliser through the same drip system that waters the crop, so every plant on the line gets a consistent dose instead of uneven hand application. It works alongside an existing drip layout rather than replacing it.",
+    "sections": [
+      {
+        "heading": "How fertigation fits into a drip system",
+        "paragraphs": [
+          "A fertigation setup injects a measured amount of dissolved fertiliser into the irrigation line, usually just after the filter and before the line splits into zones, so dosing stays consistent across the field or greenhouse.",
+          "Getting the dosing rate right depends on your crop's nutrient program and how often you irrigate — this is worth confirming before buying equipment sized for a different schedule."
+        ]
+      },
+      {
+        "heading": "Fertigation equipment available",
+        "bullets": [
+          "Fertiliser injectors and dosing pumps",
+          "Mixing tanks and venturi injectors",
+          "Filtration to protect emitters from dissolved solids",
+          "Fittings to integrate with an existing drip layout"
+        ]
+      },
+      {
+        "heading": "Adding fertigation to your system",
+        "paragraphs": [
+          "Send your crop, nutrient program and current drip layout on WhatsApp for help choosing compatible dosing equipment, or request a quote for a complete fertigation setup."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Browse greenhouse irrigation products",
+        "href": "/products/greenhouse"
+      },
+      {
+        "label": "Request irrigation guidance",
+        "href": "/contact"
+      }
+    ]
   }
 ]
