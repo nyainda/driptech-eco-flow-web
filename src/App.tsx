@@ -89,6 +89,7 @@ const App = () => {
                   <Route path="/water-storage-tanks-kenya" element={<SEOContentPage />} />
                   <Route path="/greenhouse-drip-irrigation-kenya" element={<SEOContentPage />} />
                   <Route path="/fertigation-systems-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-companies-kenya" element={<SEOContentPage />} />
 
                   {/* Service routes */}
                   <Route path="/services" element={<Services />} />
