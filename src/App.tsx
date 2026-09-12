@@ -84,6 +84,7 @@ const App = () => {
                   <Route path="/drip-irrigation-kit-price-kenya" element={<SEOContentPage />} />
                   <Route path="/driplines-for-sale-kenya" element={<SEOContentPage />} />
                   <Route path="/sprinkler-systems-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-companies-kenya" element={<SEOContentPage />} />
 
                   {/* Service routes */}
                   <Route path="/services" element={<Services />} />
