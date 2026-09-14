@@ -56,6 +56,7 @@ import Footer from "@/components/Layout/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { dataService } from "@/services/dataService";
+import { SITE_COMPANY } from "@/config/company";
 
 // Interface definitions remain unchanged
 interface IrrigationKit {
