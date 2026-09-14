@@ -388,6 +388,60 @@ const getDynamicContent = async () => {
 };
 
 const dynamicContent = await getDynamicContent();
+
+// Pull one real, representative image per product category straight from the
+// live catalog (Cloudflare Worker/Supabase) instead of relying on the
+// AI-generated seed placeholders in public/seed-products/. Falls back to the
+// existing static path only if no real product with an image exists yet for
+// that category.
+const categoryImageMap = {};
+for (const product of dynamicContent.products) {
+  const cat = product?.category;
+  const img = product?.images?.[0];
+  if (cat && img && /^https?:\/\//i.test(img) && !categoryImageMap[cat]) {
+    categoryImageMap[cat] = img;
+  }
+}
+
+const routeCategoryMap = {
+  "/": "drip_irrigation",
+  "/products": "drip_irrigation",
+  "/products/drip": "drip_irrigation",
+  "/products/sprinklers": "sprinkler_systems",
+  "/products/pumps": "pumps_motors",
+  "/products/pipes": "pipes_fittings",
+  "/products/filtration": "filtration_systems",
+  "/products/solar": "solar_irrigation",
+  "/products/greenhouse": "greenhouse_systems",
+  "/irrigation-kits": "drip_irrigation",
+  "/services": "drip_irrigation",
+  "/technician-services": "drip_irrigation",
+  "/about": "drip_irrigation",
+  "/contact": "drip_irrigation",
+  "drip-irrigation-kenya": "drip_irrigation",
+  "drip-irrigation-kit-price-kenya": "drip_irrigation",
+  "driplines-for-sale-kenya": "drip_irrigation",
+  "sprinkler-systems-kenya": "sprinkler_systems",
+  "irrigation-companies-kenya": "drip_irrigation",
+  "solar-irrigation-pumps-kenya": "solar_irrigation",
+  "borehole-water-pumps-kenya": "borehole_equipment",
+  "water-storage-tanks-kenya": "water_storage",
+  "greenhouse-drip-irrigation-kenya": "greenhouse_systems",
+  "fertigation-systems-kenya": "fertigation_systems",
+};
+
+const applyRealCategoryImage = (page) => {
+  const key = page.slug || page.route;
+  const category = routeCategoryMap[key];
+  const realImage = category && categoryImageMap[category];
+  if (realImage) {
+    page.image = realImage;
+    page.imageIsAbsolute = true;
+  }
+};
+
+for (const page of allPages) applyRealCategoryImage(page);
+
 const dynamicPages = [
   ...dynamicContent.products
     .filter((product) => product?.id && product?.name)
@@ -541,7 +595,9 @@ const pageBody = (page) => {
 
 const renderPage = (page) => {
   const canonical = `${siteUrl}${page.route === "/" ? "/" : page.route}`;
-  const imageUrl = `${siteUrl}${page.image || "/driptech-logo.png"}`;
+  const imageUrl = page.imageIsAbsolute
+    ? page.image
+    : `${siteUrl}${page.image || "/driptech-logo.png"}`;
   let html = baseHtml.replace(
     /<title>[\s\S]*?<\/title>/i,
     `<title>${escapeHtml(page.title)}</title>`,
