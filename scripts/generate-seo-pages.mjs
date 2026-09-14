@@ -18,6 +18,7 @@ const categoryPages = [
     heading: "Irrigation products and equipment in Kenya",
     intro:
       "Browse the current DripTech catalogue for irrigation products, equipment and complete kits. Compare the available specifications, prices and stock, then ask for help matching equipment to your farm.",
+    image: "/seed-products/plant_drip.jpg",
   },
   {
     route: "/products/drip",
@@ -27,6 +28,7 @@ const categoryPages = [
     heading: "Drip irrigation systems and components",
     intro:
       "Find driplines, emitters, connectors and related equipment for vegetable farms, greenhouses, kitchen gardens and larger irrigation projects in Kenya.",
+    image: "/seed-products/dripline_roll.jpg",
   },
   {
     route: "/products/sprinklers",
@@ -36,6 +38,7 @@ const categoryPages = [
     heading: "Sprinkler systems for farms in Kenya",
     intro:
       "Choose sprinkler equipment by coverage, operating pressure, crop and water source. DripTech supplies sprinkler systems and related components across Kenya.",
+    image: "/seed-products/sprinkler.jpg",
   },
   {
     route: "/products/pumps",
@@ -45,6 +48,7 @@ const categoryPages = [
     heading: "Irrigation pumps for Kenyan farms",
     intro:
       "A reliable irrigation pump must match the required flow, pressure, lift and power source. Browse current pump products and ask DripTech for sizing help.",
+    image: "/seed-products/water1.jpg",
   },
   {
     route: "/products/pipes",
@@ -54,6 +58,7 @@ const categoryPages = [
     heading: "Irrigation pipes and fittings in Kenya",
     intro:
       "Build a dependable irrigation layout with the right pipe diameter, connectors, valves and end fittings for your water source and field.",
+    image: "/seed-products/pipes_industrial.jpg",
   },
   {
     route: "/products/filtration",
@@ -63,6 +68,7 @@ const categoryPages = [
     heading: "Irrigation filters and strainers",
     intro:
       "Good filtration protects drip emitters and sprinkler equipment from blockage. Choose filtration with the water source, flow rate and maintenance routine in mind.",
+    image: "/seed-products/drip2.jpg",
   },
   {
     route: "/products/solar",
@@ -72,6 +78,7 @@ const categoryPages = [
     heading: "Solar irrigation equipment in Kenya",
     intro:
       "Solar irrigation can help farms move water where grid power is limited. Compare the current equipment and request help checking pump, tank and field requirements.",
+    image: "/seed-products/solar_panel.jpg",
   },
   {
     route: "/products/greenhouse",
@@ -81,6 +88,7 @@ const categoryPages = [
     heading: "Greenhouse irrigation systems",
     intro:
       "Greenhouse crops need consistent application and clean water. DripTech supplies greenhouse irrigation components and can help match the system to your crop layout.",
+    image: "/seed-products/greenhouse.jpg",
   },
   {
     route: "/irrigation-kits",
@@ -90,6 +98,7 @@ const categoryPages = [
     heading: "Drip irrigation kits by plot size",
     intro:
       "Compare ready-to-use irrigation kit options by plot size, price and crop. Each farm still needs the correct lines, filtration and fittings for its water source.",
+    image: "/seed-products/drip3.jpg",
   },
   {
     route: "/services",
@@ -99,6 +108,7 @@ const categoryPages = [
     heading: "Irrigation design and installation services",
     intro:
       "Get practical support from system planning through installation, testing and maintenance. DripTech serves farms and irrigation projects across Kenya.",
+    image: "/seed-products/field_drip.jpg",
   },
   {
     route: "/technician-services",
@@ -108,6 +118,7 @@ const categoryPages = [
     heading: "Irrigation technician services in Kenya",
     intro:
       "When an irrigation system needs hands-on help, DripTech can coordinate technician support for installation, repairs, maintenance and system checks.",
+    image: "/seed-products/field_drip.jpg",
   },
   {
     route: "/installation-guides",
@@ -180,6 +191,7 @@ const categoryPages = [
     heading: "About DripTech",
     intro:
       "DripTech helps Kenyan farmers and agricultural businesses source irrigation equipment and plan systems that fit the crop, plot and water source.",
+    image: "/seed-products/field_drip.jpg",
   },
   {
     route: "/contact",
@@ -189,6 +201,7 @@ const categoryPages = [
     heading: "Contact DripTech for irrigation support",
     intro:
       "Share your crop, acreage, water source and location to get practical guidance on irrigation products, complete kits and installation support.",
+    image: "/seed-products/plant_drip.jpg",
   },
 ];
 
@@ -200,6 +213,7 @@ const homePage = {
   heading: "Driplines, kits and pumps that fit your farm",
   intro:
     "DripTech supplies irrigation equipment and complete systems for Kenyan farms, greenhouses and kitchen gardens. Browse products, compare kits and ask for help before you buy.",
+  image: "/seed-products/field_drip.jpg",
 };
 
 const allPages = [
@@ -527,6 +541,7 @@ const pageBody = (page) => {
 
 const renderPage = (page) => {
   const canonical = `${siteUrl}${page.route === "/" ? "/" : page.route}`;
+  const imageUrl = `${siteUrl}${page.image || "/driptech-logo.png"}`;
   let html = baseHtml.replace(
     /<title>[\s\S]*?<\/title>/i,
     `<title>${escapeHtml(page.title)}</title>`,
@@ -542,9 +557,11 @@ const renderPage = (page) => {
   html = replaceMeta(html, "og:title", page.title, "property");
   html = replaceMeta(html, "og:description", page.description, "property");
   html = replaceMeta(html, "og:url", canonical, "property");
+  html = replaceMeta(html, "og:image", imageUrl, "property");
   html = replaceMeta(html, "twitter:title", page.title);
   html = replaceMeta(html, "twitter:description", page.description);
   html = replaceMeta(html, "twitter:url", canonical);
+  html = replaceMeta(html, "twitter:image", imageUrl);
   html = html.replace(
     '<div id="root"></div>',
     `<div id="root">${pageBody(page)}</div>`,
@@ -559,6 +576,7 @@ const renderPage = (page) => {
         name: page.title,
         description: page.description,
         url: canonical,
+        image: imageUrl,
         isPartOf: { "@id": `${siteUrl}/#website` },
         about: { "@type": "Thing", name: "Irrigation in Kenya" },
       },

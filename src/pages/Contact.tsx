@@ -67,6 +67,7 @@ const Contact = () => {
       description={`Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay} for drip kits, driplines and irrigation supplies in Kenya. Email ${SITE_COMPANY.email}. Nairobi-based, nationwide delivery.`}
       keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0723407849, 0757716018"
       url="https://www.dripstech.co.ke/contact"
+      image={`${SITE_COMPANY.url}/seed-products/plant_drip.jpg`}
       schema={[buildLocalBusinessSchema(), buildContactPageSchema()]}
     />
     <div className="min-h-screen bg-background text-foreground">
