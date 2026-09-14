@@ -45,6 +45,7 @@ const SEOContentPage = () => {
         title={page.title}
         description={page.description}
         url={pageUrl}
+        image={page.image ? `${SITE_COMPANY.url}${page.image}` : undefined}
         schema={[
           buildLocalBusinessSchema(),
           breadcrumbSchema,

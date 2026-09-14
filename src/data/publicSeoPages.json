@@ -44,7 +44,8 @@
         "label": "See installation and service support",
         "href": "/services"
       }
-    ]
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
   },
   {
     "slug": "drip-irrigation-kit-price-kenya",
@@ -90,7 +91,8 @@
         "label": "Request irrigation guidance",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "/seed-products/drip1.jpg"
   },
   {
     "slug": "driplines-for-sale-kenya",
@@ -136,7 +138,8 @@
         "label": "View irrigation accessories",
         "href": "/products/accessories"
       }
-    ]
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
   },
   {
     "slug": "sprinkler-systems-kenya",
@@ -182,7 +185,8 @@
         "label": "Talk to the irrigation team",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "/seed-products/sprinkler.jpg"
   },
   {
     "slug": "irrigation-companies-kenya",
@@ -234,7 +238,8 @@
         "label": "See installation and service support",
         "href": "/services"
       }
-    ]
+    ],
+    "image": "/seed-products/field_drip.jpg"
   },
   {
     "slug": "solar-irrigation-pumps-kenya",
@@ -279,7 +284,8 @@
         "label": "Request irrigation guidance",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "/seed-products/solar_panel.jpg"
   },
   {
     "slug": "borehole-water-pumps-kenya",
@@ -324,7 +330,8 @@
         "label": "Request irrigation guidance",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "/seed-products/water1.jpg"
   },
   {
     "slug": "water-storage-tanks-kenya",
@@ -369,7 +376,8 @@
         "label": "Request irrigation guidance",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "/seed-products/water_tank.jpg"
   },
   {
     "slug": "greenhouse-drip-irrigation-kenya",
@@ -414,7 +422,8 @@
         "label": "Request irrigation guidance",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "/seed-products/greenhouse.jpg"
   },
   {
     "slug": "fertigation-systems-kenya",
@@ -459,6 +468,7 @@
         "label": "Request irrigation guidance",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "/seed-products/plant_drip.jpg"
   }
 ]
