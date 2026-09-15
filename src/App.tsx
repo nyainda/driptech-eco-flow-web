@@ -32,6 +32,7 @@ const BlogPage = lazy(() => import("@/components/Home/BlogPage"));
 const BlogPostPage = lazy(() => import("@/components/Home/BlogPostPage"));
 const VideoSection = lazy(() => import("./components/Home/VideoSection"));
 const VisitorTracker = lazy(() => import("./components/Analytics/VisitorTracker"));
+const WhatsAppClickTracker = lazy(() => import("./components/Analytics/WhatsAppClickTracker"));
 const ScrollToTop = lazy(() => import("@/components/common/ScrollToTop"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -69,6 +70,7 @@ const App = () => {
               }}
             >
               <VisitorTracker />
+              <WhatsAppClickTracker />
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>
                   {/* Main pages */}

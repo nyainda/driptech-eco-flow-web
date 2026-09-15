@@ -13,6 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageCircle, Check, Package, Droplets, Filter, Gauge, Settings, X, ChevronRight, Wrench } from 'lucide-react';
 import { dataService } from '@/services/dataService';
+import { openTrackedWhatsApp } from '@/lib/whatsappAnalytics';
 
 interface Variant {
   name: string;
@@ -209,7 +210,7 @@ const WhatsAppContact = ({
     const message = generateWhatsAppMessage();
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
+    openTrackedWhatsApp(whatsappUrl, 'WhatsApp contact widget');
     setIsDialogOpen(false);
   };
 

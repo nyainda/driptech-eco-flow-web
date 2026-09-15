@@ -38,6 +38,7 @@ import { Team } from "./tables/team";
 import { Variants } from "./tables/variants";
 import { Videos } from "./tables/videos";
 import { VisitorSessions } from "./tables/visitor_sessions";
+import { WhatsAppClickEvents } from "./tables/whatsapp_click_events";
 
 import { UserRoles } from "./tables/user_roles"; // Add this import
 import { AnalyticsPopularPages } from "./views/analytics_popular_pages";
@@ -80,6 +81,7 @@ export type Database = {
       variants: Variants;
       videos: Videos;
       visitor_sessions: VisitorSessions;
+      whatsapp_click_events: WhatsAppClickEvents;
       user_roles: UserRoles; // Add this line
     };
     Views: {

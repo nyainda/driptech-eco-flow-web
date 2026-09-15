@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Loader2, Check } from 'lucide-react';
 import { useWhatsAppProducts } from '@/hooks/useWhatsAppProducts';
+import { openTrackedWhatsApp } from '@/lib/whatsappAnalytics';
 import {
   Dialog,
   DialogContent,
@@ -78,7 +79,7 @@ export const WhatsAppProductButton = ({
     message += "Thank you! 💧";
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    openTrackedWhatsApp(whatsappUrl, 'product inquiry builder');
     setOpen(false);
     setSelectedProducts([]);
   };

@@ -66,6 +66,7 @@ import { COMMON_FAQS } from "@/lib/seo-config";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { trackSearch } from "@/services/aiProductService";
 import { cn } from "@/lib/utils";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 
 interface Variant {
   name: string;
@@ -865,7 +866,7 @@ const Products = () => {
                   const message = encodeURIComponent(
                     `Hi DripTech Eco Flow! I'm interested in: ${product.name}${hasVariants && selectedVariant ? ` (${selectedVariant.name})` : ''}. Could you provide more information?`
                   );
-                  window.open(`https://wa.me/254114575401?text=${message}`, "_blank");
+                  openTrackedWhatsApp(`https://wa.me/254114575401?text=${message}`, "product card inquiry");
                 }}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md text-sm"
               >
