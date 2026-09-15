@@ -54,6 +54,21 @@ interface MpesaConfig {
   accountType?: "paybill" | "till";
 }
 
+// Older rows in system_settings may have been saved with snake_case
+// keys before the config shape was standardised to camelCase. This
+// type lets the backward-compatibility fallback below read those
+// legacy fields without TypeScript rejecting them as unknown
+// properties of MpesaConfig.
+interface LegacyMpesaConfigFields {
+  consumer_key?: string;
+  consumer_secret?: string;
+  pass_key?: string;
+  business_short_code?: string;
+  callback_url?: string;
+}
+
+type StoredMpesaConfig = MpesaConfig & LegacyMpesaConfigFields;
+
 interface MpesaTransaction {
   id: string;
   phone_number: string;
@@ -98,7 +113,7 @@ const MpesaIntegration = () => {
         return null;
       }
 
-      return data.setting_value as unknown as MpesaConfig;
+      return data.setting_value as unknown as StoredMpesaConfig;
     },
   });
 
@@ -268,9 +283,7 @@ const MpesaIntegration = () => {
           mpesaConfig.callback_url ||
           "https://driptech-eco-flow-web.vercel.app/api/mpesa/callback",
         accountType: mpesaConfig.accountType || "paybill",
-      } as MpesaConfig;
-
-      setConfig(updatedConfig);
+      } as MpesaConfig;      setConfig(updatedConfig);
       setIsEnabled(true);
     }
   }, [mpesaConfig]);

@@ -17,6 +17,7 @@ import { Plus, Edit, Trash2, Upload, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,

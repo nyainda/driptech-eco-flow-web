@@ -39,6 +39,8 @@ import {
   Grid,
   List,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 interface Video {
