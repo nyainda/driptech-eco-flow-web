@@ -37,7 +37,7 @@ interface ProductInteraction {
   additional_data?: any;
 }
 
-export const useVisitorTracking = () => {
+export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {}) => {
   const [visitorId] = useState(() => {
     let id = localStorage.getItem("visitor_id");
     if (!id) {
@@ -59,6 +59,7 @@ export const useVisitorTracking = () => {
   const sessionStartTime = useRef<Date>(new Date());
   const currentPageStartTime = useRef<Date>(new Date());
   const currentPagePath = useRef<string>("");
+  const currentPageViewId = useRef<string | null>(null);
   const isSessionInitialized = useRef<boolean>(false);
   const sessionInitPromise = useRef<Promise<void> | null>(null);
   const hasTrackedExit = useRef<boolean>(false); // Added for session end tracking
@@ -69,6 +70,24 @@ export const useVisitorTracking = () => {
     const totalDuration = Math.floor(
       (sessionEnd.getTime() - sessionStartTime.current.getTime()) / 1000,
     );
+
+    const currentPageDuration = Math.floor(
+      (sessionEnd.getTime() - currentPageStartTime.current.getTime()) / 1000,
+    );
+
+    if (currentPageViewId.current && currentPageDuration >= 0 && currentPageDuration < 3600) {
+      try {
+        const { error } = await supabase
+          .from("page_views")
+          .update({ time_spent: currentPageDuration, exit_page: true })
+          .eq("id", currentPageViewId.current);
+        if (error) {
+          console.error("Error updating final page view:", error);
+        }
+      } catch (updateError) {
+        console.error("Error updating final page view:", updateError);
+      }
+    }
 
     if (totalDuration > 0) {
       try {
@@ -93,7 +112,7 @@ export const useVisitorTracking = () => {
   // Initialize session with better error handling
   useEffect(() => {
     const initSession = async () => {
-      if (isSessionInitialized.current || sessionInitPromise.current) return;
+      if (!enabled || isSessionInitialized.current || sessionInitPromise.current) return;
 
       // Create a promise that resolves when session is ready
       sessionInitPromise.current = (async () => {
@@ -121,7 +140,7 @@ export const useVisitorTracking = () => {
 
           isSessionInitialized.current = true;
         } catch (error) {
-          // Silent failure for session initialization
+          console.error("Unable to start visitor session:", error);
           isSessionInitialized.current = true;
         }
       })();
@@ -132,7 +151,7 @@ export const useVisitorTracking = () => {
     // Add a small delay to ensure DOM is ready
     const timer = setTimeout(initSession, 100);
     return () => clearTimeout(timer);
-  }, [visitorId, sessionId]);
+  }, [enabled, visitorId, sessionId]);
 
   // Clean session end handling
   useEffect(() => {
@@ -155,6 +174,8 @@ export const useVisitorTracking = () => {
   }, [sessionId]);
 
   const trackPageView = async (path: string, title: string) => {
+    if (!enabled) return;
+
     try {
       // Wait for session to be initialized
       if (sessionInitPromise.current) {
@@ -170,23 +191,23 @@ export const useVisitorTracking = () => {
 
         if (timeSpent > 0 && timeSpent < 3600) {
           try {
-            await supabase
+            const { error } = await supabase
               .from("page_views")
               .update({ time_spent: timeSpent })
-              .eq("visitor_id", visitorId)
-              .eq("session_id", sessionId)
-              .eq("page_path", currentPagePath.current)
-              .order("timestamp", { ascending: false })
-              .limit(1);
+              .eq("id", currentPageViewId.current);
+            if (error) {
+              console.error("Unable to update page duration:", error);
+            }
           } catch (updateError) {
-            // Ignore time spent update errors
+            console.error("Unexpected error updating page duration:", updateError);
           }
         }
       }
 
       // Create new page view record
+      const pageViewId = uuidv4();
       const pageViewData = {
-        id: uuidv4(),
+        id: pageViewId,
         visitor_id: visitorId,
         session_id: sessionId,
         page_path: path,
@@ -201,23 +222,17 @@ export const useVisitorTracking = () => {
       const { error } = await supabase.from("page_views").insert(pageViewData);
 
       if (error) {
-        // Silent error
+        console.error("Unable to record page view:", error);
+        return;
       }
 
       // Update current page tracking
       currentPagePath.current = path;
+      currentPageViewId.current = pageViewId;
       currentPageStartTime.current = new Date();
 
-      // Try to increment page views count (ignore if RPC doesn't exist)
-      try {
-        await supabase.rpc("increment_page_views", {
-          visitor_id_param: visitorId,
-        });
-      } catch (rpcError) {
-        // Ignore RPC errors
-      }
     } catch (error) {
-      // Silent error
+      console.error("Unexpected error while recording page view:", error);
     }
   };
 
@@ -226,6 +241,8 @@ export const useVisitorTracking = () => {
     interactionType: string,
     additionalData?: any,
   ) => {
+    if (!enabled) return;
+
     try {
       // Wait for session to be initialized
       if (sessionInitPromise.current) {
@@ -253,10 +270,10 @@ export const useVisitorTracking = () => {
         .insert(interactionData);
 
       if (error) {
-        // Silent error
+        console.error("Unable to record product interaction:", error);
       }
     } catch (error) {
-      // Silent error
+      console.error("Unexpected error while recording product interaction:", error);
     }
   };
 
