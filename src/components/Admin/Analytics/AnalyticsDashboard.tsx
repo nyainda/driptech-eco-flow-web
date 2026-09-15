@@ -155,7 +155,7 @@ const AnalyticsDashboard: React.FC = () => {
 
       // Fetch visitor_ids in pages to correctly count unique visitors
       // Supabase REST default is 1000 rows — we page through to get all
-      let allVisitorIds: { visitor_id: string }[] = [];
+      let allSessions: Array<{ visitor_id: string; session_start: string }> = [];
       let pageOffset = 0;
       const PAGE_SIZE = 5000;
       let hasMore = true;
@@ -163,23 +163,30 @@ const AnalyticsDashboard: React.FC = () => {
       while (hasMore) {
         const { data: page, error: pageError } = await supabase
           .from("visitor_sessions")
-          .select("visitor_id")
+          .select("visitor_id, session_start")
+          .order("session_start", { ascending: true })
           .range(pageOffset, pageOffset + PAGE_SIZE - 1);
 
         if (pageError) {
-          setFetchError(`Visitor data: ${pageError.message}`);
-          break;
+          throw new Error(`Unable to read visitor sessions: ${pageError.message}`);
         }
         if (!page || page.length === 0) {
           hasMore = false;
         } else {
-          allVisitorIds = allVisitorIds.concat(page);
+          allSessions = allSessions.concat(page);
           pageOffset += PAGE_SIZE;
           if (page.length < PAGE_SIZE) hasMore = false;
         }
       }
 
-      const realTotalVisitors = new Set(allVisitorIds.map(v => v.visitor_id)).size;
+      if (sessionCountRes.error) {
+        throw new Error(`Unable to count sessions: ${sessionCountRes.error.message}`);
+      }
+      if (pageViewCountRes.error) {
+        throw new Error(`Unable to count page views: ${pageViewCountRes.error.message}`);
+      }
+
+      const realTotalVisitors = new Set(allSessions.map(session => session.visitor_id)).size;
 
       const lifetimeStats: LifetimeStats = {
         totalVisitors: realTotalVisitors,
@@ -190,7 +197,13 @@ const AnalyticsDashboard: React.FC = () => {
       setLifetimeData(lifetimeStats);
 
       // 2. Period Stats
-      const stats = await fetchPeriodStats(dateRange);
+      const visitorFirstSeen = new Map<string, string>();
+      allSessions.forEach((session) => {
+        if (!visitorFirstSeen.has(session.visitor_id)) {
+          visitorFirstSeen.set(session.visitor_id, session.session_start);
+        }
+      });
+      const stats = await fetchPeriodStats(dateRange, visitorFirstSeen);
       setPeriodData(stats);
 
       setLastUpdated(new Date());
@@ -203,7 +216,10 @@ const AnalyticsDashboard: React.FC = () => {
     }
   };
 
-  const fetchPeriodStats = async (range: string): Promise<PeriodStats> => {
+  const fetchPeriodStats = async (
+    range: string,
+    visitorFirstSeen: Map<string, string>,
+  ): Promise<PeriodStats> => {
     const endDate = new Date();
     const startDate = new Date();
     let isAllTime = false;
@@ -216,7 +232,6 @@ const AnalyticsDashboard: React.FC = () => {
       case "year": startDate.setFullYear(endDate.getFullYear(), 0, 1); break;
       case "all":
         isAllTime = true;
-        startDate.setFullYear(2020);
         break;
     }
 
@@ -241,7 +256,10 @@ const AnalyticsDashboard: React.FC = () => {
           q = q.gte(dateColumn, startDateStr).lte(dateColumn, endDateStr);
         }
         const { data, error } = await q;
-        if (error || !data || data.length === 0) {
+        if (error) {
+          throw new Error(`Unable to read ${table}: ${error.message}`);
+        }
+        if (!data || data.length === 0) {
           more = false;
         } else {
           results = results.concat(data);
@@ -258,10 +276,16 @@ const AnalyticsDashboard: React.FC = () => {
       fetchAllPages("product_interactions", "timestamp"),
     ]);
 
-    return processPeriodData(sessions, pageViews, interactions, range);
+    return processPeriodData(sessions, pageViews, interactions, range, visitorFirstSeen);
   };
 
-  const processPeriodData = (sessions: any[], pageViews: any[], interactions: any[], range: string): PeriodStats => {
+  const processPeriodData = (
+    sessions: any[],
+    pageViews: any[],
+    interactions: any[],
+    range: string,
+    visitorFirstSeen: Map<string, string>,
+  ): PeriodStats => {
     const uniqueVisitors = new Set(sessions.map(s => s.visitor_id)).size;
     const totalSessions = sessions.length;
     const totalPageViews = pageViews.length;
@@ -273,13 +297,15 @@ const AnalyticsDashboard: React.FC = () => {
       : 0;
 
     // Bounce Rate
-    const sessionPageCounts: Record<string, number> = {};
+    const sessionPageCounts: Record<string, number> = Object.fromEntries(
+      sessions.map((session) => [session.id, 0]),
+    );
     pageViews.forEach(pv => {
       sessionPageCounts[pv.session_id] = (sessionPageCounts[pv.session_id] || 0) + 1;
     });
-    const bounces = Object.values(sessionPageCounts).filter(c => c === 1).length;
-    const bounceRate = Object.keys(sessionPageCounts).length > 0
-      ? (bounces / Object.keys(sessionPageCounts).length) * 100
+    const bounces = Object.values(sessionPageCounts).filter(c => c <= 1).length;
+    const bounceRate = totalSessions > 0
+      ? (bounces / totalSessions) * 100
       : 0;
 
     // Pages
@@ -369,19 +395,25 @@ const AnalyticsDashboard: React.FC = () => {
       page_views: 0,
       sessions: 0
     }));
-    // Populate hourly... (simplified for brevity, can enable if needed)
+    sessions.forEach((session) => {
+      hourlyGroups[new Date(session.session_start).getHours()].sessions++;
+    });
+    pageViews.forEach((pageView) => {
+      hourlyGroups[new Date(pageView.timestamp).getHours()].page_views++;
+    });
 
     // Devices
-    const devMap: Record<string, Set<string>> = {};
+    const devMap: Record<string, { sessions: Set<string>; visitors: Set<string> }> = {};
     sessions.forEach(s => {
       const type = s.device_type || 'Unknown';
-      if (!devMap[type]) devMap[type] = new Set();
-      devMap[type].add(s.id); // Counting sessions
+      if (!devMap[type]) devMap[type] = { sessions: new Set(), visitors: new Set() };
+      devMap[type].sessions.add(s.id);
+      devMap[type].visitors.add(s.visitor_id);
     });
-    const deviceBreakdown = Object.entries(devMap).map(([type, set]) => ({
+    const deviceBreakdown = Object.entries(devMap).map(([type, values]) => ({
       device_type: type,
-      total_sessions: set.size,
-      unique_visitors: 0 // placeholder
+      total_sessions: values.sessions.size,
+      unique_visitors: values.visitors.size,
     }));
 
     // Browsers
@@ -408,15 +440,8 @@ const AnalyticsDashboard: React.FC = () => {
       : 0;
 
     // New vs Returning Visitors
-    const visitorFirstSeen = new Map<string, string>();
-    sessions.forEach(s => {
-      if (!visitorFirstSeen.has(s.visitor_id)) {
-        visitorFirstSeen.set(s.visitor_id, s.session_start);
-      }
-    });
-
-    const newVisitorSessions = sessions.filter(s =>
-      s.session_start === visitorFirstSeen.get(s.visitor_id)
+    const newVisitorSessions = sessions.filter((session) =>
+      session.session_start === visitorFirstSeen.get(session.visitor_id),
     );
     const newVisitors = new Set(newVisitorSessions.map(s => s.visitor_id)).size;
     const returningVisitors = uniqueVisitors - newVisitors;
@@ -439,15 +464,6 @@ const AnalyticsDashboard: React.FC = () => {
 
     // Average Time on Site (same as avgDuration but more explicit)
     const avgTimeOnSite = avgDuration;
-
-    console.log('📈 Calculated enhanced metrics:', {
-      pagesPerSession: pagesPerSession.toFixed(2),
-      engagementRate: engagementRate.toFixed(1) + '%',
-      newVisitors,
-      returningVisitors,
-      peakHour: `${peakHour}:00`,
-      peakDay
-    });
 
     return {
       visitors: uniqueVisitors,
@@ -473,7 +489,6 @@ const AnalyticsDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchAnalytics();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange, refreshTrigger]);
 
   // --- Render ---
@@ -499,7 +514,7 @@ const AnalyticsDashboard: React.FC = () => {
             {lastUpdated && !refreshing && (
               <span className="inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full font-medium">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
-                Live · updated {secondsAgo < 5 ? "just now" : `${secondsAgo}s ago`}
+                Updated {secondsAgo < 5 ? "just now" : `${secondsAgo}s ago`}
               </span>
             )}
             {refreshing && (
