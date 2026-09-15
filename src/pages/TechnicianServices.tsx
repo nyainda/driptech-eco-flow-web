@@ -24,6 +24,7 @@ import {
 import { dataService } from "@/services/dataService";
 import { useToast } from "@/hooks/use-toast";
 import ServiceBookingModal from "@/components/Services/ServiceBookingModal";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 
 interface ServiceCategory {
     id: string;
@@ -82,7 +83,7 @@ const TechnicianServices = () => {
         const message = encodeURIComponent(
             `Hi DripTech! I'm interested in booking ${service.name}. Can you help me with the details?`
         );
-        window.open(`https://wa.me/254723407849?text=${message}`, "_blank");
+        openTrackedWhatsApp(`https://wa.me/254723407849?text=${message}`, "technician booking");
     };
 
     const getPricingDisplay = (service: ServiceCategory) => {
@@ -135,7 +136,7 @@ const TechnicianServices = () => {
                             <Button
                                 size="lg"
                                 variant="outline"
-                                onClick={() => window.open("https://wa.me/254723407849", "_blank")}
+                                onClick={() => openTrackedWhatsApp("https://wa.me/254723407849", "technician support")}
                             >
                                 <Phone className="mr-2 h-5 w-5" />
                                 Call Now: 0757 716 018
