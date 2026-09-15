@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -43,6 +44,18 @@ const formatDuration = (seconds?: number) => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
+// Extracts a YouTube video ID from a full URL. Module-level (not inside any
+// one component) because VideoCard, VideoModal, and VideoSection are three
+// separate sibling components that all need it — it was previously defined
+// only inside VideoSection, which meant VideoCard and VideoModal referenced
+// an out-of-scope name and threw "getYouTubeVideoId is not defined" at
+// runtime the moment a YouTube video rendered.
+const getYouTubeVideoId = (url: string) => {
+  const regex =
+    /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
+  return url.match(regex)?.[1] || null;
 };
 
 // Skeleton component for loading state
@@ -395,11 +408,7 @@ const VideoSection = () => {
     },
   });
 
-  const getYouTubeVideoId = (url: string) => {
-    const regex =
-      /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/;
-    return url.match(regex)?.[1] || null;
-  };
+
 
   const handleCopyLink = async (video: Video) => {
     try {

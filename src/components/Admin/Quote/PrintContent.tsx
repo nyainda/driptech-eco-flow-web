@@ -1,4 +1,4 @@
-import { COMPANY, getLogoUrl, LOGO_SVG_MARK } from "../shared/companyBrand";
+import { COMPANY, getLogoUrl } from "../shared/companyBrand";
 // components/PrintContent.ts
 import { Quote, QuoteItem, Customer } from "./types";
 

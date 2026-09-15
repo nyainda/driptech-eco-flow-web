@@ -256,6 +256,16 @@ const IrrigationKitsManagement = () => {
       setError("Valid price is required");
       return;
     }
+    if (
+      formData.description &&
+      formData.description.trim().length > 0 &&
+      formData.description.trim().length < 40
+    ) {
+      setError(
+        "Description is too short (minimum 40 characters) — write a real one, or leave it blank rather than a placeholder.",
+      );
+      return;
+    }
 
     setLoading(true);
     setError(null);
