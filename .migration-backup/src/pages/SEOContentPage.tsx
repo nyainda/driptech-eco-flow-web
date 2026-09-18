@@ -122,7 +122,7 @@ const SEOContentPage = () => {
                   Need help matching equipment to your farm? Send the crop, acreage and water source for practical guidance.
                 </p>
                 <a
-                  href="https://wa.me/254757716018"
+                  href="https://wa.me/254723407849"
                   className="dt-btn-whatsapp mt-4 inline-flex w-full justify-center"
                   target="_blank"
                   rel="noreferrer"

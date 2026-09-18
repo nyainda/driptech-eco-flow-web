@@ -51,7 +51,8 @@ supabase db push
 
 1. Click **"Configure"** button
 2. Fill in:
-   - Business Phone: `254757716018`
+   - Primary Business Phone: `254723407849`
+   - Secondary Business Phone: `254757716018`
    - Business Name: `DripTech EcoFlow`
    - Provider: `Twilio` (recommended)
 3. Click **"Save"**

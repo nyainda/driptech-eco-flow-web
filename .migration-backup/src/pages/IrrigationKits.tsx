@@ -359,7 +359,7 @@ const IrrigationKits = () => {
       <SEOHead
         title="Drip Irrigation Kit Prices Kenya (1/8, 1/4, 1/2, 1 Acre) | DripTech Eco Flow"
         description="Buy drip irrigation kits in Kenya for 1/8 acre, 1/4 acre, 1/2 acre and 1 acre farms. Complete kits with driplines, filters, fittings and installation support. Call 0723 407 849 / 0757 716 018. Transparent pricing, nationwide delivery."
-        keywords="drip irrigation kit price kenya, 1 acre drip irrigation kit, 1/4 acre drip kit, 1/2 acre drip kit, buy drip irrigation kit online kenya, irrigation kits for sale kenya, drip kit for tomatoes kenya, drip kit for onions kenya, 0757716018, drip irrigation contact Kenya"
+        keywords="drip irrigation kit price kenya, 1 acre drip irrigation kit, 1/4 acre drip kit, 1/2 acre drip kit, buy drip irrigation kit online kenya, irrigation kits for sale kenya, drip kit for tomatoes kenya, drip kit for onions kenya, 0723407849, 0757716018, drip irrigation contact Kenya"
         url="https://www.dripstech.co.ke/irrigation-kits"
         image="https://www.dripstech.co.ke/seed-products/drip3.jpg"
         type="product"
@@ -848,7 +848,7 @@ const IrrigationKits = () => {
 
                           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                             <a
-                              href={`https://wa.me/254757716018?text=${encodeURIComponent(
+                              href={`https://wa.me/254723407849?text=${encodeURIComponent(
                                 `Hi DripTech — I'm interested in the ${kit.name} kit. Please share price and availability.`,
                               )}`}
                               target="_blank"
@@ -1157,7 +1157,7 @@ const IrrigationKits = () => {
                                 Request Quote
                               </Button>
                             </a>
-                            <a href="tel:0757716018" className="w-full">
+                            <a href="tel:0723407849" className="w-full">
                               <Button
                                 variant="outline"
                                 className="w-full border-border text-muted-foreground hover:bg-gray-100 dark:hover:bg-muted hover:text-gray-800 dark:hover:text-foreground"
@@ -1307,7 +1307,7 @@ const IrrigationKits = () => {
                           className="bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
                         >
                           <Phone className="h-5 w-5 mr-2" />
-                          Call 0757716018
+                          Call 0723407849
                         </Button>
                         <Button
                           variant="outline"

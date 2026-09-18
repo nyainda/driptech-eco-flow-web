@@ -66,7 +66,7 @@ serve(async (req) => {
           
           <p>Best regards,<br>DripTech Team</p>
         `
-                smsMessage = `DripTech: Your booking ${booking.booking_number} has been received. We'll contact you within 2 hours. Call 0757716018 for urgent matters.`
+                smsMessage = `DripTech: Your booking ${booking.booking_number} has been received. We'll contact you within 2 hours. Call 0723407849 for urgent matters.`
                 break
 
             case 'technician_assigned':

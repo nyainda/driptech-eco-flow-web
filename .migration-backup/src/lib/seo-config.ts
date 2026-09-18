@@ -8,7 +8,7 @@ export const SEO_CONFIG = {
     defaultDescription: "Drip irrigation kits, driplines, sprinklers, pumps and filters for farms in Kenya. Sizing help, supply and installation across the country.",
     defaultImage: "https://images.unsplash.com/photo-1574263867128-a3d5c1b1deac?w=1200&h=630&fit=crop",
     twitterHandle: "@driptech_eco",
-    phone: "+254757716018",
+    phone: "+254723407849",
     email: "driptech2025@gmail.com",
     address: {
         street: "Nairobi Industrial Area",

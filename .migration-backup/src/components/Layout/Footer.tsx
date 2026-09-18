@@ -99,13 +99,13 @@ const Footer = () => {
                 <div className="text-sm text-muted-foreground">
                   <div className="flex items-center gap-2 mb-1">
                     <a
-                      href="tel:0757716018"
+                      href="tel:0723407849"
                       className="hover:text-foreground transition-colors"
                     >
-                      0757716018
+                      0723407849
                     </a>
                     <a
-                      href="https://wa.me/254757716018"
+                      href="https://wa.me/254723407849"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"
@@ -115,10 +115,10 @@ const Footer = () => {
                   </div>
                   <div className="flex items-center gap-2 mb-1">
                     <a
-                      href="tel:0723407849"
+                      href="tel:0757716018"
                       className="hover:text-foreground transition-colors"
                     >
-                      0723407849
+                      0757716018
                     </a>
                     <a
                       href="https://wa.me/254757716018"

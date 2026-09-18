@@ -24,14 +24,22 @@ const Contact = () => {
       icon: Phone,
       title: "Call Us",
       subtitle: "Speak with our irrigation experts",
-      details: ["0757716018"],
-      action: "tel:0757716018",
+      details: ["0723407849"],
+      action: "tel:0723407849",
       actionText: "Call Now",
     },
     {
       icon: MessageCircle,
       title: "WhatsApp",
       subtitle: "Quick responses & support",
+      details: ["0723407849"],
+      action: "https://wa.me/254723407849",
+      actionText: "Chat on WhatsApp",
+    },
+    {
+      icon: MessageCircle,
+      title: "WhatsApp (Secondary)",
+      subtitle: "Alternative WhatsApp line",
       details: ["0757716018"],
       action: "https://wa.me/254757716018",
       actionText: "Chat on WhatsApp",
@@ -65,7 +73,7 @@ const Contact = () => {
     <SEOHead
       title={`Contact ${SITE_COMPANY.name} | Call ${SITE_COMPANY.phonePrimaryDisplay} | Drip Irrigation Kenya`}
       description={`Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay} for drip kits, driplines and irrigation supplies in Kenya. Email ${SITE_COMPANY.email}. Nairobi-based, nationwide delivery.`}
-      keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0757716018"
+      keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0723407849, 0757716018"
       url="https://www.dripstech.co.ke/contact"
       image={`${SITE_COMPANY.url}/seed-products/plant_drip.jpg`}
       schema={[buildLocalBusinessSchema(), buildContactPageSchema()]}
@@ -298,7 +306,7 @@ const Contact = () => {
                           Get Directions <ArrowRight className="h-3 w-3 ml-1" />
                         </a>
                         <a
-                          href="https://wa.me/254757716018?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
+                          href="https://wa.me/254723407849?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full hover:bg-muted/50 transition-colors"

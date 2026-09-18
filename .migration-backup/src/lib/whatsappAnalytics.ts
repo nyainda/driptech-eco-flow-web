@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/integrations/supabase/client";
 
-const BUSINESS_WHATSAPP_NUMBERS = new Set(["254757716018"]);
+const BUSINESS_WHATSAPP_NUMBERS = new Set(["254723407849", "254757716018"]);
 
 const getOrCreateId = (storage: Storage, key: string) => {
   let id = storage.getItem(key);

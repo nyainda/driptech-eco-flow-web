@@ -415,10 +415,10 @@ const Privacy = () => {
                       <div>
                         <p className="font-medium">Phone</p>
                         <a
-                          href="tel:0757716018"
+                          href="tel:0723407849"
                           className="text-primary hover:underline"
                         >
-                          0757716018
+                          0723407849
                         </a>
                       </div>
                     </div>

@@ -3,7 +3,7 @@
 export const COMPANY = {
   name: "DripTech Eco Flow",
   tagline: "Smart Irrigation Systems",
-  phone: "0757716018 / 0723407849",
+  phone: "0723407849 / 0757716018",
   email: "info@dripstech.co.ke",
   emailAlt: "driptechs.info@gmail.com",
   address: "Nairobi, Kenya",
