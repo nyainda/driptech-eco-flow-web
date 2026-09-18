@@ -24,7 +24,7 @@ interface WhatsAppProductButtonProps {
 }
 
 export const WhatsAppProductButton = ({
-  whatsappNumber = '254723407849',
+  whatsappNumber = '254757716018',
   variant = 'default',
   size = 'default',
   className = '',

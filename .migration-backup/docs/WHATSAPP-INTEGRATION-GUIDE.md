@@ -158,7 +158,7 @@ supabase db push
 
 1. Click **"Configure"** button
 2. Fill in your details:
-   - **Business Phone Number:** Your WhatsApp number (e.g., 254114575401)
+   - **Business Phone Number:** Your WhatsApp number (e.g., 254757716018)
    - **Business Name:** DripTech EcoFlow
    - **Provider:** Choose your provider
    - **API Key:** From your provider

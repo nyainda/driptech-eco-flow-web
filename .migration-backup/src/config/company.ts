@@ -11,8 +11,8 @@ export const SITE_COMPANY = {
   email: "info@dripstech.co.ke",
   emailAlt: "driptechs.info@gmail.com",
   /** Primary click-to-call / WhatsApp line */
-  phonePrimary: "+254723407849",
-  phonePrimaryDisplay: "0723 407 849",
+  phonePrimary: "+254757716018",
+  phonePrimaryDisplay: "0757 716 018",
   /** Secondary line */
   phoneSecondary: "+254794494515",
   phoneSecondaryDisplay: "0794 494 515",

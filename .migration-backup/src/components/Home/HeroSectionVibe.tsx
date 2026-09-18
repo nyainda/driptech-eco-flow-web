@@ -36,7 +36,7 @@ export default function HeroSectionVibe() {
               Browse products <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
-              href="https://wa.me/254723407849?text=Hi%20DripTech%20%E2%80%94%20I%20need%20help%20choosing%20irrigation%20equipment."
+              href="https://wa.me/254757716018?text=Hi%20DripTech%20%E2%80%94%20I%20need%20help%20choosing%20irrigation%20equipment."
               target="_blank"
               rel="noreferrer"
               className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-[hsl(var(--dt-whatsapp))] px-5 py-2.5 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-lg"

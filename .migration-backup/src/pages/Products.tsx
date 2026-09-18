@@ -866,7 +866,7 @@ const Products = () => {
                   const message = encodeURIComponent(
                     `Hi DripTech Eco Flow! I'm interested in: ${product.name}${hasVariants && selectedVariant ? ` (${selectedVariant.name})` : ''}. Could you provide more information?`
                   );
-                  openTrackedWhatsApp(`https://wa.me/254114575401?text=${message}`, "product card inquiry");
+                  openTrackedWhatsApp(`https://wa.me/254757716018?text=${message}`, "product card inquiry");
                 }}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md text-sm"
               >

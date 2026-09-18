@@ -102,7 +102,7 @@ const WhatsAppManagement = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const [config, setConfig] = useState<WhatsAppConfig>({
-        business_phone_number: "254723407849",
+        business_phone_number: "254757716018",
         business_name: "DripTech EcoFlow",
         provider: "twilio",
         is_active: false,
@@ -383,7 +383,7 @@ const WhatsAppManagement = () => {
                                                     business_phone_number: e.target.value,
                                                 }))
                                             }
-                                            placeholder="254114575401"
+                                            placeholder="254757716018"
                                         />
                                     </div>
                                     <div className="space-y-2">

@@ -35,7 +35,7 @@ const HomeOfferings = () => (
               View irrigation kits <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
-              href="https://wa.me/254723407849?text=Hi%20DripTech%20%E2%80%94%20please%20help%20me%20choose%20an%20irrigation%20kit."
+              href="https://wa.me/254757716018?text=Hi%20DripTech%20%E2%80%94%20please%20help%20me%20choose%20an%20irrigation%20kit."
               target="_blank"
               rel="noreferrer"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border border-[hsl(var(--dt-whatsapp)/0.35)] px-5 py-2.5 text-sm font-semibold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.08)]"

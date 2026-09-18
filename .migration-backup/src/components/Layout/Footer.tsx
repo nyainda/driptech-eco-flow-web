@@ -105,7 +105,7 @@ const Footer = () => {
                       0757716018
                     </a>
                     <a
-                      href="https://wa.me/254723407849"
+                      href="https://wa.me/254757716018"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"
@@ -121,7 +121,7 @@ const Footer = () => {
                       0723407849
                     </a>
                     <a
-                      href="https://wa.me/254723407849"
+                      href="https://wa.me/254757716018"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"

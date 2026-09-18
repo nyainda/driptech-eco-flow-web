@@ -711,7 +711,7 @@ const ProductsShowcase = ({
               <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
                 {/* WhatsApp — primary, green */}
                 <a
-                  href={`https://wa.me/254723407849?text=${encodeURIComponent(`Hi DripTech — I'm interested in ${product.name}. Please share price and availability.`)}`}
+                  href={`https://wa.me/254757716018?text=${encodeURIComponent(`Hi DripTech — I'm interested in ${product.name}. Please share price and availability.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`WhatsApp inquiry for ${product.name}`}

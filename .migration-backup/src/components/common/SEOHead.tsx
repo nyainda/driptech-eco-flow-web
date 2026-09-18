@@ -6,6 +6,7 @@ interface SEOHeadProps {
   description?: string;
   keywords?: string;
   image?: string;
+  imageAlt?: string;
   url?: string;
   type?: "website" | "article" | "product";
   author?: string;
@@ -19,6 +20,7 @@ export default function SEOHead({
   description = "Drip irrigation kits, driplines, sprinklers, pumps and filters for Kenyan farms. Help with sizing, supply and installation.",
   keywords = "drip irrigation kenya, smart irrigation systems, irrigation kits prices kenya, water pumps for farming, sprinkler systems kenya, greenhouse irrigation, drip lines, agricultural water solutions, solar water pumps, precision farming kenya, smallholder irrigation, automated irrigation controller, soil moisture sensors",
   image = `${SITE_COMPANY.url}/driptech-logo.png`,
+  imageAlt = `${SITE_COMPANY.name} irrigation solutions in Kenya`,
   url = SITE_COMPANY.url,
   type = "website",
   author = SITE_COMPANY.name,
@@ -45,6 +47,9 @@ export default function SEOHead({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:alt" content={imageAlt} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content={SITE_COMPANY.name} />
       <meta property="og:locale" content="en_KE" />
 
@@ -60,11 +65,12 @@ export default function SEOHead({
       )}
 
       {/* Twitter */}
-      <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content={url} />
-      <meta property="twitter:title" content={title} />
-      <meta property="twitter:description" content={description} />
-      <meta property="twitter:image" content={image} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:url" content={url} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={image} />
+      <meta name="twitter:image:alt" content={imageAlt} />
 
       {/* Additional SEO Tags */}
       <meta
