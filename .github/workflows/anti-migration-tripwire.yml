@@ -1,0 +1,87 @@
+name: Anti-Migration Tripwire
+
+# This workflow exists because a Replit AI Agent once silently applied a
+# pnpm-workspace monorepo scaffold on top of this project, wiping the real
+# package.json, vite.config.ts, index.html, and vercel.json, and moving the
+# entire real src/ into a .migration-backup/ folder. It went unnoticed until
+# the Vercel build broke (see PR #50 for the fix).
+#
+# This check fails loudly, on every push and PR, if any of the telltale
+# signs of that same kind of takeover show up again. It is intentionally
+# simple and dependency-free so it can never itself be broken by a
+# workspace/tooling migration.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  tripwire:
+    name: Check for unauthorized workspace migration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan for takeover signatures
+        run: |
+          fail=0
+
+          check_exists() {
+            if [ -e "$1" ]; then
+              echo "::error::Found '$1' — $2"
+              fail=1
+            fi
+          }
+
+          check_missing() {
+            if [ ! -e "$1" ]; then
+              echo "::error::Missing '$1' — $2"
+              fail=1
+            fi
+          }
+
+          # Files/directories that should never exist in this repo. Their
+          # presence is a strong signal of a pnpm-workspace/monorepo scaffold
+          # being applied on top of the real app again.
+          check_exists "pnpm-workspace.yaml" "this repo uses npm, not a pnpm workspace"
+          check_exists "pnpm-lock.yaml" "this repo uses package-lock.json, not pnpm"
+          check_exists "bun.lock" "this repo uses npm, not bun"
+          check_exists "lib/db" "unexpected workspace package — real DB access goes through supabase/, not a separate lib/db package"
+          check_exists "artifacts" "unexpected workspace 'artifacts' directory — not part of this app"
+          check_exists ".migration-backup" "a previous migration's backup folder should never be committed — restore it properly and delete this instead"
+          check_exists "replit.md" "generic Replit Agent scaffold file — this project does not use that template"
+          check_exists "tsconfig.base.json" "workspace-style base tsconfig — this project uses tsconfig.app.json/tsconfig.node.json directly"
+
+          # Files/directories that must always exist for the real app to
+          # build and deploy correctly.
+          check_missing "vite.config.ts" "the real Vite config is missing — the app cannot build without it"
+          check_missing "index.html" "the real app entry point is missing"
+          check_missing "vercel.json" "deploy headers and SPA routing rewrites are missing"
+          check_missing "src/main.tsx" "the real app source is missing — has it been moved into a backup folder again?"
+          check_missing "package-lock.json" "the npm lockfile is missing"
+
+          # The root package.json must be the real app's package.json, not a
+          # generic workspace shell.
+          if [ -f package.json ]; then
+            pkg_name=$(node -p "require('./package.json').name" 2>/dev/null || echo "")
+            if [ "$pkg_name" = "workspace" ]; then
+              echo "::error::package.json 'name' is 'workspace' — this looks like a generic scaffold, not the real DripTech app package.json (should be 'driptech')"
+              fail=1
+            fi
+            if ! node -p "require('./package.json').scripts.build" 2>/dev/null | grep -q "vite build"; then
+              echo "::error::package.json build script no longer calls 'vite build' — has the build pipeline been replaced?"
+              fail=1
+            fi
+          fi
+
+          if [ "$fail" = "1" ]; then
+            echo ""
+            echo "::error::One or more signs of an unauthorized workspace migration were detected."
+            echo "::error::If this is intentional, a human must update this tripwire (.github/workflows/anti-migration-tripwire.yml) in the same PR, with a clear explanation of why."
+            exit 1
+          fi
+
+          echo "No takeover signatures found — repo structure looks correct."
