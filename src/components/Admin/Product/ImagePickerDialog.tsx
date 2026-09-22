@@ -109,9 +109,26 @@ const ImagePickerDialog = ({
     if (selected.length === 0) return;
     setSaving(true);
     try {
+      // Re-host every selected image on our own storage before saving it --
+      // never write the original external URL directly onto the product.
+      // See product-image-rehost: writing raw search-result URLs here is
+      // exactly what caused most of the catalog's images to be hotlinked
+      // from Amazon/Home Depot/etc.
+      const rehostedUrls: string[] = [];
+      for (const originalUrl of selected) {
+        const { data, error: rehostError } = await supabase.functions.invoke(
+          "product-image-rehost",
+          { body: { url: originalUrl, filename_hint: productName } },
+        );
+        if (rehostError || data?.error) {
+          throw new Error(data?.error || rehostError?.message || "Re-hosting failed");
+        }
+        rehostedUrls.push(data.url);
+      }
+
       const nextImages = [
-        ...selected,
-        ...(existingImages || []).filter((i) => !selected.includes(i)),
+        ...rehostedUrls,
+        ...(existingImages || []).filter((i) => !rehostedUrls.includes(i)),
       ];
       const { error: updateError } = await supabase
         .from("products")
@@ -120,7 +137,7 @@ const ImagePickerDialog = ({
       if (updateError) throw updateError;
       toast({
         title: selected.length === 1 ? "Image saved" : `${selected.length} images saved`,
-        description: "Photo(s) assigned to this product.",
+        description: "Photo(s) downloaded and hosted on our own storage, then assigned to this product.",
       });
       onSaved?.();
       onOpenChange(false);

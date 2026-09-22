@@ -115,9 +115,23 @@ const ProjectImagePickerDialog = ({
     if (selected.length === 0) return;
     setSaving(true);
     try {
+      // Re-host every selected image on our own storage before saving it --
+      // never write the original external URL directly onto the project.
+      const rehostedUrls: string[] = [];
+      for (const originalUrl of selected) {
+        const { data, error: rehostError } = await supabase.functions.invoke(
+          "product-image-rehost",
+          { body: { url: originalUrl, filename_hint: projectName } },
+        );
+        if (rehostError || data?.error) {
+          throw new Error(data?.error || rehostError?.message || "Re-hosting failed");
+        }
+        rehostedUrls.push(data.url);
+      }
+
       const nextImages = [
-        ...selected,
-        ...(existingImages || []).filter((i) => !selected.includes(i)),
+        ...rehostedUrls,
+        ...(existingImages || []).filter((i) => !rehostedUrls.includes(i)),
       ];
       const { error: updateError } = await supabase
         .from("projects")
@@ -126,7 +140,7 @@ const ProjectImagePickerDialog = ({
       if (updateError) throw updateError;
       toast({
         title: selected.length === 1 ? "Image saved" : `${selected.length} images saved`,
-        description: "Photo(s) assigned to this project.",
+        description: "Photo(s) downloaded and hosted on our own storage, then assigned to this project.",
       });
       onSaved?.();
       onOpenChange(false);
