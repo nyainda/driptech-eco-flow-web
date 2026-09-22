@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
@@ -9,7 +9,13 @@ import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 type SeoPage = (typeof pages)[number];
 
 const SEOContentPage = () => {
-  const { slug } = useParams<{ slug: string }>();
+  // These landing pages are registered in App.tsx as fixed literal routes
+  // (e.g. "/drip-irrigation-kenya"), not a dynamic "/:slug" route, so
+  // useParams() has nothing to return here -- it was always undefined,
+  // which meant every one of these pages rendered "Page not found"
+  // regardless of the real slug in the URL. Derive it from the path instead.
+  const location = useLocation();
+  const slug = location.pathname.replace(/^\/+|\/+$/g, "");
   const page = pages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
 
   if (!page) {

@@ -216,6 +216,18 @@ const ProductsShowcase = ({
     }
   };
 
+  // Same slug pattern as pages/Products.tsx (getProductSlug/slugify), so
+  // Details links here actually resolve to the individual product page
+  // instead of only the category page.
+  const slugifyName = (value: string) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  const getProductDetailSlug = (product: Product) =>
+    `${slugifyName(product.name)}-${product.id.slice(0, 8)}`;
+
   const getCategoryRoute = (category: string) => {
     switch (category) {
       case "drip_irrigation":
@@ -725,7 +737,7 @@ const ProductsShowcase = ({
 
                 {/* Details + Quote share one cell on mobile */}
                 <div className="col-span-1 grid grid-cols-2 gap-1.5 sm:contents">
-                  <Link to={`/products/${categoryRoute}`} className="sm:col-span-1">
+                  <Link to={`/products/${categoryRoute}/${getProductDetailSlug(product)}`} className="sm:col-span-1">
                     <div className="flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-border bg-background py-2 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5 active:scale-95 sm:gap-1.5 sm:py-3">
                       <Eye className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
                       <span className="text-[9px] font-bold leading-none tracking-wide text-muted-foreground sm:text-[10px]">Details</span>
