@@ -1,6 +1,7 @@
 import { MapPin, Phone, Mail, ArrowUpRight, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import NewsletterSubscription from "@/components/Newsletter/NewsletterSubscription";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 
 const footerGroups = [
   { title: "Products", links: [
@@ -43,9 +44,9 @@ const Footer = () => {
               <a className="flex items-center gap-3 transition-colors hover:text-primary" href="tel:0723407849"><Phone className="h-4 w-4 shrink-0 text-primary" />0723 407 849</a>
               <a className="flex items-center gap-3 transition-colors hover:text-primary" href="mailto:info@dripstech.co.ke"><Mail className="h-4 w-4 shrink-0 text-primary" />info@dripstech.co.ke</a>
             </div>
-            <a href="https://wa.me/254723407849" target="_blank" rel="noreferrer" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-[hsl(var(--whatsapp))] px-4 text-sm font-semibold text-white transition-colors hover:bg-[hsl(var(--whatsapp)/0.9)]">
+            <button type="button" onClick={() => openTrackedWhatsApp("https://wa.me/254723407849?text=Hi%20DripTech%20Eco%20Flow%2C%20I%20would%20like%20help%20with%20an%20irrigation%20solution.", "footer WhatsApp inquiry")} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-[hsl(var(--whatsapp))] px-4 text-sm font-semibold text-white transition-colors hover:bg-[hsl(var(--whatsapp)/0.9)]">
               <MessageCircle className="h-4 w-4" />Chat on WhatsApp <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
+            </button>
           </div>
 
           {footerGroups.map((group) => (

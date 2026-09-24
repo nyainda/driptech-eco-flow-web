@@ -522,6 +522,16 @@
     --shadow-card:  none;
     --shadow-float: 0 4px 12px 0 hsl(0 0% 0% / 0.4);
 
+    /* Keep the public editorial surfaces semantic in dark mode too. */
+    --ink:                     var(--dt-stone-50);
+    --paper:                   20 5% 9%;
+    --teal:                    var(--dt-green-400);
+    --gold:                    var(--dt-gold-400);
+    --surface:                 20 5% 13%;
+    --brand-dark:              var(--dt-stone-50);
+    --brand-light:             20 5% 18%;
+    --whatsapp:                var(--dt-whatsapp);
+
     --sidebar-background:           20 5% 9%;
     --sidebar-foreground:           var(--dt-stone-100);
     --sidebar-primary:              var(--dt-green-400);

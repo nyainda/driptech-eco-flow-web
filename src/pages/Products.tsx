@@ -1678,7 +1678,7 @@ const Products = () => {
           ]}
         />
         <Header />
-        <main className="flex-1">
+        <main className="flex-1" id="main-content" tabIndex={-1}>
           <div className="dt-container py-6">
             <nav className="text-sm text-muted-foreground" aria-label="Breadcrumb">
               <Link to="/" className="hover:text-primary hover:underline">Home</Link>
@@ -1692,11 +1692,21 @@ const Products = () => {
           </div>
           <section className="dt-section pt-0">
             <div className="dt-container">
-              <h1 className="dt-section-title max-w-4xl">{detailProduct.name}</h1>
-              <p className="dt-section-subtitle mt-3 max-w-3xl">
-                {detailDescription}
-              </p>
-              <div className="mt-8 dt-card p-4 sm:p-8">
+              <div className="border-b border-border pb-7 sm:pb-9">
+                <p className="storefront-eyebrow">{categoryLabel}</p>
+                <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                  <div>
+                    <h1 className="storefront-heading max-w-4xl text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{detailProduct.name}</h1>
+                    <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">{detailDescription}</p>
+                  </div>
+                  <div className="min-w-[220px] border-l-0 border-border lg:border-l lg:pl-7">
+                    <p className="font-mono text-xl font-bold text-foreground sm:text-2xl">{formatPrice(detailPrice)}</p>
+                    <p className={`mt-1 text-sm font-medium ${detailProduct.in_stock ? "text-primary" : "text-muted-foreground"}`}>{detailProduct.in_stock ? "In stock — confirm delivery" : "Contact us for availability"}</p>
+                    <WhatsAppContact currentProduct={{ name: detailProduct.name, model_number: detailProduct.model_number }} variant="button" className="mt-4 w-full rounded-md shadow-none" />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8 border border-border bg-card p-4 sm:p-8">
                 <ProductDetailModal product={detailProduct} />
               </div>
             </div>
