@@ -554,14 +554,14 @@ const Products = () => {
         category={product.category}
         className="h-full"
       >
-        <Card className="group h-full flex flex-col bg-background border-border hover:border-primary/50 shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
+        <Card className="group h-full flex flex-col bg-card border-border hover:border-primary/60 shadow-none transition-colors duration-200 overflow-hidden rounded-[10px]">
           <CardHeader className="p-0 relative">
-            <div className="relative aspect-[4/3] bg-gradient-to-br from-muted to-muted/50 overflow-hidden">
+            <div className="relative aspect-square bg-[hsl(var(--surface))] overflow-hidden">
               {product.images && product.images[0] ? (
                 <OptimizedImage
                   src={product.images[0]}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-contain p-4 group-hover:scale-[1.03] transition-transform duration-300"
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   priority={false}
@@ -572,9 +572,6 @@ const Products = () => {
                 </div>
               )}
 
-              {/* Gradient overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
               {/* Badges with better positioning */}
               <div className="absolute top-3 left-3 flex flex-col gap-2">
                 {product.featured && (
@@ -584,7 +581,7 @@ const Products = () => {
                   </Badge>
                 )}
                 {isInStock && (
-                  <Badge className="bg-green-600/90 backdrop-blur-sm text-white border-0 shadow-lg">
+                  <Badge className="bg-primary/90 text-primary-foreground border-0 shadow-none">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     In Stock
                   </Badge>
@@ -654,7 +651,7 @@ const Products = () => {
             </div>
           </CardHeader>
 
-          <CardContent className="p-5 flex-1 flex flex-col">
+          <CardContent className="p-4 sm:p-5 flex-1 flex flex-col">
             <div className="flex-1 flex flex-col gap-3">
               {/* Category badges */}
               <div className="flex items-center gap-2 flex-wrap">
@@ -674,7 +671,7 @@ const Products = () => {
               </div>
 
               {/* Product name - fixed 2-line height for uniform cards */}
-              <h3 className="text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[2.75rem] sm:min-h-[3.25rem] leading-snug">
+              <h3 className="font-heading text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[2.75rem] sm:min-h-[3.25rem] leading-snug">
                 {product.name}
               </h3>
 
@@ -821,7 +818,7 @@ const Products = () => {
               )}
 
               <div className="mt-auto flex flex-row items-center justify-between gap-2 pt-3 border-t border-border/40">
-                <div className="text-lg sm:text-xl font-bold text-primary">
+                <div className="font-mono text-base sm:text-lg font-bold text-foreground">
                   {hasVariants &&
                     variantPriceRange &&
                     variantPriceRange.min !== variantPriceRange.max
@@ -853,7 +850,7 @@ const Products = () => {
             <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-border mt-3">
                   <Button
                     asChild
-                    className="flex-1 bg-muted/30 text-foreground border-border hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md text-sm"
+                    className="flex-1 bg-transparent text-foreground border border-border hover:bg-muted rounded-md shadow-none text-sm"
                   >
                     <Link to={getProductPath(product)}>
                     View Details
@@ -868,7 +865,7 @@ const Products = () => {
                   );
                   openTrackedWhatsApp(`https://wa.me/254723407849?text=${message}`, "product card inquiry");
                 }}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md text-sm"
+                className="flex-1 bg-[hsl(var(--whatsapp))] hover:bg-[hsl(var(--whatsapp)/0.9)] text-white rounded-md shadow-none text-sm"
               >
                 <span className="mr-2">💬</span>
                 WhatsApp Inquiry
@@ -1681,7 +1678,7 @@ const Products = () => {
           ]}
         />
         <Header />
-        <main className="flex-1">
+        <main className="flex-1" id="main-content" tabIndex={-1}>
           <div className="dt-container py-6">
             <nav className="text-sm text-muted-foreground" aria-label="Breadcrumb">
               <Link to="/" className="hover:text-primary hover:underline">Home</Link>
@@ -1695,11 +1692,21 @@ const Products = () => {
           </div>
           <section className="dt-section pt-0">
             <div className="dt-container">
-              <h1 className="dt-section-title max-w-4xl">{detailProduct.name}</h1>
-              <p className="dt-section-subtitle mt-3 max-w-3xl">
-                {detailDescription}
-              </p>
-              <div className="mt-8 dt-card p-4 sm:p-8">
+              <div className="border-b border-border pb-7 sm:pb-9">
+                <p className="storefront-eyebrow">{categoryLabel}</p>
+                <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                  <div>
+                    <h1 className="storefront-heading max-w-4xl text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{detailProduct.name}</h1>
+                    <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">{detailDescription}</p>
+                  </div>
+                  <div className="min-w-[220px] border-l-0 border-border lg:border-l lg:pl-7">
+                    <p className="font-mono text-xl font-bold text-foreground sm:text-2xl">{formatPrice(detailPrice)}</p>
+                    <p className={`mt-1 text-sm font-medium ${detailProduct.in_stock ? "text-primary" : "text-muted-foreground"}`}>{detailProduct.in_stock ? "In stock — confirm delivery" : "Contact us for availability"}</p>
+                    <WhatsAppContact currentProduct={{ name: detailProduct.name, model_number: detailProduct.model_number }} variant="button" className="mt-4 w-full rounded-md shadow-none" />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8 border border-border bg-card p-4 sm:p-8">
                 <ProductDetailModal product={detailProduct} />
               </div>
             </div>
@@ -2027,7 +2034,7 @@ const Products = () => {
               <div>
                 <div
                   className={`grid gap-6 mb-12 ${viewMode === "grid"
-                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                    ? "grid-cols-2 sm:grid-cols-3 xl:grid-cols-4"
                     : "grid-cols-1"
                     }`}
                 >
