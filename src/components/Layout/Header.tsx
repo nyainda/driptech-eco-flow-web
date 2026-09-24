@@ -381,6 +381,7 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full" role="banner">
+      <a href="#main-content" className="sr-only z-[60] rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
       {/* Enhanced Discount Banner */}
       {showBanner && currentBanner && (
         <div
@@ -498,22 +499,22 @@ const Header = () => {
       )}
 
       {/* Premium Top Bar */}
-      <div className="bg-background/95 backdrop-blur-md border-b border-border hidden sm:block">
+      <div className="hidden border-b border-border bg-[hsl(var(--ink))] text-white sm:block">
         <div className="container mx-auto px-4">
-          <div className="flex h-10 items-center justify-between text-xs font-medium text-muted-foreground">
+          <div className="flex h-9 items-center justify-between text-xs font-medium text-white/80">
             <div className="flex items-center gap-6">
               <a
                 href="tel:0723407849"
-                className="flex items-center gap-2 hover:text-primary transition-colors group"
+                className="flex items-center gap-2 transition-colors hover:text-white group"
               >
                 <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                   <Phone className="h-3 w-3 text-primary" />
                 </div>
-                <span>0723407849</span>
+                  <span>Nationwide delivery · 0723 407 849</span>
               </a>
               <a
                 href="mailto:info@driptech.co.ke"
-                className="flex items-center gap-2 hover:text-primary transition-colors group"
+                className="flex items-center gap-2 transition-colors hover:text-white group"
               >
                 <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                   <Mail className="h-3 w-3 text-primary" />
@@ -523,9 +524,8 @@ const Header = () => {
             </div>
 
             <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 py-1 px-3 bg-accent/10 text-accent rounded-full font-bold">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                <span>Professional Irrigation Solutions</span>
+              <div className="flex items-center gap-2 py-1 font-semibold text-white/80">
+                <span>M-Pesa accepted · technical help when you need it</span>
               </div>
               <div className="flex items-center gap-4 border-l border-border/50 pl-6">
                 <div className="flex items-center gap-1.5 opacity-80">
@@ -539,18 +539,18 @@ const Header = () => {
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="bg-background/95 backdrop-blur-xl border-b border-border shadow-sm dark:shadow-none sticky top-0 z-50">
+      <div className="sticky top-0 z-50 border-b border-border bg-background/95 shadow-none backdrop-blur-md dark:shadow-none">
         <div className="container mx-auto px-3 sm:px-4 flex h-16 sm:h-[72px] lg:h-20 items-center justify-between gap-3 sm:gap-4">
           {/* Logo */}
           <Link
             to="/"
             className="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition-all duration-300 group flex-shrink-0"
           >
-            <div className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 lg:w-14 lg:h-14 bg-primary rounded-xl sm:rounded-2xl shadow-lg group-hover:shadow-primary/30 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105 border border-white/20">
-              <Droplets className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white animate-pulse" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/20 bg-primary/10 transition-colors group-hover:bg-primary sm:h-10 sm:w-10 lg:h-11 lg:w-11">
+              <Droplets className="h-5 w-5 text-primary transition-colors group-hover:text-primary-foreground sm:h-6 sm:w-6" />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg sm:text-xl lg:text-2xl font-black text-foreground tracking-tighter leading-none">
+              <span className="font-heading text-lg font-bold leading-none tracking-tight text-foreground sm:text-xl lg:text-2xl">
                 DripTech
               </span>
               <span className="text-[9px] sm:text-[10px] lg:text-[11px] font-bold text-primary uppercase tracking-[0.25em] sm:tracking-[0.3em] mt-1">
@@ -566,7 +566,7 @@ const Header = () => {
                 <NavigationMenuItem key={item.title}>
                   {item.items ? (
                     <>
-                      <NavigationMenuTrigger className="bg-transparent hover:bg-muted/50 transition-all duration-200 rounded-xl px-2 lg:px-4 py-2 text-xs lg:text-sm font-semibold text-foreground hover:text-primary">
+                      <NavigationMenuTrigger className="rounded-md bg-transparent px-2 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted hover:text-primary lg:px-3 lg:text-sm">
                         {item.title}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
