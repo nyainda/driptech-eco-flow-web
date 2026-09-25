@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
-import { MessageCircle, Package, Star } from "lucide-react";
+import { ArrowRight, Package, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductTracker from "@/components/Analytics/ProductTracker";
-import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import {
   formatPrice,
   getCategoryTitleFromCategory,
@@ -48,13 +47,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const path = getProductPath(product);
   const categoryLabel = getCategoryTitleFromCategory(product.category);
 
-  const whatsappMessage = encodeURIComponent(
-    `Hi DripTech! I'm interested in: ${product.name}${
-      displayPrice ? ` (${formatPrice(displayPrice)})` : ""
-    }. Please confirm availability and delivery.`,
-  );
-  const whatsappUrl = `https://wa.me/254723407849?text=${whatsappMessage}`;
-
   return (
     <ProductTracker productName={product.name} productId={product.id} category={product.category} className="h-full">
       <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md">
@@ -99,12 +91,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
           <div className="mt-auto pt-4">
             <p className="mb-3 text-lg font-bold text-foreground">{priceLabel}</p>
-            <Button
-              onClick={() => openTrackedWhatsApp(whatsappUrl, "product card inquiry")}
-              className="w-full"
-            >
-              <MessageCircle className="h-4 w-4" />
-              Enquire on WhatsApp
+            <Button asChild variant="outline" className="w-full border-border bg-card text-foreground hover:bg-muted">
+              <Link to={path}>
+                View product details
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </div>
