@@ -7,6 +7,7 @@ import {
   getCategoryTitleFromCategory,
   getProductPath,
 } from "@/lib/productUrl";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 
 export interface ProductCardData {
   id: string;
@@ -46,6 +47,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   const path = getProductPath(product);
   const categoryLabel = getCategoryTitleFromCategory(product.category);
+
+  const whatsappMessage = encodeURIComponent(
+    `Hi DripTech! I'm interested in ${product.name}${
+      displayPrice ? ` listed at ${formatPrice(displayPrice)}` : ""
+    }. Please confirm stock and delivery to my location.`,
+  );
+  const whatsappUrl = `https://wa.me/254723407849?text=${whatsappMessage}`;
 
   return (
     <ProductTracker productName={product.name} productId={product.id} category={product.category} className="h-full">
@@ -106,13 +114,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 Enquire on WhatsApp
               </Button>
             </div>
-            <Button
-              onClick={() => openTrackedWhatsApp(whatsappUrl, "product card inquiry")}
-              className="w-full bg-[hsl(var(--dt-whatsapp))] text-white hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
-            >
-              <MessageCircle className="h-4 w-4" />
-              Enquire on WhatsApp
-            </Button>
           </div>
         </div>
       </article>
