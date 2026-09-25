@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { dataService } from '@/services/dataService';
+import { ProductCard } from '@/components/Products/ProductCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -332,59 +333,6 @@ const ProductRecommendations = ({
       </div>
     );
   };
-
-  const ProductCard = ({ product }: { product: Product }) => (
-    <Card className="group overflow-hidden hover:shadow-xl border transition-all duration-300">
-      <div className="relative aspect-square overflow-hidden bg-muted">
-        {product.featured && (
-          <Badge className="absolute left-1 sm:left-2 top-1 sm:top-2 z-10 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-xs shadow-lg">
-            <Star className="mr-1 h-2.5 w-2.5 sm:h-3 sm:w-3 fill-white" />
-            <span className="hidden sm:inline">Featured</span>
-          </Badge>
-        )}
-        <OptimizedImage
-          src={product.images?.[0] || 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449'}
-          alt={product.name}
-          className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
-          fill
-        />
-      </div>
-
-      <CardContent className="p-3 sm:p-4">
-        <h3 className="line-clamp-2 text-sm sm:text-base font-semibold text-foreground">
-          {product.name}
-        </h3>
-        {product.description && (
-          <p className="mt-1 sm:mt-2 line-clamp-2 text-xs sm:text-sm text-muted-foreground">
-            {product.description}
-          </p>
-        )}
-        {product.price && (
-          <p className="mt-1 sm:mt-2 text-base sm:text-lg font-bold text-primary">
-            KES {product.price.toLocaleString()}
-          </p>
-        )}
-        <div className="flex gap-2 mt-3 sm:mt-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="flex-1 text-xs sm:text-sm h-8 sm:h-10" variant="outline">
-                <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                View Details
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto bg-background border-border rounded-xl">
-              <DialogHeader>
-                <DialogTitle className="text-base sm:text-xl pr-8 text-foreground">
-                  {product.name}
-                </DialogTitle>
-              </DialogHeader>
-              <ProductDetailModal product={product} />
-            </DialogContent>
-          </Dialog>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="space-y-8 sm:space-y-12">
