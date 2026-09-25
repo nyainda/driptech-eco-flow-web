@@ -109,9 +109,42 @@ const ImagePickerDialog = ({
     if (selected.length === 0) return;
     setSaving(true);
     try {
+      // Download and re-host each selected external image on our own
+      // storage before saving it -- never write the raw external URL
+      // (Amazon/Home Depot/etc.) into the product record. If a download
+      // fails (e.g. the source is already blocking hotlinks), that photo
+      // is skipped with a toast rather than silently falling back to the
+      // external URL.
+      const hostedUrls: string[] = [];
+      const failures: string[] = [];
+      for (const url of selected) {
+        try {
+          const { data, error } = await supabase.functions.invoke(
+            "download-and-host-image",
+            { body: { imageUrl: url } },
+          );
+          if (error) throw error;
+          if (data?.error) throw new Error(data.error);
+          if (!data?.hostedUrl) throw new Error("No hosted URL returned");
+          hostedUrls.push(data.hostedUrl);
+        } catch (e: any) {
+          failures.push(e.message || url);
+        }
+      }
+
+      if (hostedUrls.length === 0) {
+        toast({
+          title: "Couldn't host any of the selected images",
+          description: failures[0] || "Try a different search result.",
+          variant: "destructive",
+        });
+        setSaving(false);
+        return;
+      }
+
       const nextImages = [
-        ...selected,
-        ...(existingImages || []).filter((i) => !selected.includes(i)),
+        ...hostedUrls,
+        ...(existingImages || []).filter((i) => !hostedUrls.includes(i)),
       ];
       const { error: updateError } = await supabase
         .from("products")
@@ -119,8 +152,11 @@ const ImagePickerDialog = ({
         .eq("id", productId);
       if (updateError) throw updateError;
       toast({
-        title: selected.length === 1 ? "Image saved" : `${selected.length} images saved`,
-        description: "Photo(s) assigned to this product.",
+        title: hostedUrls.length === 1 ? "Image saved" : `${hostedUrls.length} images saved`,
+        description:
+          failures.length > 0
+            ? `Hosted on our own storage. ${failures.length} image(s) couldn't be downloaded and were skipped.`
+            : "Downloaded and hosted on our own storage.",
       });
       onSaved?.();
       onOpenChange(false);

@@ -217,6 +217,18 @@ const ProductsShowcase = ({
     }
   };
 
+  // Same slug pattern as pages/Products.tsx (getProductSlug/slugify), so
+  // Details links here actually resolve to the individual product page
+  // instead of only the category page.
+  const slugifyName = (value: string) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  const getProductDetailSlug = (product: Product) =>
+    `${slugifyName(product.name)}-${product.id.slice(0, 8)}`;
+
   const getCategoryRoute = (category: string) => {
     switch (category) {
       case "drip_irrigation":

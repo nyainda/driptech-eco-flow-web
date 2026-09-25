@@ -1,236 +1,69 @@
-import React from "react";
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Youtube,
-  Instagram,
-  MessageCircle,
-} from "lucide-react";
+import { MapPin, Phone, Mail, ArrowUpRight, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import NewsletterSubscription from "@/components/Newsletter/NewsletterSubscription";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+
+const footerGroups = [
+  { title: "Products", links: [
+    ["Drip irrigation", "/products/drip"], ["Sprinkler systems", "/products/sprinklers"],
+    ["Pumps & motors", "/products/pumps"], ["Irrigation kits", "/irrigation-kits"], ["View catalogue", "/products"],
+  ] },
+  { title: "Support", links: [
+    ["System design", "/services#system-design"], ["Technician services", "/technician-services"],
+    ["Installation guides", "/installation-guides"], ["Technical support", "/technical-support"], ["Contact us", "/contact"],
+  ] },
+  { title: "Company", links: [
+    ["About DripTech", "/about"], ["Projects", "/projects"], ["Success stories", "/success-stories"],
+    ["Blog", "/blog"], ["News", "/news"],
+  ] },
+];
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  const footerLinks = {
-    products: [
-      { title: "Drip Irrigation Systems", href: "/products/drip" },
-      { title: "Sprinkler Systems", href: "/products/sprinklers" },
-      { title: "Filtration Systems", href: "/products/filtration" },
-      { title: "Control Systems", href: "/products/controls" },
-      { title: "Accessories", href: "/products/accessories" },
-    ],
-    services: [
-      { title: "System Design", href: "/services#system-design" },
-      { title: "Installation", href: "/services#installation" },
-      { title: "Maintenance", href: "/services#maintenance" },
-      { title: "Training", href: "/services#training" },
-      { title: "Consultation", href: "/services#consultation" },
-    ],
-    company: [
-      { title: "About Us", href: "/about" },
-      { title: "Our Team", href: "/team" },
-      { title: "Careers", href: "/careers" },
-      { title: "Certifications", href: "/certifications" },
-      { title: "News & Events", href: "/news" },
-    ],
-    resources: [
-      { title: "Installation Guides", href: "/installation-guides" },
-      { title: "Technical Support", href: "/technical-support" },
-      { title: "Product Catalog", href: "/products" },
-      { title: "Case Studies", href: "/case-studies" },
-      { title: "Blog", href: "/blog" },
-    ],
-  };
-
-  const socialLinks = [
-    { icon: Facebook, href: "https://facebook.com/driptech-eco-flow", label: "Facebook" },
-    { icon: Twitter, href: "https://twitter.com/dripechoflow", label: "Twitter" },
-    { icon: Linkedin, href: "https://linkedin.com/company/driptech-eco-flow", label: "LinkedIn" },
-    { icon: Youtube, href: "https://youtube.com/driptech-eco-flow", label: "YouTube" },
-    { icon: Instagram, href: "https://instagram.com/driptech-eco-flow", label: "Instagram" },
-  ];
-
-  const col = "text-foreground font-semibold mb-4";
-  const link = "text-sm text-muted-foreground hover:text-accent transition-colors block";
-
   return (
-    <footer className="bg-card text-foreground border-t border-border">
-      {/* Newsletter Section */}
-      <div className="bg-muted/40 border-b border-border">
-        <div className="container mx-auto px-4 py-12">
-          <NewsletterSubscription variant="default" showDescription={true} />
+    <footer className="border-t border-border bg-[hsl(var(--surface))] text-foreground">
+      <div className="border-b border-border bg-background">
+        <div className="dt-container py-10 sm:py-12">
+          <NewsletterSubscription variant="default" showDescription />
         </div>
       </div>
 
-      {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 lg:gap-8">
-          {/* Company Info */}
-          <div className="lg:col-span-2">
-            <div className="mb-6">
-              <h3 className="text-xl font-bold text-foreground mb-2">
-                DripTech
-              </h3>
-              <p className="text-muted-foreground leading-relaxed text-sm">
-                Leading provider of advanced irrigation solutions, helping
-                farmers and growers maximize efficiency while conserving water
-                resources.
-              </p>
+      <div className="dt-container py-12 sm:py-16">
+        <div className="grid gap-10 lg:grid-cols-[1.5fr_repeat(3,1fr)]">
+          <div className="max-w-sm">
+            <Link to="/" className="inline-flex items-baseline gap-2" aria-label="DripTech Eco Flow home">
+              <span className="font-heading text-xl font-bold tracking-tight">DripTech</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Eco Flow</span>
+            </Link>
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">
+              Practical irrigation equipment, system design and installation support for farms across Kenya.
+            </p>
+            <div className="mt-6 space-y-3 text-sm text-muted-foreground">
+              <a className="flex items-start gap-3 transition-colors hover:text-primary" href="https://maps.google.com/?q=Nairobi,Kenya" target="_blank" rel="noreferrer"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />Nairobi, Kenya · delivery nationwide</a>
+              <a className="flex items-center gap-3 transition-colors hover:text-primary" href="tel:0723407849"><Phone className="h-4 w-4 shrink-0 text-primary" />0723 407 849</a>
+              <a className="flex items-center gap-3 transition-colors hover:text-primary" href="mailto:info@dripstech.co.ke"><Mail className="h-4 w-4 shrink-0 text-primary" />info@dripstech.co.ke</a>
             </div>
+            <button type="button" onClick={() => openTrackedWhatsApp("https://wa.me/254723407849?text=Hi%20DripTech%20Eco%20Flow%2C%20I%20would%20like%20help%20with%20an%20irrigation%20solution.", "footer WhatsApp inquiry")} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-[hsl(var(--whatsapp))] px-4 text-sm font-semibold text-white transition-colors hover:bg-[hsl(var(--whatsapp)/0.9)]">
+              <MessageCircle className="h-4 w-4" />Chat on WhatsApp <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
 
-            {/* Contact Info */}
-            <div className="space-y-4 mb-6">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-muted-foreground">
-                  <p className="font-medium text-foreground">Driptech</p>
-                  <p>Agricultural Technology</p>
-                  <p>Nairobi, Kenya</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2 mb-1">
-                    <a
-                      href="tel:0723407849"
-                      className="hover:text-foreground transition-colors"
-                    >
-                      0723407849
-                    </a>
-                    <a
-                      href="https://wa.me/254723407849"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                    </a>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <a
-                      href="tel:0757716018"
-                      className="hover:text-foreground transition-colors"
-                    >
-                      0757716018
-                    </a>
-                    <a
-                      href="https://wa.me/254757716018"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[hsl(var(--dt-whatsapp))] hover:opacity-80 transition-opacity"
-                      aria-label="Chat with DripTech on WhatsApp"
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                    </a>
-                  </div>
-                  </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-muted-foreground">
-                  <a
-                    href="mailto:driptechs.info@gmail.com"
-                    className="hover:text-foreground transition-colors block py-1"
-                  >
-                    driptechs.info@gmail.com
-                  </a>
-                  <a
-                    href="mailto:info@dripstech.co.ke"
-                    className="hover:text-foreground transition-colors block py-1"
-                  >
-                    info@dripstech.co.ke
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-accent flex-shrink-0" />
-                <span className="text-sm text-muted-foreground">
-                  Mon–Fri: 8AM–6PM | Sat: 8AM–1PM
-                </span>
-              </div>
+          {footerGroups.map((group) => (
+            <div key={group.title}>
+              <h2 className="storefront-eyebrow mb-4">{group.title}</h2>
+              <ul className="space-y-3">
+                {group.links.map(([label, href]) => <li key={href}><Link className="storefront-link" to={href}>{label}</Link></li>)}
+              </ul>
             </div>
-
-            {/* Social Links */}
-            <div className="flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-muted hover:bg-muted/70 text-foreground transition-colors border border-border"
-                  aria-label={social.label}
-                >
-                  <social.icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Products */}
-          <div>
-            <h4 className={col}>Products</h4>
-            <ul className="space-y-3">
-              {footerLinks.products.map((l) => (
-                <li key={l.href}><a href={l.href} className={link}>{l.title}</a></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className={col}>Services</h4>
-            <ul className="space-y-3">
-              {footerLinks.services.map((l) => (
-                <li key={l.href}><a href={l.href} className={link}>{l.title}</a></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className={col}>Company</h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((l) => (
-                <li key={l.href}><a href={l.href} className={link}>{l.title}</a></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h4 className={col}>Resources</h4>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((l) => (
-                <li key={l.href}><a href={l.href} className={link}>{l.title}</a></li>
-              ))}
-            </ul>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Bottom Bar */}
       <div className="border-t border-border">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              © {currentYear} DripTech Eco Flow. All rights reserved.
-            </div>
-            <div className="flex gap-6 text-sm">
-              <a href="/privacy" className={link}>Privacy Policy</a>
-              <a href="/terms" className={link}>Terms of Service</a>
-              <a href="/cookies" className={link}>Cookie Policy</a>
-            </div>
-          </div>
+        <div className="dt-container flex flex-col gap-3 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <span>© {currentYear} DripTech Eco Flow. All rights reserved.</span>
+          <div className="flex flex-wrap gap-x-5 gap-y-2"><Link className="hover:text-primary" to="/privacy">Privacy</Link><Link className="hover:text-primary" to="/terms">Terms</Link><Link className="hover:text-primary" to="/cookies">Cookies</Link><Link className="hover:text-primary" to="/certifications">Certifications</Link><Link className="hover:text-primary" to="/careers">Careers</Link></div>
         </div>
       </div>
     </footer>

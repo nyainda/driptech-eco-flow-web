@@ -10,7 +10,7 @@ const solutionLinks = [
 export default function HeroSectionVibe() {
   return (
     <section
-      className="overflow-hidden border-b border-border bg-[radial-gradient(circle_at_top_right,hsl(var(--dt-green-100)/0.65),transparent_38%),hsl(var(--background))]"
+      className="overflow-hidden border-b border-border bg-background"
       aria-labelledby="home-hero-title"
     >
       <div className="dt-container grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:py-20">
@@ -18,7 +18,7 @@ export default function HeroSectionVibe() {
           <p className="dt-section-label mb-4">Supplies · Kenya</p>
           <h1
             id="home-hero-title"
-            className="font-heading text-4xl font-bold leading-[1.06] tracking-tight text-foreground sm:text-5xl lg:text-6xl"
+            className="storefront-heading text-4xl font-bold leading-[1.15] sm:text-5xl lg:text-6xl"
           >
             Driplines, kits and pumps that fit{" "}
             <span className="text-primary">your farm — not the other way round.</span>
@@ -89,10 +89,6 @@ export default function HeroSectionVibe() {
         </div>
 
         <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
-          <div
-            className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-accent/15"
-            aria-hidden="true"
-          />
           <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-sm sm:p-3">
             <picture>
               <source media="(max-width: 640px)" srcSet="/hero-bg-new-mobile.webp" />
