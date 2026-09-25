@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight, MessageCircle, Package, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductTracker from "@/components/Analytics/ProductTracker";
-import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import {
   formatPrice,
   getCategoryTitleFromCategory,
@@ -47,13 +46,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   const path = getProductPath(product);
   const categoryLabel = getCategoryTitleFromCategory(product.category);
-
-  const whatsappMessage = encodeURIComponent(
-    `Hi DripTech! I'm interested in: ${product.name}${
-      displayPrice ? ` (${formatPrice(displayPrice)})` : ""
-    }. Please confirm availability and delivery.`,
-  );
-  const whatsappUrl = `https://wa.me/254723407849?text=${whatsappMessage}`;
 
   return (
     <ProductTracker productName={product.name} productId={product.id} category={product.category} className="h-full">
