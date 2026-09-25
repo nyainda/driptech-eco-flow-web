@@ -114,6 +114,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 Enquire on WhatsApp
               </Button>
             </div>
+            <Button
+              onClick={() => openTrackedWhatsApp(whatsappUrl, "product card inquiry")}
+              className="w-full bg-[hsl(var(--dt-whatsapp))] text-white hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Enquire on WhatsApp
+            </Button>
           </div>
         </div>
       </article>
