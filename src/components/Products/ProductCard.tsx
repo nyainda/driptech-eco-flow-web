@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MessageCircle, Package, Star } from "lucide-react";
+import { ArrowRight, MessageCircle, Package, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductTracker from "@/components/Analytics/ProductTracker";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
@@ -99,6 +99,21 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
           <div className="mt-auto pt-4">
             <p className="mb-3 text-lg font-bold text-foreground">{priceLabel}</p>
+            <div className="grid gap-2">
+              <Button asChild variant="outline" className="w-full border-border bg-card text-foreground hover:bg-muted">
+                <Link to={path}>
+                  View product details
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                onClick={() => openTrackedWhatsApp(whatsappUrl, "product card inquiry")}
+                className="w-full bg-[hsl(var(--dt-whatsapp))] text-white hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Enquire on WhatsApp
+              </Button>
+            </div>
             <Button
               onClick={() => openTrackedWhatsApp(whatsappUrl, "product card inquiry")}
               className="w-full bg-[hsl(var(--dt-whatsapp))] text-white hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
