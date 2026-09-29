@@ -37,6 +37,7 @@ export const SITE_COMPANY = {
   sameAs: [
     "https://www.facebook.com/dripstech",
     "https://www.instagram.com/dripstech",
+    "https://www.tiktok.com/@driptech.ecoflow",
   ],
   priceRange: "KES",
 } as const;

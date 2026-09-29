@@ -58,6 +58,13 @@ const getYouTubeVideoId = (url: string) => {
   return url.match(regex)?.[1] || null;
 };
 
+const isTikTokUrl = (url: string) => url.includes("tiktok.com");
+
+const getTikTokVideoId = (url: string) => {
+  const regex = /tiktok\.com\/@[\w.-]+\/video\/(\d+)/;
+  return url.match(regex)?.[1] || null;
+};
+
 // Skeleton component for loading state
 const VideoSkeleton = () => (
   <Card className="animate-pulse bg-background border-border">
@@ -276,8 +283,12 @@ const VideoModal = ({
   const isYouTube =
     video.video_url.includes("youtube.com") ||
     video.video_url.includes("youtu.be");
+  const isTikTok = isTikTokUrl(video.video_url);
+  const tiktokId = isTikTok ? getTikTokVideoId(video.video_url) : null;
   const embedUrl = isYouTube
     ? `https://www.youtube.com/embed/${getYouTubeVideoId(video.video_url)}?autoplay=1&rel=0`
+    : isTikTok && tiktokId
+    ? `https://www.tiktok.com/embed/v2/${tiktokId}`
     : video.video_url;
 
   return (
@@ -301,13 +312,21 @@ const VideoModal = ({
             </Button>
           </div>
         </DialogHeader>
-        <div className="aspect-video w-full">
+        <div className={isTikTok ? "mx-auto flex w-full justify-center bg-muted/20 py-4" : "aspect-video w-full"}>
           {isYouTube ? (
             <iframe
               src={embedUrl}
               className="w-full h-full"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title={video.title}
+            />
+          ) : isTikTok && tiktokId ? (
+            <iframe
+              src={embedUrl}
+              className="h-[600px] max-h-[70vh] w-[325px] max-w-full"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
               allowFullScreen
               title={video.title}
             />
@@ -425,7 +444,8 @@ const VideoSection = () => {
   const handleVideoDownload = async (video: Video) => {
     if (
       video.video_url.includes("youtube.com") ||
-      video.video_url.includes("youtu.be")
+      video.video_url.includes("youtu.be") ||
+      isTikTokUrl(video.video_url)
     ) {
       window.open(video.video_url, "_blank");
       return;

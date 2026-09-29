@@ -134,10 +134,21 @@ const VideosPage = () => {
     return url && (url.includes("youtube.com") || url.includes("youtu.be"));
   };
 
+  const isTikTokVideo = (url: string) => Boolean(url && url.includes("tiktok.com"));
+
+  const getTikTokVideoId = (url: string) => {
+    const match = url.match(/tiktok\.com\/@[\w.-]+\/video\/(\d+)/);
+    return match ? match[1] : null;
+  };
+
   const getEmbedUrl = (url: string) => {
     const videoId = getYouTubeVideoId(url);
     if (videoId) {
       return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    }
+    const tiktokId = getTikTokVideoId(url);
+    if (tiktokId) {
+      return `https://www.tiktok.com/embed/v2/${tiktokId}`;
     }
     return url;
   };
@@ -809,7 +820,7 @@ const VideosPage = () => {
             </div>
           </DialogHeader>
 
-          <div className="aspect-video w-full">
+          <div className={selectedVideo && isTikTokVideo(selectedVideo.video_url) ? "flex w-full justify-center bg-muted/20 py-4" : "aspect-video w-full"}>
             {selectedVideo && (
               <>
                 {isYouTubeVideo(selectedVideo.video_url) ? (
@@ -818,6 +829,14 @@ const VideosPage = () => {
                     className="w-full h-full rounded-t-xl"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title={selectedVideo.title}
+                  />
+                ) : isTikTokVideo(selectedVideo.video_url) ? (
+                  <iframe
+                    src={getEmbedUrl(selectedVideo.video_url)}
+                    className="h-[600px] max-h-[70vh] w-[325px] max-w-full"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
                     allowFullScreen
                     title={selectedVideo.title}
                   />
