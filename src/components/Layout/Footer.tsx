@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, ArrowUpRight, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowUpRight, MessageCircle, Facebook, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import NewsletterSubscription from "@/components/Newsletter/NewsletterSubscription";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
@@ -47,6 +47,19 @@ const Footer = () => {
             <button type="button" onClick={() => openTrackedWhatsApp("https://wa.me/254723407849?text=Hi%20DripTech%20Eco%20Flow%2C%20I%20would%20like%20help%20with%20an%20irrigation%20solution.", "footer WhatsApp inquiry")} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-[hsl(var(--whatsapp))] px-4 text-sm font-semibold text-white transition-colors hover:bg-[hsl(var(--whatsapp)/0.9)]">
               <MessageCircle className="h-4 w-4" />Chat on WhatsApp <ArrowUpRight className="h-3.5 w-3.5" />
             </button>
+            <div className="mt-5 flex items-center gap-3">
+              <a href="https://www.tiktok.com/@driptech.ecoflow" target="_blank" rel="noreferrer" aria-label="DripTech on TikTok" className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                  <path d="M16.5 2h-3v13.2a2.8 2.8 0 1 1-2-2.68V9.4a5.8 5.8 0 1 0 5 5.75V8.8a7.35 7.35 0 0 0 4 1.2V7A4.35 4.35 0 0 1 16.5 2Z" />
+                </svg>
+              </a>
+              <a href="https://www.facebook.com/dripstech" target="_blank" rel="noreferrer" aria-label="DripTech on Facebook" className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a href="https://www.instagram.com/dripstech" target="_blank" rel="noreferrer" aria-label="DripTech on Instagram" className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary">
+                <Instagram className="h-4 w-4" />
+              </a>
+            </div>
           </div>
 
           {footerGroups.map((group) => (
