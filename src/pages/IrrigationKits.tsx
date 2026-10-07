@@ -768,7 +768,7 @@ const IrrigationKits = () => {
                 return (
                   <Card
                     key={kit.id}
-                    className="dt-card group relative flex h-full cursor-pointer flex-col overflow-hidden shadow-sm transition-shadow duration-200 hover:shadow-md"
+                    className="dt-card group relative flex h-full cursor-pointer flex-col overflow-hidden transition-colors duration-200 hover:border-primary/50"
                     onClick={() => handleKitSelect(kit)}
                   >
                     <CardContent className="relative flex flex-1 flex-col p-0">
@@ -854,14 +854,14 @@ const IrrigationKits = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="col-span-2 flex flex-row items-center justify-center gap-2 rounded-xl bg-[hsl(var(--dt-whatsapp))] py-2.5 transition-all hover:bg-[hsl(var(--dt-whatsapp)/0.9)] active:scale-[0.98] sm:col-span-1 sm:flex-col sm:gap-1.5 sm:py-3"
+                              className="col-span-2 flex flex-row items-center justify-center gap-2 rounded-none bg-[hsl(var(--dt-whatsapp))] py-2.5 transition-all hover:bg-[hsl(var(--dt-whatsapp)/0.9)] active:scale-[0.98] sm:col-span-1 sm:flex-col sm:gap-1.5 sm:py-3"
                             >
                               <MessageCircle className="h-4 w-4 text-white" aria-hidden="true" />
                               <span className="text-[11px] font-bold text-white sm:text-[10px]">Ask on WhatsApp</span>
                             </a>
                             <button
                               type="button"
-                              className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
+                              className="flex flex-col items-center justify-center gap-1 rounded-none border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleKitSelect(kit);
@@ -872,7 +872,7 @@ const IrrigationKits = () => {
                             </button>
                             <button
                               type="button"
-                              className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
+                              className="flex flex-col items-center justify-center gap-1 rounded-none border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleKitSelect(kit);
@@ -986,7 +986,7 @@ const IrrigationKits = () => {
                                 (component: string, index: number) => (
                                   <div
                                     key={index}
-                                    className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border"
+                                    className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-muted/30 border border-border"
                                   >
                                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                                     <span className="text-foreground">
@@ -1051,7 +1051,7 @@ const IrrigationKits = () => {
                                 (service: string, index: number) => (
                                   <div
                                     key={index}
-                                    className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-muted/30 rounded-lg border border-border"
+                                    className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-muted/30 border border-border"
                                   >
                                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                                     <span className="text-foreground">
