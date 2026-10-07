@@ -932,7 +932,7 @@ const Products = () => {
                 <p className="storefront-eyebrow">{categoryLabel}</p>
                 <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                   <div>
-                    <h1 className="storefront-heading max-w-4xl text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{detailProduct.name}</h1>
+                    <h1 className="storefront-heading max-w-4xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">{detailProduct.name}</h1>
                     <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">{detailDescription}</p>
                   </div>
                   <div className="min-w-[220px] border-l-0 border-border lg:border-l lg:pl-7">
@@ -942,7 +942,7 @@ const Products = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-8 border border-border bg-card p-4 sm:p-8">
+              <div className="mt-8 border-y border-border bg-card py-6 sm:mt-10 sm:py-10">
                 <ProductDetailView product={detailProduct} />
               </div>
             </div>
