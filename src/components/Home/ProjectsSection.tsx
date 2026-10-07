@@ -108,7 +108,7 @@ const ProjectsSection = ({
               >
                 <CardContent className="p-0">
                   <div className="aspect-[3/2] bg-muted rounded-t-lg"></div>
-                  <div className="p-6 space-y-4">
+                  <div className="flex flex-1 flex-col space-y-3 p-4 sm:p-5">
                     <div className="flex gap-2">
                       <div className="h-6 bg-muted rounded w-20"></div>
                       <div className="h-6 bg-muted rounded w-16"></div>
@@ -155,32 +155,32 @@ const ProjectsSection = ({
   }
 
   return (
-    <section className={`${compact ? "py-8" : "py-24 border-t"} bg-background border-border relative`}>
+    <section className={`${compact ? "py-12 sm:py-16" : "py-24 border-t"} bg-background border-border relative`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         {!hideHeader && (
-          <div className="text-center max-w-4xl mx-auto mb-20">
-            <div className="inline-flex items-center gap-2 mb-8">
+          <div className="text-center max-w-4xl mx-auto mb-10 sm:mb-14">
+            <div className="mb-3 inline-flex items-center gap-2">
               <Badge
                 variant="secondary"
-                className="px-5 py-2.5 text-sm font-semibold bg-muted text-foreground border-border rounded-full"
+                className="rounded-full border-border bg-muted px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-foreground"
               >
-                <TrendingUp className="w-4 h-4 mr-2" />
+                <TrendingUp className="mr-1.5 h-3.5 w-3.5" />
                 Featured Projects
               </Badge>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 lg:mb-8 leading-tight tracking-tight">
+            <h2 className="font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl">
               <span className="block mb-1 sm:mb-2">Better water use on</span>
               <span className="block text-primary">real Kenyan farms</span>
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
               See how farmers and businesses are using practical irrigation systems to grow with less water and less guesswork.
             </p>
           </div>
         )}
 
         {/* Projects Grid */}
-        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-12 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 sm:mb-10 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
           {projects.map((project) => {
             const projectImage = getProjectImage(project);
             const formattedArea = formatArea(project.area_covered);
@@ -188,16 +188,16 @@ const ProjectsSection = ({
             return (
               <Card
                 key={project.id}
-                className="group relative overflow-hidden bg-background border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1 w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0 flex-shrink-0 snap-center"
+                className="group relative flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0"
               >
                 <CardContent className="p-0">
                   {/* Project Image */}
-                  <div className="relative aspect-[3/2] overflow-hidden">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
                     {projectImage ? (
                       <img
                         src={projectImage}
                         alt={project.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
+                        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
                         loading="lazy"
                       />
                     ) : (
@@ -212,21 +212,21 @@ const ProjectsSection = ({
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge
                         variant="secondary"
-                        className="bg-muted text-foreground border-border font-medium"
+                        className="rounded-full border-border bg-muted px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-foreground"
                       >
                         {project.project_type || "Irrigation Project"}
                       </Badge>
                       {project.status && (
                         <Badge
                           variant="outline"
-                          className="font-medium bg-muted text-foreground border-border"
+                          className="rounded-full border-border bg-background px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-muted-foreground"
                         >
                           {formatStatus(project.status)}
                         </Badge>
                       )}
                     </div>
 
-                    <h3 className="text-xl font-bold text-foreground line-clamp-2 leading-tight">
+                    <h3 className="font-heading text-lg font-bold leading-snug tracking-tight text-foreground line-clamp-2">
                       {project.name}
                     </h3>
 
@@ -252,9 +252,9 @@ const ProjectsSection = ({
 
                     {/* Project Stats grid — visible on all screens */}
                     {(formattedArea || project.water_saved || project.yield_improvement) && (
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-3 gap-1.5">
                         {formattedArea && (
-                          <div className="text-center p-2.5 bg-muted/40 rounded-xl border border-border">
+                          <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.55)] p-2 text-center">
                             <div className="text-sm sm:text-base font-bold text-foreground">{formattedArea}</div>
                             <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Area</div>
                           </div>
@@ -292,7 +292,7 @@ const ProjectsSection = ({
             <Link to="/projects">
               <Button
                 size="lg"
-                className="px-8 py-6 text-lg rounded-2xl bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+                className="rounded-lg bg-primary px-6 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90"
               >
                 View All Projects
                 <ArrowRight className="ml-2 h-5 w-5" />
