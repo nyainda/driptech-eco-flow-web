@@ -83,11 +83,11 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
   const whatsappUrl = `https://wa.me/254723407849?text=${whatsappMessage}`;
 
   return (
-    <div className="space-y-10">
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+    <div className="space-y-12">
+      <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
         {/* Gallery */}
         <div>
-          <div className="overflow-hidden rounded-xl border border-border bg-muted/20 p-6">
+          <div className="overflow-hidden border border-border bg-muted/20 p-5 sm:p-8">
             {images.length > 0 ? (
               <img
                 src={images[activeImage]}
@@ -108,7 +108,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                   type="button"
                   onClick={() => setActiveImage(index)}
                   aria-label={`View image ${index + 1}`}
-                  className={`overflow-hidden rounded-lg border p-1 transition-colors ${
+                  className={`overflow-hidden border p-1 transition-colors ${
                     activeImage === index ? "border-primary" : "border-border hover:border-primary/50"
                   }`}
                 >
@@ -137,7 +137,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
           {hasVariants && (
             <section className="mt-7">
               <h2 className="font-heading text-lg font-bold text-foreground">Available variants</h2>
-              <div className="mt-3 divide-y divide-border rounded-lg border border-border">
+              <div className="mt-3 divide-y divide-border border border-border">
                 {product.variants!.map((variant) => (
                   <button
                     key={variant.name}
@@ -162,7 +162,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
 
           <Button
             size="lg"
-            className="mt-7 h-12 w-full"
+            className="mt-7 h-12 w-full rounded-none"
             onClick={() => openTrackedWhatsApp(whatsappUrl, "product detail page")}
           >
             <MessageCircle className="h-5 w-5" />
@@ -176,7 +176,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
         <div className="grid gap-8 lg:grid-cols-2">
           {product.features && product.features.length > 0 && (
             <section>
-              <h2 className="font-heading text-2xl font-bold text-foreground">Features</h2>
+              <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">Features</h2>
               <ul className="mt-4 space-y-3">
                 {product.features.map((item) => (
                   <li key={item} className="flex gap-3 text-sm text-muted-foreground">
@@ -189,7 +189,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
           )}
           {specs.length > 0 && (
             <section>
-              <h2 className="font-heading text-2xl font-bold text-foreground">Specifications</h2>
+              <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">Specifications</h2>
               <dl className="mt-4 divide-y divide-border border-y border-border">
                 {specs.map(({ label, value }) => (
                   <div key={label} className="grid grid-cols-2 gap-4 py-3 text-sm">
@@ -208,7 +208,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
         <div className="grid gap-8 lg:grid-cols-2">
           {product.applications && product.applications.length > 0 && (
             <section>
-              <h2 className="font-heading text-2xl font-bold text-foreground">Applications</h2>
+              <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">Applications</h2>
               <ul className="mt-4 space-y-3">
                 {product.applications.map((item) => (
                   <li key={item} className="flex gap-3 text-sm text-muted-foreground">
@@ -221,7 +221,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
           )}
           {(hasDocuments || product.video_url) && (
             <section>
-              <h2 className="font-heading text-2xl font-bold text-foreground">Product resources</h2>
+              <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">Product resources</h2>
               <div className="mt-4 flex flex-wrap gap-3">
                 {documents.map(([label, url]) =>
                   url ? (
