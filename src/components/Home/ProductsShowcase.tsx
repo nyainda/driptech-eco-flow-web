@@ -498,7 +498,7 @@ const ProductsShowcase = ({
                   onClick={() => setActiveCategory(cat.key)}
                   className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${
                     activeCategory === cat.key
-                      ? bg-primary text-primary-foreground border-primary
+                      ? "bg-primary text-primary-foreground border-primary"
                       : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                   }`}
                 >
