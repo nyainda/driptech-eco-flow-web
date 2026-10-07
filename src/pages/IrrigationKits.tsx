@@ -284,11 +284,11 @@ const IrrigationKits = () => {
       case "easy":
         return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-800";
       case "medium":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800";
+        return "bg-accent text-accent-foreground border-accent/30";
       case "advanced":
         return "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-800";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-muted dark:text-muted-foreground dark:border-border";
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -343,7 +343,7 @@ const IrrigationKits = () => {
             </p>
             <Button
               onClick={() => refetch()}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground border-0"
             >
               Try Again
             </Button>
@@ -417,7 +417,7 @@ const IrrigationKits = () => {
           )}
 
           {/* Filters */}
-          <Card className="mb-8 border border-border bg-card shadow-sm">
+          <Card className="mb-8 border-y border-border bg-card shadow-none">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-xl text-foreground">
@@ -431,7 +431,7 @@ const IrrigationKits = () => {
                     onClick={() => setViewMode("cards")}
                     className={
                       viewMode === "cards"
-                        ? "bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
+                        ? "bg-primary hover:bg-primary/90 text-primary-foreground border-0"
                         : "border-border text-muted-foreground hover:bg-gray-100 dark:hover:bg-muted"
                     }
                   >
@@ -444,7 +444,7 @@ const IrrigationKits = () => {
                     onClick={() => setViewMode("table")}
                     className={
                       viewMode === "table"
-                        ? "bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
+                        ? "bg-primary hover:bg-primary/90 text-primary-foreground border-0"
                         : "border-border text-muted-foreground hover:bg-gray-100 dark:hover:bg-muted"
                     }
                   >
@@ -467,7 +467,7 @@ const IrrigationKits = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    className="pl-10 bg-white dark:bg-background border-border text-foreground placeholder-muted-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary"
+                    className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary"
                     placeholder="Search kits..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -477,10 +477,10 @@ const IrrigationKits = () => {
                   value={selectedKitType}
                   onValueChange={setSelectedKitType}
                 >
-                  <SelectTrigger className="bg-white dark:bg-background border-border text-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary">
+                  <SelectTrigger className="bg-card border-border text-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary">
                     <SelectValue placeholder="Kit Type" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-background border-border text-foreground">
+                  <SelectContent className="bg-card border-border text-foreground">
                     <SelectItem
                       value="all"
                       className="hover:bg-gray-100 dark:hover:bg-muted focus:bg-gray-100 dark:focus:bg-muted"
@@ -504,10 +504,10 @@ const IrrigationKits = () => {
                   value={selectedComplexity}
                   onValueChange={setSelectedComplexity}
                 >
-                  <SelectTrigger className="bg-white dark:bg-background border-border text-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary">
+                  <SelectTrigger className="bg-card border-border text-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary">
                     <SelectValue placeholder="Complexity" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-background border-border text-foreground">
+                  <SelectContent className="bg-card border-border text-foreground">
                     <SelectItem
                       value="all"
                       className="hover:bg-gray-100 dark:hover:bg-muted focus:bg-gray-100 dark:focus:bg-muted"
@@ -535,10 +535,10 @@ const IrrigationKits = () => {
                   </SelectContent>
                 </Select>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="bg-white dark:bg-background border-border text-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary">
+                  <SelectTrigger className="bg-card border-border text-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary">
                     <SelectValue placeholder="Sort By" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-background border-border text-foreground">
+                  <SelectContent className="bg-card border-border text-foreground">
                     <SelectItem
                       value="featured"
                       className="hover:bg-gray-100 dark:hover:bg-muted focus:bg-gray-100 dark:focus:bg-muted"
@@ -584,7 +584,7 @@ const IrrigationKits = () => {
                   onChange={(e) =>
                     setPriceRange({ ...priceRange, min: e.target.value })
                   }
-                  className="bg-white dark:bg-background border-border text-foreground placeholder-muted-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary"
+                  className="bg-card border-border text-foreground placeholder-muted-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary"
                 />
                 <Input
                   type="number"
@@ -593,7 +593,7 @@ const IrrigationKits = () => {
                   onChange={(e) =>
                     setPriceRange({ ...priceRange, max: e.target.value })
                   }
-                  className="bg-white dark:bg-background border-border text-foreground placeholder-muted-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary"
+                  className="bg-card border-border text-foreground placeholder-muted-foreground focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-primary dark:focus:border-primary"
                 />
               </div>
             </CardContent>
@@ -621,7 +621,7 @@ const IrrigationKits = () => {
               </p>
               <Button
                 onClick={resetFilters}
-                className="bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground border-0"
               >
                 Clear Filters
               </Button>
@@ -630,12 +630,12 @@ const IrrigationKits = () => {
 
           {/* Table View */}
           {!isLoading && processedKits.length > 0 && viewMode === "table" && (
-            <Card className="border border-border bg-card shadow-sm">
+            <Card className="border-y border-border bg-card shadow-none">
               <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-border bg-gray-100 dark:bg-muted/30">
+                      <tr className="border-b border-border bg-muted/20">
                         <th className="text-left p-4 font-semibold text-foreground">
                           Kit Name
                         </th>
@@ -666,7 +666,7 @@ const IrrigationKits = () => {
                         return (
                           <tr
                             key={kit.id}
-                            className="border-b border-border hover:bg-gray-50 dark:hover:bg-muted/50 transition-colors"
+                            className="border-b border-border hover:hover:bg-muted/30 transition-colors"
                           >
                             <td className="p-4">
                               <div className="flex items-center gap-3">
@@ -678,7 +678,7 @@ const IrrigationKits = () => {
                                     {kit.kit_type?.replace("_", " ")}
                                   </div>
                                   {kit.featured && (
-                                    <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800 mt-1">
+                                    <Badge className="bg-accent text-accent-foreground border-accent/30 mt-1">
                                       <Star className="h-3 w-3 mr-1" />
                                       Featured
                                     </Badge>
@@ -687,7 +687,7 @@ const IrrigationKits = () => {
                               </div>
                             </td>
                             <td className="p-4">
-                              <Badge className="capitalize bg-gray-100 text-gray-800 border-gray-200 dark:bg-muted dark:text-muted-foreground dark:border-border">
+                              <Badge className="capitalize bg-muted text-muted-foreground border-border">
                                 {kit.kit_type?.replace("_", " ") || "Standard"}
                               </Badge>
                             </td>
@@ -738,7 +738,7 @@ const IrrigationKits = () => {
                               <Button
                                 onClick={() => handleKitSelect(kit)}
                                 size="sm"
-                                className="bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground border-0"
                               >
                                 <Eye className="h-4 w-4 mr-2" />
                                 View
@@ -896,13 +896,13 @@ const IrrigationKits = () => {
             open={!!selectedKit}
             onOpenChange={() => setSelectedKit(null)}
           >
-            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-background border-border text-foreground">
+            <DialogContent className="max-w-6xl max-h-[92vh] overflow-y-auto bg-card border-border text-foreground">
               {selectedKit && (
                 <>
                   <DialogHeader>
                     <div className="flex items-center justify-between">
                       <div>
-                        <DialogTitle className="text-3xl font-bold text-foreground">
+                        <DialogTitle className="font-heading text-3xl font-bold tracking-tight text-foreground">
                           {selectedKit.name}
                         </DialogTitle>
                         <DialogDescription className="text-lg mt-2 text-muted-foreground">
@@ -912,7 +912,7 @@ const IrrigationKits = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         {selectedKit.featured && (
-                          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800">
+                          <Badge className="bg-accent text-accent-foreground border-accent/30">
                             <Star className="h-4 w-4 mr-1" />
                             Featured
                           </Badge>
@@ -933,7 +933,7 @@ const IrrigationKits = () => {
                     <div className="lg:col-span-2 space-y-6">
                       {/* Specifications */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <Card className="p-4 text-center bg-gray-100 dark:bg-muted/30 border-border">
+                        <Card className="p-4 text-center bg-muted/20 border-border">
                           <MapPin className="h-8 w-8 text-primary mx-auto mb-2" />
                           <div className="text-xl font-bold text-foreground">
                             {selectedKit.coverage_area || "TBD"}
@@ -942,7 +942,7 @@ const IrrigationKits = () => {
                             acres coverage
                           </div>
                         </Card>
-                        <Card className="p-4 text-center bg-gray-100 dark:bg-muted/30 border-border">
+                        <Card className="p-4 text-center bg-muted/20 border-border">
                           <Droplets className="h-8 w-8 text-primary mx-auto mb-2" />
                           <div className="text-xl font-bold text-foreground">
                             {selectedKit.water_efficiency_percentage || 0}%
@@ -951,7 +951,7 @@ const IrrigationKits = () => {
                             efficiency
                           </div>
                         </Card>
-                        <Card className="p-4 text-center bg-gray-100 dark:bg-muted/30 border-border">
+                        <Card className="p-4 text-center bg-muted/20 border-border">
                           <Clock className="h-8 w-8 text-primary mx-auto mb-2" />
                           <div className="text-xl font-bold text-foreground">
                             {selectedKit.installation_time_hours || "TBD"}
@@ -960,7 +960,7 @@ const IrrigationKits = () => {
                             install hours
                           </div>
                         </Card>
-                        <Card className="p-4 text-center bg-gray-100 dark:bg-muted/30 border-border">
+                        <Card className="p-4 text-center bg-muted/20 border-border">
                           <Shield className="h-8 w-8 text-primary mx-auto mb-2" />
                           <div className="text-xl font-bold text-foreground">
                             {selectedKit.warranty_months || 12}
@@ -986,7 +986,7 @@ const IrrigationKits = () => {
                                 (component: string, index: number) => (
                                   <div
                                     key={index}
-                                    className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-muted/30 border border-border"
+                                    className="flex items-center gap-3 p-3 bg-muted/20 border border-border"
                                   >
                                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                                     <span className="text-foreground">
@@ -1013,7 +1013,7 @@ const IrrigationKits = () => {
                               ).pricing_tiers?.map((tier: any, index: number) => (
                                 <Card
                                   key={index}
-                                  className="p-4 bg-gray-100 dark:bg-muted/30 border-border"
+                                  className="p-4 bg-muted/20 border-border"
                                 >
                                   <div className="flex items-center justify-between">
                                     <div>
@@ -1051,7 +1051,7 @@ const IrrigationKits = () => {
                                 (service: string, index: number) => (
                                   <div
                                     key={index}
-                                    className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-muted/30 border border-border"
+                                    className="flex items-center gap-3 p-3 bg-muted/20 border border-border"
                                   >
                                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                                     <span className="text-foreground">
@@ -1075,7 +1075,7 @@ const IrrigationKits = () => {
                             {kitDocuments.map((doc) => (
                               <Card
                                 key={doc.id}
-                                className="hover:shadow-md transition-shadow bg-white dark:bg-background border-border"
+                                className="transition-colors hover:border-primary/40 bg-card border-border"
                               >
                                 <CardContent className="p-4">
                                   <div className="flex items-start gap-3">
@@ -1136,7 +1136,7 @@ const IrrigationKits = () => {
                     {/* Sidebar */}
                     <div className="space-y-6">
                       {/* Price Card */}
-                      <Card className="bg-gray-100 dark:bg-muted/30 border-border">
+                      <Card className="bg-muted/20 border-border">
                         <CardContent className="p-6 text-center">
                           <div className="text-4xl font-bold text-primary mb-2">
                             {formatCurrency(selectedKit.price)}
@@ -1150,7 +1150,7 @@ const IrrigationKits = () => {
                               className="w-full"
                             >
                               <Button
-                                className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
+                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-0"
                                 size="lg"
                               >
                                 <ShoppingCart className="h-4 w-4 mr-2" />
@@ -1172,7 +1172,7 @@ const IrrigationKits = () => {
                       </Card>
 
                       {/* Kit Details */}
-                      <Card className="bg-white dark:bg-background border-border">
+                      <Card className="bg-card border-border">
                         <CardHeader>
                           <CardTitle className="text-lg text-foreground">
                             Kit Information
@@ -1227,7 +1227,7 @@ const IrrigationKits = () => {
                       {/* Crops */}
                       {selectedKit.recommended_crops &&
                         selectedKit.recommended_crops.length > 0 && (
-                          <Card className="bg-white dark:bg-background border-border">
+                          <Card className="bg-card border-border">
                             <CardHeader>
                               <CardTitle className="text-lg flex items-center gap-2 text-foreground">
                                 <Leaf className="h-5 w-5 text-primary" />
@@ -1253,7 +1253,7 @@ const IrrigationKits = () => {
                         )}
 
                       {/* Benefits */}
-                      <Card className="bg-white dark:bg-background border-border">
+                      <Card className="bg-card border-border">
                         <CardHeader>
                           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
                             <Award className="h-5 w-5 text-primary" />
@@ -1292,7 +1292,7 @@ const IrrigationKits = () => {
                   </div>
 
                   {/* Contact Section */}
-                  <Card className="mt-8 bg-gray-100 dark:bg-muted/30 border-border">
+                  <Card className="mt-8 bg-muted/20 border-border">
                     <CardContent className="p-6 text-center">
                       <h3 className="text-xl font-semibold mb-2 text-foreground">
                         Ready to Get Started?
@@ -1304,7 +1304,7 @@ const IrrigationKits = () => {
                       <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button
                           size="lg"
-                          className="bg-blue-600 hover:bg-blue-700 dark:bg-primary dark:hover:bg-primary/90 text-primary-foreground border-0"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground border-0"
                         >
                           <Phone className="h-5 w-5 mr-2" />
                           Call 0723407849
