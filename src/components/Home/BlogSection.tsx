@@ -77,7 +77,7 @@ const BlogSection = () => {
   return (
     <section className="dt-section-tight bg-background border-t border-border">
       <div className="dt-container">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
           <p className="dt-section-label mb-3">Blog</p>
           <h2 className="dt-section-title">
             Guides and notes for{" "}
@@ -93,14 +93,14 @@ const BlogSection = () => {
           {blogPosts.map((post) => (
             <Card
               key={post.id}
-              className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full flex flex-col bg-background border-border w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0 flex-shrink-0 snap-center"
+              className="group flex h-full flex-shrink-0 snap-center flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0"
             >
               {post.featured_image_url && (
-                <div className="relative aspect-video overflow-hidden">
+                <div className="relative aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
                   <img
                     src={post.featured_image_url}
                     alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                   />
 
                   {/* Category badge */}
@@ -108,7 +108,7 @@ const BlogSection = () => {
                     <div className="absolute top-4 left-4">
                       <Badge
                         variant="secondary"
-                        className="bg-muted text-foreground border-border"
+                        className="rounded-full border-0 bg-card/95 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-foreground backdrop-blur-sm"
                       >
                         {post.blog_categories.name}
                       </Badge>
@@ -117,7 +117,7 @@ const BlogSection = () => {
                 </div>
               )}
 
-              <CardHeader className="flex-1">
+              <CardHeader className="flex flex-1 flex-col p-4 sm:p-5">
                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4 text-primary" />
@@ -137,11 +137,11 @@ const BlogSection = () => {
                   </div>
                 </div>
 
-                <CardTitle className="text-xl mb-3 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
+                <CardTitle className="mb-2 line-clamp-2 font-heading text-lg font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
                   {post.title}
                 </CardTitle>
 
-                <CardDescription className="text-base line-clamp-3 flex-1 text-muted-foreground hidden md:block">
+                <CardDescription className="hidden flex-1 line-clamp-3 text-sm leading-6 text-muted-foreground md:block">
                   {getExcerpt(post)}
                 </CardDescription>
 
@@ -160,10 +160,10 @@ const BlogSection = () => {
                 )}
               </CardHeader>
 
-              <CardContent className="pt-0">
+              <CardContent className="px-4 pb-4 pt-0 sm:px-5 sm:pb-5">
                 <Button
                   variant="ghost"
-                  className="w-full justify-between hover:bg-accent hover:text-accent-foreground transition-colors"
+                  className="h-9 w-full justify-between rounded-lg border border-border px-3 text-xs font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
                   asChild
                 >
                   <Link to={`/blog/${post.slug}`}>
