@@ -27,9 +27,9 @@ const SuccessStoriesSection = () => {
   }, []);
 
   return (
-    <section className="dt-section bg-background border-t border-border">
+    <section className="border-t border-border bg-[hsl(var(--dt-stone-50)/0.55)] py-12 sm:py-16">
       <div className="dt-container">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+        <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
           <p className="dt-section-label mb-3">Projects</p>
           <h2 className="dt-section-title">
             Farms using the{" "}
@@ -42,7 +42,7 @@ const SuccessStoriesSection = () => {
         </div>
 
         {/* Stories Grid */}
-        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12 overflow-x-auto pb-6 sm:pb-0 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+        <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-6 -mx-4 px-4 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:pb-0 sm:mx-0 sm:px-0 lg:grid-cols-3 mb-8 sm:mb-10" overflow-x-auto pb-6 sm:pb-0 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
           {loading ? (
             // Loading skeleton
             Array.from({ length: 3 }).map((_, index) => (
@@ -53,7 +53,7 @@ const SuccessStoriesSection = () => {
                 <CardContent className="p-0">
                   <div className="animate-pulse">
                     <div className="aspect-[16/10] bg-muted rounded-t-lg"></div>
-                    <div className="p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
+                    <div className="space-y-3 p-4 sm:p-5">
                       <div className="h-5 sm:h-6 bg-muted rounded w-3/4"></div>
                       <div className="h-3 sm:h-4 bg-muted rounded w-1/2"></div>
                       <div className="h-16 sm:h-20 bg-muted rounded"></div>
@@ -67,16 +67,16 @@ const SuccessStoriesSection = () => {
 
               <Card
                 key={story.id}
-                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 bg-background border-border shadow-md sm:shadow-lg overflow-hidden w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] sm:min-w-0 flex-shrink-0 snap-center"
+                className="group flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] sm:min-w-0"
               >
                 <CardContent className="p-0">
                   {/* Image */}
-                  <div className="aspect-[16/10] overflow-hidden bg-muted">
+                  <div className="aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
                     {story.image_url || story.after_image ? (
                       <img
                         src={story.image_url || story.after_image}
                         alt={story.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
@@ -88,7 +88,7 @@ const SuccessStoriesSection = () => {
                   {/* Content */}
                   <div className="p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
                     <div>
-                      <h3 className="text-base sm:text-lg md:text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      <h3 className="mb-2 line-clamp-2 font-heading text-lg font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
                         {story.title}
                       </h3>
 
@@ -111,7 +111,7 @@ const SuccessStoriesSection = () => {
                     )}
 
                     {story.results && (
-                      <div className="bg-muted/30 rounded-lg p-2.5 sm:p-3 border border-border">
+                      <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.65)] p-3">
                         <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                           <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
                           <span className="text-xs sm:text-sm font-medium text-foreground">
@@ -128,7 +128,7 @@ const SuccessStoriesSection = () => {
                     <Link to="/success-stories">
                       <Button
                         variant="ghost"
-                        className="w-full hover:bg-accent hover:text-accent-foreground transition-all duration-300 text-xs sm:text-sm h-9 sm:h-10"
+                        className="h-9 w-full rounded-lg border border-border text-xs font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
                       >
                         Read Full Story
                         <ArrowRight className="ml-1.5 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
