@@ -7,7 +7,6 @@ import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
 import ScrollReveal from "@/components/common/ScrollReveal";
 import TrustStrip from "@/components/Home/TrustStrip";
-import ServicesSection from "@/components/Home/ServicesSection";
 import ProjectsSection from "@/components/Home/ProjectsSection";
 
 const Home = () => {
@@ -22,10 +21,6 @@ const Home = () => {
       </ScrollReveal>
 
       <ScrollReveal delay={80}>
-        <ServicesSection hideMarquee hideKits hideProcess compact />
-      </ScrollReveal>
-
-      <ScrollReveal>
         <ProjectsSection compact />
       </ScrollReveal>
 
