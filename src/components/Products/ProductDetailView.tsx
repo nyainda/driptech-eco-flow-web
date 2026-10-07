@@ -122,10 +122,11 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
         {/* Info */}
         <div>
           <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--dt-green-600))]">Irrigation equipment</p>
+          <h2 className="mt-2 font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">{product.name}</h2>
           {product.model_number && (
             <p className="mt-3 font-mono text-xs text-muted-foreground">Model {product.model_number}</p>
           )}
-          <p className="mt-3 font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">{formatPrice(displayPrice)}</p>
+          <p className="mt-4 font-mono text-xl font-black tracking-tight text-[hsl(var(--dt-green-800))] sm:text-2xl">{formatPrice(displayPrice)}</p>
           <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
             <Check className="h-4 w-4" />
             {isInStock ? "Available to order" : "Confirm availability"}
