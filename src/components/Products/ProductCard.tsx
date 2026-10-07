@@ -44,8 +44,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <ProductTracker productName={product.name} productId={product.id} category={product.category} className="h-full">
-      <article className="group flex h-full flex-col overflow-hidden border border-border bg-card transition-colors duration-300 hover:border-primary/50">
-        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-border bg-muted/20">
+      <article className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))]">
+        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)]">
           {product.images?.[0] ? (
             <img
               src={product.images[0]}
@@ -53,7 +53,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               width={600}
               height={600}
               loading="lazy"
-              className="aspect-[4/3] w-full object-contain p-5 transition-transform duration-500 group-hover:scale-[1.035] sm:p-7"
+              className="aspect-[4/3] w-full object-contain p-4 transition-transform duration-500 ease-out group-hover:scale-[1.035] sm:p-5"
             />
           ) : (
             <div className="flex aspect-[4/3] w-full items-center justify-center">
@@ -61,12 +61,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </div>
           )}
 
-          <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
-            <span className="border border-border bg-card/95 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-foreground">
+          <div className="absolute left-3 top-3 flex items-center gap-1.5">
+            <span className="rounded-full bg-[hsl(var(--dt-green-800))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.12em] text-white">
               {isInStock ? "In stock" : "Check availability"}
             </span>
             {product.featured && (
-              <span className="flex items-center gap-1 border border-accent/30 bg-accent px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-accent-foreground">
+              <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[hsl(var(--dt-green-900))]">
                 <Star className="h-2.5 w-2.5" fill="currentColor" />
                 Featured
               </span>
@@ -75,19 +75,19 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
 
         <div className="flex flex-1 flex-col p-4 sm:p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent-foreground/80">{categoryLabel}</p>
-          <h3 className="mt-1.5 font-heading text-base font-bold leading-snug text-foreground sm:text-lg">
+          <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-[hsl(var(--dt-green-600))]">{categoryLabel}</p>
+          <h3 className="mt-1.5 font-heading text-[17px] font-bold leading-snug tracking-tight text-foreground sm:text-lg">
             <Link to={path} className="transition-colors hover:text-primary">{product.name}</Link>
           </h3>
-          <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground sm:text-sm">
+          <p className="mt-2 line-clamp-2 min-h-[40px] text-xs leading-5 text-muted-foreground sm:text-sm">
             {product.description || "Professional irrigation equipment for dependable field use."}
           </p>
 
-          <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4 mt-5">
-            <p className="font-mono text-base font-bold tracking-tight text-foreground sm:text-lg">{priceLabel}</p>
+          <div className="mt-auto flex items-end justify-between gap-3 border-t border-[hsl(var(--dt-stone-200))] pt-4 mt-5">
+            <p className="font-mono text-base font-black tracking-tight text-[hsl(var(--dt-green-800))] sm:text-lg">{priceLabel}</p>
             <Link
               to={path}
-              className="inline-flex shrink-0 items-center gap-1.5 text-xs font-bold text-primary transition-colors hover:text-primary/75"
+              className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-[11px] font-bold text-primary-foreground transition-colors hover:bg-primary/90"
             >
               View product <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -96,7 +96,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <button
             type="button"
             onClick={() => openTrackedWhatsApp(whatsappUrl, "product card inquiry")}
-            className="mt-3 inline-flex min-h-10 w-full items-center justify-center gap-2 border border-[hsl(var(--dt-whatsapp)/0.35)] px-3 py-2 text-xs font-bold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.07)]"
+            className="mt-2 inline-flex items-center justify-center gap-1.5 py-1.5 text-[10px] font-bold text-[hsl(var(--dt-whatsapp))] transition-colors hover:text-[hsl(var(--dt-green-800))]"
           >
             <MessageCircle className="h-3.5 w-3.5" />
             Ask about this product
