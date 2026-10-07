@@ -385,7 +385,7 @@ const ProductsShowcase = ({
     }));
 
   return (
-    <section className={`${compact ? "py-6 sm:py-8" : "dt-section border-t"} bg-background border-border relative overflow-hidden`}>
+    <section className={`${compact ? "py-10 sm:py-14" : "dt-section border-t"} bg-background border-border relative overflow-hidden`}>
       {!loading && productListSchemaItems.length > 0 && (
         <StructuredData
           type="itemlist"
@@ -415,31 +415,31 @@ const ProductsShowcase = ({
 
         {/* Featured product spotlight */}
         {!loading && featuredProduct && !hideHeader && (
-          <section className="mb-12 border border-border bg-card sm:mb-16" aria-labelledby="featured-product-title">
+          <section className="mb-10 overflow-hidden rounded-2xl border border-[hsl(var(--dt-stone-200))] bg-card sm:mb-14" aria-labelledby="featured-product-title">
             <div className="grid items-stretch lg:grid-cols-[1.05fr_0.95fr]">
               <Link
                 to={getProductPath(featuredProduct)}
-                className="group relative overflow-hidden border-b border-border bg-muted/20 lg:border-b-0 lg:border-r"
+                className="group relative overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)] lg:border-b-0 lg:border-r"
                 aria-label={`View featured product: ${featuredProduct.name}`}
               >
                 {featuredProduct.images?.[0] ? (
                   <img
                     src={featuredProduct.images[0]}
                     alt={featuredProduct.name}
-                    className="aspect-[4/3] w-full object-contain p-7 transition-transform duration-500 group-hover:scale-[1.025] sm:p-10 lg:aspect-auto lg:h-full lg:min-h-[360px]"
+                    className="aspect-[4/3] w-full object-contain p-5 transition-transform duration-500 group-hover:scale-[1.025] sm:p-8 lg:aspect-auto lg:h-full lg:min-h-[360px]"
                   />
                 ) : (
                   <div className="flex min-h-[320px] items-center justify-center">
                     <Package className="h-20 w-20 text-muted-foreground/30" />
                   </div>
                 )}
-                <span className="absolute left-4 top-4 border border-accent/30 bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-accent-foreground">
+                <span className="absolute left-4 top-4 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[hsl(var(--dt-green-900))]">
                   Featured equipment
                 </span>
               </Link>
-              <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+              <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-9">
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Recommended starting point</p>
-                <h3 id="featured-product-title" className="mt-2 max-w-xl font-heading text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+                <h3 id="featured-product-title" className="mt-2 max-w-xl font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
                   {featuredProduct.name}
                 </h3>
                 <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
@@ -497,7 +497,7 @@ const ProductsShowcase = ({
                 <button
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${
+                  className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all duration-200 ${
                     activeCategory === cat.key
                       ? "bg-primary text-primary-foreground border-primary"
                       : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
@@ -520,7 +520,7 @@ const ProductsShowcase = ({
 
           {/* Count line */}
           {!loading && (
-            <p className="text-sm text-muted-foreground mt-3">
+            <p className="mt-3 text-xs text-muted-foreground">
               Showing <span className="font-semibold text-foreground">{visibleProducts.length}</span> of{" "}
               <span className="font-semibold text-foreground">{filteredProducts.length}</span>{" "}
               {activeCategory === "all" ? "products" : CATEGORIES.find(c => c.key === activeCategory)?.label.toLowerCase() + " products"}
