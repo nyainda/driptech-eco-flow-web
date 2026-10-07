@@ -28,6 +28,7 @@ import {
 import {
   Package,
   Star,
+  ArrowRight,
   Clock,
   Droplets,
   Leaf,
@@ -766,126 +767,108 @@ const IrrigationKits = () => {
                   components.pricing_tiers.length > 0;
 
                 return (
-                  <Card
+                  <article
                     key={kit.id}
-                    className="dt-card group relative flex h-full cursor-pointer flex-col overflow-hidden transition-colors duration-200 hover:border-primary/50"
+                    className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))]"
                     onClick={() => handleKitSelect(kit)}
                   >
-                    <CardContent className="relative flex flex-1 flex-col p-0">
-                      <div className="relative overflow-hidden border-b border-border bg-muted">
-                        <div className="relative aspect-[1.12] overflow-hidden sm:aspect-[4/3] lg:aspect-[1.2]">
-                          {imageUrl ? (
-                            <img
-                              src={imageUrl}
-                              alt={kit.name}
-                              className="h-full w-full object-contain p-4 sm:p-5 lg:p-6"
-                              loading="lazy"
-                              decoding="async"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
-                              <Package className="h-12 w-12 text-primary/50" />
-                              <span className="text-xs font-medium">Kit photo</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="absolute left-2 top-2 flex max-w-[70%] flex-col gap-1">
-                          {kit.featured && (
-                            <Badge className="border-0 bg-primary px-1.5 py-0 text-[9px] font-bold text-primary-foreground sm:text-[10px]">
-                              <Star className="mr-0.5 h-2.5 w-2.5" fill="currentColor" />
-                              Featured
-                            </Badge>
-                          )}
-                          <Badge
-                            variant="secondary"
-                            className="max-w-full truncate border-border bg-background/95 px-1.5 py-0 text-[9px] capitalize text-foreground shadow-sm sm:text-[10px]"
-                          >
-                            {(kit.kit_type || "standard kit").replace(/_/g, " ")}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
-                        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground sm:text-base">
-                          {kit.name}
-                        </h3>
-
-                        {kit.description && (
-                          <p className="hidden text-sm leading-relaxed text-muted-foreground line-clamp-2 md:block">
-                            {kit.description}
-                          </p>
+                    <div className="relative overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)]">
+                      <div className="aspect-[4/3] overflow-hidden p-4 sm:p-5">
+                        {imageUrl ? (
+                          <img
+                            src={imageUrl}
+                            alt={kit.name}
+                            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.035]"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center">
+                            <Package className="h-12 w-12 text-primary/40" />
+                          </div>
                         )}
+                      </div>
+                      {kit.featured && (
+                        <Badge className="absolute left-3 top-3 rounded-full border-0 bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[hsl(var(--dt-green-900))]">
+                          <Star className="mr-1 h-2.5 w-2.5" fill="currentColor" />
+                          Featured
+                        </Badge>
+                      )}
+                    </div>
 
-                        <div className="mt-auto space-y-3 pt-1">
-                          <div className="flex items-baseline justify-between gap-2">
-                            {hasPricingTiers ? (
-                              <div>
-                                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                                  From
-                                </p>
-                                <p className="dt-price-sm text-primary">
-                                  {formatCurrency(
-                                    Math.min(
-                                      ...components.pricing_tiers!.map((tier) => tier.price),
-                                    ),
-                                  )}
-                                </p>
-                              </div>
-                            ) : (
-                              <p className="dt-price-sm text-primary">
-                                {formatCurrency(kit.price)}
-                              </p>
-                            )}
-                            {kit.coverage_area ? (
-                              <span className="text-xs text-muted-foreground">
-                                {kit.coverage_area} acres
-                              </span>
-                            ) : null}
-                          </div>
+                    <div className="flex flex-1 flex-col p-4 sm:p-5">
+                      <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-[hsl(var(--dt-green-600))]">
+                        {(kit.kit_type || "Irrigation kit").replace(/_/g, " ")}
+                      </p>
+                      <h3 className="mt-1.5 font-heading text-[17px] font-bold leading-snug tracking-tight text-foreground sm:text-lg">
+                        {kit.name}
+                      </h3>
 
-                          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-                            <a
-                              href={`https://wa.me/254723407849?text=${encodeURIComponent(
-                                `Hi DripTech — I'm interested in the ${kit.name} kit. Please share price and availability.`,
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="col-span-2 flex flex-row items-center justify-center gap-2 rounded-none bg-[hsl(var(--dt-whatsapp))] py-2.5 transition-all hover:bg-[hsl(var(--dt-whatsapp)/0.9)] active:scale-[0.98] sm:col-span-1 sm:flex-col sm:gap-1.5 sm:py-3"
-                            >
-                              <MessageCircle className="h-4 w-4 text-white" aria-hidden="true" />
-                              <span className="text-[11px] font-bold text-white sm:text-[10px]">Ask on WhatsApp</span>
-                            </a>
-                            <button
-                              type="button"
-                              className="flex flex-col items-center justify-center gap-1 rounded-none border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleKitSelect(kit);
-                              }}
-                            >
-                              <Eye className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
-                              Details
-                            </button>
-                            <button
-                              type="button"
-                              className="flex flex-col items-center justify-center gap-1 rounded-none border border-border bg-background py-2 text-[9px] font-bold text-muted-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:gap-1.5 sm:py-3 sm:text-[10px]"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleKitSelect(kit);
-                              }}
-                            >
-                              <ShoppingCart className="h-3.5 w-3.5 text-primary sm:h-4 sm:w-4" />
-                              Quote
-                            </button>
-                          </div>
+                      <p className="mt-2 line-clamp-2 min-h-[40px] text-xs leading-5 text-muted-foreground sm:text-sm">
+                        {kit.description || "A ready-to-use irrigation package matched to your farm or plot size."}
+                      </p>
+
+                      <div className="mt-4 grid grid-cols-2 gap-2">
+                        <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.55)] px-3 py-2">
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Coverage</p>
+                          <p className="mt-0.5 font-mono text-sm font-bold text-foreground">
+                            {kit.coverage_area ? kit.coverage_area + " acre" + (kit.coverage_area === 1 ? "" : "s") : "Custom"}
+                          </p>
+                        </div>
+                        <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.55)] px-3 py-2">
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Install</p>
+                          <p className="mt-0.5 text-sm font-bold capitalize text-foreground">
+                            {kit.installation_complexity || "Contact"}
+                          </p>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+
+                      {components.main_components && components.main_components.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {components.main_components.slice(0, 3).map((component: string) => (
+                            <span key={component} className="rounded-full bg-primary/5 px-2 py-1 text-[9px] font-semibold text-primary">
+                              {component}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="mt-auto flex items-end justify-between gap-3 border-t border-[hsl(var(--dt-stone-200))] pt-4 mt-5">
+                        <div>
+                          <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                            {hasPricingTiers ? "Starting from" : "Price"}
+                          </p>
+                          <p className="mt-0.5 font-mono text-base font-black tracking-tight text-[hsl(var(--dt-green-800))] sm:text-lg">
+                            {hasPricingTiers
+                              ? formatCurrency(Math.min(...components.pricing_tiers!.map((tier) => tier.price)))
+                              : formatCurrency(kit.price)}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleKitSelect(kit);
+                          }}
+                          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-[11px] font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                        >
+                          View Kit
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+
+                      <a
+                        href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! I'm interested in the " + kit.name + " kit. Please share price and availability.")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="mt-2 inline-flex items-center justify-center gap-1.5 py-1.5 text-[10px] font-bold text-[hsl(var(--dt-whatsapp))] transition-colors hover:text-[hsl(var(--dt-green-800))]"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        Ask on WhatsApp
+                      </a>
+                    </div>
+                  </article>
                 );
               })}
             </div>
