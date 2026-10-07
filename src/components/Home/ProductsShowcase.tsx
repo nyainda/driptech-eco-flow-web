@@ -357,6 +357,16 @@ const ProductsShowcase = ({
   ];
 
 
+  const featuredProduct = allProducts.find((p) => p.featured) || allProducts[0];
+  const formatHomepagePrice = (price: number | null | undefined) =>
+    price == null
+      ? "Price on request"
+      : new Intl.NumberFormat("en-KE", {
+          style: "currency",
+          currency: "KES",
+          maximumFractionDigits: 0,
+        }).format(price);
+
   // Schema.org ItemList for products visible on the homepage (helps product SEO)
   const productListSchemaItems = products
     .filter((p) => p.name)
@@ -402,6 +412,60 @@ const ProductsShowcase = ({
           </div>
         )}
 
+        {/* Featured product spotlight */}
+        {!loading && featuredProduct && !hideHeader && (
+          <section className="mb-12 border border-border bg-card sm:mb-16" aria-labelledby="featured-product-title">
+            <div className="grid items-stretch lg:grid-cols-[1.05fr_0.95fr]">
+              <Link
+                to={getProductPath(featuredProduct)}
+                className="group relative overflow-hidden border-b border-border bg-muted/20 lg:border-b-0 lg:border-r"
+                aria-label={`View featured product: ${featuredProduct.name}`}
+              >
+                {featuredProduct.images?.[0] ? (
+                  <img
+                    src={featuredProduct.images[0]}
+                    alt={featuredProduct.name}
+                    className="aspect-[4/3] w-full object-contain p-7 transition-transform duration-500 group-hover:scale-[1.025] sm:p-10 lg:aspect-auto lg:h-full lg:min-h-[360px]"
+                  />
+                ) : (
+                  <div className="flex min-h-[320px] items-center justify-center">
+                    <Package className="h-20 w-20 text-muted-foreground/30" />
+                  </div>
+                )}
+                <span className="absolute left-4 top-4 border border-accent/30 bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-accent-foreground">
+                  Featured equipment
+                </span>
+              </Link>
+              <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Recommended starting point</p>
+                <h3 id="featured-product-title" className="mt-2 max-w-xl font-heading text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+                  {featuredProduct.name}
+                </h3>
+                <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
+                  {featuredProduct.description || "A dependable irrigation component selected from our current catalogue."}
+                </p>
+                <div className="mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-border pt-5">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Starting price</p>
+                    <p className="mt-1 font-mono text-xl font-bold text-foreground">{formatHomepagePrice(featuredProduct.price)}</p>
+                  </div>
+                  <Link
+                    to={getProductPath(featuredProduct)}
+                    className="dt-btn-primary inline-flex items-center gap-2"
+                  >
+                    View product <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-muted-foreground">
+                  <span>✓ Product details</span>
+                  <span>✓ Stock status</span>
+                  <span>✓ WhatsApp support</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Stats Bar */}
         {!hideStats && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
@@ -434,7 +498,7 @@ const ProductsShowcase = ({
                   onClick={() => setActiveCategory(cat.key)}
                   className={`flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 ${
                     activeCategory === cat.key
-                      ? "bg-primary text-primary-foreground border-primary shadow-md"
+                      ? bg-primary text-primary-foreground border-primary
                       : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                   }`}
                 >
@@ -514,7 +578,7 @@ const ProductsShowcase = ({
                 variant="outline"
                 size="lg"
                 onClick={() => setVisibleCount(v => v + LOAD_MORE_COUNT)}
-                className="rounded-full px-8 border-border hover:border-primary/40 hover:bg-accent"
+                className="px-7 border-border hover:border-primary/40 hover:bg-accent"
               >
                 Load {Math.min(LOAD_MORE_COUNT, filteredProducts.length - visibleCount)} more products
                 <ChevronDown className="ml-2 h-4 w-4" />
@@ -523,7 +587,7 @@ const ProductsShowcase = ({
             <Link to="/products">
               <Button
                 size="lg"
-                className="rounded-full px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
+                className="px-7 bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Browse all products
                 <ArrowRight className="ml-2 h-4 w-4" />
