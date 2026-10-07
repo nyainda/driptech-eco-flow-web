@@ -83,16 +83,16 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
   const whatsappUrl = `https://wa.me/254723407849?text=${whatsappMessage}`;
 
   return (
-    <div className="space-y-12">
-      <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
+    <div className="space-y-10 sm:space-y-14">
+      <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12 xl:gap-16">
         {/* Gallery */}
         <div>
-          <div className="overflow-hidden border border-border bg-muted/20 p-5 sm:p-8">
+          <div className="overflow-hidden rounded-2xl border border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)] p-4 sm:p-7">
             {images.length > 0 ? (
               <img
                 src={images[activeImage]}
                 alt={`${product.name}${activeImage > 0 ? ` — image ${activeImage + 1}` : ""}`}
-                className="aspect-square w-full object-contain"
+                className="aspect-square w-full object-contain transition-transform duration-500 hover:scale-[1.015]"
               />
             ) : (
               <div className="flex aspect-square w-full items-center justify-center">
@@ -108,7 +108,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                   type="button"
                   onClick={() => setActiveImage(index)}
                   aria-label={`View image ${index + 1}`}
-                  className={`overflow-hidden border p-1 transition-colors ${
+                  className={`overflow-hidden rounded-lg border bg-card p-1 transition-colors ${
                     activeImage === index ? "border-primary" : "border-border hover:border-primary/50"
                   }`}
                 >
@@ -121,30 +121,32 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
 
         {/* Info */}
         <div>
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--dt-green-600))]">Irrigation equipment</p>
+          <h2 className="mt-2 font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">{product.name}</h2>
           {product.model_number && (
-            <p className="text-sm text-muted-foreground">Model {product.model_number}</p>
+            <p className="mt-3 font-mono text-xs text-muted-foreground">Model {product.model_number}</p>
           )}
-          <p className="mt-4 text-3xl font-bold text-foreground">{formatPrice(displayPrice)}</p>
-          <p className="mt-2 flex items-center gap-2 text-sm font-medium text-primary">
+          <p className="mt-4 font-mono text-xl font-black tracking-tight text-[hsl(var(--dt-green-800))] sm:text-2xl">{formatPrice(displayPrice)}</p>
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
             <Check className="h-4 w-4" />
             {isInStock ? "Available to order" : "Confirm availability"}
           </p>
 
-          <p className="mt-6 leading-7 text-muted-foreground">
+          <p className="mt-5 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
             {product.description || "Professional irrigation equipment for dependable field use."}
           </p>
 
           {hasVariants && (
-            <section className="mt-7">
-              <h2 className="font-heading text-lg font-bold text-foreground">Available variants</h2>
+            <section className="mt-7 rounded-xl border border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-50)/0.55)] p-4 sm:p-5">
+              <h2 className="font-heading text-base font-bold text-foreground">Select variant</h2>
               <div className="mt-3 divide-y divide-border border border-border">
                 {product.variants!.map((variant) => (
                   <button
                     key={variant.name}
                     type="button"
                     onClick={() => setSelectedVariant(variant)}
-                    className={`flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm transition-colors ${
-                      selectedVariant?.name === variant.name ? "bg-primary/10" : "hover:bg-muted/40"
+                    className={`flex w-full items-center justify-between gap-4 rounded-lg px-3 py-3 text-left text-sm transition-colors ${
+                      selectedVariant?.name === variant.name ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted/40"
                     }`}
                   >
                     <span className="text-foreground">{variant.name}</span>
@@ -162,7 +164,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
 
           <Button
             size="lg"
-            className="mt-7 h-12 w-full rounded-none"
+            className="mt-7 h-12 w-full rounded-xl text-sm font-bold shadow-none"
             onClick={() => openTrackedWhatsApp(whatsappUrl, "product detail page")}
           >
             <MessageCircle className="h-5 w-5" />
@@ -173,10 +175,10 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
 
       {/* Features & specifications */}
       {(product.features?.length || specs.length > 0) && (
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           {product.features && product.features.length > 0 && (
             <section>
-              <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">Features</h2>
+              <h2 className="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl">Features</h2>
               <ul className="mt-4 space-y-3">
                 {product.features.map((item) => (
                   <li key={item} className="flex gap-3 text-sm text-muted-foreground">
@@ -190,9 +192,9 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
           {specs.length > 0 && (
             <section>
               <h2 className="font-heading text-2xl font-bold tracking-tight text-foreground">Specifications</h2>
-              <dl className="mt-4 divide-y divide-border border-y border-border">
+              <dl className="mt-4 divide-y divide-border rounded-xl border border-border bg-card">
                 {specs.map(({ label, value }) => (
-                  <div key={label} className="grid grid-cols-2 gap-4 py-3 text-sm">
+                  <div key={label} className="grid grid-cols-2 gap-4 px-4 py-3 text-sm">
                     <dt className="text-muted-foreground">{label}</dt>
                     <dd className="font-semibold text-foreground">{value}</dd>
                   </div>
