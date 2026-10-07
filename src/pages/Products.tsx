@@ -113,6 +113,18 @@ interface Product {
   variants?: Variant[] | null;
 }
 
+const CATEGORY_NAV = [
+  ["drip_irrigation", "Drip Irrigation", "drip"],
+  ["sprinkler_systems", "Sprinklers", "sprinklers"],
+  ["pumps_motors", "Pumps & Motors", "pumps"],
+  ["pipes_fittings", "Pipes & Fittings", "pipes"],
+  ["filtration_systems", "Filtration", "filtration"],
+  ["fertigation_systems", "Fertigation", "fertigation"],
+  ["greenhouse_systems", "Greenhouse", "greenhouse"],
+  ["emitters_drippers", "Emitters", "emitters"],
+  ["valves_regulators", "Valves", "valves"],
+] as const;
+
 const CATEGORY_PATHS: Record<string, string> = {
   accessories: "accessories",
   borehole_equipment: "borehole",
@@ -681,8 +693,8 @@ const Products = () => {
         <Header />
         <main>
           <section className="py-12 sm:py-16 lg:py-20 bg-background border-b border-border">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="bg-background shadow-md rounded-xl p-6">
+            <div className="dt-container">
+              <div className="bg-card border border-border p-5 sm:p-8">
                 <div className="text-center mb-8 sm:mb-12">
                   <div className="h-8 bg-muted rounded w-64 mx-auto mb-4"></div>
                   <div className="h-4 bg-muted rounded w-96 mx-auto"></div>
@@ -728,7 +740,7 @@ const Products = () => {
         <main>
           <section className="py-12 sm:py-16 lg:py-20 bg-background border-b border-border">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center bg-background shadow-md rounded-xl p-6">
+              <div className="text-center bg-card border border-border p-5 sm:p-8">
                 <Package className="h-12 w-12 text-primary mx-auto mb-4" />
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
                   Error Loading Products
@@ -1111,14 +1123,14 @@ const Products = () => {
       </Dialog>
       <main>
         {/* Enhanced Hero Section with Gradient and Breadcrumbs */}
-        <section className="relative bg-gradient-to-br from-background via-background to-primary/5 border-b border-border py-8 sm:py-12">
+        <section className="relative border-b border-border bg-background py-10 sm:py-14">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {/* Hero-like Breadcrumb and Title Section */}
             <Breadcrumbs className="mb-8" />
 
             {/* Title Section */}
-            <div className="text-center max-w-4xl mx-auto">
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+            <div className="mx-auto max-w-4xl text-center">
+              <Badge className="mb-4 border border-primary/20 bg-primary/5 text-primary">
                 <Package className="w-4 h-4 mr-2" />
                 Product Catalog
               </Badge>
@@ -1141,6 +1153,29 @@ const Products = () => {
               </div>
             </div>
           </div>
+
+          <nav aria-label="Product categories" className="mt-8 overflow-x-auto pb-1">
+            <div className="flex min-w-max justify-center gap-2">
+              {CATEGORY_NAV.map(([, label, path]) => {
+                const active = category === path;
+                return (
+                  <Link
+                    key={path}
+                    to={`/products/${path}`}
+                    className={cn(
+                      "border px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4",
+                      active
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                    )}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
         </section>
 
         {/* Main Content Section */}
@@ -1148,7 +1183,7 @@ const Products = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
             {/* Enhanced Sticky Filter Bar */}
-            <div className="sticky top-16 z-20 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm mb-8">
+            <div className="sticky top-16 z-20 border-y border-border bg-background/95 backdrop-blur-sm mb-8">
               <div className={`py-4 ${showFilters ? "block" : "hidden sm:block"}`}>
                 {/* Search and Controls Row */}
                 <div className="flex flex-col lg:flex-row gap-4 mb-4">
@@ -1159,7 +1194,7 @@ const Products = () => {
                       placeholder="Search by name, model, or features..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-12 pr-12 h-12 bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl text-base transition-all"
+                      className="pl-12 pr-12 h-12 bg-card border-border focus:border-primary focus:ring-2 focus:ring-primary/20 text-base transition-all"
                     />
                     {searchTerm && (
                       <Button
@@ -1187,7 +1222,7 @@ const Products = () => {
                     </Select>
 
                     <Button
-                      className="px-4 h-12 bg-background border border-border hover:border-primary/50 hover:bg-muted rounded-xl transition-all"
+                      className="px-4 h-12 bg-background border border-border hover:border-primary/50 hover:bg-muted transition-all"
                       onClick={() =>
                         setSortOrder(sortOrder === "asc" ? "desc" : "asc")
                       }
@@ -1218,7 +1253,7 @@ const Products = () => {
                     </div>
 
                     <Button
-                      className="sm:hidden h-12 px-4 bg-background border border-border hover:border-primary/50 hover:bg-muted rounded-xl transition-all"
+                      className="sm:hidden h-12 px-4 bg-background border border-border hover:border-primary/50 hover:bg-muted transition-all"
                       onClick={() => setShowFilters(!showFilters)}
                     >
                       <Filter className="h-5 w-5 mr-2" />
@@ -1270,7 +1305,7 @@ const Products = () => {
               <div>
                 <div
                   className={`grid gap-6 mb-12 ${viewMode === "grid"
-                    ? "grid-cols-2 sm:grid-cols-3 xl:grid-cols-4"
+                    ? "grid-cols-1 min-[520px]:grid-cols-2 lg:grid-cols-3"
                     : "grid-cols-1"
                     }`}
                 >
@@ -1288,7 +1323,7 @@ const Products = () => {
                 <hr className="border-border w-full max-w-3xl mx-auto mt-12" />
               </div>
             ) : (
-              <div className="text-center py-16 bg-gradient-to-br from-background to-muted/20 rounded-2xl border-2 border-dashed border-border">
+              <div className="border border-dashed border-border py-16 text-center">
                 <div className="max-w-md mx-auto px-6">
                   <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Package className="h-10 w-10 text-primary" />
@@ -1301,7 +1336,7 @@ const Products = () => {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Button
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-md"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={clearAllFilters}
                     >
                       <X className="h-4 w-4 mr-2" />
