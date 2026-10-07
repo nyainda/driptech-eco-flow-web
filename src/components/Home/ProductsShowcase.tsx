@@ -45,6 +45,7 @@ import { Link } from "react-router-dom";
 import QuoteModal from "./QuoteModal";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import { StructuredData } from "@/components/SEO/StructuredData";
+import { getProductPath } from "@/lib/productUrl";
 
 interface Variant {
   name: string;
