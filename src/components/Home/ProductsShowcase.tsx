@@ -434,7 +434,7 @@ const ProductsShowcase = ({
                   </div>
                 )}
                 <span className="absolute left-4 top-4 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[hsl(var(--dt-green-900))]">
-                  Featured equipment
+                  Featured product
                 </span>
               </Link>
               <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-9">
