@@ -30,13 +30,13 @@ const SuccessStoriesSection = () => {
     <section className="border-t border-border bg-[hsl(var(--dt-stone-50)/0.55)] py-12 sm:py-16">
       <div className="dt-container">
         <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
-          <p className="dt-section-label mb-3">Projects</p>
+          <p className="dt-section-label mb-3">Success stories</p>
           <h2 className="dt-section-title">
             Farms using the{" "}
             <span className="text-primary">equipment</span>
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
-            Real installs where the right driplines or kit made watering simpler.
+            Real installations, practical results and feedback from the farms we have helped.
 
           </p>
         </div>
