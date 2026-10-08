@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, MessageCircle, Package, Star } from "lucide-react";
+import { ArrowRight, MessageCircle, Package, Star, Truck } from "lucide-react";
 import ProductTracker from "@/components/Analytics/ProductTracker";
 import {
   formatPrice,
@@ -44,8 +44,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <ProductTracker productName={product.name} productId={product.id} category={product.category} className="h-full">
-      <article className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))]">
-        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-border bg-muted/60">
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/35 hover:shadow-xl hover:shadow-primary/5">
+        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-border bg-muted/45">
           {product.images?.[0] ? (
             <img
               src={product.images[0]}
@@ -53,7 +53,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               width={600}
               height={600}
               loading="lazy"
-              className="aspect-[4/3] w-full object-contain p-4 transition-transform duration-500 ease-out group-hover:scale-[1.035] sm:p-5"
+              className="aspect-[4/3] w-full object-contain p-5 transition-transform duration-500 ease-out group-hover:scale-[1.045] sm:p-6"
             />
           ) : (
             <div className="flex aspect-[4/3] w-full items-center justify-center">
@@ -61,12 +61,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </div>
           )}
 
-          <div className="absolute left-3 top-3 flex items-center gap-1.5">
-            <span className="rounded-full bg-[hsl(var(--dt-green-800))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.12em] text-white">
+          <div className="absolute left-3 top-3 right-3 flex items-start justify-between gap-2">
+            <span className="rounded-full bg-primary px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.12em] text-primary-foreground shadow-sm">
               {isInStock ? "In stock" : "Check availability"}
             </span>
             {product.featured && (
-              <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[hsl(var(--dt-green-900))]">
+              <span className="flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-accent-foreground shadow-sm">
                 <Star className="h-2.5 w-2.5" fill="currentColor" />
                 Featured
               </span>
@@ -75,7 +75,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
 
         <div className="flex flex-1 flex-col p-4 sm:p-5">
-          <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">{categoryLabel}</p>
+          <div className="flex items-center justify-between gap-2">\n            <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">{categoryLabel}</p>\n            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-muted-foreground"><Truck className="h-3 w-3 text-primary" /> Kenya delivery</span>\n          </div>
           <h3 className="mt-1.5 font-heading text-[17px] font-bold leading-snug tracking-tight text-foreground sm:text-lg">
             <Link to={path} className="transition-colors hover:text-primary">{product.name}</Link>
           </h3>
