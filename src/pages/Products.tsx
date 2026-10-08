@@ -1122,60 +1122,75 @@ const Products = () => {
         </DialogContent>
       </Dialog>
       <main>
-        {/* Enhanced Hero Section with Gradient and Breadcrumbs */}
-        <section className="relative border-b border-border bg-background py-10 sm:py-14">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Hero-like Breadcrumb and Title Section */}
-            <Breadcrumbs className="mb-8" />
-
-            {/* Title Section */}
-            <div className="mx-auto max-w-4xl text-center">
-              <Badge className="mb-4 border border-primary/20 bg-primary/5 text-primary">
-                <Package className="w-4 h-4 mr-2" />
-                Product Catalog
-              </Badge>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4">
-                {category ? (
-                  getCategoryTitle(category)
-                ) : (
-                  <>
-                    <span className="text-accent">All</span> Products
-                  </>
-                )}
-              </h1>
-              <p className="text-lg sm:text-xl text-muted-foreground mb-2">
-                Discover our range of professional irrigation solutions
-              </p>
-              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="outline" className="font-normal">
-                  {catalogueStatus}
+        {/* Catalogue hero */}
+        <section className="relative overflow-hidden border-b border-border bg-background">
+          <div className="absolute inset-0">
+            <img src="/hero-bg-new-desktop.webp" alt="" className="h-full w-full object-cover opacity-[0.12] dark:opacity-[0.08]" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/70" />
+          </div>
+          <div className="relative container mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+            <Breadcrumbs className="mb-7" />
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div className="max-w-3xl">
+                <Badge className="mb-4 border border-primary/20 bg-primary/10 text-primary">
+                  <Package className="mr-2 h-3.5 w-3.5" />
+                  DripTech product catalogue
                 </Badge>
+                <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                  {category ? getCategoryTitle(category) : "Irrigation equipment built for the field"}
+                </h1>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
+                  {category
+                    ? `Explore ${getCategoryTitle(category).toLowerCase()} for farms, greenhouses and irrigation projects across Kenya.`
+                    : "Find drip, sprinkler, pumping, filtration, fertigation and greenhouse equipment in one practical catalogue."}
+                </p>
+              </div>
+              <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm backdrop-blur">
+                <div className="border-r border-border px-4 py-4 text-center sm:px-6">
+                  <p className="font-mono text-xl font-black text-foreground">{filteredProducts.length}</p>
+                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Products</p>
+                </div>
+                <div className="border-r border-border px-4 py-4 text-center sm:px-6">
+                  <p className="font-mono text-xl font-black text-foreground">9+</p>
+                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Categories</p>
+                </div>
+                <div className="px-4 py-4 text-center sm:px-6">
+                  <p className="font-mono text-xl font-black text-primary">KE</p>
+                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Delivery</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <nav aria-label="Product categories" className="mt-8 overflow-x-auto pb-1">
-            <div className="flex min-w-max justify-center gap-2">
-              {CATEGORY_NAV.map(([, label, path]) => {
-                const active = category === path;
-                return (
-                  <Link
-                    key={path}
-                    to={`/products/${path}`}
-                    className={cn(
-                      "border px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4",
-                      active
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
-                    )}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
-            </div>
-          </nav>
+            <nav aria-label="Product categories" className="mt-8 overflow-x-auto pb-1">
+              <div className="flex min-w-max gap-2">
+                <Link
+                  to="/products"
+                  className={cn(
+                    "rounded-full border px-4 py-2 text-xs font-bold transition-all",
+                    !category ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                  )}
+                >
+                  All products
+                </Link>
+                {CATEGORY_NAV.map(([, label, path]) => {
+                  const active = category === path;
+                  return (
+                    <Link
+                      key={path}
+                      to={`/products/${path}`}
+                      className={cn(
+                        "rounded-full border px-4 py-2 text-xs font-bold transition-all",
+                        active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                      )}
+                      aria-current={active ? "page" : undefined}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </nav>
+          </div>
         </section>
 
         {/* Main Content Section */}
