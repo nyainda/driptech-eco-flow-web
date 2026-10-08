@@ -44,8 +44,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <ProductTracker productName={product.name} productId={product.id} category={product.category} className="h-full">
-      <article className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))]">
-        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)]">
+      <article className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))]">
+        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-border bg-muted/60">
           {product.images?.[0] ? (
             <img
               src={product.images[0]}
@@ -75,7 +75,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
 
         <div className="flex flex-1 flex-col p-4 sm:p-5">
-          <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-[hsl(var(--dt-green-600))]">{categoryLabel}</p>
+          <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">{categoryLabel}</p>
           <h3 className="mt-1.5 font-heading text-[17px] font-bold leading-snug tracking-tight text-foreground sm:text-lg">
             <Link to={path} className="transition-colors hover:text-primary">{product.name}</Link>
           </h3>
@@ -83,8 +83,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             {product.description || "Professional irrigation equipment for dependable field use."}
           </p>
 
-          <div className="mt-auto flex items-end justify-between gap-3 border-t border-[hsl(var(--dt-stone-200))] pt-4 mt-5">
-            <p className="font-mono text-base font-black tracking-tight text-[hsl(var(--dt-green-800))] sm:text-lg">{priceLabel}</p>
+          <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-4 mt-5">
+            <p className="font-mono text-base font-black tracking-tight text-foreground sm:text-lg">{priceLabel}</p>
             <Link
               to={path}
               className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-[11px] font-bold text-primary-foreground transition-colors hover:bg-primary/90"

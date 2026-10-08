@@ -56,8 +56,8 @@ const ProjectsSection = ({
       try {
         setError(null);
         const data = await dataService.getProjects({ featured: true });
-        // Take only first 3 projects
-        setProjects((data || []).slice(0, 3));
+        // Keep the homepage compact while showing a useful spread of real projects
+        setProjects((data || []).slice(0, 4));
       } catch (error) {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects. Please try again later.");
@@ -100,7 +100,7 @@ const ProjectsSection = ({
             <div className="h-12 bg-muted rounded w-96 mx-auto mb-6 animate-pulse"></div>
             <div className="h-6 bg-muted rounded w-full animate-pulse"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {Array.from({ length: 3 }).map((_, index) => (
               <Card
                 key={index}
@@ -159,7 +159,7 @@ const ProjectsSection = ({
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         {!hideHeader && (
-          <div className="text-center max-w-4xl mx-auto mb-10 sm:mb-14">
+          <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
             <div className="mb-3 inline-flex items-center gap-2">
               <Badge
                 variant="secondary"
@@ -173,11 +173,15 @@ const ProjectsSection = ({
               <span className="block mb-1 sm:mb-2">Better water use on</span>
               <span className="block text-primary">real Kenyan farms</span>
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-              See how farmers and businesses are using practical irrigation systems to grow with less water and less guesswork.
+            <p className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
+              Real installations, real farms and practical irrigation systems built around water, crop and acreage.
             </p>
           </div>
         )}
+
+        <Link to="/projects" className="mb-5 hidden shrink-0 items-center gap-1.5 text-xs font-extrabold text-primary hover:underline sm:inline-flex">
+          View all projects <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
 
         {/* Projects Grid */}
         <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 sm:mb-10 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
@@ -188,11 +192,11 @@ const ProjectsSection = ({
             return (
               <Card
                 key={project.id}
-                className="group relative flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0"
+                className="group relative flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[82vw] sm:w-[300px] md:w-auto min-w-[250px] md:min-w-0"
               >
                 <CardContent className="p-0">
                   {/* Project Image */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                     {projectImage ? (
                       <img
                         src={projectImage}
@@ -208,7 +212,7 @@ const ProjectsSection = ({
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
 
-                  <div className="p-6 space-y-4">
+                  <div className="space-y-3.5 p-4 sm:p-5">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge
                         variant="secondary"
@@ -254,13 +258,13 @@ const ProjectsSection = ({
                     {(formattedArea || project.water_saved || project.yield_improvement) && (
                       <div className="grid grid-cols-3 gap-1.5">
                         {formattedArea && (
-                          <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.55)] p-2 text-center">
+                          <div className="rounded-lg border border-border bg-muted/50 p-2 text-center">
                             <div className="text-sm sm:text-base font-bold text-foreground">{formattedArea}</div>
                             <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Area</div>
                           </div>
                         )}
                         {project.water_saved && (
-                          <div className="text-center p-2.5 bg-muted/40 rounded-xl border border-border">
+                          <div className="rounded-lg border border-border bg-muted/50 p-2 text-center">
                             <div className="text-sm sm:text-base font-bold text-foreground">{project.water_saved}%</div>
                             <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Water Saved</div>
                           </div>

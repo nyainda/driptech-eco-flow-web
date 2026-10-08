@@ -1,23 +1,40 @@
-/* Theme Instant Switch - No Transitions for Maximum Speed */
+/* Theme transitions
+   Initial theme application stays instant to avoid FOUC.
+   Deliberate light/dark switches animate the semantic surfaces only. */
 
-/* Prevent flash of unstyled content */
 html:not(.dark):not(.light) {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 html.dark,
 html.light {
-    visibility: visible;
+  visibility: visible;
 }
 
-/* Respect reduced motion preference - disable all animations */
-@media (prefers-reduced-motion: reduce) {
+html.theme-transitioning,
+html.theme-transitioning body,
+html.theme-transitioning #root {
+  transition:
+    background-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition:
+    background-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    fill 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    stroke 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transitioning *,
+  html.theme-transitioning *::before,
+  html.theme-transitioning *::after {
+    transition: none !important;
+  }
 }

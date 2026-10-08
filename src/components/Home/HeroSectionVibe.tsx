@@ -1,115 +1,116 @@
-import { ArrowRight, CheckCircle2, Droplets, MessageCircle, Sprout, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Leaf, MessageCircle, ShieldCheck, Truck, Users, Wrench } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const solutionLinks = [
-  { label: "Drip irrigation", href: "/products/drip", icon: Droplets },
-  { label: "Sprinkler systems", href: "/products/sprinklers", icon: Zap },
-  { label: "Complete kits", href: "/irrigation-kits", icon: Sprout },
+const metrics = [
+  { value: "500+", label: "Installations", icon: Wrench },
+  { value: "60%", label: "Water savings", icon: Leaf },
+  { value: "40%", label: "Yield increase", icon: ArrowRight },
+  { value: "Free", label: "Farm assessment", icon: CheckCircle2 },
+];
+
+const benefits = [
+  { icon: ShieldCheck, title: "Quality equipment", detail: "Built for real farms" },
+  { icon: Users, title: "Expert guidance", detail: "Get the right solution" },
+  { icon: Truck, title: "Fast delivery", detail: "Across Kenya" },
 ];
 
 export default function HeroSectionVibe() {
   return (
-    <section
-      className="overflow-hidden border-b border-border bg-background"
-      aria-labelledby="home-hero-title"
-    >
-      <div className="dt-container grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16 lg:py-20">
-        <div className="max-w-2xl">
-          <p className="dt-section-label mb-4">Supplies · Kenya</p>
-          <h1
-            id="home-hero-title"
-            className="storefront-heading text-4xl font-bold leading-[1.15] sm:text-5xl lg:text-6xl"
-          >
-            Driplines, kits and pumps that fit{" "}
-            <span className="text-primary">your farm — not the other way round.</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-            From a kitchen-garden kit to a full-field system: we stock the parts, help you size
-            them, and can install when you need a crew on site.
-          </p>
+    <section className="relative overflow-hidden border-b border-border bg-background" aria-labelledby="home-hero-title">
+      <div className="dt-container relative py-7 sm:py-10 lg:py-12">
+        <div className="relative min-h-[500px] overflow-hidden rounded-[20px] border border-border bg-card shadow-sm sm:min-h-[560px] lg:min-h-[600px]">
+          <picture>
+            <source media="(max-width: 640px)" srcSet="/hero-bg-new-mobile.webp" />
+            <source media="(max-width: 1024px)" srcSet="/hero-bg-new-tablet.webp" />
+            <img
+              src="/hero-bg-new-desktop.webp"
+              alt="Irrigated crop rows on a Kenyan farm"
+              className="absolute inset-0 h-full w-full object-cover"
+              fetchPriority="high"
+              decoding="async"
+              width="1920"
+              height="1080"
+            />
+          </picture>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Link
-              to="/products"
-              className="dt-btn-primary inline-flex min-h-11 items-center justify-center gap-2 shadow-sm"
-            >
-              Browse products <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <a
-              href="https://wa.me/254723407849?text=Hi%20DripTech%20%E2%80%94%20I%20need%20help%20choosing%20irrigation%20equipment."
-              target="_blank"
-              rel="noreferrer"
-              className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-[hsl(var(--dt-whatsapp))] px-5 py-2.5 font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-lg"
-            >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15">
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-              </span>
-              <span className="flex flex-col items-start leading-tight">
-                <span>Talk to our team</span>
-                <span className="text-[10px] font-medium text-white/75">WhatsApp · quick sizing help</span>
-              </span>
-            </a>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/82 via-48% to-background/10 lg:from-background/95 lg:via-background/72 lg:to-transparent" />
 
-          <ul className="mt-7 grid gap-2 text-sm text-foreground sm:grid-cols-2">
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-              Small plots and larger farms
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-              Supply, design and install
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-              Delivery across Kenya
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-              Honest sizing before you pay
-            </li>
-          </ul>
+          <div className="relative flex min-h-[500px] items-end px-5 py-7 sm:min-h-[560px] sm:px-8 sm:py-9 lg:min-h-[600px] lg:items-center lg:px-12">
+            <div className="max-w-2xl">
+              <p className="dt-section-label mb-3">Smart irrigation solutions</p>
+              <h1 id="home-hero-title" className="font-heading text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[hsl(var(--dt-green-900))] sm:text-5xl lg:text-6xl xl:text-7xl">
+                Healthy Crops.
+                <br />
+                <span className="text-[hsl(var(--dt-green-700))]">Higher Yields.</span>
+              </h1>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-[hsl(var(--dt-green-900)/0.82)] sm:text-base sm:leading-7">
+                Quality irrigation equipment and expert support for a more productive and sustainable farm.
+              </p>
 
-          <div className="mt-8 grid gap-2 sm:grid-cols-3">
-            {solutionLinks.map(({ label, href, icon: Icon }) => (
-              <Link
-                key={href}
-                to={href}
-                className="dt-card group flex items-center gap-2.5 px-3 py-3 text-sm font-semibold text-foreground hover:bg-card"
-              >
-                <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                <span>{label}</span>
-                <ArrowRight
-                  className="ml-auto h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                />
-              </Link>
-            ))}
+              <div className="mt-5 flex flex-wrap gap-2.5 sm:mt-6 sm:gap-3">
+                <Link to="/products" className="dt-btn-primary inline-flex items-center gap-2 shadow-sm">
+                  Explore products <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a
+                  href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! I need help choosing irrigation equipment.")}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-[10px] border border-primary/30 bg-card/85 px-4 py-2.5 text-sm font-bold text-foreground backdrop-blur-sm transition-colors hover:bg-card"
+                >
+                  <MessageCircle className="h-4 w-4" /> Talk to our experts
+                </a>
+              </div>
+
+              <div className="mt-6 grid max-w-2xl grid-cols-2 gap-x-5 gap-y-3 border-t border-[hsl(var(--dt-green-900)/0.15)] pt-5 sm:grid-cols-4">
+                {metrics.map(({ value, label, icon: Icon }) => (
+                  <div key={label} className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 shrink-0 text-[hsl(var(--dt-green-700))]" />
+                    <div>
+                      <p className="font-mono text-sm font-black text-[hsl(var(--dt-green-900))]">{value}</p>
+                      <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-[hsl(var(--dt-green-900)/0.65)]">{label}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="absolute right-5 top-5 hidden w-[220px] rounded-2xl border border-white/30 bg-[hsl(var(--dt-green-900)/0.94)] p-4 text-white shadow-lg backdrop-blur-md sm:block lg:right-8 lg:top-12 lg:w-[240px]">
+              <p className="font-heading text-xl font-bold leading-tight">Better irrigation.<br />Healthier crops.<br />Higher yields.</p>
+              <div className="mt-4 space-y-3 border-t border-white/15 pt-3">
+                {benefits.map(({ icon: Icon, title, detail }) => (
+                  <div key={title} className="flex items-start gap-2.5">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--dt-gold-400))]" />
+                    <div>
+                      <p className="text-[11px] font-bold">{title}</p>
+                      <p className="text-[9px] text-white/65">{detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-sm sm:p-3">
-            <picture>
-              <source media="(max-width: 640px)" srcSet="/hero-bg-new-mobile.webp" />
-              <source media="(max-width: 1024px)" srcSet="/hero-bg-new-tablet.webp" />
-              <img
-                src="/hero-bg-new-desktop.webp"
-                alt="Irrigated crop rows on a Kenyan farm"
-                className="h-[300px] w-full rounded-xl object-cover sm:h-[410px] lg:h-[500px]"
-                fetchPriority="high"
-                decoding="async"
-                width="1920"
-                height="1080"
-              />
-            </picture>
-          </div>
-          <div className="relative mt-3 max-w-[290px] rounded-xl border border-border bg-card p-4 shadow-md sm:mt-4 sm:max-w-[320px] lg:absolute lg:-bottom-6 lg:left-6 lg:mt-0">
-            <p className="dt-section-label">Not sure what you need?</p>
-            <p className="mt-1 text-sm font-semibold leading-snug text-foreground">
-              Tell us the crop and acreage. We’ll point you to the right kit or parts list.
-            </p>
-          </div>
+      <div className="border-t border-border bg-background">
+        <div className="dt-container grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
+          {[
+            ["Quality equipment", "Built for real farms"],
+            ["Expert guidance", "Get the right solution"],
+            ["Fast delivery", "Across Kenya"],
+            ["Local support", "We're here to help"],
+          ].map(([title, detail], index) => {
+            const Icon = [ShieldCheck, Users, Truck, CheckCircle2][index];
+            return (
+              <div key={title} className="flex gap-3 px-0 py-4 sm:px-5 lg:px-6">
+                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="text-xs font-bold text-foreground">{title}</p>
+                  <p className="mt-0.5 text-[10px] leading-4 text-muted-foreground">{detail}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

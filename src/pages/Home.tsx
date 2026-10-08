@@ -6,15 +6,12 @@ import WhatsAppContact from "@/components/common/WhatsAppContact";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
 import ScrollReveal from "@/components/common/ScrollReveal";
-import TrustStrip from "@/components/Home/TrustStrip";
 import ProjectsSection from "@/components/Home/ProjectsSection";
 
 const Home = () => {
   return (
     <>
       <HeroSectionVibe />
-      <TrustStrip />
-
       {/* Products first — the main reason people visit */}
       <ScrollReveal>
         <HomeOfferings />

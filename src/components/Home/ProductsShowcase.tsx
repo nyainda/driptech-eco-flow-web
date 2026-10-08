@@ -415,11 +415,11 @@ const ProductsShowcase = ({
 
         {/* Featured product spotlight */}
         {!loading && featuredProduct && !hideHeader && (
-          <section className="mb-10 overflow-hidden rounded-2xl border border-[hsl(var(--dt-stone-200))] bg-card sm:mb-14" aria-labelledby="featured-product-title">
+          <section className="mb-10 overflow-hidden rounded-2xl border border-border bg-card sm:mb-14" aria-labelledby="featured-product-title">
             <div className="grid items-stretch lg:grid-cols-[1.05fr_0.95fr]">
               <Link
                 to={getProductPath(featuredProduct)}
-                className="group relative overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)] lg:border-b-0 lg:border-r"
+                className="group relative overflow-hidden border-b border-border bg-muted/60 lg:border-b-0 lg:border-r"
                 aria-label={`View featured product: ${featuredProduct.name}`}
               >
                 {featuredProduct.images?.[0] ? (
@@ -434,7 +434,7 @@ const ProductsShowcase = ({
                   </div>
                 )}
                 <span className="absolute left-4 top-4 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[hsl(var(--dt-green-900))]">
-                  Featured equipment
+                  Featured product
                 </span>
               </Link>
               <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-9">
@@ -467,27 +467,56 @@ const ProductsShowcase = ({
           </section>
         )}
 
-        {/* Stats Bar */}
-        {!hideStats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className="text-center p-6 rounded-2xl bg-background border border-border hover:border-primary/20 transition-colors duration-300"
-              >
-                <stat.icon className="h-8 w-8 text-primary mx-auto mb-3" />
-                <div className="text-2xl font-bold text-foreground mb-1">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
-            ))}
+        {/* Browse by equipment type */}
+        <section className="mb-10 sm:mb-14" aria-labelledby="equipment-types-title">
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="dt-section-label">Browse equipment</p>
+              <h3 id="equipment-types-title" className="mt-1 font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                Find it by system type
+              </h3>
+            </div>
+            <Link to="/products" className="hidden items-center gap-1.5 text-xs font-extrabold text-primary hover:underline sm:inline-flex">
+              View all categories <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
-        )}
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
+            {CATEGORIES.filter((cat) => cat.key !== "all").map((cat) => {
+              const count = allProducts.filter((p) => p.category === cat.key).length;
+              if (count === 0) return null;
+              const Icon = getCategoryIcon(cat.key);
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setActiveCategory(cat.key)}
+                  className="group rounded-xl border border-border bg-card px-2 py-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm"
+                >
+                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Icon className="h-4.5 w-4.5" />
+                  </span>
+                  <span className="mt-2 block line-clamp-2 text-[10px] font-bold leading-4 text-foreground sm:text-[11px]">{cat.label}</span>
+                  <span className="mt-0.5 block text-[9px] text-muted-foreground">{count} products</span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
-        {/* Category Tabs */}
-        <div className="mb-8 md:mb-12">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1 sm:gap-2 sm:mx-0 sm:px-0">
+        {/* Product catalogue */}
+        <section aria-labelledby="catalogue-title">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="dt-section-label">Our products</p>
+              <h3 id="catalogue-title" className="mt-1 font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                Equipment ready for the field
+              </h3>
+            </div>
+            <p className="max-w-md text-xs leading-5 text-muted-foreground sm:text-right">
+              Filter by system type, compare prices and open the product details before you buy.
+            </p>
+          </div>
+
+          <div className="mb-5 flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide">
             {CATEGORIES.map((cat) => {
               const count = cat.key === "all"
                 ? allProducts.length
@@ -497,42 +526,31 @@ const ProductsShowcase = ({
                 <button
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-bold transition-all duration-200 ${
+                  className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-colors ${
                     activeCategory === cat.key
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                   }`}
                 >
                   {cat.label}
-                  {count > 0 && (
-                    <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
-                      activeCategory === cat.key
-                        ? "bg-white/20 text-white"
-                        : "bg-muted text-muted-foreground"
-                    }`}>
-                      {count}
-                    </span>
-                  )}
+                  <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${
+                    activeCategory === cat.key ? "bg-white/20" : "bg-muted"
+                  }`}>{count}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Count line */}
           {!loading && (
-            <p className="mt-3 text-xs text-muted-foreground">
-              Showing <span className="font-semibold text-foreground">{visibleProducts.length}</span> of{" "}
-              <span className="font-semibold text-foreground">{filteredProducts.length}</span>{" "}
-              {activeCategory === "all" ? "products" : CATEGORIES.find(c => c.key === activeCategory)?.label.toLowerCase() + " products"}
-              {allProducts.length > 0 && activeCategory !== "all" && (
-                <> &nbsp;·&nbsp; <span className="text-primary font-medium">{allProducts.length} total in catalog</span></>
-              )}
+            <p className="mb-4 text-[11px] text-muted-foreground">
+              Showing <span className="font-bold text-foreground">{visibleProducts.length}</span> of{" "}
+              <span className="font-bold text-foreground">{filteredProducts.length}</span> products
             </p>
           )}
-        </div>
+        </section>
 
         {/* Products grid — one card on narrow phones, then two columns when there is room */}
-        <div className="mb-8 grid grid-cols-1 gap-4 min-[460px]:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+        <div className="mb-8 grid grid-cols-1 gap-3.5 min-[460px]:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
               <Card key={index} className="dt-card overflow-hidden flex flex-col">
@@ -570,6 +588,68 @@ const ProductsShowcase = ({
             </div>
           )}
         </div>
+
+        {/* Irrigation kits banner */}
+        <section className="mb-10 overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-900))] text-white sm:mb-14" aria-labelledby="homepage-kits-title">
+          <div className="grid lg:grid-cols-[1.25fr_0.75fr]">
+            <div className="relative min-h-[210px] overflow-hidden">
+              <img
+                src="/hero-bg-new-desktop.webp"
+                alt="DripTech irrigation systems serving productive crop farms"
+                className="absolute inset-0 h-full w-full object-cover opacity-55"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--dt-green-900)/0.98)] via-[hsl(var(--dt-green-900)/0.72)] to-transparent" />
+              <div className="relative flex h-full flex-col justify-center p-6 sm:p-8">
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--dt-gold-400))]">Complete irrigation kits</p>
+                <h3 id="homepage-kits-title" className="mt-2 max-w-xl font-heading text-2xl font-bold leading-tight sm:text-3xl">
+                  Everything you need for a working irrigation system.
+                </h3>
+                <p className="mt-2 max-w-lg text-xs leading-5 text-white/70 sm:text-sm">
+                  Ready packages for common farm sizes, with the right components grouped together.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link to="/irrigation-kits" className="inline-flex items-center gap-2 rounded-lg bg-[hsl(var(--dt-gold-500))] px-4 py-2.5 text-xs font-extrabold text-[hsl(var(--dt-green-900))] hover:bg-[hsl(var(--dt-gold-400))]">
+                    Explore kits <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                  <a href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! Please help me choose an irrigation kit.")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/15">
+                    Chat on WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="hidden items-center justify-center bg-[hsl(var(--dt-green-800))] p-7 lg:flex">
+              <div className="grid w-full grid-cols-2 gap-3">
+                {[
+                  ["1/8 acre", "Small farm"],
+                  ["1/4 acre", "Growing farm"],
+                  ["1/2 acre", "Larger plot"],
+                  ["1 acre+", "Commercial"],
+                ].map(([size, label]) => (
+                  <Link key={size} to="/irrigation-kits" className="rounded-xl border border-white/10 bg-white/5 p-3 transition-colors hover:bg-white/10">
+                    <p className="font-heading text-lg font-bold">{size}</p>
+                    <p className="mt-1 text-[10px] text-white/60">{label}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Storefront proof strip */}
+        <section className="mb-10 grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-4 sm:mb-14" aria-label="DripTech service highlights">
+          {[
+            ["500+", "Happy customers"],
+            ["50+", "Completed projects"],
+            ["99%", "Satisfaction rate"],
+            ["24/7", "Technical support"],
+          ].map(([value, label], index) => (
+            <div key={label} className={`px-4 py-5 text-center sm:px-5 ${index < 3 ? "border-b border-border sm:border-b-0 sm:border-r" : "border-b-0"} ${index % 2 === 0 ? "" : "border-l sm:border-l-0"}`}>
+              <p className="font-mono text-xl font-black text-foreground sm:text-2xl">{value}</p>
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground sm:text-[10px]">{label}</p>
+            </div>
+          ))}
+        </section>
 
         {/* Load more + View all CTA */}
         {!loading && (

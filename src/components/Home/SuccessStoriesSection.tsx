@@ -27,16 +27,16 @@ const SuccessStoriesSection = () => {
   }, []);
 
   return (
-    <section className="border-t border-border bg-[hsl(var(--dt-stone-50)/0.55)] py-12 sm:py-16">
+    <section className="border-t border-border bg-muted/50 py-12 sm:py-16">
       <div className="dt-container">
         <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
-          <p className="dt-section-label mb-3">Projects</p>
+          <p className="dt-section-label mb-3">Success stories</p>
           <h2 className="dt-section-title">
             Farms using the{" "}
             <span className="text-primary">equipment</span>
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
-            Real installs where the right driplines or kit made watering simpler.
+            Real installations, practical results and feedback from the farms we have helped.
 
           </p>
         </div>
@@ -67,11 +67,11 @@ const SuccessStoriesSection = () => {
 
               <Card
                 key={story.id}
-                className="group flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] sm:min-w-0"
+                className="group flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] sm:min-w-0"
               >
                 <CardContent className="p-0">
                   {/* Image */}
-                  <div className="aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
+                  <div className="aspect-[16/10] overflow-hidden bg-muted">
                     {story.image_url || story.after_image ? (
                       <img
                         src={story.image_url || story.after_image}
@@ -111,7 +111,7 @@ const SuccessStoriesSection = () => {
                     )}
 
                     {story.results && (
-                      <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.65)] p-3">
+                      <div className="rounded-lg border border-border bg-muted/50 p-3">
                         <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
                           <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
                           <span className="text-xs sm:text-sm font-medium text-foreground">
