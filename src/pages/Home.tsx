@@ -7,7 +7,6 @@ import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
 import ScrollReveal from "@/components/common/ScrollReveal";
 import ProjectsSection from "@/components/Home/ProjectsSection";
-import HomeKitsShowcase from "@/components/Home/HomeKitsShowcase";
 
 const Home = () => {
   return (
@@ -16,10 +15,6 @@ const Home = () => {
       {/* Products first — the main reason people visit */}
       <ScrollReveal>
         <HomeOfferings />
-      </ScrollReveal>
-
-      <ScrollReveal>
-        <HomeKitsShowcase />
       </ScrollReveal>
 
       <ScrollReveal delay={80}>
