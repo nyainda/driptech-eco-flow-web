@@ -594,8 +594,8 @@ const ProductsShowcase = ({
           <div className="grid lg:grid-cols-[1.25fr_0.75fr]">
             <div className="relative min-h-[210px] overflow-hidden">
               <img
-                src="/irrigation-kit-bg.jpg"
-                alt="Irrigation equipment and crop field"
+                src="/hero-bg-new-desktop.webp"
+                alt="DripTech irrigation systems serving productive crop farms"
                 className="absolute inset-0 h-full w-full object-cover opacity-55"
                 loading="lazy"
               />
@@ -634,6 +634,21 @@ const ProductsShowcase = ({
               </div>
             </div>
           </div>
+        </section>
+
+        {/* Storefront proof strip */}
+        <section className="mb-10 grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-4 sm:mb-14" aria-label="DripTech service highlights">
+          {[
+            ["500+", "Happy customers"],
+            ["50+", "Completed projects"],
+            ["99%", "Satisfaction rate"],
+            ["24/7", "Technical support"],
+          ].map(([value, label], index) => (
+            <div key={label} className={`px-4 py-5 text-center sm:px-5 ${index < 3 ? "border-b border-border sm:border-b-0 sm:border-r" : "border-b-0"} ${index % 2 === 0 ? "" : "border-l sm:border-l-0"}`}>
+              <p className="font-mono text-xl font-black text-foreground sm:text-2xl">{value}</p>
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground sm:text-[10px]">{label}</p>
+            </div>
+          ))}
         </section>
 
         {/* Load more + View all CTA */}
