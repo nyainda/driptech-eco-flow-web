@@ -42,7 +42,7 @@ export const dataService = {
     // ============================================
     async getProductCategoryCounts() {
         const fetchFromD1 = async () => {
-            const response = await fetch(\`${WORKER_URL}/api/products/categories\`);
+            const response = await fetch(`${WORKER_URL}/api/products/categories`);
             if (!response.ok) throw new Error('Failed to fetch product category counts from D1');
             return await response.json();
         };
