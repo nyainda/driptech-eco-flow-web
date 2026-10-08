@@ -192,11 +192,11 @@ const ProjectsSection = ({
             return (
               <Card
                 key={project.id}
-                className="group relative flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[82vw] sm:w-[300px] md:w-auto min-w-[250px] md:min-w-0"
+                className="group relative flex h-full flex-shrink-0 snap-center overflow-hidden rounded-[14px] border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[82vw] sm:w-[300px] md:w-auto min-w-[250px] md:min-w-0"
               >
                 <CardContent className="p-0">
                   {/* Project Image */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                     {projectImage ? (
                       <img
                         src={projectImage}
@@ -258,13 +258,13 @@ const ProjectsSection = ({
                     {(formattedArea || project.water_saved || project.yield_improvement) && (
                       <div className="grid grid-cols-3 gap-1.5">
                         {formattedArea && (
-                          <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.55)] p-2 text-center">
+                          <div className="rounded-lg border border-border bg-muted/50 p-2 text-center">
                             <div className="text-sm sm:text-base font-bold text-foreground">{formattedArea}</div>
                             <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Area</div>
                           </div>
                         )}
                         {project.water_saved && (
-                          <div className="rounded-lg border border-border bg-[hsl(var(--dt-stone-50)/0.55)] p-2 text-center">
+                          <div className="rounded-lg border border-border bg-muted/50 p-2 text-center">
                             <div className="text-sm sm:text-base font-bold text-foreground">{project.water_saved}%</div>
                             <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Water Saved</div>
                           </div>
