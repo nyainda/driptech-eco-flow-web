@@ -1,49 +1,67 @@
-import ProductsShowcase from "@/components/Home/ProductsShowcase";
-import { ArrowRight, CheckCircle2, MessageCircle, Sprout } from "lucide-react";
+import { ArrowRight, Droplets, Filter, Gauge, Settings, Sprout, Wrench, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import ProductsShowcase from "@/components/Home/ProductsShowcase";
 
-/** Keep the homepage focused on the catalogue rather than hiding products behind service tabs. */
+const categories = [
+  { label: "Drip Irrigation", description: "Precision watering", href: "/products/drip", icon: Droplets },
+  { label: "Sprinkler Systems", description: "Wide crop coverage", href: "/products/sprinklers", icon: Gauge },
+  { label: "Controller Systems", description: "Automate & save water", href: "/products/controls", icon: Settings },
+  { label: "Accessories", description: "Fittings, valves & more", href: "/products/accessories", icon: Wrench },
+  { label: "Filtration Systems", description: "Cleaner, longer-running systems", href: "/products/filtration", icon: Filter },
+  { label: "Pumps & Motors", description: "Reliable water delivery", href: "/products/pumps", icon: Zap },
+];
+
 const HomeOfferings = () => (
   <>
-    <ProductsShowcase hideStats hideBenefits />
-    <section className="border-t border-border bg-muted/30 py-12 sm:py-16" aria-labelledby="kit-callout-title">
+    <section className="border-b border-[hsl(var(--dt-stone-200))] bg-background py-10 sm:py-12" aria-labelledby="homepage-categories-title">
       <div className="dt-container">
-        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-card p-6 shadow-sm sm:p-8 lg:flex lg:items-center lg:justify-between lg:gap-12 lg:p-10">
-          <div className="pointer-events-none absolute -right-12 -top-16 h-40 w-40 rounded-full bg-primary/10" aria-hidden="true" />
-          <div className="relative max-w-2xl">
-            <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-primary">
-              <Sprout className="h-4 w-4" aria-hidden="true" />
-              Complete kits
-            </div>
-            <h2 id="kit-callout-title" className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Prefer one package instead of a long parts list?
+        <div className="grid gap-6 lg:grid-cols-[0.72fr_1.7fr] lg:items-center">
+          <div>
+            <p className="dt-section-label">Our products</p>
+            <h2 id="homepage-categories-title" className="mt-2 font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
+              Irrigation solutions for <span className="text-primary">every farm</span>
             </h2>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-              Choose a kit by plot size and crop. Each package brings the main lines, filter and fittings together, with help available before you order.
+            <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+              From drip systems to filtration, find the equipment you need for efficient and sustainable farming.
             </p>
-            <ul className="mt-5 grid gap-2 text-sm text-foreground sm:grid-cols-3">
-              {["Sized for your plot", "Parts grouped together", "Installation help available"].map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="relative mt-6 flex shrink-0 flex-col gap-3 sm:flex-row lg:mt-0 lg:flex-col">
-            <Link to="/irrigation-kits" className="dt-btn-primary inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap">
-              View irrigation kits <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <Link to="/products" className="mt-4 inline-flex items-center gap-2 text-xs font-extrabold text-primary hover:underline">
+              View all products <ArrowRight className="h-3.5 w-3.5" />
             </Link>
-            <a
-              href="https://wa.me/254723407849?text=Hi%20DripTech%20%E2%80%94%20please%20help%20me%20choose%20an%20irrigation%20kit."
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border border-[hsl(var(--dt-whatsapp)/0.35)] px-5 py-2.5 text-sm font-semibold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.08)]"
-            >
-              <MessageCircle className="h-4 w-4" aria-hidden="true" /> Ask about a kit
-            </a>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+            {categories.map(({ label, description, href, icon: Icon }) => (
+              <Link
+                key={href}
+                to={href}
+                className="group rounded-xl border border-[hsl(var(--dt-stone-200))] bg-card p-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm sm:p-4"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--dt-green-50))] text-primary">
+                  <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+                </span>
+                <h3 className="mt-2.5 text-xs font-bold leading-snug text-foreground sm:text-sm">{label}</h3>
+                <p className="mt-1 text-[10px] leading-4 text-muted-foreground sm:text-[11px]">{description}</p>
+              </Link>
+            ))}
           </div>
         </div>
+      </div>
+    </section>
+
+    <ProductsShowcase hideStats hideBenefits />
+
+    <section className="border-t border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-green-900)/0.98)] py-7 text-white sm:py-8">
+      <div className="dt-container flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <Sprout className="mt-0.5 h-5 w-5 shrink-0 text-[hsl(var(--dt-gold-400))]" />
+          <div>
+            <p className="font-heading text-lg font-bold">Need a complete irrigation setup?</p>
+            <p className="mt-0.5 text-xs text-white/70 sm:text-sm">Choose a ready package by plot size, crop and budget.</p>
+          </div>
+        </div>
+        <Link to="/irrigation-kits" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-xs font-extrabold text-[hsl(var(--dt-green-900))] hover:bg-white/90">
+          Explore irrigation kits <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </section>
   </>
