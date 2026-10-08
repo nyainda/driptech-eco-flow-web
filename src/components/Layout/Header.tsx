@@ -498,40 +498,51 @@ const Header = () => {
         </div>
       )}
 
-      {/* Premium Top Bar */}
-      <div className="hidden border-b border-border bg-[hsl(var(--ink))] text-white sm:block">
-        <div className="container mx-auto px-4">
-          <div className="flex h-9 items-center justify-between text-xs font-medium text-white/80">
-            <div className="flex items-center gap-6">
+      {/* Premium contact / trust bar */}
+      <div className="border-b border-border bg-muted/35 text-foreground">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex min-h-10 items-center justify-between gap-2 py-1.5 text-[11px]">
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2.5">
               <a
                 href="tel:0723407849"
-                className="flex items-center gap-2 transition-colors hover:text-white group"
+                className="group inline-flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 font-semibold transition-colors hover:bg-card hover:text-primary"
               >
-                <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                  <Phone className="h-3 w-3 text-primary" />
-                </div>
-                  <span>Nationwide delivery · 0723 407 849</span>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/10 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Phone className="h-3 w-3" />
+                </span>
+                <span className="truncate">
+                  <span className="hidden text-muted-foreground sm:inline">Nationwide delivery · </span>
+                  <span className="font-extrabold">0723 407 849</span>
+                </span>
               </a>
+
+              <span className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+
               <a
                 href="mailto:info@driptech.co.ke"
-                className="flex items-center gap-2 transition-colors hover:text-white group"
+                className="group inline-flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 font-semibold transition-colors hover:bg-card hover:text-primary"
               >
-                <div className="w-6 h-6 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                  <Mail className="h-3 w-3 text-primary" />
-                </div>
-                <span>info@driptech.co.ke</span>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/10 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Mail className="h-3 w-3" />
+                </span>
+                <span className="hidden truncate sm:inline">info@driptech.co.ke</span>
+                <span className="sr-only sm:hidden">Email DripTech</span>
               </a>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 py-1 font-semibold text-white/80">
-                <span>M-Pesa accepted · technical help when you need it</span>
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1.5 font-bold text-foreground shadow-sm">
+                <span className="flex h-5 min-w-9 items-center justify-center rounded-md bg-[#2E7D32] px-1.5 text-[9px] font-black tracking-[0.08em] text-white shadow-sm">
+                  M-PESA
+                </span>
+                <span className="hidden sm:inline text-[10px] text-muted-foreground">Accepted</span>
               </div>
-              <div className="flex items-center gap-4 border-l border-border/50 pl-6">
-                <div className="flex items-center gap-1.5 opacity-80">
-                  <Clock className="h-3 w-3" />
-                  <span>Mon - Fri: 8am - 5pm</span>
-                </div>
+
+              <span className="hidden h-5 w-px bg-border lg:block" aria-hidden="true" />
+
+              <div className="hidden items-center gap-1.5 text-muted-foreground lg:flex">
+                <Clock className="h-3.5 w-3.5 text-primary" />
+                <span className="font-semibold">Mon–Fri · 8am–5pm</span>
               </div>
             </div>
           </div>
