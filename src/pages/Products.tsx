@@ -954,9 +954,20 @@ const Products = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-8 border-y border-border bg-card py-6 sm:mt-10 sm:py-10">
+              <div className="mt-8 rounded-3xl border border-border bg-card p-4 shadow-sm sm:mt-10 sm:p-7 lg:p-9">
                 <ProductDetailView product={detailProduct} />
               </div>
+
+              <section className="mt-12 border-t border-border pt-10 sm:mt-16 sm:pt-14">
+                <ProductRecommendations
+                  currentProductId={detailProduct.id}
+                  currentCategory={detailProduct.category}
+                  currentSubcategory={detailProduct.subcategory || undefined}
+                  currentPrice={detailPrice || undefined}
+                  limit={4}
+                  showComplementary
+                />
+              </section>
             </div>
           </section>
         </main>
