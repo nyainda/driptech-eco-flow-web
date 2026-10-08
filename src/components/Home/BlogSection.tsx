@@ -34,7 +34,7 @@ const BlogSection = () => {
   const { data: blogPosts = [], isLoading } = useQuery({
     queryKey: ["published-blog-posts"],
     queryFn: async () => {
-      const data = await dataService.getBlogPosts({ limit: 6 });
+      const data = await dataService.getBlogPosts({ limit: 4 });
       return data as BlogPost[];
     },
   });
@@ -77,7 +77,7 @@ const BlogSection = () => {
   return (
     <section className="dt-section-tight bg-background border-t border-border">
       <div className="dt-container">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
+        <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <p className="dt-section-label mb-3">Blog</p>
           <h2 className="dt-section-title">
             Guides and notes for{" "}
@@ -89,11 +89,11 @@ const BlogSection = () => {
           </p>
         </div>
 
-        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
           {blogPosts.map((post) => (
             <Card
               key={post.id}
-              className="group flex h-full flex-shrink-0 snap-center flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[85vw] sm:w-[320px] md:w-auto min-w-[260px] md:min-w-0"
+              className="group flex h-full flex-shrink-0 snap-center flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[82vw] sm:w-[300px] md:w-auto min-w-[250px] md:min-w-0"
             >
               {post.featured_image_url && (
                 <div className="relative aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
@@ -118,9 +118,9 @@ const BlogSection = () => {
               )}
 
               <CardHeader className="flex flex-1 flex-col p-4 sm:p-5">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                <div className="mb-3 flex items-center gap-3 text-[10px] text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4 text-primary" />
+                    <Calendar className="h-3.5 w-3.5 text-primary" />
                     {formatDate(post.published_at || post.created_at)}
                   </div>
 
@@ -151,7 +151,7 @@ const BlogSection = () => {
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="text-xs bg-muted/30 border-border text-foreground"
+                        className="rounded-full border-border bg-muted/30 px-2 py-1 text-[9px] font-bold text-foreground"
                       >
                         {tag}
                       </Badge>
@@ -174,6 +174,10 @@ const BlogSection = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-6 text-center sm:hidden">
+          <Button size="sm" variant="outline" className="rounded-lg" asChild><Link to="/blog">View all articles <ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link></Button>
         </div>
 
         {/* View All Button */}
