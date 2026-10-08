@@ -16,9 +16,9 @@ const benefits = [
 
 export default function HeroSectionVibe() {
   return (
-    <section className="relative overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-50))]" aria-labelledby="home-hero-title">
+    <section className="relative overflow-hidden border-b border-border bg-background" aria-labelledby="home-hero-title">
       <div className="dt-container relative py-7 sm:py-10 lg:py-12">
-        <div className="relative min-h-[500px] overflow-hidden rounded-[20px] border border-[hsl(var(--dt-stone-200))] bg-card shadow-sm sm:min-h-[560px] lg:min-h-[600px]">
+        <div className="relative min-h-[500px] overflow-hidden rounded-[20px] border border-border bg-card shadow-sm sm:min-h-[560px] lg:min-h-[600px]">
           <picture>
             <source media="(max-width: 640px)" srcSet="/hero-bg-new-mobile.webp" />
             <source media="(max-width: 1024px)" srcSet="/hero-bg-new-tablet.webp" />
@@ -33,7 +33,7 @@ export default function HeroSectionVibe() {
             />
           </picture>
 
-          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--dt-stone-50)/0.98)] via-[hsl(var(--dt-stone-50)/0.88)] via-48% to-[hsl(var(--dt-stone-50)/0.12)] lg:from-[hsl(var(--dt-stone-50)/0.96)] lg:via-[hsl(var(--dt-stone-50)/0.74)] lg:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/82 via-48% to-background/10 lg:from-background/95 lg:via-background/72 lg:to-transparent" />
 
           <div className="relative flex min-h-[500px] items-end px-5 py-7 sm:min-h-[560px] sm:px-8 sm:py-9 lg:min-h-[600px] lg:items-center lg:px-12">
             <div className="max-w-2xl">
@@ -55,7 +55,7 @@ export default function HeroSectionVibe() {
                   href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! I need help choosing irrigation equipment.")}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-[10px] border border-[hsl(var(--dt-green-700)/0.35)] bg-white/75 px-4 py-2.5 text-sm font-bold text-[hsl(var(--dt-green-900))] backdrop-blur-sm transition-colors hover:bg-white"
+                  className="inline-flex items-center gap-2 rounded-[10px] border border-primary/30 bg-card/85 px-4 py-2.5 text-sm font-bold text-foreground backdrop-blur-sm transition-colors hover:bg-card"
                 >
                   <MessageCircle className="h-4 w-4" /> Talk to our experts
                 </a>
@@ -92,22 +92,25 @@ export default function HeroSectionVibe() {
         </div>
       </div>
 
-      <div className="border-t border-[hsl(var(--dt-stone-200))] bg-background">
+      <div className="border-t border-border bg-background">
         <div className="dt-container grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
           {[
-            ["Free farm assessment", "Get practical advice for your farm"],
-            ["Professional installation", "1–3 days, quick and efficient"],
-            ["24/7 support", "We're always here to help"],
-            ["Local delivery", "Across Kenya"],
-          ].map(([title, detail], index) => (
-            <div key={title} className="flex gap-3 px-0 py-4 sm:px-5 lg:px-6">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <div>
-                <p className="text-xs font-bold text-foreground">{title}</p>
-                <p className="mt-0.5 text-[10px] leading-4 text-muted-foreground">{detail}</p>
+            ["Quality equipment", "Built for real farms"],
+            ["Expert guidance", "Get the right solution"],
+            ["Fast delivery", "Across Kenya"],
+            ["Local support", "We're here to help"],
+          ].map(([title, detail], index) => {
+            const Icon = [ShieldCheck, Users, Truck, CheckCircle2][index];
+            return (
+              <div key={title} className="flex gap-3 px-0 py-4 sm:px-5 lg:px-6">
+                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                <div>
+                  <p className="text-xs font-bold text-foreground">{title}</p>
+                  <p className="mt-0.5 text-[10px] leading-4 text-muted-foreground">{detail}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
