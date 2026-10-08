@@ -93,10 +93,10 @@ const BlogSection = () => {
           {blogPosts.map((post) => (
             <Card
               key={post.id}
-              className="group flex h-full flex-shrink-0 snap-center flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[82vw] sm:w-[300px] md:w-auto min-w-[250px] md:min-w-0"
+              className="group flex h-full flex-shrink-0 snap-center flex-col overflow-hidden rounded-[14px] border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md w-[82vw] sm:w-[300px] md:w-auto min-w-[250px] md:min-w-0"
             >
               {post.featured_image_url && (
-                <div className="relative aspect-[16/10] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
+                <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img
                     src={post.featured_image_url}
                     alt={post.title}
