@@ -42,7 +42,7 @@ const SuccessStoriesSection = () => {
         </div>
 
         {/* Stories Grid */}
-        <div className="mb-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-6 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 sm:mb-10"">
+        <div className="mb-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-6 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 sm:mb-10">
           {loading ? (
             // Loading skeleton
             Array.from({ length: 3 }).map((_, index) => (
