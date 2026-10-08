@@ -51,6 +51,9 @@ export default {
 
         try {
             // Products
+            // Product category counts
+            if (path === '/api/products/categories') return handleProductCategoryCounts(env, ctx);
+
             if (path === '/api/products') return handleProducts(env, url, ctx);
             if (path.match(/^\/api\/products\/[\w-]+$/)) {
                 const id = path.split('/').pop()!;
@@ -134,6 +137,26 @@ export default {
 // ============================================
 // PRODUCTS HANDLERS
 // ============================================
+
+
+async function handleProductCategoryCounts(env: Env, ctx: ExecutionContext): Promise<Response> {
+    const { results } = await env.DB.prepare(
+        `SELECT category, COUNT(*) as count
+         FROM products
+         WHERE in_stock = 1
+         GROUP BY category
+         ORDER BY category`
+    ).all();
+
+    return cachedJsonResponse(
+        results.map((row: any) => ({
+            category: String(row.category || ''),
+            count: Number(row.count || 0),
+        })),
+        CACHE_TIMES.products,
+        ctx
+    );
+}
 
 async function handleProducts(env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
     const category = url.searchParams.get('category');

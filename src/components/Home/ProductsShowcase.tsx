@@ -157,6 +157,7 @@ const ProductsShowcase = ({
   compact = false,
 }: ProductsShowcaseProps = {}) => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
   const [visibleCount, setVisibleCount] = useState(INITIAL_SHOW);
@@ -164,10 +165,25 @@ const ProductsShowcase = ({
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await dataService.getProducts({ limit: 300, inStock: true });
-        setAllProducts(data || []);
+        const [counts, featured, ...categoryResults] = await Promise.all([
+          dataService.getProductCategoryCounts(),
+          dataService.getProducts({ featured: true, limit: 4, inStock: true }),
+          ...CATEGORIES
+            .filter((cat) => cat.key !== "all")
+            .map((cat) => dataService.getProducts({ category: cat.key, limit: 4, inStock: true })),
+        ]);
+
+        const countMap: Record<string, number> = {};
+        (counts || []).forEach((item: { category: string; count: number }) => {
+          countMap[item.category] = Number(item.count || 0);
+        });
+        setCategoryCounts(countMap);
+
+        const merged = [...(featured || []), ...categoryResults.flat()];
+        const unique = Array.from(new Map(merged.map((product: Product) => [product.id, product])).values());
+        setAllProducts(unique);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching homepage products:", error);
       } finally {
         setLoading(false);
       }
@@ -482,7 +498,7 @@ const ProductsShowcase = ({
           </div>
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
             {CATEGORIES.filter((cat) => cat.key !== "all").map((cat) => {
-              const count = allProducts.filter((p) => p.category === cat.key).length;
+              const count = categoryCounts[cat.key] ?? 0;
               if (count === 0) return null;
               const Icon = getCategoryIcon(cat.key);
               return (

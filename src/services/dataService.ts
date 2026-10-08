@@ -40,6 +40,31 @@ export const dataService = {
     // ============================================
     // PRODUCTS
     // ============================================
+    async getProductCategoryCounts() {
+        const fetchFromD1 = async () => {
+            const response = await fetch(\`${WORKER_URL}/api/products/categories\`);
+            if (!response.ok) throw new Error('Failed to fetch product category counts from D1');
+            return await response.json();
+        };
+
+        const fetchFromSupabase = async () => {
+            const { data, error } = await supabase
+                .from('products')
+                .select('category')
+                .eq('in_stock', true);
+            if (error) throw error;
+
+            const counts: Record<string, number> = {};
+            (data || []).forEach((row: any) => {
+                const key = row.category || 'other';
+                counts[key] = (counts[key] || 0) + 1;
+            });
+            return Object.entries(counts).map(([category, count]) => ({ category, count }));
+        };
+
+        return await fetchWithFailover(fetchFromD1, fetchFromSupabase);
+    },
+
 
     async getProducts(filters?: {
         category?: string;
