@@ -41,11 +41,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const isInitialMount = useRef(true);
 
-  // Apply theme changes instantly
+  // Apply the initial theme instantly; animate only deliberate theme switches.
   const applyTheme = (newTheme: Theme) => {
     const html = document.documentElement;
+    const shouldAnimate = !isInitialMount.current;
 
-    // Instant apply - no animations
+    if (shouldAnimate) {
+      html.classList.add("theme-transitioning");
+      window.setTimeout(() => html.classList.remove("theme-transitioning"), 340);
+    }
+
     if (newTheme === 'dark') {
       html.classList.add('dark');
       html.classList.remove('light');
