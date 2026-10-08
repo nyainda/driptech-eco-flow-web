@@ -415,11 +415,11 @@ const ProductsShowcase = ({
 
         {/* Featured product spotlight */}
         {!loading && featuredProduct && !hideHeader && (
-          <section className="mb-10 overflow-hidden rounded-2xl border border-[hsl(var(--dt-stone-200))] bg-card sm:mb-14" aria-labelledby="featured-product-title">
+          <section className="mb-10 overflow-hidden rounded-2xl border border-border bg-card sm:mb-14" aria-labelledby="featured-product-title">
             <div className="grid items-stretch lg:grid-cols-[1.05fr_0.95fr]">
               <Link
                 to={getProductPath(featuredProduct)}
-                className="group relative overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)] lg:border-b-0 lg:border-r"
+                className="group relative overflow-hidden border-b border-border bg-muted/60 lg:border-b-0 lg:border-r"
                 aria-label={`View featured product: ${featuredProduct.name}`}
               >
                 {featuredProduct.images?.[0] ? (
@@ -489,9 +489,9 @@ const ProductsShowcase = ({
                 <button
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className="group rounded-xl border border-[hsl(var(--dt-stone-200))] bg-card px-2 py-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm"
+                  className="group rounded-xl border border-border bg-card px-2 py-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm"
                 >
-                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[hsl(var(--dt-green-50))] text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="h-4.5 w-4.5" />
                   </span>
                   <span className="mt-2 block line-clamp-2 text-[10px] font-bold leading-4 text-foreground sm:text-[11px]">{cat.label}</span>
