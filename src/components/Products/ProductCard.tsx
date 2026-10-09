@@ -75,7 +75,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
 
         <div className="flex flex-1 flex-col p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-2">\n            <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">{categoryLabel}</p>\n            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-muted-foreground"><Truck className="h-3 w-3 text-primary" /> Kenya delivery</span>\n          </div>
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+            <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-primary">{categoryLabel}</p>
+            <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-muted-foreground"><Truck className="h-3 w-3 shrink-0 text-primary" /> <span>Kenya delivery</span></span>
+          </div>
           <h3 className="mt-1.5 font-heading text-[17px] font-bold leading-snug tracking-tight text-foreground sm:text-lg">
             <Link to={path} className="transition-colors hover:text-primary">{product.name}</Link>
           </h3>
