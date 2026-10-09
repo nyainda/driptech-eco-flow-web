@@ -45,7 +45,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <ProductTracker productName={product.name} productId={product.id} category={product.category} className="h-full">
       <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/35 hover:shadow-xl hover:shadow-primary/5">
-        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-border bg-muted/45">
+        <Link to={path} aria-label={`View ${product.name}`} className="relative block overflow-hidden border-b border-border bg-white dark:bg-muted/30">
           {product.images?.[0] ? (
             <img
               src={product.images[0]}
@@ -53,10 +53,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               width={600}
               height={600}
               loading="lazy"
-              className="aspect-[4/3] w-full object-contain p-5 transition-transform duration-500 ease-out group-hover:scale-[1.045] sm:p-6"
+              className="aspect-[4/3] w-full object-cover p-0 transition-transform duration-500 ease-out group-hover:scale-[1.04]"
             />
           ) : (
-            <div className="flex aspect-[4/3] w-full items-center justify-center">
+            <div className="flex aspect-[4/3] w-full items-center justify-center bg-muted/30">
               <Package className="h-14 w-14 text-muted-foreground/30" />
             </div>
           )}
