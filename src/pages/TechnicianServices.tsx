@@ -116,7 +116,7 @@ const TechnicianServices = () => {
 
             <main>
                 {/* Service-led hero */}
-                <section className="relative isolate overflow-hidden border-b border-border bg-background">
+                <section className="relative isolate overflow-hidden border-b border-border bg-background text-foreground">
                     <div className="absolute inset-0 -z-20">
                         <img
                             src="/seed-products/field_drip.jpg"
@@ -125,7 +125,7 @@ const TechnicianServices = () => {
                             aria-hidden="true"
                         />
                     </div>
-                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/95 to-background/65 dark:from-background dark:via-background/90 dark:to-background/70" />
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/95 to-background/85 dark:from-background dark:via-background/90 dark:to-background/80" />
                     <div className="container mx-auto grid gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1.15fr_.85fr] lg:items-center lg:px-8 lg:py-20">
                         <div className="max-w-3xl">
                             <Badge className="mb-5 border border-primary/20 bg-primary/10 px-3 py-1.5 text-primary">
@@ -135,7 +135,7 @@ const TechnicianServices = () => {
                             <h1 className="font-heading text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                                 Keep your irrigation system <span className="text-primary">working at its best.</span>
                             </h1>
-                            <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+                            <p className="mt-5 max-w-2xl text-base leading-7 text-foreground/80 sm:text-lg sm:leading-8">
                                 Get practical help with installation, troubleshooting, repairs and routine maintenance from the DripTech team. Tell us what your farm needs and we’ll help you plan the next step.
                             </p>
                             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -147,14 +147,14 @@ const TechnicianServices = () => {
                                 <Button
                                     size="lg"
                                     variant="outline"
-                                    className="min-h-12 bg-background/80 backdrop-blur"
+                                    className="min-h-12 border-border bg-background text-foreground hover:bg-muted"
                                     onClick={() => openTrackedWhatsApp("https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech, I need help with an irrigation system. Please advise."), "technician support")}
                                 >
                                     <Phone className="mr-2 h-4 w-4" />
                                     Chat with our team
                                 </Button>
                             </div>
-                            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-xs font-semibold text-muted-foreground sm:text-sm">
+                            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-xs font-semibold text-foreground/80 sm:text-sm">
                                 <span className="inline-flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary" /> Installation & setup</span>
                                 <span className="inline-flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary" /> Repairs & maintenance</span>
                                 <span className="inline-flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary" /> Farm-focused guidance</span>
@@ -176,14 +176,14 @@ const TechnicianServices = () => {
                                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-mono text-sm font-black text-primary">{step.n}</span>
                                             <div>
                                                 <h3 className="font-bold text-foreground">{step.title}</h3>
-                                                <p className="mt-1 text-sm leading-6 text-muted-foreground">{step.body}</p>
+                                                <p className="mt-1 text-sm leading-6 text-foreground/75">{step.body}</p>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex items-center gap-3 bg-primary/5 px-5 py-4 sm:px-6">
+                                <div className="flex items-center gap-3 border-t border-border bg-muted/60 px-5 py-4 sm:px-6">
                                     <MapPin className="h-5 w-5 shrink-0 text-primary" />
-                                    <p className="text-sm text-muted-foreground">Serving farms and irrigation projects across Kenya. Confirm coverage when booking.</p>
+                                    <p className="text-sm leading-6 text-foreground/80">Serving farms and irrigation projects across Kenya. Confirm coverage when booking.</p>
                                 </div>
                             </div>
                         </div>
@@ -197,9 +197,9 @@ const TechnicianServices = () => {
                             <div className="max-w-2xl">
                                 <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-primary">Choose your support</p>
                                 <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Technician services for your farm</h2>
-                                <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">From a new installation to a system that needs attention, start with the service that best matches your situation.</p>
+                                <p className="mt-3 text-sm leading-6 text-foreground/80 sm:text-base">From a new installation to a system that needs attention, start with the service that best matches your situation.</p>
                             </div>
-                            <p className="max-w-sm text-sm leading-6 text-muted-foreground">Not sure what you need? Message us and describe the issue before booking.</p>
+                            <p className="max-w-sm text-sm leading-6 text-foreground/75">Not sure what you need? Message us and describe the issue before booking.</p>
                         </div>
 
                         {loading ? (
@@ -275,7 +275,7 @@ const TechnicianServices = () => {
                         <div className="mx-auto mb-9 max-w-2xl text-center">
                             <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-primary">Support you can plan around</p>
                             <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Practical help, clear next steps</h2>
-                            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">We’ll help you understand the service, discuss the scope and confirm the details before work is arranged.</p>
+                            <p className="mt-3 text-sm leading-6 text-foreground/80 sm:text-base">We’ll help you understand the service, discuss the scope and confirm the details before work is arranged.</p>
                         </div>
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {[
@@ -287,7 +287,7 @@ const TechnicianServices = () => {
                                 <div key={benefit.title} className="rounded-2xl border border-border bg-card p-5">
                                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10"><benefit.icon className="h-5 w-5 text-primary" /></div>
                                     <h3 className="mt-4 font-bold text-foreground">{benefit.title}</h3>
-                                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{benefit.description}</p>
+                                    <p className="mt-2 text-sm leading-6 text-foreground/75">{benefit.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -302,13 +302,13 @@ const TechnicianServices = () => {
                             <div className="pointer-events-none absolute -right-2 -top-8 h-40 w-40 rounded-full border border-primary-foreground/15" />
                             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                                 <div className="max-w-2xl">
-                                    <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-primary-foreground/75">Need a hand with your system?</p>
+                                    <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-white/80">Need a hand with your system?</p>
                                     <h2 className="mt-2 font-heading text-3xl font-bold tracking-tight sm:text-4xl">Let’s get your irrigation back on track.</h2>
-                                    <p className="mt-3 max-w-xl text-sm leading-6 text-primary-foreground/80 sm:text-base">Tell us what you’re working on. We’ll help you identify the right service and discuss the next steps.</p>
+                                    <p className="mt-3 max-w-xl text-sm leading-6 text-white/85 sm:text-base">Tell us what you’re working on. We’ll help you identify the right service and discuss the next steps.</p>
                                 </div>
                                 <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
                                     <Button size="lg" variant="secondary" onClick={() => setShowBookingModal(true)}><Calendar className="mr-2 h-4 w-4" /> Request a technician</Button>
-                                    <Button size="lg" variant="outline" className="border-primary-foreground/35 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" onClick={() => openTrackedWhatsApp("https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech, I need help with irrigation technician services."), "technician support")}><Phone className="mr-2 h-4 w-4" /> WhatsApp DripTech</Button>
+                                    <Button size="lg" variant="outline" className="border-white/40 bg-white/10 text-white hover:bg-white/20 hover:text-white" onClick={() => openTrackedWhatsApp("https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech, I need help with irrigation technician services."), "technician support")}><Phone className="mr-2 h-4 w-4" /> WhatsApp DripTech</Button>
                                 </div>
                             </div>
                         </div>
