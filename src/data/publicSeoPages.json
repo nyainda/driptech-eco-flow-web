@@ -470,5 +470,149 @@
       }
     ],
     "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "drip-irrigation-for-tomatoes-kenya",
+    "title": "Drip Irrigation for Tomatoes in Kenya | DripTech Eco Flow",
+    "description": "Plan drip irrigation for tomatoes in Kenya. Learn what to check about bed layout, emitter spacing, filtration, water supply and system sizing before buying.",
+    "h1": "Drip irrigation for tomato farming in Kenya",
+    "intro": "A tomato irrigation layout should match the field or greenhouse, crop spacing, water source and available pressure. Drip irrigation can deliver water along crop rows, but the components and schedule need to suit the farm rather than follow a one-size-fits-all recipe.",
+    "sections": [
+      {
+        "heading": "Plan the layout before choosing equipment",
+        "paragraphs": [
+          "Start with the planted area, row and bed arrangement, water source, elevation changes and the flow available during irrigation. These details help determine how many lines are needed and how the field should be divided into irrigation zones.",
+          "Emitter spacing and discharge should be chosen for the crop layout, soil and operating pressure. Ask for advice before selecting a roll or assuming one spacing works for every tomato farm."
+        ]
+      },
+      {
+        "heading": "Components to consider",
+        "bullets": [
+          "Driplines or drip tape suited to the crop-row arrangement",
+          "A filter selected for the water source and emitter requirements",
+          "Mainline, submain, valves, connectors and flush points",
+          "A pump or tank connection that can provide the required flow and pressure",
+          "Optional fertigation equipment where it fits the farm's nutrient-management plan"
+        ]
+      },
+      {
+        "heading": "Keep the system operating reliably",
+        "paragraphs": [
+          "Check the filter and flush lines regularly, look for leaks or blocked emitters, and monitor whether water reaches the field evenly. Irrigation frequency depends on crop stage, weather, soil and system output, so use local agronomic guidance rather than a fixed schedule copied from another farm.",
+          "For a more useful equipment recommendation, share the tomato growing area, water source, whether the crop is in an open field or greenhouse, and your location."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Compare irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Request irrigation guidance",
+        "href": "/contact"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "drip-irrigation-for-onions-kenya",
+    "title": "Drip Irrigation for Onions in Kenya | DripTech Eco Flow",
+    "description": "Explore drip irrigation considerations for onion farming in Kenya, including bed layout, dripline selection, filtration, water supply and maintenance.",
+    "h1": "Drip irrigation for onion farming in Kenya",
+    "intro": "Onion irrigation planning starts with the planting layout, soil, water source and the system's ability to apply water evenly. A suitable drip setup can be designed around the farm's beds and available flow instead of relying on a generic kit specification.",
+    "sections": [
+      {
+        "heading": "Match the dripline to the planting layout",
+        "paragraphs": [
+          "Record the bed width, row arrangement, planted area and water source before choosing dripline length or emitter spacing. These details affect the number of lines, the flow needed and how the field should be divided into zones.",
+          "Soil type, bed shape and pressure variation influence how evenly water moves through the root zone. Confirm that the proposed line and emitter specifications fit the actual layout."
+        ]
+      },
+      {
+        "heading": "Plan the complete system",
+        "bullets": [
+          "Driplines or drip tape selected for the crop arrangement",
+          "Filtration appropriate for the water source and emitters",
+          "Mainline and submain pipes sized for the required flow",
+          "Valves, connectors, end caps and flushing access",
+          "A suitable water supply, pump or storage arrangement where required"
+        ]
+      },
+      {
+        "heading": "Maintenance matters",
+        "paragraphs": [
+          "Inspect filters, connectors and line ends, flush the system as recommended for the equipment, and check for leaks or uneven discharge. Irrigation timing should account for crop stage, soil moisture, weather and local agronomic advice.",
+          "DripTech Eco Flow can help you compare components. Share your onion acreage, planting layout, water source and location to discuss a practical equipment list."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Shop drip irrigation components",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Compare complete irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Ask about installation support",
+        "href": "/services"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "irrigation-water-filters-kenya",
+    "title": "Irrigation Water Filters in Kenya | Drip System Filtration | DripTech",
+    "description": "Learn how to select irrigation filters in Kenya based on water source, flow rate and emitter requirements, and explore filters and strainers for farm systems.",
+    "h1": "Irrigation water filters for farms in Kenya",
+    "intro": "Filtration helps protect drip emitters and other irrigation components from particles that can cause blockages. The right filter depends on the water source, the contaminants present, system flow and the equipment manufacturer's requirements.",
+    "sections": [
+      {
+        "heading": "Choose filtration for the water source",
+        "paragraphs": [
+          "Water from a borehole, river, dam, pond or storage tank can contain different types and amounts of debris. Check the water source and the irrigation equipment specification before selecting a screen, disc or other filtration arrangement.",
+          "Filter capacity should suit the system's flow and pressure. A filter that is too small can restrict flow, while an unsuitable filter may not protect the emitters adequately."
+        ]
+      },
+      {
+        "heading": "Installation and routine checks",
+        "bullets": [
+          "Install the filter in the correct direction and position for the equipment",
+          "Check the filter element and clean it according to the manufacturer's instructions",
+          "Monitor pressure changes that may indicate a dirty filter",
+          "Provide access for cleaning and maintenance",
+          "Use additional treatment only where the water quality and system design call for it"
+        ]
+      },
+      {
+        "heading": "Get help choosing a filter",
+        "paragraphs": [
+          "Share your water source, pump or system flow if known, and the type of irrigation equipment being protected. This helps narrow down the appropriate filter and supporting fittings without guessing a specification.",
+          "Browse the filtration category for currently listed products, then contact DripTech Eco Flow to confirm suitability and availability before ordering."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse filters and filtration products",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Explore irrigation accessories",
+        "href": "/products/accessories"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ],
+    "image": "/seed-products/drip2.jpg"
   }
 ]
