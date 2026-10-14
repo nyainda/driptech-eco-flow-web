@@ -48,17 +48,17 @@ const Contact = () => {
       icon: Mail,
       title: "Email Us",
       subtitle: "Get detailed information",
-      details: ["driptech2025@gmail.com", "driptechs.info@gmail.com"],
-      action: "mailto:driptech2025@gmail.com",
+      details: [SITE_COMPANY.email, SITE_COMPANY.emailAlt],
+      action: `mailto:${SITE_COMPANY.email}`,
       actionText: "Send Email",
     },
     {
       icon: MapPin,
-      title: "Visit Us",
-      subtitle: "Our office location",
-      details: ["Nairobi, Kenya", "East Africa"],
-      action: "https://goo.gl/maps/nairobi-kenya",
-      actionText: "Get Directions",
+      title: "Nationwide Service",
+      subtitle: "Irrigation supply and support across Kenya",
+      details: ["Serving customers nationwide", "Contact us to arrange delivery or a farm visit"],
+      action: null,
+      actionText: "",
     },
   ];
 
@@ -71,8 +71,8 @@ const Contact = () => {
   return (
     <>
     <SEOHead
-      title={`Contact ${SITE_COMPANY.name} | Call ${SITE_COMPANY.phonePrimaryDisplay} | Drip Irrigation Kenya`}
-      description={`Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay} for drip kits, driplines and irrigation supplies in Kenya. Email ${SITE_COMPANY.email}. Nairobi-based, nationwide delivery.`}
+      title={`Contact ${SITE_COMPANY.name} | Irrigation Supplies & Services Kenya`}
+      description={`Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay} for drip kits, driplines and irrigation supplies in Kenya. Email ${SITE_COMPANY.email}. Nationwide delivery and farm support.`}
       keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0723407849, 0757716018"
       url="https://www.dripstech.co.ke/contact"
       image={`${SITE_COMPANY.url}/seed-products/plant_drip.jpg`}
@@ -113,13 +113,13 @@ const Contact = () => {
                 <div className="p-2 bg-primary/10 rounded-full group-hover:bg-primary/20 transition-colors">
                   <CheckCircle className="w-5 h-5 text-primary" />
                 </div>
-                <span className="font-semibold text-foreground">24/7 Support</span>
+                <span className="font-semibold text-foreground">Farm-focused Support</span>
               </div>
               <div className="group flex items-center gap-3 px-6 py-3 bg-background/50 backdrop-blur-sm rounded-full border border-border shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                 <div className="p-2 bg-accent/10 rounded-full group-hover:bg-accent/20 transition-colors">
                   <Star className="w-5 h-5 text-accent" />
                 </div>
-                <span className="font-semibold text-foreground">500+ Happy Customers</span>
+                <span className="font-semibold text-foreground">Nationwide Service</span>
               </div>
               <div className="group flex items-center gap-3 px-6 py-3 bg-background/50 backdrop-blur-sm rounded-full border border-border shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                 <div className="p-2 bg-primary/10 rounded-full group-hover:bg-primary/20 transition-colors">
@@ -253,11 +253,11 @@ const Contact = () => {
             <div className="mt-12 lg:mt-16">
               <div className="mb-8 text-center">
                 <h2 className="text-3xl font-bold text-foreground mb-4">
-                  Find Us in Kenya
+                  Irrigation Support Across Kenya
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Located in Nairobi, Kenya's capital city. We serve irrigation
-                  projects across Kenya.
+                  We supply irrigation equipment and support farm projects across Kenya.
+                  Contact us to discuss delivery, system sizing or arranging a farm visit.
                 </p>
               </div>
 
@@ -272,7 +272,7 @@ const Contact = () => {
                       allowFullScreen
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
-                      title="DripTech Kenya Location - Nairobi, Kenya"
+                      title="Map of Nairobi, Kenya"
                       className="rounded-lg"
                     ></iframe>
 
