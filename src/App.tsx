@@ -95,6 +95,14 @@ const App = () => {
                   <Route path="/drip-irrigation-for-watermelon-kenya" element={<SEOContentPage />} />
                   <Route path="/drip-irrigation-for-avocado-kenya" element={<SEOContentPage />} />
                   <Route path="/drip-vs-sprinkler-irrigation-kenya" element={<SEOContentPage />} />
+                  <Route path="/drip-irrigation-for-coffee-kenya" element={<SEOContentPage />} />
+                  <Route path="/drip-irrigation-for-maize-kenya" element={<SEOContentPage />} />
+                  <Route path="/greenhouse-irrigation-systems-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-system-cost-kenya" element={<SEOContentPage />} />
+                  <Route path="/one-acre-drip-irrigation-system-kenya" element={<SEOContentPage />} />
+                  <Route path="/how-to-choose-dripline-spacing-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-pump-sizing-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-system-maintenance-kenya" element={<SEOContentPage />} />
                   <Route path="/solar-irrigation-pumps-kenya" element={<SEOContentPage />} />
                   <Route path="/borehole-water-pumps-kenya" element={<SEOContentPage />} />
                   <Route path="/water-storage-tanks-kenya" element={<SEOContentPage />} />
