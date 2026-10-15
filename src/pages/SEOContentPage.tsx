@@ -73,6 +73,23 @@ const SEOContentPage = () => {
             <p className="dt-section-label mb-3">DripTech Kenya</p>
             <h1 className="dt-section-title max-w-4xl">{page.h1}</h1>
             <p className="dt-section-subtitle mt-5 max-w-3xl">{page.intro}</p>
+            {page.image && (
+              <figure className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                <img
+                  src={page.image}
+                  alt={`${page.h1} — irrigation equipment and farm water delivery`}
+                  width="1200"
+                  height="675"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="aspect-video w-full object-cover"
+                />
+                <figcaption className="px-4 py-3 text-sm text-muted-foreground">
+                  Irrigation equipment and field setup relevant to this guide. Confirm crop-specific layout and specifications for your farm.
+                </figcaption>
+              </figure>
+            )}
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/products" className="dt-btn-primary inline-flex items-center gap-2">
                 Browse products <ArrowRight className="h-4 w-4" />
