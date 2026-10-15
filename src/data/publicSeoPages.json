@@ -907,5 +907,384 @@
       }
     ],
     "image": "/seed-products/sprinkler.jpg"
+  },
+  {
+    "slug": "drip-irrigation-for-coffee-kenya",
+    "title": "Coffee Farm Irrigation in Kenya | DripTech Eco Flow",
+    "description": "Plan irrigation for coffee farms in Kenya with guidance on water source, tree layout, filtration, pumping and maintenance.",
+    "h1": "Irrigation planning for coffee farms in Kenya",
+    "intro": "Coffee irrigation needs depend on location, rainfall pattern, soil, tree age and farm management. A practical system starts with a reliable water source and a layout that can be maintained as the farm develops.",
+    "image": "/seed-products/plant_drip.jpg",
+    "sections": [
+      {
+        "heading": "Assess the coffee block first",
+        "paragraphs": [
+          "Map the planted area, tree spacing, slope and distance to the water source. Estimate the required flow and consider whether the block should be divided into zones to fit the available supply.",
+          "The application method and emitter placement should be selected for the orchard layout, soil and local agronomic guidance. Avoid assuming that one setup is appropriate for every coffee-growing area."
+        ]
+      },
+      {
+        "heading": "Equipment to plan for",
+        "bullets": [
+          "Water source, storage and pump capacity",
+          "Filtration appropriate to the water and emitter specification",
+          "Mainline, submain, valves and compatible connectors",
+          "Emitters or dripline matched to tree layout",
+          "Flush points and safe maintenance access"
+        ]
+      },
+      {
+        "heading": "Get advice for your farm",
+        "paragraphs": [
+          "Monitor soil moisture and crop conditions and follow locally appropriate agronomic advice when deciding irrigation timing. Inspect filters, leaks and emitters regularly.",
+          "Share the coffee acreage, tree spacing, water source and location with DripTech Eco Flow to discuss a practical system layout."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse irrigation products",
+        "href": "/products"
+      },
+      {
+        "label": "Explore solar pumping",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "drip-irrigation-for-maize-kenya",
+    "title": "Irrigation for Maize Farming in Kenya | DripTech Eco Flow",
+    "description": "Explore irrigation planning for maize farms in Kenya, including field layout, water supply, drip and sprinkler options, and system sizing.",
+    "h1": "Irrigation options for maize farming in Kenya",
+    "intro": "Maize irrigation decisions depend on rainfall, field size, soil, planting arrangement and available water. Compare the application method and total system capacity before investing in equipment.",
+    "image": "/seed-products/field_drip.jpg",
+    "sections": [
+      {
+        "heading": "Choose a method that suits the field",
+        "paragraphs": [
+          "Drip and sprinkler systems have different layouts and operating requirements. Compare the crop arrangement, field shape, wind exposure, water quality, labour and available flow before choosing.",
+          "A design should account for the actual acreage and how much of the field can be irrigated at one time. A system advertised for a given acreage may need adjustment for slope, pipe lengths and crop layout."
+        ]
+      },
+      {
+        "heading": "Size the supporting equipment",
+        "bullets": [
+          "Water availability and required flow",
+          "Pump capacity and operating pressure",
+          "Mainline, submain pipes and valves",
+          "Filtration suited to the selected application equipment",
+          "Maintenance access and future expansion"
+        ]
+      },
+      {
+        "heading": "Get a field-specific recommendation",
+        "paragraphs": [
+          "Irrigation frequency should be informed by crop stage, soil moisture, weather and local agronomic guidance rather than a universal schedule.",
+          "Share your field size, water source and location with DripTech Eco Flow to compare system options and components."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Compare drip and sprinkler systems",
+        "href": "/drip-vs-sprinkler-irrigation-kenya"
+      },
+      {
+        "label": "Browse irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Request guidance",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "greenhouse-irrigation-systems-kenya",
+    "title": "Greenhouse Irrigation Systems in Kenya | DripTech",
+    "description": "Plan greenhouse irrigation in Kenya with guidance on dripline layout, filtration, fertigation, pressure and system maintenance.",
+    "h1": "Greenhouse irrigation systems for Kenyan growers",
+    "intro": "Greenhouse irrigation should fit the crop rows, bed arrangement, water source and growing system. A well-planned setup makes it easier to manage delivery, inspect components and maintain consistent operation.",
+    "image": "/seed-products/greenhouse.jpg",
+    "sections": [
+      {
+        "heading": "Design around the greenhouse layout",
+        "paragraphs": [
+          "Measure the greenhouse, beds and crop rows, then confirm water-source flow and pressure. The layout determines the number and length of drip lines and how the greenhouse should be divided into zones.",
+          "Choose emitter spacing and discharge for the crop arrangement, soil or growing medium and equipment specifications. Keep access for flushing, filter cleaning and repairs."
+        ]
+      },
+      {
+        "heading": "Plan filtration and fertigation",
+        "bullets": [
+          "Filter selected for the water source and emitters",
+          "Dripline, connectors, valves and flush points",
+          "Pump and pipe capacity matched to required flow",
+          "Compatible fertigation equipment when needed",
+          "Pressure checks and a routine maintenance plan"
+        ]
+      },
+      {
+        "heading": "Avoid one-size-fits-all schedules",
+        "paragraphs": [
+          "Greenhouse conditions can change with temperature, ventilation, crop stage and growing medium. Base irrigation decisions on appropriate crop guidance and monitoring, not a fixed schedule copied from another greenhouse.",
+          "Share the greenhouse dimensions, crop, water source and location with DripTech Eco Flow for help planning equipment."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse greenhouse products",
+        "href": "/products/greenhouse"
+      },
+      {
+        "label": "Explore fertigation systems",
+        "href": "/fertigation-systems-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-system-cost-kenya",
+    "title": "Irrigation System Cost in Kenya | What Affects the Price? | DripTech",
+    "description": "Understand what affects irrigation system cost in Kenya, from acreage and crop layout to pumps, filtration, pipes, installation and delivery.",
+    "h1": "How much does an irrigation system cost in Kenya?",
+    "intro": "Irrigation costs vary by field layout, crop, water source and equipment. A meaningful quote should list the components and installation scope instead of relying on acreage alone.",
+    "image": "/seed-products/dripline_roll.jpg",
+    "sections": [
+      {
+        "heading": "What determines the total cost?",
+        "bullets": [
+          "Area, crop spacing and the number of irrigation lines",
+          "Drip, sprinkler or other application method",
+          "Pump, power source, water storage and required pressure",
+          "Filters, mainline, submain, valves, connectors and fittings",
+          "Site conditions, installation labour, delivery and commissioning"
+        ]
+      },
+      {
+        "heading": "Compare quotes fairly",
+        "paragraphs": [
+          "Check whether each quote includes the same items, quantities, installation work, testing and support. A low headline price may exclude the pump, filtration, fittings or installation that the farm still needs.",
+          "Current product prices and stock can change. Use the live catalogue for listed items and request a farm-specific bill of materials before relying on a final project budget."
+        ]
+      },
+      {
+        "heading": "Request a practical estimate",
+        "paragraphs": [
+          "Send your crop, acreage, water source, location and whether you need installation. DripTech Eco Flow can use those details to discuss a system scope and the equipment required."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "View irrigation kit options",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Browse current products",
+        "href": "/products"
+      },
+      {
+        "label": "Request a quote",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "one-acre-drip-irrigation-system-kenya",
+    "title": "One-Acre Drip Irrigation System in Kenya | DripTech",
+    "description": "Plan a one-acre drip irrigation system in Kenya with guidance on crop spacing, water supply, filters, pipes, zones and kit selection.",
+    "h1": "Planning a drip irrigation system for one acre",
+    "intro": "A one-acre system is not a single fixed kit. Crop spacing, number of rows, field shape, water source and available pressure determine the quantities and system layout.",
+    "image": "/seed-products/field_drip.jpg",
+    "sections": [
+      {
+        "heading": "Information needed before sizing",
+        "bullets": [
+          "Crop and row or bed spacing",
+          "Field shape, slope and distance from the water source",
+          "Available water flow, storage and pump details",
+          "Soil and water quality considerations",
+          "Whether installation and delivery are required"
+        ]
+      },
+      {
+        "heading": "Typical system components",
+        "paragraphs": [
+          "A complete design may include driplines, mainline and submain pipe, a filter, valves, connectors, flush points and a pump or tank connection where needed. The quantities and specifications should be calculated from the actual layout.",
+          "The field may need to be divided into zones if the available flow or pressure cannot support the entire area at once. Confirm sizing against the product specifications before purchase."
+        ]
+      },
+      {
+        "heading": "Get a bill of materials for your acre",
+        "paragraphs": [
+          "Share your crop, row spacing, water source and location with DripTech Eco Flow. This makes it possible to discuss a realistic parts list rather than guessing quantities from acreage alone."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Compare irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Browse drip products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Request a farm quote",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "how-to-choose-dripline-spacing-kenya",
+    "title": "How to Choose Dripline Spacing in Kenya | DripTech",
+    "description": "Learn what affects dripline emitter spacing and discharge in Kenya, including crop layout, soil, line length, pressure and filtration.",
+    "h1": "How to choose dripline and emitter spacing",
+    "intro": "Dripline selection is about more than roll length. Emitter spacing, discharge, operating pressure, line length and soil influence how water spreads along the crop row.",
+    "image": "/seed-products/dripline_roll.jpg",
+    "sections": [
+      {
+        "heading": "Match spacing to crop and soil",
+        "paragraphs": [
+          "Start with crop spacing, bed width and the intended root-zone coverage. Soil texture and the way water moves through the soil also affect whether a particular emitter spacing is appropriate.",
+          "Closely spaced emitters are not automatically best for every crop, and wider spacing is not always suitable. Confirm the choice against the crop layout, soil and manufacturer guidance."
+        ]
+      },
+      {
+        "heading": "Check flow, pressure and filtration",
+        "bullets": [
+          "Emitter discharge and operating-pressure range",
+          "Maximum practical line length for the chosen product",
+          "Available flow and pressure at the field",
+          "Filter type and capacity for the water source",
+          "Connectors, flush points and compatibility with mainline"
+        ]
+      },
+      {
+        "heading": "Confirm before ordering",
+        "paragraphs": [
+          "Send the crop, row spacing, bed dimensions, water source and approximate field size to DripTech Eco Flow. Those details help narrow the options and avoid choosing a roll based on spacing alone."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse driplines",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Learn about irrigation filters",
+        "href": "/irrigation-water-filters-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-pump-sizing-kenya",
+    "title": "Irrigation Pump Sizing in Kenya | Flow, Head & Power | DripTech",
+    "description": "Learn the main inputs for irrigation pump sizing in Kenya, including required flow, total head, water source, pipe losses and power supply.",
+    "h1": "How to size a pump for farm irrigation",
+    "intro": "Pump selection should be based on the flow the irrigation system needs and the total head the pump must overcome. Choosing by horsepower alone can lead to a system that does not deliver the required flow or pressure.",
+    "image": "/seed-products/water1.jpg",
+    "sections": [
+      {
+        "heading": "Inputs needed for pump selection",
+        "bullets": [
+          "Required flow rate for the zones operating at one time",
+          "Vertical lift and delivery height",
+          "Pressure required by the irrigation equipment",
+          "Pipe lengths, diameters and friction losses",
+          "Water-source depth, yield and available power supply"
+        ]
+      },
+      {
+        "heading": "Match the pump to the application",
+        "paragraphs": [
+          "Drip and sprinkler systems can have different flow and pressure requirements. Borehole pumps also need to be matched to the water level, borehole yield and delivery conditions; a borehole yield test is an important input.",
+          "For solar pumping, consider daily water volume, available sunlight, pumping window and any storage needed. Confirm calculations with the pump performance curve and a qualified installer."
+        ]
+      },
+      {
+        "heading": "Get sizing help",
+        "paragraphs": [
+          "Share the water source, depth or lift, field size, irrigation method and required flow if known. DripTech Eco Flow can help identify the information needed to compare suitable pump options."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse irrigation pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Explore solar pumps",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-system-maintenance-kenya",
+    "title": "Irrigation System Maintenance in Kenya | DripTech",
+    "description": "Practical irrigation maintenance checks for farms in Kenya, including filters, leaks, blocked emitters, pressure, valves and seasonal inspection.",
+    "h1": "Irrigation system maintenance checklist",
+    "intro": "Routine maintenance helps farmers find leaks, blockages and pressure problems before they disrupt watering. Follow the manufacturer's instructions for each component and adapt checks to the water source and system design.",
+    "image": "/seed-products/drip2.jpg",
+    "sections": [
+      {
+        "heading": "Regular checks for drip systems",
+        "bullets": [
+          "Inspect and clean filters as directed by the manufacturer",
+          "Look for leaks, damaged connectors and loose fittings",
+          "Check line ends and flush according to the system instructions",
+          "Look for blocked emitters or uneven water delivery",
+          "Monitor pressure and confirm valves operate correctly"
+        ]
+      },
+      {
+        "heading": "Sprinkler, pump and storage checks",
+        "paragraphs": [
+          "Check sprinkler heads for damage or obstruction and confirm spacing and pressure remain appropriate. Inspect pump connections, controls and storage arrangements according to the equipment manual; isolate power safely before servicing.",
+          "If pressure changes, leaks persist or equipment behaves unusually, stop and have the system assessed rather than making adjustments beyond your training."
+        ]
+      },
+      {
+        "heading": "Need help troubleshooting?",
+        "paragraphs": [
+          "When contacting a technician, provide the water source, equipment type, symptoms, photos if safe to take, and any recent changes. DripTech Eco Flow can help discuss product compatibility and irrigation support."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse irrigation accessories",
+        "href": "/products/accessories"
+      },
+      {
+        "label": "Explore filters",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
   }
 ]
