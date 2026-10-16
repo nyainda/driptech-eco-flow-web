@@ -7,7 +7,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import Breadcrumbs from "@/components/Layout/Breadcrumbs";
 import SEOHead from "@/components/common/SEOHead";
-import { buildLocalBusinessSchema, SITE_COMPANY } from "@/config/company";
+import { buildOrganizationSchema, SITE_COMPANY } from "@/config/company";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -846,7 +846,7 @@ const Products = () => {
       : undefined;
 
   const productsSchema = [
-    buildLocalBusinessSchema(),
+    buildOrganizationSchema(),
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
@@ -884,7 +884,7 @@ const Products = () => {
           type="product"
           image={detailProduct.images?.[0] || `${SITE_COMPANY.url}/driptech-logo.png`}
           schema={[
-            buildLocalBusinessSchema(),
+            buildOrganizationSchema(),
             {
               "@context": "https://schema.org",
               "@type": "BreadcrumbList",
