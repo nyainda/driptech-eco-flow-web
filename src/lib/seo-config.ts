@@ -6,15 +6,10 @@ export const SEO_CONFIG = {
     siteUrl: "https://www.dripstech.co.ke",
     defaultTitle: "Irrigation Materials Kenya | Driplines, Sprinklers, Irrigation Kits - DripTech Eco Flow",
     defaultDescription: "Drip irrigation kits, driplines, sprinklers, pumps and filters for farms in Kenya. Sizing help, supply and installation across the country.",
-    defaultImage: "https://images.unsplash.com/photo-1574263867128-a3d5c1b1deac?w=1200&h=630&fit=crop",
+    defaultImage: "https://www.dripstech.co.ke/hero-bg-new-desktop.webp",
     twitterHandle: "@driptech_eco",
     phone: "+254723407849",
-    email: "driptech2025@gmail.com",
-    address: {
-        street: "Nairobi Industrial Area",
-        city: "Nairobi",
-        country: "Kenya"
-    }
+    email: "info@dripstech.co.ke",
 };
 
 // Common FAQs for different pages
@@ -22,23 +17,23 @@ export const COMMON_FAQS = {
     homepage: [
         {
             question: "What irrigation services does DripTech Eco Flow provide in Kenya?",
-            answer: "DripTech Eco Flow provides irrigation services including drip irrigation system design and installation, sprinkler system installation, irrigation maintenance and repair, greenhouse irrigation, and farm water planning. We serve farms of all sizes across Kenya with professional installation and a 5-year warranty."
+            answer: "DripTech Eco Flow supplies dripline, sprinkler equipment, pumps, filters, pipes, fittings and irrigation kits, and provides irrigation design, installation support and maintenance services. The right system depends on your crop, field layout, water source and operating conditions. Contact the team to confirm product availability and which services are available for your location."
         },
         {
             question: "How much does a drip irrigation system cost in Kenya?",
-            answer: "Drip irrigation systems in Kenya cost between KES 35,000 to KES 150,000 per acre, depending on farm size, crop type, and system complexity. Small farm kits (0.25 acre) start from KES 15,000. All prices include professional installation, testing, and farmer training. Contact us for a free consultation and accurate quote."
+            answer: "Irrigation system cost depends on the area to be irrigated, crop spacing, water source, filtration, pump requirements, pipe lengths, automation and installation scope. Review current kit and product listings, then request a quote based on your farm layout. A price should state clearly which materials, transport and labour are included."
         },
         {
             question: "What areas in Kenya does DripTech Eco Flow serve?",
-            answer: "DripTech Eco Flow serves all regions in Kenya including Nairobi and Central Kenya, Rift Valley (Nakuru, Eldoret, Naivasha), Western Kenya (Kisumu, Kakamega), Coast Region (Mombasa, Kilifi), Eastern Kenya (Machakos, Embu, Meru), and Nyanza Region. We provide nationwide installation and maintenance services."
+            answer: "DripTech supplies irrigation equipment across Kenya and can help customers confirm delivery options for their location. On-site design, installation and maintenance arrangements depend on the project and availability; confirm these details and any travel charges before booking."
         },
         {
             question: "How long does irrigation installation take?",
-            answer: "Installation time depends on farm size. Small farms (0.25-0.5 acre) take 1-2 days. Medium farms (1 acre) take 3-5 days. Large farms (5+ acres) take 1-2 weeks. This includes system design, installation, testing, and farmer training on operation and maintenance."
+            answer: "There is no fixed installation time for every farm. The schedule depends on the irrigated area, water-source setup, trenching or other site work, system complexity and material availability. Ask for an estimated timetable after the scope is reviewed."
         },
         {
             question: "How much water does drip irrigation save?",
-            answer: "Drip irrigation saves 40-60% of water compared to traditional flood irrigation and 20-30% compared to sprinkler systems. On a 1-acre farm, this translates to savings of approximately 15,000-20,000 liters per week. Most farmers recover their investment within 1-2 growing seasons through water savings and increased yields."
+            answer: "Drip irrigation applies water near the crop root zone and can reduce avoidable losses when the system is designed and operated correctly. Actual water savings depend on the previous irrigation method, crop, soil, weather, system design and management, so savings should be estimated for a specific farm rather than promised as a universal percentage."
         }
     ],
 
@@ -49,11 +44,11 @@ export const COMMON_FAQS = {
         },
         {
             question: "Which irrigation system is best for small farms in Kenya?",
-            answer: "For small farms (under 1 acre), drip irrigation is the most cost-effective and water-efficient option. DripTech Eco Flow offers starter kits specifically designed for small-scale farmers, starting from KES 15,000 for 0.25 acres. These systems typically pay for themselves within one growing season through water savings and increased yields of 20-30%."
+            answer: "For a small farm, drip irrigation can be a good option for many row crops when water pressure, filtration and crop spacing are suitable. Compare current kit specifications and confirm coverage, included components and any installation or transport costs before choosing. Payback depends on crop, yields, water cost and how the system is operated."
         },
         {
             question: "Do you offer irrigation system warranties?",
-            answer: "Yes, all DripTech Eco Flow irrigation equipment comes with a 5-year warranty covering manufacturing defects. Installation workmanship is guaranteed for 2 years. We also offer extended warranty options and maintenance packages to keep the system working well."
+            answer: "Warranty terms vary by product, manufacturer and purchase. Check the product listing or manual and ask the sales team to confirm the duration, covered defects, exclusions and whether installation labour is included. Request the final warranty terms in writing."
         },
         {
             question: "What irrigation products are suitable for greenhouses?",
@@ -64,19 +59,19 @@ export const COMMON_FAQS = {
     services: [
         {
             question: "Do you provide free irrigation system consultations?",
-            answer: "Yes, DripTech Eco Flow provides free consultations and site assessments. Our irrigation team will assess your water source, soil type, and crop requirements, then provide a system design with accurate pricing. There is no obligation to purchase after the consultation."
+            answer: "DripTech offers farm assessments; contact the team to confirm availability for your location and what the assessment covers. Ask for a written quote and check whether transport, installation or any additional site work is included before proceeding."
         },
         {
             question: "How often should irrigation systems be maintained?",
-            answer: "We recommend professional maintenance every 6 months for optimal performance. This includes filter cleaning, emitter inspection, leak detection, and system pressure checks. Regular maintenance extends system life to 10+ years and ensures maximum water efficiency. Our maintenance service costs KES 5,000-15,000 depending on system size."
+            answer: "Maintenance frequency depends on the manufacturer’s guidance, water quality and system use. Typical checks include cleaning filters, flushing lines, inspecting emitters, checking pressure and looking for leaks. The cost of professional service depends on system size, site location and the work required; request a project-specific quote."
         },
         {
             question: "Can you install irrigation systems nationwide in Kenya?",
-            answer: "Yes, DripTech Eco Flow provides installation services across all regions of Kenya including Nairobi, Rift Valley, Western Kenya, Coast Region, Eastern Kenya, and Nyanza. Our technicians travel nationwide to support installation regardless of your location. Installation is included in all system prices."
+            answer: "DripTech serves customers across Kenya. Confirm installation availability for your exact location and project scope, and ask the quote to list materials, transport, labour, testing and training separately. Do not assume installation is included in every kit price unless the quote says so."
         },
         {
             question: "What's included in your installation service?",
-            answer: "Our installation service includes system design, the required materials and equipment, professional installation, testing, farmer training on operation and maintenance, and a 2-year installation workmanship warranty. We also provide ongoing technical support."
+            answer: "Request a written scope that identifies the materials supplied, labour, transport, testing, farmer training and warranty terms. These items can vary by project, so confirm exactly what is included in your quote and what may cost extra."
         }
     ]
 };
@@ -85,19 +80,19 @@ export const COMMON_FAQS = {
 export const PAGE_SEO = {
     home: {
         title: "Irrigation Materials Kenya | Driplines, Sprinklers, Irrigation Kits - DripTech Eco Flow",
-        description: "Buy quality irrigation materials in Kenya: driplines (15cm, 20cm, 30cm spacing), sprinkler systems, irrigation pipes, filters, water pumps, fittings, farm irrigation kits. Affordable prices, professional installation, fast delivery nationwide.",
+        description: "Browse dripline, sprinkler systems, pipes, filters, pumps, fittings and irrigation kits for farms in Kenya. Check current product details and arrange nationwide delivery or project-specific installation support.",
         keywords: "irrigation materials Kenya, dripline Kenya, irrigation kits, sprinkler systems, drip irrigation pipes, irrigation fittings, water pumps Kenya, farm irrigation solutions"
     },
 
     products: {
         title: "Irrigation Products & Equipment Kenya | DripTech Eco Flow Catalog",
-        description: "Browse our complete catalog of irrigation products: driplines, sprinklers, filters, pumps, pipes, fittings, and accessories. Quality irrigation equipment with 5-year warranty. Professional installation available nationwide.",
+        description: "Browse irrigation products for Kenyan farms, including driplines, sprinklers, filters, pumps, pipes, fittings and accessories. Check each listing for specifications, current pricing, warranty terms and delivery options.",
         keywords: "irrigation products Kenya, dripline prices, sprinkler systems, irrigation equipment, water pumps, irrigation filters, drip tape, irrigation accessories"
     },
 
     services: {
         title: "Professional Irrigation Services Kenya | Installation & Maintenance",
-        description: "Expert irrigation services in Kenya: system design, professional installation, maintenance, repairs, and consulting. Serving all regions with certified technicians. Free consultation and site assessment.",
+        description: "Irrigation system design, installation, maintenance and repair support across Kenya. Contact DripTech for a farm assessment and a quote tailored to your location, water source and project requirements.",
         keywords: "irrigation installation Kenya, irrigation services, drip system installation, irrigation maintenance, irrigation repair, agricultural consulting"
     },
 
@@ -109,28 +104,23 @@ export const PAGE_SEO = {
 
     contact: {
         title: "Contact DripTech Eco Flow | Irrigation Consultation Kenya",
-        description: "Contact DripTech Eco Flow for an irrigation consultation. WhatsApp, email, or visit our Nairobi office for help with your farm water needs.",
+        description: "Contact DripTech Eco Flow by phone, WhatsApp or email for irrigation product advice, farm assessment arrangements, delivery details and a project-specific quote in Kenya.",
         keywords: "contact DripTech Eco Flow, irrigation consultation Kenya, irrigation quote, irrigation experts Nairobi"
     }
 };
 
 // Structured data templates
 export const STRUCTURED_DATA_TEMPLATES = {
-    localBusiness: {
+    organization: {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
+        "@type": "Organization",
         "name": "DripTech Eco Flow",
-        "description": "Kenya's leading provider of professional irrigation solutions and smart drip systems",
+        "description": "Irrigation equipment, kits and project support for farms in Kenya.",
         "url": SEO_CONFIG.siteUrl,
+        "logo": "https://www.dripstech.co.ke/driptech-logo.png",
         "telephone": SEO_CONFIG.phone,
         "email": SEO_CONFIG.email,
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": SEO_CONFIG.address.street,
-            "addressLocality": SEO_CONFIG.address.city,
-            "addressCountry": SEO_CONFIG.address.country
-        },
-        "priceRange": "$$",
-        "openingHours": "Mo-Fr 08:00-17:00, Sa 08:00-13:00"
+        "acceptedPaymentMethod": ["Cash", "M-Pesa", "Bank Transfer"],
+        "areaServed": { "@type": "Country", "name": "Kenya" }
     }
 };
