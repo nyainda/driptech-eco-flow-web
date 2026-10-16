@@ -84,12 +84,27 @@ for (const route of routes) {
     (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("Product"),
   );
   const isProductDetailRoute = /^\/products\/[^/]+\/[^/]+$/.test(route);
-  if (isProductDetailRoute && productSchemas.length === 0) {
-    failures.push(route + ": product detail page is missing Product JSON-LD");
+  if (isProductDetailRoute && productSchemas.length === 0 && !parsedSchemas.some((schema) =>
+    (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("WebPage"),
+  )) {
+    failures.push(route + ": product detail page must have Product or WebPage JSON-LD");
   }
   for (const schema of productSchemas) {
     if (schema.url !== siteUrl + route) {
       failures.push(route + ": Product JSON-LD URL does not match its canonical route");
+    }
+    // Product rich-result markup must include an offer, review, or rating.
+    // We do not fabricate reviews/ratings, so require a genuine priced Offer.
+    if (!schema.offers && !schema.review && !schema.aggregateRating) {
+      failures.push(route + ": Product JSON-LD must include offers, review, or aggregateRating");
+    }
+    if (schema.offers) {
+      const offers = Array.isArray(schema.offers) ? schema.offers : [schema.offers];
+      for (const offer of offers) {
+        if (offer?.["@type"] !== "Offer" || !(Number(offer.price) > 0) || !offer.priceCurrency) {
+          failures.push(route + ": Product Offer must have a positive price and currency");
+        }
+      }
     }
     const images = schema.image == null ? [] : Array.isArray(schema.image) ? schema.image : [schema.image];
     for (const image of images) {
