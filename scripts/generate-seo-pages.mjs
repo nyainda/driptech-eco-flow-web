@@ -575,15 +575,27 @@ const dynamicPages = [
 for (const route of sitemapRoutes) {
   if (allPages.some((page) => page.route === route)) continue;
 
-  const [title, heading, intro] = sitemapFallbackPages[route] || [
-    "Irrigation Solutions Kenya | DripTech",
-    "Irrigation solutions from DripTech",
-    "Explore irrigation products, farm system support and practical guidance from DripTech in Kenya.",
-  ];
+  const fallback = sitemapFallbackPages[route];
+  if (!fallback) {
+    throw new Error(
+      `SEO sitemap route "${route}" has no static page definition. Add it to categoryPages, landingPages, irrigationCostCalculatorPage, or sitemapFallbackPages before building.`,
+    );
+  }
+
+  const [title, heading, intro] = fallback;
   allPages.push({ route, title, description: intro, heading, intro });
 }
 
 allPages.push(...dynamicPages);
+
+// Catch duplicate static routes before they silently overwrite one another.
+const seenRoutes = new Set();
+for (const page of allPages) {
+  if (seenRoutes.has(page.route)) {
+    throw new Error(`Duplicate static SEO route detected: ${page.route}`);
+  }
+  seenRoutes.add(page.route);
+}
 
 const escapeHtml = (value = "") =>
   String(value)
