@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { serializeJsonLd, toAbsoluteSiteAssetUrl } from "./seo-url-helpers.mjs";
 
 const root = process.cwd();
 const dist = path.join(root, "dist");
@@ -22,6 +23,31 @@ if (new Set(routes).size !== routes.length) {
 }
 
 const failures = [];
+
+const imageUrlCases = [
+  ["root-relative image", toAbsoluteSiteAssetUrl("/seed-products/dripline_roll.jpg", siteUrl), siteUrl + "/seed-products/dripline_roll.jpg"],
+  ["absolute image", toAbsoluteSiteAssetUrl("https://cdn.example.test/product.jpg", siteUrl), "https://cdn.example.test/product.jpg"],
+  ["protocol-relative image", toAbsoluteSiteAssetUrl("//cdn.example.test/product.jpg", siteUrl), undefined],
+  ["unsupported image scheme", toAbsoluteSiteAssetUrl("javascript:alert(1)", siteUrl), undefined],
+  ["blank image", toAbsoluteSiteAssetUrl("   ", siteUrl), undefined],
+];
+for (const [label, actual, expected] of imageUrlCases) {
+  if (actual !== expected) failures.push("SEO helper test failed: " + label);
+}
+
+const jsonLdProbeValue = "</script><img src=x>";
+const serializedProbe = serializeJsonLd({ description: jsonLdProbeValue });
+try {
+  const parsedProbe = JSON.parse(serializedProbe);
+  if (parsedProbe.description !== jsonLdProbeValue) {
+    failures.push("SEO helper test failed: JSON-LD escaping changed the parsed value");
+  }
+} catch {
+  failures.push("SEO helper test failed: serialized JSON-LD is not valid JSON");
+}
+if (serializedProbe.toLowerCase().includes("</script>")) {
+  failures.push("SEO helper test failed: JSON-LD may terminate its script element");
+}
 for (const route of routes) {
   const directory = route === "/" ? dist : path.join(dist, route.replace(/^\/+/, ""));
   const file = path.join(directory, "index.html");
