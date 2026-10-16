@@ -265,7 +265,8 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
                 </div>
               )}
             </div>
-                      {/* WhatsApp Inquiry Button */}
+          </div>
+          {/* WhatsApp Inquiry Button */}
           <Button
             onClick={() => {
               const message = encodeURIComponent(
