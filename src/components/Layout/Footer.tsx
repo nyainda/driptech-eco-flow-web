@@ -40,7 +40,7 @@ const Footer = () => {
               Practical irrigation equipment, system design and installation support for farms across Kenya.
             </p>
             <div className="mt-6 space-y-3 text-sm text-muted-foreground">
-              <a className="flex items-start gap-3 transition-colors hover:text-primary" href="https://maps.google.com/?q=Nairobi,Kenya" target="_blank" rel="noreferrer"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />Nairobi, Kenya · delivery nationwide</a>
+              <div className="flex items-start gap-3"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />Serving farms across Kenya</div>
               <a className="flex items-center gap-3 transition-colors hover:text-primary" href="tel:0723407849"><Phone className="h-4 w-4 shrink-0 text-primary" />0723 407 849</a>
               <a className="flex items-center gap-3 transition-colors hover:text-primary" href="mailto:info@dripstech.co.ke"><Mail className="h-4 w-4 shrink-0 text-primary" />info@dripstech.co.ke</a>
             </div>

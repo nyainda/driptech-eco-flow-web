@@ -29,6 +29,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import { isIrrigationRelatedContent } from "@/lib/irrigationContent";
 
 // Types
 interface Project {
@@ -71,8 +72,6 @@ const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
   { value: "oldest", label: "Oldest First" },
   { value: "name", label: "Name A-Z" },
-  { value: "area", label: "Largest Area" },
-  { value: "water_saved", label: "Most Water Saved" },
 ] as const;
 
 // Utility Functions
@@ -120,11 +119,11 @@ const ProjectHero = ({ onGoBack }: { onGoBack: () => void }) => (
           Our Success Stories
         </Badge>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-          Irrigation work from <span className="text-accent">real farms</span>
+          <span className="text-accent">Irrigation</span> project examples
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-          See how farmers and businesses are using practical irrigation systems
-          across different crops, plots and growing conditions.
+          Browse irrigation-related project records and discuss a system suited
+          to your crop, water source, plot and growing conditions.
         </p>
       </div>
     </div>
@@ -183,7 +182,10 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
                 <span className="text-sm">{project.location}</span>
               </div>
             )}
-            {project.completion_date && (
+            {project.completion_date &&
+                project.status?.toLowerCase() === "completed" &&
+                Number.isFinite(new Date(project.completion_date).getTime()) &&
+                new Date(project.completion_date).getTime() <= Date.now() && (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4 flex-shrink-0 text-primary" />
                 <span className="text-sm">
@@ -193,39 +195,7 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
               </div>
             )}
           </div>
-          {(project.area_covered || project.water_saved) && (
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {project.area_covered != null && (
-                <div className="text-center p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl shadow-sm">
-                  <div className="text-2xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                    {project.area_covered}
-                  </div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">
-                    Area Covered
-                  </div>
-                </div>
-              )}
-              {project.water_saved != null && (
-                <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-200 dark:border-blue-800 rounded-xl shadow-sm">
-                  <div className="text-2xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                    {project.water_saved}%
-                  </div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">
-                    Water Saved
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          {project.testimonial && (
-            <div className="mb-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-gradient-to-b from-amber-500 to-orange-500 rounded-lg">
-              <p className="text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
-                "{project.testimonial}"
-              </p>
-            </div>
-          )}
-
-          {/* WhatsApp Inquiry Button */}
+                    {/* WhatsApp Inquiry Button */}
           <Button
             onClick={() => {
               const message = encodeURIComponent(
@@ -282,7 +252,10 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
                   <span className="text-sm">{project.location}</span>
                 </div>
               )}
-              {project.completion_date && (
+              {project.completion_date &&
+                project.status?.toLowerCase() === "completed" &&
+                Number.isFinite(new Date(project.completion_date).getTime()) &&
+                new Date(project.completion_date).getTime() <= Date.now() && (
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="h-4 w-4 flex-shrink-0 text-primary" />
                   <span className="text-sm">
@@ -292,37 +265,7 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
                 </div>
               )}
             </div>
-            {(project.area_covered || project.water_saved) && (
-              <div className="flex gap-3">
-                {project.area_covered != null && (
-                  <div className="text-center p-3 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg shadow-sm flex-1">
-                    <div className="text-lg font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                      {project.area_covered}
-                    </div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold">Area</div>
-                  </div>
-                )}
-                {project.water_saved != null && (
-                  <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-200 dark:border-blue-800 rounded-lg shadow-sm flex-1">
-                    <div className="text-lg font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                      {project.water_saved}%
-                    </div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400 font-semibold">
-                      Water Saved
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
-          {project.testimonial && (
-            <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-l-4 border-gradient-to-b from-amber-500 to-orange-500 rounded-lg">
-              <p className="text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed line-clamp-2">
-                "{project.testimonial}"
-              </p>
-            </div>
-          )}
-
           {/* WhatsApp Inquiry Button */}
           <Button
             onClick={() => {
@@ -787,7 +730,11 @@ const Projects: React.FC = () => {
     const fetchProjects = async () => {
       try {
         const data = await dataService.getProjects({ featured: true });
-        setProjects(data || []);
+        setProjects(
+          (data || []).filter((project) =>
+            isIrrigationRelatedContent(project.name, project.project_type),
+          ),
+        );
       } catch (error) {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects. Please try again later.");
@@ -852,10 +799,6 @@ const Projects: React.FC = () => {
           );
         case "name":
           return a.name.localeCompare(b.name);
-        case "area":
-          return (b.area_covered || 0) - (a.area_covered || 0);
-        case "water_saved":
-          return (b.water_saved || 0) - (a.water_saved || 0);
         default:
           return 0;
       }

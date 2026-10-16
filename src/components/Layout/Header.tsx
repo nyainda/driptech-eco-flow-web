@@ -519,13 +519,13 @@ const Header = () => {
               <span className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
 
               <a
-                href="mailto:info@driptech.co.ke"
+                href="mailto:info@dripstech.co.ke"
                 className="group inline-flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 font-semibold transition-colors hover:bg-card hover:text-primary"
               >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/10 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Mail className="h-3 w-3" />
                 </span>
-                <span className="hidden truncate sm:inline">info@driptech.co.ke</span>
+                <span className="hidden truncate sm:inline">info@dripstech.co.ke</span>
                 <span className="sr-only sm:hidden">Email DripTech</span>
               </a>
             </div>
@@ -821,7 +821,7 @@ const Header = () => {
                       </div>
                       <span className="text-[10px] font-bold text-foreground/70">Call</span>
                     </a>
-                    <a href="mailto:info@driptech.co.ke" className="flex flex-col items-center gap-1.5 group">
+                    <a href="mailto:info@dripstech.co.ke" className="flex flex-col items-center gap-1.5 group">
                       <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
                         <Mail className="h-4 w-4 text-primary" />
                       </div>

@@ -2,16 +2,16 @@ import { ArrowRight, CheckCircle2, Leaf, MessageCircle, ShieldCheck, Truck, User
 import { Link } from "react-router-dom";
 
 const metrics = [
-  { value: "500+", label: "Installations", icon: Wrench },
-  { value: "60%", label: "Water savings", icon: Leaf },
-  { value: "40%", label: "Yield increase", icon: ArrowRight },
-  { value: "Free", label: "Farm assessment", icon: CheckCircle2 },
+  { value: "Crop-fit", label: "System guidance", icon: Leaf },
+  { value: "Clear", label: "Product details", icon: CheckCircle2 },
+  { value: "Direct", label: "WhatsApp support", icon: MessageCircle },
+  { value: "Nationwide", label: "Service enquiries", icon: Wrench },
 ];
 
 const benefits = [
   { icon: ShieldCheck, title: "Quality equipment", detail: "Built for real farms" },
   { icon: Users, title: "Expert guidance", detail: "Get the right solution" },
-  { icon: Truck, title: "Fast delivery", detail: "Across Kenya" },
+  { icon: Truck, title: "Delivery options", detail: "Confirm timing for your location" },
 ];
 
 export default function HeroSectionVibe() {
@@ -97,7 +97,7 @@ export default function HeroSectionVibe() {
           {[
             ["Quality equipment", "Built for real farms"],
             ["Expert guidance", "Get the right solution"],
-            ["Fast delivery", "Across Kenya"],
+            ["Delivery options", "Confirm timing for your location"],
             ["Local support", "We're here to help"],
           ].map(([title, detail], index) => {
             const Icon = [ShieldCheck, Users, Truck, CheckCircle2][index];

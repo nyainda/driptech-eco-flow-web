@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { dataService } from "@/services/dataService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, TrendingUp, Award, Building } from "lucide-react";
+import { ArrowRight, Award, Building } from "lucide-react";
 import { Link } from "react-router-dom";
+import { isIrrigationRelatedContent } from "@/lib/irrigationContent";
 
 const SuccessStoriesSection = () => {
   const [stories, setStories] = useState<any[]>([]);
@@ -13,9 +14,11 @@ const SuccessStoriesSection = () => {
     const fetchStories = async () => {
       try {
         const data = await dataService.getSuccessStories();
-        // Filter for featured and take only first 3
-        const featured = (data || []).filter((story: any) => story.featured).slice(0, 3);
-        setStories(featured);
+        const featuredIrrigationStories = (data || []).filter((story: any) =>
+          story.featured &&
+          isIrrigationRelatedContent(story.title, story.description, story.client_company),
+        );
+        setStories(featuredIrrigationStories.slice(0, 3));
       } catch (error) {
         console.error("Error fetching success stories:", error);
       } finally {
@@ -26,18 +29,19 @@ const SuccessStoriesSection = () => {
     fetchStories();
   }, []);
 
+  if (!loading && stories.length === 0) return null;
+
   return (
     <section className="border-t border-border bg-muted/50 py-12 sm:py-16">
       <div className="dt-container">
         <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-10">
-          <p className="dt-section-label mb-3">Success stories</p>
+          <p className="dt-section-label mb-3">Project examples</p>
           <h2 className="dt-section-title">
-            Farms using the{" "}
-            <span className="text-primary">equipment</span>
+            Irrigation work for{" "}
+            <span className="text-primary">different farm needs</span>
           </h2>
           <p className="dt-section-subtitle mx-auto mt-3">
-            Real installations, practical results and feedback from the farms we have helped.
-
+            Browse irrigation-related project overviews. System selection and outcomes depend on each site's conditions.
           </p>
         </div>
 
@@ -110,30 +114,18 @@ const SuccessStoriesSection = () => {
                       </p>
                     )}
 
-                    {story.results && (
-                      <div className="rounded-lg border border-border bg-muted/50 p-3">
-                        <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                          <span className="text-xs sm:text-sm font-medium text-foreground">
-                            Results
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {story.results}
-                        </p>
-                      </div>
-                    )}
 
-                    {/* CTA */}
-                    <Link to="/success-stories">
-                      <Button
-                        variant="ghost"
-                        className="h-9 w-full rounded-lg border border-border text-xs font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
-                      >
-                        Read Full Story
-                        <ArrowRight className="ml-1.5 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </Link>
+
+                    {/* Direct, working enquiry because there is no individual story-detail route yet. */}
+                    <a
+                      href={`https://wa.me/254723407849?text=${encodeURIComponent(`Hi DripTech, please advise me about a similar irrigation setup to: ${story.title}.`)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-9 w-full items-center justify-center rounded-lg border border-border px-3 text-xs font-bold transition-colors hover:bg-primary hover:text-primary-foreground"
+                    >
+                      Ask about a similar setup
+                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                    </a>
                   </div>
                 </CardContent>
               </Card>

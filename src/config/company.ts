@@ -1,6 +1,6 @@
 /**
- * Canonical NAP + brand for SEO (must match footer, schema, GBP).
- * Do not invent addresses or ratings.
+ * Canonical brand and contact details for SEO.
+ * Only add a physical address or local-business schema when the location is verified.
  */
 export const SITE_COMPANY = {
   name: "DripTech Eco Flow",
@@ -16,11 +16,6 @@ export const SITE_COMPANY = {
   /** Secondary click-to-call / WhatsApp line */
   phoneSecondary: "+254757716018",
   phoneSecondaryDisplay: "0757 716 018",
-  address: {
-    addressLocality: "Nairobi",
-    addressRegion: "Nairobi",
-    addressCountry: "KE",
-  },
   areaServed: [
     "Kenya",
     "Nairobi",
@@ -39,16 +34,15 @@ export const SITE_COMPANY = {
     "https://www.instagram.com/dripstech",
     "https://www.tiktok.com/@driptech.ecoflow",
   ],
-  priceRange: "KES",
 } as const;
 
-/** LocalBusiness + Organization JSON-LD (aggressive local SEO, phone-first). */
-export function buildLocalBusinessSchema() {
+/** Organization JSON-LD for a nationwide supplier without a verified walk-in address. */
+export function buildOrganizationSchema() {
   const c = SITE_COMPANY;
   return {
     "@context": "https://schema.org",
-    "@type": ["LocalBusiness", "Store", "Organization"],
-    "@id": `${c.url}/#business`,
+    "@type": "Organization",
+    "@id": `${c.url}/#organization`,
     name: c.name,
     legalName: c.legalName,
     description:
@@ -58,15 +52,6 @@ export function buildLocalBusinessSchema() {
     image: c.logo,
     telephone: [c.phonePrimary, c.phoneSecondary],
     email: c.email,
-    priceRange: c.priceRange,
-    currenciesAccepted: "KES",
-    paymentAccepted: "Cash, M-Pesa, Bank Transfer",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: c.address.addressLocality,
-      addressRegion: c.address.addressRegion,
-      addressCountry: c.address.addressCountry,
-    },
     areaServed: c.areaServed.map((name) => ({
       "@type": "Place",
       name,
@@ -131,6 +116,9 @@ export function buildLocalBusinessSchema() {
     sameAs: c.sameAs,
   };
 }
+
+// Backward-compatible export for existing page imports; the emitted schema is Organization.
+export const buildLocalBusinessSchema = buildOrganizationSchema;
 
 export function buildContactPageSchema() {
   const c = SITE_COMPANY;

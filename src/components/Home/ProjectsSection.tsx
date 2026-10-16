@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { isIrrigationRelatedContent } from "@/lib/irrigationContent";
 
 // Type definition based on your schema
 interface Project {
@@ -56,8 +57,11 @@ const ProjectsSection = ({
       try {
         setError(null);
         const data = await dataService.getProjects({ featured: true });
-        // Keep the homepage compact while showing a useful spread of real projects
-        setProjects((data || []).slice(0, 4));
+        // Public project highlights should describe irrigation work, not unrelated demo records.
+        const irrigationProjects = (data || []).filter((project) =>
+          isIrrigationRelatedContent(project.name, project.project_type),
+        );
+        setProjects(irrigationProjects.slice(0, 4));
       } catch (error) {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects. Please try again later.");
@@ -74,15 +78,6 @@ const ProjectsSection = ({
     const images =
       project.project_images || project.after_images || project.before_images;
     return images && images.length > 0 ? images[0] : null;
-  };
-
-  // Helper function to format area
-  const formatArea = (area: number | null) => {
-    if (!area) return null;
-    if (area >= 1000) {
-      return `${(area / 1000).toFixed(1)}k ha`;
-    }
-    return `${area} ha`;
   };
 
   // Helper function to format status text
@@ -170,11 +165,11 @@ const ProjectsSection = ({
               </Badge>
             </div>
             <h2 className="font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-              <span className="block mb-1 sm:mb-2">Better water use on</span>
-              <span className="block text-primary">real Kenyan farms</span>
+              <span className="block mb-1 sm:mb-2">Selected irrigation</span>
+              <span className="block text-primary">project examples</span>
             </h2>
             <p className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-              Real installations, real farms and practical irrigation systems built around water, crop and acreage.
+              Explore irrigation-related project records and system types. Ask us about a setup for your crop, water source and farm conditions.
             </p>
           </div>
         )}
@@ -187,7 +182,6 @@ const ProjectsSection = ({
         <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 sm:mb-10 overflow-x-auto pb-6 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
           {projects.map((project) => {
             const projectImage = getProjectImage(project);
-            const formattedArea = formatArea(project.area_covered);
 
             return (
               <Card
@@ -244,7 +238,10 @@ const ProjectsSection = ({
                           </span>
                         </div>
                       )}
-                      {project.completion_date && (
+                      {project.completion_date &&
+                        project.status?.toLowerCase() === "completed" &&
+                        Number.isFinite(new Date(project.completion_date).getTime()) &&
+                        new Date(project.completion_date).getTime() <= Date.now() && (
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <Calendar className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
                           <span className="text-xs sm:text-sm">
@@ -254,35 +251,6 @@ const ProjectsSection = ({
                       )}
                     </div>
 
-                    {/* Project Stats grid — visible on all screens */}
-                    {(formattedArea || project.water_saved || project.yield_improvement) && (
-                      <div className="grid grid-cols-3 gap-1.5">
-                        {formattedArea && (
-                          <div className="rounded-lg border border-border bg-muted/50 p-2 text-center">
-                            <div className="text-sm sm:text-base font-bold text-foreground">{formattedArea}</div>
-                            <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Area</div>
-                          </div>
-                        )}
-                        {project.water_saved && (
-                          <div className="rounded-lg border border-border bg-muted/50 p-2 text-center">
-                            <div className="text-sm sm:text-base font-bold text-foreground">{project.water_saved}%</div>
-                            <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Water Saved</div>
-                          </div>
-                        )}
-                        {project.yield_improvement && (
-                          <div className="text-center p-2.5 bg-muted/40 rounded-xl border border-border">
-                            <div className="text-sm sm:text-base font-bold text-primary">+{project.yield_improvement}%</div>
-                            <div className="text-[9px] sm:text-xs text-muted-foreground mt-0.5">Yield Up</div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {project.testimonial && (
-                      <blockquote className="text-xs sm:text-sm text-muted-foreground italic border-l-2 border-primary/40 pl-3 py-1 line-clamp-2">
-                        "{project.testimonial}"
-                      </blockquote>
-                    )}
                   </div>
                 </CardContent>
               </Card>

@@ -20,10 +20,6 @@ import {
   ShoppingCart,
   Star,
   Package,
-  TrendingUp,
-  CheckCircle,
-  Users,
-  Globe,
   Check,
   Sparkles,
   Target,
@@ -94,6 +90,18 @@ const CATEGORIES = [
 
 const INITIAL_SHOW = 8;
 const LOAD_MORE_COUNT = 4;
+const SITE_ORIGIN = "https://www.dripstech.co.ke";
+
+const toAbsoluteSiteAssetUrl = (value: string | null | undefined) => {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
+    return `${SITE_ORIGIN}${trimmed}`;
+  }
+  return undefined;
+};
 
 /** Spread products across categories so "All" is not dominated by one type (e.g. accessories). */
 function mixProductsByCategory(list: Product[]): Product[] {
@@ -204,6 +212,10 @@ const ProductsShowcase = ({
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const hasMore = visibleCount < filteredProducts.length;
   const products = visibleProducts;
+  const totalCatalogueCount = Object.values(categoryCounts).reduce(
+    (total, count) => total + count,
+    0,
+  );
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -332,44 +344,21 @@ const ProductsShowcase = ({
   const benefits = [
     {
       icon: Zap,
-      title: "50% Energy Savings",
-      description: "Reduce operational costs with our energy-efficient systems",
-      stat: "50%",
+      title: "Compare system options",
+      description: "Choose equipment to suit your water source, pressure and power supply.",
+      stat: "Compare",
     },
     {
       icon: Leaf,
-      title: "40% Water Conservation",
-      description: "Minimize water waste while maximizing crop yields",
-      stat: "40%",
+      title: "Plan around your crop",
+      description: "Crop, soil, spacing and available water all affect system design.",
+      stat: "Plan",
     },
     {
       icon: Shield,
-      title: "10-Year Warranty",
-      description: "Industry-leading warranty on all premium products",
-      stat: "10Y",
-    },
-  ];
-
-  const stats = [
-    {
-      icon: Users,
-      number: "500+",
-      label: "Happy Customers",
-    },
-    {
-      icon: Globe,
-      number: "50+",
-      label: "Projects Completed",
-    },
-    {
-      icon: TrendingUp,
-      number: "99%",
-      label: "Customer Satisfaction",
-    },
-    {
-      icon: CheckCircle,
-      number: "24/7",
-      label: "Technical Support",
+      title: "Confirm product coverage",
+      description: "Warranty terms vary by product. Ask us to confirm the applicable coverage before you buy.",
+      stat: "Confirm",
     },
   ];
 
@@ -393,11 +382,11 @@ const ProductsShowcase = ({
       name: p.name,
       description: p.description || undefined,
       category: p.category?.replace(/_/g, " "),
-      image: p.images?.[0] || undefined,
-      url: `https://www.dripstech.co.ke/products/${p.id}`,
+      image: toAbsoluteSiteAssetUrl(p.images?.[0]),
+      url: new URL(getProductPath(p), SITE_ORIGIN).toString(),
       price: p.price ?? (p.variants?.[0]?.price ?? undefined),
       currency: "KES",
-      inStock: p.in_stock ?? true,
+      inStock: typeof p.in_stock === "boolean" ? p.in_stock : undefined,
     }));
 
   return (
@@ -535,8 +524,8 @@ const ProductsShowcase = ({
           <div className="mb-5 flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide">
             {CATEGORIES.map((cat) => {
               const count = cat.key === "all"
-                ? allProducts.length
-                : allProducts.filter(p => p.category === cat.key).length;
+                ? totalCatalogueCount
+                : (categoryCounts[cat.key] ?? 0);
               if (count === 0 && cat.key !== "all") return null;
               return (
                 <button
@@ -558,9 +547,13 @@ const ProductsShowcase = ({
           </div>
 
           {!loading && (
-            <p className="mb-4 text-[11px] text-muted-foreground">
-              Showing <span className="font-bold text-foreground">{visibleProducts.length}</span> of{" "}
-              <span className="font-bold text-foreground">{filteredProducts.length}</span> products
+            <p className="mb-4 text-[11px] leading-5 text-muted-foreground">
+              Showing <span className="font-bold text-foreground">{visibleProducts.length}</span> selected product{visibleProducts.length === 1 ? "" : "s"}.
+              This homepage is a sample of the catalogue;{" "}
+              <Link to="/products" className="font-semibold text-primary underline-offset-4 hover:underline">
+                browse all products
+              </Link>{" "}
+              for the full range.
             </p>
           )}
         </section>
@@ -652,13 +645,13 @@ const ProductsShowcase = ({
           </div>
         </section>
 
-        {/* Storefront proof strip */}
-        <section className="mb-10 grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-4 sm:mb-14" aria-label="DripTech service highlights">
+        {/* Practical buying information — avoid unverified scale or service guarantees. */}
+        <section className="mb-10 grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-4 sm:mb-14" aria-label="DripTech buying information">
           {[
-            ["500+", "Happy customers"],
-            ["50+", "Completed projects"],
-            ["99%", "Satisfaction rate"],
-            ["24/7", "Technical support"],
+            ["Equipment", "Product selection"],
+            ["Crop-aware", "System guidance"],
+            ["Quote first", "Confirm final scope"],
+            ["Direct help", "WhatsApp enquiries"],
           ].map(([value, label], index) => (
             <div key={label} className={`px-4 py-5 text-center sm:px-5 ${index < 3 ? "border-b border-border sm:border-b-0 sm:border-r" : "border-b-0"} ${index % 2 === 0 ? "" : "border-l sm:border-l-0"}`}>
               <p className="font-mono text-xl font-black text-foreground sm:text-2xl">{value}</p>
@@ -703,8 +696,7 @@ const ProductsShowcase = ({
                   <span className="text-primary"> DripTech?</span>
                 </h3>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  Proven results that make a difference to your bottom line and
-                  environmental impact
+                  Practical guidance for choosing equipment that fits your farm
                 </p>
               </div>
 
