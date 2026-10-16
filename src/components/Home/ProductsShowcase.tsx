@@ -600,9 +600,8 @@ const ProductsShowcase = ({
           )}
         </div>
 
+        {/* Irrigation kits banner */}
         {!hideKitsBanner && (
-          <>
-          {/* Irrigation kits banner */}
           <section className="mb-10 overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-900))] text-white sm:mb-14" aria-labelledby="homepage-kits-title">
             <div className="grid lg:grid-cols-[1.25fr_0.75fr]">
               <div className="relative min-h-[210px] overflow-hidden">
@@ -648,9 +647,6 @@ const ProductsShowcase = ({
               </div>
             </div>
           </section>
-
-
-          </>
         )}
 
         {/* Practical buying information — avoid unverified scale or service guarantees. */}
