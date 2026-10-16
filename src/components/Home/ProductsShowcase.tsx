@@ -155,6 +155,7 @@ interface ProductsShowcaseProps {
   hideHeader?: boolean;
   hideStats?: boolean;
   hideBenefits?: boolean;
+  hideKitsBanner?: boolean;
   compact?: boolean;
 }
 
@@ -162,6 +163,7 @@ const ProductsShowcase = ({
   hideHeader = false,
   hideStats = false,
   hideBenefits = false,
+  hideKitsBanner = false,
   compact = false,
 }: ProductsShowcaseProps = {}) => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -599,51 +601,53 @@ const ProductsShowcase = ({
         </div>
 
         {/* Irrigation kits banner */}
-        <section className="mb-10 overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-900))] text-white sm:mb-14" aria-labelledby="homepage-kits-title">
-          <div className="grid lg:grid-cols-[1.25fr_0.75fr]">
-            <div className="relative min-h-[210px] overflow-hidden">
-              <img
-                src="/hero-bg-new-desktop.webp"
-                alt="DripTech irrigation systems serving productive crop farms"
-                className="absolute inset-0 h-full w-full object-cover opacity-55"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--dt-green-900)/0.98)] via-[hsl(var(--dt-green-900)/0.72)] to-transparent" />
-              <div className="relative flex h-full flex-col justify-center p-6 sm:p-8">
-                <p className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--dt-gold-400))]">Complete irrigation kits</p>
-                <h3 id="homepage-kits-title" className="mt-2 max-w-xl font-heading text-2xl font-bold leading-tight sm:text-3xl">
-                  Everything you need for a working irrigation system.
-                </h3>
-                <p className="mt-2 max-w-lg text-xs leading-5 text-white/70 sm:text-sm">
-                  Ready packages for common farm sizes, with the right components grouped together.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Link to="/irrigation-kits" className="inline-flex items-center gap-2 rounded-lg bg-[hsl(var(--dt-gold-500))] px-4 py-2.5 text-xs font-extrabold text-[hsl(var(--dt-green-900))] hover:bg-[hsl(var(--dt-gold-400))]">
-                    Explore kits <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                  <a href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! Please help me choose an irrigation kit.")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/15">
-                    Chat on WhatsApp
-                  </a>
+        {!hideKitsBanner && (
+          <section className="mb-10 overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-900))] text-white sm:mb-14" aria-labelledby="homepage-kits-title">
+            <div className="grid lg:grid-cols-[1.25fr_0.75fr]">
+              <div className="relative min-h-[210px] overflow-hidden">
+                <img
+                  src="/hero-bg-new-desktop.webp"
+                  alt="DripTech irrigation systems serving productive crop farms"
+                  className="absolute inset-0 h-full w-full object-cover opacity-55"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--dt-green-900)/0.98)] via-[hsl(var(--dt-green-900)/0.72)] to-transparent" />
+                <div className="relative flex h-full flex-col justify-center p-6 sm:p-8">
+                  <p className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--dt-gold-400))]">Complete irrigation kits</p>
+                  <h3 id="homepage-kits-title" className="mt-2 max-w-xl font-heading text-2xl font-bold leading-tight sm:text-3xl">
+                    Everything you need for a working irrigation system.
+                  </h3>
+                  <p className="mt-2 max-w-lg text-xs leading-5 text-white/70 sm:text-sm">
+                    Ready packages for common farm sizes, with the right components grouped together.
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Link to="/irrigation-kits" className="inline-flex items-center gap-2 rounded-lg bg-[hsl(var(--dt-gold-500))] px-4 py-2.5 text-xs font-extrabold text-[hsl(var(--dt-green-900))] hover:bg-[hsl(var(--dt-gold-400))]">
+                      Explore kits <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                    <a href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! Please help me choose an irrigation kit.")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/10 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/15">
+                      Chat on WhatsApp
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="hidden items-center justify-center bg-[hsl(var(--dt-green-800))] p-7 lg:flex">
+                <div className="grid w-full grid-cols-2 gap-3">
+                  {[
+                    ["1/8 acre", "Small farm"],
+                    ["1/4 acre", "Growing farm"],
+                    ["1/2 acre", "Larger plot"],
+                    ["1 acre+", "Commercial"],
+                  ].map(([size, label]) => (
+                    <Link key={size} to="/irrigation-kits" className="rounded-xl border border-white/10 bg-white/5 p-3 transition-colors hover:bg-white/10">
+                      <p className="font-heading text-lg font-bold">{size}</p>
+                      <p className="mt-1 text-[10px] text-white/60">{label}</p>
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
-            <div className="hidden items-center justify-center bg-[hsl(var(--dt-green-800))] p-7 lg:flex">
-              <div className="grid w-full grid-cols-2 gap-3">
-                {[
-                  ["1/8 acre", "Small farm"],
-                  ["1/4 acre", "Growing farm"],
-                  ["1/2 acre", "Larger plot"],
-                  ["1 acre+", "Commercial"],
-                ].map(([size, label]) => (
-                  <Link key={size} to="/irrigation-kits" className="rounded-xl border border-white/10 bg-white/5 p-3 transition-colors hover:bg-white/10">
-                    <p className="font-heading text-lg font-bold">{size}</p>
-                    <p className="mt-1 text-[10px] text-white/60">{label}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Practical buying information — avoid unverified scale or service guarantees. */}
         <section className="mb-10 grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-4 sm:mb-14" aria-label="DripTech buying information">
