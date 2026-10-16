@@ -1612,17 +1612,5 @@
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
-        "label": "Browse drip irrigation products",
-        "href": "/products/drip"
-      },
-      {
-        "label": "Compare irrigation kit options",
-        "href": "/irrigation-kits"
-      },
-      {
-        "label": "Contact DripTech Eco Flow",
-        "href": "/contact"
-      }
-    ]
   }
 ]
