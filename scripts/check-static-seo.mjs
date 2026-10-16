@@ -8,6 +8,8 @@ const siteUrl = "https://www.dripstech.co.ke";
 const seoManifest = [
   ...JSON.parse(fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8")),
   ...JSON.parse(fs.readFileSync(path.join(root, "src/data/irrigationPriceSeoPages.json"), "utf8")),
+
+  ...JSON.parse(fs.readFileSync(path.join(root, "src/data/irrigationCropGapPages.json"), "utf8")),
 ];
 const escapeHtml = (value = "") =>
   String(value)
