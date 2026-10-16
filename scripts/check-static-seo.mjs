@@ -102,4 +102,4 @@ if (failures.length) {
   for (const failure of failures) console.error(` - ${failure}`);
   process.exit(1);
 }
-console.log(`Static SEO validation passed for ${routes.length} sitemap URLs, including canonical URLs, titles, descriptions, server-rendered H1s, JSON-LD and calculator metadata.`);
+console.log(`Static SEO validation passed for ${routes.length} sitemap URLs, including canonical URLs, titles, descriptions, server-rendered H1s, JSON-LD, calculator metadata, contextual manifest links and unique homepage intro text.`);
