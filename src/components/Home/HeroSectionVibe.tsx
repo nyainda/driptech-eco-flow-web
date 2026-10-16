@@ -1,15 +1,12 @@
 import {
   ArrowRight,
   Calculator,
-  CheckCircle2,
   Droplets,
   Gauge,
   Leaf,
   MessageCircle,
   Package,
   ShieldCheck,
-  Truck,
-  Users,
   Wrench,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -28,8 +25,8 @@ const shopPaths = [
     icon: Gauge,
   },
   {
-    label: "Pumps & filters",
-    detail: "Move and protect water",
+    label: "Pumps & motors",
+    detail: "Water supply equipment",
     href: "/products/pumps",
     icon: Wrench,
   },
