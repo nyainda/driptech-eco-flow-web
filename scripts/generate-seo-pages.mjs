@@ -395,6 +395,15 @@ const stripHtml = (value = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
+const toAbsoluteSiteAssetUrl = (value) => {
+  if (typeof value !== "string") return undefined;
+  const url = value.trim();
+  if (!url) return undefined;
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith("/") && !url.startsWith("//")) return `${siteUrl}${url}`;
+  return undefined;
+};
+
 const fetchJson = async (url, headers = {}) => {
   const response = await fetch(url, { headers });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
@@ -496,6 +505,9 @@ const dynamicPages = [
       const route = `/products/${category}/${slugify(product.name)}-${String(product.id).slice(0, 8)}`;
       const description = stripHtml(product.description) || `${product.name} irrigation equipment from DripTech in Kenya.`;
       const price = Number(product.price);
+      const images = (Array.isArray(product.images) ? product.images : [])
+        .map(toAbsoluteSiteAssetUrl)
+        .filter((url) => typeof url === "string");
       return {
         route,
         title: `${product.name} Kenya | Price & Specifications | DripTech`,
@@ -507,7 +519,7 @@ const dynamicPages = [
           "@type": "Product",
           name: product.name,
           description,
-          image: product.images?.[0],
+          ...(images.length ? { image: images } : {}),
           sku: product.model_number || product.id,
           brand: { "@type": "Brand", name: "DripTech Eco Flow" },
           url: `${siteUrl}${route}`,
