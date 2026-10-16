@@ -4,9 +4,9 @@ import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Building, TrendingUp, Award, ArrowRight } from "lucide-react";
+import { Building, Award, ArrowRight } from "lucide-react";
+import { isIrrigationRelatedContent } from "@/lib/irrigationContent";
 
 const SuccessStories = () => {
   const [stories, setStories] = useState<any[]>([]);
@@ -21,7 +21,11 @@ const SuccessStories = () => {
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-        setStories(data || []);
+        setStories(
+          (data || []).filter((story: any) =>
+            isIrrigationRelatedContent(story.title, story.description, story.client_company),
+          ),
+        );
       } catch (error) {
         console.error("Error fetching success stories:", error);
       } finally {
@@ -43,12 +47,11 @@ const SuccessStories = () => {
               🏆 Success Stories
             </Badge>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Real Results from{" "}
-              <span className="text-primary">Real Customers</span>
+              Irrigation{" "}
+              <span className="text-primary">project examples</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-              Discover how our irrigation solutions have transformed farms,
-              boosted yields, and improved lives globally.
+              Explore irrigation-related project overviews. Contact DripTech to discuss equipment and system design for your crop, water source and farm conditions.
             </p>
           </div>
         </section>
@@ -117,32 +120,16 @@ const SuccessStories = () => {
                         </div>
                       )}
 
-                      {/* Results Achieved */}
-                      {story.results && (
-                        <div className="rounded-xl border border-primary/10 bg-gradient-to-br from-primary/5 to-secondary/10 p-4 sm:p-5 shadow-sm mb-4">
-                          <div className="flex items-center gap-3 mb-3">
-                            <TrendingUp className="h-5 w-5 text-primary flex-shrink-0" />
-                            <h4 className="text-sm sm:text-md font-semibold text-primary tracking-wide">
-                              Results Achieved
-                            </h4>
-                          </div>
-
-                          <div className="max-h-40 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-                            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                              {story.results}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
                       <div className="mt-auto">
-                        <Button
-                          variant="outline"
-                          className="w-full transition-all group-hover:bg-primary group-hover:text-primary-foreground text-sm sm:text-base"
+                        <a
+                          href={`https://wa.me/254723407849?text=${encodeURIComponent(`Hi DripTech, please advise me about a similar irrigation setup to: ${story.title}.`)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex w-full items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-primary hover:text-primary-foreground"
                         >
-                          Read Full Story
+                          Ask about a similar setup
                           <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
+                        </a>
                       </div>
                     </CardContent>
                   </Card>
@@ -152,10 +139,10 @@ const SuccessStories = () => {
               <div className="text-center py-12 sm:py-16 md:py-20 px-4">
                 <Award className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg sm:text-xl font-semibold mb-2">
-                  No Success Stories Yet
+                  No irrigation project examples available yet
                 </h3>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  Stories will appear here once available from our community.
+                  We are reviewing project records for publication. Contact us to discuss a suitable irrigation setup for your farm.
                 </p>
               </div>
             )}
