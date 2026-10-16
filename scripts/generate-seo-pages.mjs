@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { serializeJsonLd, toAbsoluteSiteAssetUrl } from "./seo-url-helpers.mjs";
 
 const root = process.cwd();
 const dist = path.join(root, "dist");
@@ -496,6 +497,9 @@ const dynamicPages = [
       const route = `/products/${category}/${slugify(product.name)}-${String(product.id).slice(0, 8)}`;
       const description = stripHtml(product.description) || `${product.name} irrigation equipment from DripTech in Kenya.`;
       const price = Number(product.price);
+      const images = (Array.isArray(product.images) ? product.images : [])
+        .map((image) => toAbsoluteSiteAssetUrl(image, siteUrl))
+        .filter((url) => typeof url === "string");
       return {
         route,
         title: `${product.name} Kenya | Price & Specifications | DripTech`,
@@ -507,7 +511,7 @@ const dynamicPages = [
           "@type": "Product",
           name: product.name,
           description,
-          image: product.images?.[0],
+          ...(images.length ? { image: images } : {}),
           sku: product.model_number || product.id,
           brand: { "@type": "Brand", name: "DripTech Eco Flow" },
           url: `${siteUrl}${route}`,
@@ -683,7 +687,7 @@ const renderPage = (page) => {
 
   return `${html.replace(
     "</head>",
-    `<script type="application/ld+json">${JSON.stringify(
+    `<script type="application/ld+json">${serializeJsonLd(
       page.schema || {
         "@context": "https://schema.org",
         "@type": "WebPage",
