@@ -54,7 +54,21 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/pipes_industrial.jpg"
+    "image": "/seed-products/pipes_industrial.jpg",
+    "sources": [
+      {
+        "label": "Faulu Irrigation — HDPE pipe prices by size",
+        "url": "https://fauluirrigation.co.ke/hdpe-pipes-in-nairobi-prices-sizes-user-guide/"
+      },
+      {
+        "label": "Grekkon — irrigation pipe prices and sizes",
+        "url": "https://grekkon.com/irrigation-pipes-for-sale/"
+      },
+      {
+        "label": "Grekkon — rain hose irrigation",
+        "url": "https://grekkon.com/rain-hose-irrigation/"
+      }
+    ]
   },
   {
     "slug": "hdpe-pipe-prices-kenya",
@@ -107,7 +121,17 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/pipes_industrial.jpg"
+    "image": "/seed-products/pipes_industrial.jpg",
+    "sources": [
+      {
+        "label": "Faulu Irrigation — HDPE pipe price guide",
+        "url": "https://fauluirrigation.co.ke/hdpe-pipes-in-nairobi-prices-sizes-user-guide/"
+      },
+      {
+        "label": "Grekkon — HDPE pipe prices by PN rating",
+        "url": "https://grekkon.com/irrigation-pipes-for-sale/"
+      }
+    ]
   },
   {
     "slug": "rain-hose-prices-kenya",
@@ -159,7 +183,17 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/pipes_industrial.jpg"
+    "image": "/seed-products/pipes_industrial.jpg",
+    "sources": [
+      {
+        "label": "Grekkon — rain hose irrigation",
+        "url": "https://grekkon.com/rain-hose-irrigation/"
+      },
+      {
+        "label": "Grekkon — irrigation archive with rain hose prices",
+        "url": "https://grekkon.co.ke/category/irrigation/page/2/"
+      }
+    ]
   },
   {
     "slug": "dripline-prices-kenya",
@@ -211,6 +245,20 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "/seed-products/dripline_roll.jpg",
+    "sources": [
+      {
+        "label": "Faulu Irrigation — 1000 m dripline rolls",
+        "url": "https://fauluirrigation.co.ke/products/driplines-in-kenya-1000m-roll/"
+      },
+      {
+        "label": "Aqua Hub — dripline prices in Kenya",
+        "url": "https://aquahubirrigation.co.ke/drip-line-prices-in-kenya/"
+      },
+      {
+        "label": "Grekkon — irrigation pipe and dripline information",
+        "url": "https://grekkon.com/irrigation-pipes-for-sale/"
+      }
+    ]
   }
 ]
