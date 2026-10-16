@@ -636,7 +636,7 @@ const pageBody = (page) => {
       typeof link?.href === "string" &&
       link.href.startsWith("/") &&
       !link.href.startsWith("//") &&
-      !/[\\u0000-\\u0020\"'<>]/.test(link.href),
+      !/[\s"'<>]/.test(link.href),
   );
   const relatedNav = relatedLinks.length
     ? `<nav aria-label="Related irrigation guides"><h2>Continue exploring</h2><ul>${relatedLinks
