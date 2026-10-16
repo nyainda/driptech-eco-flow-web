@@ -99,9 +99,11 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) =>
                   "@type": "Offer",
                   price: product.price,
                   priceCurrency: product.currency || "KES",
-                  availability: product.inStock
-                    ? "https://schema.org/InStock"
-                    : "https://schema.org/OutOfStock",
+                  ...(typeof product.inStock === "boolean" && {
+                    availability: product.inStock
+                      ? "https://schema.org/InStock"
+                      : "https://schema.org/OutOfStock",
+                  }),
                   seller: {
                     "@type": "Organization",
                     name: "DripTech Eco Flow",
