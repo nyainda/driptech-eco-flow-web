@@ -4,7 +4,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import SEOHead from "@/components/common/SEOHead";
 import pages from "@/data/publicSeoPages.json";
-import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
+import { SITE_COMPANY, buildOrganizationSchema } from "@/config/company";
 
 type SeoPage = (typeof pages)[number];
 
@@ -53,7 +53,7 @@ const SEOContentPage = () => {
         url={pageUrl}
         image={page.image ? `${SITE_COMPANY.url}${page.image}` : undefined}
         schema={[
-          buildLocalBusinessSchema(),
+          buildOrganizationSchema(),
           breadcrumbSchema,
           {
             "@context": "https://schema.org",
