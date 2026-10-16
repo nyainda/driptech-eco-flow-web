@@ -4,6 +4,15 @@ import path from "node:path";
 const root = process.cwd();
 const dist = path.join(root, "dist");
 const siteUrl = "https://www.dripstech.co.ke";
+const manifest = JSON.parse(fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8"));
+const escapeHtml = (value = "") =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
 const sitemapPath = path.join(dist, "sitemap.xml");
 
 if (!fs.existsSync(sitemapPath)) {
@@ -52,6 +61,34 @@ if (fs.existsSync(calculatorPath)) {
 } else {
   failures.push("/irrigation-cost-calculator-kenya: generated HTML missing");
 }
+
+// The build-time SEO shell must preserve contextual links from the manifest,
+// not just the same generic navigation links on every page.
+for (const page of manifest) {
+  const route = `/${page.slug}`;
+  const file = path.join(dist, route.replace(/^\\/+/, ""), "index.html");
+  if (!fs.existsSync(file)) {
+    failures.push(`${route}: generated HTML missing for SEO manifest page`);
+    continue;
+  }
+
+  const html = fs.readFileSync(file, "utf8");
+  for (const link of page.links || []) {
+    const expectedAnchor = `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`;
+    if (!html.includes(expectedAnchor)) {
+      failures.push(`${route}: contextual link missing from static HTML (${link.label})`);
+    }
+  }
+}
+
+// Pages without sections should not print their intro twice in the static shell.
+const homepageHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+const homepageIntro = "DripTech supplies irrigation equipment and complete systems for Kenyan farms, greenhouses and kitchen gardens. Browse products, compare kits and ask for help before you buy.";
+const homepageIntroCount = homepageHtml.split(homepageIntro).length - 1;
+if (homepageIntroCount !== 1) {
+  failures.push(`/: homepage intro must appear once in static HTML (found ${homepageIntroCount})`);
+}
+
 
 const adminPath = path.join(dist, "admin", "index.html");
 if (fs.existsSync(adminPath)) {
