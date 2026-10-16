@@ -617,6 +617,9 @@ const escapeHtml = (value = "") =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
+const serializeJsonLd = (value) =>
+  JSON.stringify(value).replace(/</g, "\\u003c");
+
 const replaceMeta = (html, name, content, attribute = "name") => {
   const escaped = escapeHtml(content);
   const pattern = new RegExp(
@@ -695,7 +698,7 @@ const renderPage = (page) => {
 
   return `${html.replace(
     "</head>",
-    `<script type="application/ld+json">${JSON.stringify(
+    `<script type="application/ld+json">${serializeJsonLd(
       page.schema || {
         "@context": "https://schema.org",
         "@type": "WebPage",
