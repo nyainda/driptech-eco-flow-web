@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import SimpleContactForm from "@/components/common/SimpleContactForm";
 import SEOHead from "@/components/common/SEOHead";
-import { buildContactPageSchema, buildLocalBusinessSchema, SITE_COMPANY } from "@/config/company";
+import { buildContactPageSchema, buildOrganizationSchema, SITE_COMPANY } from "@/config/company";
 
 const Contact = () => {
   const contactInfo = [
@@ -76,7 +76,7 @@ const Contact = () => {
       keywords="contact DripTech, drip irrigation phone Kenya, irrigation WhatsApp Kenya, buy drip kit Nairobi contact, 0723407849, 0757716018"
       url="https://www.dripstech.co.ke/contact"
       image={`${SITE_COMPANY.url}/seed-products/plant_drip.jpg`}
-      schema={[buildLocalBusinessSchema(), buildContactPageSchema()]}
+      schema={[buildOrganizationSchema(), buildContactPageSchema()]}
     />
     <div className="min-h-screen bg-background text-foreground">
       <Header />
