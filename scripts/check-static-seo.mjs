@@ -35,13 +35,40 @@ for (const route of routes) {
   const description = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']*)["'][^>]*>/i)?.[1]?.trim() || "";
   const canonical = html.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']*)["'][^>]*>/i)?.[1]?.trim() || "";
   const heading = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1]?.replace(/<[^>]*>/g, "").trim() || "";
+  const schemaScripts = [...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+  const parsedSchemas = [];
+  for (const match of schemaScripts) {
+    try {
+      parsedSchemas.push(JSON.parse(match[1]));
+    } catch {
+      failures.push(route + ": invalid JSON-LD block");
+    }
+  }
+  const productSchemas = parsedSchemas.filter((schema) =>
+    (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("Product"),
+  );
+  const isProductDetailRoute = /^\/products\/[^/]+\/[^/]+$/.test(route);
+  if (isProductDetailRoute && productSchemas.length === 0) {
+    failures.push(route + ": product detail page is missing Product JSON-LD");
+  }
+  for (const schema of productSchemas) {
+    if (schema.url !== siteUrl + route) {
+      failures.push(route + ": Product JSON-LD URL does not match its canonical route");
+    }
+    const images = schema.image == null ? [] : Array.isArray(schema.image) ? schema.image : [schema.image];
+    for (const image of images) {
+      if (typeof image !== "string" || !/^https?:\/\//i.test(image)) {
+        failures.push(route + ": Product JSON-LD image must be an absolute HTTP(S) URL");
+      }
+    }
+  }
 
   if (!title) failures.push(`${route}: missing title`);
   if (!description) failures.push(`${route}: missing meta description`);
   if (!heading) failures.push(`${route}: missing server-rendered H1`);
   if (canonical !== `${siteUrl}${route === "/" ? "/" : route}`) failures.push(`${route}: incorrect canonical URL (${canonical || "missing"})`);
   if (/^Irrigation Solutions Kenya \| DripTech$/i.test(title)) failures.push(`${route}: generic fallback title detected`);
-  if (!html.includes('type="application/ld+json"')) failures.push(`${route}: missing JSON-LD structured data`);
+  if (schemaScripts.length === 0) failures.push(`${route}: missing JSON-LD structured data`);
 }
 
 const calculatorPath = path.join(dist, "irrigation-cost-calculator-kenya", "index.html");
