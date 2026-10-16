@@ -73,7 +73,11 @@ for (const page of manifest) {
   }
 
   const html = fs.readFileSync(file, "utf8");
-  for (const link of page.links || []) {
+  if (!Array.isArray(page.links) || page.links.length === 0) {
+    failures.push(`${route}: SEO manifest page must define contextual links`);
+    continue;
+  }
+  for (const link of page.links) {
     const expectedAnchor = `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`;
     if (!html.includes(expectedAnchor)) {
       failures.push(`${route}: contextual link missing from static HTML (${link.label})`);
