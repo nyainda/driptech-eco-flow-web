@@ -45,7 +45,18 @@ import { Link } from "react-router-dom";
 import QuoteModal from "./QuoteModal";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import { StructuredData } from "@/components/SEO/StructuredData";
+import { SITE_COMPANY } from "@/config/company";
 import { getProductPath } from "@/lib/productUrl";
+
+const getAbsoluteProductImageUrl = (image?: string | null) => {
+  const value = image?.trim();
+  if (!value) return undefined;
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith("/") && !value.startsWith("//")) {
+    return `${SITE_COMPANY.url}${value}`;
+  }
+  return undefined;
+};
 
 interface Variant {
   name: string;
@@ -393,8 +404,8 @@ const ProductsShowcase = ({
       name: p.name,
       description: p.description || undefined,
       category: p.category?.replace(/_/g, " "),
-      image: p.images?.[0] || undefined,
-      url: `https://www.dripstech.co.ke/products/${p.id}`,
+      image: getAbsoluteProductImageUrl(p.images?.[0]),
+      url: `${SITE_COMPANY.url}${getProductPath(p)}`,
       price: p.price ?? (p.variants?.[0]?.price ?? undefined),
       currency: "KES",
       inStock: p.in_stock ?? true,
