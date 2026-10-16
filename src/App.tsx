@@ -105,6 +105,11 @@ const App = () => {
                   <Route path="/how-to-choose-dripline-spacing-kenya" element={<SEOContentPage />} />
                   <Route path="/irrigation-pump-sizing-kenya" element={<SEOContentPage />} />
                   <Route path="/irrigation-system-maintenance-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-troubleshooting-kenya" element={<SEOContentPage />} />
+                  <Route path="/blocked-drippers-uneven-watering-kenya" element={<SEOContentPage />} />
+                  <Route path="/low-irrigation-pressure-sprinklers-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-pipe-leaks-fittings-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-filter-pump-problems-kenya" element={<SEOContentPage />} />
                   <Route path="/drip-tape-vs-dripline-kenya" element={<SEOContentPage />} />
                   <Route path="/solar-irrigation-pumps-kenya" element={<SEOContentPage />} />
                   <Route path="/borehole-water-pumps-kenya" element={<SEOContentPage />} />

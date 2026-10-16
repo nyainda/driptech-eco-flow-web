@@ -1288,6 +1288,197 @@
     ]
   },
   {
+    "slug": "irrigation-troubleshooting-kenya",
+    "title": "Irrigation Troubleshooting Guide Kenya | DripTech Eco Flow",
+    "description": "Diagnose common drip and sprinkler irrigation problems in Kenya, from blocked emitters and uneven watering to leaks, filters, pressure and pump issues.",
+    "h1": "Irrigation troubleshooting guide for Kenyan farms",
+    "intro": "When an irrigation system stops delivering water evenly, check the basics before replacing equipment. This guide helps you narrow down common drip and sprinkler problems safely, identify what information to collect, and know when a technician should inspect the system.",
+    "sections": [
+      {
+        "heading": "Start with these checks",
+        "bullets": [
+          "Check whether the water source has enough water and the pump or supply is operating normally",
+          "Inspect the filter and clean it according to the manufacturer's instructions",
+          "Look for leaks, kinked pipes, closed valves and disconnected fittings",
+          "Compare water delivery at the beginning and end of lines",
+          "Turn the system off and isolate pressure before opening fittings or servicing equipment"
+        ]
+      },
+      {
+        "heading": "Choose the problem that matches your system",
+        "paragraphs": [
+          "Use the focused guides for blocked drippers, weak sprinkler coverage, leaks and pressure or pump problems. Symptoms can have several causes, so avoid replacing a pump or changing pressure settings based on one observation alone."
+        ]
+      },
+      {
+        "heading": "When to request technical support",
+        "paragraphs": [
+          "If the system still performs unevenly after basic checks, share photos or a short video, the pump or filter model if known, the water source, and which zones are affected. DripTech Eco Flow can help assess the likely cause and discuss service options."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Blocked drippers and uneven watering",
+        "href": "/blocked-drippers-uneven-watering-kenya"
+      },
+      {
+        "label": "Low pressure and weak sprinklers",
+        "href": "/low-irrigation-pressure-sprinklers-kenya"
+      },
+      {
+        "label": "Leaks and damaged fittings",
+        "href": "/irrigation-pipe-leaks-fittings-kenya"
+      },
+      {
+        "label": "Filters and pump troubleshooting",
+        "href": "/irrigation-filter-pump-problems-kenya"
+      },
+      {
+        "label": "Book irrigation technician support",
+        "href": "/technician-services"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "blocked-drippers-uneven-watering-kenya",
+    "title": "Blocked Drippers & Uneven Watering: Troubleshooting Kenya | DripTech",
+    "description": "Learn what to check when drip emitters block or crop rows receive uneven water, including filters, flushing, pressure and line layout.",
+    "h1": "How to troubleshoot blocked drippers and uneven watering",
+    "intro": "Blocked emitters and uneven watering can result from sediment, biological growth, mineral deposits, leaks or pressure differences. Identify where the problem occurs before deciding which component needs attention.",
+    "sections": [
+      {
+        "heading": "Find out whether the problem is local or across the field",
+        "bullets": [
+          "If only a few emitters are affected, inspect that section for kinks, damage or local blockage",
+          "If many lines are affected, inspect the filter, water source and supply pressure",
+          "Compare the first and last parts of a line to identify a possible distribution issue",
+          "Check for leaks and disconnected fittings that divert flow"
+        ]
+      },
+      {
+        "heading": "Clean and flush carefully",
+        "paragraphs": [
+          "Follow the filter and dripline manufacturer's cleaning and flushing instructions. Isolate the system and release pressure before opening end caps or fittings. Do not mix cleaning chemicals or apply acid treatments unless the equipment guidance and qualified advice specifically support it.",
+          "If the issue returns quickly, the filtration setup or source-water quality may not suit the emitters. A technician can help identify the likely cause before you buy replacement parts."
+        ]
+      },
+      {
+        "heading": "Prevent the same issue recurring",
+        "bullets": [
+          "Use filtration appropriate to the source water and emitter specifications",
+          "Inspect and clean filters at the recommended interval",
+          "Provide accessible line ends for flushing where the design requires them",
+          "Keep records of when blockage starts and which zones are affected"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse irrigation filters",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Shop drip products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Read the maintenance guide",
+        "href": "/irrigation-system-maintenance-kenya"
+      },
+      {
+        "label": "Get technician support",
+        "href": "/technician-services"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "low-irrigation-pressure-sprinklers-kenya",
+    "title": "Low Irrigation Pressure & Weak Sprinklers Kenya | DripTech",
+    "description": "Troubleshoot weak sprinkler throw and low irrigation pressure by checking supply, leaks, filters, pipe sizing and pump specifications.",
+    "h1": "Troubleshooting low pressure and weak sprinkler coverage",
+    "intro": "Weak sprinkler throw or low flow at the far end of a field can have several causes. Check the supply and distribution system methodically; a larger pump is not always the right fix.",
+    "sections": [
+      {
+        "heading": "Check the water supply and system condition",
+        "bullets": [
+          "Confirm the source has enough water during irrigation",
+          "Inspect filters, valves and pipework for blockage or accidental restriction",
+          "Look for leaks and damaged connections",
+          "Check whether too many sprinklers or zones are operating at once",
+          "Compare the installed sprinkler requirements with the available operating pressure and flow"
+        ]
+      },
+      {
+        "heading": "Verify pump and pipe sizing",
+        "paragraphs": [
+          "Pump selection depends on required flow at the total dynamic head, including elevation and friction losses. Read the pump curve and sprinkler specifications rather than relying on the motor power rating alone. Pipe diameter, line length and fittings also affect pressure losses.",
+          "Do not adjust pressure controls beyond equipment limits. If pressure remains low, have the pump, layout and measured operating conditions checked before replacing equipment."
+        ]
+      },
+      {
+        "heading": "Information to collect for a diagnosis",
+        "bullets": [
+          "Pump make and model, if available",
+          "Number and type of sprinklers operating together",
+          "Approximate pipe sizes and longest run",
+          "Water source and elevation difference",
+          "Where pressure or coverage becomes weak"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse sprinkler products",
+        "href": "/products/sprinklers"
+      },
+      {
+        "label": "Explore pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Read pump sizing guidance",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Request technician support",
+        "href": "/technician-services"
+      }
+    ],
+    "image": "/seed-products/sprinkler.jpg"
+  },
+  {
+    "slug": "irrigation-pipe-leaks-fittings-kenya",
+    "title": "Irrigation Pipe Leaks & Fittings Troubleshooting Kenya | DripTech",
+    "description": "Find common causes of irrigation pipe leaks, loose connectors and damaged fittings, with safe checks before repairs or replacement.",
+    "h1": "How to troubleshoot irrigation leaks and damaged fittings",
+    "intro": "Leaks waste water and can reduce delivery to other parts of an irrigation system. Identify the damaged section and relieve pressure before inspecting or repairing pipes and fittings.",
+    "sections": [
+      {
+        "heading": "Locate the leak and isolate the affected section",
+        "bullets": [
+          "Switch off the pump or water supply and safely release system pressure",
+          "Inspect joints, valves, connectors and visible pipe sections",
+          "Look for cracked fittings, loose connections, damaged seals or pipe punctures",
+          "Check whether movement, sunlight exposure or unsupported pipework may have contributed",
+          "After repair, restart gradually and inspect the joint for leaks"
+        ]
+      },
+      {
+        "heading": "Choose compatible replacement parts",
+        "paragraphs": [
+          "Match the pipe diameter, pressure rating, connection type and material. A fitting that looks similar may not seal correctly or withstand the system's operating pressure. Use components within the manufacturer's specifications and seek qualified help for buried, high-pressure or repeatedly failing sections."
+        ]
+      },
+      {
+        "heading": "Reduce repeat failures",
+        "bullets": [
+          "Support exposed pipework where needed",
+          "Avoid forcing mismatched threads or connectors",
+          "Protect equipment from avoidable impact and excessive pressure",
+          "Include valves and joints in routine inspections"
     "slug": "drip-tape-vs-dripline-kenya",
     "title": "Drip Tape vs Dripline in Kenya: Differences, Uses & Buying Guide | DripTech",
     "description": "Compare drip tape and dripline for Kenyan farms. Learn about wall thickness, emitter spacing, durability, filtration, operating pressure and how to choose for your crop.",
@@ -1345,6 +1536,76 @@
     ],
     "links": [
       {
+        "label": "Browse irrigation accessories",
+        "href": "/products/accessories"
+      },
+      {
+        "label": "Browse pipes and fittings",
+        "href": "/products/pipes"
+      },
+      {
+        "label": "Explore valves",
+        "href": "/products/valves"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ],
+    "image": "/seed-products/drip2.jpg"
+  },
+  {
+    "slug": "irrigation-filter-pump-problems-kenya",
+    "title": "Irrigation Filter & Pump Problems Kenya | Troubleshooting | DripTech",
+    "description": "Troubleshoot common irrigation filter and pump symptoms, including repeated filter blockage, reduced flow and supply interruptions.",
+    "h1": "Troubleshooting irrigation filter and pump problems",
+    "intro": "Filters and pumps perform different jobs: filtration protects downstream equipment, while the pump or source must provide the flow and pressure the system needs. Symptoms should be checked against both components and the pipe layout.",
+    "sections": [
+      {
+        "heading": "If the filter blocks repeatedly",
+        "bullets": [
+          "Check whether source water contains sand, organic matter or other suspended material",
+          "Clean the filter only as described by the manufacturer",
+          "Check that the filter type and rating are appropriate for the source and emitters",
+          "Investigate whether the intake or source has changed"
+        ]
+      },
+      {
+        "heading": "If the pump flow is reduced or stops",
+        "bullets": [
+          "Confirm the source has adequate water and the intake is not obstructed",
+          "Check for visible leaks, closed valves and blocked filters",
+          "Record any alarms or unusual changes without opening electrical or pressurised equipment",
+          "Compare the pump model and operating conditions with its manufacturer guidance"
+        ]
+      },
+      {
+        "heading": "Know when to call a qualified technician",
+        "paragraphs": [
+          "Electrical faults, borehole pump removal, persistent loss of prime, overheating, abnormal noise or pressure-vessel problems require appropriate qualified service. Do not open electrical equipment or dismantle a pump while it is powered or pressurised.",
+          "Share the pump model, water source, symptom, affected zones and recent changes to help the support team understand the issue."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse filtration products",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Browse pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Book technician support",
+        "href": "/technician-services"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
         "label": "Browse drip irrigation products",
         "href": "/products/drip"
       },

@@ -302,6 +302,29 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.dripstech.co.ke/irrigation-troubleshooting-kenya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.dripstech.co.ke/blocked-drippers-uneven-watering-kenya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.dripstech.co.ke/low-irrigation-pressure-sprinklers-kenya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.dripstech.co.ke/irrigation-pipe-leaks-fittings-kenya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://www.dripstech.co.ke/irrigation-filter-pump-problems-kenya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
     <loc>https://www.dripstech.co.ke/drip-tape-vs-dripline-kenya</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
