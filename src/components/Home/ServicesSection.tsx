@@ -205,9 +205,9 @@ const ServicesSection = ({
             {/* AI-Friendly Highlight Stats for GEO */}
             <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-16">
               {[
-                { label: "Water Saving", value: "up to 60%" },
-                { label: "Yield Improvement", value: "up to 40%" },
-                { label: "Service Area", value: "Nationwide" }
+                { label: "System design", value: "Farm-specific" },
+                { label: "Crop planning", value: "Crop-aware" },
+                { label: "Service area", value: "Nationwide" }
               ].map(stat => (
                 <div key={stat.label} className="text-center p-4 bg-muted/50 rounded-2xl border border-border/50 min-w-[140px]">
                   <div className="text-2xl md:text-3xl font-black text-primary">{stat.value}</div>
@@ -216,7 +216,7 @@ const ServicesSection = ({
               ))}
             </div>
             <p className="text-xs text-muted-foreground max-w-2xl mx-auto -mt-10 mb-8">
-              Water and yield results are indicative, not guaranteed. Outcomes depend on crop, soil, weather, water source, existing irrigation method and system design.
+              System design and expected performance depend on crop, soil, weather, water source, pressure and site conditions.
             </p>
 
             {/* Benefits Grid */}
@@ -749,7 +749,7 @@ const ServicesSection = ({
                 {
                   step: "01",
                   title: "Consultation",
-                  desc: "Free site visit and needs assessment",
+                  desc: "Discuss your farm needs and confirm whether a site visit is available.",
                 },
                 {
                   step: "02",
@@ -759,12 +759,12 @@ const ServicesSection = ({
                 {
                   step: "03",
                   title: "Installation",
-                  desc: "Professional setup and testing",
+                  desc: "Agree installation scope, testing and costs in the quotation.",
                 },
                 {
                   step: "04",
                   title: "Support",
-                  desc: "Ongoing maintenance and optimization",
+                  desc: "Ask about maintenance and after-sales support for your equipment.",
                 },
               ].map((process, index) => (
                 <div key={index} className="text-center relative">
