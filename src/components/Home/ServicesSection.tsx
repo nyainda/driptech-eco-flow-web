@@ -102,12 +102,12 @@ const ServicesSection = ({
   const marqueeProducts = [...products, ...products, ...products];
 
   const benefits = [
-    "Increase crop yield by 30-50%",
-    "Reduce water consumption by 40-60%",
-    "Lower labor costs significantly",
-    "Improve crop quality and consistency",
-    "Reduce fertilizer waste through precision application",
-    "Monitor and control remotely via mobile app",
+    "Support crop yields with correctly designed irrigation",
+    "Use water more efficiently with targeted irrigation",
+    "Reduce avoidable irrigation labour",
+    "Support consistent crop quality and watering",
+    "Reduce fertilizer waste when fertigation is properly managed",
+    "Use compatible controllers for scheduled irrigation",
   ];
 
   // Fetch featured kits from Supabase
@@ -206,8 +206,8 @@ const ServicesSection = ({
             <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-16">
               {[
                 { label: "Water Saving", value: "up to 60%" },
-                { label: "Yield Increase", value: "30-50%" },
-                { label: "System Lifespan", value: "10+ Years" }
+                { label: "Yield Improvement", value: "up to 40%" },
+                { label: "Service Area", value: "Nationwide" }
               ].map(stat => (
                 <div key={stat.label} className="text-center p-4 bg-muted/50 rounded-2xl border border-border/50 min-w-[140px]">
                   <div className="text-2xl md:text-3xl font-black text-primary">{stat.value}</div>
@@ -215,6 +215,9 @@ const ServicesSection = ({
                 </div>
               ))}
             </div>
+            <p className="text-xs text-muted-foreground max-w-2xl mx-auto -mt-10 mb-8">
+              Water and yield results are indicative, not guaranteed. Outcomes depend on crop, soil, weather, water source, existing irrigation method and system design.
+            </p>
 
             {/* Benefits Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12">
