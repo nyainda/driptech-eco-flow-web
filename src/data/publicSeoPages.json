@@ -1479,6 +1479,12 @@
           "Avoid forcing mismatched threads or connectors",
           "Protect equipment from avoidable impact and excessive pressure",
           "Include valves and joints in routine inspections"
+        ]
+      }
+    ],
+    "image": "/seed-products/pipes_industrial.jpg"
+  },
+  {
     "slug": "drip-tape-vs-dripline-kenya",
     "title": "Drip Tape vs Dripline in Kenya: Differences, Uses & Buying Guide | DripTech",
     "description": "Compare drip tape and dripline for Kenyan farms. Learn about wall thickness, emitter spacing, durability, filtration, operating pressure and how to choose for your crop.",
@@ -1606,17 +1612,5 @@
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
-        "label": "Browse drip irrigation products",
-        "href": "/products/drip"
-      },
-      {
-        "label": "Compare irrigation kit options",
-        "href": "/irrigation-kits"
-      },
-      {
-        "label": "Contact DripTech Eco Flow",
-        "href": "/contact"
-      }
-    ]
   }
 ]

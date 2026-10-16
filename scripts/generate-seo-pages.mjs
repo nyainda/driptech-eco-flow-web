@@ -216,9 +216,55 @@ const homePage = {
   image: "/seed-products/field_drip.jpg",
 };
 
+const irrigationCostCalculatorPage = {
+  route: "/irrigation-cost-calculator-kenya",
+  title: "Drip Irrigation Cost Calculator Kenya | DripTech Eco Flow",
+  description:
+    "Estimate dripline length and build a preliminary irrigation budget for a Kenyan farm. Enter your own prices, review the assumptions and request a verified quotation from DripTech Eco Flow.",
+  heading: "Drip irrigation cost calculator for Kenya",
+  intro:
+    "Estimate a preliminary dripline quantity and build a budget using prices you enter. This is a planning aid—not a fixed DripTech price or a final engineering design.",
+  image: "/seed-products/dripline_roll.jpg",
+  sections: [
+    {
+      heading: "Estimate dripline quantity and farm costs",
+      paragraphs: [
+        "Enter the farm area, distance between crop rows and a layout allowance to estimate a preliminary dripline length. Add your own prices for dripline, filters and fittings, the pump or water supply, and installation to calculate a budget from your inputs.",
+        "The calculation uses area divided by row spacing, then applies the allowance you choose. It assumes the whole plot is planted in rows and does not automatically account for headlands, paths, field shape, multiple lines per bed, mainlines or irrigation zones."
+      ]
+    },
+    {
+      heading: "Use the estimate as a starting point",
+      paragraphs: [
+        "The result is not a supplier quote, hydraulic design or pump-sizing recommendation. Actual quantities and costs depend on crop layout, water quality, available flow, elevation, pipe lengths, filtration and the components required for your farm.",
+        "Share your crop, field dimensions, water source and location with DripTech Eco Flow to verify the layout and request a farm-specific quotation."
+      ],
+      bullets: [
+        "Enter current supplier prices rather than relying on assumed prices",
+        "Include filtration, fittings, pump or water supply and installation where applicable",
+        "Confirm pressure, flow and system zones before purchasing equipment"
+      ]
+    }
+  ],
+  schema: {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Drip Irrigation Cost Calculator Kenya",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Any",
+    description:
+      "A preliminary dripline quantity and user-priced irrigation budget calculator for Kenyan farms. Results require farm-specific verification.",
+    url: "https://www.dripstech.co.ke/irrigation-cost-calculator-kenya",
+    image: "https://www.dripstech.co.ke/seed-products/dripline_roll.jpg",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "KES" },
+    publisher: { "@type": "Organization", name: "DripTech Eco Flow", url: "https://www.dripstech.co.ke/" }
+  }
+};
+
 const allPages = [
   homePage,
   ...categoryPages,
+  irrigationCostCalculatorPage,
   ...landingPages.map((page) => ({ ...page, route: `/${page.slug}` })),
 ];
 
@@ -529,15 +575,27 @@ const dynamicPages = [
 for (const route of sitemapRoutes) {
   if (allPages.some((page) => page.route === route)) continue;
 
-  const [title, heading, intro] = sitemapFallbackPages[route] || [
-    "Irrigation Solutions Kenya | DripTech",
-    "Irrigation solutions from DripTech",
-    "Explore irrigation products, farm system support and practical guidance from DripTech in Kenya.",
-  ];
+  const fallback = sitemapFallbackPages[route];
+  if (!fallback) {
+    throw new Error(
+      `SEO sitemap route "${route}" has no static page definition. Add it to categoryPages, landingPages, irrigationCostCalculatorPage, or sitemapFallbackPages before building.`,
+    );
+  }
+
+  const [title, heading, intro] = fallback;
   allPages.push({ route, title, description: intro, heading, intro });
 }
 
 allPages.push(...dynamicPages);
+
+// Catch duplicate static routes before they silently overwrite one another.
+const seenRoutes = new Set();
+for (const page of allPages) {
+  if (seenRoutes.has(page.route)) {
+    throw new Error(`Duplicate static SEO route detected: ${page.route}`);
+  }
+  seenRoutes.add(page.route);
+}
 
 const escapeHtml = (value = "") =>
   String(value)
