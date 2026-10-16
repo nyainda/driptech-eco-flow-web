@@ -9,6 +9,12 @@ const baseHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
 const landingPages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8"),
 );
+const irrigationPricePages = JSON.parse(
+  fs.readFileSync(path.join(root, "src/data/irrigationPriceSeoPages.json"), "utf8"),
+);
+const irrigationCropGapPages = JSON.parse(
+  fs.readFileSync(path.join(root, "src/data/irrigationCropGapPages.json"), "utf8"),
+);
 
 const categoryPages = [
   {
@@ -267,6 +273,8 @@ const allPages = [
   ...categoryPages,
   irrigationCostCalculatorPage,
   ...landingPages.map((page) => ({ ...page, route: `/${page.slug}` })),
+  ...irrigationPricePages.map((page) => ({ ...page, route: `/${page.slug}` })),
+  ...irrigationCropGapPages.map((page) => ({ ...page, route: `/${page.slug}` })),
 ];
 
 // Keep the HTML generated at build time aligned with the URLs submitted to
@@ -468,6 +476,15 @@ const routeCategoryMap = {
   "drip-irrigation-kenya": "drip_irrigation",
   "drip-irrigation-kit-price-kenya": "drip_irrigation",
   "driplines-for-sale-kenya": "drip_irrigation",
+  "irrigation-pipe-prices-kenya": "pipes_fittings",
+  "hdpe-pipe-prices-kenya": "pipes_fittings",
+  "rain-hose-prices-kenya": "pipes_fittings",
+  "dripline-prices-kenya": "drip_irrigation",
+  "drip-irrigation-for-garlic-kenya": "drip_irrigation",
+  "passion-fruit-irrigation-kenya": "drip_irrigation",
+  "macadamia-irrigation-kenya": "drip_irrigation",
+  "strawberry-irrigation-kenya": "drip_irrigation",
+  "french-beans-irrigation-kenya": "drip_irrigation",
   "sprinkler-systems-kenya": "sprinkler_systems",
   "irrigation-companies-kenya": "drip_irrigation",
   "solar-irrigation-pumps-kenya": "solar_irrigation",
@@ -668,12 +685,23 @@ const pageBody = (page) => {
         <a href="/contact">Contact DripTech</a>
       </nav>`;
 
+  const sourceLinks = (Array.isArray(page.sources) ? page.sources : []).filter((source) =>
+    typeof source?.label === "string" && source.label.trim() &&
+    typeof source?.url === "string" && /^https:\/\//i.test(source.url),
+  );
+  const sourceNav = sourceLinks.length
+    ? `<section aria-label="Price reference sources"><h2>Sources to verify current prices</h2><ul>${sourceLinks
+        .map((source) => `<li><a href="${escapeHtml(source.url)}" rel="nofollow noopener noreferrer" target="_blank">${escapeHtml(source.label)}</a></li>`)
+        .join("")}</ul><p>External listings are independently maintained and may change. Confirm current price, product specification and units with the supplier.</p></section>`
+    : "";
+
   return `
     <main data-seo-shell="true">
       <p>DripTech Kenya</p>
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       <p>${escapeHtml(page.intro)}</p>
       ${sections}
+      ${sourceNav}
       ${relatedNav}
     </main>`;
 };
