@@ -6,11 +6,11 @@
   "homepage": "https://driptech-eco-flow-web.vercel.app",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5000",
-    "build": "vite build && node scripts/generate-seo-pages.mjs && node scripts/check-static-seo.mjs",
+    "build": "vite build && node scripts/generate-seo-pages.mjs && node scripts/check-static-seo.mjs && node --import tsx scripts/check-irrigation-content.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0 --port 5000",
-    "test": "echo \"No tests yet\" && exit 0",
+    "test": "node --import tsx scripts/check-irrigation-content.mjs",
     "sync:d1": "tsx migration-scripts/sync-to-d1.ts",
     "optimize:images": "node scripts/optimize-images.mjs",
     "test:seo": "node scripts/check-static-seo.mjs"
