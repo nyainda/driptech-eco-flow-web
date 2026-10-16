@@ -1,5 +1,5 @@
 import SEOHead from "@/components/common/SEOHead";
-import { buildLocalBusinessSchema, SITE_COMPANY } from "@/config/company";
+import { buildOrganizationSchema, SITE_COMPANY } from "@/config/company";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -341,7 +341,7 @@ const VideosPage = () => {
         keywords="drip irrigation video Kenya, irrigation installation guide, dripline demo Kenya, farm irrigation tutorial, DripTech videos"
         url="https://www.dripstech.co.ke/videos"
         schema={[
-          buildLocalBusinessSchema(),
+          buildOrganizationSchema(),
           {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
