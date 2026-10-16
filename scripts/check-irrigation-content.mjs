@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { isIrrigationRelatedContent } from "../src/lib/irrigationContent.ts";
 
 const cases = [
@@ -45,4 +46,47 @@ for (const testCase of cases) {
   );
 }
 
-console.log(`Passed ${cases.length} irrigation-content relevance checks.`);
+const publicClaimChecks = [
+  {
+    file: "src/components/Home/HeroSectionVibe.tsx",
+    forbidden: [
+      /500\+.*Installations/i,
+      /60%.*Water savings/i,
+      /40%.*Yield increase/i,
+      /Free.*Farm assessment/i,
+    ],
+  },
+  {
+    file: "src/components/Home/ProductsShowcase.tsx",
+    forbidden: [
+      /500\+.*Happy customers/i,
+      /50\+.*Completed projects/i,
+      /99%.*(?:Satisfaction|Customer Satisfaction)/i,
+      /24\/7.*Technical support/i,
+      /10-Year Warranty/i,
+    ],
+  },
+  {
+    file: "src/components/Home/ServicesSection.tsx",
+    forbidden: [
+      /value:\s*"up to 60%"/i,
+      /value:\s*"up to 40%"/i,
+      /Free site visit and needs assessment/i,
+    ],
+  },
+];
+
+for (const check of publicClaimChecks) {
+  const source = await readFile(new URL(`../${check.file}`, import.meta.url), "utf8");
+  for (const forbidden of check.forbidden) {
+    assert.equal(
+      forbidden.test(source),
+      false,
+      `Unsupported public marketing claim remains in ${check.file}: ${forbidden}`,
+    );
+  }
+}
+
+console.log(
+  `Passed ${cases.length} irrigation relevance checks and ${publicClaimChecks.length} public-claim source checks.`,
+);
