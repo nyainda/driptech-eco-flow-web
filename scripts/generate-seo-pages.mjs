@@ -623,7 +623,7 @@ const isSafeInternalHref = (href) =>
   typeof href === "string" &&
   href.startsWith("/") &&
   !href.startsWith("//") &&
-  !/[\\s"'<>]/.test(href);
+  !/[\s"'<>]/.test(href);
 
 const pageBody = (page) => {
   // An intro belongs to the page shell exactly once. The old fallback rendered
