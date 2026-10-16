@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { serializeJsonLd, toAbsoluteSiteAssetUrl } from "./seo-url-helpers.mjs";
 
 const root = process.cwd();
 const dist = path.join(root, "dist");
@@ -395,15 +396,6 @@ const stripHtml = (value = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
-const toAbsoluteSiteAssetUrl = (value) => {
-  if (typeof value !== "string") return undefined;
-  const url = value.trim();
-  if (!url) return undefined;
-  if (/^https?:\/\//i.test(url)) return url;
-  if (url.startsWith("/") && !url.startsWith("//")) return `${siteUrl}${url}`;
-  return undefined;
-};
-
 const fetchJson = async (url, headers = {}) => {
   const response = await fetch(url, { headers });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
@@ -506,7 +498,7 @@ const dynamicPages = [
       const description = stripHtml(product.description) || `${product.name} irrigation equipment from DripTech in Kenya.`;
       const price = Number(product.price);
       const images = (Array.isArray(product.images) ? product.images : [])
-        .map(toAbsoluteSiteAssetUrl)
+        .map((image) => toAbsoluteSiteAssetUrl(image, siteUrl))
         .filter((url) => typeof url === "string");
       return {
         route,
@@ -616,9 +608,6 @@ const escapeHtml = (value = "") =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-
-const serializeJsonLd = (value) =>
-  JSON.stringify(value).replace(/</g, "\\u003c");
 
 const replaceMeta = (html, name, content, attribute = "name") => {
   const escaped = escapeHtml(content);
