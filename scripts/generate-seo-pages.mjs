@@ -506,28 +506,38 @@ const dynamicPages = [
         description,
         heading: product.name,
         intro: description,
-        schema: {
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: product.name,
-          description,
-          ...(images.length ? { image: images } : {}),
-          sku: product.model_number || product.id,
-          brand: { "@type": "Brand", name: "DripTech Eco Flow" },
-          url: `${siteUrl}${route}`,
-          ...(price > 0
-            ? {
-                offers: {
-                  "@type": "Offer",
-                  price,
-                  priceCurrency: "KES",
-                  availability: product.in_stock
-                    ? "https://schema.org/InStock"
-                    : "https://schema.org/OutOfStock",
-                },
-              }
-            : {}),
-        },
+        // Only use Product structured data when there is a real, positive
+        // catalog price to support a valid Offer. Never invent a price,
+        // review, or rating just to qualify for a rich result.
+        schema: price > 0
+          ? {
+              "@context": "https://schema.org",
+              "@type": "Product",
+              name: product.name,
+              description,
+              ...(images.length ? { image: images } : {}),
+              sku: product.model_number || product.id,
+              brand: { "@type": "Brand", name: "DripTech Eco Flow" },
+              url: `${siteUrl}${route}`,
+              offers: {
+                "@type": "Offer",
+                price,
+                priceCurrency: "KES",
+                availability: product.in_stock
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+                url: `${siteUrl}${route}`,
+              },
+            }
+          : {
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              name: product.name,
+              description,
+              ...(images.length ? { image: images } : {}),
+              url: `${siteUrl}${route}`,
+              isPartOf: { "@id": `${siteUrl}/#website` },
+            },
       };
     }),
   ...dynamicContent.posts
