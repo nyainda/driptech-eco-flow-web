@@ -619,27 +619,44 @@ const replaceMeta = (html, name, content, attribute = "name") => {
   return pattern.test(html) ? html.replace(pattern, replacement) : html;
 };
 
+const isSafeInternalHref = (href) =>
+  typeof href === "string" &&
+  href.startsWith("/") &&
+  !href.startsWith("//") &&
+  !/[\\s"'<>]/.test(href);
+
 const pageBody = (page) => {
-  const sections = page.sections
-    ? page.sections
-        .map(
-          (section) => `
-            <section>
-              <h2>${escapeHtml(section.heading)}</h2>
-              ${(section.paragraphs || [])
-                .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
-                .join("")}
-              ${
-                section.bullets
-                  ? `<ul>${section.bullets
-                      .map((bullet) => `<li>${escapeHtml(bullet)}</li>`)
-                      .join("")}</ul>`
-                  : ""
-              }
-            </section>`,
-        )
-        .join("")
-    : `<p>${escapeHtml(page.intro)}</p>`;
+  // An intro belongs to the page shell exactly once. The old fallback rendered
+  // it once here and a second time when a page did not define sections.
+  const sections = (page.sections || [])
+    .map((section) => {
+      const paragraphs = (section.paragraphs || [])
+        .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+        .join("");
+      const bullets = Array.isArray(section.bullets) && section.bullets.length
+        ? `<ul>${section.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>`
+        : "";
+      return `<section><h2>${escapeHtml(section.heading)}</h2>${paragraphs}${bullets}</section>`;
+    })
+    .join("");
+
+  // Use page-specific related links for SEO landing pages. Keep site-wide
+  // navigation as a fallback for pages that do not define contextual links.
+  const relatedLinks = (Array.isArray(page.links) ? page.links : []).filter(
+    (link) =>
+      typeof link?.label === "string" &&
+      link.label.trim().length > 0 &&
+      isSafeInternalHref(link.href),
+  );
+  const relatedNav = relatedLinks.length
+    ? `<nav aria-label="Related irrigation guides"><h2>Continue exploring</h2><ul>${relatedLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : `<nav aria-label="Related irrigation pages">
+        <a href="/products">Browse irrigation products</a>
+        <a href="/irrigation-kits">Compare irrigation kits</a>
+        <a href="/contact">Contact DripTech</a>
+      </nav>`;
 
   return `
     <main data-seo-shell="true">
@@ -647,11 +664,7 @@ const pageBody = (page) => {
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       <p>${escapeHtml(page.intro)}</p>
       ${sections}
-      <nav aria-label="Related irrigation pages">
-        <a href="/products">Browse irrigation products</a>
-        <a href="/irrigation-kits">Compare irrigation kits</a>
-        <a href="/contact">Contact DripTech</a>
-      </nav>
+      ${relatedNav}
     </main>`;
 };
 
