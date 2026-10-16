@@ -616,26 +616,33 @@ const replaceMeta = (html, name, content, attribute = "name") => {
 };
 
 const pageBody = (page) => {
-  const sections = page.sections
-    ? page.sections
-        .map(
-          (section) => `
-            <section>
-              <h2>${escapeHtml(section.heading)}</h2>
-              ${(section.paragraphs || [])
-                .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
-                .join("")}
-              ${
-                section.bullets
-                  ? `<ul>${section.bullets
-                      .map((bullet) => `<li>${escapeHtml(bullet)}</li>`)
-                      .join("")}</ul>`
-                  : ""
-              }
-            </section>`,
-        )
-        .join("")
-    : `<p>${escapeHtml(page.intro)}</p>`;
+  const sections = (page.sections || [])
+    .map((section) => {
+      const paragraphs = (section.paragraphs || [])
+        .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+        .join("");
+      const bullets = section.bullets?.length
+        ? `<ul>${section.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>`
+        : "";
+      return `<section><h2>${escapeHtml(section.heading)}</h2>${paragraphs}${bullets}</section>`;
+    })
+    .join("");
+
+  // Keep the build-time HTML useful without JavaScript: manifest-defined links
+  // give crawlers and visitors direct, descriptive paths to related content.
+  const relatedLinks = (page.links || []).filter(
+    (link) =>
+      typeof link?.label === "string" &&
+      typeof link?.href === "string" &&
+      link.href.startsWith("/") &&
+      !link.href.startsWith("//") &&
+      !/[\\u0000-\\u0020\"'<>]/.test(link.href),
+  );
+  const relatedNav = relatedLinks.length
+    ? `<nav aria-label="Related irrigation guides"><h2>Continue exploring</h2><ul>${relatedLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
 
   return `
     <main data-seo-shell="true">
@@ -643,14 +650,14 @@ const pageBody = (page) => {
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       <p>${escapeHtml(page.intro)}</p>
       ${sections}
-      <nav aria-label="Related irrigation pages">
+      ${relatedNav}
+      <nav aria-label="Primary irrigation links">
         <a href="/products">Browse irrigation products</a>
         <a href="/irrigation-kits">Compare irrigation kits</a>
         <a href="/contact">Contact DripTech</a>
       </nav>
     </main>`;
 };
-
 const renderPage = (page) => {
   const canonical = `${siteUrl}${page.route === "/" ? "/" : page.route}`;
   const imageUrl = page.imageIsAbsolute
