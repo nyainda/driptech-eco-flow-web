@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
+import { SITE_COMPANY, buildOrganizationSchema } from "@/config/company";
 
 interface SEOHeadProps {
   title?: string;
@@ -28,7 +28,7 @@ export default function SEOHead({
   modifiedTime,
   schema,
 }: SEOHeadProps) {
-  const schemaData = schema || buildLocalBusinessSchema();
+  const schemaData = schema || buildOrganizationSchema();
   const schemas = Array.isArray(schemaData) ? schemaData : [schemaData];
 
   return (
