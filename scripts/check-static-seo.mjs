@@ -144,7 +144,7 @@ for (const page of seoManifest) {
       typeof link?.href === "string" &&
       link.href.startsWith("/") &&
       !link.href.startsWith("//") &&
-      !/[\\s"'<>]/.test(link.href);
+      !/[\s"'<>]/.test(link.href);
     if (!safeHref || typeof link?.label !== "string" || !link.label.trim()) {
       failures.push(`${route}: unsafe or incomplete contextual link`);
       continue;
