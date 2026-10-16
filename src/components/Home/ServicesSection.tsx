@@ -670,7 +670,7 @@ const ServicesSection = ({
                             ) : (
                               <div className="p-4 bg-muted/30 rounded-lg border border-border text-center">
                                 <div className="text-3xl font-bold text-primary mb-1">{formatCurrency(kit.price)}</div>
-                                <p className="text-sm text-muted-foreground">Complete Kit Price (Installation Included)</p>
+                                <p className="text-sm text-muted-foreground">Kit price shown — confirm installation scope in the quote</p>
                               </div>
                             )}
 
