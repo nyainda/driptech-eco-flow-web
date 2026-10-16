@@ -12,6 +12,9 @@ const landingPages = JSON.parse(
 const irrigationPricePages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/irrigationPriceSeoPages.json"), "utf8"),
 );
+const irrigationCropGapPages = JSON.parse(
+  fs.readFileSync(path.join(root, "src/data/irrigationCropGapPages.json"), "utf8"),
+);
 
 const categoryPages = [
   {
@@ -271,6 +274,7 @@ const allPages = [
   irrigationCostCalculatorPage,
   ...landingPages.map((page) => ({ ...page, route: `/${page.slug}` })),
   ...irrigationPricePages.map((page) => ({ ...page, route: `/${page.slug}` })),
+  ...irrigationCropGapPages.map((page) => ({ ...page, route: `/${page.slug}` })),
 ];
 
 // Keep the HTML generated at build time aligned with the URLs submitted to
@@ -476,6 +480,11 @@ const routeCategoryMap = {
   "hdpe-pipe-prices-kenya": "pipes_fittings",
   "rain-hose-prices-kenya": "pipes_fittings",
   "dripline-prices-kenya": "drip_irrigation",
+  "drip-irrigation-for-garlic-kenya": "drip_irrigation",
+  "passion-fruit-irrigation-kenya": "drip_irrigation",
+  "macadamia-irrigation-kenya": "drip_irrigation",
+  "strawberry-irrigation-kenya": "drip_irrigation",
+  "french-beans-irrigation-kenya": "drip_irrigation",
   "sprinkler-systems-kenya": "sprinkler_systems",
   "irrigation-companies-kenya": "drip_irrigation",
   "solar-irrigation-pumps-kenya": "solar_irrigation",
