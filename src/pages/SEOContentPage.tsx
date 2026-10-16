@@ -132,7 +132,7 @@ const SEOContentPage = () => {
             <aside className="h-fit rounded-xl border border-border bg-card p-6 lg:sticky lg:top-24">
               <h2 className="text-lg font-bold text-foreground">Continue exploring</h2>
               <nav className="mt-4 space-y-3" aria-label="Related irrigation pages">
-                {page.links.map((link) => (
+                {(page.links || []).map((link) => (
                   <Link
                     key={link.href}
                     to={link.href}
