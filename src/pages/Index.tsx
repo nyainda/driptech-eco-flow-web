@@ -3,7 +3,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import Home from "./Home";
 import SEOHead from "@/components/common/SEOHead";
-import { buildLocalBusinessSchema, SITE_COMPANY } from "@/config/company";
+import { buildOrganizationSchema, SITE_COMPANY } from "@/config/company";
 
 const Index = () => {
   return (
@@ -14,14 +14,14 @@ const Index = () => {
         keywords="drip irrigation Kenya, drip irrigation kit Kenya, drip irrigation kit price Kenya, driplines Kenya, sprinkler systems Kenya, irrigation pumps Kenya, farm irrigation Kenya, greenhouse irrigation Kenya, irrigation installation Kenya, drip irrigation Nairobi, buy drip kit Kenya, 0723407849, 0757716018"
         url="https://www.dripstech.co.ke/"
         schema={[
-          buildLocalBusinessSchema(),
+          buildOrganizationSchema(),
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
             "@id": "https://www.dripstech.co.ke/#website",
             name: SITE_COMPANY.name,
             url: SITE_COMPANY.url,
-            publisher: { "@id": "https://www.dripstech.co.ke/#business" },
+            publisher: { "@id": "https://www.dripstech.co.ke/#organization" },
             potentialAction: {
               "@type": "SearchAction",
               target: {
