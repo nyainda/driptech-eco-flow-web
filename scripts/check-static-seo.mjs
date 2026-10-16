@@ -83,7 +83,7 @@ for (const route of routes) {
   const productSchemas = parsedSchemas.filter((schema) =>
     (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("Product"),
   );
-  const isProductDetailRoute = /^\\/products\\/[^/]+\\/[^/]+$/.test(route);
+  const isProductDetailRoute = /^\/products\/[^/]+\/[^/]+$/.test(route);
   if (isProductDetailRoute && productSchemas.length === 0 && !parsedSchemas.some((schema) =>
     (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("WebPage"),
   )) {
@@ -108,7 +108,7 @@ for (const route of routes) {
     }
     const images = schema.image == null ? [] : Array.isArray(schema.image) ? schema.image : [schema.image];
     for (const image of images) {
-      if (typeof image !== "string" || !/^https?:\\/\\//i.test(image)) {
+      if (typeof image !== "string" || !/^https?:\/\//i.test(image)) {
         failures.push(route + ": Product JSON-LD image must be an absolute HTTP(S) URL");
       }
     }
