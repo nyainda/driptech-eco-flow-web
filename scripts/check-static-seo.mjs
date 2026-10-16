@@ -66,7 +66,7 @@ if (fs.existsSync(calculatorPath)) {
 // not just the same generic navigation links on every page.
 for (const page of manifest) {
   const route = `/${page.slug}`;
-  const file = path.join(dist, route.replace(/^\\/+/, ""), "index.html");
+  const file = path.join(dist, route.slice(1), "index.html");
   if (!fs.existsSync(file)) {
     failures.push(`${route}: generated HTML missing for SEO manifest page`);
     continue;
