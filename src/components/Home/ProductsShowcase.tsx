@@ -386,7 +386,7 @@ const ProductsShowcase = ({
       url: new URL(getProductPath(p), SITE_ORIGIN).toString(),
       price: p.price ?? (p.variants?.[0]?.price ?? undefined),
       currency: "KES",
-      inStock: p.in_stock === true,
+      inStock: typeof p.in_stock === "boolean" ? p.in_stock : undefined,
     }));
 
   return (
