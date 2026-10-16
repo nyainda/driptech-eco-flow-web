@@ -5,6 +5,16 @@ import { serializeJsonLd, toAbsoluteSiteAssetUrl } from "./seo-url-helpers.mjs";
 const root = process.cwd();
 const dist = path.join(root, "dist");
 const siteUrl = "https://www.dripstech.co.ke";
+const seoManifest = JSON.parse(
+  fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8"),
+);
+const escapeHtml = (value = "") =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 const sitemapPath = path.join(dist, "sitemap.xml");
 
 if (!fs.existsSync(sitemapPath)) {
@@ -104,6 +114,56 @@ if (fs.existsSync(calculatorPath)) {
   if (!html.includes('"@type":"WebApplication"')) failures.push("/irrigation-cost-calculator-kenya: expected WebApplication JSON-LD missing");
 } else {
   failures.push("/irrigation-cost-calculator-kenya: generated HTML missing");
+}
+
+// Validate the generated static shell for every editorial SEO landing page:
+// contextual links must be crawlable in the initial HTML, and the intro must
+// render once (not twice) when a page has no content sections.
+for (const page of seoManifest) {
+  const route = `/${page.slug}`;
+  const file = path.join(dist, page.slug, "index.html");
+  if (!fs.existsSync(file)) {
+    failures.push(`${route}: generated HTML missing for SEO manifest page`);
+    continue;
+  }
+
+  const html = fs.readFileSync(file, "utf8");
+  const intro = escapeHtml(page.intro || "");
+  const introCount = intro ? html.split(intro).length - 1 : 0;
+  if (introCount !== 1) {
+    failures.push(`${route}: intro must appear exactly once in static HTML (found ${introCount})`);
+  }
+
+  if (!Array.isArray(page.links) || page.links.length === 0) {
+    failures.push(`${route}: SEO manifest page must define contextual links`);
+    continue;
+  }
+
+  for (const link of page.links) {
+    const safeHref =
+      typeof link?.href === "string" &&
+      link.href.startsWith("/") &&
+      !link.href.startsWith("//") &&
+      !/[\\s"'<>]/.test(link.href);
+    if (!safeHref || typeof link?.label !== "string" || !link.label.trim()) {
+      failures.push(`${route}: unsafe or incomplete contextual link`);
+      continue;
+    }
+    const expectedAnchor = `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`;
+    if (!html.includes(expectedAnchor)) {
+      failures.push(`${route}: contextual link missing from static HTML (${link.label})`);
+    }
+  }
+}
+
+// The homepage copy has a separate build-time SEO shell. Guard against the
+// previous regression where the fallback duplicated that introduction.
+const homepageHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+const homepageIntro =
+  "DripTech supplies irrigation equipment and complete systems for Kenyan farms, greenhouses and kitchen gardens. Browse products, compare kits and ask for help before you buy.";
+const homepageIntroCount = homepageHtml.split(escapeHtml(homepageIntro)).length - 1;
+if (homepageIntroCount !== 1) {
+  failures.push(`/: homepage intro must appear once in static HTML (found ${homepageIntroCount})`);
 }
 
 const adminPath = path.join(dist, "admin", "index.html");
