@@ -97,6 +97,9 @@ const SEOContentPage = () => {
               <Link to="/contact" className="dt-btn-secondary inline-flex items-center gap-2">
                 Talk to the team <ArrowRight className="h-4 w-4" />
               </Link>
+              <Link to="/irrigation-cost-calculator-kenya" className="dt-btn-secondary inline-flex items-center gap-2">
+                Estimate irrigation costs <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
