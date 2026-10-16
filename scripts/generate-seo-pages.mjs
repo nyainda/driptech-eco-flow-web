@@ -676,12 +676,23 @@ const pageBody = (page) => {
         <a href="/contact">Contact DripTech</a>
       </nav>`;
 
+  const sourceLinks = (Array.isArray(page.sources) ? page.sources : []).filter((source) =>
+    typeof source?.label === "string" && source.label.trim() &&
+    typeof source?.url === "string" && /^https:\/\//i.test(source.url),
+  );
+  const sourceNav = sourceLinks.length
+    ? `<section aria-label="Price reference sources"><h2>Sources to verify current prices</h2><ul>${sourceLinks
+        .map((source) => `<li><a href="${escapeHtml(source.url)}" rel="nofollow noopener noreferrer" target="_blank">${escapeHtml(source.label)}</a></li>`)
+        .join("")}</ul><p>External listings are independently maintained and may change. Confirm current price, product specification and units with the supplier.</p></section>`
+    : "";
+
   return `
     <main data-seo-shell="true">
       <p>DripTech Kenya</p>
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       <p>${escapeHtml(page.intro)}</p>
       ${sections}
+      ${sourceNav}
       ${relatedNav}
     </main>`;
 };
