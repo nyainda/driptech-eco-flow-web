@@ -1482,6 +1482,24 @@
         ]
       }
     ],
+    "links": [
+      {
+        "label": "Browse irrigation pipes and fittings",
+        "href": "/products/pipes"
+      },
+      {
+        "label": "Browse irrigation accessories",
+        "href": "/products/accessories"
+      },
+      {
+        "label": "Open irrigation troubleshooting centre",
+        "href": "/irrigation-troubleshooting-kenya"
+      },
+      {
+        "label": "Book technician support",
+        "href": "/technician-services"
+      }
+    ],
     "image": "/seed-products/pipes_industrial.jpg"
   },
   {
