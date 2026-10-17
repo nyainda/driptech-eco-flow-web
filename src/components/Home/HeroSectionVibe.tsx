@@ -87,15 +87,15 @@ export default function HeroSectionVibe() {
               </p>
               <h1
                 id="home-hero-title"
-                className="font-heading text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-[hsl(var(--dt-green-900))] sm:text-5xl lg:text-6xl xl:text-7xl"
+                className="font-heading text-4xl font-bold leading-[0.98] tracking-[-0.035em] text-foreground sm:text-5xl lg:text-6xl xl:text-7xl"
               >
                 Find the right
                 <br />
-                <span className="text-[hsl(var(--dt-green-700))]">
+                <span className="text-primary">
                   irrigation setup.
                 </span>
               </h1>
-              <p className="mt-4 max-w-xl text-sm leading-6 text-[hsl(var(--dt-green-900)/0.82)] sm:text-base sm:leading-7">
+              <p className="mt-4 max-w-xl text-sm leading-6 text-foreground/85 sm:text-base sm:leading-7">
                 Shop dripline, sprinklers, pumps, filters and irrigation kits.
                 Explore your options and get help matching equipment to your
                 crop, water source and field layout.
@@ -121,27 +121,27 @@ export default function HeroSectionVibe() {
                 href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! I need help choosing irrigation equipment.")}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-3 inline-flex items-center gap-2 rounded-md text-xs font-bold text-[hsl(var(--dt-green-900))] underline decoration-[hsl(var(--dt-green-700)/0.35)] underline-offset-4 transition-colors hover:text-primary sm:text-sm"
+                className="mt-3 inline-flex items-center gap-2 rounded-md text-xs font-bold text-foreground underline decoration-[hsl(var(--dt-green-700)/0.35)] underline-offset-4 transition-colors hover:text-primary sm:text-sm"
               >
                 <MessageCircle className="h-4 w-4" />
                 Not sure where to start? Chat with DripTech
               </a>
 
-              <div className="mt-6 grid max-w-2xl grid-cols-2 gap-2 border-t border-[hsl(var(--dt-green-900)/0.15)] pt-5 sm:mt-7 sm:grid-cols-4 sm:gap-3">
+              <div className="mt-6 grid max-w-2xl grid-cols-2 gap-2 border-t border-foreground/15 pt-5 sm:mt-7 sm:grid-cols-4 sm:gap-3">
                 {shopPaths.map(({ label, detail, href, icon: Icon }) => (
                   <Link
                     key={label}
                     to={href}
-                    className="group flex min-w-0 items-start gap-2 rounded-xl border border-[hsl(var(--dt-green-900)/0.12)] bg-card/75 p-2.5 backdrop-blur-sm transition-all hover:border-primary/35 hover:bg-card sm:p-3"
+                    className="group flex min-w-0 items-start gap-2 rounded-xl border border-border bg-card/75 p-2.5 backdrop-blur-sm transition-all hover:border-primary/35 hover:bg-card sm:p-3"
                   >
                     <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                       <Icon className="h-4 w-4" aria-hidden="true" />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[10px] font-extrabold leading-4 text-[hsl(var(--dt-green-900))] sm:text-[11px]">
+                      <span className="block text-[10px] font-extrabold leading-4 text-foreground sm:text-[11px]">
                         {label}
                       </span>
-                      <span className="mt-0.5 hidden text-[9px] leading-3.5 text-[hsl(var(--dt-green-900)/0.65)] sm:block">
+                      <span className="mt-0.5 hidden text-[9px] leading-3.5 text-muted-foreground sm:block">
                         {detail}
                       </span>
                     </span>
