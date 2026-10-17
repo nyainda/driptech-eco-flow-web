@@ -62,7 +62,7 @@ export default function HomeKitsShowcase() {
   if (!loading && kits.length === 0) return null;
 
   return (
-    <section className="overflow-hidden border-y border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-green-50)/0.55)] py-10 sm:py-14 lg:py-16">
+    <section className="overflow-hidden border-y border-border bg-muted/40 py-10 sm:py-14 lg:py-16">
       <div className="dt-container">
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1.8fr] lg:items-center lg:gap-10">
           <div>
