@@ -18,7 +18,7 @@ const planningPaths = [
       "Build a starting estimate, then confirm the design and quotation for your actual farm conditions.",
     action: "Open cost calculator",
     href: "/irrigation-cost-calculator-kenya",
-    tone: "bg-[hsl(var(--dt-green-50))] text-[hsl(var(--dt-green-800))]",
+    tone: "bg-primary/10 text-primary",
   },
   {
     number: "02",
@@ -29,7 +29,7 @@ const planningPaths = [
       "Compare available kits and check coverage, included components and current pricing before you buy.",
     action: "Compare available kits",
     href: "/irrigation-kits",
-    tone: "bg-[hsl(var(--dt-gold-100))] text-[hsl(var(--dt-green-900))]",
+    tone: "bg-accent/15 text-accent-foreground",
   },
   {
     number: "03",
@@ -40,7 +40,7 @@ const planningPaths = [
       "The crop, field layout, water source and pressure all help determine which setup is suitable.",
     action: "Explore irrigation services",
     href: "/services",
-    tone: "bg-[hsl(var(--dt-stone-100))] text-[hsl(var(--dt-green-800))]",
+    tone: "bg-muted text-muted-foreground",
   },
 ];
 
