@@ -6,6 +6,7 @@ import { buildOrganizationSchema, SITE_COMPANY } from "@/config/company";
 
 const Index = () => {
   return (
+    <>
       <SEOHead
         title="Drip Irrigation Kits, Driplines & Sprinklers in Kenya | DripTech Eco Flow"
         description="Shop drip irrigation kits, driplines (15cm, 20cm, 30cm), sprinklers, pumps and filters in Kenya. Call or WhatsApp 0723 407 849 for sizing, supply and installation nationwide."
@@ -39,6 +40,7 @@ const Index = () => {
         </main>
         <Footer />
       </div>
+    </>
   );
 };
 
