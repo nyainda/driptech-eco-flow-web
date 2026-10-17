@@ -76,7 +76,7 @@ const Footer = () => {
       <div className="border-t border-border">
         <div className="dt-container flex flex-col gap-3 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>© {currentYear} DripTech Eco Flow. All rights reserved.</span>
-          <div className="flex flex-wrap gap-x-5 gap-y-2"><Link className="hover:text-primary" to="/privacy">Privacy</Link><Link className="hover:text-primary" to="/terms">Terms</Link><Link className="hover:text-primary" to="/cookies">Cookies</Link><Link className="hover:text-primary" to="/certifications">Certifications</Link><Link className="hover:text-primary" to="/careers">Careers</Link></div>
+          <div className="flex flex-wrap gap-x-5 gap-y-2"><Link className="hover:text-primary" to="/privacy">Privacy</Link><Link className="hover:text-primary" to="/terms">Terms</Link><Link className="hover:text-primary" to="/cookies">Cookies</Link><Link className="hover:text-primary" to="/certifications">Certifications</Link><Link className="hover:text-primary" to="/careers">Careers</Link><a className="hover:text-primary" href="https://bruceoyugi.dev" target="_blank" rel="noreferrer">Web &amp; Digital Solutions <ArrowUpRight className="ml-1 inline h-3 w-3" /></a></div>
         </div>
       </div>
     </footer>
