@@ -41,6 +41,7 @@ const IrrigationKits = lazy(() => import("@/pages/IrrigationKits"));
 const Careers = lazy(() => import("./pages/Careers"));
 const TechnicianServices = lazy(() => import("./pages/TechnicianServices"));
 const SEOContentPage = lazy(() => import("./pages/SEOContentPage"));
+const BlueDigitalSolutions = lazy(() => import("./pages/BlueDigitalSolutions"));
 const IrrigationCostCalculator = lazy(() => import("./pages/IrrigationCostCalculator"));
 
 const queryClient = new QueryClient();
@@ -75,6 +76,7 @@ const App = () => {
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>
                   {/* Main pages */}
+                  <Route path="/blue-digital-solutions" element={<BlueDigitalSolutions />} />
                   <Route path="/" element={<Index />} />
                   <Route path="/admin" element={<Admin />} />
 
