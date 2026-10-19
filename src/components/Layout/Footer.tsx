@@ -74,9 +74,25 @@ const Footer = () => {
       </div>
 
       <div className="border-t border-border">
-        <div className="dt-container flex flex-col gap-3 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="dt-container flex flex-col gap-4 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>© {currentYear} DripTech Eco Flow. All rights reserved.</span>
-          <div className="flex flex-wrap gap-x-5 gap-y-2"><Link className="hover:text-primary" to="/privacy">Privacy</Link><Link className="hover:text-primary" to="/terms">Terms</Link><Link className="hover:text-primary" to="/cookies">Cookies</Link><Link className="hover:text-primary" to="/certifications">Certifications</Link><Link className="hover:text-primary" to="/careers">Careers</Link><Link className="hover:text-primary" to="/blue-digital-solutions">Blue Digital Solutions <ArrowUpRight className="ml-1 inline h-3 w-3" /></Link></div>
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link className="hover:text-primary" to="/privacy">Privacy</Link>
+            <Link className="hover:text-primary" to="/terms">Terms</Link>
+            <Link className="hover:text-primary" to="/cookies">Cookies</Link>
+            <Link className="hover:text-primary" to="/certifications">Certifications</Link>
+            <Link className="hover:text-primary" to="/careers">Careers</Link>
+          </div>
+          <Link
+            to="/blue-digital-solutions"
+            aria-label="Powered by Blue Digital Solutions — view digital services"
+            className="group inline-flex w-fit items-center gap-2 rounded-lg border border-border/80 bg-card/60 px-3 py-2 transition-colors hover:border-primary/50 hover:bg-primary/5"
+          >
+            <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Powered by</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs font-black tracking-tight text-primary-foreground shadow-sm">BD</span>
+            <span className="text-xs font-semibold text-foreground transition-colors group-hover:text-primary">Blue Digital Solutions</span>
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
         </div>
       </div>
     </footer>
