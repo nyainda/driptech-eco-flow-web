@@ -143,8 +143,8 @@
   },
   {
     "slug": "sprinkler-systems-kenya",
-    "title": "Sprinkler Systems in Kenya | Farm Sprinklers & Installation | DripTech Eco Flow",
-    "description": "Sprinkler systems in Kenya for farms, nurseries and open fields. Compare sprinklers, rain guns, pipes, pumps and fittings with sizing and installation support.",
+    "title": "Farm Sprinklers & Rain Guns in Kenya | DripTech",
+    "description": "Compare farm sprinklers and rain guns in Kenya. Get help with coverage, pressure, spacing, pumps and installation for your field or nursery.",
     "h1": "Sprinkler systems for farms in Kenya",
     "intro": "Sprinklers are useful when a farm needs broader coverage than a row-based drip system. The correct sprinkler depends on the crop, application rate, operating pressure, spacing and available water supply.",
     "sections": [
@@ -170,6 +170,19 @@
         "paragraphs": [
           "Share the field size, crop, water source and location for a more useful recommendation. DripTech Eco Flow can supply the equipment and coordinate installation support across Kenya."
         ]
+      },
+      {
+        "heading": "Match sprinkler coverage to pump and pipe sizing",
+        "paragraphs": [
+          "Sprinkler performance depends on the flow and pressure available at the sprinkler while the system is running. Check the product specification alongside the pump curve, pipe diameter, line length and elevation before settling on a layout.",
+          "Rain guns can cover larger open areas, but they need a compatible water supply and suitable spacing. Wind, field shape and the crop's water needs affect the pattern, so do not choose a model by throw distance alone."
+        ],
+        "bullets": [
+          "Compare required flow and operating pressure for each sprinkler or rain gun.",
+          "Plan spacing and overlap around the actual coverage pattern and local wind conditions.",
+          "Check pump capacity, pipe friction loss, filters and fittings as one system.",
+          "Allow access for flushing, maintenance and moving equipment between zones."
+        ]
       }
     ],
     "links": [
@@ -184,6 +197,22 @@
       {
         "label": "Talk to the irrigation team",
         "href": "/contact"
+      },
+      {
+        "label": "Browse rain guns and large-area sprinklers",
+        "href": "/products/rain-guns"
+      },
+      {
+        "label": "Troubleshoot low sprinkler pressure",
+        "href": "/low-irrigation-pressure-sprinklers-kenya"
+      },
+      {
+        "label": "Read the irrigation pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Compare drip and sprinkler irrigation",
+        "href": "/drip-vs-sprinkler-irrigation-kenya"
       }
     ],
     "image": "/seed-products/sprinkler.jpg"

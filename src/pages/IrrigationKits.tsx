@@ -358,9 +358,9 @@ const IrrigationKits = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SEOHead
-        title="Drip Irrigation Kit Prices Kenya (1/8, 1/4, 1/2, 1 Acre) | DripTech Eco Flow"
-        description="Buy drip irrigation kits in Kenya for 1/8 acre, 1/4 acre, 1/2 acre and 1 acre farms. Complete kits with driplines, filters, fittings and installation support. Call 0723 407 849 / 0757 716 018. Transparent pricing, nationwide delivery."
-        keywords="drip irrigation kit price kenya, 1 acre drip irrigation kit, 1/4 acre drip kit, 1/2 acre drip kit, buy drip irrigation kit online kenya, irrigation kits for sale kenya, drip kit for tomatoes kenya, drip kit for onions kenya, 0723407849, 0757716018, drip irrigation contact Kenya"
+        title="Drip Irrigation Kit Prices in Kenya | DripTech"
+        description="Compare drip irrigation kits for Kenyan farms by plot size, crop and included components. Request a farm-specific price and installation advice from DripTech."
+        keywords="drip irrigation kit prices Kenya, drip irrigation kits for sale, 1 acre drip kit, 1/2 acre drip kit, 1/4 acre drip kit, farm irrigation kits, drip kit for tomatoes, drip kit for onions"
         url="https://www.dripstech.co.ke/irrigation-kits"
         image="https://www.dripstech.co.ke/seed-products/drip3.jpg"
         type="product"
@@ -394,11 +394,11 @@ const IrrigationKits = () => {
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
             <p className="dt-section-label mb-3">Kits</p>
             <h1 className="dt-section-title text-3xl sm:text-4xl">
-              Find the right irrigation kit for{" "}
-              <span className="text-primary">your plot</span>
+              Compare drip irrigation kits for{" "}
+              <span className="text-primary">your farm</span>
             </h1>
             <p className="dt-section-subtitle mx-auto mt-3">
-              Compare ready-to-use packages by plot size, price and crop. Every kit brings the core lines, filter and fittings together, with support if you want help installing it.
+              Compare available kits by plot size, crop and included components. Check the driplines, filtration, fittings and water supply requirements, then request a quote matched to your field.
             </p>
           </div>
 
@@ -1308,6 +1308,43 @@ const IrrigationKits = () => {
             </DialogContent>
           </Dialog>
         </div>
+          <section className="mt-14 border-t border-border pt-10 sm:mt-16 sm:pt-14" aria-labelledby="kit-buying-guide">
+            <div className="mx-auto max-w-5xl">
+              <p className="dt-section-label mb-3">Buying guide</p>
+              <h2 id="kit-buying-guide" className="dt-section-title text-2xl sm:text-3xl">
+                How to choose a drip irrigation kit in Kenya
+              </h2>
+              <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">
+                Plot size is only a starting point. A useful kit selection also accounts for crop spacing, bed layout, water availability, elevation, required flow and operating pressure. Confirm the included components before comparing prices.
+              </p>
+              <div className="mt-7 grid gap-5 md:grid-cols-3">
+                <article className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-semibold text-foreground">1. Match the kit to the crop</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Row spacing and the number of drip lines per bed affect the amount of dripline, connectors and valves required.
+                  </p>
+                  <a className="mt-3 inline-flex text-sm font-semibold text-primary hover:underline" href="/products/drip">Browse drip components</a>
+                </article>
+                <article className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-semibold text-foreground">2. Check filtration and pressure</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Choose a filter suitable for the water source and emitters. Check available flow, operating pressure and pipe sizing before installing the kit.
+                  </p>
+                  <a className="mt-3 inline-flex text-sm font-semibold text-primary hover:underline" href="/products/filtration">Explore irrigation filters</a>
+                </article>
+                <article className="rounded-xl border border-border bg-card p-5">
+                  <h3 className="font-semibold text-foreground">3. Budget for the whole system</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Confirm whether the quote includes mainline, fittings, pump or tank connection, delivery and installation—not just dripline.
+                  </p>
+                  <a className="mt-3 inline-flex text-sm font-semibold text-primary hover:underline" href="/irrigation-cost-calculator-kenya">Estimate irrigation costs</a>
+                </article>
+              </div>
+              <p className="mt-6 text-sm leading-6 text-muted-foreground">
+                For a farm-specific recommendation, share your crop, plot dimensions, water source and location through the <a className="font-semibold text-primary hover:underline" href="/contact">DripTech contact page</a>.
+              </p>
+            </div>
+          </section>
       </main>
 
       <Footer />

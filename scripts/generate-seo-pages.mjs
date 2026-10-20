@@ -39,12 +39,39 @@ const categoryPages = [
   },
   {
     route: "/products/sprinklers",
-    title: "Sprinkler Systems Kenya | Farm Sprinklers & Accessories | DripTech",
+    title: "Farm Sprinklers & Rain Guns in Kenya | DripTech",
     description:
-      "Browse sprinkler systems and irrigation accessories in Kenya. Compare sprinklers, rain guns, pipes, pumps and fittings with DripTech support.",
-    heading: "Sprinkler systems for farms in Kenya",
+      "Compare farm sprinklers, rain guns and accessories in Kenya. Get help with coverage, operating pressure, spacing, pumps and installation from DripTech.",
+    heading: "Farm sprinklers and rain guns in Kenya",
     intro:
-      "Choose sprinkler equipment by coverage, operating pressure, crop and water source. DripTech supplies sprinkler systems and related components across Kenya.",
+      "Choose sprinkler equipment by coverage pattern, operating pressure, crop, wind exposure and water supply. Compare impact sprinklers and rain guns, then check pump capacity, pipe sizing and spacing as one system.",
+    sections: [
+      {
+        heading: "Choose sprinklers for your field",
+        paragraphs: [
+          "Impact sprinklers and rain guns serve different field layouts. The correct choice depends on the required flow and pressure, the coverage pattern, wind exposure, crop needs and how the field is divided into irrigation zones.",
+          "Do not select equipment by throw distance alone. Confirm the operating conditions from the product specification and plan enough overlap for the intended coverage."
+        ]
+      },
+      {
+        heading: "Check the complete water delivery system",
+        bullets: [
+          "Required flow and operating pressure at the sprinkler",
+          "Pump capacity and total head, including elevation and friction losses",
+          "Pipe diameter, line length, valves and fittings",
+          "Sprinkler spacing, wind exposure and field shape",
+          "Maintenance access and the ability to flush the system"
+        ]
+      }
+    ],
+    links: [
+      { label: "Browse available sprinkler products", href: "/products/sprinklers" },
+      { label: "Compare rain guns", href: "/products/rain-guns" },
+      { label: "Read the pump sizing guide", href: "/irrigation-pump-sizing-kenya" },
+      { label: "Troubleshoot low sprinkler pressure", href: "/low-irrigation-pressure-sprinklers-kenya" },
+      { label: "Compare drip and sprinkler irrigation", href: "/drip-vs-sprinkler-irrigation-kenya" },
+      { label: "Request irrigation advice", href: "/contact" }
+    ],
     image: "/seed-products/sprinkler.jpg",
   },
   {
@@ -99,12 +126,38 @@ const categoryPages = [
   },
   {
     route: "/irrigation-kits",
-    title: "Drip Irrigation Kit Prices Kenya | Compare Farm Kits | DripTech",
+    title: "Drip Irrigation Kit Prices in Kenya | DripTech",
     description:
-      "Compare complete drip irrigation kits in Kenya by plot size, crop and included components. Get help with pricing, delivery and installation from DripTech.",
-    heading: "Drip irrigation kits by plot size",
+      "Compare drip irrigation kits for Kenyan farms by plot size, crop and included components. Request a farm-specific price and installation advice from DripTech.",
+    heading: "Compare drip irrigation kits for your farm",
     intro:
-      "Compare ready-to-use irrigation kit options by plot size, price and crop. Each farm still needs the correct lines, filtration and fittings for its water source.",
+      "Compare available kits by plot size, crop and included components. Check the driplines, filtration, fittings and water supply requirements, then request a quote matched to your field.",
+    sections: [
+      {
+        heading: "What to check in a drip irrigation kit",
+        bullets: [
+          "Driplines or drip tape matched to crop and row spacing",
+          "Mainline, connectors, valves and end closures",
+          "Filtration suitable for the water source and emitter specification",
+          "Flow and pressure available from the pump or gravity supply",
+          "Whether delivery, installation and any additional fittings are included"
+        ]
+      },
+      {
+        heading: "Compare the whole farm requirement",
+        paragraphs: [
+          "A kit's acreage label is only a starting point. Crop layout, number of lines per bed, water availability, elevation and irrigation zones affect the final bill of materials.",
+          "For a practical quote, share the crop, plot dimensions, water source and location. Confirm current product availability and included components before comparing supplier prices."
+        ]
+      }
+    ],
+    links: [
+      { label: "Browse drip irrigation components", href: "/products/drip" },
+      { label: "Compare irrigation filters", href: "/products/filtration" },
+      { label: "Check pumps and motors", href: "/products/pumps" },
+      { label: "Estimate irrigation costs", href: "/irrigation-cost-calculator-kenya" },
+      { label: "Request a farm-specific quotation", href: "/contact" }
+    ],
     image: "/seed-products/drip3.jpg",
   },
   {
