@@ -1411,6 +1411,42 @@ const Products = () => {
           </div>
         </section>
 
+        <section className="border-t border-border bg-muted/20 py-12 sm:py-16" aria-labelledby="irrigation-planning-guides">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl">
+              <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-primary">Plan with confidence</p>
+              <h2 id="irrigation-planning-guides" className="text-2xl font-bold text-foreground sm:text-3xl">
+                Helpful irrigation planning guides
+              </h2>
+              <p className="mt-3 leading-7 text-muted-foreground">
+                Choosing equipment is easier when you check the full system requirements. Use these guides to compare options, estimate costs and size the main components before you order.
+              </p>
+            </div>
+            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <Link to="/irrigation-kits" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
+                <h3 className="font-semibold text-foreground group-hover:text-primary">Compare irrigation kits</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Review complete kit options and the components a system may need.</p>
+                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Explore kits <span aria-hidden="true" className="ml-1">→</span></span>
+              </Link>
+              <Link to="/drip-irrigation-kit-price-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
+                <h3 className="font-semibold text-foreground group-hover:text-primary">Understand kit costs</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">See which crop, spacing, filtration and installation details affect a quote.</p>
+                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Read price guide <span aria-hidden="true" className="ml-1">→</span></span>
+              </Link>
+              <Link to="/irrigation-pump-sizing-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
+                <h3 className="font-semibold text-foreground group-hover:text-primary">Size the pump</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Match flow and total head to the water source and field layout.</p>
+                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Read pump guide <span aria-hidden="true" className="ml-1">→</span></span>
+              </Link>
+              <Link to="/drip-vs-sprinkler-irrigation-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
+                <h3 className="font-semibold text-foreground group-hover:text-primary">Drip vs sprinkler</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Compare irrigation approaches against crops, coverage and operating needs.</p>
+                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Compare systems <span aria-hidden="true" className="ml-1">→</span></span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         <FAQSection faqs={COMMON_FAQS.products} />
 
         <section className="bg-background py-12 sm:py-16">
