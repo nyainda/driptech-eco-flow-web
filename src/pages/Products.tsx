@@ -767,12 +767,41 @@ const Products = () => {
   // listed item up here gives search engines product names, categories, images
   // and live prices without inventing reviews or ratings that cannot be verified.
   const categoryLabel = category ? getCategoryTitle(category) : "Irrigation Products";
+  const categorySeo: Record<string, { title: string; description: string }> = {
+    sprinklers: {
+      title: "Farm Sprinklers & Rain Guns in Kenya | DripTech",
+      description:
+        "Compare farm sprinklers, rain guns and accessories in Kenya. Get help with coverage, operating pressure, spacing, pumps and installation from DripTech.",
+    },
+    drip: {
+      title: "Drip Irrigation Equipment Kenya | Driplines & Fittings | DripTech",
+      description:
+        "Shop driplines, drip tape, emitters, filters and fittings in Kenya. Compare specifications and get help sizing a drip irrigation system for your farm.",
+    },
+    filtration: {
+      title: "Irrigation Filters & Strainers in Kenya | DripTech",
+      description:
+        "Find irrigation filters and strainers for drip and sprinkler systems in Kenya. Choose filtration for your water source, flow rate and emitter requirements.",
+    },
+    pipes: {
+      title: "Irrigation Pipes & Fittings in Kenya | DripTech",
+      description:
+        "Compare irrigation pipes, HDPE, PVC and fittings for farm water systems in Kenya. Get help checking diameter, pressure rating and layout requirements.",
+    },
+    pumps: {
+      title: "Irrigation Pumps for Farms in Kenya | DripTech",
+      description:
+        "Explore irrigation pumps for Kenyan farms. Match required flow, total head, water source and power supply before choosing a pump.",
+    },
+  };
   const productPageTitle = category
-    ? `${categoryLabel} for Sale Kenya | Call ${SITE_COMPANY.phonePrimaryDisplay} | ${SITE_COMPANY.name}`
-    : `Drip Irrigation Products & Kits for Sale Kenya | Call ${SITE_COMPANY.phonePrimaryDisplay}`;
+    ? categorySeo[category]?.title ||
+      `${categoryLabel} for Sale in Kenya | DripTech`
+    : "Drip Irrigation Products & Kits for Sale in Kenya | DripTech";
   const productPageDescription = category
-    ? `Buy ${categoryLabel.toLowerCase()} in Kenya from ${SITE_COMPANY.name}. Prices in KES, stock in Nairobi, delivery nationwide. Call or WhatsApp ${SITE_COMPANY.phonePrimaryDisplay} / ${SITE_COMPANY.phoneSecondaryDisplay}.`
-    : `Buy drip lines, sprinklers, pumps, filters and irrigation kits in Kenya. Clear pricing, WhatsApp support. Call ${SITE_COMPANY.phonePrimaryDisplay} or ${SITE_COMPANY.phoneSecondaryDisplay}.`;
+    ? categorySeo[category]?.description ||
+      `Browse ${categoryLabel.toLowerCase()} in Kenya from ${SITE_COMPANY.name}. Check current product specifications and ask about delivery or installation.`
+    : "Browse driplines, sprinklers, pumps, filters, pipes and irrigation kits in Kenya. Compare products and get help with sizing, delivery and installation from DripTech.";
   const productPageKeywords = [
     categoryLabel.toLowerCase() + " Kenya",
     categoryLabel.toLowerCase() + " for sale",
