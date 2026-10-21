@@ -198,7 +198,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
       description: `${descriptionLines.length ? "Description updated. " : ""}${features.length} feature(s) and ${applications.length} application(s) added.`,
     });
   };
-\n  const [newVariant, setNewVariant] = useState({
+
+  const [newVariant, setNewVariant] = useState({
     name: "",
     price: "",
     in_stock: true,
