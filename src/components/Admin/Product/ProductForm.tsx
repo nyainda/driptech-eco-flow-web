@@ -101,15 +101,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
     const lines = raw.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     const parsed: { name: string; value: string; unit: string }[] = [];
     for (const line of lines) {
-      if (/^\\|?\\s*:?-{3,}/.test(line) || /^\\s*\\|?\\s*name\\s*\\|/i.test(line)) continue;
-      const cleaned = line.replace(/^\\|/, "").replace(/\\|$/, "").trim();
+      if (/^\|?\s*:?-{3,}/.test(line) || /^\s*\|?\s*name\s*\|/i.test(line)) continue;
+      const cleaned = line.replace(/^\|/, "").replace(/\|$/, "").trim();
       let parts: string[] = [];
       if (cleaned.includes("|")) {
         parts = cleaned.split("|").map((part) => part.trim());
-      } else if (cleaned.includes("\\t")) {
+      } else if (cleaned.includes("\t")) {
         parts = cleaned.split("\t").map((part) => part.trim());
-      } else if (/^[-*]\\s+/.test(cleaned)) {
-        const match = cleaned.replace(/^[-*]\\s+/, "").match(/^([^:]+):\s*(.+)$/);
+      } else if (/^[-*]\s+/.test(cleaned)) {
+        const match = cleaned.replace(/^[-*]\s+/, "").match(/^([^:]+):\s*(.+)$/);
         if (match) {
           const label = match[1].trim();
           const valueUnit = match[2].trim().match(/^(.+?)\s+([a-zA-Z%°/]+(?:\s*[³²])?)$/);
@@ -169,15 +169,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
     let section: "description" | "features" | "applications" = "description";
     for (const rawLine of lines) {
       const line = rawLine.replace(/^[-*•]\s+/, "").trim();
-      if (/^(key\\s+)?features?\\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
+      if (/^(key\s+)?features?\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
         section = "features";
         continue;
       }
-      if (/^(common\\s+)?applications?\\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
+      if (/^(common\s+)?applications?\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
         section = "applications";
         continue;
       }
-      if (/^description\\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
+      if (/^description\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
         section = "description";
         continue;
       }
