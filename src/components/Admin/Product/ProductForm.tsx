@@ -93,6 +93,112 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const [newFeature, setNewFeature] = useState("");
   const [newApplication, setNewApplication] = useState("");
   const [newSpec, setNewSpec] = useState({ name: "", value: "", unit: "" });
+
+  const [bulkPaste, setBulkPaste] = useState("");
+  const [bulkContentPaste, setBulkContentPaste] = useState("");
+
+  const parseBulkSpecifications = (raw: string) => {
+    const lines = raw.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const parsed: { name: string; value: string; unit: string }[] = [];
+    for (const line of lines) {
+      if (/^\|?\s*:?-{3,}/.test(line) || /^\s*\|?\s*name\s*\|/i.test(line)) continue;
+      const cleaned = line.replace(/^\|/, "").replace(/\|$/, "").trim();
+      let parts: string[] = [];
+      if (cleaned.includes("|")) {
+        parts = cleaned.split("|").map((part) => part.trim());
+      } else if (cleaned.includes("\t")) {
+        parts = cleaned.split("\t").map((part) => part.trim());
+      } else if (/^[-*]\s+/.test(cleaned)) {
+        const match = cleaned.replace(/^[-*]\s+/, "").match(/^([^:]+):\s*(.+)$/);
+        if (match) {
+          const label = match[1].trim();
+          const valueUnit = match[2].trim().match(/^(.+?)\s+([a-zA-Z%°/]+(?:\s*[³²])?)$/);
+          parsed.push({ name: label, value: valueUnit?.[1] || match[2].trim(), unit: valueUnit?.[2] || "" });
+        }
+        continue;
+      } else {
+        const match = cleaned.match(/^([^:=]+?)\s*[:=]\s*(.+)$/);
+        if (match && !/^technical specifications$/i.test(match[1].trim())) {
+          const valueUnit = match[2].trim().match(/^(.+?)\s+([a-zA-Z%°/]+(?:\s*[³²])?)$/);
+          parsed.push({ name: match[1].trim(), value: valueUnit?.[1] || match[2].trim(), unit: valueUnit?.[2] || "" });
+        }
+        continue;
+      }
+      if (parts.length >= 2) {
+        const name = parts[0].replace(/^\*+|\*+$/g, "").trim();
+        const value = parts[1].replace(/^\*+|\*+$/g, "").trim();
+        const unit = (parts[2] || "").replace(/^\*+|\*+$/g, "").trim();
+        if (name && value && !/^unit$/i.test(name)) parsed.push({ name, value, unit });
+      }
+    }
+    return parsed;
+  };
+
+  const applyBulkSpecifications = () => {
+    const parsed = parseBulkSpecifications(bulkPaste);
+    if (!parsed.length) {
+      toast({
+        title: "No specifications detected",
+        description: "Paste a Name | Value | Unit table, tab-separated rows, or Name: Value lines.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const existingNames = new Set(formData.specifications.map((item) => item.name.trim().toLowerCase()));
+    const additions = parsed.filter((item) => !existingNames.has(item.name.trim().toLowerCase()));
+    setFormData((prev) => ({
+      ...prev,
+      specifications: [
+        ...prev.specifications,
+        ...additions,
+      ],
+    }));
+    setBulkPaste("");
+    toast({
+      title: "Specifications imported",
+      description: `${additions.length} specification(s) added. Existing rows with the same name were kept.`,
+    });
+  };
+
+  const applyBulkContent = () => {
+    const lines = bulkContentPaste.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    if (!lines.length) return;
+    const features: string[] = [];
+    const applications: string[] = [];
+    const descriptionLines: string[] = [];
+    let section: "description" | "features" | "applications" = "description";
+    for (const rawLine of lines) {
+      const line = rawLine.replace(/^[-*•]\s+/, "").trim();
+      if (/^(key\s+)?features?\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
+        section = "features";
+        continue;
+      }
+      if (/^(common\s+)?applications?\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
+        section = "applications";
+        continue;
+      }
+      if (/^description\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
+        section = "description";
+        continue;
+      }
+      if (/^technical specifications$/i.test(line.replace(/[*#]/g, "").trim())) continue;
+      if (section === "features") features.push(line);
+      else if (section === "applications") applications.push(line);
+      else descriptionLines.push(line);
+    }
+    setFormData((prev) => ({
+      ...prev,
+      description: descriptionLines.length ? descriptionLines.join("\n") : prev.description,
+      features: [...prev.features, ...features.filter((value) => !prev.features.includes(value))],
+      applications: [...prev.applications, ...applications.filter((value) => !prev.applications.includes(value))],
+    }));
+    setBulkContentPaste("");
+    toast({
+      title: "Content imported",
+      description: `${descriptionLines.length ? "Description updated. " : ""}${features.length} feature(s) and ${applications.length} application(s) added.`,
+    });
+  };
+
   const [newVariant, setNewVariant] = useState({
     name: "",
     price: "",
@@ -364,6 +470,37 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </TabsContent>
 
             <TabsContent value="content" className="space-y-6 focus-visible:outline-none focus-visible:ring-0">
+              <div className="space-y-3 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                <div className="space-y-1">
+                  <Label htmlFor="bulk-product-content" className="text-sm font-semibold">Paste Description, Features & Applications</Label>
+                  <p className="text-xs text-muted-foreground">Paste the description first, then optional sections labelled Features and Applications with one item per line. Existing content is preserved except the description, which is replaced when pasted.</p>
+                </div>
+                <Textarea
+                  id="bulk-product-content"
+                  value={bulkContentPaste}
+                  onChange={(e) => setBulkContentPaste(e.target.value)}
+                  placeholder={`The DripTech Eco-Flow pump is designed for...
+
+Features
+- Compact design
+- Reliable water delivery
+
+Applications
+- Domestic water supply
+- Small-scale irrigation`}
+                  rows={6}
+                  className="font-mono text-xs bg-background"
+                />
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" onClick={applyBulkContent} disabled={!bulkContentPaste.trim()}>
+                    <Layers className="h-4 w-4 mr-2" /> Import content
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setBulkContentPaste("")} disabled={!bulkContentPaste}>
+                    Clear paste box
+                  </Button>
+                </div>
+              </div>
+
               <div>
                 <Label htmlFor="description" className="text-sm font-medium">Description</Label>
                 <Textarea
@@ -428,6 +565,33 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </TabsContent>
 
             <TabsContent value="details" className="space-y-6 focus-visible:outline-none focus-visible:ring-0">
+              <div className="space-y-4 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                <div className="space-y-1">
+                  <Label htmlFor="bulk-product-specs" className="text-sm font-semibold">Paste Technical Specifications</Label>
+                  <p className="text-xs text-muted-foreground">Paste a whole table at once. Supports <code>Name | Value | Unit</code>, tab-separated spreadsheet rows, Markdown tables, and simple <code>Name: Value</code> lines.</p>
+                </div>
+                <Textarea
+                  id="bulk-product-specs"
+                  value={bulkPaste}
+                  onChange={(e) => setBulkPaste(e.target.value)}
+                  placeholder={`Name | Value | Unit
+Motor Power | 1 | HP
+Rated Power | 750 | W
+Voltage | 220–240 | V
+Pump Type | Single-stage centrifugal | —`}
+                  rows={6}
+                  className="font-mono text-xs bg-background"
+                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button type="button" onClick={applyBulkSpecifications} disabled={!bulkPaste.trim()}>
+                    <Layers className="h-4 w-4 mr-2" /> Import all specifications
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setBulkPaste("")} disabled={!bulkPaste}>
+                    Clear paste box
+                  </Button>
+                </div>
+              </div>
+
               <div className="space-y-4">
                 <Label className="text-sm font-medium">Technical Specifications</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
