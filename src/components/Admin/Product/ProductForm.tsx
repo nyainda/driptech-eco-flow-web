@@ -98,7 +98,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const [bulkContentPaste, setBulkContentPaste] = useState("");
 
   const parseBulkSpecifications = (raw: string) => {
-    const lines = raw.split(/\\r?\\n/).map((line) => line.trim()).filter(Boolean);
+    const lines = raw.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     const parsed: { name: string; value: string; unit: string }[] = [];
     for (const line of lines) {
       if (/^\\|?\\s*:?-{3,}/.test(line) || /^\\s*\\|?\\s*name\\s*\\|/i.test(line)) continue;
@@ -107,27 +107,27 @@ const ProductForm: React.FC<ProductFormProps> = ({
       if (cleaned.includes("|")) {
         parts = cleaned.split("|").map((part) => part.trim());
       } else if (cleaned.includes("\\t")) {
-        parts = cleaned.split("\\t").map((part) => part.trim());
+        parts = cleaned.split("\t").map((part) => part.trim());
       } else if (/^[-*]\\s+/.test(cleaned)) {
-        const match = cleaned.replace(/^[-*]\\s+/, "").match(/^([^:]+):\\s*(.+)$/);
+        const match = cleaned.replace(/^[-*]\\s+/, "").match(/^([^:]+):\s*(.+)$/);
         if (match) {
           const label = match[1].trim();
-          const valueUnit = match[2].trim().match(/^(.+?)\\s+([a-zA-Z%°/]+(?:\\s*[³²])?)$/);
+          const valueUnit = match[2].trim().match(/^(.+?)\s+([a-zA-Z%°/]+(?:\s*[³²])?)$/);
           parsed.push({ name: label, value: valueUnit?.[1] || match[2].trim(), unit: valueUnit?.[2] || "" });
         }
         continue;
       } else {
-        const match = cleaned.match(/^([^:=]+?)\\s*[:=]\\s*(.+)$/);
+        const match = cleaned.match(/^([^:=]+?)\s*[:=]\s*(.+)$/);
         if (match && !/^technical specifications$/i.test(match[1].trim())) {
-          const valueUnit = match[2].trim().match(/^(.+?)\\s+([a-zA-Z%°/]+(?:\\s*[³²])?)$/);
+          const valueUnit = match[2].trim().match(/^(.+?)\s+([a-zA-Z%°/]+(?:\s*[³²])?)$/);
           parsed.push({ name: match[1].trim(), value: valueUnit?.[1] || match[2].trim(), unit: valueUnit?.[2] || "" });
         }
         continue;
       }
       if (parts.length >= 2) {
-        const name = parts[0].replace(/^\\*+|\\*+$/g, "").trim();
-        const value = parts[1].replace(/^\\*+|\\*+$/g, "").trim();
-        const unit = (parts[2] || "").replace(/^\\*+|\\*+$/g, "").trim();
+        const name = parts[0].replace(/^\*+|\*+$/g, "").trim();
+        const value = parts[1].replace(/^\*+|\*+$/g, "").trim();
+        const unit = (parts[2] || "").replace(/^\*+|\*+$/g, "").trim();
         if (name && value && !/^unit$/i.test(name)) parsed.push({ name, value, unit });
       }
     }
@@ -161,14 +161,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   const applyBulkContent = () => {
-    const lines = bulkContentPaste.split(/\\r?\\n/).map((line) => line.trim()).filter(Boolean);
+    const lines = bulkContentPaste.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     if (!lines.length) return;
     const features: string[] = [];
     const applications: string[] = [];
     const descriptionLines: string[] = [];
     let section: "description" | "features" | "applications" = "description";
     for (const rawLine of lines) {
-      const line = rawLine.replace(/^[-*•]\\s+/, "").trim();
+      const line = rawLine.replace(/^[-*•]\s+/, "").trim();
       if (/^(key\\s+)?features?\\s*:?$/i.test(line.replace(/[*#]/g, "").trim())) {
         section = "features";
         continue;
