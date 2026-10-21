@@ -188,7 +188,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }
     setFormData((prev) => ({
       ...prev,
-      description: descriptionLines.length ? descriptionLines.join("\\n") : prev.description,
+      description: descriptionLines.length ? descriptionLines.join("\n") : prev.description,
       features: [...prev.features, ...features.filter((value) => !prev.features.includes(value))],
       applications: [...prev.applications, ...applications.filter((value) => !prev.applications.includes(value))],
     }));
