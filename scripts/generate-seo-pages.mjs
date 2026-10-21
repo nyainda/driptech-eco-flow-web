@@ -468,34 +468,67 @@ const getDynamicContent = async () => {
   const supabaseUrl = process.env.VITE_SUPABASE_URL?.replace(/\/$/, "");
   const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-  try {
-    if (workerUrl) {
+  const fetchFromSupabase = async () => {
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error("Supabase SEO fallback requires VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+    }
+    const headers = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
+    const endpoint = `${supabaseUrl}/rest/v1`;
+    const [products, posts, news] = await Promise.all([
+      // Include public catalogue records even when they are temporarily out of stock.
+      // Stock status is emitted separately in Product Offer structured data.
+      fetchJson(`${endpoint}/products?select=*`, headers),
+      fetchJson(`${endpoint}/blog_posts?select=*&published=eq.true`, headers),
+      fetchJson(`${endpoint}/news_articles?select=*&published=eq.true`, headers),
+    ]);
+    return { products, posts, news };
+  };
+
+  if (workerUrl) {
+    try {
       const [products, posts, news] = await Promise.all([
-        fetchJson(`${workerUrl}/api/products?in_stock=true&limit=1000`),
+        // Do not filter by in_stock: every public catalogue product needs a crawlable URL.
+        fetchJson(`${workerUrl}/api/products?limit=1000`),
         fetchJson(`${workerUrl}/api/blog?limit=1000`),
         fetchJson(`${workerUrl}/api/news?limit=1000`),
       ]);
+      if (!Array.isArray(products) || products.length === 0) {
+        throw new Error("The Worker product feed returned no products.");
+      }
       return { products, posts, news };
+    } catch (error) {
+      if (supabaseUrl && supabaseKey) {
+        console.warn(`Worker SEO feed failed; trying Supabase instead: ${error.message}`);
+        return fetchFromSupabase();
+      }
+      throw new Error(`Could not fetch the live SEO feed from Cloudflare Worker: ${error.message}`);
     }
-
-    if (supabaseUrl && supabaseKey) {
-      const headers = { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` };
-      const endpoint = `${supabaseUrl}/rest/v1`;
-      const [products, posts, news] = await Promise.all([
-        fetchJson(`${endpoint}/products?select=*&in_stock=eq.true`, headers),
-        fetchJson(`${endpoint}/blog_posts?select=*&published=eq.true`, headers),
-        fetchJson(`${endpoint}/news_articles?select=*&published=eq.true`, headers),
-      ]);
-      return { products, posts, news };
-    }
-  } catch (error) {
-    console.warn(`Could not fetch dynamic SEO content; continuing with static pages: ${error.message}`);
   }
 
-  return { products: [], posts: [], news: [] };
+  if (supabaseUrl && supabaseKey) return fetchFromSupabase();
+
+  if (process.env.SEO_ALLOW_STATIC_ONLY === "true") {
+    console.warn("SEO_ALLOW_STATIC_ONLY=true: generating static landing pages without dynamic product pages.");
+    return { products: [], posts: [], news: [] };
+  }
+
+  throw new Error(
+    "SEO generation requires VITE_WORKER_URL or both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY. " +
+    "Configure the production build environment, or set SEO_ALLOW_STATIC_ONLY=true only for intentional static-only previews.",
+  );
 };
 
 const dynamicContent = await getDynamicContent();
+
+// Do not silently publish a product sitemap that omits the live catalogue.
+// Static-only generation is an explicit opt-in for isolated previews only.
+if (!Array.isArray(dynamicContent.products)) {
+  throw new Error("SEO product feed must return an array.");
+}
+if (dynamicContent.products.length === 0 && process.env.SEO_ALLOW_STATIC_ONLY !== "true") {
+  throw new Error("SEO generation found zero products. Refusing to publish incomplete product pages and sitemap.");
+}
+console.log(`SEO generator loaded ${dynamicContent.products.length} catalogue products for crawlable product pages.`);
 
 // Pull one real, representative image per product category straight from the
 // live catalog (Cloudflare Worker/Supabase) instead of relying on the
