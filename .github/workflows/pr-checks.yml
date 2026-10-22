@@ -33,6 +33,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_WORKER_URL: https://driptech-api.dripstech.workers.dev
 
       - name: Validate PR title
         uses: amannn/action-semantic-pull-request@v5
