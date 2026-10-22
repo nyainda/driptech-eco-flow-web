@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import HeroSectionVibe from "@/components/Home/HeroSectionVibe";
 import HomeOfferings from "@/components/Home/HomeOfferings";
+import HomeEngineeringServices from "@/components/Home/HomeEngineeringServices";
 import HomeKitsShowcase from "@/components/Home/HomeKitsShowcase";
 import HomePlanningSection from "@/components/Home/HomePlanningSection";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
@@ -16,6 +17,11 @@ const Home = () => {
       {/* Product discovery stays the primary purpose of the homepage. */}
       <ScrollReveal>
         <HomeOfferings />
+      </ScrollReveal>
+
+      {/* Bring engineering design and consultation into view near the top of the homepage. */}
+      <ScrollReveal>
+        <HomeEngineeringServices />
       </ScrollReveal>
 
       {/* Real kit records make the complete-system path easier to compare. */}
