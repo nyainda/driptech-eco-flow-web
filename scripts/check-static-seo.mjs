@@ -87,6 +87,15 @@ for (const route of routes) {
     (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("Product"),
   );
   const isProductDetailRoute = /^\/products\/[^/]+\/[^/]+$/.test(route);
+  const isArticleRoute = /^\/(?:blog|news)\/[^/]+$/.test(route);
+  if (isArticleRoute) {
+    if (!html.includes('data-seo-article-body="true"')) {
+      failures.push(route + ": article body must be present in initial HTML");
+    }
+    if (!/<section data-seo-article-body="true"[^>]*><p>[^<\s][\s\S]*?<\/p><\/section>/.test(html)) {
+      failures.push(route + ": article body must contain readable text in initial HTML");
+    }
+  }
   if (isProductDetailRoute) {
     // Product pages must be useful in the first HTML response, not only after
     // React fetches and renders the product detail view in the browser.
