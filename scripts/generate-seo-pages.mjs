@@ -457,6 +457,17 @@ const stripHtml = (value = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
+// Convert stored rich text into safe plain-text blocks for initial HTML. We do
+// not inject CMS HTML into the page; all blocks are escaped at render time.
+const extractTextBlocks = (value = "") =>
+  String(value)
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<\/(?:p|h[1-6]|li|blockquote|div|section|article|tr)>/gi, "\n")
+    .replace(/<[^>]*>/g, " ")
+    .split(/\n+/)
+    .map((block) => block.replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
 const fetchJson = async (url, headers = {}) => {
   const response = await fetch(url, { headers });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
@@ -603,12 +614,57 @@ const dynamicPages = [
       const images = (Array.isArray(product.images) ? product.images : [])
         .map((image) => toAbsoluteSiteAssetUrl(image, siteUrl))
         .filter((url) => typeof url === "string");
+      const features = Array.isArray(product.features)
+        ? product.features.map(stripHtml).filter(Boolean)
+        : [];
+      const applications = Array.isArray(product.applications)
+        ? product.applications.map(stripHtml).filter(Boolean)
+        : [];
+      const specifications = Array.isArray(product.specifications)
+        ? product.specifications
+            .map((item) => ({
+              name: stripHtml(item?.name || item?.label || ""),
+              value: stripHtml(item?.value ?? ""),
+              unit: stripHtml(item?.unit || ""),
+            }))
+            .filter((item) => item.name && item.value)
+        : product.specifications && typeof product.specifications === "object"
+          ? Object.entries(product.specifications)
+              .map(([name, value]) => ({
+                name: stripHtml(name),
+                value: stripHtml(typeof value === "object" && value !== null ? JSON.stringify(value) : String(value ?? "")),
+                unit: "",
+              }))
+              .filter((item) => item.name && item.value)
+          : [];
+      const variants = Array.isArray(product.variants)
+        ? product.variants
+            .map((variant) => ({
+              name: stripHtml(variant?.name || ""),
+              price: Number(variant?.price),
+              inStock: Boolean(variant?.in_stock),
+            }))
+            .filter((variant) => variant.name)
+        : [];
       return {
         route,
         title: `${product.name} Kenya | Price & Specifications | DripTech`,
-        description,
+        description: description.slice(0, 300),
         heading: product.name,
         intro: description,
+        image: images[0] || undefined,
+        imageIsAbsolute: Boolean(images[0]),
+        productDetails: {
+          name: product.name,
+          modelNumber: stripHtml(product.model_number || ""),
+          price: Number.isFinite(price) && price > 0 ? price : null,
+          inStock: Boolean(product.in_stock),
+          images,
+          features,
+          applications,
+          specifications,
+          variants,
+        },
         // Only use Product structured data when there is a real, positive
         // catalog price to support a valid Offer. Never invent a price,
         // review, or rating just to qualify for a rich result.
@@ -647,17 +703,25 @@ const dynamicPages = [
     .filter((post) => post?.slug && post?.title)
     .map((post) => {
       const description = stripHtml(post.excerpt || post.content).slice(0, 300);
+      const articleBlocks = extractTextBlocks(post.content || post.body || post.article_body);
+      const articleImage = toAbsoluteSiteAssetUrl(post.featured_image || post.image || post.cover_image, siteUrl);
       return {
         route: `/blog/${post.slug}`,
         title: `${post.title} | DripTech Blog`,
         description,
         heading: post.title,
         intro: description,
+        articleContent: articleBlocks.length ? articleBlocks : extractTextBlocks(description),
+        image: articleImage || undefined,
+        imageIsAbsolute: Boolean(articleImage),
+        articleImage: articleImage || null,
+        articleDate: post.published_at || post.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "BlogPosting",
           headline: post.title,
           description,
+          ...(articleImage ? { image: articleImage } : {}),
           url: `${siteUrl}/blog/${post.slug}`,
           datePublished: post.published_at || post.created_at,
           dateModified: post.updated_at || post.published_at || post.created_at,
@@ -669,17 +733,25 @@ const dynamicPages = [
     .filter((article) => article?.slug && article?.title)
     .map((article) => {
       const description = stripHtml(article.excerpt || article.content).slice(0, 300);
+      const articleBlocks = extractTextBlocks(article.content || article.body || article.article_body);
+      const articleImage = toAbsoluteSiteAssetUrl(article.featured_image || article.image || article.cover_image, siteUrl);
       return {
         route: `/news/${article.slug}`,
         title: `${article.title} | DripTech News`,
         description,
         heading: article.title,
         intro: description,
+        articleContent: articleBlocks.length ? articleBlocks : extractTextBlocks(description),
+        image: articleImage || undefined,
+        imageIsAbsolute: Boolean(articleImage),
+        articleImage: articleImage || null,
+        articleDate: article.published_at || article.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "NewsArticle",
           headline: article.title,
           description,
+          ...(articleImage ? { image: articleImage } : {}),
           url: `${siteUrl}/news/${article.slug}`,
           datePublished: article.published_at || article.created_at,
           dateModified: article.updated_at || article.published_at || article.created_at,
@@ -704,6 +776,49 @@ for (const route of sitemapRoutes) {
 }
 
 allPages.push(...dynamicPages);
+
+// Connect the existing catalogue URLs with crawlable HTML links. Category pages
+// list a manageable set of real products, and product pages link to related
+// products from the same category instead of relying on JavaScript navigation.
+const productPages = allPages.filter((page) => page.productDetails);
+const productPagesByCategory = new Map();
+for (const product of productPages) {
+  const category = product.route.split("/")[2];
+  const group = productPagesByCategory.get(category) || [];
+  group.push(product);
+  productPagesByCategory.set(category, group);
+}
+for (const page of allPages) {
+  if (page.route === "/products") {
+    page.catalogLinks = productPages.slice(0, 12).map((product) => ({
+      label: product.heading,
+      href: product.route,
+    }));
+  } else if (/^\/products\/[^/]+$/.test(page.route)) {
+    const category = page.route.split("/")[2];
+    page.catalogLinks = (productPagesByCategory.get(category) || [])
+      .slice(0, 12)
+      .map((product) => ({ label: product.heading, href: product.route }));
+  }
+  if (page.productDetails) {
+    const category = page.route.split("/")[2];
+    const group = productPagesByCategory.get(category) || [];
+    const index = group.findIndex((product) => product.route === page.route);
+    // Always link to adjacent products so the whole category is crawlable as a
+    // chain, even when the category contains hundreds of products.
+    const adjacent = [
+      ...(index > 0 ? [group[index - 1]] : []),
+      ...(index >= 0 && index + 1 < group.length ? [group[index + 1]] : []),
+    ];
+    const related = group.filter((product) =>
+      product.route !== page.route && !adjacent.some((item) => item.route === product.route),
+    ).slice(0, 4);
+    page.relatedProductLinks = [...adjacent, ...related].map((product) => ({
+      label: product.heading,
+      href: product.route,
+    }));
+  }
+}
 
 // Catch duplicate static routes before they silently overwrite one another.
 const seenRoutes = new Set();
@@ -771,6 +886,17 @@ const pageBody = (page) => {
         <a href="/contact">Contact DripTech</a>
       </nav>`;
 
+  const catalogNav = (Array.isArray(page.catalogLinks) && page.catalogLinks.length)
+    ? `<nav aria-label="Products in this catalogue"><h2>Browse available products</h2><ul>${page.catalogLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
+  const relatedProductsNav = (Array.isArray(page.relatedProductLinks) && page.relatedProductLinks.length)
+    ? `<nav aria-label="Related products"><h2>Related products</h2><ul>${page.relatedProductLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
+
   const sourceLinks = (Array.isArray(page.sources) ? page.sources : []).filter((source) =>
     typeof source?.label === "string" && source.label.trim() &&
     typeof source?.url === "string" && /^https:\/\//i.test(source.url),
@@ -781,12 +907,61 @@ const pageBody = (page) => {
         .join("")}</ul><p>External listings are independently maintained and may change. Confirm current price, product specification and units with the supplier.</p></section>`
     : "";
 
+  const articleImageUrl = page.articleImage
+    ? toAbsoluteSiteAssetUrl(page.articleImage, siteUrl)
+    : undefined;
+  const articleImage = articleImageUrl
+    ? `<figure><img src="${escapeHtml(articleImageUrl)}" alt="${escapeHtml(page.heading || "DripTech article")}" width="1200" height="675" decoding="async" /><figcaption>${escapeHtml(page.heading || "DripTech article")}</figcaption></figure>`
+    : "";
+  const articleBody = Array.isArray(page.articleContent) && page.articleContent.length
+    ? `<section data-seo-article-body="true" aria-label="Article content">${page.articleContent.map((block) => `<p>${escapeHtml(block)}</p>`).join("")}</section>`
+    : "";
+  const articleDate = page.articleDate
+    ? `<p><time datetime="${escapeHtml(page.articleDate)}">Published ${escapeHtml(page.articleDate.slice(0, 10))}</time></p>`
+    : "";
+
+  const product = page.productDetails;
+  const productImage = product?.images?.[0]
+    ? `<figure data-seo-product-image="true"><img src="${escapeHtml(product.images[0])}" alt="${escapeHtml(product.name)}" width="900" height="900" fetchpriority="high" decoding="async" /><figcaption>${escapeHtml(product.name)} — irrigation equipment from DripTech Eco-Flow, Kenya.</figcaption></figure>`
+    : "";
+  const productFacts = product
+    ? `<section data-seo-product-section="details" aria-label="Product details"><h2>Product details</h2>
+        ${product.modelNumber ? `<p><strong>Model:</strong> ${escapeHtml(product.modelNumber)}</p>` : ""}
+        ${product.price ? `<p><strong>Listed price:</strong> KSh ${escapeHtml(product.price.toLocaleString("en-KE"))}</p>` : `<p><strong>Pricing:</strong> Request a current quotation from DripTech Eco-Flow.</p>`}
+        <p><strong>Availability:</strong> ${product.inStock ? "Listed as in stock; confirm current availability before ordering." : "Contact DripTech to confirm current availability."}</p>
+      </section>`
+    : "";
+  const renderListSection = (heading, values, marker) => values?.length
+    ? `<section data-seo-product-section="${marker}"><h2>${heading}</h2><ul>${values.map((value) => `<li>${escapeHtml(value)}</li>`).join("")}</ul></section>`
+    : "";
+  const specifications = product?.specifications?.length
+    ? `<section data-seo-product-section="specifications"><h2>Technical specifications</h2><dl>${product.specifications.map((spec) => `<div><dt><strong>${escapeHtml(spec.name)}</strong></dt><dd>${escapeHtml(spec.value)}${spec.unit ? " " + escapeHtml(spec.unit) : ""}</dd></div>`).join("")}</dl></section>`
+    : "";
+  const variants = product?.variants?.length
+    ? `<section><h2>Available options</h2><ul>${product.variants.map((variant) => `<li>${escapeHtml(variant.name)}${variant.price > 0 ? " — KSh " + escapeHtml(variant.price.toLocaleString("en-KE")) : ""}</li>`).join("")}</ul></section>`
+    : "";
+  const productContact = product
+    ? `<p><a href="/contact">Ask DripTech about this product</a> for confirmation of current price, specifications, stock and delivery options.</p>`
+    : "";
+
   return `
-    <main data-seo-shell="true">
-      <p>DripTech Kenya</p>
+    <main data-seo-shell="true"${product ? ' data-seo-product="true"' : ""}>
+      <p>DripTech Eco-Flow | Irrigation equipment in Kenya</p>
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
+      ${productImage}
+      ${articleImage}
       <p>${escapeHtml(page.intro)}</p>
+      ${articleDate}
+      ${articleBody}
+      ${productFacts}
+      ${renderListSection("Features", product?.features, "features")}
+      ${renderListSection("Applications", product?.applications, "applications")}
+      ${specifications}
+      ${variants}
+      ${productContact}
       ${sections}
+      ${catalogNav}
+      ${relatedProductsNav}
       ${sourceNav}
       ${relatedNav}
     </main>`;
