@@ -704,20 +704,24 @@ const dynamicPages = [
     .map((post) => {
       const description = stripHtml(post.excerpt || post.content).slice(0, 300);
       const articleBlocks = extractTextBlocks(post.content || post.body || post.article_body);
+      const articleImage = toAbsoluteSiteAssetUrl(post.featured_image || post.image || post.cover_image, siteUrl);
       return {
         route: `/blog/${post.slug}`,
         title: `${post.title} | DripTech Blog`,
         description,
         heading: post.title,
         intro: description,
-        articleContent: articleBlocks,
-        articleImage: post.featured_image || post.image || post.cover_image || null,
+        articleContent: articleBlocks.length ? articleBlocks : extractTextBlocks(description),
+        image: articleImage || undefined,
+        imageIsAbsolute: Boolean(articleImage),
+        articleImage: articleImage || null,
         articleDate: post.published_at || post.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "BlogPosting",
           headline: post.title,
           description,
+          ...(articleImage ? { image: articleImage } : {}),
           url: `${siteUrl}/blog/${post.slug}`,
           datePublished: post.published_at || post.created_at,
           dateModified: post.updated_at || post.published_at || post.created_at,
@@ -730,20 +734,24 @@ const dynamicPages = [
     .map((article) => {
       const description = stripHtml(article.excerpt || article.content).slice(0, 300);
       const articleBlocks = extractTextBlocks(article.content || article.body || article.article_body);
+      const articleImage = toAbsoluteSiteAssetUrl(article.featured_image || article.image || article.cover_image, siteUrl);
       return {
         route: `/news/${article.slug}`,
         title: `${article.title} | DripTech News`,
         description,
         heading: article.title,
         intro: description,
-        articleContent: articleBlocks,
-        articleImage: article.featured_image || article.image || article.cover_image || null,
+        articleContent: articleBlocks.length ? articleBlocks : extractTextBlocks(description),
+        image: articleImage || undefined,
+        imageIsAbsolute: Boolean(articleImage),
+        articleImage: articleImage || null,
         articleDate: article.published_at || article.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "NewsArticle",
           headline: article.title,
           description,
+          ...(articleImage ? { image: articleImage } : {}),
           url: `${siteUrl}/news/${article.slug}`,
           datePublished: article.published_at || article.created_at,
           dateModified: article.updated_at || article.published_at || article.created_at,
