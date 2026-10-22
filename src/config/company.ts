@@ -87,28 +87,65 @@ export function buildOrganizationSchema() {
       "sprinkler systems Kenya",
       "solar irrigation Kenya",
     ],
+    // Keep this as a catalogue of categories, not a list of fake Product entities.
+    // Category labels and acreage-kit sizes are collections; they are not individual
+    // purchasable products and should not trigger Google's Product rich-result checks.
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Irrigation equipment",
       itemListElement: [
         {
           "@type": "OfferCatalog",
-          name: "Drip irrigation kits",
+          name: "Drip irrigation kits by plot size",
+          description:
+            "Drip irrigation kit options for different plot sizes. Request a current quote for the kit contents and price.",
           itemListElement: [
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "1/8 acre drip kit" } },
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "1/4 acre drip kit" } },
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "1/2 acre drip kit" } },
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "1 acre drip kit" } },
+            {
+              "@type": "OfferCatalog",
+              name: "1/8 acre drip kit",
+              description: "Drip irrigation kit category for a 1/8-acre plot; ask DripTech for current availability and pricing.",
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "1/4 acre drip kit",
+              description: "Drip irrigation kit category for a 1/4-acre plot; ask DripTech for current availability and pricing.",
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "1/2 acre drip kit",
+              description: "Drip irrigation kit category for a 1/2-acre plot; ask DripTech for current availability and pricing.",
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "1 acre drip kit",
+              description: "Drip irrigation kit category for a 1-acre plot; ask DripTech for current availability and pricing.",
+            },
           ],
         },
         {
           "@type": "OfferCatalog",
-          name: "Irrigation products",
+          name: "Irrigation product categories",
           itemListElement: [
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "Driplines" } },
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "Sprinklers" } },
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "Pumps" } },
-            { "@type": "Offer", itemOffered: { "@type": "Product", name: "Filters and fittings" } },
+            {
+              "@type": "OfferCatalog",
+              name: "Driplines",
+              description: "Drip irrigation lines and related components.",
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "Sprinklers",
+              description: "Sprinkler equipment and accessories for irrigation systems.",
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "Pumps",
+              description: "Water pumps and related irrigation equipment.",
+            },
+            {
+              "@type": "OfferCatalog",
+              name: "Filters and fittings",
+              description: "Irrigation filtration products, pipes, fittings and connectors.",
+            },
           ],
         },
       ],
