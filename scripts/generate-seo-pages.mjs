@@ -457,6 +457,17 @@ const stripHtml = (value = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
+// Convert stored rich text into safe plain-text blocks for initial HTML. We do
+// not inject CMS HTML into the page; all blocks are escaped at render time.
+const extractTextBlocks = (value = "") =>
+  String(value)
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<\/(?:p|h[1-6]|li|blockquote|div|section|article|tr)>/gi, "\n")
+    .replace(/<[^>]*>/g, " ")
+    .split(/\n+/)
+    .map((block) => block.replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
 const fetchJson = async (url, headers = {}) => {
   const response = await fetch(url, { headers });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
@@ -692,12 +703,16 @@ const dynamicPages = [
     .filter((post) => post?.slug && post?.title)
     .map((post) => {
       const description = stripHtml(post.excerpt || post.content).slice(0, 300);
+      const articleBlocks = extractTextBlocks(post.content || post.body || post.article_body);
       return {
         route: `/blog/${post.slug}`,
         title: `${post.title} | DripTech Blog`,
         description,
         heading: post.title,
         intro: description,
+        articleContent: articleBlocks,
+        articleImage: post.featured_image || post.image || post.cover_image || null,
+        articleDate: post.published_at || post.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "BlogPosting",
@@ -714,12 +729,16 @@ const dynamicPages = [
     .filter((article) => article?.slug && article?.title)
     .map((article) => {
       const description = stripHtml(article.excerpt || article.content).slice(0, 300);
+      const articleBlocks = extractTextBlocks(article.content || article.body || article.article_body);
       return {
         route: `/news/${article.slug}`,
         title: `${article.title} | DripTech News`,
         description,
         heading: article.title,
         intro: description,
+        articleContent: articleBlocks,
+        articleImage: article.featured_image || article.image || article.cover_image || null,
+        articleDate: article.published_at || article.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "NewsArticle",
@@ -880,6 +899,19 @@ const pageBody = (page) => {
         .join("")}</ul><p>External listings are independently maintained and may change. Confirm current price, product specification and units with the supplier.</p></section>`
     : "";
 
+  const articleImageUrl = page.articleImage
+    ? toAbsoluteSiteAssetUrl(page.articleImage, siteUrl)
+    : undefined;
+  const articleImage = articleImageUrl
+    ? `<figure><img src="${escapeHtml(articleImageUrl)}" alt="${escapeHtml(page.heading || "DripTech article")}" width="1200" height="675" decoding="async" /><figcaption>${escapeHtml(page.heading || "DripTech article")}</figcaption></figure>`
+    : "";
+  const articleBody = Array.isArray(page.articleContent) && page.articleContent.length
+    ? `<section data-seo-article-body="true" aria-label="Article content">${page.articleContent.map((block) => `<p>${escapeHtml(block)}</p>`).join("")}</section>`
+    : "";
+  const articleDate = page.articleDate
+    ? `<p><time datetime="${escapeHtml(page.articleDate)}">Published ${escapeHtml(page.articleDate.slice(0, 10))}</time></p>`
+    : "";
+
   const product = page.productDetails;
   const productImage = product?.images?.[0]
     ? `<figure data-seo-product-image="true"><img src="${escapeHtml(product.images[0])}" alt="${escapeHtml(product.name)}" width="900" height="900" fetchpriority="high" decoding="async" /><figcaption>${escapeHtml(product.name)} — irrigation equipment from DripTech Eco-Flow, Kenya.</figcaption></figure>`
@@ -909,7 +941,10 @@ const pageBody = (page) => {
       <p>DripTech Eco-Flow | Irrigation equipment in Kenya</p>
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       ${productImage}
+      ${articleImage}
       <p>${escapeHtml(page.intro)}</p>
+      ${articleDate}
+      ${articleBody}
       ${productFacts}
       ${renderListSection("Features", product?.features, "features")}
       ${renderListSection("Applications", product?.applications, "applications")}
