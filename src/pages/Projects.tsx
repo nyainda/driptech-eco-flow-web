@@ -103,28 +103,29 @@ const getStatusColor = (status?: string) => {
 
 // Components
 const ProjectHero = ({ onGoBack }: { onGoBack: () => void }) => (
-  <section className="py-12 sm:py-16 lg:py-20 bg-background border-b border-border">
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <Button
-        className="mb-6 px-6 py-3 text-base bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground rounded-xl shadow-md group"
-        onClick={onGoBack}
-        aria-label="Go back to previous page"
-      >
-        <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-        Go Back
+  <section className="relative isolate overflow-hidden bg-[hsl(var(--dt-green-900))] text-white">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-20">
+      <div className="absolute -right-16 -top-24 h-80 w-80 rounded-full border border-[hsl(var(--dt-gold-400))] sm:h-[28rem] sm:w-[28rem]" />
+      <div className="absolute -right-2 -top-10 h-64 w-64 rounded-full border border-white/20 sm:h-96 sm:w-96" />
+      <div className="absolute bottom-0 left-0 h-1 w-40 bg-[hsl(var(--dt-gold-400))]" />
+    </div>
+    <div className="dt-container relative py-12 sm:py-16 lg:py-20">
+      <Button variant="outline" onClick={onGoBack} aria-label="Go back to previous page" className="mb-10 border-white/25 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back
       </Button>
-      <div className="text-center max-w-4xl mx-auto">
-        <Badge className="mb-4 bg-muted text-foreground border-border">
-          <Award className="w-4 h-4 mr-2" />
-          Our Success Stories
-        </Badge>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-          <span className="text-accent">Irrigation</span> project examples
+      <div className="max-w-4xl">
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[hsl(var(--dt-gold-400)/0.5)] bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[hsl(var(--dt-gold-400))]">
+          <Award className="h-4 w-4" /> Field work. Real results.
+        </div>
+        <h1 className="storefront-heading max-w-4xl text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl">
+          Irrigation built for <span className="text-[hsl(var(--dt-gold-400))]">real farms.</span>
         </h1>
-        <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-          Browse irrigation-related project records and discuss a system suited
-          to your crop, water source, plot and growing conditions.
-        </p>
+        <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">Explore selected DripTech Eco-Flow installations, from efficient drip systems to tailored farm irrigation solutions across Kenya.</p>
+        <div className="mt-8 flex flex-wrap items-center gap-3 text-sm text-white/70">
+          <span className="inline-flex items-center gap-2"><Droplets className="h-4 w-4 text-[hsl(var(--dt-gold-400))]" /> Water-smart systems</span>
+          <span className="hidden h-1 w-1 rounded-full bg-white/40 sm:block" />
+          <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-[hsl(var(--dt-gold-400))]" /> Projects across Kenya</span>
+        </div>
       </div>
     </div>
   </section>
@@ -138,22 +139,22 @@ interface ProjectCardProps {
 
 const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
   <Card
-    className={`group overflow-hidden bg-background border-border shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-2xl ${viewMode === "list" ? "flex" : ""
+    className={`group overflow-hidden rounded-2xl border border-border bg-card shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-[hsl(var(--dt-green-300))] hover:shadow-[var(--shadow-float)] ${viewMode === "list" ? "flex" : ""
       }`}
     style={{ animationDelay: `${index * 100}ms` }}
   >
     {viewMode === "grid" ? (
       <>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
+        <div className="relative aspect-[5/4] overflow-hidden bg-muted">
           {project.project_images?.length ? (
             <img
               src={project.project_images[0]}
               alt={`Image of ${project.name} project`}
               loading="lazy"
-              className="w-full h-full object-cover transition-all duration-300"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center">
+            <div className="w-full h-full flex h-full w-full items-center justify-center bg-[hsl(var(--dt-green-50))] dark:bg-[hsl(var(--dt-green-900))]">
               <Droplets className="h-16 w-16 text-primary/40" />
             </div>
           )}
@@ -203,7 +204,7 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
               );
               openTrackedWhatsApp(`https://wa.me/254723407849?text=${message}`, "project inquiry");
             }}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all text-sm font-semibold py-3"
+            className="w-full dt-btn-whatsapp w-full rounded-xl shadow-none transition-all hover:-translate-y-0.5 text-sm"
           >
             <span className="mr-2 text-lg">💬</span>
             Inquire About This Project
@@ -665,7 +666,7 @@ const ProjectsList = ({
           <div
             className={
               viewMode === "grid"
-                ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-12"
+                ? "mb-12 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 xl:gap-6"
                 : "space-y-6 mb-12"
             }
           >
