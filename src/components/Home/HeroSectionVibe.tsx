@@ -9,7 +9,22 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { dataService } from "@/services/dataService";
+
+interface HeroProduct {
+  id: string;
+  name: string;
+  category: string;
+  images: string[] | null;
+}
+
+const heroProductCategories = [
+  { category: "drip_irrigation", label: "Drip lines & tape", href: "/products/drip" },
+  { category: "sprinkler_systems", label: "Sprinklers", href: "/products/sprinklers" },
+  { category: "filtration_systems", label: "Filters & pumps", href: "/products/filtration" },
+];
 
 const shopPaths = [
   {
@@ -57,6 +72,43 @@ const planningChecklist = [
 ];
 
 export default function HeroSectionVibe() {
+  const [heroProducts, setHeroProducts] = useState<HeroProduct[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadHeroProducts = async () => {
+      try {
+        const results = await Promise.all(
+          heroProductCategories.map(({ category }) =>
+            dataService.getProducts({ category, inStock: true, limit: 6 }),
+          ),
+        );
+
+        const products = results.flatMap((result, index) => {
+          const category = heroProductCategories[index].category;
+          const rows = Array.isArray(result) ? result : [];
+          const withImages = rows.filter(
+            (product: HeroProduct) =>
+              Array.isArray(product.images) && product.images.some((image) => typeof image === "string" && image.trim()),
+          );
+          const featured = withImages.find((product: any) => product.featured);
+          const selected = featured || withImages[0];
+          return selected ? [{ ...selected, category }] : [];
+        });
+
+        if (!cancelled) setHeroProducts(products);
+      } catch (error) {
+        console.error("Failed to load homepage hero products:", error);
+      }
+    };
+
+    loadHeroProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <section
       className="relative overflow-hidden border-b border-border bg-background"
@@ -150,78 +202,64 @@ export default function HeroSectionVibe() {
               </div>
             </div>
 
-            <aside
-              className="absolute right-5 top-1/2 hidden w-[300px] -translate-y-1/2 overflow-hidden rounded-[24px] border border-white/40 bg-white/90 p-3 shadow-2xl backdrop-blur-md xl:block xl:right-8 xl:w-[340px]"
-              aria-label="DripTech irrigation product highlights"
-            >
-              <div className="flex items-center justify-between px-2 pb-3 pt-1">
-                <div>
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[hsl(var(--dt-green-700))]">
-                    Built for your farm
-                  </p>
-                  <h2 className="mt-1 font-heading text-lg font-bold text-[hsl(var(--dt-green-900))]">
-                    Irrigation essentials
-                  </h2>
-                </div>
-                <span className="rounded-full bg-[hsl(var(--dt-gold-400))] px-2.5 py-1 text-[10px] font-extrabold text-[hsl(var(--dt-green-900))]">
-                  DripTech
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  to="/products/drip"
-                  className="group relative col-span-2 h-[150px] overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-50))]"
-                >
-                  <img
-                    src="/seed-products/dripline_roll.jpg"
-                    alt="Drip irrigation line roll"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-3 pb-3 pt-8 text-sm font-bold text-white">
-                    Drip lines &amp; tape
-                  </span>
-                </Link>
-
-                <Link
-                  to="/products/sprinklers"
-                  className="group relative h-[126px] overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-50))]"
-                >
-                  <img
-                    src="/seed-products/sprinkler.jpg"
-                    alt="Agricultural sprinkler equipment"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-7 text-xs font-bold text-white">
-                    Sprinklers
-                  </span>
-                </Link>
-
-                <Link
-                  to="/products/filters"
-                  className="group relative h-[126px] overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-50))]"
-                >
-                  <img
-                    src="/seed-products/water1.jpg"
-                    alt="Water filtration and irrigation equipment"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-7 text-xs font-bold text-white">
-                    Filters &amp; pumps
-                  </span>
-                </Link>
-              </div>
-
-              <Link
-                to="/products"
-                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--dt-green-900))] px-4 py-3 text-xs font-extrabold text-white transition-colors hover:bg-[hsl(var(--dt-green-800))]"
+            {heroProducts.length > 0 && (
+              <aside
+                className="absolute right-5 top-1/2 hidden w-[300px] -translate-y-1/2 overflow-hidden rounded-[24px] border border-white/40 bg-white/90 p-3 shadow-2xl backdrop-blur-md xl:block xl:right-8 xl:w-[340px]"
+                aria-label="DripTech products from the live catalogue"
               >
-                Explore all products <ArrowRight className="h-4 w-4" />
-              </Link>
-            </aside>
+                <div className="flex items-center justify-between px-2 pb-3 pt-1">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[hsl(var(--dt-green-700))]">
+                      From our catalogue
+                    </p>
+                    <h2 className="mt-1 font-heading text-lg font-bold text-[hsl(var(--dt-green-900))]">
+                      Irrigation essentials
+                    </h2>
+                  </div>
+                  <span className="rounded-full bg-[hsl(var(--dt-gold-400))] px-2.5 py-1 text-[10px] font-extrabold text-[hsl(var(--dt-green-900))]">
+                    DripTech
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  {heroProducts.map((product, index) => {
+                    const categoryInfo = heroProductCategories.find(
+                      (item) => item.category === product.category,
+                    );
+                    const image = product.images?.find(
+                      (value) => typeof value === "string" && value.trim(),
+                    );
+                    if (!image || !categoryInfo) return null;
+
+                    return (
+                      <Link
+                        key={product.id}
+                        to={categoryInfo.href}
+                        className={`group relative h-[132px] overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-50))] ${index === 0 ? "col-span-2 h-[150px]" : ""}`}
+                        aria-label={`Browse ${product.name}`}
+                      >
+                        <img
+                          src={image}
+                          alt={product.name}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-3 pb-3 pt-8 text-xs font-bold text-white">
+                          {product.name}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <Link
+                  to="/products"
+                  className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--dt-green-900))] px-4 py-3 text-xs font-extrabold text-white transition-colors hover:bg-[hsl(var(--dt-green-800))]"
+                >
+                  Explore all products <ArrowRight className="h-4 w-4" />
+                </Link>
+              </aside>
+            )}
           </div>
         </div>
       </div>
