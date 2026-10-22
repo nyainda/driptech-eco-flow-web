@@ -88,18 +88,16 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
   const applications = product.applications?.filter(Boolean) || [];
 
   const whatsappUrl = useMemo(() => {
-    const variant = selectedVariant ? \` — \${selectedVariant.name}\` : "";
-    const price = displayPrice ? \` (\${formatPrice(displayPrice)} each)\` : "";
-    return \`https://wa.me/254723407849?text=\${encodeURIComponent(
-      \`Hi DripTech Eco-Flow! I'd like to order \${quantity} × \${product.name}\${variant}\${price}. Please confirm availability, delivery options and total cost.\`,
-    )}\`;
+    const variant = selectedVariant ? " — " + selectedVariant.name : "";
+    const price = displayPrice ? " (" + formatPrice(displayPrice) + " each)" : "";
+    const message = "Hi DripTech Eco-Flow! I would like to order " + quantity + " × " + product.name + variant + price + ". Please confirm availability, delivery options and total cost.";
+    return "https://wa.me/254723407849?text=" + encodeURIComponent(message);
   }, [displayPrice, product.name, quantity, selectedVariant]);
 
   const quoteUrl = useMemo(() => {
-    const variant = selectedVariant ? \` — \${selectedVariant.name}\` : "";
-    return \`https://wa.me/254723407849?text=\${encodeURIComponent(
-      \`Hi DripTech Eco-Flow, please prepare a formal quotation for \${quantity} × \${product.name}\${variant}. Please include the current price, delivery cost and availability.\`,
-    )}\`;
+    const variant = selectedVariant ? " — " + selectedVariant.name : "";
+    const message = "Hi DripTech Eco-Flow, please prepare a formal quotation for " + quantity + " × " + product.name + variant + ". Please include the current price, delivery cost and availability.";
+    return "https://wa.me/254723407849?text=" + encodeURIComponent(message);
   }, [product.name, quantity, selectedVariant]);
 
   const showImage = (index: number) => {
