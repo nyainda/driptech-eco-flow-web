@@ -87,6 +87,34 @@ for (const route of routes) {
     (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("Product"),
   );
   const isProductDetailRoute = /^\/products\/[^/]+\/[^/]+$/.test(route);
+  if (isProductDetailRoute) {
+    // Product pages must be useful in the first HTML response, not only after
+    // React fetches and renders the product detail view in the browser.
+    if (!html.includes('data-seo-product="true"')) {
+      failures.push(route + ": missing server-rendered product content marker");
+    }
+    if (!html.includes('data-seo-product-section="details"')) {
+      failures.push(route + ": product details must be present in initial HTML");
+    }
+    if (!html.includes("<h2>Product details</h2>")) {
+      failures.push(route + ": product details heading missing from initial HTML");
+    }
+    if (html.includes('data-seo-product-image="true"')) {
+      const productImage = html.match(/<figure data-seo-product-image="true"><img\s+src="([^"]+)"\s+alt="([^"]*)"/i);
+      if (!productImage || !/^https?:\/\//i.test(productImage[1]) || !productImage[2].trim()) {
+        failures.push(route + ": server-rendered product image must have an absolute URL and descriptive alt text");
+      }
+    }
+    if (html.includes('data-seo-product-section="features"') && !/<section data-seo-product-section="features"><h2>Features<\/h2><ul><li>/.test(html)) {
+      failures.push(route + ": product features section is empty or malformed");
+    }
+    if (html.includes('data-seo-product-section="applications"') && !/<section data-seo-product-section="applications"><h2>Applications<\/h2><ul><li>/.test(html)) {
+      failures.push(route + ": product applications section is empty or malformed");
+    }
+    if (html.includes('data-seo-product-section="specifications"') && !/<section data-seo-product-section="specifications"><h2>Technical specifications<\/h2><dl><div>/.test(html)) {
+      failures.push(route + ": technical specifications section is empty or malformed");
+    }
+  }
   if (isProductDetailRoute && productSchemas.length === 0 && !parsedSchemas.some((schema) =>
     (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("WebPage"),
   )) {
