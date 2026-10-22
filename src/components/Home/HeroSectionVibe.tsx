@@ -150,38 +150,76 @@ export default function HeroSectionVibe() {
               </div>
             </div>
 
-            <aside className="absolute right-5 top-5 hidden w-[235px] rounded-2xl border border-white/30 bg-[hsl(var(--dt-green-900)/0.95)] p-4 text-white shadow-xl backdrop-blur-md lg:block xl:right-8 xl:top-8 xl:w-[255px]">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[hsl(var(--dt-gold-400))]">
-                Before you choose
-              </p>
-              <h2 className="mt-2 font-heading text-xl font-bold leading-tight">
-                Plan around your farm.
-              </h2>
-              <p className="mt-2 text-xs leading-5 text-white/70">
-                A suitable setup starts with the crop, water supply and what
-                needs to be included in the quote.
-              </p>
-              <div className="mt-4 space-y-3 border-t border-white/15 pt-4">
-                {planningChecklist.map(({ title, detail, icon: Icon }) => (
-                  <div key={title} className="flex items-start gap-2.5">
-                    <Icon
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--dt-gold-400))]"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <p className="text-[11px] font-bold">{title}</p>
-                      <p className="mt-0.5 text-[10px] leading-4 text-white/65">
-                        {detail}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+            <aside
+              className="absolute right-5 top-1/2 hidden w-[300px] -translate-y-1/2 overflow-hidden rounded-[24px] border border-white/40 bg-white/90 p-3 shadow-2xl backdrop-blur-md lg:block xl:right-8 xl:w-[340px]"
+              aria-label="DripTech irrigation product highlights"
+            >
+              <div className="flex items-center justify-between px-2 pb-3 pt-1">
+                <div>
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[hsl(var(--dt-green-700))]">
+                    Built for your farm
+                  </p>
+                  <h2 className="mt-1 font-heading text-lg font-bold text-[hsl(var(--dt-green-900))]">
+                    Irrigation essentials
+                  </h2>
+                </div>
+                <span className="rounded-full bg-[hsl(var(--dt-gold-400))] px-2.5 py-1 text-[10px] font-extrabold text-[hsl(var(--dt-green-900))]">
+                  DripTech
+                </span>
               </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  to="/products/drip"
+                  className="group relative col-span-2 h-[150px] overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-50))]"
+                >
+                  <img
+                    src="/seed-products/dripline_roll.jpg"
+                    alt="Drip irrigation line roll"
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-3 pb-3 pt-8 text-sm font-bold text-white">
+                    Drip lines &amp; tape
+                  </span>
+                </Link>
+
+                <Link
+                  to="/products/sprinklers"
+                  className="group relative h-[126px] overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-50))]"
+                >
+                  <img
+                    src="/seed-products/sprinkler.jpg"
+                    alt="Agricultural sprinkler equipment"
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-7 text-xs font-bold text-white">
+                    Sprinklers
+                  </span>
+                </Link>
+
+                <Link
+                  to="/products/filters"
+                  className="group relative h-[126px] overflow-hidden rounded-2xl bg-[hsl(var(--dt-green-50))]"
+                >
+                  <img
+                    src="/seed-products/water1.jpg"
+                    alt="Water filtration and irrigation equipment"
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-7 text-xs font-bold text-white">
+                    Filters &amp; pumps
+                  </span>
+                </Link>
+              </div>
+
               <Link
-                to="/services"
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2.5 text-xs font-bold transition-colors hover:bg-white/10"
+                to="/products"
+                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--dt-green-900))] px-4 py-3 text-xs font-extrabold text-white transition-colors hover:bg-[hsl(var(--dt-green-800))]"
               >
-                Explore service options <ArrowRight className="h-3.5 w-3.5" />
+                Explore all products <ArrowRight className="h-4 w-4" />
               </Link>
             </aside>
           </div>
