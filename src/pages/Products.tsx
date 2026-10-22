@@ -969,23 +969,16 @@ const Products = () => {
           </div>
           <section className="dt-section pt-0">
             <div className="dt-container">
-              <div className="border-b border-border pb-7 sm:pb-9">
-                <p className="storefront-eyebrow">{categoryLabel}</p>
-                <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-                  <div>
-                    <h1 className="storefront-heading max-w-4xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">{detailProduct.name}</h1>
-                    <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">{detailDescription}</p>
-                  </div>
-                  <div className="min-w-[220px] border-l-0 border-border lg:border-l lg:pl-7">
-                    <p className="font-mono text-xl font-bold text-foreground sm:text-2xl">{formatPrice(detailPrice)}</p>
-                    <p className={`mt-1 text-sm font-medium ${detailProduct.in_stock ? "text-primary" : "text-muted-foreground"}`}>{detailProduct.in_stock ? "In stock — confirm delivery" : "Contact us for availability"}</p>
-                    <WhatsAppContact currentProduct={{ name: detailProduct.name, model_number: detailProduct.model_number }} variant="button" className="mt-4 w-full rounded-md shadow-none" />
-                  </div>
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground">Browsing <span className="text-foreground">{categoryLabel}</span></p>
+                  <p className="mt-1 text-xs text-muted-foreground">Product details, options and technical information</p>
                 </div>
+                <Link to={`/products/${category || ""}`} className="text-xs font-bold text-primary transition hover:underline">
+                  Back to products <span aria-hidden="true">→</span>
+                </Link>
               </div>
-              <div className="mt-8 rounded-3xl border border-border bg-card p-4 shadow-sm sm:mt-10 sm:p-7 lg:p-9">
-                <ProductDetailView product={detailProduct} />
-              </div>
+              <ProductDetailView product={detailProduct} />
 
               <section className="mt-12 border-t border-border pt-10 sm:mt-16 sm:pt-14">
                 <ProductRecommendations
