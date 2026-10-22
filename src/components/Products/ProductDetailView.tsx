@@ -14,6 +14,9 @@ import {
   Leaf,
   CircleCheck,
   ArrowUpRight,
+  Minus,
+  Plus,
+  FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
@@ -67,6 +70,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
   const images = product.images?.filter(Boolean) || [];
   const hasVariants = Boolean(product.variants?.length);
   const [activeImage, setActiveImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
     product.variants?.[0] || null,
   );
@@ -84,12 +88,19 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
   const applications = product.applications?.filter(Boolean) || [];
 
   const whatsappUrl = useMemo(() => {
-    const variant = selectedVariant ? ` — ${selectedVariant.name}` : "";
-    const price = displayPrice ? ` (${formatPrice(displayPrice)})` : "";
-    return `https://wa.me/254723407849?text=${encodeURIComponent(
-      `Hi DripTech Eco-Flow! I'm interested in ${product.name}${variant}${price}. Please confirm availability and delivery options.`,
-    )}`;
-  }, [displayPrice, product.name, selectedVariant]);
+    const variant = selectedVariant ? \` — \${selectedVariant.name}\` : "";
+    const price = displayPrice ? \` (\${formatPrice(displayPrice)} each)\` : "";
+    return \`https://wa.me/254723407849?text=\${encodeURIComponent(
+      \`Hi DripTech Eco-Flow! I'd like to order \${quantity} × \${product.name}\${variant}\${price}. Please confirm availability, delivery options and total cost.\`,
+    )}\`;
+  }, [displayPrice, product.name, quantity, selectedVariant]);
+
+  const quoteUrl = useMemo(() => {
+    const variant = selectedVariant ? \` — \${selectedVariant.name}\` : "";
+    return \`https://wa.me/254723407849?text=\${encodeURIComponent(
+      \`Hi DripTech Eco-Flow, please prepare a formal quotation for \${quantity} × \${product.name}\${variant}. Please include the current price, delivery cost and availability.\`,
+    )}\`;
+  }, [product.name, quantity, selectedVariant]);
 
   const showImage = (index: number) => {
     if (!images.length) return;
@@ -263,17 +274,53 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                 </div>
               )}
 
-              <div className="mt-6 grid gap-3">
-                <Button
-                  size="lg"
-                  className="h-12 min-h-12 w-full rounded-xl text-sm font-extrabold shadow-sm transition-transform hover:-translate-y-0.5"
-                  onClick={() => openTrackedWhatsApp(whatsappUrl, "product detail page")}
-                >
-                  <MessageCircle className="mr-1 h-5 w-5" />
-                  Ask about this product on WhatsApp
-                  <ArrowUpRight className="ml-auto h-4 w-4" />
-                </Button>
-                <p className="text-center text-xs leading-5 text-muted-foreground">
+              <div className="mt-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <label htmlFor="product-quantity" className="text-sm font-bold text-foreground">Quantity</label>
+                  <div className="inline-flex h-10 items-center overflow-hidden rounded-lg border border-border bg-background">
+                    <button
+                      type="button"
+                      aria-label="Decrease quantity"
+                      onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                      disabled={quantity <= 1}
+                      className="flex h-full w-10 items-center justify-center text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <span id="product-quantity" aria-live="polite" className="flex h-full min-w-12 items-center justify-center border-x border-border px-3 text-sm font-bold tabular-nums">{quantity}</span>
+                    <button
+                      type="button"
+                      aria-label="Increase quantity"
+                      onClick={() => setQuantity((current) => Math.min(999, current + 1))}
+                      disabled={quantity >= 999}
+                      className="flex h-full w-10 items-center justify-center text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-[1.25fr_0.9fr]">
+                  <Button
+                    size="lg"
+                    className="h-12 min-h-12 w-full rounded-xl bg-[hsl(var(--dt-whatsapp))] text-sm font-extrabold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
+                    onClick={() => openTrackedWhatsApp(whatsappUrl, "product detail page order")}
+                  >
+                    <MessageCircle className="mr-2 h-5 w-5" />
+                    Order on WhatsApp
+                    <ArrowUpRight className="ml-auto h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-12 min-h-12 w-full rounded-xl border-2 text-sm font-bold"
+                    onClick={() => openTrackedWhatsApp(quoteUrl, "product detail page quote request")}
+                  >
+                    <FileCheck className="mr-2 h-4 w-4 shrink-0" />
+                    Request a Quote
+                  </Button>
+                </div>
+                <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
                   Confirm stock, delivery and bulk-order pricing with our team.
                 </p>
               </div>
