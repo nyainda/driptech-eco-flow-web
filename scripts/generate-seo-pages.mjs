@@ -750,6 +750,32 @@ for (const route of sitemapRoutes) {
 
 allPages.push(...dynamicPages);
 
+// Connect the existing catalogue URLs with crawlable HTML links. Category pages
+// list a manageable set of real products, and product pages link to related
+// products from the same category instead of relying on JavaScript navigation.
+const productPages = allPages.filter((page) => page.productDetails);
+for (const page of allPages) {
+  if (page.route === "/products") {
+    page.catalogLinks = productPages.slice(0, 12).map((product) => ({
+      label: product.heading,
+      href: product.route,
+    }));
+  } else if (/^\/products\/[^/]+$/.test(page.route)) {
+    const category = page.route.split("/")[2];
+    page.catalogLinks = productPages
+      .filter((product) => product.route.split("/")[2] === category)
+      .slice(0, 12)
+      .map((product) => ({ label: product.heading, href: product.route }));
+  }
+  if (page.productDetails) {
+    const category = page.route.split("/")[2];
+    page.relatedProductLinks = productPages
+      .filter((product) => product.route !== page.route && product.route.split("/")[2] === category)
+      .slice(0, 6)
+      .map((product) => ({ label: product.heading, href: product.route }));
+  }
+}
+
 // Catch duplicate static routes before they silently overwrite one another.
 const seenRoutes = new Set();
 for (const page of allPages) {
@@ -816,6 +842,17 @@ const pageBody = (page) => {
         <a href="/contact">Contact DripTech</a>
       </nav>`;
 
+  const catalogNav = (Array.isArray(page.catalogLinks) && page.catalogLinks.length)
+    ? `<nav aria-label="Products in this catalogue"><h2>Browse available products</h2><ul>${page.catalogLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
+  const relatedProductsNav = (Array.isArray(page.relatedProductLinks) && page.relatedProductLinks.length)
+    ? `<nav aria-label="Related products"><h2>Related products</h2><ul>${page.relatedProductLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
+
   const sourceLinks = (Array.isArray(page.sources) ? page.sources : []).filter((source) =>
     typeof source?.label === "string" && source.label.trim() &&
     typeof source?.url === "string" && /^https:\/\//i.test(source.url),
@@ -863,6 +900,8 @@ const pageBody = (page) => {
       ${variants}
       ${productContact}
       ${sections}
+      ${catalogNav}
+      ${relatedProductsNav}
       ${sourceNav}
       ${relatedNav}
     </main>`;
