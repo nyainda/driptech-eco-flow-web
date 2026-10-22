@@ -754,6 +754,13 @@ allPages.push(...dynamicPages);
 // list a manageable set of real products, and product pages link to related
 // products from the same category instead of relying on JavaScript navigation.
 const productPages = allPages.filter((page) => page.productDetails);
+const productPagesByCategory = new Map();
+for (const product of productPages) {
+  const category = product.route.split("/")[2];
+  const group = productPagesByCategory.get(category) || [];
+  group.push(product);
+  productPagesByCategory.set(category, group);
+}
 for (const page of allPages) {
   if (page.route === "/products") {
     page.catalogLinks = productPages.slice(0, 12).map((product) => ({
@@ -762,17 +769,27 @@ for (const page of allPages) {
     }));
   } else if (/^\/products\/[^/]+$/.test(page.route)) {
     const category = page.route.split("/")[2];
-    page.catalogLinks = productPages
-      .filter((product) => product.route.split("/")[2] === category)
+    page.catalogLinks = (productPagesByCategory.get(category) || [])
       .slice(0, 12)
       .map((product) => ({ label: product.heading, href: product.route }));
   }
   if (page.productDetails) {
     const category = page.route.split("/")[2];
-    page.relatedProductLinks = productPages
-      .filter((product) => product.route !== page.route && product.route.split("/")[2] === category)
-      .slice(0, 6)
-      .map((product) => ({ label: product.heading, href: product.route }));
+    const group = productPagesByCategory.get(category) || [];
+    const index = group.findIndex((product) => product.route === page.route);
+    // Always link to adjacent products so the whole category is crawlable as a
+    // chain, even when the category contains hundreds of products.
+    const adjacent = [
+      ...(index > 0 ? [group[index - 1]] : []),
+      ...(index >= 0 && index + 1 < group.length ? [group[index + 1]] : []),
+    ];
+    const related = group.filter((product) =>
+      product.route !== page.route && !adjacent.some((item) => item.route === product.route),
+    ).slice(0, 4);
+    page.relatedProductLinks = [...adjacent, ...related].map((product) => ({
+      label: product.heading,
+      href: product.route,
+    }));
   }
 }
 
