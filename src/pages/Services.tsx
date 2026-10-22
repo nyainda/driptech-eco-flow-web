@@ -126,6 +126,13 @@ const Services = () => {
                 Book a Technician
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
+              <a
+                href="/irrigation-design-consultation-kenya"
+                className="inline-flex items-center justify-center rounded-md border border-primary/30 bg-background px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/5"
+              >
+                Irrigation design & consultation details
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
             </div>
           </div>
         </section>
