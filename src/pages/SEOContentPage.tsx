@@ -55,6 +55,7 @@ const SEOContentPage = () => {
         schema={[
           buildLocalBusinessSchema(),
           breadcrumbSchema,
+          ...(page.schema ? [page.schema] : []),
           {
             "@context": "https://schema.org",
             "@type": "Article",
