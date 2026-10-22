@@ -425,7 +425,7 @@ const ProjectManagement = () => {
       </div>
 
       <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-muted/30 p-3">
-        {/* Custom file import */
+        {/* Custom file import */}
         <ProjectImporter onImported={fetchProjects} />
       </div>
 
