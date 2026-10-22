@@ -603,12 +603,57 @@ const dynamicPages = [
       const images = (Array.isArray(product.images) ? product.images : [])
         .map((image) => toAbsoluteSiteAssetUrl(image, siteUrl))
         .filter((url) => typeof url === "string");
+      const features = Array.isArray(product.features)
+        ? product.features.map(stripHtml).filter(Boolean)
+        : [];
+      const applications = Array.isArray(product.applications)
+        ? product.applications.map(stripHtml).filter(Boolean)
+        : [];
+      const specifications = Array.isArray(product.specifications)
+        ? product.specifications
+            .map((item) => ({
+              name: stripHtml(item?.name || item?.label || ""),
+              value: stripHtml(item?.value ?? ""),
+              unit: stripHtml(item?.unit || ""),
+            }))
+            .filter((item) => item.name && item.value)
+        : product.specifications && typeof product.specifications === "object"
+          ? Object.entries(product.specifications)
+              .map(([name, value]) => ({
+                name: stripHtml(name),
+                value: stripHtml(typeof value === "object" && value !== null ? JSON.stringify(value) : String(value ?? "")),
+                unit: "",
+              }))
+              .filter((item) => item.name && item.value)
+          : [];
+      const variants = Array.isArray(product.variants)
+        ? product.variants
+            .map((variant) => ({
+              name: stripHtml(variant?.name || ""),
+              price: Number(variant?.price),
+              inStock: Boolean(variant?.in_stock),
+            }))
+            .filter((variant) => variant.name)
+        : [];
       return {
         route,
         title: `${product.name} Kenya | Price & Specifications | DripTech`,
-        description,
+        description: description.slice(0, 300),
         heading: product.name,
         intro: description,
+        image: images[0] || undefined,
+        imageIsAbsolute: Boolean(images[0]),
+        productDetails: {
+          name: product.name,
+          modelNumber: stripHtml(product.model_number || ""),
+          price: Number.isFinite(price) && price > 0 ? price : null,
+          inStock: Boolean(product.in_stock),
+          images,
+          features,
+          applications,
+          specifications,
+          variants,
+        },
         // Only use Product structured data when there is a real, positive
         // catalog price to support a valid Offer. Never invent a price,
         // review, or rating just to qualify for a rich result.
@@ -781,11 +826,42 @@ const pageBody = (page) => {
         .join("")}</ul><p>External listings are independently maintained and may change. Confirm current price, product specification and units with the supplier.</p></section>`
     : "";
 
+  const product = page.productDetails;
+  const productImage = product?.images?.[0]
+    ? `<figure><img src="${escapeHtml(product.images[0])}" alt="${escapeHtml(product.name)}" width="900" height="900" fetchpriority="high" decoding="async" /><figcaption>${escapeHtml(product.name)} — irrigation equipment from DripTech Eco-Flow, Kenya.</figcaption></figure>`
+    : "";
+  const productFacts = product
+    ? `<section aria-label="Product details"><h2>Product details</h2>
+        ${product.modelNumber ? `<p><strong>Model:</strong> ${escapeHtml(product.modelNumber)}</p>` : ""}
+        ${product.price ? `<p><strong>Listed price:</strong> KSh ${escapeHtml(product.price.toLocaleString("en-KE"))}</p>` : `<p><strong>Pricing:</strong> Request a current quotation from DripTech Eco-Flow.</p>`}
+        <p><strong>Availability:</strong> ${product.inStock ? "Listed as in stock; confirm current availability before ordering." : "Contact DripTech to confirm current availability."}</p>
+      </section>`
+    : "";
+  const renderListSection = (heading, values) => values?.length
+    ? `<section><h2>${heading}</h2><ul>${values.map((value) => `<li>${escapeHtml(value)}</li>`).join("")}</ul></section>`
+    : "";
+  const specifications = product?.specifications?.length
+    ? `<section><h2>Technical specifications</h2><dl>${product.specifications.map((spec) => `<div><dt><strong>${escapeHtml(spec.name)}</strong></dt><dd>${escapeHtml(spec.value)}${spec.unit ? " " + escapeHtml(spec.unit) : ""}</dd></div>`).join("")}</dl></section>`
+    : "";
+  const variants = product?.variants?.length
+    ? `<section><h2>Available options</h2><ul>${product.variants.map((variant) => `<li>${escapeHtml(variant.name)}${variant.price > 0 ? " — KSh " + escapeHtml(variant.price.toLocaleString("en-KE")) : ""}</li>`).join("")}</ul></section>`
+    : "";
+  const productContact = product
+    ? `<p><a href="/contact">Ask DripTech about this product</a> for confirmation of current price, specifications, stock and delivery options.</p>`
+    : "";
+
   return `
     <main data-seo-shell="true">
-      <p>DripTech Kenya</p>
+      <p>DripTech Eco-Flow | Irrigation equipment in Kenya</p>
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
+      ${productImage}
       <p>${escapeHtml(page.intro)}</p>
+      ${productFacts}
+      ${renderListSection("Features", product?.features)}
+      ${renderListSection("Applications", product?.applications)}
+      ${specifications}
+      ${variants}
+      ${productContact}
       ${sections}
       ${sourceNav}
       ${relatedNav}
