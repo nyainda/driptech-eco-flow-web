@@ -95,8 +95,8 @@ export default function HomeEngineeringServices() {
           <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <div className="relative h-48 overflow-hidden sm:h-64">
               <img
-                src="/seed-products/field_drip.jpg"
-                alt="Drip irrigation laid out across a cultivated field"
+                src="/engineering/drip-irrigation-layout.svg"
+                alt="CAD-style conceptual drip irrigation layout showing four irrigation zones, mainline, sub-main, drip laterals, tank, pump and filter"
                 loading="lazy"
                 decoding="async"
                 className="h-full w-full object-cover"
