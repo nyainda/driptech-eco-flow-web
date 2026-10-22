@@ -151,7 +151,7 @@ export default function HeroSectionVibe() {
             </div>
 
             <aside
-              className="absolute right-5 top-1/2 hidden w-[300px] -translate-y-1/2 overflow-hidden rounded-[24px] border border-white/40 bg-white/90 p-3 shadow-2xl backdrop-blur-md lg:block xl:right-8 xl:w-[340px]"
+              className="absolute right-5 top-1/2 hidden w-[300px] -translate-y-1/2 overflow-hidden rounded-[24px] border border-white/40 bg-white/90 p-3 shadow-2xl backdrop-blur-md xl:block xl:right-8 xl:w-[340px]"
               aria-label="DripTech irrigation product highlights"
             >
               <div className="flex items-center justify-between px-2 pb-3 pt-1">
