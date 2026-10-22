@@ -88,8 +88,8 @@ const Services = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Irrigation Services Kenya | Installation, Maintenance & Design - DripTech Eco Flow"
-        description="Professional irrigation services in Kenya: drip irrigation installation, sprinkler system setup, maintenance, design, consultation. Expert irrigation contractors for farms, greenhouses, commercial properties. Nationwide service."
+        title="Irrigation Engineering Design & Consultation Kenya | DripTech Eco-Flow"
+        description="Irrigation engineering design and consultation in Kenya for drip and sprinkler layouts, water-source and pumping requirements, farm planning, installation and technical support from DripTech Eco-Flow."
         image="https://www.dripstech.co.ke/seed-products/field_drip.jpg"
       />
       <Header />
@@ -126,6 +126,13 @@ const Services = () => {
                 Book a Technician
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
+              <a
+                href="/irrigation-design-consultation-kenya"
+                className="inline-flex items-center justify-center rounded-md border border-primary/30 bg-background px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/5"
+              >
+                Irrigation design & consultation details
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
             </div>
           </div>
         </section>

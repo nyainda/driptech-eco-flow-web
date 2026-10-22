@@ -1658,5 +1658,95 @@
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "irrigation-design-consultation-kenya",
+    "title": "Irrigation System Design & Engineering Consultation Kenya | DripTech Eco-Flow",
+    "description": "Get irrigation system design and engineering consultation in Kenya. DripTech Eco-Flow helps plan drip and sprinkler layouts, water-source and pumping requirements, filtration, pipe sizing and farm irrigation systems.",
+    "h1": "Irrigation system design and engineering consultation in Kenya",
+    "intro": "DripTech Eco-Flow provides irrigation equipment alongside engineering guidance to help farms plan practical water-delivery systems. Discuss your crop, field dimensions, water source and project goals with our team to identify the design information and equipment your project needs.",
+    "sections": [
+      {
+        "heading": "Custom drip and sprinkler irrigation layouts",
+        "paragraphs": [
+          "An irrigation layout should reflect the farm boundary, crop rows, spacing, elevation, available water and the way the field will be divided into operating zones. Our team can discuss the requirements for a practical drip or sprinkler system layout before equipment is selected.",
+          "A CAD-style layout can help communicate the proposed field zones, mainline and sub-main routes, drip laterals, valves, filtration and water-supply equipment. Final drawings and specifications must be prepared or verified against the actual site information."
+        ],
+        "bullets": [
+          "Farm and crop layout planning",
+          "Dripline or sprinkler selection and spacing",
+          "Mainline, sub-main and zone planning",
+          "Filtration, valves and water-distribution components"
+        ]
+      },
+      {
+        "heading": "Water source, pumping and filtration assessment",
+        "paragraphs": [
+          "A dependable irrigation system starts with understanding the available water supply. Share the source and any known flow or yield information so the team can discuss storage, pumping, filtration and the water delivery requirements for the field.",
+          "Pump selection and pipe sizing depend on measured flow, pressure, elevation, pipe lengths and system demand. Final equipment selection should be checked using project-specific calculations rather than a generic example layout."
+        ]
+      },
+      {
+        "heading": "What to share before an engineering consultation",
+        "bullets": [
+          "Farm location and approximate area or field dimensions",
+          "Crop type, row spacing and planting arrangement",
+          "Water source, known yield or flow, and storage details",
+          "Power availability and any existing pump details",
+          "Photos, a sketch or an existing farm layout if available"
+        ],
+        "paragraphs": [
+          "These details help the team understand your project and advise on the next steps. If some measurements are not yet available, start with what you know and ask what information should be collected."
+        ]
+      },
+      {
+        "heading": "Request irrigation design guidance",
+        "paragraphs": [
+          "Contact DripTech Eco-Flow to discuss irrigation design, water-source and pumping requirements, farm planning, equipment supply and installation support. The exact scope, site assessment requirements and deliverables can be agreed for your project."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Explore irrigation services",
+        "href": "/services"
+      },
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Compare complete irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Contact DripTech Eco-Flow",
+        "href": "/contact"
+      }
+    ],
+    "image": "/engineering/drip-irrigation-layout.svg",
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Irrigation System Design and Engineering Consultation",
+      "serviceType": [
+        "Drip irrigation system design",
+        "Sprinkler irrigation layout planning",
+        "Water-source and pumping assessment",
+        "Farm irrigation consultation"
+      ],
+      "description": "Get irrigation system design and engineering consultation in Kenya. DripTech Eco-Flow helps plan drip and sprinkler layouts, water-source and pumping requirements, filtration, pipe sizing and farm irrigation systems.",
+      "url": "https://www.dripstech.co.ke/irrigation-design-consultation-kenya",
+      "image": "https://www.dripstech.co.ke/engineering/drip-irrigation-layout.svg",
+      "provider": {
+        "@type": "Organization",
+        "name": "DripTech Eco-Flow",
+        "url": "https://www.dripstech.co.ke/"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Kenya"
+      }
+    }
   }
 ]
