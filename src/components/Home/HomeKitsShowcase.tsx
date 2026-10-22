@@ -129,7 +129,7 @@ export default function HomeKitsShowcase() {
                           <img
                             src={images[0]}
                             alt={kit.name}
-                            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.04]"
                             loading="lazy"
                             decoding="async"
                           />

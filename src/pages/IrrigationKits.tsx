@@ -778,7 +778,7 @@ const IrrigationKits = () => {
                           <img
                             src={imageUrl}
                             alt={kit.name}
-                            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.035]"
+                            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.035]"
                             loading="lazy"
                             decoding="async"
                           />
