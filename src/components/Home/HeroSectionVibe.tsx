@@ -170,13 +170,13 @@ export default function HeroSectionVibe() {
               </div>
 
               <a
-                href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! I need help choosing irrigation equipment.")}
+                href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech Eco-Flow, I would like to speak with your engineers about irrigation system design and consultation.")}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-3 inline-flex items-center gap-2 rounded-md text-xs font-bold text-foreground underline decoration-[hsl(var(--dt-green-700)/0.35)] underline-offset-4 transition-colors hover:text-primary sm:text-sm"
               >
                 <MessageCircle className="h-4 w-4" />
-                Not sure where to start? Chat with DripTech
+                Need a system designed? Talk to our engineers
               </a>
 
               <div className="mt-6 grid max-w-2xl grid-cols-2 gap-2 border-t border-foreground/15 pt-5 sm:mt-7 sm:grid-cols-4 sm:gap-3">
