@@ -106,7 +106,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
     <div className="space-y-8 sm:space-y-12">
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-8">
         <section aria-label="Product images" className="min-w-0">
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <div className="absolute left-4 top-4 z-10">
               <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold shadow-sm ${
                 isInStock
@@ -168,7 +168,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                   onClick={() => showImage(index)}
                   aria-label={`View product image ${index + 1}`}
                   aria-pressed={activeImage === index}
-                  className={`overflow-hidden rounded-xl border bg-white p-1.5 transition-all sm:p-2 ${
+                  className={`overflow-hidden rounded-xl border bg-card p-1.5 transition-all sm:p-2 ${
                     activeImage === index
                       ? "border-primary ring-2 ring-primary/20"
                       : "border-border hover:border-primary/60"
@@ -266,7 +266,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
               <div className="mt-6 grid gap-3">
                 <Button
                   size="lg"
-                  className="h-13 min-h-12 w-full rounded-xl text-sm font-extrabold shadow-sm transition-transform hover:-translate-y-0.5"
+                  className="h-12 min-h-12 w-full rounded-xl text-sm font-extrabold shadow-sm transition-transform hover:-translate-y-0.5"
                   onClick={() => openTrackedWhatsApp(whatsappUrl, "product detail page")}
                 >
                   <MessageCircle className="mr-1 h-5 w-5" />
