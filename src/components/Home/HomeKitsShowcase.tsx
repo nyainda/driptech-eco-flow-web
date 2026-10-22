@@ -124,12 +124,12 @@ export default function HomeKitsShowcase() {
 
                   return (
                     <article key={kit.id} className="group flex min-w-0 flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md">
-                      <div className="relative aspect-[4/3] overflow-hidden bg-[hsl(var(--dt-stone-100))]">
+                      <div className="relative aspect-[4/3] min-h-[170px] overflow-hidden bg-[hsl(var(--dt-stone-100))] sm:min-h-[190px] lg:min-h-[210px]">
                         {images[0] ? (
                           <img
                             src={images[0]}
                             alt={kit.name}
-                            className="h-full w-full object-contain p-3 transition-transform duration-500 group-hover:scale-[1.04]"
+                            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
                             loading="lazy"
                             decoding="async"
                           />

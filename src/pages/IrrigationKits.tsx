@@ -773,7 +773,7 @@ const IrrigationKits = () => {
                     onClick={() => handleKitSelect(kit)}
                   >
                     <div className="relative overflow-hidden border-b border-[hsl(var(--dt-stone-200))] bg-[hsl(var(--dt-stone-100)/0.7)]">
-                      <div className="aspect-[4/3] overflow-hidden p-4 sm:p-5">
+                      <div className="aspect-[4/3] min-h-[240px] overflow-hidden sm:min-h-[280px] lg:min-h-[300px]">
                         {imageUrl ? (
                           <img
                             src={imageUrl}
