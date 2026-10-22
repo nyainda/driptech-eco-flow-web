@@ -531,11 +531,18 @@ const Header = () => {
             </div>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1.5 font-bold text-foreground shadow-sm">
-                <span className="flex h-5 min-w-9 items-center justify-center rounded-md bg-[#2E7D32] px-1.5 text-[9px] font-black tracking-[0.08em] text-white shadow-sm">
-                  M-PESA
+              <div
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1.5 font-bold text-foreground shadow-sm"
+                aria-label="Powered by Blue Digital Solutions"
+                title="Powered by Blue Digital Solutions"
+              >
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                  <Zap className="h-3 w-3" aria-hidden="true" />
                 </span>
-                <span className="hidden sm:inline text-[10px] text-muted-foreground">Accepted</span>
+                <span className="text-[10px] sm:text-[11px]">
+                  <span className="text-muted-foreground font-medium">Powered by </span>
+                  <span className="font-extrabold">Blue Digital</span>
+                </span>
               </div>
 
               <span className="hidden h-5 w-px bg-border lg:block" aria-hidden="true" />
