@@ -398,21 +398,18 @@ const ProjectManagement = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center mb-8">
+    <div className="space-y-7">
+      <div className="flex flex-col gap-5 border-b border-border pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-            Project Management
-          </h2>
-          <p className="text-muted-foreground">
-            Manage your irrigation project portfolio and case studies
-          </p>
+          <p className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[hsl(var(--dt-gold-600))]">Portfolio workspace</p>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Project management</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Turn completed installations into a polished portfolio. Keep project details, imagery and featured work organised here.</p>
         </div>
         <div className="flex gap-2">
           <AIProjectGenerator onGenerate={handleAIGenerated} />
           <Button
             onClick={() => setShowAddForm(true)}
-            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+            className="dt-btn-primary rounded-xl shadow-none"
           >
             <Plus className="mr-2 h-4 w-4" />
             New Project
@@ -420,14 +417,21 @@ const ProjectManagement = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        {/* Custom file import */}
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <Card className="rounded-2xl border-border shadow-none"><CardContent className="flex items-center gap-3 p-4"><span className="rounded-xl bg-primary/10 p-2.5 text-primary"><TrendingUp className="h-5 w-5" /></span><div><p className="text-2xl font-bold text-foreground">{projects.length}</p><p className="text-xs text-muted-foreground">Total projects</p></div></CardContent></Card>
+        <Card className="rounded-2xl border-border shadow-none"><CardContent className="flex items-center gap-3 p-4"><span className="rounded-xl bg-primary/10 p-2.5 text-primary"><Calendar className="h-5 w-5" /></span><div><p className="text-2xl font-bold text-foreground">{projects.filter((project) => project.status === "completed").length}</p><p className="text-xs text-muted-foreground">Completed</p></div></CardContent></Card>
+        <Card className="rounded-2xl border-border shadow-none"><CardContent className="flex items-center gap-3 p-4"><span className="rounded-xl bg-accent/20 p-2.5 text-[hsl(var(--dt-gold-600))]"><Star className="h-5 w-5" /></span><div><p className="text-2xl font-bold text-foreground">{projects.filter((project) => project.featured).length}</p><p className="text-xs text-muted-foreground">Featured</p></div></CardContent></Card>
+        <Card className="rounded-2xl border-border shadow-none"><CardContent className="flex items-center gap-3 p-4"><span className="rounded-xl bg-muted p-2.5 text-muted-foreground"><Camera className="h-5 w-5" /></span><div><p className="text-2xl font-bold text-foreground">{projects.filter((project) => (project.project_images?.length || 0) > 0).length}</p><p className="text-xs text-muted-foreground">With photos</p></div></CardContent></Card>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-muted/30 p-3">
+        {/* Custom file import */
         <ProjectImporter onImported={fetchProjects} />
       </div>
 
       {showAddForm && (
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden rounded-2xl border-border shadow-[var(--shadow-float)]">
+          <CardHeader className="border-b border-border bg-muted/30">
             <CardTitle>
               {editingProject ? "Edit Project" : "Create New Project"}
             </CardTitle>
@@ -698,7 +702,7 @@ const ProjectManagement = () => {
         </Card>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -723,13 +727,14 @@ const ProjectManagement = () => {
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         {filteredProjects.map((project) => (
           <Card
             key={project.id}
-            className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10"
+            className="group overflow-hidden rounded-2xl border border-border bg-card shadow-none transition-all duration-200 hover:border-[hsl(var(--dt-green-300))] hover:shadow-[var(--shadow-float)]"
           >
-            <CardHeader>
+            {project.project_images?.[0] && <div className="relative h-44 overflow-hidden bg-muted sm:h-52"><img src={project.project_images[0]} alt={project.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" /><div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />{project.featured && <span className="absolute left-4 top-4 inline-flex items-center gap-1 rounded-full bg-[hsl(var(--dt-gold-400))] px-3 py-1 text-xs font-bold text-[hsl(var(--dt-green-900))]"><Star className="h-3 w-3 fill-current" /> Featured</span>}</div>}
+            <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -795,7 +800,7 @@ const ProjectManagement = () => {
                   <div className="grid grid-cols-2 gap-4 mt-4 p-3 bg-muted/50 rounded-lg">
                     {project.water_saved && (
                       <div className="text-center">
-                        <div className="text-lg font-semibold text-blue-600">
+                        <div className="text-lg font-semibold text-primary">
                           {project.water_saved.toLocaleString()}
                         </div>
                         <div className="text-xs text-muted-foreground">
@@ -805,7 +810,7 @@ const ProjectManagement = () => {
                     )}
                     {project.yield_improvement && (
                       <div className="text-center">
-                        <div className="text-lg font-semibold text-green-600">
+                        <div className="text-lg font-semibold text-primary">
                           +{project.yield_improvement}%
                         </div>
                         <div className="text-xs text-muted-foreground">
