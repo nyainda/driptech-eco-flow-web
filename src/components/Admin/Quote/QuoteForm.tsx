@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -24,7 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, ClipboardList } from "lucide-react";
+import { CalendarIcon, ClipboardList, FileUp } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
@@ -148,7 +148,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   date,
   setDate,
 }) => {
-  const [formData, setFormData] = useState({
+  const pdfInputRef = useRef<HTMLInputElement>(null);\n  const [pdfImporting, setPdfImporting] = useState(false);\n  const [formData, setFormData] = useState({
     project_type: quote?.project_type || "",
     crop_type: quote?.crop_type || "",
     area_size: quote?.area_size?.toString() || "",
@@ -172,6 +172,55 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const importQuotationPdf = async (file?: File) => {
+    if (!file) return;
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      window.alert("Please select a PDF file.");
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      window.alert("PDF is too large. Please use a file under 20 MB.");
+      return;
+    }
+    setPdfImporting(true);
+    try {
+      // PDF.js is loaded only when an admin imports a PDF (keeps the normal quote form bundle light).
+      // @ts-ignore - PDF.js is loaded from its browser ESM CDN build at runtime.
+      const pdfjs = await import(/* @vite-ignore */ "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs");
+      pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+      const document = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+      const pages: string[] = [];
+      for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
+        const page = await document.getPage(pageNumber);
+        const content = await page.getTextContent();
+        const text = content.items
+          .map((item: { str?: string }) => item.str || "")
+          .join(" ")
+          .replace(/\\s+/g, " ")
+          .trim();
+        if (text) pages.push(`--- PDF page ${pageNumber} ---\\n${text}`);
+      }
+      const extracted = pages.join("\\n\\n");
+      if (!extracted.trim()) {
+        window.alert("No selectable text was found. This PDF may be scanned; OCR is not available in this import yet.");
+        return;
+      }
+      setFormData((previous) => ({
+        ...previous,
+        notes: previous.notes.trim()
+          ? `${previous.notes.trim()}\\n\\n--- IMPORTED PDF: ${file.name} ---\\n${extracted}`
+          : `--- IMPORTED PDF: ${file.name} ---\\n${extracted}`,
+      }));
+      window.alert("PDF text imported into Technical Specifications & Notes. Please review it and manually verify BOQ items and figures before saving.");
+    } catch (error) {
+      console.error("Quotation PDF import failed:", error);
+      window.alert("Could not read this PDF. Try a text-based PDF (not a scan) and check your internet connection.");
+    } finally {
+      setPdfImporting(false);
+      if (pdfInputRef.current) pdfInputRef.current.value = "";
+    }
   };
 
   const insertIrrigationSchedule = () => {
