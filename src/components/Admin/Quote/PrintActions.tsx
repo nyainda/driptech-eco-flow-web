@@ -100,17 +100,29 @@ export const generatePrintContent = (
     )
     .join("");
 
-  const notesSection = quote.notes
+  const escapeHtml = (value: string): string =>
+    value.replace(/[&<>"']/g, (character) => {
+      const entities: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return entities[character] ?? character;
+    });
+
+  const notesSection = quote.notes?.trim()
     ? `
-    <div class="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-3 border-l-3 border-amber-500 mb-3">
+    <section class="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-3 border-l-3 border-amber-500 mb-3" aria-label="Technical specifications, commercial terms and notes">
       <div class="flex items-center gap-2 mb-2">
         <div class="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-md flex items-center justify-center text-sm">📝</div>
-        <h3 class="text-amber-800 text-sm font-bold">Additional Notes</h3>
+        <h3 class="text-amber-800 text-sm font-bold">Technical Specifications, Commercial Terms &amp; Notes</h3>
       </div>
       <div class="bg-white bg-opacity-50 p-2 rounded border border-amber-200">
-        <p class="text-amber-900 text-xs font-medium break-words">${quote.notes}</p>
+        <p class="text-amber-900 text-xs font-medium break-words whitespace-pre-wrap" style="white-space: pre-wrap; overflow-wrap: anywhere;">${escapeHtml(quote.notes.trim())}</p>
       </div>
-    </div>
+    </section>
   `
     : "";
 

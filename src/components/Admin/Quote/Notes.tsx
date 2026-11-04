@@ -5,14 +5,19 @@ interface NotesSectionProps {
 }
 
 export const NotesSection: React.FC<NotesSectionProps> = ({ notes }) => {
-  if (!notes) return null;
+  if (!notes?.trim()) return null;
 
   return (
-    <div className="mb-8 bg-gray-50 dark:bg-gray-700 p-5 rounded-lg border-l-4 border-blue-900 dark:border-blue-500">
-      <h3 className="font-semibold mb-3 text-blue-900 dark:text-blue-400 text-lg">
-        Notes:
+    <section
+      aria-label="Technical specifications and commercial terms"
+      className="mb-8 rounded-lg border border-blue-100 border-l-4 border-l-blue-900 bg-gray-50 p-5 dark:border-blue-800 dark:border-l-blue-500 dark:bg-gray-700"
+    >
+      <h3 className="mb-3 text-lg font-semibold text-blue-900 dark:text-blue-400">
+        Technical Specifications, Commercial Terms & Notes
       </h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{notes}</p>
-    </div>
+      <p className="whitespace-pre-wrap break-words text-sm leading-6 text-gray-600 dark:text-gray-300">
+        {notes}
+      </p>
+    </section>
   );
 };
