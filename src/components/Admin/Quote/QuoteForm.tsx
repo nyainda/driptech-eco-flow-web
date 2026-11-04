@@ -198,11 +198,14 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
         const text = content.items
           .map((item: { str?: string }) => item.str || "")
           .join(" ")
-          .replace(/\\s+/g, " ")
+          .replace(/\s+/g, " ")
           .trim();
-        if (text) pages.push(`--- PDF page ${pageNumber} ---\\n${text}`);
+        if (text) pages.push(`--- PDF page ${pageNumber} ---
+${text}`);
       }
-      const extracted = pages.join("\\n\\n");
+      const extracted = pages.join("
+
+");
       if (!extracted.trim()) {
         window.alert("No selectable text was found. This PDF may be scanned; OCR is not available in this import yet.");
         return;
@@ -210,8 +213,12 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
       setFormData((previous) => ({
         ...previous,
         notes: previous.notes.trim()
-          ? `${previous.notes.trim()}\\n\\n--- IMPORTED PDF: ${file.name} ---\\n${extracted}`
-          : `--- IMPORTED PDF: ${file.name} ---\\n${extracted}`,
+          ? `${previous.notes.trim()}
+
+--- IMPORTED PDF: ${file.name} ---
+${extracted}`
+          : `--- IMPORTED PDF: ${file.name} ---
+${extracted}`,
       }));
       window.alert("PDF text imported into Technical Specifications & Notes. Please review it and manually verify BOQ items and figures before saving.");
     } catch (error) {
