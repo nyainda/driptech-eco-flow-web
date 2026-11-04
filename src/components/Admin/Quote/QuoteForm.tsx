@@ -311,6 +311,24 @@ ${extracted}`,
                   This content is included in the quotation PDF. Use the schedule for a detailed irrigation offer.
                 </p>
               </div>
+              <input
+                ref={pdfInputRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                className="hidden"
+                onChange={(event) => void importQuotationPdf(event.target.files?.[0])}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={pdfImporting}
+                onClick={() => pdfInputRef.current?.click()}
+                className="shrink-0"
+              >
+                <FileUp className="mr-2 h-4 w-4" />
+                {pdfImporting ? "Importing PDF..." : "Import quotation PDF"}
+              </Button>
               <Button
                 type="button"
                 variant="outline"
