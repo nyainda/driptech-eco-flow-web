@@ -1,6 +1,6 @@
 # Irrigation Consultant Quotation – Detailed Schedule Template
 
-Use this schedule for rain guns, drip tapes, rain hoses, hose options and pumps. Add selected products to the BOQ; put model specifications in each item Description and commercial answers in quotation Notes. The PDF notes area is labelled **Technical Specifications, Commercial Terms & Notes** and preserves line breaks.
+Use this schedule for rain guns, drip tapes, rain hoses, hose options and pumps. Add selected products to the BOQ; put model specifications in each item Description and commercial answers in quotation Notes. The print/PDF HTML renderer labels the notes area **Technical Specifications, Commercial Terms & Notes** and preserves line breaks.
 
 > Accuracy rule: populate pressure, flow, throw/radius, nozzle sizes, roll lengths, pressure ratings, pump duty points, prices and stock only from current supplier datasheets/product records or confirmed stock. A model family name is not a complete datasheet.
 
