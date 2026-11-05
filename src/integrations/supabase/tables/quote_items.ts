@@ -10,6 +10,7 @@ export type QuoteItems = {
     product_id: string | null;
     quote_id: string | null;
     section_id: string | null;
+    sort_order: number;
     total: number;
     unit: string;
     unitprice: number;
@@ -23,6 +24,7 @@ export type QuoteItems = {
     product_id?: string | null;
     quote_id?: string | null;
     section_id?: string | null;
+    sort_order?: number;
     total: number;
     unit: string;
     unitprice: number;
@@ -36,6 +38,7 @@ export type QuoteItems = {
     product_id?: string | null;
     quote_id?: string | null;
     section_id?: string | null;
+    sort_order?: number;
     total?: number;
     unit?: string;
     unitprice?: number;

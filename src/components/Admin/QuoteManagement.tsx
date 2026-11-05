@@ -262,10 +262,27 @@ const QuoteManagement = () => {
       if (deleteError) throw deleteError;
 
       if (items.length > 0) {
-        const quoteItemsToInsert = items.map((item) => ({
+        const sectionOrder = new Map(
+          sectionRows.map((section) => [section.id, section.sort_order]),
+        );
+        const orderedItems = items
+          .map((item, index) => ({ item, index }))
+          .sort((left, right) => {
+            const leftSection = left.item.section_id || sectionRows[0]?.id || "";
+            const rightSection = right.item.section_id || sectionRows[0]?.id || "";
+            return (
+              (sectionOrder.get(leftSection) ?? 0) -
+                (sectionOrder.get(rightSection) ?? 0) ||
+              left.index - right.index
+            );
+          })
+          .map(({ item }) => item);
+
+        const quoteItemsToInsert = orderedItems.map((item, index) => ({
           quote_id: quoteId,
           section_id: item.section_id || sectionRows[0]?.id || null,
           product_id: item.product_id || null,
+          sort_order: index,
           name: item.name,
           description: item.description || "",
           quantity: item.quantity,
@@ -384,6 +401,7 @@ const QuoteManagement = () => {
       to: quote.valid_until ? new Date(quote.valid_until) : undefined,
     });
 
+    setSelectedCustomer(null);
     if (quote.customer_id) {
       const { data: customer } = await supabase
         .from("customers")
@@ -393,8 +411,6 @@ const QuoteManagement = () => {
 
       setSelectedCustomer(customer);
     }
-
-    setSelectedCustomer(null);
 
     try {
       const [{ data: sectionRows, error: sectionsError }, { data: itemRows, error: itemsError }] =
@@ -407,7 +423,9 @@ const QuoteManagement = () => {
           supabase
             .from("quote_items")
             .select("*")
-            .eq("quote_id", quote.id),
+            .eq("quote_id", quote.id)
+            .order("sort_order", { ascending: true })
+            .order("created_at", { ascending: true }),
         ]);
 
       if (sectionsError) throw sectionsError;
@@ -429,7 +447,7 @@ const QuoteManagement = () => {
       );
       const defaultSection = sectionsForQuote[0];
 
-      const mappedItems: QuoteItem[] = (itemRows || []).map((item) => {
+      const mappedItems: QuoteItem[] = (itemRows || []).map((item, index) => {
         const sectionId = item.section_id || defaultSection.id;
         return {
           id: item.id,
@@ -442,6 +460,7 @@ const QuoteManagement = () => {
           product_id: item.product_id || null,
           section_id: sectionId,
           section_name: sectionNames.get(sectionId) || defaultSection.name,
+          sort_order: item.sort_order ?? index,
         };
       });
 
@@ -499,7 +518,9 @@ const QuoteManagement = () => {
         supabase
           .from("quote_items")
           .select("*")
-          .eq("quote_id", quote.id),
+          .eq("quote_id", quote.id)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: true }),
         supabase
           .from("quote_sections")
           .select("*")
@@ -526,7 +547,7 @@ const QuoteManagement = () => {
       loadedSections.map((section) => [section.id, section.name]),
     );
 
-    const mappedItems: QuoteItem[] = (items || []).map((item) => ({
+    const mappedItems: QuoteItem[] = (items || []).map((item, index) => ({
       id: item.id,
       name: item.name,
       description: item.description || "",
@@ -539,6 +560,7 @@ const QuoteManagement = () => {
       section_name: item.section_id
         ? sectionNames.get(item.section_id) || "General"
         : "General",
+      sort_order: item.sort_order ?? index,
     }));
 
     setSelectedQuoteSections(loadedSections);

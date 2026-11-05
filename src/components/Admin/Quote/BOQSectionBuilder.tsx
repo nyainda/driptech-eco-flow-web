@@ -60,6 +60,7 @@ export interface BOQItem {
   total: number;
   section_id?: string | null;
   section_name?: string;
+  sort_order?: number;
   product_id?: string | null;
 }
 
