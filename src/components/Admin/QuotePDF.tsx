@@ -62,9 +62,15 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({
     usePrintHandlers();
   const totals = calculateQuoteTotals(quote, items);
   const groups = groupItems(items);
+  const itemLineNumbers = new Map<string, number>();
+  let nextLineNumber = 1;
+  groups.forEach((group) => {
+    group.items.forEach((item) => {
+      itemLineNumbers.set(item.id, nextLineNumber++);
+    });
+  });
   const status = quote.status?.toLowerCase() || "draft";
   const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
-  let previewLineNumber = 0;
   const projectFacts = [
     { label: "Project type", value: quote.project_type },
     { label: "Crop", value: quote.crop_type },
@@ -296,7 +302,7 @@ export const QuotePDF: React.FC<QuotePDFProps> = ({
                                 {group.items.map((item, index) => (
                                   <tr key={item.id} className="border-t border-slate-100 align-top">
                                     <td className="px-2 py-2.5 text-center text-slate-400">
-                                      {++previewLineNumber}
+                                      {itemLineNumbers.get(item.id)}
                                     </td>
                                     <td className="max-w-[240px] px-2 py-2.5">
                                       <p className="break-words font-semibold text-slate-800">
