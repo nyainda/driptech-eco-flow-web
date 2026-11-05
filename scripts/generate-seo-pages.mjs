@@ -274,6 +274,19 @@ const homePage = {
   intro:
     "DripTech supplies irrigation equipment and complete systems for Kenyan farms, greenhouses and kitchen gardens. Browse products, compare kits and ask for help before you buy.",
   image: "/seed-products/field_drip.jpg",
+  links: [
+    { label: "Drip irrigation systems in Kenya", href: "/drip-irrigation-kenya" },
+    { label: "Sprinkler systems in Kenya", href: "/sprinkler-systems-kenya" },
+    { label: "Borehole and water pumps in Kenya", href: "/borehole-water-pumps-kenya" },
+    { label: "Driplines for sale in Kenya", href: "/driplines-for-sale-kenya" },
+    { label: "Fertigation systems in Kenya", href: "/fertigation-systems-kenya" },
+    { label: "Water storage tanks in Kenya", href: "/water-storage-tanks-kenya" },
+    { label: "Drip irrigation kit prices in Kenya", href: "/drip-irrigation-kit-price-kenya" },
+    { label: "Irrigation companies in Kenya", href: "/irrigation-companies-kenya" },
+    { label: "Drip irrigation pumps", href: "/products/pumps" },
+    { label: "Driplines and emitters", href: "/products/drip" },
+    { label: "Sprinklers and rain guns", href: "/products/sprinklers" },
+  ],
 };
 
 const irrigationCostCalculatorPage = {
@@ -646,10 +659,28 @@ const dynamicPages = [
             }))
             .filter((variant) => variant.name)
         : [];
+      // Distinct, spec-based metadata so near-identical catalogue items do not
+      // all share one title/description template.
+      const specSummary = specifications
+        .slice(0, 3)
+        .map((item) => `${item.name}: ${item.value}${item.unit ? " " + item.unit : ""}`)
+        .join(", ");
+      const modelSuffix = product.model_number ? ` (${stripHtml(product.model_number)})` : "";
+      const seoTitle = `${product.name}${modelSuffix} Kenya${price > 0 ? ` | KSh ${price.toLocaleString("en-KE")}` : " | Specs & Quote"} | DripTech`;
+      const seoDescription = (description.length >= 140 || !specSummary
+        ? description
+        : `${description} ${specSummary}.`
+      ).slice(0, 300);
+      // A page is "thin" when it has no photo and almost no distinguishing
+      // detail. These stay crawlable and linked, but are kept out of the
+      // index and sitemap so Google spends its crawl budget on real pages.
+      const isThin = images.length === 0 && specifications.length < 3 && description.length < 120;
       return {
         route,
-        title: `${product.name} Kenya | Price & Specifications | DripTech`,
-        description: description.slice(0, 300),
+        thin: isThin,
+        lastmod: product.updated_at || product.created_at || null,
+        title: seoTitle,
+        description: seoDescription,
         heading: product.name,
         intro: description,
         image: images[0] || undefined,
@@ -790,14 +821,15 @@ for (const product of productPages) {
 }
 for (const page of allPages) {
   if (page.route === "/products") {
-    page.catalogLinks = productPages.slice(0, 12).map((product) => ({
+    page.catalogLinks = productPages.filter((product) => !product.thin).slice(0, 12).map((product) => ({
       label: product.heading,
       href: product.route,
     }));
   } else if (/^\/products\/[^/]+$/.test(page.route)) {
     const category = page.route.split("/")[2];
+    // List every indexable product so none sit deep in a prev/next chain.
     page.catalogLinks = (productPagesByCategory.get(category) || [])
-      .slice(0, 12)
+      .filter((product) => !product.thin)
       .map((product) => ({ label: product.heading, href: product.route }));
   }
   if (page.productDetails) {
@@ -979,7 +1011,11 @@ const renderPage = (page) => {
 
   html = replaceMeta(html, "description", page.description);
   html = replaceMeta(html, "title", page.title);
-  html = replaceMeta(html, "robots", "index, follow, max-image-preview:large");
+  html = replaceMeta(
+    html,
+    "robots",
+    page.thin ? "noindex, follow" : "index, follow, max-image-preview:large",
+  );
   html = html.replace(
     /<link\s+rel=["']canonical["'][^>]*>/i,
     `<link rel="canonical" href="${canonical}" />`,
@@ -1028,12 +1064,22 @@ const xmlEscape = (value) =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&apos;");
 
+const sitemapPages = new Map();
+for (const page of allPages) {
+  if (page.thin) continue; // noindex pages must not be in the sitemap
+  if (!sitemapPages.has(page.route)) sitemapPages.set(page.route, page);
+}
+const toLastmod = (value) => {
+  const date = value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date.toISOString().slice(0, 10) : null;
+};
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[...new Set(allPages.map((page) => page.route))]
-  .map(
-    (route) => `  <url><loc>${xmlEscape(`${siteUrl}${route}`)}</loc><changefreq>weekly</changefreq><priority>${route === "/" ? "1.0" : "0.7"}</priority></url>`,
-  )
+${[...sitemapPages.entries()]
+  .map(([route, page]) => {
+    const lastmod = toLastmod(page.lastmod || page.articleDate);
+    return `  <url><loc>${xmlEscape(`${siteUrl}${route}`)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}</url>`;
+  })
   .join("\n")}
 </urlset>
 `;
@@ -1050,6 +1096,14 @@ const adminHtml = baseHtml
 fs.mkdirSync(path.join(dist, "admin"), { recursive: true });
 fs.writeFileSync(path.join(dist, "admin", "index.html"), adminHtml);
 
+{
+  const total = dynamicPages.filter((p) => p.productDetails).length;
+  const thin = dynamicPages.filter((p) => p.thin).length;
+  if (total > 0 && thin / total > 0.5) {
+    console.warn(`WARNING: ${thin} of ${total} product pages are thin and set to noindex. Add images, specs or longer descriptions in the admin to get them indexed.`);
+  }
+}
+console.log(`Thin product pages kept out of index and sitemap: ${dynamicPages.filter((p) => p.thin).length} of ${dynamicPages.filter((p) => p.productDetails).length}`);
 console.log(
   `Generated ${allPages.length} crawlable SEO pages (${dynamicPages.length} dynamic) and one noindex admin page in dist/`,
 );
