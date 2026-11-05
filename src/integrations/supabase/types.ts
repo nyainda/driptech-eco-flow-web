@@ -31,6 +31,7 @@ import { ProductInteractions } from "./tables/product_interactions";
 import { Products } from "./tables/products";
 import { Projects } from "./tables/projects";
 import { QuoteItems } from "./tables/quote_items";
+import { QuoteSections } from "./tables/quote_sections";
 import { Quotes } from "./tables/quotes";
 import { SuccessStories } from "./tables/success_stories";
 import { SystemSettings } from "./tables/system_settings";
@@ -74,6 +75,7 @@ export type Database = {
       products: Products;
       projects: Projects;
       quote_items: QuoteItems;
+      quote_sections: QuoteSections;
       quotes: Quotes;
       success_stories: SuccessStories;
       system_settings: SystemSettings;

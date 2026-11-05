@@ -28,6 +28,10 @@ export interface Quote {
 
 export interface QuoteItem {
   id: string;
+  product_id?: string | null;
+  section_id?: string | null;
+  section_name?: string;
+  sort_order?: number;
   name: string;
   description: string;
   quantity: number;
