@@ -1,5 +1,6 @@
 import { COMPANY, getLogoUrl } from "../shared/companyBrand";
 import { Quote, QuoteItem, Customer } from "./types";
+import { calculateQuoteTotals } from "./quoteCalculations";
 
 const escapeHtml = (value: unknown): string =>
   String(value ?? "").replace(/[&<>"']/g, (character) => {
@@ -32,10 +33,7 @@ export const generatePrintContent = (
   items: QuoteItem[],
   customer?: Customer,
 ): string => {
-  const subtotal = items.reduce((sum, item) => sum + item.total, 0);
-  const vatRate = quote.include_vat ? quote.vat_rate : 0;
-  const tax = quote.include_vat ? subtotal * (quote.vat_rate / 100) : 0;
-  const total = subtotal + tax;
+  const { subtotal, vat: tax, total, vatRate } = calculateQuoteTotals(quote, items);
 
   const customerLines = customer
     ? [
@@ -73,21 +71,46 @@ export const generatePrintContent = (
     </section>`
     : "";
 
-  const rows = items
-    .map(
-      (item, index) => `
-      <tr>
-        <td class="c-num">${index + 1}</td>
-        <td class="c-desc">
-          <div class="item-name">${escapeHtml(item.name)}</div>
-          ${item.description?.trim() ? `<div class="item-desc">${escapeHtml(item.description.trim())}</div>` : ""}
+  const groupedItems = new Map<string, { name: string; items: QuoteItem[] }>();
+  items.forEach((item) => {
+    const name = item.section_name?.trim() || "General";
+    const key = item.section_id || `legacy:${name}`;
+    const group = groupedItems.get(key) || { name, items: [] };
+    group.items.push(item);
+    groupedItems.set(key, group);
+  });
+
+  let lineNumber = 0;
+  const rows = Array.from(groupedItems.values())
+    .map((group, groupIndex) => {
+      const sectionTotal = group.items.reduce(
+        (sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0),
+        0,
+      );
+      const sectionHeading = `
+      <tr class="section-row">
+        <td colspan="6">
+          <span>${groupIndex + 1}. ${escapeHtml(group.name)}</span>
+          <strong>KES ${money(sectionTotal)}</strong>
         </td>
-        <td class="c-qty">${escapeHtml(item.quantity)}</td>
-        <td class="c-unit">${escapeHtml(item.unit)}</td>
-        <td class="c-money">${money(item.unit_price)}</td>
-        <td class="c-money c-total">${money(item.total)}</td>
-      </tr>`,
-    )
+      </tr>`;
+      const sectionRows = group.items.map((item) => {
+        lineNumber += 1;
+        return `
+        <tr>
+          <td class="c-num">${lineNumber}</td>
+          <td class="c-desc">
+            <div class="item-name">${escapeHtml(item.name)}</div>
+            ${item.description?.trim() ? `<div class="item-desc">${escapeHtml(item.description.trim())}</div>` : ""}
+          </td>
+          <td class="c-qty">${escapeHtml(item.quantity)}</td>
+          <td class="c-unit">${escapeHtml(item.unit)}</td>
+          <td class="c-money">${money(item.unit_price)}</td>
+          <td class="c-money c-total">${money(Number(item.quantity || 0) * Number(item.unit_price || 0))}</td>
+        </tr>`;
+      }).join("");
+      return sectionHeading + sectionRows;
+    })
     .join("");
 
   const notesSection = quote.notes?.trim()
@@ -163,6 +186,8 @@ export const generatePrintContent = (
     .c-qty, .c-unit { width: 52px; text-align: center; }
     .c-money { width: 96px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .c-total { font-weight: 700; }
+    .section-row td { background: var(--brand-tint) !important; color: var(--brand-dark); padding: 9px 10px; font-weight: 700; }
+    .section-row td strong { float: right; font-size: 10.5px; font-variant-numeric: tabular-nums; }
     .boq th.c-num, .boq th.c-qty, .boq th.c-unit { text-align: center; }
     .boq th.c-money { text-align: right; }
     .item-name { font-weight: 700; }
@@ -256,7 +281,7 @@ export const generatePrintContent = (
       <div class="totals-wrap">
         <div class="totals">
           <div class="row"><span>Subtotal</span><span>KES ${money(subtotal)}</span></div>
-          ${quote.include_vat ? `<div class="row"><span>VAT (${escapeHtml(vatRate)}%)</span><span>KES ${money(tax)}</span></div>` : `<div class="row"><span>VAT</span><span>Not applied</span></div>`}
+          ${vatRate > 0 ? `<div class="row"><span>VAT (${escapeHtml(vatRate)}%)</span><span>KES ${money(tax)}</span></div>` : `<div class="row"><span>VAT</span><span>Not applied</span></div>`}
           <div class="row grand"><span>Total</span><span>KES ${money(total)}</span></div>
         </div>
       </div>
