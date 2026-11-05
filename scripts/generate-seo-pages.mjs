@@ -482,9 +482,24 @@ const extractTextBlocks = (value = "") =>
     .filter(Boolean);
 
 const fetchJson = async (url, headers = {}) => {
-  const response = await fetch(url, { headers });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-  return response.json();
+  let response;
+  try {
+    response = await fetch(url, { headers });
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Request failed for ${url}: ${detail}`);
+  }
+
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText} at ${url}`);
+  }
+
+  try {
+    return await response.json();
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Invalid JSON from ${url}: ${detail}`);
+  }
 };
 
 const getDynamicContent = async () => {
