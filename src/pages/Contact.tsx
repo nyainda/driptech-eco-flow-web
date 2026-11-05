@@ -249,75 +249,72 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Map Section */}
+            {/* Service coverage */}
             <div className="mt-12 lg:mt-16">
               <div className="mb-8 text-center">
                 <h2 className="text-3xl font-bold text-foreground mb-4">
-                  Irrigation Support Across Kenya
+                  Nationwide Irrigation Supply and Farm Support
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  We supply irrigation equipment and support farm projects across Kenya.
-                  Contact us to discuss delivery, system sizing or arranging a farm visit.
+                  DripTech supplies irrigation equipment to customers across Kenya.
+                  Delivery, farm visits and installation support are confirmed according
+                  to your location, product requirements and project scope.
                 </p>
               </div>
 
-              <Card className="overflow-hidden border-border">
-                <CardContent className="p-0">
-                  <div className="aspect-video relative">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255282.35864512736!2d36.70730046250002!3d-1.3028617999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172d84d49a7%3A0xf7cf0254b297924c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2ske!4v1642678890123"
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="Map of Nairobi, Kenya"
-                      className="rounded-lg"
-                    ></iframe>
-
-                    {/* Map Overlay */}
-                    <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-sm border border-border">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-muted rounded-lg">
-                          <MapPin className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-foreground">
-                            DripTech Kenya
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            Irrigation Solutions
-                          </p>
-                        </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                <Card className="border-border">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-primary/10">
+                        <MapPin className="h-6 w-6 text-primary" />
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Nairobi, Kenya
-                        <br />
-                        East Africa
-                      </p>
-                      <div className="flex gap-2">
-                        <a
-                          href="https://goo.gl/maps/nairobi-kenya"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full hover:bg-primary/90 transition-colors"
-                        >
-                          Get Directions <ArrowRight className="h-3 w-3 ml-1" />
-                        </a>
-                        <a
-                          href="https://wa.me/254723407849?text=Hi, I found you on your website. I'm interested in drip irrigation solutions."
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-xs bg-muted text-muted-foreground px-3 py-1 rounded-full hover:bg-muted/50 transition-colors"
-                        >
-                          WhatsApp Us <ArrowRight className="h-3 w-3 ml-1" />
-                        </a>
-                      </div>
+                      <h3 className="font-bold text-xl text-foreground">
+                        Equipment Supply Across Kenya
+                      </h3>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Share your county or nearest town and the irrigation products
+                      you need. Our team can confirm product availability, delivery
+                      options and transport arrangements before you order.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-border">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-xl bg-primary/10">
+                        <MessageCircle className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-bold text-xl text-foreground">
+                        Arrange Farm and Installation Support
+                      </h3>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed mb-5">
+                      For system design, installation or an on-site assessment, send
+                      your location, crop, field size and water source so we can
+                      confirm availability and the required scope.
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <a
+                        href={`tel:${SITE_COMPANY.phonePrimary}`}
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                      >
+                        Call DripTech <ArrowRight className="h-4 w-4" />
+                      </a>
+                      <a
+                        href={`https://wa.me/${SITE_COMPANY.phonePrimary.replace("+", "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+                      >
+                        WhatsApp Us <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
