@@ -13,7 +13,9 @@
     "test": "node --import tsx scripts/check-irrigation-content.mjs",
     "sync:d1": "tsx migration-scripts/sync-to-d1.ts",
     "optimize:images": "node scripts/optimize-images.mjs",
-    "test:seo": "node scripts/check-static-seo.mjs"
+    "test:seo": "node scripts/check-static-seo.mjs",
+    "sync:gbp-photos": "node scripts/sync-gbp-product-photos.mjs",
+    "test:gbp-photos": "node scripts/sync-gbp-product-photos.mjs --self-test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
