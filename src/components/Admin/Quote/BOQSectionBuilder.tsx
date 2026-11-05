@@ -110,6 +110,14 @@ const categoryLabel = (value: string) =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
+// Keep BOQ actions legible against both warm light surfaces and dark surfaces.
+const primaryActionClass =
+  "border border-primary bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover hover:text-primary-foreground disabled:opacity-80";
+const outlineActionClass =
+  "border border-border bg-background text-foreground shadow-sm hover:border-primary/60 hover:bg-muted hover:text-foreground disabled:opacity-80";
+const dangerActionClass =
+  "border border-border bg-background text-destructive shadow-sm hover:border-destructive/60 hover:bg-destructive/10 hover:text-destructive disabled:opacity-80";
+
 const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
   sections,
   items,
@@ -385,7 +393,12 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
               line when it is not in the catalogue.
             </CardDescription>
           </div>
-          <Button type="button" onClick={addSection}>
+          <Button
+            type="button"
+            variant="secondary"
+            className={primaryActionClass}
+            onClick={addSection}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add Section
           </Button>
@@ -417,7 +430,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                       onChange={(event) =>
                         updateSection(section.id, { name: event.target.value })
                       }
-                      className="h-9 max-w-xl border-transparent bg-transparent px-2 text-base font-semibold shadow-none focus-visible:border-input focus-visible:bg-background"
+                      className="h-9 max-w-xl border-transparent bg-transparent px-2 text-base font-semibold text-foreground shadow-none placeholder:text-muted-foreground focus-visible:border-input focus-visible:bg-background"
                     />
                     <Input
                       aria-label={`Section ${index + 1} description`}
@@ -428,7 +441,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                         })
                       }
                       placeholder="Optional section description"
-                      className="h-8 max-w-xl border-transparent bg-transparent px-2 text-sm text-muted-foreground shadow-none focus-visible:border-input focus-visible:bg-background"
+                      className="h-8 max-w-xl border-transparent bg-transparent px-2 text-sm text-muted-foreground shadow-none placeholder:text-muted-foreground focus-visible:border-input focus-visible:bg-background"
                     />
                   </div>
                 </div>
@@ -443,7 +456,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   <Button
                     type="button"
                     size="icon"
-                    variant="ghost"
+                    variant="outline"
+                    className={outlineActionClass}
                     aria-label="Move section up"
                     title="Move section up"
                     disabled={index === 0}
@@ -454,7 +468,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   <Button
                     type="button"
                     size="icon"
-                    variant="ghost"
+                    variant="outline"
+                    className={outlineActionClass}
                     aria-label="Move section down"
                     title="Move section down"
                     disabled={index === orderedSections.length - 1}
@@ -465,7 +480,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   <Button
                     type="button"
                     size="icon"
-                    variant="ghost"
+                    variant="outline"
+                    className={dangerActionClass}
                     aria-label={`Delete ${section.name}`}
                     title="Delete section"
                     disabled={sections.length <= 1}
@@ -486,12 +502,12 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="min-w-[180px]">Item</TableHead>
-                        <TableHead className="min-w-[220px]">Description / specification</TableHead>
-                        <TableHead className="w-24">Qty</TableHead>
-                        <TableHead className="w-24">Unit</TableHead>
-                        <TableHead className="min-w-[135px]">Unit price (KES)</TableHead>
-                        <TableHead className="min-w-[135px] text-right">Line total</TableHead>
+                        <TableHead className="min-w-[180px] font-semibold text-foreground">Item</TableHead>
+                        <TableHead className="min-w-[220px] font-semibold text-foreground">Description / specification</TableHead>
+                        <TableHead className="w-24 font-semibold text-foreground">Qty</TableHead>
+                        <TableHead className="w-24 font-semibold text-foreground">Unit</TableHead>
+                        <TableHead className="min-w-[135px] font-semibold text-foreground">Unit price (KES)</TableHead>
+                        <TableHead className="min-w-[135px] text-right font-semibold text-foreground">Line total</TableHead>
                         <TableHead className="w-12" />
                       </TableRow>
                     </TableHeader>
@@ -506,7 +522,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                                 onChange={(event) =>
                                   updateItem(item.id, { name: event.target.value })
                                 }
-                                className="min-w-[160px]"
+                                className="min-w-[160px] text-foreground placeholder:text-muted-foreground"
                               />
                               <Badge
                                 variant="outline"
@@ -526,7 +542,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                                   description: event.target.value,
                                 })
                               }
-                              className="min-w-[190px] max-w-[260px] text-xs"
+                              className="min-w-[190px] max-w-[260px] text-xs text-foreground placeholder:text-muted-foreground"
                               placeholder="Optional specification"
                             />
                           </TableCell>
@@ -542,7 +558,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                                   quantity: Number(event.target.value),
                                 })
                               }
-                              className="w-20"
+                              className="w-20 text-foreground placeholder:text-muted-foreground"
                             />
                           </TableCell>
                           <TableCell>
@@ -552,7 +568,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                               onChange={(event) =>
                                 updateItem(item.id, { unit: event.target.value })
                               }
-                              className="w-20"
+                              className="w-20 text-foreground placeholder:text-muted-foreground"
                             />
                           </TableCell>
                           <TableCell>
@@ -567,7 +583,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                                   unit_price: Number(event.target.value),
                                 })
                               }
-                              className="w-32"
+                              className="w-32 text-foreground placeholder:text-muted-foreground"
                             />
                           </TableCell>
                           <TableCell className="text-right font-semibold tabular-nums">
@@ -577,7 +593,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                             <Button
                               type="button"
                               size="icon"
-                              variant="ghost"
+                              variant="outline"
+                              className={dangerActionClass}
                               aria-label={`Remove ${item.name}`}
                               onClick={() => removeItem(item.id)}
                             >
@@ -596,6 +613,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   <Button
                     type="button"
                     size="sm"
+                    variant="secondary"
+                    className={primaryActionClass}
                     onClick={() => openCatalogue(section.id)}
                   >
                     <Package className="mr-2 h-4 w-4" />
@@ -605,6 +624,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     type="button"
                     size="sm"
                     variant="outline"
+                    className={outlineActionClass}
                     onClick={() => openManual(section.id)}
                   >
                     <Wrench className="mr-2 h-4 w-4" />
@@ -639,7 +659,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
       </CardContent>
 
       <Dialog open={catalogueOpen} onOpenChange={setCatalogueOpen}>
-        <DialogContent className="flex max-h-[88vh] max-w-5xl flex-col overflow-hidden p-0">
+        <DialogContent className="flex max-h-[88vh] max-w-5xl flex-col overflow-hidden bg-background p-0 text-foreground">
           <DialogHeader className="border-b border-border px-6 py-5">
             <div className="flex items-start gap-3">
               <div className="rounded-xl bg-primary/10 p-2.5 text-primary">
@@ -662,7 +682,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   value={search}
                   onChange={(event) => changeSearch(event.target.value)}
                   placeholder="Search product name, model, SKU, category or specification…"
-                  className="h-11 pl-9 pr-10"
+                  className="h-11 pl-9 pr-10 text-foreground placeholder:text-muted-foreground"
                   autoFocus
                 />
                 {search && (
@@ -670,7 +690,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                    className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 border border-border bg-background text-foreground shadow-sm hover:bg-muted hover:text-foreground disabled:opacity-80"
                     aria-label="Clear product search"
                     onClick={() => changeSearch("")}
                   >
@@ -681,7 +701,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
               <div className="flex items-center gap-2 lg:w-[250px]">
                 <Filter className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <Select value={category} onValueChange={changeCategory}>
-                  <SelectTrigger className="h-11">
+                  <SelectTrigger className="h-11 border-border bg-background text-foreground">
                     <SelectValue placeholder="All categories" />
                   </SelectTrigger>
                   <SelectContent>
@@ -700,7 +720,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
               <Button
                 type="button"
                 size="sm"
-                variant={category === "all" ? "default" : "outline"}
+                variant="outline"
+                className={category === "all" ? primaryActionClass : outlineActionClass}
                 onClick={() => changeCategory("all")}
               >
                 All products
@@ -710,7 +731,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   key={entry}
                   type="button"
                   size="sm"
-                  variant={category === entry ? "default" : "outline"}
+                  variant="outline"
+                  className={category === entry ? primaryActionClass : outlineActionClass}
                   onClick={() => changeCategory(entry)}
                 >
                   {categoryLabel(entry)}
@@ -744,7 +766,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                 </p>
                 <Button
                   type="button"
-                  className="mt-4"
+                  className={`mt-4 ${outlineActionClass}`}
                   variant="outline"
                   onClick={() => {
                     changeSearch("");
@@ -781,7 +803,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                           .join(" · ") || "Catalogue item"}
                       </p>
                       {product.description && (
-                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground/80" title={product.description}>
+                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground" title={product.description}>
                           {product.description}
                         </p>
                       )}
@@ -800,7 +822,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     <Button
                       type="button"
                       size="sm"
-                      className="shrink-0"
+                      variant="secondary"
+                      className={`shrink-0 ${primaryActionClass}`}
                       onClick={() => addProduct(product)}
                     >
                       <Plus className="mr-1.5 h-4 w-4" />
@@ -822,6 +845,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   <Button
                     type="button"
                     variant="outline"
+                    className={outlineActionClass}
                     size="sm"
                     disabled={productPage <= 1}
                     onClick={() => setProductPage((page) => Math.max(1, page - 1))}
@@ -835,6 +859,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   <Button
                     type="button"
                     variant="outline"
+                    className={outlineActionClass}
                     size="sm"
                     disabled={productPage >= productPageCount}
                     onClick={() => setProductPage((page) => Math.min(productPageCount, page + 1))}
@@ -854,7 +879,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
       </Dialog>
 
       <Dialog open={manualOpen} onOpenChange={setManualOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-background text-foreground">
           <DialogHeader>
             <DialogTitle>Add manual BOQ item</DialogTitle>
             <DialogDescription>
@@ -884,7 +909,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   }))
                 }
                 placeholder="e.g. Installation and commissioning"
-                className="h-10"
+                className="h-10 text-foreground placeholder:text-muted-foreground"
               />
             </div>
 
@@ -903,7 +928,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   }))
                 }
                 placeholder="Size, capacity, scope or other short details"
-                className="resize-y text-sm"
+                className="resize-y text-sm text-foreground placeholder:text-muted-foreground"
               />
             </div>
 
@@ -922,6 +947,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                       quantity: event.target.value,
                     }))
                   }
+                  className="text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div className="space-y-1.5">
@@ -936,6 +962,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     }))
                   }
                   placeholder="pcs, m, roll, set"
+                  className="text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div className="col-span-2 space-y-1.5 sm:col-span-1">
@@ -953,6 +980,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     }))
                   }
                   placeholder="0.00"
+                  className="text-foreground placeholder:text-muted-foreground"
                 />
               </div>
             </div>
@@ -971,11 +999,17 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
               <Button
                 type="button"
                 variant="outline"
+                className={outlineActionClass}
                 onClick={() => setManualOpen(false)}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={!manualItem.name.trim()}>
+              <Button
+                type="submit"
+                variant="secondary"
+                className={primaryActionClass}
+                disabled={!manualItem.name.trim()}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add to BOQ
               </Button>
