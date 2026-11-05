@@ -11,17 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -38,7 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Trash2, Eye, Edit, Save, X, User, Check } from "lucide-react";
+import { Plus, Trash2, Eye, Edit, User, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -53,6 +42,7 @@ import { DateRange } from "react-day-picker";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { QuotePDF } from "./QuotePDF";
+import BOQSectionBuilder, { type BOQSection, type CatalogueProduct } from "./Quote/BOQSectionBuilder";
 
 interface Customer {
   id: string;
@@ -95,6 +85,9 @@ interface QuoteItem {
   unit: string;
   unit_price: number;
   total: number;
+  product_id?: string | null;
+  section_id?: string | null;
+  section_name?: string;
 }
 
 const QuoteManagement = () => {
@@ -104,23 +97,13 @@ const QuoteManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([]);
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const [editingItem, setEditingItem] = useState<QuoteItem | null>(null);
+  const [quoteSections, setQuoteSections] = useState<BOQSection[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null,
   );
   const [showCustomerDialog, setShowCustomerDialog] = useState(false);
   const [includeVat, setIncludeVat] = useState(true);
   const [vatRate, setVatRate] = useState(16);
-  const [newQuoteItem, setNewQuoteItem] = useState<
-    Omit<QuoteItem, "id" | "total">
-  >({
-    name: "",
-    description: "",
-    quantity: 1,
-    unit: "unit",
-    unit_price: 0,
-  });
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(new Date().setDate(new Date().getDate() + 30)),
@@ -154,6 +137,30 @@ const QuoteManagement = () => {
         vat_rate: q.vat_rate ?? 16,
         total_amount: q.total_amount ?? 0,
       })) as Quote[];
+    },
+  });
+
+  const { data: quoteProducts = [], isLoading: quoteProductsLoading } = useQuery({
+    queryKey: ["quote-products-for-quotes"],
+    enabled: showForm,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const allProducts: CatalogueProduct[] = [];
+      const pageSize = 500;
+
+      for (let from = 0; ; from += pageSize) {
+        const { data, error } = await supabase
+          .from("products")
+          .select("id, name, model_number, category, subcategory, description, price, in_stock")
+          .order("name", { ascending: true })
+          .range(from, from + pageSize - 1);
+
+        if (error) throw error;
+        allProducts.push(...((data || []) as CatalogueProduct[]));
+        if (!data || data.length < pageSize) break;
+      }
+
+      return allProducts;
     },
   });
 
@@ -212,6 +219,7 @@ const QuoteManagement = () => {
 
       saveQuoteItemsMutation.mutate({
         quoteId: newQuote.id,
+        sections: quoteSections,
         items: quoteItems,
       });
     },
@@ -227,41 +235,76 @@ const QuoteManagement = () => {
   const saveQuoteItemsMutation = useMutation({
     mutationFn: async ({
       quoteId,
+      sections,
       items,
     }: {
       quoteId: string;
+      sections: BOQSection[];
       items: QuoteItem[];
     }) => {
+      const sectionRows = sections.map((section, index) => ({
+        id: section.id,
+        quote_id: quoteId,
+        name: section.name.trim() || `Section ${index + 1}`,
+        description: section.description?.trim() || null,
+        sort_order: index,
+      }));
+
+      const { error: sectionSaveError } = await supabase
+        .from("quote_sections")
+        .upsert(sectionRows, { onConflict: "id" });
+      if (sectionSaveError) throw sectionSaveError;
+
       const { error: deleteError } = await supabase
         .from("quote_items")
         .delete()
         .eq("quote_id", quoteId);
-
       if (deleteError) throw deleteError;
 
-      const quoteItemsToInsert = items.map((item) => ({
-        quote_id: quoteId,
-        name: item.name,
-        description: item.description,
-        quantity: item.quantity,
-        unit: item.unit,
-        unitprice: item.unit_price,
-        total: item.total,
-      }));
+      if (items.length > 0) {
+        const quoteItemsToInsert = items.map((item) => ({
+          quote_id: quoteId,
+          section_id: item.section_id || sectionRows[0]?.id || null,
+          product_id: item.product_id || null,
+          name: item.name,
+          description: item.description || "",
+          quantity: item.quantity,
+          unit: item.unit || "unit",
+          unitprice: item.unit_price,
+          total: item.total,
+        }));
 
-      const { data, error } = await supabase
-        .from("quote_items")
-        .insert(quoteItemsToInsert)
-        .select();
+        const { error } = await supabase
+          .from("quote_items")
+          .insert(quoteItemsToInsert);
+        if (error) throw error;
+      }
 
-      if (error) throw error;
-      return data;
+      const { data: savedSections, error: savedSectionsError } = await supabase
+        .from("quote_sections")
+        .select("id")
+        .eq("quote_id", quoteId);
+      if (savedSectionsError) throw savedSectionsError;
+
+      const retainedIds = new Set(sectionRows.map((section) => section.id));
+      for (const section of savedSections || []) {
+        if (!retainedIds.has(section.id)) {
+          const { error } = await supabase
+            .from("quote_sections")
+            .delete()
+            .eq("id", section.id);
+          if (error) throw error;
+        }
+      }
+
+      return true;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quotes"] });
       setShowForm(false);
       setSelectedQuote(null);
       setQuoteItems([]);
+      setQuoteSections([]);
       setSelectedCustomer(null);
       toast({
         title: "Success",
@@ -303,6 +346,15 @@ const QuoteManagement = () => {
   });
 
   const handleSaveQuote = (quote: Partial<Quote>) => {
+    if (quoteSections.length === 0 || quoteSections.some((section) => !section.name.trim())) {
+      toast({
+        title: "Check BOQ sections",
+        description: "Every BOQ section needs a name before the quotation can be saved.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const validUntilDate =
       date?.to instanceof Date ? date.to.toISOString() : undefined;
     saveQuoteMutation.mutate({
@@ -342,120 +394,79 @@ const QuoteManagement = () => {
       setSelectedCustomer(customer);
     }
 
-    supabase
-      .from("quote_items")
-      .select("*")
-      .eq("quote_id", quote.id)
-      .then(({ data, error }) => {
-        if (error) throw error;
+    setSelectedCustomer(null);
 
-        const mappedItems: QuoteItem[] = (data || []).map((item) => ({
+    try {
+      const [{ data: sectionRows, error: sectionsError }, { data: itemRows, error: itemsError }] =
+        await Promise.all([
+          supabase
+            .from("quote_sections")
+            .select("*")
+            .eq("quote_id", quote.id)
+            .order("sort_order", { ascending: true }),
+          supabase
+            .from("quote_items")
+            .select("*")
+            .eq("quote_id", quote.id),
+        ]);
+
+      if (sectionsError) throw sectionsError;
+      if (itemsError) throw itemsError;
+
+      const loadedSections: BOQSection[] =
+        (sectionRows || []).map((section, index) => ({
+          id: section.id,
+          name: section.name,
+          description: section.description || "",
+          sort_order: section.sort_order ?? index,
+        }));
+      const sectionsForQuote =
+        loadedSections.length > 0
+          ? loadedSections
+          : [{ id: crypto.randomUUID(), name: "General", description: "", sort_order: 0 }];
+      const sectionNames = new Map(
+        sectionsForQuote.map((section) => [section.id, section.name]),
+      );
+      const defaultSection = sectionsForQuote[0];
+
+      const mappedItems: QuoteItem[] = (itemRows || []).map((item) => {
+        const sectionId = item.section_id || defaultSection.id;
+        return {
           id: item.id,
           name: item.name,
-          description: item.description,
+          description: item.description || "",
           quantity: item.quantity,
           unit: item.unit,
           unit_price: item.unitprice,
           total: item.total,
-        }));
-
-        setQuoteItems(mappedItems);
-        setShowForm(true);
+          product_id: item.product_id || null,
+          section_id: sectionId,
+          section_name: sectionNames.get(sectionId) || defaultSection.name,
+        };
       });
+
+      setQuoteSections(sectionsForQuote);
+      setQuoteItems(mappedItems);
+      setShowForm(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to load quotation BOQ",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleNewQuote = () => {
     setSelectedQuote(null);
     setQuoteItems([]);
+    setQuoteSections([
+      { id: crypto.randomUUID(), name: "General", description: "", sort_order: 0 },
+    ]);
     setSelectedCustomer(null);
     setIncludeVat(true);
     setVatRate(16);
     setShowForm(true);
-  };
-
-  const handleAddItem = () => {
-    const total = newQuoteItem.quantity * newQuoteItem.unit_price;
-    const newItem: QuoteItem = {
-      id: Date.now().toString(),
-      ...newQuoteItem,
-      total,
-    };
-    setQuoteItems([...quoteItems, newItem]);
-    setNewQuoteItem({
-      name: "",
-      description: "",
-      quantity: 1,
-      unit: "unit",
-      unit_price: 0,
-    });
-  };
-
-  const handleRemoveItem = (itemId: string) => {
-    setQuoteItems(quoteItems.filter((item) => item.id !== itemId));
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setNewQuoteItem({
-      ...newQuoteItem,
-      [name]: value,
-    });
-  };
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const quantity = parseInt(value);
-    if (isNaN(quantity)) {
-      setNewQuoteItem({
-        ...newQuoteItem,
-        [name]: 1,
-      });
-    } else {
-      setNewQuoteItem({
-        ...newQuoteItem,
-        [name]: quantity,
-      });
-    }
-  };
-
-  const handleStartEdit = (item: QuoteItem) => {
-    setEditingItemId(item.id);
-    setEditingItem({ ...item });
-  };
-
-  const handleCancelEdit = () => {
-    setEditingItemId(null);
-    setEditingItem(null);
-  };
-
-  const handleSaveEdit = () => {
-    if (editingItem) {
-      const updatedTotal = editingItem.quantity * editingItem.unit_price;
-      const updatedItem = { ...editingItem, total: updatedTotal };
-
-      setQuoteItems(
-        quoteItems.map((item) =>
-          item.id === editingItem.id ? updatedItem : item,
-        ),
-      );
-
-      setEditingItemId(null);
-      setEditingItem(null);
-    }
-  };
-
-  const handleEditItemChange = (
-    field: keyof QuoteItem,
-    value: string | number,
-  ) => {
-    if (editingItem) {
-      setEditingItem({
-        ...editingItem,
-        [field]: value,
-      });
-    }
   };
 
   const handleSelectCustomer = (customer: Customer) => {
@@ -476,36 +487,61 @@ const QuoteManagement = () => {
     null,
   );
   const [selectedQuoteItems, setSelectedQuoteItems] = useState<QuoteItem[]>([]);
+  const [selectedQuoteSections, setSelectedQuoteSections] = useState<BOQSection[]>([]);
   const [selectedCustomerForPDF, setSelectedCustomerForPDF] =
     useState<Customer | null>(null);
 
   const handleViewPDF = async (quote: Quote) => {
     setSelectedQuoteForPDF(quote);
 
-    const { data: items, error: itemsError } = await supabase
-      .from("quote_items")
-      .select("*")
-      .eq("quote_id", quote.id);
+    const [{ data: items, error: itemsError }, { data: sections, error: sectionsError }] =
+      await Promise.all([
+        supabase
+          .from("quote_items")
+          .select("*")
+          .eq("quote_id", quote.id),
+        supabase
+          .from("quote_sections")
+          .select("*")
+          .eq("quote_id", quote.id)
+          .order("sort_order", { ascending: true }),
+      ]);
 
-    if (itemsError) {
+    if (itemsError || sectionsError) {
       toast({
         title: "Error",
-        description: "Failed to load quote items",
+        description: "Failed to load quotation details",
         variant: "destructive",
       });
       return;
     }
 
+    const loadedSections: BOQSection[] = (sections || []).map((section, index) => ({
+      id: section.id,
+      name: section.name,
+      description: section.description || "",
+      sort_order: section.sort_order ?? index,
+    }));
+    const sectionNames = new Map(
+      loadedSections.map((section) => [section.id, section.name]),
+    );
+
     const mappedItems: QuoteItem[] = (items || []).map((item) => ({
       id: item.id,
       name: item.name,
-      description: item.description,
+      description: item.description || "",
       quantity: item.quantity,
       unit: item.unit,
       unit_price: item.unitprice,
       total: item.total,
+      product_id: item.product_id || null,
+      section_id: item.section_id || null,
+      section_name: item.section_id
+        ? sectionNames.get(item.section_id) || "General"
+        : "General",
     }));
 
+    setSelectedQuoteSections(loadedSections);
     setSelectedQuoteItems(mappedItems);
 
     if (quote.customer_id) {
@@ -514,8 +550,9 @@ const QuoteManagement = () => {
         .select("*")
         .eq("id", quote.customer_id)
         .single();
-
       setSelectedCustomerForPDF(customer);
+    } else {
+      setSelectedCustomerForPDF(null);
     }
 
     setShowPDFPreview(true);
@@ -524,7 +561,19 @@ const QuoteManagement = () => {
   const handleEditFromPDF = () => {
     if (selectedQuoteForPDF) {
       setSelectedQuote(selectedQuoteForPDF);
-      setQuoteItems(selectedQuoteItems);
+      const previewSections =
+        selectedQuoteSections.length > 0
+          ? selectedQuoteSections
+          : [{ id: crypto.randomUUID(), name: "General", description: "", sort_order: 0 }];
+      const fallbackSectionId = previewSections[0].id;
+      setQuoteSections(previewSections);
+      setQuoteItems(
+        selectedQuoteItems.map((item) => ({
+          ...item,
+          section_id: item.section_id || fallbackSectionId,
+          section_name: item.section_name || previewSections[0].name,
+        })),
+      );
       setSelectedCustomer(selectedCustomerForPDF);
       setShowPDFPreview(false);
       setShowForm(true);
@@ -938,280 +987,14 @@ const QuoteManagement = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-background border-border shadow-lg overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-foreground">
-              Bill of Quantities (BOQ)
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Add items to the quote
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-              <div>
-                <Label htmlFor="name" className="text-foreground">
-                  Item Name
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={newQuoteItem.name}
-                  onChange={handleInputChange}
-                  className="bg-background border-border text-foreground placeholder-muted-foreground"
-                />
-              </div>
-              <div>
-                <Label htmlFor="description" className="text-foreground">
-                  Description
-                </Label>
-                <Input
-                  id="description"
-                  name="description"
-                  value={newQuoteItem.description}
-                  onChange={handleInputChange}
-                  className="bg-background border-border text-foreground placeholder-muted-foreground"
-                />
-              </div>
-              <div>
-                <Label htmlFor="quantity" className="text-foreground">
-                  Quantity
-                </Label>
-                <Input
-                  type="number"
-                  id="quantity"
-                  name="quantity"
-                  value={newQuoteItem.quantity}
-                  onChange={handleQuantityChange}
-                  className="bg-background border-border text-foreground placeholder-muted-foreground"
-                />
-              </div>
-              <div>
-                <Label htmlFor="unit" className="text-foreground">
-                  Unit
-                </Label>
-                <Input
-                  id="unit"
-                  name="unit"
-                  value={newQuoteItem.unit}
-                  onChange={handleInputChange}
-                  className="bg-background border-border text-foreground placeholder-muted-foreground"
-                />
-              </div>
-              <div>
-                <Label htmlFor="unit_price" className="text-foreground">
-                  Unit Price (KES)
-                </Label>
-                <Input
-                  type="number"
-                  id="unit_price"
-                  name="unit_price"
-                  value={newQuoteItem.unit_price}
-                  onChange={handleInputChange}
-                  className="bg-background border-border text-foreground placeholder-muted-foreground"
-                />
-              </div>
-            </div>
-            <div className="flex items-end mb-4">
-              <Button
-                type="button"
-                onClick={handleAddItem}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Item
-              </Button>
-            </div>
-
-            <Separator className="bg-border" />
-
-            <div className="overflow-x-auto -mx-3 sm:mx-0">
-              <div className="inline-block min-w-full align-middle">
-                <Table>
-                  <TableCaption className="text-muted-foreground">
-                    A list of items in the quote.
-                  </TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-foreground min-w-[120px]">Item</TableHead>
-                      <TableHead className="text-foreground min-w-[150px]">Description</TableHead>
-                      <TableHead className="text-foreground min-w-[80px]">Quantity</TableHead>
-                      <TableHead className="text-foreground min-w-[80px]">Unit</TableHead>
-                      <TableHead className="text-foreground min-w-[100px]">Unit Price</TableHead>
-                      <TableHead className="text-right text-foreground min-w-[100px]">
-                        Total
-                      </TableHead>
-                      <TableHead className="text-right text-foreground min-w-[120px]">
-                        Actions
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {quoteItems.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell className="font-medium text-foreground">
-                          {editingItemId === item.id ? (
-                            <Input
-                              value={editingItem?.name || ""}
-                              onChange={(e) =>
-                                handleEditItemChange("name", e.target.value)
-                              }
-                              className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
-                            />
-                          ) : (
-                            <span className="break-words">{item.name}</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-foreground">
-                          {editingItemId === item.id ? (
-                            <Input
-                              value={editingItem?.description || ""}
-                              onChange={(e) =>
-                                handleEditItemChange("description", e.target.value)
-                              }
-                              className="w-full bg-background border-border text-foreground placeholder-muted-foreground"
-                            />
-                          ) : (
-                            <span className="break-words">{item.description}</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-foreground">
-                          {editingItemId === item.id ? (
-                            <Input
-                              type="number"
-                              value={editingItem?.quantity || 0}
-                              onChange={(e) =>
-                                handleEditItemChange(
-                                  "quantity",
-                                  parseInt(e.target.value) || 0,
-                                )
-                              }
-                              className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
-                            />
-                          ) : (
-                            item.quantity
-                          )}
-                        </TableCell>
-                        <TableCell className="text-foreground">
-                          {editingItemId === item.id ? (
-                            <Input
-                              value={editingItem?.unit || ""}
-                              onChange={(e) =>
-                                handleEditItemChange("unit", e.target.value)
-                              }
-                              className="w-20 bg-background border-border text-foreground placeholder-muted-foreground"
-                            />
-                          ) : (
-                            item.unit
-                          )}
-                        </TableCell>
-                        <TableCell className="text-foreground">
-                          {editingItemId === item.id ? (
-                            <Input
-                              type="number"
-                              value={editingItem?.unit_price || 0}
-                              onChange={(e) =>
-                                handleEditItemChange(
-                                  "unit_price",
-                                  parseFloat(e.target.value) || 0,
-                                )
-                              }
-                              className="w-24 bg-background border-border text-foreground placeholder-muted-foreground"
-                            />
-                          ) : (
-                            `KES ${item.unit_price.toLocaleString()}`
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right text-foreground">
-                          KES{" "}
-                          {editingItemId === item.id && editingItem
-                            ? (
-                                editingItem.quantity * editingItem.unit_price
-                              ).toLocaleString()
-                            : item.total.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {editingItemId === item.id ? (
-                              <>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={handleSaveEdit}
-                                  className="hover:bg-muted"
-                                >
-                                  <Save className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={handleCancelEdit}
-                                  className="hover:bg-muted"
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleStartEdit(item)}
-                                  className="hover:bg-muted"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleRemoveItem(item.id)}
-                                  className="hover:bg-muted"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-foreground">
-                        Subtotal
-                      </TableCell>
-                      <TableCell className="text-right text-foreground">
-                        KES {subtotal.toLocaleString()}
-                      </TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                    {includeVat && (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-foreground">
-                          VAT ({vatRate}%)
-                        </TableCell>
-                        <TableCell className="text-right text-foreground">
-                          KES {tax.toLocaleString()}
-                        </TableCell>
-                        <TableCell></TableCell>
-                      </TableRow>
-                    )}
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-foreground">
-                        Total Amount {includeVat ? "(Incl. VAT)" : "(Excl. VAT)"}
-                      </TableCell>
-                      <TableCell className="text-right font-bold text-foreground">
-                        KES {totalAmount.toLocaleString()}
-                      </TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <BOQSectionBuilder
+          sections={quoteSections}
+          items={quoteItems}
+          products={quoteProducts}
+          productsLoading={quoteProductsLoading}
+          onSectionsChange={setQuoteSections}
+          onItemsChange={setQuoteItems}
+        />
 
         <div className="flex flex-col sm:flex-row justify-end gap-2">
           <Button
