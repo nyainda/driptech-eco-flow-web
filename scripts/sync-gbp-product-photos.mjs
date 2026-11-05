@@ -11,7 +11,6 @@ const ALLOWLIST_PATH =
   process.env.GBP_PHOTO_ALLOWLIST || "src/data/gbp-photo-allowlist.json";
 const STATE_PATH =
   process.env.GBP_PHOTO_STATE || ".cache/gbp-product-photo-sync.json";
-const GOOGLE_SCOPE = "https://www.googleapis.com/auth/business.manage";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GOOGLE_API_ROOT = "https://mybusiness.googleapis.com/v4";
 const MIN_IMAGE_BYTES = 10 * 1024;
