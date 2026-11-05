@@ -301,6 +301,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
     setCatalogueOpen(false);
     setSearch("");
     setCategory("all");
+    setProductPage(1);
   };
 
   const addManualItem = (event: React.FormEvent) => {
@@ -353,11 +354,19 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
 
   const openCatalogue = (sectionId: string) => {
     setActiveSectionId(sectionId);
+    setProductPage(1);
     setCatalogueOpen(true);
   };
 
   const openManual = (sectionId: string) => {
     setActiveSectionId(sectionId);
+    setManualItem({
+      name: "",
+      description: "",
+      quantity: "1",
+      unit: "unit",
+      unit_price: "",
+    });
     setManualOpen(true);
   };
 
