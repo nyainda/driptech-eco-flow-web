@@ -195,7 +195,11 @@ const QuoteDashboard = ({
   }, [quotes, customerNames, search, statusFilter, sortBy]);
 
   const pageCount = Math.max(1, Math.ceil(filteredQuotes.length / pageSize));
-  const visibleQuotes = filteredQuotes.slice((page - 1) * pageSize, page * pageSize);
+  const currentPage = Math.min(page, pageCount);
+  const visibleQuotes = filteredQuotes.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const updateSearch = (value: string) => {
     setSearch(value);
@@ -249,6 +253,7 @@ const QuoteDashboard = ({
             <Button
               type="button"
               onClick={onCreateQuote}
+              variant="outline"
               className="h-11 w-full shrink-0 border border-primary-foreground/25 bg-background px-5 font-semibold text-foreground shadow-sm hover:bg-muted hover:text-foreground sm:w-auto"
             >
               <FilePlus2 className="mr-2 h-4 w-4" />
@@ -425,6 +430,7 @@ const QuoteDashboard = ({
                       updateSearch("");
                       updateStatus("all");
                     }}
+                    variant="secondary"
                     className="mt-4 border border-primary bg-primary text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground"
                   >
                     {quotes.length === 0 ? "Create first quote" : "Clear filters"}
@@ -526,8 +532,8 @@ const QuoteDashboard = ({
 
                   <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-xs text-muted-foreground">
-                      Showing {(page - 1) * pageSize + 1}–
-                      {Math.min(page * pageSize, filteredQuotes.length)} of {filteredQuotes.length}
+                      Showing {(currentPage - 1) * pageSize + 1}–
+                      {Math.min(currentPage * pageSize, filteredQuotes.length)} of {filteredQuotes.length}
                     </p>
                     <div className="flex items-center gap-2">
                       <Button
@@ -535,21 +541,21 @@ const QuoteDashboard = ({
                         size="sm"
                         variant="outline"
                         className="border-border bg-background text-foreground hover:bg-muted hover:text-foreground"
-                        disabled={page <= 1}
+                        disabled={currentPage <= 1}
                         onClick={() => setPage((current) => Math.max(1, current - 1))}
                       >
                         <ChevronLeft className="mr-1 h-4 w-4" />
                         Previous
                       </Button>
                       <span className="min-w-20 text-center text-xs tabular-nums text-muted-foreground">
-                        Page {page} of {pageCount}
+                        Page {currentPage} of {pageCount}
                       </span>
                       <Button
                         type="button"
                         size="sm"
                         variant="outline"
                         className="border-border bg-background text-foreground hover:bg-muted hover:text-foreground"
-                        disabled={page >= pageCount}
+                        disabled={currentPage >= pageCount}
                         onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
                       >
                         Next
@@ -668,6 +674,7 @@ const QuoteDashboard = ({
                 <Button
                   type="button"
                   onClick={onCreateQuote}
+                  variant="secondary"
                   className="w-full border border-primary bg-primary text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground"
                 >
                   Start a new BOQ
