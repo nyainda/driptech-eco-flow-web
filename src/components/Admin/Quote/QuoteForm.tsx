@@ -148,7 +148,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
   date,
   setDate,
 }) => {
-  const pdfInputRef = useRef<HTMLInputElement>(null);\n  const [pdfImporting, setPdfImporting] = useState(false);\n  const [formData, setFormData] = useState({
+  const pdfInputRef = useRef<HTMLInputElement>(null);
+  const [pdfImporting, setPdfImporting] = useState(false);
+  const [formData, setFormData] = useState({
     project_type: quote?.project_type || "",
     crop_type: quote?.crop_type || "",
     area_size: quote?.area_size?.toString() || "",
@@ -200,12 +202,9 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
           .join(" ")
           .replace(/\s+/g, " ")
           .trim();
-        if (text) pages.push(`--- PDF page ${pageNumber} ---
-${text}`);
+        if (text) pages.push(`--- PDF page ${pageNumber} ---\n${text}`);
       }
-      const extracted = pages.join("
-
-");
+      const extracted = pages.join("\n\n");
       if (!extracted.trim()) {
         window.alert("No selectable text was found. This PDF may be scanned; OCR is not available in this import yet.");
         return;
