@@ -430,7 +430,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                       onChange={(event) =>
                         updateSection(section.id, { name: event.target.value })
                       }
-                      className="h-9 max-w-xl border-transparent bg-transparent px-2 text-base font-semibold shadow-none focus-visible:border-input focus-visible:bg-background"
+                      className="h-9 max-w-xl border-transparent bg-transparent px-2 text-base font-semibold text-foreground shadow-none placeholder:text-muted-foreground focus-visible:border-input focus-visible:bg-background"
                     />
                     <Input
                       aria-label={`Section ${index + 1} description`}
@@ -441,7 +441,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                         })
                       }
                       placeholder="Optional section description"
-                      className="h-8 max-w-xl border-transparent bg-transparent px-2 text-sm text-muted-foreground shadow-none focus-visible:border-input focus-visible:bg-background"
+                      className="h-8 max-w-xl border-transparent bg-transparent px-2 text-sm text-muted-foreground shadow-none placeholder:text-muted-foreground focus-visible:border-input focus-visible:bg-background"
                     />
                   </div>
                 </div>
@@ -947,6 +947,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                       quantity: event.target.value,
                     }))
                   }
+                  className="text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div className="space-y-1.5">
@@ -961,6 +962,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     }))
                   }
                   placeholder="pcs, m, roll, set"
+                  className="text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div className="col-span-2 space-y-1.5 sm:col-span-1">
@@ -978,6 +980,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     }))
                   }
                   placeholder="0.00"
+                  className="text-foreground placeholder:text-muted-foreground"
                 />
               </div>
             </div>
@@ -1001,7 +1004,12 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={!manualItem.name.trim()}>
+              <Button
+                type="submit"
+                variant="secondary"
+                className={primaryActionClass}
+                disabled={!manualItem.name.trim()}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add to BOQ
               </Button>
