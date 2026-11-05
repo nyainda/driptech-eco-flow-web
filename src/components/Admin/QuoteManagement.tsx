@@ -26,7 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { User, Check } from "lucide-react";
+import { User, Check, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -604,18 +604,30 @@ const QuoteManagement = () => {
 
   if (showPDFPreview && selectedQuoteForPDF) {
     return (
-      <div className="space-y-6 bg-background p-3 sm:p-4 lg:p-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            onClick={() => setShowPDFPreview(false)}
-            className="border-border text-muted-foreground hover:bg-muted"
-          >
-            ← Back to Quotes
-          </Button>
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground">
-            Quote PDF Preview
-          </h2>
+      <div className="min-h-screen space-y-5 bg-muted/30 p-3 sm:p-5 lg:p-6">
+        <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowPDFPreview(false)}
+              className="shrink-0 border-border bg-background text-foreground hover:bg-muted"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to quotes
+            </Button>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                Quotes & BOQ / Document preview
+              </p>
+              <h2 className="mt-1 truncate text-lg font-bold text-foreground">
+                {selectedQuoteForPDF.quote_number}
+              </h2>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Review the full quotation before printing or saving it as a PDF.
+          </p>
         </div>
 
         <QuotePDF
