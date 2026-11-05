@@ -15,12 +15,13 @@ const money = (value: number) =>
   });
 
 export const BOQTable: React.FC<BOQTableProps> = ({ items, onEdit }) => {
-  const groups = new Map<string, QuoteItem[]>();
+  const groups = new Map<string, { sectionName: string; items: QuoteItem[] }>();
   items.forEach((item) => {
     const sectionName = item.section_name?.trim() || "General";
-    const group = groups.get(sectionName) || [];
-    group.push(item);
-    groups.set(sectionName, group);
+    const groupKey = item.section_id || `legacy:${sectionName}`;
+    const group = groups.get(groupKey) || { sectionName, items: [] };
+    group.items.push(item);
+    groups.set(groupKey, group);
   });
 
   return (
@@ -48,14 +49,14 @@ export const BOQTable: React.FC<BOQTableProps> = ({ items, onEdit }) => {
         </p>
       ) : (
         <div className="space-y-5">
-          {Array.from(groups.entries()).map(([sectionName, sectionItems]) => {
+          {Array.from(groups.values()).map(({ sectionName, items: sectionItems }, groupIndex) => {
             const sectionTotal = sectionItems.reduce(
               (sum, item) => sum + Number(item.total || 0),
               0,
             );
 
             return (
-              <section key={sectionName} className="break-inside-avoid">
+              <section key={sectionItems[0]?.section_id || `legacy:${sectionName}:${groupIndex}`} className="break-inside-avoid">
                 <div className="mb-0 flex items-center justify-between rounded-t-md border border-gray-200 bg-gray-100 px-4 py-3 dark:border-gray-600 dark:bg-gray-700">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100">
                     {sectionName}
