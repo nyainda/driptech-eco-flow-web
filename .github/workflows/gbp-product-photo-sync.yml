@@ -1,0 +1,64 @@
+name: Google Business Profile Product Photos
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview only. Set false only after Google OAuth secrets and the product allowlist are ready."
+        required: true
+        default: true
+        type: boolean
+  schedule:
+    # 08:00 East Africa Time (UTC+3) on Monday, Wednesday and Friday.
+    - cron: "0 5 * * 1,3,5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gbp-product-photo-sync
+  cancel-in-progress: false
+
+jobs:
+  sync-product-photos:
+    # Scheduled publishing remains off until the repository variable is deliberately enabled.
+    if: \${{ github.event_name == 'workflow_dispatch' || vars.GBP_PHOTO_SYNC_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Restore photo history
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/gbp-product-photo-sync.json
+          key: gbp-product-photo-sync-\${{ github.run_id }}
+          restore-keys: |
+            gbp-product-photo-sync-
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Sync one approved product image
+        run: node scripts/sync-gbp-product-photos.mjs
+        env:
+          VITE_WORKER_URL: https://dripstech-api.dripstech.workers.dev
+          GBP_ACCOUNT_ID: "107802453294630169300"
+          GBP_LOCATION_ID: "11100731052159024871"
+          GBP_CLIENT_ID: \${{ secrets.GBP_CLIENT_ID }}
+          GBP_CLIENT_SECRET: \${{ secrets.GBP_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: \${{ secrets.GBP_REFRESH_TOKEN }}
+          GBP_PHOTO_SYNC_ENABLED: \${{ vars.GBP_PHOTO_SYNC_ENABLED }}
+          GBP_DRY_RUN: \${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+          GBP_PHOTO_ALLOWLIST: src/data/gbp-photo-allowlist.json
+          GBP_PHOTO_STATE: .cache/gbp-product-photo-sync.json
+
+      - name: Save photo history
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/gbp-product-photo-sync.json
+          key: gbp-product-photo-sync-\${{ github.run_id }}
