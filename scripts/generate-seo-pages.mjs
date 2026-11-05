@@ -885,6 +885,34 @@ const isSafeInternalHref = (href) =>
   !href.startsWith("//") &&
   !/[\s"'<>]/.test(href);
 
+const categoryLabels = {
+  drip: "Drip Irrigation", sprinklers: "Sprinklers", pumps: "Pumps & Motors", pipes: "Pipes & Fittings",
+  filtration: "Filtration", solar: "Solar Irrigation", greenhouse: "Greenhouse Systems", controls: "Controls",
+  fertigation: "Fertigation", emitters: "Emitters & Drippers", valves: "Valves & Regulators",
+  accessories: "Accessories", storage: "Water Storage", borehole: "Borehole", "rain-guns": "Rain Guns",
+};
+// Breadcrumb trail for any page below the homepage. Used both for the visible
+// links (internal linking) and for BreadcrumbList structured data.
+const getBreadcrumbs = (page) => {
+  if (page.route === "/") return [];
+  const parts = page.route.split("/").filter(Boolean);
+  const trail = [{ name: "Home", href: "/" }];
+  if (parts[0] === "products") {
+    trail.push({ name: "Products", href: "/products" });
+    if (parts[1]) {
+      trail.push({
+        name: categoryLabels[parts[1]] || parts[1].replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+        href: `/products/${parts[1]}`,
+      });
+    }
+  } else if (parts[0] === "blog" || parts[0] === "news") {
+    trail.push({ name: parts[0] === "blog" ? "Blog" : "News", href: `/${parts[0]}` });
+  }
+  trail.push({ name: page.heading || page.h1 || page.title, href: page.route });
+  // A trail of Home > current page is still valid; just dedupe the tail.
+  return trail.filter((item, i, arr) => i === arr.length - 1 || item.href !== page.route);
+};
+
 const pageBody = (page) => {
   // An intro belongs to the page shell exactly once. The old fallback rendered
   // it once here and a second time when a page did not define sections.
@@ -978,6 +1006,14 @@ const pageBody = (page) => {
 
   return `
     <main data-seo-shell="true"${product ? ' data-seo-product="true"' : ""}>
+      ${(() => {
+        const trail = getBreadcrumbs(page);
+        return trail.length > 1
+          ? `<nav aria-label="Breadcrumb"><ol>${trail
+              .map((item, i) => `<li>${i === trail.length - 1 ? escapeHtml(item.name) : `<a href="${escapeHtml(item.href)}">${escapeHtml(item.name)}</a>`}</li>`)
+              .join("")}</ol></nav>`
+          : "";
+      })()}
       <p>DripTech Eco-Flow | Irrigation equipment in Kenya</p>
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       ${productImage}
@@ -1033,9 +1069,44 @@ const renderPage = (page) => {
     `<div id="root">${pageBody(page)}</div>`,
   );
 
+  const crumbs = getBreadcrumbs(page);
+  const extraSchemas = [];
+  if (crumbs.length > 1) {
+    extraSchemas.push({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: item.name,
+        item: `${siteUrl}${item.href === "/" ? "/" : item.href}`,
+      })),
+    });
+  }
+  if (Array.isArray(page.catalogLinks) && page.catalogLinks.length && /^\/products\/[^/]+$/.test(page.route)) {
+    extraSchemas.push({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: page.heading,
+      url: canonical,
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: page.catalogLinks.length,
+        itemListElement: page.catalogLinks.map((link, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          url: `${siteUrl}${link.href}`,
+          name: link.label,
+        })),
+      },
+    });
+  }
+  const extraSchemaTags = extraSchemas
+    .map((schema) => `<script type="application/ld+json">${serializeJsonLd(schema)}</script>`)
+    .join("\n");
   return `${html.replace(
     "</head>",
-    `<script type="application/ld+json">${serializeJsonLd(
+    `${extraSchemaTags}\n<script type="application/ld+json">${serializeJsonLd(
       page.schema || {
         "@context": "https://schema.org",
         "@type": "WebPage",
