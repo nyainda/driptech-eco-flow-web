@@ -1,404 +1,279 @@
 import { COMPANY, getLogoUrl } from "../shared/companyBrand";
-import { TermsSection } from "./TermsAndConditions";
 import { Quote, QuoteItem, Customer } from "./types";
 
+const escapeHtml = (value: unknown): string =>
+  String(value ?? "").replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character] ?? character;
+  });
+
+const money = (value: number): string =>
+  (Number.isFinite(value) ? value : 0).toLocaleString("en-KE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+const formatDate = (value?: string): string =>
+  value ? new Date(value).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "";
+
+/**
+ * Self-contained, print-first quotation document (A4).
+ * No external scripts/fonts: renders identically offline, in print preview and "Save as PDF".
+ * All user-supplied text is HTML-escaped; line breaks in descriptions and notes are preserved.
+ */
 export const generatePrintContent = (
   quote: Quote,
   items: QuoteItem[],
   customer?: Customer,
 ): string => {
   const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+  const vatRate = quote.include_vat ? quote.vat_rate : 0;
   const tax = quote.include_vat ? subtotal * (quote.vat_rate / 100) : 0;
   const total = subtotal + tax;
 
-  const customerSection = customer
+  const customerLines = customer
+    ? [
+        `<div class="party-name">${escapeHtml(customer.company_name || customer.contact_person)}</div>`,
+        customer.company_name ? `<div>Attn: ${escapeHtml(customer.contact_person)}</div>` : "",
+        customer.address ? `<div>${escapeHtml(customer.address)}</div>` : "",
+        [customer.city, customer.country].filter(Boolean).length
+          ? `<div>${escapeHtml([customer.city, customer.country].filter(Boolean).join(", "))}</div>`
+          : "",
+        customer.phone ? `<div>Tel: ${escapeHtml(customer.phone)}</div>` : "",
+        `<div>${escapeHtml(customer.email)}</div>`,
+      ].join("")
+    : `<div class="muted">Customer information not available</div>`;
+
+  const projectFacts = [
+    ["Project", quote.project_type],
+    ["Crop", quote.crop_type],
+    ["Area", quote.area_size ? `${quote.area_size} acres` : ""],
+    ["Water source", quote.water_source],
+    ["Terrain", quote.terrain_info],
+  ].filter(([, value]) => Boolean(value));
+
+  const projectSection = projectFacts.length
     ? `
-    <div class="space-y-1 text-xs">
-      <div class="font-bold text-gray-900 break-words">${customer.contact_person}</div>
-      ${customer.company_name ? `<div class="text-blue-600 font-semibold break-words">${customer.company_name}</div>` : ""}
-      ${customer.address ? `<div class="text-gray-600 break-words">${customer.address}</div>` : ""}
-      ${customer.city ? `<div class="text-gray-600 break-words">${customer.city}</div>` : ""}
-      ${customer.country ? `<div class="text-gray-600 break-words">${customer.country}</div>` : ""}
-      ${customer.phone ? `<div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">📞</span> ${customer.phone}</div>` : ""}
-      <div class="flex items-center gap-1 text-gray-600 font-medium break-all"><span class="opacity-70">✉️</span> ${customer.email}</div>
-    </div>
-  `
-    : '<div class="text-gray-500 text-xs">Customer information not available</div>';
-
-  const projectDetailsSection =
-    quote.project_type || quote.crop_type || quote.area_size
-      ? `
-    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-3 rounded-lg border-l-3 border-blue-600 mb-3">
-      <div class="flex items-center gap-2 mb-2">
-        <div class="w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-500 rounded-md flex items-center justify-center text-sm">🌱</div>
-        <h3 class="text-blue-600 text-sm font-bold">Project Overview</h3>
+    <section class="block avoid-break">
+      <h2 class="section-title">Project overview</h2>
+      <div class="facts">
+        ${projectFacts
+          .map(
+            ([label, value]) =>
+              `<div class="fact"><span class="fact-label">${label}</span><span class="fact-value">${escapeHtml(value)}</span></div>`,
+          )
+          .join("")}
       </div>
-      <div class="grid grid-cols-2 gap-2 text-xs">
-        ${quote.project_type
-        ? `
-          <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
-            <span class="block text-xs font-medium text-gray-500 uppercase">Project</span>
-            <span class="block text-xs font-bold text-gray-900">${quote.project_type}</span>
-          </div>
-        `
-        : ""
-      }
-        ${quote.crop_type
-        ? `
-          <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
-            <span class="block text-xs font-medium text-gray-500 uppercase">Crop</span>
-            <span class="block text-xs font-bold text-gray-900">${quote.crop_type}</span>
-          </div>
-        `
-        : ""
-      }
-        ${quote.area_size
-        ? `
-          <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
-            <span class="block text-xs font-medium text-gray-500 uppercase">Area</span>
-            <span class="block text-xs font-bold text-gray-900">${quote.area_size} acres</span>
-          </div>
-        `
-        : ""
-      }
-        ${quote.water_source
-        ? `
-          <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100">
-            <span class="block text-xs font-medium text-gray-500 uppercase">Water</span>
-            <span class="block text-xs font-bold text-gray-900">${quote.water_source}</span>
-          </div>
-        `
-        : ""
-      }
-      </div>
-      ${quote.terrain_info
-        ? `
-        <div class="bg-white bg-opacity-70 p-2 rounded border border-blue-100 mt-2">
-          <span class="block text-xs font-medium text-gray-500 uppercase">Terrain</span>
-          <span class="block text-xs font-medium text-gray-900">${quote.terrain_info}</span>
-        </div>
-      `
-        : ""
-      }
-    </div>
-  `
-      : "";
+    </section>`
+    : "";
 
-  const itemsRows = items
+  const rows = items
     .map(
       (item, index) => `
-    <tr class="hover:bg-blue-50 border-b border-gray-100">
-      <td class="p-1.5 font-bold text-gray-500 text-center text-xs">${index + 1}</td>
-      <td class="p-1.5 font-bold text-gray-900 text-xs">${item.name}</td>
-      <td class="p-1.5 text-gray-600 text-xs">${item.description}</td>
-      <td class="p-1.5 text-center font-bold text-green-600 text-xs">${item.quantity}</td>
-      <td class="p-1.5 text-center text-gray-600 text-xs">${item.unit}</td>
-      <td class="p-1.5 text-right font-mono text-teal-600 text-xs">${item.unit_price.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
-      <td class="p-1.5 text-right font-mono font-bold text-red-600 text-xs">${item.total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}</td>
-    </tr>
-  `,
+      <tr>
+        <td class="c-num">${index + 1}</td>
+        <td class="c-desc">
+          <div class="item-name">${escapeHtml(item.name)}</div>
+          ${item.description?.trim() ? `<div class="item-desc">${escapeHtml(item.description.trim())}</div>` : ""}
+        </td>
+        <td class="c-qty">${escapeHtml(item.quantity)}</td>
+        <td class="c-unit">${escapeHtml(item.unit)}</td>
+        <td class="c-money">${money(item.unit_price)}</td>
+        <td class="c-money c-total">${money(item.total)}</td>
+      </tr>`,
     )
     .join("");
 
-  const escapeHtml = (value: string): string =>
-    value.replace(/[&<>"']/g, (character) => {
-      const entities: Record<string, string> = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      };
-      return entities[character] ?? character;
-    });
-
   const notesSection = quote.notes?.trim()
     ? `
-    <section class="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-3 border-l-3 border-amber-500 mb-3" aria-label="Technical specifications, commercial terms and notes">
-      <div class="flex items-center gap-2 mb-2">
-        <div class="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-md flex items-center justify-center text-sm">📝</div>
-        <h3 class="text-amber-800 text-sm font-bold">Technical Specifications, Commercial Terms &amp; Notes</h3>
-      </div>
-      <div class="bg-white bg-opacity-50 p-2 rounded border border-amber-200">
-        <p class="text-amber-900 text-xs font-medium break-words whitespace-pre-wrap" style="white-space: pre-wrap; overflow-wrap: anywhere;">${escapeHtml(quote.notes.trim())}</p>
-      </div>
-    </section>
-  `
+    <section class="block">
+      <h2 class="section-title">Technical specifications, commercial terms &amp; notes</h2>
+      <div class="notes">${escapeHtml(quote.notes.trim())}</div>
+    </section>`
     : "";
 
-  const totalsRows = `
-    <tr class="border-b border-gray-200">
-      <td class="p-2 font-semibold text-gray-700 text-xs">Subtotal</td>
-      <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-        KES ${subtotal.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
-      </td>
-    </tr>
-    ${quote.include_vat
-      ? `
-    <tr class="border-b border-gray-200">
-      <td class="p-2 font-semibold text-gray-700 text-xs">VAT (${quote.vat_rate}%)</td>
-      <td class="p-2 text-right font-mono font-bold text-green-600 text-xs">
-        KES ${tax.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
-      </td>
-    </tr>
-    `
-      : ""
-    }
-    <tr class="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
-      <td class="p-2 font-extrabold text-sm">Total Amount</td>
-      <td class="p-2 text-right font-mono font-extrabold text-sm">
-        KES ${total.toLocaleString("en-KE", { minimumFractionDigits: 2 })}
-      </td>
-    </tr>
-  `;
+  const validUntil = formatDate(quote.valid_until);
 
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Quote #${quote.quote_number} - ${COMPANY.name}</title>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-      <script src="https://cdn.tailwindcss.com"></script>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-      <style>
-        body { 
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-          background: white !important;
-          margin: 0;
-          padding: 12px;
-          font-size: 13px;
-          line-height: 1.4;
-          color: #1f2937;
-        }
-        
-        @keyframes shine {
-          0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-          100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-        
-        .shine-effect::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-          animation: shine 3s infinite;
-        }
-        
-        /* Enhanced print-friendly layout */
-        @media print {
-          @page { 
-            margin: 0.8cm; 
-            size: A4 portrait; 
-          }
-          body { 
-            background: white !important; 
-            padding: 0 !important;
-            font-size: 12px !important;
-          }
-          * { 
-            -webkit-print-color-adjust: exact !important; 
-            color-adjust: exact !important; 
-          }
-          .no-print { display: none !important; }
-          .page-break { page-break-before: always; }
-        }
-        
-        /* Ensure consistent table display across all devices */
-        .items-table {
-          display: table !important;
-          width: 100% !important;
-          font-size: 10px !important;
-        }
-        
-        .items-table th,
-        .items-table td {
-          padding: 4px 2px !important;
-          border: 1px solid #e5e7eb !important;
-          word-wrap: break-word !important;
-          overflow-wrap: break-word !important;
-        }
-        
-        /* Mobile specific adjustments for PDF */
-        @media screen and (max-width: 768px) {
-          .container {
-            max-width: 100% !important;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-          }
-          
-          .items-table th,
-          .items-table td {
-            font-size: 8px !important;
-            padding: 2px 1px !important;
-          }
-          
-          .header-section {
-            padding: 12px !important;
-          }
-          
-          .content-section {
-            padding: 8px !important;
-          }
-        }
-        
-        /* Hide description on very small screens but keep for PDF */
-        @media screen and (max-width: 480px) {
-          .hide-mobile {
-            display: none !important;
-          }
-        }
-        
-        /* Force show all columns in print/PDF mode */
-        @media print {
-          .hide-mobile {
-            display: table-cell !important;
-          }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        
-        <!-- Header Section -->
-        <div class="header-section bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-4 relative overflow-hidden">
-          <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-2 left-2 w-1 h-1 bg-white rounded-full"></div>
-            <div class="absolute top-6 right-8 w-0.5 h-0.5 bg-white rounded-full"></div>
-            <div class="absolute bottom-4 left-6 w-0.5 h-0.5 bg-white rounded-full"></div>
-            <div class="absolute bottom-8 right-4 w-1.5 h-1.5 bg-white rounded-full"></div>
-          </div>
-          
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
-            <div class="flex items-center gap-3 w-full md:w-auto">
-              <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow">
-                <img src="${getLogoUrl({ forPrint: true })}" alt="${COMPANY.name}" class="w-11 h-11 object-contain" />
-              </div>
-              <div class="min-w-0 flex-1">
-                <h1 class="text-white text-xl font-black mb-1">${COMPANY.name}</h1>
-                <div class="text-white text-opacity-90 text-xs font-medium">${COMPANY.tagline}</div>
-                <div class="mt-1 text-white text-opacity-80 text-xs space-y-0.5">
-                  <div>📍 ${COMPANY.address}</div>
-                  <div>📞 ${COMPANY.phone}</div>
-                  <div>✉️ ${COMPANY.email}</div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="text-center md:text-right text-white w-full md:w-auto">
-              <h2 class="text-2xl font-black mb-2">QUOTATION</h2>
-              <div class="bg-white bg-opacity-15 backdrop-blur-md p-3 rounded-lg border border-white border-opacity-20">
-                <div class="flex justify-between items-center mb-1 text-xs">
-                  <span class="font-medium text-white text-opacity-90">Quote #:</span>
-                  <span class="font-bold ml-2">${quote.quote_number}</span>
-                </div>
-                <div class="flex justify-between items-center mb-1 text-xs">
-                  <span class="font-medium text-white text-opacity-90">Date:</span>
-                  <span class="font-bold ml-2">${new Date(quote.created_at).toLocaleDateString("en-GB")}</span>
-                </div>
-                ${quote.valid_until
-      ? `
-                <div class="flex justify-between items-center text-xs">
-                  <span class="font-medium text-white text-opacity-90">Valid Until:</span>
-                  <span class="font-bold ml-2">${new Date(quote.valid_until).toLocaleDateString("en-GB")}</span>
-                </div>
-                `
-      : ""
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quotation ${escapeHtml(quote.quote_number)} - ${escapeHtml(COMPANY.name)}</title>
+  <style>
+    :root {
+      --brand: ${COMPANY.primary};
+      --brand-dark: ${COMPANY.primaryDark};
+      --brand-tint: #eef6f1;
+      --ink: #1c2521;
+      --muted: #5f6b66;
+      --line: #dfe6e2;
     }
-              </div>
-            </div>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px; line-height: 1.45; color: var(--ink); background: #eceff0; padding: 24px 12px;
+    }
+    .page { max-width: 794px; margin: 0 auto; background: #fff; box-shadow: 0 2px 18px rgba(0,0,0,.1); }
+    .topbar { height: 8px; background: linear-gradient(90deg, var(--brand-dark), var(--brand)); }
+    .inner { padding: 28px 34px 22px; }
+
+    .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+    .brand { display: flex; gap: 12px; align-items: center; }
+    .logo { width: 52px; height: 52px; border: 1px solid var(--line); border-radius: 10px; padding: 7px; display: flex; align-items: center; justify-content: center; }
+    .logo img { width: 100%; height: 100%; object-fit: contain; }
+    .brand h1 { font-size: 20px; font-weight: 800; color: var(--brand-dark); letter-spacing: -.01em; }
+    .brand .tag { color: var(--muted); font-size: 11px; }
+    .doc-title { text-align: right; }
+    .doc-title .word { font-size: 26px; font-weight: 800; letter-spacing: .14em; color: var(--brand); line-height: 1; }
+    .meta { margin-top: 10px; display: inline-grid; grid-template-columns: auto auto; gap: 3px 14px; text-align: left; font-size: 11.5px; }
+    .meta dt { color: var(--muted); }
+    .meta dd { font-weight: 700; text-align: right; }
+
+    .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+    .party { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; }
+    .party-label { font-size: 9.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); margin-bottom: 5px; }
+    .party-name { font-weight: 700; font-size: 13px; }
+    .party div { overflow-wrap: anywhere; }
+    .muted { color: var(--muted); }
+
+    .block { margin-top: 20px; }
+    .avoid-break { break-inside: avoid; page-break-inside: avoid; }
+    .section-title { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-dark); padding-bottom: 6px; border-bottom: 2px solid var(--brand); margin-bottom: 10px; }
+
+    .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .fact { background: var(--brand-tint); border-radius: 6px; padding: 7px 10px; }
+    .fact-label { display: block; font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .fact-value { display: block; font-weight: 600; overflow-wrap: anywhere; }
+
+    table.boq { width: 100%; border-collapse: collapse; }
+    .boq thead { display: table-header-group; }
+    .boq th { background: var(--brand-dark); color: #fff; font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 8px 8px; text-align: left; }
+    .boq td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .boq tbody tr { break-inside: avoid; page-break-inside: avoid; }
+    .boq tbody tr:nth-child(even) td { background: #f8faf9; }
+    .c-num { width: 28px; text-align: center; color: var(--muted); }
+    .c-qty, .c-unit { width: 52px; text-align: center; }
+    .c-money { width: 96px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .c-total { font-weight: 700; }
+    .boq th.c-num, .boq th.c-qty, .boq th.c-unit { text-align: center; }
+    .boq th.c-money { text-align: right; }
+    .item-name { font-weight: 700; }
+    .item-desc { color: var(--muted); font-size: 11px; margin-top: 2px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+    .totals-wrap { display: flex; justify-content: flex-end; margin-top: 14px; break-inside: avoid; page-break-inside: avoid; }
+    .totals { width: 285px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .totals .row { display: flex; justify-content: space-between; padding: 8px 14px; font-variant-numeric: tabular-nums; }
+    .totals .row + .row { border-top: 1px solid var(--line); }
+    .totals .grand { background: var(--brand); color: #fff; font-size: 14px; font-weight: 800; }
+    .currency-note { text-align: right; font-size: 10px; color: var(--muted); margin-top: 5px; }
+
+    .notes { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--brand-tint); border-left: 4px solid var(--brand); border-radius: 0 6px 6px 0; padding: 11px 14px; }
+
+    .accept { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 28px; break-inside: avoid; page-break-inside: avoid; }
+    .sign { border-top: 1px solid var(--ink); padding-top: 5px; font-size: 10.5px; color: var(--muted); }
+
+    .foot { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--line); text-align: center; font-size: 10.5px; color: var(--muted); }
+    .foot strong { color: var(--brand-dark); }
+
+    @page { size: A4 portrait; margin: 10mm; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { box-shadow: none; max-width: none; }
+      .inner { padding: 18px 8px 8px; }
+    }
+    @media screen and (max-width: 600px) {
+      .head, .parties { grid-template-columns: 1fr; flex-direction: column; }
+      .doc-title { text-align: left; }
+      .facts { grid-template-columns: 1fr 1fr; }
+      .inner { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar"></div>
+    <div class="inner">
+
+      <header class="head">
+        <div class="brand">
+          <div class="logo"><img src="${getLogoUrl({ forPrint: true })}" alt=""></div>
+          <div>
+            <h1>${escapeHtml(COMPANY.name)}</h1>
+            <div class="tag">${escapeHtml(COMPANY.tagline)}</div>
           </div>
         </div>
+        <div class="doc-title">
+          <div class="word">QUOTATION</div>
+          <dl class="meta">
+            <dt>Quote no.</dt><dd>${escapeHtml(quote.quote_number)}</dd>
+            <dt>Date</dt><dd>${formatDate(quote.created_at)}</dd>
+            ${validUntil ? `<dt>Valid until</dt><dd>${validUntil}</dd>` : ""}
+          </dl>
+        </div>
+      </header>
 
-        <div class="content-section p-4">
-          <!-- Address Section -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-            <div>
-              <h3 class="text-blue-600 text-sm font-bold mb-2 flex items-center gap-2">
-                <div class="w-0.5 h-3 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-                From
-              </h3>
-              <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
-                <div class="space-y-1 text-xs">
-                  <div class="font-bold text-gray-900">${COMPANY.name}</div>
-                  <div class="text-gray-600">${COMPANY.address}</div>
-                  <div class="flex items-center gap-1 text-gray-600">
-                    <span class="opacity-70">📞</span> ${COMPANY.phone}
-                  </div>
-                  <div class="flex items-center gap-1 text-gray-600">
-                    <span class="opacity-70">✉️</span> ${COMPANY.email}
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 class="text-blue-600 text-sm font-bold mb-2 flex items-center gap-2">
-                <div class="w-0.5 h-3 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-                To
-              </h3>
-              <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-lg border border-gray-200">
-                ${customerSection}
-              </div>
-            </div>
-          </div>
+      <section class="parties avoid-break">
+        <div class="party">
+          <div class="party-label">From</div>
+          <div class="party-name">${escapeHtml(COMPANY.name)}</div>
+          <div>${escapeHtml(COMPANY.address)}</div>
+          <div>Tel: ${escapeHtml(COMPANY.phone)}</div>
+          <div>${escapeHtml(COMPANY.email)}</div>
+        </div>
+        <div class="party">
+          <div class="party-label">Quoted to</div>
+          ${customerLines}
+        </div>
+      </section>
 
-          <!-- Project Details Section -->
-          <div class="avoid-break">
-            ${projectDetailsSection}
-          </div>
+      ${projectSection}
 
-          <!-- BOQ Table Section -->
-          <div class="mb-4">
-            <h3 class="text-blue-600 text-sm font-bold mb-2 flex items-center gap-2">
-              <div class="w-0.5 h-3 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-              Bill of Quantities (BOQ)
-            </h3>
-            
-            <div class="rounded-lg overflow-hidden shadow-lg border border-gray-200 bg-white">
-              <table class="items-table w-full">
-                <thead class="bg-gradient-to-r from-blue-600 to-blue-500">
-                  <tr>
-                    <th class="p-2 text-left font-bold text-white text-xs uppercase">#</th>
-                    <th class="p-2 text-left font-bold text-white text-xs uppercase">Item</th>
-                    <th class="hide-mobile p-2 text-left font-bold text-white text-xs uppercase">Description</th>
-                    <th class="p-2 text-center font-bold text-white text-xs uppercase">Qty</th>
-                    <th class="hide-mobile p-2 text-center font-bold text-white text-xs uppercase">Unit</th>
-                    <th class="p-2 text-right font-bold text-white text-xs uppercase">Unit Price (KES)</th>
-                    <th class="p-2 text-right font-bold text-white text-xs uppercase">Total (KES)</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                  ${itemsRows}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <section class="block">
+        <h2 class="section-title">Bill of quantities</h2>
+        <table class="boq">
+          <thead>
+            <tr>
+              <th class="c-num">#</th>
+              <th>Item &amp; specification</th>
+              <th class="c-qty">Qty</th>
+              <th class="c-unit">Unit</th>
+              <th class="c-money">Unit price</th>
+              <th class="c-money">Amount</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </section>
 
-          <!-- Totals Section -->
-          <div class="flex justify-end mb-3">
-            <div class="w-full md:w-auto md:min-w-[250px] max-w-sm">
-              <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-lg border border-gray-200">
-                <table class="w-full text-xs">
-                  <tbody>
-                    ${totalsRows}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- Notes Section -->
-          <div class="avoid-break">
-            ${notesSection}
-          </div>
+      <div class="totals-wrap">
+        <div class="totals">
+          <div class="row"><span>Subtotal</span><span>KES ${money(subtotal)}</span></div>
+          ${quote.include_vat ? `<div class="row"><span>VAT (${escapeHtml(vatRate)}%)</span><span>KES ${money(tax)}</span></div>` : `<div class="row"><span>VAT</span><span>Not applied</span></div>`}
+          <div class="row grand"><span>Total</span><span>KES ${money(total)}</span></div>
         </div>
       </div>
-    </body>
-    </html>
-  `;
+      <div class="currency-note">All amounts in Kenya Shillings (KES)${validUntil ? ` · Valid until ${validUntil}` : ""}</div>
+
+      ${notesSection}
+
+      <section class="accept">
+        <div class="sign">Authorised by ${escapeHtml(COMPANY.name)}</div>
+        <div class="sign">Customer acceptance (name, signature &amp; date)</div>
+      </section>
+
+      <footer class="foot">
+        <strong>${escapeHtml(COMPANY.name)}</strong> · ${escapeHtml(COMPANY.phone)} · ${escapeHtml(COMPANY.email)} · ${escapeHtml(COMPANY.emailAlt)}
+      </footer>
+    </div>
+  </div>
+</body>
+</html>`;
 };
