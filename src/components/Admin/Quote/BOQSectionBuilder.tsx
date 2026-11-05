@@ -2,11 +2,15 @@ import React, { useMemo, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
   Package,
   Plus,
   Search,
   Trash2,
   Wrench,
+  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -92,6 +96,20 @@ const formatKES = (value: number) =>
     maximumFractionDigits: 2,
   })}`;
 
+const normalizeSearchText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+const categoryLabel = (value: string) =>
+  value
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
 const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
   sections,
   items,
@@ -105,6 +123,8 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
   const [activeSectionId, setActiveSectionId] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
+  const [productPage, setProductPage] = useState(1);
+  const productPageSize = 8;
   const [manualItem, setManualItem] = useState({
     name: "",
     description: "",
@@ -127,23 +147,70 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
   );
 
   const filteredProducts = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return products.filter((product) => {
-      const matchesCategory =
-        category === "all" || product.category === category;
-      const searchable = [
-        product.name,
-        product.model_number,
-        product.category,
-        product.subcategory,
-        product.description,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-      return matchesCategory && (!term || searchable.includes(term));
-    });
+    const term = normalizeSearchText(search);
+    const terms = term.split(/\s+/).filter(Boolean);
+
+    return products
+      .map((product) => {
+        const name = normalizeSearchText(product.name);
+        const model = normalizeSearchText(product.model_number || "");
+        const categoryText = normalizeSearchText(product.category || "");
+        const searchable = normalizeSearchText(
+          [
+            product.name,
+            product.model_number,
+            product.category,
+            product.subcategory,
+            product.description,
+          ]
+            .filter(Boolean)
+            .join(" "),
+        );
+        const matchesEveryTerm = terms.every((token) =>
+          searchable.includes(token),
+        );
+
+        let score = 0;
+        if (term && name === term) score += 100;
+        else if (term && name.startsWith(term)) score += 70;
+        else if (term && name.includes(term)) score += 50;
+        if (term && model === term) score += 45;
+        else if (term && model.includes(term)) score += 30;
+        if (term && categoryText.includes(term)) score += 10;
+
+        return { product, matchesEveryTerm, score };
+      })
+      .filter(
+        ({ product, matchesEveryTerm }) =>
+          (category === "all" || product.category === category) &&
+          matchesEveryTerm,
+      )
+      .sort(
+        (a, b) =>
+          b.score - a.score ||
+          a.product.name.localeCompare(b.product.name),
+      )
+      .map(({ product }) => product);
   }, [products, search, category]);
+
+  const productPageCount = Math.max(
+    1,
+    Math.ceil(filteredProducts.length / productPageSize),
+  );
+  const visibleProducts = filteredProducts.slice(
+    (productPage - 1) * productPageSize,
+    productPage * productPageSize,
+  );
+
+  const changeSearch = (value: string) => {
+    setSearch(value);
+    setProductPage(1);
+  };
+
+  const changeCategory = (value: string) => {
+    setCategory(value);
+    setProductPage(1);
+  };
 
   const itemsForSection = (sectionId: string) =>
     items.filter((item) => item.section_id === sectionId);
@@ -212,10 +279,12 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
     const section = sections.find((entry) => entry.id === activeSectionId);
     if (!section) return;
     const unitPrice = Number(product.price ?? 0);
-    const description =
-      [product.model_number, product.description || product.subcategory]
-        .filter(Boolean)
-        .join(" — ") || product.category || "";
+    // Keep each quote line compact. Full catalogue descriptions remain searchable
+    // but are not copied into the BOQ by default.
+    const description = [product.model_number, product.subcategory || product.category]
+      .filter(Boolean)
+      .join(" · ")
+      .slice(0, 160);
     const newItem: BOQItem = {
       id: makeId(),
       product_id: product.id,
@@ -439,16 +508,17 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Textarea
+                            <Input
                               value={item.description}
                               aria-label="BOQ item description"
+                              title={item.description}
                               onChange={(event) =>
                                 updateItem(item.id, {
                                   description: event.target.value,
                                 })
                               }
-                              rows={2}
-                              className="min-w-[210px] resize-y text-sm"
+                              className="min-w-[190px] max-w-[260px] text-xs"
+                              placeholder="Optional specification"
                             />
                           </TableCell>
                           <TableCell>
@@ -560,112 +630,243 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
       </CardContent>
 
       <Dialog open={catalogueOpen} onOpenChange={setCatalogueOpen}>
-        <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Add a product from the catalogue</DialogTitle>
-            <DialogDescription>
-              Search DripTech products. The saved product name, model and current
-              catalogue price will be copied into this quote.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by name, model or specification"
-                className="pl-9"
-                autoFocus
-              />
+        <DialogContent className="flex max-h-[88vh] max-w-5xl flex-col overflow-hidden p-0">
+          <DialogHeader className="border-b border-border px-6 py-5">
+            <div className="flex items-start gap-3">
+              <div className="rounded-xl bg-primary/10 p-2.5 text-primary">
+                <Package className="h-5 w-5" />
+              </div>
+              <div className="min-w-0">
+                <DialogTitle className="text-lg">Product catalogue</DialogTitle>
+                <DialogDescription className="mt-1">
+                  Find a saved product and add it to this BOQ section.
+                </DialogDescription>
+              </div>
             </div>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="All categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
-                {categories.map((entry) => (
-                  <SelectItem key={entry} value={entry}>
-                    {entry.replace(/_/g, " ")}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          </DialogHeader>
 
-          <div className="max-h-[52vh] space-y-2 overflow-y-auto pr-1">
-            {productsLoading ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                Loading product catalogue…
+          <div className="space-y-4 overflow-y-auto px-6 py-5">
+            <div className="flex flex-col gap-3 lg:flex-row">
+              <div className="relative min-w-0 flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(event) => changeSearch(event.target.value)}
+                  placeholder="Search product name, model, SKU, category or specification…"
+                  className="h-11 pl-9 pr-10"
+                  autoFocus
+                />
+                {search && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                    aria-label="Clear product search"
+                    onClick={() => changeSearch("")}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              <div className="flex items-center gap-2 lg:w-[250px]">
+                <Filter className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <Select value={category} onValueChange={changeCategory}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="All categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All categories</SelectItem>
+                    {categories.map((entry) => (
+                      <SelectItem key={entry} value={entry}>
+                        {categoryLabel(entry)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={category === "all" ? "default" : "outline"}
+                onClick={() => changeCategory("all")}
+              >
+                All products
+              </Button>
+              {categories.slice(0, 5).map((entry) => (
+                <Button
+                  key={entry}
+                  type="button"
+                  size="sm"
+                  variant={category === entry ? "default" : "outline"}
+                  onClick={() => changeCategory(entry)}
+                >
+                  {categoryLabel(entry)}
+                </Button>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+              <p className="text-sm font-medium text-foreground">
+                {productsLoading
+                  ? "Loading catalogue…"
+                  : filteredProducts.length.toLocaleString("en-KE") + " matching products"}
               </p>
-            ) : filteredProducts.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-border p-8 text-center">
-                <Package className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-                <p className="font-medium text-foreground">No matching products</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Add this item manually when it is not in the product catalogue.
+              <p className="text-xs text-muted-foreground">
+                Search checks product names, models and specifications
+              </p>
+            </div>
+
+            {productsLoading ? (
+              <div className="grid min-h-48 place-items-center">
+                <p className="text-sm text-muted-foreground">
+                  Loading product catalogue…
                 </p>
               </div>
-            ) : (
-              filteredProducts.map((product) => (
-                <button
-                  key={product.id}
+            ) : filteredProducts.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
+                <Package className="mx-auto mb-3 h-9 w-9 text-muted-foreground" />
+                <p className="font-semibold text-foreground">No products found</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Try another name, model number or category, or add a manual BOQ item.
+                </p>
+                <Button
                   type="button"
-                  onClick={() => addProduct(product)}
-                  className="flex w-full flex-col gap-2 rounded-lg border border-border p-3 text-left transition-colors hover:border-primary/50 hover:bg-muted/40 sm:flex-row sm:items-center sm:justify-between"
+                  className="mt-4"
+                  variant="outline"
+                  onClick={() => {
+                    changeSearch("");
+                    changeCategory("all");
+                  }}
                 >
-                  <span className="min-w-0">
-                    <span className="block font-medium text-foreground">
-                      {product.name}
-                    </span>
-                    <span className="mt-1 block text-xs text-muted-foreground">
-                      {[product.model_number, product.category, product.subcategory]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </span>
-                    {product.description && (
-                      <span className="mt-1 block line-clamp-2 text-xs text-muted-foreground">
-                        {product.description}
-                      </span>
-                    )}
-                  </span>
-                  <span className="flex shrink-0 items-center gap-2">
-                    {product.price == null ? (
-                      <Badge variant="outline">Price not set</Badge>
-                    ) : (
-                      <span className="font-semibold tabular-nums text-foreground">
-                        {formatKES(Number(product.price))}
-                      </span>
-                    )}
-                    <Plus className="h-4 w-4 text-primary" />
-                  </span>
-                </button>
-              ))
+                  Clear filters
+                </Button>
+              </div>
+            ) : (
+              <div className="grid gap-2 md:grid-cols-2">
+                {visibleProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="flex min-w-0 items-center gap-3 rounded-xl border border-border bg-card p-3 transition-colors hover:border-primary/40 hover:bg-muted/20"
+                  >
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Package className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <p className="truncate text-sm font-semibold text-foreground" title={product.name}>
+                          {product.name}
+                        </p>
+                        {product.in_stock === false && (
+                          <Badge variant="outline" className="shrink-0 text-[10px]">
+                            Out of stock
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                        {[product.model_number, product.category, product.subcategory]
+                          .filter(Boolean)
+                          .join(" · ") || "Catalogue item"}
+                      </p>
+                      {product.description && (
+                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground/80" title={product.description}>
+                          {product.description}
+                        </p>
+                      )}
+                      <div className="mt-1.5">
+                        {product.price == null ? (
+                          <Badge variant="outline" className="text-[10px]">
+                            Price not set
+                          </Badge>
+                        ) : (
+                          <span className="text-sm font-semibold tabular-nums text-foreground">
+                            {formatKES(Number(product.price))}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="shrink-0"
+                      onClick={() => addProduct(product)}
+                    >
+                      <Plus className="mr-1.5 h-4 w-4" />
+                      Add
+                    </Button>
+                  </div>
+                ))}
+              </div>
             )}
+
+            {!productsLoading && filteredProducts.length > 0 && (
+              <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-muted-foreground">
+                  Showing {(productPage - 1) * productPageSize + 1}–
+                  {Math.min(productPage * productPageSize, filteredProducts.length)} of{" "}
+                  {filteredProducts.length}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={productPage <= 1}
+                    onClick={() => setProductPage((page) => Math.max(1, page - 1))}
+                  >
+                    <ChevronLeft className="mr-1 h-4 w-4" />
+                    Previous
+                  </Button>
+                  <span className="min-w-20 text-center text-xs tabular-nums text-muted-foreground">
+                    Page {productPage} of {productPageCount}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={productPage >= productPageCount}
+                    onClick={() => setProductPage((page) => Math.min(productPageCount, page + 1))}
+                  >
+                    Next
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <p className="text-xs text-muted-foreground">
+              Long catalogue descriptions are kept out of the BOQ by default. Confirm the project specification and adjust the quoted unit price before saving.
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Product catalogue prices are starting values. Confirm supplier pricing
-            and update the unit price for this specific quotation before saving.
-          </p>
         </DialogContent>
       </Dialog>
 
       <Dialog open={manualOpen} onOpenChange={setManualOpen}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Add a manual BOQ item</DialogTitle>
+            <DialogTitle>Add manual BOQ item</DialogTitle>
             <DialogDescription>
-              Use this for site-specific works, custom fittings, services or
-              products that are not currently in the catalogue.
+              Add a custom product, fitting, labour or installation cost.
             </DialogDescription>
           </DialogHeader>
+
+          <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2">
+            <span className="text-xs text-muted-foreground">Adding to section</span>
+            <Badge variant="secondary">
+              {sections.find((entry) => entry.id === activeSectionId)?.name || "BOQ section"}
+            </Badge>
+          </div>
+
           <form className="space-y-4" onSubmit={addManualItem}>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="manual-item-name">Item name</Label>
               <Input
                 id="manual-item-name"
                 required
+                autoFocus
                 value={manualItem.name}
                 onChange={(event) =>
                   setManualItem((current) => ({
@@ -673,16 +874,18 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     name: event.target.value,
                   }))
                 }
-                placeholder="e.g. Site installation and commissioning"
+                placeholder="e.g. Installation and commissioning"
+                className="h-10"
               />
             </div>
-            <div className="space-y-2">
+
+            <div className="space-y-1.5">
               <Label htmlFor="manual-item-description">
-                Description / specification
+                Specification <span className="font-normal text-muted-foreground">(optional)</span>
               </Label>
               <Textarea
                 id="manual-item-description"
-                rows={3}
+                rows={2}
                 value={manualItem.description}
                 onChange={(event) =>
                   setManualItem((current) => ({
@@ -690,11 +893,13 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                     description: event.target.value,
                   }))
                 }
-                placeholder="Enter the required size, rating, scope or specification"
+                placeholder="Size, capacity, scope or other short details"
+                className="resize-y text-sm"
               />
             </div>
+
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="manual-item-quantity">Quantity</Label>
                 <Input
                   id="manual-item-quantity"
@@ -710,7 +915,7 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                   }
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="manual-item-unit">Unit</Label>
                 <Input
                   id="manual-item-unit"
@@ -721,10 +926,10 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                       unit: event.target.value,
                     }))
                   }
-                  placeholder="e.g. m, roll, set"
+                  placeholder="pcs, m, roll, set"
                 />
               </div>
-              <div className="col-span-2 space-y-2 sm:col-span-1">
+              <div className="col-span-2 space-y-1.5 sm:col-span-1">
                 <Label htmlFor="manual-item-price">Unit price (KES)</Label>
                 <Input
                   id="manual-item-price"
@@ -742,7 +947,18 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-2 pt-2">
+
+            <div className="flex items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2.5">
+              <span className="text-sm text-muted-foreground">Estimated line total</span>
+              <span className="font-semibold tabular-nums text-foreground">
+                {formatKES(
+                  Math.max(0, Number(manualItem.quantity) || 0) *
+                    Math.max(0, Number(manualItem.unit_price) || 0),
+                )}
+              </span>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-1">
               <Button
                 type="button"
                 variant="outline"
@@ -750,14 +966,15 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
               >
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={!manualItem.name.trim()}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Item
+                Add to BOQ
               </Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
+
     </Card>
   );
 };
