@@ -1,81 +1,82 @@
-# Google Business Profile product photo sync
+# Google Business Profile automatic media sync
 
-This workflow reads the public Cloudflare D1 product feed and can publish one individually approved product image to the DripTech Google Business Profile per week.
+This workflow automatically selects eligible product photos and videos from the public Cloudflare D1 feeds and can publish one new media item to the DripTech Google Business Profile per seven days.
 
-## Safety and selection
+## Automatic selection rules
 
-- It only considers products returned by the public product feed as **featured and in stock**.
-- Approval is image-specific: an entry must match both the product ID and the exact HTTPS image URL in `src/data/gbp-photo-allowlist.json`.
-- Approving one image never approves the other images attached to that product.
-- It publishes into Google's `PRODUCT` photo category; it never labels catalogue images as team-at-work, exterior, interior or cover photos.
-- It checks that each source is public HTTPS, JPEG or PNG, between 10 KB and 5 MB, and at least 250 × 250 pixels.
-- It uploads at most one photo per run and enforces a seven-day cooldown.
-- It stops if the Google profile reaches 90 media items, leaving 10 slots before the 100-item API limit.
-- It keeps source-URL hashes in the Actions cache to avoid repeat uploads. The workflow runs three times weekly to keep that cache active.
-- The scheduled workflow is disabled until the repository variable `GBP_PHOTO_SYNC_ENABLED` is explicitly set to `true`.
+### Product photos
 
-Catalogue images may be supplier images or renders. Review them first and only approve genuine, representative products that DripTech actually sells. Do not use AI-generated images or promotional banners as if they were real product photographs.
+- The product feed is queried with `featured=true` and `in_stock=true`.
+- Every HTTPS image URL attached to those featured, in-stock products enters the automatic queue unless it is in the exclusions file.
+- Before upload, the source is downloaded and checked for JPG/PNG format, a size between 10 KB and 5 MB, and minimum 250 × 250 dimensions.
+- Photos are uploaded as `PHOTO` in the Google `PRODUCT` category.
 
-## 1. Preview and review every image
+### Videos
 
-Run the workflow manually from **Actions → Google Business Profile Product Photos → Run workflow**, leaving `dry_run = true`.
+- The Worker endpoint `/api/videos?featured=true&limit=100` returns published videos and filters for featured records.
+- A video must be a publicly accessible direct MP4 URL. YouTube/TikTok watch-page URLs and other HTML/embed pages are skipped because they are not source video files.
+- The video is inspected with ffprobe and must be no longer than 30 seconds, no larger than 75 MB, and at least 720p on its shorter edge.
+- Videos are uploaded as `VIDEO` in Google's `ADDITIONAL` category.
 
-The workflow reads the product feed from:
+The Google Business Profile API supports creating media from a publicly accessible source URL for both photos and videos. Google's published video requirements are up to 30 seconds, up to 75 MB, and 720p or higher. See [Google's media upload guide](https://developers.google.com/my-business/content/upload-photos) and [Business Profile photo/video guidance](https://support.google.com/business/answer/6103862).
 
-`https://dripstech-api.dripstech.workers.dev/api/products?featured=true&in_stock=true&limit=100`
+## Automatic publishing safeguards
 
-When no images have been approved yet, the script generates:
-- `.cache/gbp-product-photo-candidates.html`: a visual gallery with every image, its product name, category, product ID and image number.
-- `.cache/gbp-product-photo-candidates.json`: the same candidates in machine-readable form.
+- The API's featured and published flags act as the content-selection controls. No per-image or per-video manual allowlist is required.
+- Optional exclusions are in `src/data/gbp-media-exclusions.json`:
+  - `excludedProductIds`: omit every photo for a product.
+  - `excludedImageUrls`: omit one exact image URL.
+  - `excludedVideoIds`: omit a video record.
+- The workflow uploads at most one media item per seven days and alternates between photo and video queues when both have eligible items.
+- It stops when the Business Profile has 90 media items, leaving 10 slots below the API's 100-item limit.
+- Source-URL hashes are stored in the GitHub Actions cache to avoid repeat uploads.
+- The schedule checks Monday, Wednesday and Friday at 08:00 East Africa Time. The seven-day rate guard means no more than one item is uploaded per week.
+- Scheduled publishing stays disabled until the repository variable `GBP_PHOTO_SYNC_ENABLED` is explicitly set to `true`.
+- The workflow is dry-run by default when manually dispatched.
 
-The workflow uploads these files as the **GBP product photo review gallery** artifact. Open the completed workflow run, download that artifact, extract it, and open the HTML file in a browser. No Google OAuth credentials are used for this preview because no images are approved yet.
+**Important content-quality note:** Automatic selection trusts the catalogue's featured/in-stock flags and the video library's published/featured flags, then checks technical requirements. It does not use a human to judge whether a supplier photo is a real-life field photograph or whether every video is the best marketing choice. Make sure only appropriate, representative content is marked featured/published in the admin system. Google may separately review submitted media and can mark it pending, live or not approved.
 
-## 2. Approve individual image URLs
+## Preview and media report
 
-Only add the exact product ID and image URL for each image that has been visually reviewed and approved. Example:
+Run **Actions → Google Business Profile Product Photos → Run workflow** and leave `dry_run = true`.
 
-```json
-{
-  "approvedImages": [
-    {
-      "productId": "product-id-1",
-      "imageUrl": "https://cdn.example.com/path/to/approved-product-photo.jpg"
-    }
-  ]
-}
-```
+The run queries:
+- `https://dripstech-api.dripstech.workers.dev/api/products?featured=true&in_stock=true&limit=100`
+- `https://dripstech-api.dripstech.workers.dev/api/videos?featured=true&limit=100`
 
-The product ID and URL must both match an item in the current featured/in-stock feed. If a product has six images and only one is approved, only that one image can be uploaded.
+It attaches a short-lived **gbp-media-candidate-gallery** artifact containing:
+- `.cache/gbp-media-candidates.html`: visual gallery of product images and videos.
+- `.cache/gbp-media-candidates.json`: machine-readable candidate list.
 
-Commit allowlist changes through a pull request. Do not approve an entire product by ID.
+The preview does not call Google's OAuth or upload endpoints.
 
-## 3. Google API credentials
+## Google API credentials
 
-The existing Windsor.ai Google Business Profile connection is separate from GitHub Actions. The workflow needs its own Google OAuth client and refresh token with the `https://www.googleapis.com/auth/business.manage` scope, and the Google Business Profile API must be enabled and accessible for the Google Cloud project.
+GitHub Actions uses its own Google OAuth client and refresh token with the `https://www.googleapis.com/auth/business.manage` scope. The existing Windsor.ai Google Business Profile connection is separate.
 
-Add these under **GitHub repository → Settings → Secrets and variables → Actions → Secrets**:
+Add these repository secrets under **Settings → Secrets and variables → Actions**:
 
 - `GBP_CLIENT_ID`
 - `GBP_CLIENT_SECRET`
 - `GBP_REFRESH_TOKEN`
 
-Never commit these credentials or paste them into source code. Do not use credentials or tokens exposed in chat. External OAuth apps in Testing mode issue refresh tokens that expire after seven days for this scope; resolve the app publishing/verification status and generate a fresh token before relying on unattended scheduled uploads.
+Never commit credentials or paste tokens into source code. Do not use credentials or tokens exposed in chat. External OAuth apps in Testing mode issue refresh tokens that expire after seven days for this scope; complete the required publishing/verification steps and generate a fresh token before relying on unattended scheduled uploads.
 
-The workflow is tied to the currently connected listing:
+The workflow is tied to the connected listing:
 - Account ID: `107802453294630169300`
 - Location ID: `11100731052159024871`
 
-## 4. Enable scheduled uploads
+## Enable scheduled publishing
 
-After individual image approvals and valid, durable OAuth credentials are ready:
+Only after API access and durable OAuth credentials have been verified:
 
-1. Run the workflow manually with `dry_run = true` and inspect the candidate gallery.
-2. Add only approved image URL/product ID pairs to the allowlist through a pull request.
-3. Set the repository Actions variable `GBP_PHOTO_SYNC_ENABLED = true` only after OAuth credentials have been verified.
-4. Run it manually with `dry_run = false` to test one upload.
-5. Scheduled runs then check every Monday, Wednesday and Friday at 08:00 East Africa Time. The seven-day cooldown means no more than one approved photo is uploaded per week.
+1. Run a manual preview with `dry_run = true`.
+2. Ensure the featured/in-stock product records and published/featured video records contain appropriate media.
+3. Set the repository Actions variable `GBP_PHOTO_SYNC_ENABLED = true`.
+4. Run a manual test with `dry_run = false` to publish one item.
+5. Scheduled runs then continue automatically, subject to the seven-day rate guard.
 
-If Google rejects the credentials or the image URL, the workflow fails visibly and does not mark that image as uploaded.
+If Google rejects the credentials or media source, the workflow fails visibly and does not mark the item as uploaded.
 
 ## Local checks
 
@@ -84,5 +85,3 @@ node --check scripts/sync-gbp-product-photos.mjs
 npm run test:gbp-photos
 npm run sync:gbp-photos
 ```
-
-The local sync command is a dry run unless the publishing environment variables are deliberately configured.
