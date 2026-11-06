@@ -1870,7 +1870,8 @@
       {
         "heading": "Design deliverables: what can be provided",
         "paragraphs": [
-          "Deliverables depend on project scope, site data and the agreed level of engineering. A consultation may produce a requirements brief or preliminary recommendations; a scoped design assignment may include:"
+          "Deliverables depend on project scope, site data and the agreed level of engineering. A consultation may produce a requirements brief or preliminary recommendations; a scoped design assignment may include:",
+          "A preliminary concept or illustrative BOQ is not a substitute for verified field measurements or final construction specifications. Final sizing and quantities should be checked against actual site conditions, water availability, elevation and selected equipment."
         ],
         "bullets": [
           "Site and design assumptions, constraints and data gaps",
@@ -1879,9 +1880,6 @@
           "Pump, filtration and pipe/component schedules with selection rationale",
           "BOQ listing quantities, descriptions and specifications for pricing or procurement",
           "Implementation notes, testing/commissioning checklist and operating guidance"
-        ],
-        "paragraphs2": [
-          "A preliminary concept or illustrative BOQ is not a substitute for verified field measurements or final construction specifications. Final sizing and quantities should be checked against actual site conditions, water availability, elevation and selected equipment."
         ]
       },
       {
