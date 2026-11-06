@@ -62,6 +62,17 @@ jobs:
           GBP_PHOTO_ALLOWLIST: src/data/gbp-photo-allowlist.json
           GBP_PHOTO_STATE: .cache/gbp-product-photo-sync.json
 
+      - name: Upload product photo review gallery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gbp-product-photo-review-gallery
+          path: |
+            .cache/gbp-product-photo-candidates.html
+            .cache/gbp-product-photo-candidates.json
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Save photo history
         if: always()
         uses: actions/cache/save@v4
