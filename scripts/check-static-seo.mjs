@@ -36,14 +36,14 @@ if (new Set(routes).size !== routes.length) {
 }
 
 const failures = [];
-const urlEntries = [...sitemap.matchAll(/<url\\b[^>]*>([\\s\\S]*?)<\\/url>/gi)];
-const locEntries = [...sitemap.matchAll(/<loc\\b[^>]*>[\\s\\S]*?<\\/loc>/gi)];
+const urlEntries = [...sitemap.matchAll(/<url\b[^>]*>([\s\S]*?)<\/url>/gi)];
+const locEntries = [...sitemap.matchAll(/<loc\b[^>]*>[\s\S]*?<\/loc>/gi)];
 
 if (urlEntries.length === 0) {
   failures.push("Generated sitemap.xml contains no <url> entries.");
 }
 urlEntries.forEach((entry, index) => {
-  const locCount = [...entry[1].matchAll(/<loc\\b[^>]*>[\\s\\S]*?<\\/loc>/gi)].length;
+  const locCount = [...entry[1].matchAll(/<loc\b[^>]*>[\s\S]*?<\/loc>/gi)].length;
   if (locCount !== 1) {
     failures.push(`Generated sitemap <url> entry ${index + 1} must contain exactly one <loc> (found ${locCount}).`);
   }
