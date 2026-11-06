@@ -189,7 +189,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({
     setPdfImporting(true);
     try {
       // PDF.js is loaded only when an admin imports a PDF (keeps the normal quote form bundle light).
-      // @ts-ignore - PDF.js is loaded from its browser ESM CDN build at runtime.
+      // @ts-expect-error - PDF.js is loaded from its browser ESM CDN build at runtime.
       const pdfjs = await import(/* @vite-ignore */ "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs");
       pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
       const document = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
