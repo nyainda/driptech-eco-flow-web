@@ -175,6 +175,9 @@ const App = () => {
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/cookies" element={<Cookies />} />
 
+                  {/* Resolve any remaining single-segment authored SEO slug from the SEO manifest. Static routes above take precedence; unknown slugs render the SEO page 404 state. */}
+                  <Route path="/:seoSlug" element={<SEOContentPage />} />
+
                   {/* Catch-all route for 404 */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
