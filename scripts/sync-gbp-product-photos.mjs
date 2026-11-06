@@ -155,6 +155,19 @@ async function loadProducts() {
   return products;
 }
 
+async function loadVideos() {
+  const payload = await fetchJson(VIDEOS_URL);
+  const videos = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload.videos)
+      ? payload.videos
+      : Array.isArray(payload.data)
+        ? payload.data
+        : null;
+  if (!videos) throw new Error("The videos feed did not return a video array.");
+  return videos;
+}
+
 function approvedImageKey(productId, imageUrl) {
   return JSON.stringify([String(productId), imageUrl]);
 }
