@@ -206,7 +206,7 @@ function escapeHtml(value) {
 
 function writeCandidateReport(candidates) {
   const reportPath = process.env.GBP_PHOTO_CANDIDATE_REPORT || ".cache/gbp-product-photo-candidates.html";
-  const jsonPath = reportPath.replace(/\\.html?$/i, ".json");
+  const jsonPath = reportPath.replace(/\.html?$/i, ".json");
   const imageRows = candidates.flatMap((product) =>
     product.imageUrls.map((url, index) => ({
       productId: product.id,
@@ -389,7 +389,7 @@ async function main() {
   console.log("Individually approved images: " + approved.length + ".");
   const pending = approved.filter((item) => !uploadedHashes.has(item.sha256));
 
-  console.log(`Allowlisted products: ${approved.length}; unused image candidates: ${pending.length}.`);
+  console.log(`Allowlisted image URLs: ${approved.length}; not-yet-uploaded images: ${pending.length}.`);
   if (pending.length === 0) {
     console.log("All allowlisted image URLs have already been processed.");
     saveState(state);
