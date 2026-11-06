@@ -6,7 +6,7 @@ const SITE_URL = "https://www.dripstech.co.ke";
 const WORKER_URL = (process.env.VITE_WORKER_URL || "https://dripstech-api.dripstech.workers.dev").replace(/\/+$/, "");
 const PRODUCTS_URL =
   process.env.GBP_PRODUCTS_API_URL ||
-  \`\${WORKER_URL}/api/products?featured=true&in_stock=true&limit=100\`;
+  `${WORKER_URL}/api/products?featured=true&in_stock=true&limit=100`;
 const ALLOWLIST_PATH =
   process.env.GBP_PHOTO_ALLOWLIST || "src/data/gbp-photo-allowlist.json";
 const STATE_PATH =
@@ -128,12 +128,12 @@ async function fetchJson(url, options = {}) {
   });
   const text = await response.text();
   if (!response.ok) {
-    throw new Error(\`HTTP \${response.status} from \${url}: \${text.slice(0, 500)}\`);
+    throw new Error(`HTTP ${response.status} from ${url}: ${text.slice(0, 500)}`);
   }
   try {
     return text ? JSON.parse(text) : {};
   } catch {
-    throw new Error(\`Expected JSON from \${url}, but received an invalid response.\`);
+    throw new Error(`Expected JSON from ${url}, but received an invalid response.`);
   }
 }
 
@@ -215,21 +215,21 @@ async function getGoogleAccessToken() {
 function googleLocationPath() {
   const accountId = process.env.GBP_ACCOUNT_ID || "107802453294630169300";
   const locationId = process.env.GBP_LOCATION_ID || "11100731052159024871";
-  return \`accounts/\${encodeURIComponent(accountId)}/locations/\${encodeURIComponent(locationId)}\`;
+  return `accounts/${encodeURIComponent(accountId)}/locations/${encodeURIComponent(locationId)}`;
 }
 
 async function googleApi(url, accessToken, options = {}) {
   return fetchJson(url, {
     ...options,
     headers: {
-      Authorization: \`Bearer \${accessToken}\`,
+      Authorization: `Bearer ${accessToken}`,
       ...(options.headers || {}),
     },
   });
 }
 
 async function getExistingMediaCount(accessToken) {
-  const endpoint = \`\${GOOGLE_API_ROOT}/\${googleLocationPath()}/media?pageSize=100\`;
+  const endpoint = `${GOOGLE_API_ROOT}/${googleLocationPath()}/media?pageSize=100`;
   const response = await googleApi(endpoint, accessToken);
   return Number(response.totalMediaItemCount ?? response.mediaItems?.length ?? 0);
 }
@@ -240,7 +240,7 @@ async function validateImage(url) {
     signal: AbortSignal.timeout(25_000),
     headers: { "User-Agent": "DripTech-GBP-Photo-Sync/1.0" },
   });
-  if (!response.ok) throw new Error(\`Image returned HTTP \${response.status}\`);
+  if (!response.ok) throw new Error(`Image returned HTTP ${response.status}`);
   const bytes = Buffer.from(await response.arrayBuffer());
   if (bytes.length < MIN_IMAGE_BYTES) throw new Error("Image is smaller than Google's 10 KB minimum.");
   if (bytes.length > MAX_IMAGE_BYTES) throw new Error("Image exceeds Google's 5 MB maximum.");
@@ -249,7 +249,7 @@ async function validateImage(url) {
     throw new Error("Only genuine JPEG and PNG images are supported.");
   }
   if (dimensions.width < MIN_IMAGE_EDGE || dimensions.height < MIN_IMAGE_EDGE) {
-    throw new Error(\`Image is too small (\${dimensions.width}×\${dimensions.height}; minimum 250×250).\`);
+    throw new Error(`Image is too small (${dimensions.width}×${dimensions.height}; minimum 250×250).`);
   }
   return {
     width: dimensions.width,
@@ -260,7 +260,7 @@ async function validateImage(url) {
 }
 
 async function uploadPhoto(url, accessToken) {
-  const endpoint = \`\${GOOGLE_API_ROOT}/\${googleLocationPath()}/media\`;
+  const endpoint = `${GOOGLE_API_ROOT}/${googleLocationPath()}/media`;
   return googleApi(endpoint, accessToken, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -280,11 +280,11 @@ async function main() {
   const state = readState();
   const uploadedHashes = new Set(state.uploaded.map((item) => item.sha256));
 
-  console.log(\`Loaded \${products.length} products; \${candidates.length} have usable image URLs.\`);
+  console.log(`Loaded ${products.length} products; ${candidates.length} have usable image URLs.`);
   if (approvedIds.size === 0) {
     console.log("No product IDs have been approved yet. Review candidate images before adding IDs to the allowlist:");
     for (const product of candidates.slice(0, 40)) {
-      console.log(\`- \${product.id} | \${product.name} | \${product.category} | \${product.imageUrls.length} image(s) | \${product.imageUrls[0]}\`);
+      console.log(`- ${product.id} | ${product.name} | ${product.category} | ${product.imageUrls.length} image(s) | ${product.imageUrls[0]}`);
     }
     saveState(state);
     return;
@@ -302,7 +302,7 @@ async function main() {
     })),
   ).filter((item) => !uploadedHashes.has(item.sha256));
 
-  console.log(\`Allowlisted products: \${approved.length}; unused image candidates: \${pending.length}.\`);
+  console.log(`Allowlisted products: ${approved.length}; unused image candidates: ${pending.length}.`);
   if (pending.length === 0) {
     console.log("All allowlisted image URLs have already been processed.");
     saveState(state);
@@ -318,7 +318,7 @@ async function main() {
   if (!enabled || explicitDryRun) {
     console.log("DRY RUN — no Google Business Profile changes will be made.");
     for (const item of pending.slice(0, 10)) {
-      console.log(\`Candidate: \${item.productName} [\${item.productId}] — \${item.url}\`);
+      console.log(`Candidate: ${item.productName} [${item.productId}] — ${item.url}`);
     }
     saveState(state);
     return;
@@ -327,7 +327,7 @@ async function main() {
   const lastUpload = state.lastUploadAt ? Date.parse(state.lastUploadAt) : 0;
   const ageDays = (Date.now() - lastUpload) / 86_400_000;
   if (lastUpload && ageDays < MIN_DAYS_BETWEEN_UPLOADS) {
-    console.log(\`Rate guard: last upload was \${ageDays.toFixed(1)} days ago; next upload is due after 7 days.\`);
+    console.log(`Rate guard: last upload was ${ageDays.toFixed(1)} days ago; next upload is due after 7 days.`);
     saveState(state);
     return;
   }
@@ -335,7 +335,7 @@ async function main() {
   const accessToken = await getGoogleAccessToken();
   const existingCount = await getExistingMediaCount(accessToken);
   if (existingCount >= MAX_PROFILE_MEDIA - PROFILE_MEDIA_HEADROOM) {
-    console.log(\`Profile already has \${existingCount} media items; keeping \${PROFILE_MEDIA_HEADROOM} slots in reserve and stopping.\`);
+    console.log(`Profile already has ${existingCount} media items; keeping ${PROFILE_MEDIA_HEADROOM} slots in reserve and stopping.`);
     saveState(state);
     return;
   }
@@ -354,11 +354,11 @@ async function main() {
       state.lastUploadAt = new Date().toISOString();
       saveState(state);
       console.log(
-        \`Uploaded PRODUCT photo for \${item.productName} (\${quality.width}×\${quality.height}, \${Math.round(quality.bytes / 1024)} KB).\`,
+        `Uploaded PRODUCT photo for ${item.productName} (${quality.width}×${quality.height}, ${Math.round(quality.bytes / 1024)} KB).`,
       );
       return; // One approved image per run; no profile flooding.
     } catch (error) {
-      console.warn(\`Skipped \${item.productName}: \${error.message}\`);
+      console.warn(`Skipped ${item.productName}: ${error.message}`);
     }
   }
 
