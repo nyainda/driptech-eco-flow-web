@@ -469,36 +469,22 @@ async function uploadMedia(item, accessToken) {
 }
 
 async function main() {
-  const products = await loadProducts();
-  const candidates = makeCandidates(products);
-  const approvedKeys = readAllowlist();
-  const approved = selectApprovedImages(candidates, approvedKeys);
+  const [productsPayload, videosPayload] = await Promise.all([loadProducts(), loadVideos()]);
+  const products = makeCandidates(productsPayload);
+  const videos = makeVideoCandidates(videosPayload);
+  const exclusions = readMediaExclusions();
   const state = readState();
   const uploadedHashes = new Set(state.uploaded.map((item) => item.sha256));
+  const queues = buildMediaQueues(products, videos, exclusions, uploadedHashes);
 
-  const availableImageCount = candidates.reduce((total, product) => total + product.imageUrls.length, 0);
-  console.log("Loaded " + products.length + " products; " + candidates.length + " have usable image URLs across " + availableImageCount + " individual images.");
-  if (approvedKeys.size === 0) {
-    console.log("No individual images have been approved yet. Generating the visual review gallery.");
-    writeCandidateReport(candidates);
-    saveState(state);
-    return;
-  }
-  if (approved.length === 0) {
-    throw new Error("The allowlist contains image entries, but none matched the exact product ID and image URL in the featured/in-stock product feed. Re-run the preview and update the allowlist.");
-  }
+  const imageCount = products.reduce((total, product) => total + product.imageUrls.length, 0);
+  console.log("Product feed: " + productsPayload.length + " featured/in-stock products; " + imageCount + " photos.");
+  console.log("Video feed: " + videosPayload.length + " published/featured records; " + videos.length + " public HTTPS sources.");
+  console.log("Automatic queue: " + queues.images.length + " photos and " + queues.clips.length + " videos.");
 
-  console.log("Individually approved images: " + approved.length + ".");
-  const pending = approved.filter((item) => !uploadedHashes.has(item.sha256));
+  writeCandidateReport(products, videos);
 
-  console.log(`Allowlisted image URLs: ${approved.length}; not-yet-uploaded images: ${pending.length}.`);
-  if (pending.length === 0) {
-    console.log("All allowlisted image URLs have already been processed.");
-    saveState(state);
-    return;
-  }
-
-  const explicitDryRun = process.env.GBP_DRY_RUN === "true";
+  const explicitDryRun = process.env.GBP_DRY_RUN !== "false";
   const scheduledEnabled = process.env.GBP_PHOTO_SYNC_ENABLED === "true";
   const manualLiveRun =
     process.env.GITHUB_EVENT_NAME === "workflow_dispatch" && process.env.GBP_DRY_RUN === "false";
@@ -506,9 +492,16 @@ async function main() {
 
   if (!enabled || explicitDryRun) {
     console.log("DRY RUN — no Google Business Profile changes will be made.");
-    for (const item of pending.slice(0, 10)) {
-      console.log(`Candidate: ${item.productName} [${item.productId}] — ${item.url}`);
+    console.log("Auto rules: featured + in-stock products; published + featured videos; file checks are required before uploading.");
+    for (const item of [...queues.images.slice(0, 5), ...queues.clips.slice(0, 5)]) {
+      console.log("Candidate " + item.mediaType + ": " + item.title + " [" + item.id + "] — " + item.url);
     }
+    saveState(state);
+    return;
+  }
+
+  if (queues.images.length === 0 && queues.clips.length === 0) {
+    console.log("No new media candidates remain after exclusion and duplicate checks.");
     saveState(state);
     return;
   }
@@ -516,7 +509,7 @@ async function main() {
   const lastUpload = state.lastUploadAt ? Date.parse(state.lastUploadAt) : 0;
   const ageDays = (Date.now() - lastUpload) / 86_400_000;
   if (lastUpload && ageDays < MIN_DAYS_BETWEEN_UPLOADS) {
-    console.log(`Rate guard: last upload was ${ageDays.toFixed(1)} days ago; next upload is due after 7 days.`);
+    console.log("Rate guard: last upload was " + ageDays.toFixed(1) + " days ago; next upload is due after 7 days.");
     saveState(state);
     return;
   }
@@ -524,35 +517,46 @@ async function main() {
   const accessToken = await getGoogleAccessToken();
   const existingCount = await getExistingMediaCount(accessToken);
   if (existingCount >= MAX_PROFILE_MEDIA - PROFILE_MEDIA_HEADROOM) {
-    console.log(`Profile already has ${existingCount} media items; keeping ${PROFILE_MEDIA_HEADROOM} slots in reserve and stopping.`);
+    console.log("Profile has " + existingCount + " media items; keeping " + PROFILE_MEDIA_HEADROOM + " slots in reserve and stopping.");
     saveState(state);
     return;
   }
 
-  for (const item of pending) {
+  const firstQueue = state.lastMediaType === "photo" ? queues.clips : queues.images;
+  const secondQueue = state.lastMediaType === "photo" ? queues.images : queues.clips;
+  const orderedQueue = [...firstQueue, ...secondQueue];
+
+  for (const item of orderedQueue) {
     try {
-      const quality = await validateImage(item.url);
-      const response = await uploadPhoto(item.url, accessToken);
+      const quality = item.mediaType === "video"
+        ? await validateVideo(item)
+        : await validateImage(item.url);
+      const response = await uploadMedia(item, accessToken);
+
       state.uploaded.push({
         sha256: item.sha256,
-        productId: item.productId,
-        productName: item.productName,
+        mediaType: item.mediaType,
+        sourceId: item.id,
+        title: item.title,
         mediaName: response.name || response.mediaItem?.name || null,
         uploadedAt: new Date().toISOString(),
       });
       state.lastUploadAt = new Date().toISOString();
+      state.lastMediaType = item.mediaType;
       saveState(state);
-      console.log(
-        `Uploaded PRODUCT photo for ${item.productName} (${quality.width}×${quality.height}, ${Math.round(quality.bytes / 1024)} KB).`,
-      );
-      return; // One approved image per run; no profile flooding.
+
+      const details = item.mediaType === "video"
+        ? quality.width + "×" + quality.height + ", " + quality.duration.toFixed(1) + "s, " + Math.round(quality.bytes / (1024 * 1024)) + " MB"
+        : quality.width + "×" + quality.height + ", " + Math.round(quality.bytes / 1024) + " KB";
+      console.log("Uploaded " + item.mediaType.toUpperCase() + " media for " + item.title + " (" + details + ").");
+      return; // At most one upload every seven days; alternate photos and videos.
     } catch (error) {
-      console.warn(`Skipped ${item.productName}: ${error.message}`);
+      console.warn("Skipped " + item.mediaType + " " + item.title + ": " + error.message);
     }
   }
 
+  console.log("No media passed technical validation; nothing was uploaded.");
   saveState(state);
-  console.log("No allowlisted image passed validation; no photo was published.");
 }
 
 function selfTest() {
