@@ -2,7 +2,7 @@
   {
     "slug": "irrigation-areas-kenya",
     "title": "Irrigation Equipment & Design Support Across Kenya | DripTech Eco Flow",
-    "description": "Explore irrigation equipment, system guidance and delivery support for farms in Nairobi, Kisumu, Nakuru and Nanyuki–Laikipia. Confirm options for your exact location.",
+    "description": "Find irrigation equipment and farm-system guidance for Nairobi, Kisumu, Nakuru, Nanyuki, Eldoret, Meru, Nyeri, Mwea, Machakos, Kajiado and Kilifi.",
     "h1": "Irrigation equipment and farm water solutions across Kenya",
     "intro": "DripTech Eco Flow supplies drip irrigation equipment, sprinklers, pumps, filtration, pipes, fittings and complete irrigation kits. We help farmers match equipment to the crop, plot, water source and available pressure, with delivery and installation support confirmed for each project location.",
     "sections": [
@@ -17,9 +17,16 @@
         "heading": "Explore irrigation support by area",
         "bullets": [
           "Nairobi: compact and peri-urban farms, vegetable plots, nurseries and greenhouse irrigation.",
-          "Kisumu: irrigation planning for vegetable and horticultural plots, alongside the region's established rice-growing schemes.",
-          "Nakuru: crop-aware drip and sprinkler options for mixed farms, vegetable production and horticultural operations.",
-          "Nanyuki and Laikipia: irrigation planning for horticulture, greenhouse production, water storage and varied water sources."
+          "Kisumu: vegetable and horticultural plots alongside established rice-growing schemes.",
+          "Nakuru: crop-aware drip and sprinkler options for mixed farms and horticultural operations.",
+          "Nanyuki and Laikipia: horticulture, greenhouse production, water storage and varied water sources.",
+          "Eldoret and Uasin Gishu: potato, maize, wheat and selected high-value crop blocks.",
+          "Meru: French beans, coffee, tea, macadamia, avocado and other horticultural crops.",
+          "Nyeri: coffee, tea, avocado, passion fruit, vegetables and other horticultural production.",
+          "Mwea and Kirinyaga: separate horticultural and upland crop systems alongside the established basin-irrigated rice scheme.",
+          "Machakos: water-limited vegetable and horticultural plots where storage, pumping and irrigation scheduling matter.",
+          "Kajiado: irrigated horticulture and greenhouse crops, with water storage and source planning.",
+          "Kilifi: vegetable, orchard and horticultural production including mango, coconut, cashew and watermelon."
         ]
       },
       {
@@ -42,22 +49,6 @@
     ],
     "links": [
       {
-        "label": "Irrigation systems in Nairobi",
-        "href": "/irrigation-systems-nairobi"
-      },
-      {
-        "label": "Irrigation systems in Kisumu",
-        "href": "/irrigation-systems-kisumu"
-      },
-      {
-        "label": "Irrigation systems in Nakuru",
-        "href": "/irrigation-systems-nakuru"
-      },
-      {
-        "label": "Irrigation systems in Nanyuki and Laikipia",
-        "href": "/irrigation-systems-nanyuki-laikipia"
-      },
-      {
         "label": "Browse irrigation products",
         "href": "/products"
       },
@@ -68,6 +59,38 @@
       {
         "label": "Request irrigation design support",
         "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Irrigation in Eldoret and Uasin Gishu",
+        "href": "/irrigation-systems-eldoret-uasin-gishu"
+      },
+      {
+        "label": "Irrigation systems in Meru",
+        "href": "/irrigation-systems-meru"
+      },
+      {
+        "label": "Irrigation systems in Nyeri",
+        "href": "/irrigation-systems-nyeri"
+      },
+      {
+        "label": "Irrigation equipment in Mwea and Kirinyaga",
+        "href": "/irrigation-systems-mwea-kirinyaga"
+      },
+      {
+        "label": "Irrigation systems in Machakos",
+        "href": "/irrigation-systems-machakos"
+      },
+      {
+        "label": "Irrigation systems in Kajiado",
+        "href": "/irrigation-systems-kajiado"
+      },
+      {
+        "label": "Irrigation systems in Kilifi",
+        "href": "/irrigation-systems-kilifi"
+      },
+      {
+        "label": "How to compare irrigation quotations",
+        "href": "/irrigation-quotation-checklist-kenya"
       }
     ]
   },
@@ -208,6 +231,16 @@
         "label": "Contact DripTech",
         "href": "/contact"
       }
+    ],
+    "sources": [
+      {
+        "label": "National Irrigation Authority — Ahero Irrigation Scheme",
+        "url": "https://www.irrigationauthority.go.ke/projects/ahero-irrigation-scheme/"
+      },
+      {
+        "label": "National Irrigation Authority — West Kano Irrigation Scheme",
+        "url": "https://www.irrigationauthority.go.ke/projects/west-kano-irrigation-scheme/"
+      }
     ]
   },
   {
@@ -342,6 +375,616 @@
       {
         "label": "Explore all areas served",
         "href": "/irrigation-areas-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-systems-eldoret-uasin-gishu",
+    "title": "Irrigation Systems in Eldoret & Uasin Gishu | DripTech",
+    "description": "Irrigation equipment and system planning for Eldoret and Uasin Gishu farms growing potatoes, maize, wheat and horticultural crops.",
+    "h1": "Irrigation systems for farms in Eldoret and Uasin Gishu",
+    "intro": "Uasin Gishu is a major crop-producing area, with maize, wheat and potatoes alongside diversification into horticultural and other high-value crops. DripTech Eco Flow helps farmers assess where drip, sprinkler or supplemental irrigation equipment fits the crop, field and water supply.",
+    "sections": [
+      {
+        "heading": "Choose irrigation for the crop and production system",
+        "paragraphs": [
+          "Large rain-fed cereal fields, potato plots, vegetable blocks and greenhouse crops do not have the same irrigation requirements. For vegetables and other high-value crops, drip can suit defined rows and beds; sprinklers may suit broader coverage where the available flow and pressure support the layout.",
+          "In areas with reliable rainfall, irrigation may be most useful for selected high-value blocks, nurseries or dry periods rather than as a blanket system across every acre. Start with the crop calendar and the water available during the periods when irrigation is needed."
+        ]
+      },
+      {
+        "heading": "Check water, pressure and field layout",
+        "bullets": [
+          "Confirm the water source and dependable flow during the intended irrigation window.",
+          "Measure elevation changes across the plot before selecting pumps and pipe sizes.",
+          "For drip systems, match emitter spacing and the number of lines per bed to the planting pattern.",
+          "For sprinklers, check operating pressure, application rate, overlap and wind exposure.",
+          "Plan zones so the available supply can run the required area without overloading the pump."
+        ]
+      },
+      {
+        "heading": "Equipment and support from DripTech",
+        "paragraphs": [
+          "The range includes driplines, drip tape, sprinklers, filters, pumps, pipes, valves, fittings, fertigation equipment and irrigation kits. DripTech can help assemble a preliminary bill of materials and identify the checks needed before final design.",
+          "Delivery, site assessment and installation support are confirmed for the exact farm location and project scope. This page does not imply a walk-in branch in Eldoret."
+        ]
+      },
+      {
+        "heading": "Request a Uasin Gishu farm recommendation",
+        "paragraphs": [
+          "Share your town or ward, crop, acreage, water source, pump details if available, and a field sketch or photographs. Mention whether you need full-season irrigation or supplementary watering for a particular crop stage."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Browse sprinklers",
+        "href": "/products/sprinklers"
+      },
+      {
+        "label": "Compare irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Read pump sizing guidance",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "See the irrigation quotation checklist",
+        "href": "/irrigation-quotation-checklist-kenya"
+      },
+      {
+        "label": "Explore all areas served",
+        "href": "/irrigation-areas-kenya"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Uasin Gishu County — Agriculture and Food Security",
+        "url": "https://uasingishu.go.ke/index.php/service/1-agriculture-food-security"
+      },
+      {
+        "label": "Uasin Gishu County — Agriculture, Agribusiness, Livestock and Fisheries",
+        "url": "https://uasingishu.go.ke/index.php/department/agriculture-and-fisheries"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-systems-meru",
+    "title": "Irrigation Systems in Meru | DripTech Eco Flow",
+    "description": "Explore irrigation equipment for Meru farms growing French beans, coffee, tea, macadamia, avocado and other horticultural crops.",
+    "h1": "Irrigation systems and equipment for Meru farms",
+    "intro": "Meru has a varied agricultural economy that includes coffee, tea, French beans, macadamia, fruits and other horticultural production. DripTech Eco Flow helps farmers match irrigation equipment to the crop, slope, water source and field conditions.",
+    "sections": [
+      {
+        "heading": "Match the method to the crop",
+        "paragraphs": [
+          "Vegetable rows, French beans, orchards and greenhouse crops can require different water application patterns. Drip irrigation can suit defined crop rows and tree basins when the design matches plant spacing, soil and water quality. Sprinklers may be appropriate for other blocks where coverage and pressure are suitable.",
+          "Do not assume the same emitter spacing or number of lines per bed works for every crop. Confirm the crop spacing, root-zone needs and field layout before ordering."
+        ]
+      },
+      {
+        "heading": "Account for elevation and water quality",
+        "bullets": [
+          "Record the elevation difference between the water source and each field block.",
+          "Where a farm has sloping ground, consider pressure differences and whether separate zones or pressure regulation are required.",
+          "Check source-water quality before selecting screen or disc filtration.",
+          "Size the pump for the required flow at the total head, including elevation and pipe friction losses.",
+          "Provide accessible flush points and filter-maintenance space."
+        ]
+      },
+      {
+        "heading": "DripTech products and project support",
+        "paragraphs": [
+          "DripTech supplies dripline, drip tape, emitters, filters, sprinklers, pumps, pipes, valves, fittings, fertigation equipment and irrigation kits. We can help identify the components required for a farm-specific layout.",
+          "Confirm delivery, site visits and installation availability for your specific Meru location before arranging the project. This is a service-area page, not a claim of a physical branch."
+        ]
+      },
+      {
+        "heading": "Request a Meru irrigation assessment",
+        "paragraphs": [
+          "Send the crop, acreage, farm location, water source, elevation details if known and a field sketch. For an existing pump, include the model or nameplate so the flow and head can be checked."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Browse filters and filtration",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Explore pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Explore fertigation systems",
+        "href": "/fertigation-systems-kenya"
+      },
+      {
+        "label": "See the irrigation quotation checklist",
+        "href": "/irrigation-quotation-checklist-kenya"
+      },
+      {
+        "label": "Explore all areas served",
+        "href": "/irrigation-areas-kenya"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Meru County — Discover Meru County and agricultural profile",
+        "url": "https://meru.go.ke/93/discover-meru-county/"
+      },
+      {
+        "label": "Kenya Export Promotion and Branding Agency — Meru County products",
+        "url": "https://www.makeitkenya.go.ke/buyer-seller/county-profile/meru/products-available"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-systems-nyeri",
+    "title": "Irrigation Systems in Nyeri | DripTech Eco Flow",
+    "description": "Farm irrigation equipment in Nyeri for coffee, tea, avocado, passion fruit, vegetables and other horticultural production.",
+    "h1": "Irrigation systems for Nyeri farms and horticulture",
+    "intro": "Nyeri's agricultural production includes coffee, tea, dairy, vegetables and horticultural crops such as avocado and passion fruit. DripTech Eco Flow helps farmers assess irrigation layouts for orchards, vegetable beds, nurseries and other selected crop blocks.",
+    "sections": [
+      {
+        "heading": "Design around Nyeri's crop and terrain",
+        "paragraphs": [
+          "An orchard, a vegetable field and a greenhouse need different layouts. Drip or button-dripper systems may suit tree crops when emitter number and placement are selected for tree size, soil and root-zone conditions. Row crops need emitter spacing that matches the bed and planting arrangement.",
+          "Where the farm slopes, a system may need separate pressure zones, suitable pipe sizing and pressure regulation. Measure the elevation changes rather than choosing a pump from acreage alone."
+        ]
+      },
+      {
+        "heading": "Check the full water delivery chain",
+        "bullets": [
+          "Confirm seasonal water availability and the source used by the farm.",
+          "Check pump flow, total head and the pressure required at the irrigation equipment.",
+          "Select filtration for the actual source water and emitter specifications.",
+          "Plan valves and zones for different crops or blocks with different schedules.",
+          "Allow access for flushing, filter cleaning and routine inspection."
+        ]
+      },
+      {
+        "heading": "Equipment and technical guidance",
+        "paragraphs": [
+          "DripTech supplies dripline, drip tape, button drippers, filters, pumps, sprinklers, pipes, valves, fittings and irrigation kits. The team can help prepare an equipment list and discuss design or installation support.",
+          "Delivery and site-service options are confirmed for the exact location and scope; this page does not represent a Nyeri walk-in branch."
+        ]
+      },
+      {
+        "heading": "Request a Nyeri farm quotation",
+        "paragraphs": [
+          "Share the crop, block size, plant spacing, water source, elevation and photos or a sketch of the field. For an orchard, include approximate tree spacing and the age or size range of the trees."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Explore button drippers and emitters",
+        "href": "/products/emitters"
+      },
+      {
+        "label": "Compare pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Read the pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "See the quotation checklist",
+        "href": "/irrigation-quotation-checklist-kenya"
+      },
+      {
+        "label": "Explore all areas served",
+        "href": "/irrigation-areas-kenya"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Nyeri County — Agriculture and Agribusiness",
+        "url": "https://www.nyeri.go.ke/agriculture-and-agribusiness/"
+      },
+      {
+        "label": "Nyeri County — Directorate of Agriculture",
+        "url": "https://www.nyeri.go.ke/directorate-of-agriculture/"
+      },
+      {
+        "label": "Kenya Export Promotion and Branding Agency — Nyeri County products",
+        "url": "https://www.makeitkenya.go.ke/buyer-seller/county-profile/nyeri/products-available"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-systems-mwea-kirinyaga",
+    "title": "Irrigation Equipment in Mwea & Kirinyaga | DripTech",
+    "description": "Irrigation equipment and planning for Mwea and Kirinyaga farms, including horticultural plots, tomatoes, French beans and upland crops.",
+    "h1": "Irrigation equipment and farm planning in Mwea and Kirinyaga",
+    "intro": "Mwea is well known for its large rice irrigation scheme, where basin irrigation is the established method. Kirinyaga also has horticultural and upland crop production. DripTech Eco Flow helps assess equipment for suitable vegetable, orchard, nursery and other non-paddy crop layouts.",
+    "sections": [
+      {
+        "heading": "Understand the existing irrigation method",
+        "paragraphs": [
+          "The Mwea Irrigation Scheme primarily produces rice using basin irrigation and water conveyed through scheme infrastructure. A drip kit is not a substitute for the scheme's paddy-field layout. For tomatoes, French beans and other horticultural blocks outside or alongside paddy production, a separate drip or sprinkler design may be appropriate after checking the crop and water arrangements.",
+          "Before recommending equipment, confirm whether the farm is within a managed irrigation scheme, uses an individual water source, or operates an upland block with a separate supply."
+        ]
+      },
+      {
+        "heading": "Select components for horticultural blocks",
+        "bullets": [
+          "Confirm water access, allocated supply conditions and when water is available.",
+          "Match dripline spacing and number of lines per bed to the crop and row arrangement.",
+          "Check filtration requirements for the source and the emitter specification.",
+          "Size pumps and pipes only where the farm's water supply requires pumping.",
+          "Separate horticultural blocks into zones where crop schedules or water needs differ."
+        ]
+      },
+      {
+        "heading": "DripTech equipment and support",
+        "paragraphs": [
+          "DripTech supplies driplines, drip tape, filters, pumps, sprinklers, valves, pipes, fittings and fertigation components. We can help prepare a parts list for a separate horticultural irrigation system.",
+          "For farms inside a public scheme, confirm the scheme's water-use rules and infrastructure responsibilities with the relevant scheme management. DripTech is not the operator of the Mwea Irrigation Scheme."
+        ]
+      },
+      {
+        "heading": "Request a Kirinyaga irrigation recommendation",
+        "paragraphs": [
+          "Send the sub-county or area, crop, plot size, water source and whether the field is within the Mwea scheme or an independent farm. A sketch showing the intake, water point and field layout will help avoid quoting for the wrong irrigation method."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Browse filters and filtration",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Compare irrigation kits",
+        "href": "/irrigation-kits"
+      },
+      {
+        "label": "Read the irrigation quotation checklist",
+        "href": "/irrigation-quotation-checklist-kenya"
+      },
+      {
+        "label": "Explore all areas served",
+        "href": "/irrigation-areas-kenya"
+      }
+    ],
+    "sources": [
+      {
+        "label": "National Irrigation Authority — Mwea Irrigation Scheme",
+        "url": "https://www.irrigationauthority.go.ke/projects/mwea-irrigation-scheme/"
+      },
+      {
+        "label": "National Irrigation Authority — Mwea Irrigation Scheme statistics",
+        "url": "https://www.irrigationauthority.go.ke/projects/mwea-irrigation-scheme-sb/"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-systems-machakos",
+    "title": "Irrigation Systems in Machakos | DripTech Eco Flow",
+    "description": "Irrigation equipment for Machakos farms, including vegetable plots and horticulture. Plan around water storage, rainfall and available pumping capacity.",
+    "h1": "Irrigation systems for Machakos farms",
+    "intro": "Machakos has semi-arid areas with variable rainfall, alongside locations where irrigated vegetables and horticulture are grown. DripTech Eco Flow helps farmers plan equipment around water availability, storage, crop needs and the conditions at the individual farm.",
+    "sections": [
+      {
+        "heading": "Plan for seasonal water availability",
+        "paragraphs": [
+          "In a water-limited area, the first question is not which drip kit to buy; it is how much dependable water is available during the crop's irrigation period. Estimate usable storage, refill rate and daily demand before selecting the irrigated area.",
+          "Drip may suit vegetable rows, tomatoes and chilli plots where water can be filtered and delivered at the required pressure. Other crops or field conditions may call for a different method. The design should match the source and the crop."
+        ]
+      },
+      {
+        "heading": "Water storage, pumping and filtration",
+        "bullets": [
+          "Identify whether the farm uses a tank, earth dam, water pan, river intake, borehole or another source.",
+          "Estimate how much water can actually be pumped or delivered per day.",
+          "Check elevation and pipe losses before choosing a pump.",
+          "Use filtration suited to the source water; surface water and water pans may carry sediment or organic material.",
+          "Design irrigation zones to fit the available supply and the time available for watering."
+        ]
+      },
+      {
+        "heading": "Equipment and support",
+        "paragraphs": [
+          "DripTech supplies driplines, drip tape, filters, pumps, solar pumping equipment, pipes, sprinklers, valves, fittings and complete kits. We can help compare equipment options and prepare a farm-specific bill of materials.",
+          "Delivery, site visits and installation support are confirmed for the exact Machakos location and project scope. This page does not imply a physical branch in the county."
+        ]
+      },
+      {
+        "heading": "Request a Machakos irrigation plan",
+        "paragraphs": [
+          "Share the farm location, crop, irrigated acreage, available storage, water source, pump details and a photo or sketch. Include the approximate tank or dam volume and how often it refills if known."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Explore solar irrigation pumps",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Browse water storage products",
+        "href": "/products/storage"
+      },
+      {
+        "label": "Read the pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "See the quotation checklist",
+        "href": "/irrigation-quotation-checklist-kenya"
+      },
+      {
+        "label": "Explore all areas served",
+        "href": "/irrigation-areas-kenya"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Machakos County Assembly — Economic activity and agriculture",
+        "url": "https://machakosassembly.go.ke/economic-activity/"
+      },
+      {
+        "label": "Machakos County — Water, Irrigation, Environment and Natural Resources",
+        "url": "https://machakos.go.ke/water-irrigation-environment-natural-resources/"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-systems-kajiado",
+    "title": "Irrigation Systems in Kajiado | DripTech Eco Flow",
+    "description": "Irrigation equipment for Kajiado farms and greenhouses growing tomatoes, onions, kale and other high-value crops.",
+    "h1": "Irrigation systems for Kajiado farms and greenhouses",
+    "intro": "Kajiado includes extensive arid and semi-arid areas as well as horticultural and greenhouse production around places such as Isinya. DripTech Eco Flow helps farmers assess water storage, pumping, filtration and crop-specific irrigation equipment before buying.",
+    "sections": [
+      {
+        "heading": "Choose a system for irrigated horticulture",
+        "paragraphs": [
+          "Tomatoes, onions, kales and greenhouse crops have different spacing and watering requirements. Drip irrigation can work well for defined beds and greenhouse rows where the source water is suitable and the design matches the crop. Sprinklers may be considered for nurseries or other uses where their coverage and operating pressure fit.",
+          "For a greenhouse, plan the irrigation zones, crop rows, filter access and fertigation requirements as one system rather than treating the pump and driplines as separate purchases."
+        ]
+      },
+      {
+        "heading": "Treat water planning as part of the design",
+        "bullets": [
+          "Confirm the source and its dependable yield during dry periods.",
+          "Size storage for the irrigation schedule and the time needed to refill.",
+          "Check pump flow and total head, including tank elevation and pipe losses.",
+          "Select filtration based on tested or observed water quality and emitter requirements.",
+          "Plan zones and maintenance access to use water efficiently and keep the system serviceable."
+        ]
+      },
+      {
+        "heading": "DripTech equipment and support",
+        "paragraphs": [
+          "DripTech supplies greenhouse and field irrigation components, driplines, filters, pumps, sprinklers, pipes, valves, fittings, fertigation equipment and irrigation kits. We can help identify the information needed for a site-specific design and quote.",
+          "Delivery, installation and site-assessment availability are confirmed for the exact location and project scope. This page is not a claim of a walk-in Kajiado branch."
+        ]
+      },
+      {
+        "heading": "Request a Kajiado farm assessment",
+        "paragraphs": [
+          "Send your farm location, crop, greenhouse or open-field dimensions, water source, storage volume and pump details. A field sketch or greenhouse layout helps confirm the number of zones and the required equipment."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse greenhouse irrigation",
+        "href": "/greenhouse-irrigation-systems-kenya"
+      },
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Explore pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Explore filtration systems",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Read the quotation checklist",
+        "href": "/irrigation-quotation-checklist-kenya"
+      },
+      {
+        "label": "Explore all areas served",
+        "href": "/irrigation-areas-kenya"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Kajiado County — Agriculture, Livestock, Fisheries and Irrigation",
+        "url": "https://www.kajiado.go.ke/ministries/agriculture-livestock-and-fisheries/"
+      },
+      {
+        "label": "Kajiado County — About Kajiado and economic activities",
+        "url": "https://www.kajiado.go.ke/about-kajiado/"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-systems-kilifi",
+    "title": "Irrigation Systems in Kilifi | DripTech Eco Flow",
+    "description": "Farm irrigation equipment for Kilifi horticulture, vegetables and orchard crops including mango, coconut, cashew, tomatoes and watermelon.",
+    "h1": "Irrigation equipment for Kilifi farms and horticulture",
+    "intro": "Kilifi farming includes maize, cassava and legumes as well as horticultural crops such as mango, coconut, cashew, pineapple, citrus, tomatoes and watermelon. DripTech Eco Flow helps farmers choose irrigation equipment around the crop, field, water source and available supply.",
+    "sections": [
+      {
+        "heading": "Match the irrigation method to the crop",
+        "paragraphs": [
+          "Orchards, vegetable rows and mixed smallholder plots need different layouts. Dripline or button drippers may suit tree crops and defined beds when emitter placement is matched to the crop and soil. Sprinklers may suit nurseries or areas that need broader coverage, subject to pressure and wind conditions.",
+          "For coastal farms, do not assume that all water sources have the same quality. Check the source water and select filtration and materials based on actual conditions before choosing emitters or pumps."
+        ]
+      },
+      {
+        "heading": "Check the source and the operating schedule",
+        "bullets": [
+          "Confirm whether water comes from a borehole, river, storage tank, water pan or another source.",
+          "Estimate the dependable water volume and how frequently the source is replenished.",
+          "Check water quality before selecting filters and irrigation components.",
+          "Match pump capacity, pipe sizes and irrigation zones to the actual field layout.",
+          "Allow for filter cleaning, line flushing and maintenance access."
+        ]
+      },
+      {
+        "heading": "DripTech equipment and support",
+        "paragraphs": [
+          "DripTech supplies dripline, drip tape, button drippers, filters, pumps, sprinklers, pipes, valves, fittings, fertigation equipment and irrigation kits. We can help prepare a preliminary parts list and discuss design or installation support.",
+          "Confirm delivery and service availability for the exact Kilifi location and project scope. This page does not represent a physical branch in Kilifi."
+        ]
+      },
+      {
+        "heading": "Request a Kilifi irrigation recommendation",
+        "paragraphs": [
+          "Share the crop, farm area, town or ward, water source, storage details and photos or a sketch. For orchard projects, include tree spacing; for vegetable beds, include bed width and row spacing."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Browse filters and filtration",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Compare pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Browse irrigation accessories",
+        "href": "/products/accessories"
+      },
+      {
+        "label": "Read the quotation checklist",
+        "href": "/irrigation-quotation-checklist-kenya"
+      },
+      {
+        "label": "Explore all areas served",
+        "href": "/irrigation-areas-kenya"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Kilifi County Government — County Spatial Plan agriculture profile",
+        "url": "https://kilifi.go.ke/wp-content/uploads/2024/12/Kilifi_CSP_18.07.22.pdf"
+      },
+      {
+        "label": "Kilifi County Government — Official county portal",
+        "url": "https://kilifi.go.ke/"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-quotation-checklist-kenya",
+    "title": "Irrigation Quotation Checklist Kenya | Compare Farm Quotes | DripTech",
+    "description": "Compare irrigation quotations in Kenya with a practical checklist for crop layout, dripline, filters, pumps, pipes, installation, warranty and support.",
+    "h1": "What a good irrigation quotation should include",
+    "intro": "An acreage label or one-line total is not enough to compare irrigation suppliers. A useful quotation should show how the system was sized, exactly which components are included, what installation covers and what support is available after commissioning.",
+    "sections": [
+      {
+        "heading": "1. Farm and crop design assumptions",
+        "bullets": [
+          "Farm location, irrigated area and a layout or field sketch",
+          "Crop, plant spacing, bed width and number of irrigation lines per bed",
+          "Emitter spacing, flow rate and dripline wall thickness or product model",
+          "Number of irrigation zones and which zones can operate together",
+          "Any assumptions about soil, slope, water availability and daily irrigation time"
+        ]
+      },
+      {
+        "heading": "2. Water source, pump and filtration specification",
+        "bullets": [
+          "Water source and any water-quality checks used for equipment selection",
+          "Required flow rate and pressure at the operating irrigation zone",
+          "Pump make and model, performance curve and total head assumptions where pumping is required",
+          "Filter type, rating, flow capacity and cleaning access",
+          "Mainline and submain pipe sizes, valve layout and pressure regulation"
+        ]
+      },
+      {
+        "heading": "3. What the price includes and excludes",
+        "paragraphs": [
+          "Ask the supplier to separate equipment, transport, installation labour, trenching or earthworks, tank and tank stand, electrical work, commissioning and training. A low headline price may exclude items that are essential to make the system operational.",
+          "Compare the bill of materials line by line. Check quantities, units, sizes, models and whether fittings, flush points, valves, connectors and end closures are included."
+        ]
+      },
+      {
+        "heading": "4. Warranty, commissioning and after-sales support",
+        "bullets": [
+          "Written warranty period and the parts or labour it covers",
+          "Who handles warranty claims and which contact channel to use",
+          "Availability of replacement filters, emitters, fittings and pump spares",
+          "Whether the supplier tests flow and pressure during commissioning",
+          "Whether you receive an operating guide, maintenance schedule and system layout"
+        ]
+      },
+      {
+        "heading": "5. Questions to ask before paying",
+        "paragraphs": [
+          "Can you show the calculation behind the pump and pipe sizes? Which components are excluded from the quotation? Who will test the system after installation? What should I do if the flow reduces or emitters block? How do I obtain spare parts or request warranty service?",
+          "A responsible supplier should be able to explain the assumptions and limitations in plain language. DripTech Eco Flow can help prepare an equipment list for your farm; final specifications should be checked against the site and product documentation."
+        ]
+      },
+      {
+        "heading": "Prepare your farm information",
+        "paragraphs": [
+          "Send your location, crop, acreage, row or bed spacing, water source, tank or pump details and a field sketch. Use the irrigation cost calculator for an initial planning estimate, then request a verified bill of materials and written quotation."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Estimate preliminary irrigation costs",
+        "href": "/irrigation-cost-calculator-kenya"
+      },
+      {
+        "label": "Compare drip irrigation kit prices",
+        "href": "/drip-irrigation-kit-price-kenya"
+      },
+      {
+        "label": "Read the pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Understand irrigation filters",
+        "href": "/irrigation-water-filters-kenya"
+      },
+      {
+        "label": "Browse irrigation kits",
+        "href": "/irrigation-kits"
       },
       {
         "label": "Contact DripTech",
