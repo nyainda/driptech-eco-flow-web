@@ -32,8 +32,6 @@ jobs:
         run: npm run build
         env:
           SEO_ALLOW_STATIC_ONLY: 'true'
-        env:
-          SEO_ALLOW_STATIC_ONLY: 'true'
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_WORKER_URL: https://driptech-api.dripstech.workers.dev
