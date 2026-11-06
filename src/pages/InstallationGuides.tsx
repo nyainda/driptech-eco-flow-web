@@ -459,7 +459,7 @@ const InstallationGuides = () => {
   return (
     <div className="min-h-screen bg-muted/30">
       <SEOHead
-        title="Drip Irrigation Installation Guides & Technical Manuals | DripTech Eco Flow"
+        title="Drip Irrigation Installation Guides & Manuals | DripTech"
         description="Step-by-step guides and technical notes for installing and maintaining DripTech Eco Flow irrigation systems, with practical support for farmers."
         schema={[
           {

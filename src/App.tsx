@@ -120,6 +120,19 @@ const App = () => {
                   <Route path="/fertigation-systems-kenya" element={<SEOContentPage />} />
                   <Route path="/irrigation-companies-kenya" element={<SEOContentPage />} />
                   <Route path="/irrigation-design-consultation-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-areas-kenya" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-nairobi" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-kisumu" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-nakuru" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-nanyuki-laikipia" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-eldoret-uasin-gishu" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-meru" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-nyeri" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-mwea-kirinyaga" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-machakos" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-kajiado" element={<SEOContentPage />} />
+                  <Route path="/irrigation-systems-kilifi" element={<SEOContentPage />} />
+                  <Route path="/irrigation-quotation-checklist-kenya" element={<SEOContentPage />} />
 
                   {/* Service routes */}
                   <Route path="/services" element={<Services />} />

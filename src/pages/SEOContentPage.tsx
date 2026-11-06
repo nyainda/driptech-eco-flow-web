@@ -3,10 +3,16 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import SEOHead from "@/components/common/SEOHead";
+import KitPriceTable from "@/components/SEO/KitPriceTable";
 import pages from "@/data/publicSeoPages.json";
+import locationPages from "@/data/locationSeoPages.json";
 import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
-type SeoPage = (typeof pages)[number];
+const allPages = [...pages, ...locationPages];
+
+type SeoPage = ((typeof pages)[number] | (typeof locationPages)[number]) & {
+  sources?: Array<{ label: string; url: string }>;
+};
 
 const SEOContentPage = () => {
   // These landing pages are registered in App.tsx as fixed literal routes
@@ -16,7 +22,7 @@ const SEOContentPage = () => {
   // regardless of the real slug in the URL. Derive it from the path instead.
   const location = useLocation();
   const slug = location.pathname.replace(/^\/+|\/+$/g, "");
-  const page = pages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
+  const page = allPages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
 
   if (!page) {
     return (
@@ -108,6 +114,7 @@ const SEOContentPage = () => {
         <section className="dt-section">
           <div className="dt-container grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
             <div className="space-y-10">
+              {slug === "drip-irrigation-kit-price-kenya" && <KitPriceTable />}
               {page.sections.map((section) => (
                 <article key={section.heading} className="dt-card p-6 sm:p-8">
                   <h2 className="text-2xl font-bold text-foreground">{section.heading}</h2>
@@ -144,6 +151,25 @@ const SEOContentPage = () => {
                   </Link>
                 ))}
               </nav>
+              {page.sources?.length ? (
+                <section className="mt-6 border-t border-border pt-6" aria-label="Background sources">
+                  <h2 className="text-sm font-bold text-foreground">Local context and further reading</h2>
+                  <ul className="mt-3 space-y-2">
+                    {page.sources.map((source) => (
+                      <li key={source.url}>
+                        <a
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary hover:underline"
+                        >
+                          {source.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
               <div className="mt-6 border-t border-border pt-6">
                 <p className="text-sm leading-6 text-muted-foreground">
                   Need help matching equipment to your farm? Send the crop, acreage and water source for practical guidance.

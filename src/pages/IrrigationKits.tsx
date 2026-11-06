@@ -219,16 +219,6 @@ const IrrigationKits = () => {
     sortBy,
   ]);
 
-  // Market-informed fallback prices (KES), used only until real kits load from
-  // the database or if a kit has no price set yet. Based on July 2026 competitor
-  // benchmarking (Grekkon, Hortitechno, Aqua Hub) for equivalent kit sizes.
-  const MARKET_FALLBACK_PRICES: Record<string, { min: number; max: number }> = {
-    "1/8": { min: 16000, max: 24000 },
-    "1/4": { min: 38000, max: 50000 },
-    "1/2": { min: 55000, max: 69000 },
-    "1": { min: 100000, max: 169000 },
-  };
-
   const kitsSchema = React.useMemo(() => {
     const sourceKits = kits.length > 0 ? kits : [];
     if (sourceKits.length === 0) return null;
@@ -241,10 +231,10 @@ const IrrigationKits = () => {
         const acreLabel = kit.coverage_area
           ? String(kit.coverage_area)
           : null;
-        const fallback = acreLabel
-          ? MARKET_FALLBACK_PRICES[acreLabel]
-          : undefined;
-        const price = kit.price || fallback?.min || undefined;
+        // Only publish a price in structured data when the kit really has one.
+        // Never substitute another supplier's price: markup must match what
+        // DripTech charges and what visitors see on the page.
+        const price = kit.price && kit.price > 0 ? kit.price : undefined;
 
         return {
           "@type": "Product",
