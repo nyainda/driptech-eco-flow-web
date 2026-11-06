@@ -8,7 +8,7 @@ const Index = () => {
   return (
     <>
       <SEOHead
-        title="Drip Irrigation Kits, Driplines & Sprinklers in Kenya | DripTech Eco Flow"
+        title="Drip Irrigation Kits & Sprinklers in Kenya | DripTech"
         description="Shop drip irrigation kits, driplines (15cm, 20cm, 30cm), sprinklers, pumps and filters in Kenya. Call or WhatsApp 0723 407 849 for sizing, supply and installation nationwide."
         keywords="drip irrigation Kenya, drip irrigation kit Kenya, drip irrigation kit price Kenya, driplines Kenya, sprinkler systems Kenya, irrigation pumps Kenya, farm irrigation Kenya, greenhouse irrigation Kenya, irrigation installation Kenya, drip irrigation Nairobi, buy drip kit Kenya, 0723407849, 0757716018"
         url="https://www.dripstech.co.ke/"

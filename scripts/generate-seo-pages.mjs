@@ -29,7 +29,7 @@ const categoryPages = [
   },
   {
     route: "/products/drip",
-    title: "Drip Irrigation Systems Kenya | Driplines, Emitters & Fittings | DripTech",
+    title: "Drip Irrigation Systems Kenya | Driplines & Fittings",
     description:
       "Shop drip irrigation products in Kenya including driplines, emitters, connectors, filters and fittings. Get sizing and installation support from DripTech.",
     heading: "Drip irrigation systems and components",
@@ -76,7 +76,7 @@ const categoryPages = [
   },
   {
     route: "/products/pumps",
-    title: "Irrigation Pumps Kenya | Farm Water Pumps & Accessories | DripTech",
+    title: "Irrigation Pumps Kenya | Farm Water Pumps | DripTech",
     description:
       "Find irrigation pumps and related farm water equipment in Kenya. Get help matching pump capacity to your water source and irrigation layout.",
     heading: "Irrigation pumps for Kenyan farms",
@@ -96,7 +96,7 @@ const categoryPages = [
   },
   {
     route: "/products/filtration",
-    title: "Irrigation Filters Kenya | Water Filtration for Drip Systems | DripTech",
+    title: "Irrigation Filters Kenya | Drip Filtration | DripTech",
     description:
       "Browse irrigation filters and strainers in Kenya for drip and sprinkler systems. Protect emitters and keep your irrigation lines working reliably.",
     heading: "Irrigation filters and strainers",
@@ -106,7 +106,7 @@ const categoryPages = [
   },
   {
     route: "/products/solar",
-    title: "Solar Irrigation Equipment Kenya | Solar Pumps & Farm Systems | DripTech",
+    title: "Solar Irrigation Equipment Kenya | Solar Pumps | DripTech",
     description:
       "Explore solar irrigation equipment in Kenya, including solar pumping options and components for farms that need dependable water supply.",
     heading: "Solar irrigation equipment in Kenya",
@@ -162,7 +162,7 @@ const categoryPages = [
   },
   {
     route: "/services",
-    title: "Irrigation Services Kenya | Design, Installation & Maintenance | DripTech",
+    title: "Irrigation Services Kenya | Design & Install | DripTech",
     description:
       "Professional irrigation design, installation, maintenance and repair services in Kenya for farms, greenhouses and commercial projects.",
     heading: "Irrigation design and installation services",
@@ -172,7 +172,7 @@ const categoryPages = [
   },
   {
     route: "/technician-services",
-    title: "Irrigation Technicians Kenya | Installation, Repair & Maintenance | DripTech",
+    title: "Irrigation Technicians Kenya | Install & Repair | DripTech",
     description:
       "Book irrigation technician support in Kenya for installation, maintenance, troubleshooting and repairs on farm irrigation systems.",
     heading: "Irrigation technician services in Kenya",
@@ -191,7 +191,7 @@ const categoryPages = [
   },
   {
     route: "/case-studies",
-    title: "Irrigation Case Studies Kenya | Farm Projects & Results | DripTech",
+    title: "Irrigation Case Studies Kenya | Farm Projects | DripTech",
     description:
       "Explore DripTech irrigation case studies, farm projects and practical lessons from irrigation installations in Kenya.",
     heading: "Irrigation projects and case studies",
@@ -236,7 +236,7 @@ const categoryPages = [
   },
   {
     route: "/videos",
-    title: "Irrigation Videos Kenya | Drip Installation Guides | DripTech",
+    title: "Irrigation Videos Kenya | Drip Guides | DripTech",
     description:
       "Watch drip irrigation installation, kit demonstrations and farm irrigation videos from DripTech in Kenya.",
     heading: "Irrigation videos and demonstrations",
@@ -267,7 +267,7 @@ const categoryPages = [
 
 const homePage = {
   route: "/",
-  title: "Drip Irrigation Kits, Driplines & Sprinklers in Kenya | DripTech",
+  title: "Drip Irrigation Kits & Sprinklers in Kenya | DripTech",
   description:
     "Shop drip irrigation kits, driplines, sprinklers, pumps and filters in Kenya. Get sizing help, supply and installation support from DripTech.",
   heading: "Driplines, kits and pumps that fit your farm",
@@ -293,7 +293,7 @@ const irrigationCostCalculatorPage = {
   route: "/irrigation-cost-calculator-kenya",
   title: "Drip Irrigation Cost Calculator Kenya | DripTech Eco Flow",
   description:
-    "Estimate dripline length and build a preliminary irrigation budget for a Kenyan farm. Enter your own prices, review the assumptions and request a verified quotation from DripTech Eco Flow.",
+    "Estimate dripline length and a preliminary irrigation budget for your Kenyan farm. Enter your own prices and request a verified quote from DripTech.",
   heading: "Drip irrigation cost calculator for Kenya",
   intro:
     "Estimate a preliminary dripline quantity and build a budget using prices you enter. This is a planning aid—not a fixed DripTech price or a final engineering design.",
@@ -343,12 +343,45 @@ const allPages = [
   ...irrigationCropGapPages.map((page) => ({ ...page, route: `/${page.slug}` })),
 ];
 
+// Fail the build on sitemap structure problems that Google silently ignores:
+// more than one <loc> in a <url>, duplicate URLs, off-domain URLs, or a missing
+// <urlset>. Returns the list of <loc> values for further checks.
+const validateSitemapXml = (xml, label) => {
+  const problems = [];
+  if (!/<urlset[\s>]/.test(xml) || !/<\/urlset>\s*$/.test(xml.trim())) {
+    problems.push("missing or unterminated <urlset>");
+  }
+  const blocks = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1]);
+  const totalLocs = (xml.match(/<loc>/g) || []).length;
+  if (blocks.length !== totalLocs) {
+    problems.push(`${totalLocs} <loc> elements across ${blocks.length} <url> blocks (each <url> must contain exactly one <loc>)`);
+  }
+  const seen = new Set();
+  for (const block of blocks) {
+    const locs = [...block.matchAll(/<loc>\s*([^<]*?)\s*<\/loc>/g)].map((m) => m[1]);
+    if (locs.length !== 1) {
+      problems.push(`<url> with ${locs.length} locations: ${locs.slice(0, 3).join(", ") || "(empty)"}`);
+      continue;
+    }
+    const loc = locs[0];
+    if (!loc.startsWith(siteUrl)) problems.push(`off-domain or relative URL: ${loc}`);
+    if (/\s/.test(loc)) problems.push(`URL contains whitespace: ${loc}`);
+    if (seen.has(loc)) problems.push(`duplicate URL: ${loc}`);
+    seen.add(loc);
+  }
+  if (problems.length) {
+    throw new Error(`${label} is invalid:\n - ${problems.slice(0, 15).join("\n - ")}`);
+  }
+  return [...seen];
+};
+
 // Keep the HTML generated at build time aligned with the URLs submitted to
 // search engines. A route missing from this list would otherwise fall through
 // to the empty SPA document and lose its unique canonical and page content.
+const sourceSitemapXml = fs.readFileSync(path.join(root, "public/sitemap.xml"), "utf8");
+validateSitemapXml(sourceSitemapXml, "public/sitemap.xml");
 const sitemapRoutes = [
-  ...fs
-    .readFileSync(path.join(root, "public/sitemap.xml"), "utf8")
+  ...sourceSitemapXml
     .matchAll(/<loc>https:\/\/www\.dripstech\.co\.ke(\/[^<]*)?<\/loc>/g),
 ].map((match) => match[1] || "/");
 
@@ -364,7 +397,7 @@ const sitemapFallbackPages = {
     "Find irrigation filters and strainers in Kenya to protect drip emitters, sprinklers and farm water equipment from blockage.",
   ],
   "/products/controllers": [
-    "Irrigation Controllers Kenya | Timers & Automation | DripTech",
+    "Irrigation Controllers Kenya | Timers | DripTech",
     "Irrigation controllers and timers",
     "Browse irrigation controllers and timers in Kenya to schedule reliable watering for farms, greenhouses and gardens.",
   ],
@@ -481,10 +514,40 @@ const extractTextBlocks = (value = "") =>
     .map((block) => block.replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim())
     .filter(Boolean);
 
+// Never print query strings or keys; the path is enough to identify a feed.
+const describeUrl = (url) => {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.origin}${parsed.pathname}`;
+  } catch {
+    return String(url).split("?")[0];
+  }
+};
+
 const fetchJson = async (url, headers = {}) => {
-  const response = await fetch(url, { headers });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-  return response.json();
+  let response;
+  try {
+    response = await fetch(url, { headers });
+  } catch (error) {
+    throw new Error(`${describeUrl(url)} is unreachable (${error.cause?.code || error.message})`);
+  }
+  if (!response.ok) {
+    throw new Error(`${describeUrl(url)} returned ${response.status} ${response.statusText}`);
+  }
+  try {
+    return await response.json();
+  } catch {
+    throw new Error(`${describeUrl(url)} did not return valid JSON`);
+  }
+};
+
+// The Worker wraps paginated lists as { data: [...], pagination }; Supabase and
+// the other Worker routes return bare arrays. Accept both, reject anything else
+// with a message that names the feed instead of crashing later in .filter().
+const toArray = (payload, label) => {
+  if (Array.isArray(payload)) return payload;
+  if (payload && Array.isArray(payload.data)) return payload.data;
+  throw new Error(`${label} feed must be an array or { data: [...] }, got ${payload === null ? "null" : typeof payload}`);
 };
 
 const getDynamicContent = async () => {
@@ -505,7 +568,11 @@ const getDynamicContent = async () => {
       fetchJson(`${endpoint}/blog_posts?select=*&published=eq.true`, headers),
       fetchJson(`${endpoint}/news_articles?select=*&published=eq.true`, headers),
     ]);
-    return { products, posts, news };
+    return {
+      products: toArray(products, "Supabase products"),
+      posts: toArray(posts, "Supabase blog_posts"),
+      news: toArray(news, "Supabase news_articles"),
+    };
   };
 
   if (workerUrl) {
@@ -516,16 +583,24 @@ const getDynamicContent = async () => {
         fetchJson(`${workerUrl}/api/blog?limit=1000`),
         fetchJson(`${workerUrl}/api/news?limit=1000`),
       ]);
-      if (!Array.isArray(products) || products.length === 0) {
-        throw new Error("The Worker product feed returned no products.");
+      const normalized = {
+        products: toArray(products, `${describeUrl(`${workerUrl}/api/products`)}`),
+        posts: toArray(posts, `${describeUrl(`${workerUrl}/api/blog`)}`),
+        news: toArray(news, `${describeUrl(`${workerUrl}/api/news`)}`),
+      };
+      if (normalized.products.length === 0) {
+        throw new Error(`${describeUrl(`${workerUrl}/api/products`)} returned no products`);
       }
-      return { products, posts, news };
+      return normalized;
     } catch (error) {
       if (supabaseUrl && supabaseKey) {
         console.warn(`Worker SEO feed failed; trying Supabase instead: ${error.message}`);
         return fetchFromSupabase();
       }
-      throw new Error(`Could not fetch the live SEO feed from Cloudflare Worker: ${error.message}`);
+      throw new Error(
+        `Could not fetch the live SEO feed from the Cloudflare Worker (VITE_WORKER_URL host: ${new URL(workerUrl).host}). ${error.message}. ` +
+        "Check the Worker hostname is correct (expected dripstech-api.<account>.workers.dev) and that /api/health responds.",
+      );
     }
   }
 
@@ -1154,6 +1229,27 @@ ${[...sitemapPages.entries()]
   .join("\n")}
 </urlset>
 `;
+// Search snippets get truncated past roughly these lengths. Warn (not fail) so
+// admin-authored product and blog titles can be reviewed without blocking deploys.
+const TITLE_LIMIT = 60;
+const DESCRIPTION_LIMIT = 160;
+const longSnippets = allPages.filter(
+  (page) => !page.thin && ((page.title || "").length > TITLE_LIMIT || (page.description || "").length > DESCRIPTION_LIMIT),
+);
+if (longSnippets.length) {
+  console.warn(`WARNING: ${longSnippets.length} page(s) exceed ${TITLE_LIMIT}-char titles or ${DESCRIPTION_LIMIT}-char descriptions and may be truncated in search results:`);
+  for (const page of longSnippets.slice(0, 20)) {
+    console.warn(`  ${page.route} (title ${(page.title || "").length}, description ${(page.description || "").length})`);
+  }
+}
+
+const generatedLocs = validateSitemapXml(sitemap, "Generated dist/sitemap.xml");
+const missingFiles = generatedLocs
+  .map((loc) => loc.slice(siteUrl.length) || "/")
+  .filter((route) => route !== "/" && !fs.existsSync(path.join(dist, route.replace(/^\//, ""), "index.html")));
+if (missingFiles.length) {
+  throw new Error(`Generated sitemap lists ${missingFiles.length} URL(s) with no generated HTML file: ${missingFiles.slice(0, 10).join(", ")}`);
+}
 fs.writeFileSync(path.join(dist, "sitemap.xml"), sitemap);
 
 // /admin is intentionally a real static document so no crawler has to execute
