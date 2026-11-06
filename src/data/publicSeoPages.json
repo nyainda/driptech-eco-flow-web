@@ -1847,52 +1847,106 @@
   },
   {
     "slug": "irrigation-design-consultation-kenya",
-    "title": "Irrigation Design & Consultation Kenya | DripTech",
-    "description": "Irrigation design and engineering consultation in Kenya: drip and sprinkler layouts, pumping, filtration and pipe sizing from DripTech Eco-Flow.",
-    "h1": "Irrigation system design and engineering consultation in Kenya",
-    "intro": "DripTech Eco-Flow provides irrigation equipment alongside engineering guidance to help farms plan practical water-delivery systems. Discuss your crop, field dimensions, water source and project goals with our team to identify the design information and equipment your project needs.",
+    "title": "Irrigation Design Consultation Kenya | Farm Assessment & BOQ | DripTech",
+    "description": "Request irrigation design consultation in Kenya for farm assessment, drip or sprinkler layouts, pump and filter selection, zone planning and project BOQs.",
+    "h1": "Irrigation design consultation and engineering support in Kenya",
+    "intro": "DripTech Eco-Flow helps farmers, contractors and project teams turn a farm’s water source, crop plan and field dimensions into a practical irrigation design brief. Start with a consultation to review the site, identify missing measurements and agree the right scope—from concept planning and equipment selection to a detailed layout, BOQ or installation support where agreed.",
     "sections": [
       {
-        "heading": "Custom drip and sprinkler irrigation layouts",
+        "heading": "What irrigation consultation can cover",
         "paragraphs": [
-          "An irrigation layout should reflect the farm boundary, crop rows, spacing, elevation, available water and the way the field will be divided into operating zones. Our team can discuss the requirements for a practical drip or sprinkler system layout before equipment is selected.",
-          "A CAD-style layout can help communicate the proposed field zones, mainline and sub-main routes, drip laterals, valves, filtration and water-supply equipment. Final drawings and specifications must be prepared or verified against the actual site information."
+          "Consultation scope is agreed around your farm or project needs. Depending on the information available and the service agreed, support may cover:"
         ],
         "bullets": [
-          "Farm and crop layout planning",
-          "Dripline or sprinkler selection and spacing",
-          "Mainline, sub-main and zone planning",
-          "Filtration, valves and water-distribution components"
+          "Farm and water-source assessment; review of field dimensions, elevation and crop arrangement",
+          "Drip or sprinkler concept layouts, crop spacing and irrigation-zone planning",
+          "Mainline, sub-main, lateral, valve and fitting selection",
+          "Pump duty requirements using flow, total dynamic head and operating pressure—not horsepower alone",
+          "Filtration choice based on water source and water quality",
+          "Equipment schedule, bill of quantities (BOQ), budget estimate or quotation",
+          "Installation planning, commissioning checks and operator guidance where included"
         ]
       },
       {
-        "heading": "Water source, pumping and filtration assessment",
+        "heading": "Design deliverables: what can be provided",
         "paragraphs": [
-          "A dependable irrigation system starts with understanding the available water supply. Share the source and any known flow or yield information so the team can discuss storage, pumping, filtration and the water delivery requirements for the field.",
-          "Pump selection and pipe sizing depend on measured flow, pressure, elevation, pipe lengths and system demand. Final equipment selection should be checked using project-specific calculations rather than a generic example layout."
+          "Deliverables depend on project scope, site data and the agreed level of engineering. A consultation may produce a requirements brief or preliminary recommendations; a scoped design assignment may include:"
+        ],
+        "bullets": [
+          "Site and design assumptions, constraints and data gaps",
+          "Irrigation zoning and a schematic/layout showing distribution components",
+          "Design basis: crop, area, water demand assumptions, flow and pressure requirements",
+          "Pump, filtration and pipe/component schedules with selection rationale",
+          "BOQ listing quantities, descriptions and specifications for pricing or procurement",
+          "Implementation notes, testing/commissioning checklist and operating guidance"
+        ],
+        "paragraphs2": [
+          "A preliminary concept or illustrative BOQ is not a substitute for verified field measurements or final construction specifications. Final sizing and quantities should be checked against actual site conditions, water availability, elevation and selected equipment."
         ]
       },
       {
-        "heading": "What to share before an engineering consultation",
+        "heading": "How the consultation and design process works",
         "bullets": [
-          "Farm location and approximate area or field dimensions",
-          "Crop type, row spacing and planting arrangement",
-          "Water source, known yield or flow, and storage details",
-          "Power availability and any existing pump details",
-          "Photos, a sketch or an existing farm layout if available"
+          "1. Share your project brief, location, crop and available measurements.",
+          "2. We review the water source, field arrangement, constraints and information gaps.",
+          "3. Agree the scope: remote review, site visit/assessment, concept layout, detailed design, BOQ or supply/installation support.",
+          "4. Develop recommendations or deliverables within the agreed scope; confirm assumptions and items requiring field verification.",
+          "5. Review the proposal, clarify changes and plan procurement, installation or next steps if required."
+        ]
+      },
+      {
+        "heading": "What to prepare before contacting us",
+        "bullets": [
+          "Farm location, acreage and field dimensions (length, width, boundaries)",
+          "Crop, planting method, row spacing and planned crop rotation",
+          "Water source (borehole, river, dam, tank or other), known yield/flow and storage",
+          "Elevation differences, source-to-field distance and approximate pipe route",
+          "Power availability, existing pump model/nameplate and any pressure/flow readings",
+          "Photos, a hand sketch, Google Maps pin or existing farm/CAD drawing",
+          "Budget range, project deadline and whether you need design only or supply/installation too"
         ],
         "paragraphs": [
-          "These details help the team understand your project and advise on the next steps. If some measurements are not yet available, start with what you know and ask what information should be collected."
+          "No complete survey yet? Send the information you have. We can identify which measurements or tests are still needed before a reliable design or BOQ can be prepared."
         ]
       },
       {
-        "heading": "Request irrigation design guidance",
+        "heading": "Why site information matters",
         "paragraphs": [
-          "Contact DripTech Eco-Flow to discuss irrigation design, water-source and pumping requirements, farm planning, equipment supply and installation support. The exact scope, site assessment requirements and deliverables can be agreed for your project."
+          "Two farms with the same acreage can require different equipment because of elevation, water yield, crop spacing, pipe route, soil infiltration and operating zones. Pump duty, pipe diameter, filter capacity and irrigation duration should therefore be based on project data and verified assumptions—not acreage alone."
+        ]
+      },
+      {
+        "heading": "Request an irrigation consultation",
+        "paragraphs": [
+          "Contact DripTech Eco-Flow with your farm location, crop, area and water source. Tell us whether you need a site assessment, irrigation layout, BOQ, equipment quotation or installation support so we can agree the right scope and next step."
         ]
       }
     ],
     "links": [
+      {
+        "label": "Irrigation consultation checklist: what to prepare",
+        "href": "/irrigation-consultation-checklist-kenya"
+      },
+      {
+        "label": "Irrigation site assessment guide",
+        "href": "/irrigation-site-assessment-kenya"
+      },
+      {
+        "label": "How to prepare an irrigation BOQ",
+        "href": "/irrigation-boq-kenya"
+      },
+      {
+        "label": "Pump selection and sizing guide",
+        "href": "/pump-selection-for-irrigation-kenya"
+      },
+      {
+        "label": "Filter selection by water source",
+        "href": "/irrigation-filtration-by-water-source-kenya"
+      },
+      {
+        "label": "Irrigation installation and commissioning checklist",
+        "href": "/irrigation-commissioning-checklist-kenya"
+      },
       {
         "label": "Explore irrigation services",
         "href": "/services"
@@ -1900,10 +1954,6 @@
       {
         "label": "Browse drip irrigation products",
         "href": "/products/drip"
-      },
-      {
-        "label": "Compare complete irrigation kits",
-        "href": "/irrigation-kits"
       },
       {
         "label": "Contact DripTech Eco-Flow",
@@ -1921,7 +1971,7 @@
         "Water-source and pumping assessment",
         "Farm irrigation consultation"
       ],
-      "description": "Irrigation design and engineering consultation in Kenya: drip and sprinkler layouts, pumping, filtration and pipe sizing from DripTech Eco-Flow.",
+      "description": "Request irrigation design consultation in Kenya for farm assessment, drip or sprinkler layouts, pump and filter selection, zone planning and project BOQs.",
       "url": "https://www.dripstech.co.ke/irrigation-design-consultation-kenya",
       "image": "https://www.dripstech.co.ke/engineering/drip-irrigation-layout.svg",
       "provider": {
@@ -2795,5 +2845,292 @@
       }
     ],
     "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "irrigation-boq-kenya",
+    "title": "Irrigation BOQ Example Kenya | Bill of Quantities Guide | DripTech",
+    "description": "Irrigation BOQ guide for Kenya with an illustrative bill of quantities, item descriptions, sizing notes and quantity take-off tips.",
+    "h1": "Irrigation bill of quantities (BOQ): example and preparation guide",
+    "intro": "A bill of quantities (BOQ) translates an irrigation design into a structured list of materials, descriptions, specifications and quantities for costing or procurement. This SEO guide shows an illustrative format—not a site-specific quotation or ready-to-build design.",
+    "sections": [
+      {
+        "heading": "Illustrative irrigation BOQ structure",
+        "paragraphs": [
+          "The sample below is a format example only. Actual quantities, pipe diameters, pump duty, filter rating and component specifications must come from a verified design and site measurements."
+        ],
+        "bullets": [
+          "Water source and storage: source connection, tank/storage items where applicable",
+          "Pump set: selected duty point, controls and accessories (if required)",
+          "Filtration and fertigation: filter type/capacity, valves and injection components as specified",
+          "Distribution network: mainline, sub-main, zone manifolds and fittings",
+          "Field application: dripline/drip tape or sprinklers, connectors and end closures",
+          "Control and protection: isolation valves, pressure regulation, gauges and air-release/drain components as designed",
+          "Installation items: supports, excavation/backfill, flushing, testing and commissioning—if included in scope"
+        ]
+      },
+      {
+        "heading": "Example BOQ table headings",
+        "bullets": [
+          "Item number",
+          "Description and technical specification",
+          "Unit (m, No., set, roll, etc.)",
+          "Quantity from drawing or measurement",
+          "Rate (KES)",
+          "Amount (KES)",
+          "Remarks / design reference"
+        ]
+      },
+      {
+        "heading": "How quantities should be measured",
+        "paragraphs": [
+          "Measure pipe routes from the layout and account for fittings, branches, crossings and installation conditions using the project’s agreed measurement rules. Count valves, filters, emitters, connectors and control items from zone details and component schedules. Do not estimate pump or filter specifications from acreage alone."
+        ]
+      },
+      {
+        "heading": "Important limits of an online BOQ example",
+        "paragraphs": [
+          "This page is an educational SEO resource, not a downloadable project BOQ, engineering certification, fixed-price offer or promise of standard quantities. A farm-specific BOQ needs crop and field data, water-source details, elevations, zone design and verified routes. Prices also change with product choice and availability."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Irrigation BOQ preparation checklist",
+        "href": "/irrigation-boq-preparation-checklist-kenya"
+      },
+      {
+        "label": "Irrigation site assessment guide",
+        "href": "/irrigation-site-assessment-kenya"
+      },
+      {
+        "label": "Contact DripTech Eco-Flow",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-pump-selection-service-kenya",
+    "title": "Irrigation Pump Selection & Sizing Support Kenya | DripTech",
+    "description": "Pump selection support in Kenya for irrigation flow, total head, pressure, solar/electric options and system matching.",
+    "h1": "Irrigation pump selection and sizing support in Kenya",
+    "intro": "Choose an irrigation pump around the required flow and total dynamic head, the water source, operating schedule and power supply. DripTech Eco-Flow can help review pump requirements and match suitable equipment to an irrigation project.",
+    "sections": [
+      {
+        "heading": "What pump selection support reviews",
+        "bullets": [
+          "Required flow and irrigation-zone demand",
+          "Static lift, drawdown and elevation at the delivery point",
+          "Pipe length, diameter, friction losses and fittings",
+          "Required operating pressure at filters and emitters/sprinklers",
+          "Water-source yield and seasonal reliability",
+          "Power availability and solar/electric operating considerations",
+          "Pump curve and duty-point compatibility, controls and protection"
+        ]
+      },
+      {
+        "heading": "Avoid sizing a pump by horsepower alone",
+        "paragraphs": [
+          "Horsepower does not state the flow a pump will deliver at the required head. Compare the pump curve with the calculated duty point and confirm the source can sustain the selected flow. A site-specific calculation is necessary before final selection."
+        ]
+      },
+      {
+        "heading": "Information to send for pump review",
+        "bullets": [
+          "Water source and measured/estimated yield",
+          "Vertical lift and delivery elevation",
+          "Distance and pipe route to the field",
+          "Required irrigated area and operating zones",
+          "Existing pump details or power supply",
+          "Pressure/flow readings if available"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Pump sizing guide: flow and head",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "How to choose an irrigation pump",
+        "href": "/pump-selection-for-irrigation-kenya"
+      },
+      {
+        "label": "Solar vs electric irrigation pumps",
+        "href": "/solar-vs-electric-irrigation-pump-kenya"
+      },
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-filtration-service-kenya",
+    "title": "Irrigation Filtration Systems Kenya | Filter Selection & Support | DripTech",
+    "description": "Irrigation filtration systems in Kenya: screen, disc and media filter selection, water quality review, maintenance and system protection.",
+    "h1": "Irrigation filtration systems and selection support in Kenya",
+    "intro": "Correct filtration protects emitters and sprinkler nozzles from clogging. Filter selection depends on water source, suspended material, emitter requirements, flow and maintenance capacity—not a single filter size for every farm.",
+    "sections": [
+      {
+        "heading": "Filtration support for different water sources",
+        "bullets": [
+          "Borehole water: assess sand, mineral deposits and source-specific risks",
+          "River, dam or open-water sources: consider suspended solids, organic matter and changing water quality",
+          "Stored water: inspect tank cleanliness and contamination pathways",
+          "Fertigation: consider compatibility, injection point and downstream filtration needs"
+        ]
+      },
+      {
+        "heading": "Filter types and selection considerations",
+        "paragraphs": [
+          "Screen and disc filters are common for different particle loads; media filtration may be appropriate for water containing substantial organic material. Selection and filtration degree should follow water analysis, emitter/nozzle requirements and manufacturer guidance. Some sources need more than one filtration stage."
+        ]
+      },
+      {
+        "heading": "Maintenance and troubleshooting",
+        "bullets": [
+          "Monitor pressure difference across the filter",
+          "Flush or clean according to the manufacturer and water conditions",
+          "Inspect screens/discs and media condition",
+          "Flush lines and check emitters when clogging appears",
+          "Investigate water quality before repeatedly replacing components"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Filter selection by water source",
+        "href": "/irrigation-filtration-by-water-source-kenya"
+      },
+      {
+        "label": "Irrigation filter and pump problems",
+        "href": "/irrigation-filter-pump-problems-kenya"
+      },
+      {
+        "label": "Irrigation system maintenance guide",
+        "href": "/irrigation-system-maintenance-kenya"
+      },
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-installation-kenya",
+    "title": "Irrigation System Installation Kenya | DripTech Eco-Flow",
+    "description": "Irrigation installation in Kenya with system planning, pipework, dripline or sprinkler placement, flushing, testing and commissioning support.",
+    "h1": "Irrigation system installation and commissioning in Kenya",
+    "intro": "A reliable installation follows a design, uses compatible components and includes flushing, pressure checks and practical handover. DripTech Eco-Flow can discuss irrigation equipment supply and installation support based on project location and agreed scope.",
+    "sections": [
+      {
+        "heading": "Installation work and project coordination",
+        "bullets": [
+          "Review design, BOQ, field dimensions and water-source conditions before work",
+          "Plan mainline, sub-main, zone valves and laterals/sprinkler positions",
+          "Install filtration, pump and control components according to specifications",
+          "Check pipe routes, joints, supports and protection",
+          "Flush pipework before connecting or operating sensitive emitters",
+          "Test zones, pressure and flow; correct leaks and uneven operation",
+          "Provide operator guidance and a maintenance handover where included"
+        ]
+      },
+      {
+        "heading": "Before installation begins",
+        "paragraphs": [
+          "Confirm site access, water availability, power, storage, materials, layout and responsibilities. Any changes caused by actual field conditions should be reviewed rather than silently altering the design."
+        ]
+      },
+      {
+        "heading": "Commissioning is part of a good handover",
+        "paragraphs": [
+          "Commissioning checks should follow the equipment manuals and project design. Record relevant pressure/flow observations, inspect each zone, verify filtration and controls, and explain normal operation and maintenance to the farm operator."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Installation and commissioning checklist",
+        "href": "/irrigation-commissioning-checklist-kenya"
+      },
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Irrigation BOQ guide",
+        "href": "/irrigation-boq-kenya"
+      },
+      {
+        "label": "Contact DripTech Eco-Flow",
+        "href": "/contact"
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-maintenance-repair-kenya",
+    "title": "Irrigation Maintenance & Repair Kenya | DripTech Eco-Flow",
+    "description": "Irrigation maintenance and troubleshooting in Kenya: filter cleaning, leak checks, pressure problems, pump inspection and dripline flushing.",
+    "h1": "Irrigation system maintenance and repair support in Kenya",
+    "intro": "Routine maintenance helps identify leaks, clogged filters, blocked emitters, pressure changes and pump issues before they disrupt irrigation. DripTech Eco-Flow can discuss maintenance guidance, troubleshooting and repair support according to the system and location.",
+    "sections": [
+      {
+        "heading": "Maintenance checks for irrigation systems",
+        "bullets": [
+          "Inspect pump operation, intake and visible pipework",
+          "Clean filters and check pressure difference across filtration",
+          "Inspect valves, joints and fittings for leaks",
+          "Flush mainlines, sub-mains and laterals where appropriate",
+          "Check representative emitters or sprinklers for flow and distribution",
+          "Review pressure gauges and compare readings with normal operation",
+          "Inspect controls, cables and protections according to manufacturer instructions"
+        ]
+      },
+      {
+        "heading": "Common symptoms to investigate",
+        "bullets": [
+          "Low pressure: check source yield, pump duty, leaks, blocked filters and open zones",
+          "Uneven watering: inspect pressure balance, clogging, damaged laterals and zone design",
+          "Frequent filter blockage: investigate source water and filtration suitability",
+          "Pump cycling or overheating: stop unsafe operation and seek qualified inspection"
+        ]
+      },
+      {
+        "heading": "Plan maintenance around your system",
+        "paragraphs": [
+          "Maintenance frequency depends on water quality, equipment, operating hours and manufacturer recommendations. Keep records of filter cleaning, flushing, repairs and pressure/flow readings to help diagnose recurring problems."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation system maintenance guide",
+        "href": "/irrigation-system-maintenance-kenya"
+      },
+      {
+        "label": "Filter and pump troubleshooting",
+        "href": "/irrigation-filter-pump-problems-kenya"
+      },
+      {
+        "label": "Low irrigation pump pressure",
+        "href": "/irrigation-pump-low-pressure-kenya"
+      },
+      {
+        "label": "Contact DripTech Eco-Flow",
+        "href": "/contact"
+      }
+    ]
   }
 ]
