@@ -398,6 +398,26 @@ async function validateImage(url) {
   };
 }
 
+async function readResponseWithinLimit(response, maxBytes, label) {
+  if (!response.body) throw new Error(label + " response had no readable body.");
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw new Error(label + " exceeds the maximum permitted file size.");
+    }
+    chunks.push(Buffer.from(value));
+  }
+
+  return Buffer.concat(chunks, total);
+}
+
 async function validateVideo(item) {
   if (item.declaredDuration && item.declaredDuration > MAX_VIDEO_SECONDS) {
     throw new Error("Video API duration exceeds Google's 30-second limit.");
@@ -416,10 +436,8 @@ async function validateVideo(item) {
 
   const declaredBytes = Number(response.headers.get("content-length")) || 0;
   if (declaredBytes > MAX_VIDEO_BYTES) throw new Error("Video exceeds Google's 75 MB limit.");
-  const bytes = Buffer.from(await response.arrayBuffer());
-  if (!bytes.length || bytes.length > MAX_VIDEO_BYTES) {
-    throw new Error("Video must be non-empty and no larger than 75 MB.");
-  }
+  const bytes = await readResponseWithinLimit(response, MAX_VIDEO_BYTES, "Video");
+  if (!bytes.length) throw new Error("Video source was empty.");
 
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "driptech-gbp-video-"));
   const tempFile = path.join(tempDir, "source.mp4");
