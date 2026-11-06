@@ -398,15 +398,72 @@ async function validateImage(url) {
   };
 }
 
-async function uploadPhoto(url, accessToken) {
+async function validateVideo(item) {
+  if (item.declaredDuration && item.declaredDuration > MAX_VIDEO_SECONDS) {
+    throw new Error("Video API duration exceeds Google's 30-second limit.");
+  }
+
+  const response = await fetch(item.url, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(60_000),
+    headers: { "User-Agent": "DripTech-GBP-Media-Sync/1.0" },
+  });
+  if (!response.ok) throw new Error("Video source returned HTTP " + response.status + ".");
+  const mime = (response.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  if (mime !== "video/mp4" && mime !== "application/mp4") {
+    throw new Error("Only direct public MP4 files are eligible; video platform pages are skipped.");
+  }
+
+  const declaredBytes = Number(response.headers.get("content-length")) || 0;
+  if (declaredBytes > MAX_VIDEO_BYTES) throw new Error("Video exceeds Google's 75 MB limit.");
+  const bytes = Buffer.from(await response.arrayBuffer());
+  if (!bytes.length || bytes.length > MAX_VIDEO_BYTES) {
+    throw new Error("Video must be non-empty and no larger than 75 MB.");
+  }
+
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "driptech-gbp-video-"));
+  const tempFile = path.join(tempDir, "source.mp4");
+  try {
+    fs.writeFileSync(tempFile, bytes);
+    const probe = spawnSync("ffprobe", [
+      "-v", "error", "-select_streams", "v:0",
+      "-show_entries", "stream=width,height:format=duration,format_name",
+      "-of", "json", tempFile,
+    ], { encoding: "utf8", timeout: 20_000, maxBuffer: 1024 * 1024 });
+    if (probe.error || probe.status !== 0) throw new Error("Could not inspect MP4 metadata with ffprobe.");
+
+    const metadata = JSON.parse(probe.stdout || "{}");
+    const stream = (metadata.streams || [])[0];
+    const duration = Number(metadata.format?.duration);
+    const width = Number(stream?.width);
+    const height = Number(stream?.height);
+    const formats = String(metadata.format?.format_name || "").split(",");
+    if (!formats.some((format) => ["mp4", "mov"].includes(format))) {
+      throw new Error("Video container is not a supported MP4/MOV file.");
+    }
+    if (!Number.isFinite(duration) || duration <= 0 || duration > MAX_VIDEO_SECONDS) {
+      throw new Error("Video duration must be between 1 and 30 seconds.");
+    }
+    if (!Number.isFinite(width) || !Number.isFinite(height) || Math.min(width, height) < MIN_VIDEO_EDGE) {
+      throw new Error("Video resolution must be at least 720p on its shorter edge.");
+    }
+    return { bytes: bytes.length, duration, width, height, mime };
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+}
+
+async function uploadMedia(item, accessToken) {
   const endpoint = `${GOOGLE_API_ROOT}/${googleLocationPath()}/media`;
+  const isVideo = item.mediaType === "video";
   return googleApi(endpoint, accessToken, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      mediaFormat: "PHOTO",
-      locationAssociation: { category: "PRODUCT" },
-      sourceUrl: url,
+      mediaFormat: isVideo ? "VIDEO" : "PHOTO",
+      locationAssociation: { category: isVideo ? "ADDITIONAL" : "PRODUCT" },
+      sourceUrl: item.url,
+      ...(isVideo && item.description ? { description: item.description.slice(0, 1000) } : {}),
     }),
   });
 }
