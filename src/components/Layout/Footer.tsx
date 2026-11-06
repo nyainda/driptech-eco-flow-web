@@ -10,7 +10,7 @@ const footerGroups = [
   ] },
   { title: "Support", links: [
     ["System design", "/services#system-design"], ["Technician services", "/technician-services"],
-    ["Installation guides", "/installation-guides"], ["Technical support", "/technical-support"], ["Contact us", "/contact"],
+    ["Installation guides", "/installation-guides"], ["Technical support", "/technical-support"], ["Areas we serve", "/irrigation-areas-kenya"], ["Contact us", "/contact"],
   ] },
   { title: "Company", links: [
     ["About DripTech", "/about"], ["Projects", "/projects"], ["Success stories", "/success-stories"],

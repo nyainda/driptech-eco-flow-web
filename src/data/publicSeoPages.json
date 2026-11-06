@@ -326,7 +326,7 @@
       {
         "heading": "Areas served",
         "paragraphs": [
-          "DripTech Eco Flow serves farms and commercial sites across Kenya, including Nairobi, Kiambu, Nakuru, Machakos, Kajiado, Meru, Nyeri, Kisumu, Mombasa and Uasin Gishu."
+          "DripTech Eco Flow serves customers across Kenya. Explore our service-area pages for regional farming and irrigation guidance, then confirm delivery, site assessment and installation availability for your exact project location."
         ]
       },
       {
@@ -352,6 +352,10 @@
       {
         "label": "Irrigation system design and engineering consultation in Kenya",
         "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Explore irrigation service areas across Kenya",
+        "href": "/irrigation-areas-kenya"
       }
     ],
     "image": "/seed-products/field_drip.jpg"

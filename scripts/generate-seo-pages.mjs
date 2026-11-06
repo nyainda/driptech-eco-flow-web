@@ -9,6 +9,9 @@ const baseHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
 const landingPages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8"),
 );
+const locationPages = JSON.parse(
+  fs.readFileSync(path.join(root, "src/data/locationSeoPages.json"), "utf8"),
+);
 const irrigationPricePages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/irrigationPriceSeoPages.json"), "utf8"),
 );
@@ -339,6 +342,7 @@ const allPages = [
   ...categoryPages,
   irrigationCostCalculatorPage,
   ...landingPages.map((page) => ({ ...page, route: `/${page.slug}` })),
+  ...locationPages.map((page) => ({ ...page, route: `/${page.slug}` })),
   ...irrigationPricePages.map((page) => ({ ...page, route: `/${page.slug}` })),
   ...irrigationCropGapPages.map((page) => ({ ...page, route: `/${page.slug}` })),
 ];
@@ -1105,9 +1109,9 @@ const pageBody = (page) => {
     typeof source?.url === "string" && /^https:\/\//i.test(source.url),
   );
   const sourceNav = sourceLinks.length
-    ? `<section aria-label="Price reference sources"><h2>Sources to verify current prices</h2><ul>${sourceLinks
-        .map((source) => `<li><a href="${escapeHtml(source.url)}" rel="nofollow noopener noreferrer" target="_blank">${escapeHtml(source.label)}</a></li>`)
-        .join("")}</ul><p>External listings are independently maintained and may change. Confirm current price, product specification and units with the supplier.</p></section>`
+    ? `<section aria-label="Background sources"><h2>Local context and further reading</h2><ul>${sourceLinks
+        .map((source) => `<li><a href="${escapeHtml(source.url)}" rel="noopener noreferrer" target="_blank">${escapeHtml(source.label)}</a></li>`)
+        .join("")}</ul><p>These references provide regional agricultural context. Confirm site-specific requirements, product specifications and service availability for each farm.</p></section>`
     : "";
 
   const articleImageUrl = page.articleImage
