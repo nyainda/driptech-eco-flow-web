@@ -81,8 +81,6 @@ export default function SEOHead({
       <meta name="bingbot" content="index, follow" />
       <meta name="revisit-after" content="7 days" />
       <meta name="language" content="English" />
-      <meta name="geo.region" content="KE" />
-      <meta name="geo.placename" content="Kenya" />
 
       {/* Mobile Optimization */}
       <meta
