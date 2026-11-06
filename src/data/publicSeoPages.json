@@ -3130,5 +3130,63 @@
         "href": "/contact"
       }
     ]
+  },
+  {
+    "slug": "irrigation-boq-preparation-checklist-kenya",
+    "title": "Irrigation BOQ Preparation Checklist Kenya | DripTech",
+    "description": "Prepare an irrigation bill of quantities with site dimensions, zone layout, pipe routes, equipment specifications and measurement notes.",
+    "h1": "Irrigation BOQ preparation checklist",
+    "intro": "Use this checklist to assemble the design information needed for a useful irrigation bill of quantities (BOQ). Quantities should be taken from a project layout and verified measurements—not guessed from acreage.",
+    "sections": [
+      {
+        "heading": "Information needed before measuring quantities",
+        "bullets": [
+          "Farm boundary, dimensions and elevation information",
+          "Crop layout, row spacing and irrigated blocks",
+          "Water source, yield/flow and storage details",
+          "Zone plan, design flow and required operating pressure",
+          "Mainline, sub-main and lateral routes with lengths",
+          "Pump duty point and filtration requirements from calculations",
+          "Valve, fitting, control and application-component details",
+          "Installation scope, site constraints and measurement conventions"
+        ]
+      },
+      {
+        "heading": "BOQ review before pricing",
+        "bullets": [
+          "Use consistent item descriptions, specifications and units",
+          "Separate pipe lengths from counted fittings and equipment",
+          "Identify included accessories, installation and commissioning items",
+          "Mark provisional quantities and assumptions clearly",
+          "Check quantities against drawings and site measurements",
+          "Confirm product substitutions meet the design requirements",
+          "Date the BOQ and note what is excluded"
+        ]
+      },
+      {
+        "heading": "Do not treat a sample BOQ as a final design",
+        "paragraphs": [
+          "An online example helps with format only. A project BOQ requires a site-specific layout, hydraulic design and confirmed quantities; pricing should be based on current supplier quotations and the agreed scope."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Illustrative irrigation BOQ example",
+        "href": "/irrigation-boq-kenya"
+      },
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Site assessment guide",
+        "href": "/irrigation-site-assessment-kenya"
+      },
+      {
+        "label": "Contact DripTech Eco-Flow",
+        "href": "/contact"
+      }
+    ]
   }
 ]
