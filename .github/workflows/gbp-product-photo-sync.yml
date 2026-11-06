@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Preview only. Set false only after Google OAuth secrets and the product allowlist are ready."
+        description: "Preview automatically selected product photos and featured videos. Set false only after durable Google OAuth credentials are ready."
         required: true
         default: true
         type: boolean
@@ -42,10 +42,10 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Check photo sync script syntax
+      - name: Check media sync script syntax
         run: node --check scripts/sync-gbp-product-photos.mjs
 
-      - name: Test photo sync utilities
+      - name: Test media sync utilities
         run: npm run test:gbp-photos
 
       - name: Ensure ffprobe is available for video validation
@@ -81,7 +81,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Save photo history
+      - name: Save media upload history
         if: always()
         uses: actions/cache/save@v4
         with:
