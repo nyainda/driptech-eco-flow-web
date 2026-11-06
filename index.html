@@ -1,129 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-  <!-- Google Site Verification -->
   <meta name="google-site-verification" content="7kfckABSquTNISxd-uCE4q3AggSMDxyCPodZhcgLX6I" />
-
-  <!-- Inline critical CSS for content that must be available in static HTML
-       but must not flash before React takes over the page. -->
+  <!-- SEO HTML is generated per route at build time. Keep it visible and readable
+       in the first response; React enhances the same route after hydration. -->
   <style>
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border-width: 0;
-    }
-
-    /* The build-time SEO shell gives non-JavaScript crawlers meaningful HTML.
-       JavaScript visitors receive the actual React route, so hide the shell
-       before first paint to prevent its fallback copy from flashing briefly. */
-    html.js [data-seo-shell] {
-      display: none;
-    }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0; }
   </style>
-
-  <!-- Performance Optimizations -->
-  <!-- DNS Prefetch for external domains -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
-  <!-- Preconnect to critical origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-  <!-- LCP: preload hero image (desktop default; picture sources handle mobile) -->
-  <link rel="preload" as="image" href="/hero-bg-new-desktop.webp" type="image/webp" fetchpriority="high" />
-  <link rel="preload" as="image" href="/hero-bg-new-mobile.webp" type="image/webp" media="(max-width: 640px)" />
-
-  <!-- Storefront typography: editorial headings, highly legible technical body copy, and tabular prices. -->
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
-
-  <!-- Primary Meta Tags -->
-
   <title>Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech Eco Flow</title>
   <meta name="title" content="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech Eco Flow" />
-  <meta name="description"
-    content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech Eco Flow supplies and installs irrigation equipment for farms nationwide." />
-  <meta name="keywords"
-    content="drip irrigation Kenya, irrigation kits Kenya, sprinkler systems Kenya, irrigation materials Kenya, drip lines Kenya, farm irrigation Kenya, greenhouse irrigation Kenya, water pumps Kenya, irrigation installation Kenya" />
+  <meta name="description" content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech Eco Flow supplies and installs irrigation equipment for farms nationwide." />
+  <meta name="keywords" content="drip irrigation Kenya, irrigation kits Kenya, sprinkler systems Kenya, irrigation materials Kenya, drip lines Kenya, farm irrigation Kenya, greenhouse irrigation Kenya, water pumps Kenya, irrigation installation Kenya" />
   <meta name="author" content="DripTech Eco Flow" />
   <meta name="robots" content="index, follow" />
   <meta name="language" content="English" />
-
-  <!-- Canonical URL -->
+  <meta name="geo.region" content="KE" />
+  <meta name="geo.country" content="Kenya" />
   <link rel="canonical" href="https://www.dripstech.co.ke/" />
-
-  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.dripstech.co.ke/" />
   <meta property="og:title" content="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech Eco Flow" />
-  <meta property="og:description"
-    content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech Eco Flow supplies and installs irrigation equipment for farms nationwide." />
+  <meta property="og:description" content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech Eco Flow supplies and installs irrigation equipment for farms nationwide." />
   <meta property="og:image" content="https://www.dripstech.co.ke/driptech-logo.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="DripTech Eco Flow irrigation equipment in Kenya" />
   <meta property="og:site_name" content="DripTech Eco Flow" />
   <meta property="og:locale" content="en_KE" />
-  <meta property="fb:app_id" content="" />
-
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://www.dripstech.co.ke/" />
   <meta name="twitter:title" content="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech Eco Flow" />
-  <meta name="twitter:description"
-    content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. Expert farm irrigation design, supply and installation nationwide." />
+  <meta name="twitter:description" content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech Eco Flow supplies and installs irrigation equipment for farms nationwide." />
   <meta name="twitter:image" content="https://www.dripstech.co.ke/driptech-logo.png" />
-  <meta name="twitter:image:alt" content="DripTech Eco Flow irrigation equipment in Kenya" />
-  <meta name="twitter:site" content="@driptech_eco" />
-  <meta name="twitter:creator" content="@driptech_eco" />
-
-  <!-- Security Headers (Note: X-Frame-Options must be set via HTTP headers, not meta tags) -->
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
-  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-
-  <!-- Favicon - SVG Only -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="theme-color" content="#2d6a4f" />
-
-  <!-- Structured data is injected per route by SEOHead. -->
-
-  <!-- Theme initialization script - prevents FOUC (Flash of Unstyled Content) -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <script>
     (function () {
       const root = document.documentElement;
-      root.classList.add('js');
-
       try {
+        root.classList.add('js');
         const theme = localStorage.getItem('vite-ui-theme') || 'system';
-
-        if (theme === 'system') {
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          root.classList.add(systemTheme);
-        } else {
-          root.classList.add(theme);
-        }
-      } catch (e) {
-        root.classList.add('light');
-      }
+        root.classList.add(theme === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : theme);
+      } catch (_) { root.classList.add('light'); }
     })();
   </script>
 </head>
-
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
-
 </html>

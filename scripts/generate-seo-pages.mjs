@@ -6,6 +6,9 @@ const root = process.cwd();
 const dist = path.join(root, "dist");
 const siteUrl = "https://www.dripstech.co.ke";
 const baseHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+if (/html\\.js\\s+\\[data-seo-shell\\]/i.test(baseHtml)) {
+  throw new Error("Static SEO content must not be hidden for JavaScript visitors. Remove the SEO-shell display:none rule.");
+}
 const landingPages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8"),
 );
