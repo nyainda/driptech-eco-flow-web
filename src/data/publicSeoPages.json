@@ -92,6 +92,40 @@
         ]
       },
       {
+        "heading": "Gravity-fed or pumped: how water pressure changes the kit",
+        "paragraphs": [
+          "Roughly ten metres of water head gives one bar of pressure. Thin-wall drip tape often works at low pressure, so a small plot can run from a tank on a raised stand, while a larger field or long laterals usually needs a pump to keep flow even from the first emitter to the last.",
+          "Pressure also decides the filter. A screen filter is common on low-pressure gravity systems; disc filters suit pumped systems and dirtier water. Water from a dam or river usually needs more filtration than borehole or tank water, which changes both the price and the maintenance routine."
+        ]
+      },
+      {
+        "heading": "How many drip lines per bed?",
+        "paragraphs": [
+          "Common practice is two lines per bed for widely spaced crops such as tomatoes and capsicum, and three or four lines for closely planted crops such as onions and garlic. More lines per bed means more dripline, more fittings and a higher flow demand, so it raises the kit price and can lower pressure at the end of the run.",
+          "Treat this as a starting point. Bed width, soil type and the planting pattern you use should confirm the final layout."
+        ]
+      },
+      {
+        "heading": "Compare quotes like for like",
+        "bullets": [
+          "Dripline wall thickness, diameter and emitter spacing, not just the acreage label",
+          "Flow rate per emitter and the maximum run length it supports",
+          "Mainline and submain material and size, for example HDPE or PVC",
+          "Filter type and mesh, pressure control and control valves",
+          "Whether the water tank, stand, trenching, bed preparation, transport and installation are included or left to you",
+          "Warranty terms, spare parts and who to call if a section blocks or leaks"
+        ]
+      },
+      {
+        "heading": "Common questions",
+        "paragraphs": [
+          "How much does a one-acre drip kit cost? Published prices for a one-acre kit vary widely between suppliers because the specification, number of lines per bed and what is included differ. Use the catalogue prices above, then ask for a written bill of materials so you can compare the same items.",
+          "Can I install a drip kit myself? Small kits for kitchen gardens are often practical to install yourself. Larger systems depend on correct pressure, filtration and layout, so have the design checked before you buy.",
+          "Do I need a pump? Not always. It depends on the height of your tank, the length of the laterals and the size of the plot. Share those details and DripTech can recommend gravity or pumped supply.",
+          "Can I estimate the cost first? Yes. Use the irrigation cost calculator to work out dripline length and a preliminary budget from your own prices, then request a verified quotation."
+        ]
+      },
+      {
         "heading": "Ask for a practical quote",
         "paragraphs": [
           "DripTech Eco Flow supports farmers across Kenya with equipment selection, delivery and installation coordination. A clear quote should show the kit size, included components, installation scope and any items still required at the farm."
@@ -114,6 +148,22 @@
       {
         "label": "Planning a drip irrigation system for one acre",
         "href": "/one-acre-drip-irrigation-system-kenya"
+      },
+      {
+        "label": "Estimate your irrigation costs",
+        "href": "/irrigation-cost-calculator-kenya"
+      },
+      {
+        "label": "Drip tape or dripline: which to buy?",
+        "href": "/drip-tape-vs-dripline-kenya"
+      },
+      {
+        "label": "How to choose dripline spacing",
+        "href": "/how-to-choose-dripline-spacing-kenya"
+      },
+      {
+        "label": "What affects irrigation system cost?",
+        "href": "/irrigation-system-cost-kenya"
       }
     ],
     "image": "/seed-products/drip1.jpg"

@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import SEOHead from "@/components/common/SEOHead";
+import KitPriceTable from "@/components/SEO/KitPriceTable";
 import pages from "@/data/publicSeoPages.json";
 import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
@@ -108,6 +109,7 @@ const SEOContentPage = () => {
         <section className="dt-section">
           <div className="dt-container grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
             <div className="space-y-10">
+              {slug === "drip-irrigation-kit-price-kenya" && <KitPriceTable />}
               {page.sections.map((section) => (
                 <article key={section.heading} className="dt-card p-6 sm:p-8">
                   <h2 className="text-2xl font-bold text-foreground">{section.heading}</h2>
