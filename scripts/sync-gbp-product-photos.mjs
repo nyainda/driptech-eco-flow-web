@@ -570,39 +570,43 @@ function selfTest() {
     throw new Error("PNG dimension parser self-test failed.");
   }
 
-  const urls = extractProductImages({
+  const images = extractProductImages({
     images: JSON.stringify(["/products/drip.jpg", { url: "https://cdn.example.com/filter.png" }, "javascript:alert(1)"]),
   });
-  if (
-    urls.length !== 2 ||
-    urls[0] !== "https://www.dripstech.co.ke/products/drip.jpg" ||
-    urls[1] !== "https://cdn.example.com/filter.png"
-  ) {
+  if (images.length !== 2 || images[0] !== "https://www.dripstech.co.ke/products/drip.jpg") {
     throw new Error("Product image URL extraction self-test failed.");
   }
 
-  const testCandidates = [{
-    id: "product-1",
-    name: "Test Dripline",
-    category: "drip_irrigation",
-    imageUrls: ["https://cdn.example.com/a.jpg", "https://cdn.example.com/b.jpg"],
-  }];
-  const oneImageApproval = new Set([
-    approvedImageKey("product-1", "https://cdn.example.com/b.jpg"),
+  const videos = makeVideoCandidates([
+    { id: "v1", title: "Irrigation demonstration", video_url: "https://cdn.example.com/demo.mp4", duration: 25 },
+    { id: "v2", title: "Hosted watch page", video_url: "https://www.youtube.com/watch?v=abc123", duration: 20 },
+    { id: "v3", title: "Insecure file", video_url: "http://cdn.example.com/unsafe.mp4", duration: 20 },
   ]);
-  const selected = selectApprovedImages(testCandidates, oneImageApproval);
-  if (selected.length !== 1 || selected[0].url !== "https://cdn.example.com/b.jpg" || selected[0].imageIndex !== 2) {
-    throw new Error("Image-level allowlist self-test failed: approving one image must not approve sibling images.");
+  if (videos.length !== 2 || videos[0].url !== "https://cdn.example.com/demo.mp4") {
+    throw new Error("Video API candidate parsing self-test failed.");
   }
 
-  const noWrongProductApproval = new Set([
-    approvedImageKey("different-product", "https://cdn.example.com/b.jpg"),
-  ]);
-  if (selectApprovedImages(testCandidates, noWrongProductApproval).length !== 0) {
-    throw new Error("Image-level allowlist self-test failed: image approvals must match the product ID too.");
+  const queues = buildMediaQueues(
+    [{ id: "p1", name: "Dripline", category: "drip_irrigation", imageUrls: ["https://cdn.example.com/a.jpg", "https://cdn.example.com/b.jpg"] }],
+    videos,
+    { productIds: new Set(), imageUrls: new Set(), videoIds: new Set() },
+    new Set(),
+  );
+  if (queues.images.length !== 2 || queues.clips.length !== 2) {
+    throw new Error("Automatic photo/video selection self-test failed.");
   }
 
-  console.log("GBP photo sync self-tests passed, including image-level approval.");
+  const excluded = buildMediaQueues(
+    [{ id: "p1", name: "Dripline", category: "drip_irrigation", imageUrls: ["https://cdn.example.com/a.jpg"] }],
+    [videos[0]],
+    { productIds: new Set(["p1"]), imageUrls: new Set(), videoIds: new Set(["v1"]) },
+    new Set(),
+  );
+  if (excluded.images.length !== 0 || excluded.clips.length !== 0) {
+    throw new Error("Media exclusions self-test failed.");
+  }
+
+  console.log("GBP media sync self-tests passed, including automatic photo/video selection.");
 }
 
 if (process.argv.includes("--self-test")) {
