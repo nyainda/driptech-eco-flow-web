@@ -1109,9 +1109,9 @@ const pageBody = (page) => {
     typeof source?.url === "string" && /^https:\/\//i.test(source.url),
   );
   const sourceNav = sourceLinks.length
-    ? `<section aria-label="Price reference sources"><h2>Sources to verify current prices</h2><ul>${sourceLinks
-        .map((source) => `<li><a href="${escapeHtml(source.url)}" rel="nofollow noopener noreferrer" target="_blank">${escapeHtml(source.label)}</a></li>`)
-        .join("")}</ul><p>External listings are independently maintained and may change. Confirm current price, product specification and units with the supplier.</p></section>`
+    ? `<section aria-label="Background sources"><h2>Local context and further reading</h2><ul>${sourceLinks
+        .map((source) => `<li><a href="${escapeHtml(source.url)}" rel="noopener noreferrer" target="_blank">${escapeHtml(source.label)}</a></li>`)
+        .join("")}</ul><p>These references provide regional agricultural context. Confirm site-specific requirements, product specifications and service availability for each farm.</p></section>`
     : "";
 
   const articleImageUrl = page.articleImage
