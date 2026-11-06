@@ -629,6 +629,74 @@ if (dynamicContent.products.length === 0 && process.env.SEO_ALLOW_STATIC_ONLY !=
 }
 console.log(`SEO generator loaded ${dynamicContent.products.length} catalogue products for crawlable product pages.`);
 
+// Real, current kit prices for the price pages. Optional: a kits outage must not
+// block a deploy, but it is reported so a missing table is never a surprise.
+const toStringList = (value) => {
+  if (Array.isArray(value)) return value.map(String).filter(Boolean);
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+    } catch {
+      return value.split(",").map((item) => item.trim()).filter(Boolean);
+    }
+  }
+  return [];
+};
+
+const getKitRows = async () => {
+  const workerUrl = process.env.VITE_WORKER_URL?.replace(/\/$/, "");
+  const supabaseUrl = process.env.VITE_SUPABASE_URL?.replace(/\/$/, "");
+  const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+  const attempts = [];
+  if (workerUrl) attempts.push(() => fetchJson(`${workerUrl}/api/irrigation-kits`));
+  if (supabaseUrl && supabaseKey) {
+    attempts.push(() =>
+      fetchJson(`${supabaseUrl}/rest/v1/irrigation_kits?select=*&active=eq.true`, {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      }),
+    );
+  }
+  for (const attempt of attempts) {
+    try {
+      const kits = toArray(await attempt(), "irrigation kits");
+      return kits
+        .filter((kit) => typeof kit?.name === "string" && kit.name.trim())
+        .map((kit) => ({
+          name: kit.name.trim(),
+          acres: Number(kit.coverage_area) > 0 ? Number(kit.coverage_area) : null,
+          price: Number(kit.price) > 0 ? Number(kit.price) : null,
+          crops: toStringList(kit.recommended_crops).slice(0, 4),
+          warrantyMonths: Number(kit.warranty_months) > 0 ? Number(kit.warranty_months) : null,
+        }))
+        .sort((a, b) => (a.acres ?? Infinity) - (b.acres ?? Infinity) || (a.price ?? Infinity) - (b.price ?? Infinity));
+    } catch (error) {
+      console.warn(`Kit price feed failed (${error.message}); kit price tables will be omitted from static pages.`);
+    }
+  }
+  return [];
+};
+
+const kitRows = await getKitRows();
+console.log(`SEO generator loaded ${kitRows.length} irrigation kits (${kitRows.filter((kit) => kit.price).length} with a price).`);
+const KIT_TABLE_ROUTES = new Set(["/irrigation-kits", "/drip-irrigation-kit-price-kenya"]);
+const formatKes = (value) => `KES ${Math.round(value).toLocaleString("en-US")}`;
+const formatAcres = (acres) => (acres ? `${acres} acre${acres === 1 ? "" : "s"}` : "Custom size");
+
+const renderKitTable = () => {
+  if (!kitRows.length) return "";
+  const rows = kitRows
+    .map(
+      (kit) =>
+        `<tr><th scope="row">${escapeHtml(kit.name)}</th><td>${escapeHtml(formatAcres(kit.acres))}</td><td>${
+          kit.price ? escapeHtml(formatKes(kit.price)) : "Contact DripTech for a quote"
+        }</td><td>${escapeHtml(kit.crops.join(", ") || "Ask for a crop-specific layout")}</td></tr>`,
+    )
+    .join("");
+  return `<section><h2>Current drip irrigation kit prices</h2><table><caption>DripTech kit catalogue prices in Kenyan shillings</caption><thead><tr><th scope="col">Kit</th><th scope="col">Covers</th><th scope="col">Price</th><th scope="col">Suited to</th></tr></thead><tbody>${rows}</tbody></table><p>Prices are DripTech's catalogue prices when this page was last published. A kit's acreage is a starting point: crop layout, lines per bed, water source and distance change the final list, so confirm the included components, delivery and installation before you order.</p></section>`;
+};
+
 // Pull one real, representative image per product category straight from the
 // live catalog (Cloudflare Worker/Supabase) instead of relying on the
 // AI-generated seed placeholders in public/seed-products/. Falls back to the
@@ -1102,6 +1170,7 @@ const pageBody = (page) => {
       ${specifications}
       ${variants}
       ${productContact}
+      ${KIT_TABLE_ROUTES.has(page.route) ? renderKitTable() : ""}
       ${sections}
       ${catalogNav}
       ${relatedProductsNav}
@@ -1174,6 +1243,30 @@ const renderPage = (page) => {
           name: link.label,
         })),
       },
+    });
+  }
+  const pricedKits = kitRows.filter((kit) => kit.price);
+  if (KIT_TABLE_ROUTES.has(page.route) && pricedKits.length) {
+    extraSchemas.push({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "DripTech drip irrigation kits",
+      numberOfItems: pricedKits.length,
+      itemListElement: pricedKits.map((kit, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "Product",
+          name: kit.name,
+          brand: { "@type": "Brand", name: "DripTech Eco Flow" },
+          offers: {
+            "@type": "Offer",
+            price: String(Math.round(kit.price)),
+            priceCurrency: "KES",
+            url: `${siteUrl}/irrigation-kits`,
+          },
+        },
+      })),
     });
   }
   const extraSchemaTags = extraSchemas
