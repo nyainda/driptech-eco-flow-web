@@ -5,9 +5,12 @@ import Footer from "@/components/Layout/Footer";
 import SEOHead from "@/components/common/SEOHead";
 import KitPriceTable from "@/components/SEO/KitPriceTable";
 import pages from "@/data/publicSeoPages.json";
+import locationPages from "@/data/locationSeoPages.json";
+
+const allPages = [...pages, ...locationPages];
 import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
-type SeoPage = (typeof pages)[number];
+type SeoPage = (typeof pages)[number] | (typeof locationPages)[number];
 
 const SEOContentPage = () => {
   // These landing pages are registered in App.tsx as fixed literal routes
@@ -17,7 +20,7 @@ const SEOContentPage = () => {
   // regardless of the real slug in the URL. Derive it from the path instead.
   const location = useLocation();
   const slug = location.pathname.replace(/^\/+|\/+$/g, "");
-  const page = pages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
+  const page = allPages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
 
   if (!page) {
     return (
