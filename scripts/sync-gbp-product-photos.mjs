@@ -1,14 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import crypto from "node:crypto";
+import { spawnSync } from "node:child_process";
 
 const SITE_URL = "https://www.dripstech.co.ke";
 const WORKER_URL = (process.env.VITE_WORKER_URL || "https://dripstech-api.dripstech.workers.dev").replace(/\/+$/, "");
 const PRODUCTS_URL =
   process.env.GBP_PRODUCTS_API_URL ||
   `${WORKER_URL}/api/products?featured=true&in_stock=true&limit=100`;
-const ALLOWLIST_PATH =
-  process.env.GBP_PHOTO_ALLOWLIST || "src/data/gbp-photo-allowlist.json";
+const VIDEOS_URL = process.env.GBP_VIDEOS_API_URL || `${WORKER_URL}/api/videos?featured=true&limit=100`;
+const EXCLUSIONS_PATH = process.env.GBP_MEDIA_EXCLUSIONS || "src/data/gbp-media-exclusions.json";
 const STATE_PATH =
   process.env.GBP_PHOTO_STATE || ".cache/gbp-product-photo-sync.json";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -16,6 +18,9 @@ const GOOGLE_API_ROOT = "https://mybusiness.googleapis.com/v4";
 const MIN_IMAGE_BYTES = 10 * 1024;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MIN_IMAGE_EDGE = 250;
+const MAX_VIDEO_BYTES = 75 * 1024 * 1024;
+const MAX_VIDEO_SECONDS = 30;
+const MIN_VIDEO_EDGE = 720;
 const MIN_DAYS_BETWEEN_UPLOADS = 7;
 const MAX_PROFILE_MEDIA = 100;
 const PROFILE_MEDIA_HEADROOM = 10;
