@@ -48,7 +48,14 @@ jobs:
       - name: Test photo sync utilities
         run: npm run test:gbp-photos
 
-      - name: Sync one approved product image
+      - name: Ensure ffprobe is available for video validation
+        run: |
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+
+      - name: Sync automatically selected product photos and videos
         run: node scripts/sync-gbp-product-photos.mjs
         env:
           VITE_WORKER_URL: https://dripstech-api.dripstech.workers.dev
@@ -59,17 +66,18 @@ jobs:
           GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
           GBP_PHOTO_SYNC_ENABLED: ${{ vars.GBP_PHOTO_SYNC_ENABLED }}
           GBP_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
-          GBP_PHOTO_ALLOWLIST: src/data/gbp-photo-allowlist.json
+          GBP_VIDEOS_API_URL: https://dripstech-api.dripstech.workers.dev/api/videos?featured=true&limit=100
+          GBP_MEDIA_EXCLUSIONS: src/data/gbp-media-exclusions.json
           GBP_PHOTO_STATE: .cache/gbp-product-photo-sync.json
 
-      - name: Upload product photo review gallery
+      - name: Upload media candidate gallery
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gbp-product-photo-review-gallery
+          name: gbp-media-candidate-gallery
           path: |
-            .cache/gbp-product-photo-candidates.html
-            .cache/gbp-product-photo-candidates.json
+            .cache/gbp-media-candidates.html
+            .cache/gbp-media-candidates.json
           if-no-files-found: ignore
           retention-days: 7
 
