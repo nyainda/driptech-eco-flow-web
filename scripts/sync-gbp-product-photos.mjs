@@ -150,10 +150,22 @@ async function loadProducts() {
   return products;
 }
 
+function approvedImageKey(productId, imageUrl) {
+  return JSON.stringify([String(productId), imageUrl]);
+}
+
 function readAllowlist() {
   const value = readJson(ALLOWLIST_PATH, {});
-  const ids = Array.isArray(value.approvedProductIds) ? value.approvedProductIds : [];
-  return new Set(ids.map((id) => String(id).trim()).filter(Boolean));
+  const entries = Array.isArray(value.approvedImages) ? value.approvedImages : [];
+  const approved = new Set();
+
+  for (const entry of entries) {
+    const productId = entry && entry.productId != null ? String(entry.productId).trim() : "";
+    const imageUrl = entry ? normalizePublicImageUrl(entry.imageUrl) : null;
+    if (productId && imageUrl) approved.add(approvedImageKey(productId, imageUrl));
+  }
+
+  return approved;
 }
 
 function makeCandidates(products) {
@@ -167,6 +179,88 @@ function makeCandidates(products) {
     }))
     .filter((product) => product.imageUrls.length > 0)
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function selectApprovedImages(candidates, approvedKeys) {
+  return candidates.flatMap((product) =>
+    product.imageUrls.map((url, index) => ({
+      productId: product.id,
+      productName: product.name,
+      category: product.category,
+      imageIndex: index + 1,
+      url,
+      sha256: sha256(url),
+    })).filter((item) => approvedKeys.has(approvedImageKey(item.productId, item.url))),
+  );
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[character]);
+}
+
+function writeCandidateReport(candidates) {
+  const reportPath = process.env.GBP_PHOTO_CANDIDATE_REPORT || ".cache/gbp-product-photo-candidates.html";
+  const jsonPath = reportPath.replace(/\.html?$/i, ".json");
+  const imageRows = candidates.flatMap((product) =>
+    product.imageUrls.map((url, index) => ({
+      productId: product.id,
+      productName: product.name,
+      category: product.category,
+      imageIndex: index + 1,
+      url,
+    })),
+  );
+
+  const cards = imageRows.map((item) =>
+    '<article class="card">' +
+      '<a href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">' +
+        '<img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.productName) + ' image ' + item.imageIndex + '">' +
+      '</a>' +
+      '<div class="details">' +
+        '<strong>' + escapeHtml(item.productName) + '</strong>' +
+        '<span>' + escapeHtml(item.category || "Uncategorised") + ' · Image ' + item.imageIndex + '</span>' +
+        '<code>Product ID: ' + escapeHtml(item.productId) + '</code>' +
+        '<a class="url" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">Open original image</a>' +
+        '<code class="image-url">' + escapeHtml(item.url) + '</code>' +
+      '</div>' +
+    '</article>',
+  ).join("\n");
+
+  const html = [
+    "<!doctype html>",
+    '<html lang="en"><head><meta charset="utf-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    "<title>DripTech GBP product image review</title>",
+    "<style>",
+    "body{font:15px/1.5 system-ui,sans-serif;margin:0;background:#f5f7f8;color:#17202a}",
+    "header{padding:24px;background:#123b32;color:#fff}header p{margin:6px 0 0;color:#d9e8e2}",
+    ".notice{margin:18px;padding:14px;background:#fff4d6;border:1px solid #e8ce83;border-radius:10px}",
+    ".grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;padding:18px}",
+    ".card{background:#fff;border:1px solid #dce3e0;border-radius:12px;overflow:hidden}",
+    ".card img{display:block;width:100%;height:210px;object-fit:contain;background:#eef1ef}",
+    ".details{display:grid;gap:5px;padding:12px}.details span{color:#66736e;font-size:13px}",
+    "code{font-size:11px;overflow-wrap:anywhere;background:#f1f4f2;padding:6px;border-radius:6px}",
+    ".url{font-size:13px;color:#087b60}.image-url{max-height:54px;overflow:auto}",
+    "</style></head><body>",
+    "<header><h1>DripTech Eco Flow · Product image review</h1>",
+    "<p>" + imageRows.length + " image candidates across " + candidates.length + " products</p></header>",
+    '<div class="notice"><strong>Review only:</strong> Nothing in this gallery is approved or uploaded. Approve images individually by adding both the matching productId and exact imageUrl to the GitHub allowlist.</div>',
+    '<main class="grid">' + cards + "</main>",
+    "</body></html>",
+  ].join("\n");
+
+  fs.mkdirSync(path.dirname(reportPath), { recursive: true });
+  fs.writeFileSync(reportPath, html);
+  writeJson(jsonPath, imageRows);
+  console.log("Product image review gallery: " + reportPath);
+  console.log("Machine-readable candidate list: " + jsonPath);
+  console.log("Review " + imageRows.length + " individual images; no image has been approved.");
 }
 
 function readState() {
@@ -275,34 +369,27 @@ async function uploadPhoto(url, accessToken) {
 async function main() {
   const products = await loadProducts();
   const candidates = makeCandidates(products);
-  const approvedIds = readAllowlist();
-  const approved = candidates.filter((product) => approvedIds.has(product.id));
+  const approvedKeys = readAllowlist();
+  const approved = selectApprovedImages(candidates, approvedKeys);
   const state = readState();
   const uploadedHashes = new Set(state.uploaded.map((item) => item.sha256));
 
-  console.log(`Loaded ${products.length} products; ${candidates.length} have usable image URLs.`);
-  if (approvedIds.size === 0) {
-    console.log("No product IDs have been approved yet. Review candidate images before adding IDs to the allowlist:");
-    for (const product of candidates.slice(0, 40)) {
-      console.log(`- ${product.id} | ${product.name} | ${product.category} | ${product.imageUrls.length} image(s) | ${product.imageUrls[0]}`);
-    }
+  const availableImageCount = candidates.reduce((total, product) => total + product.imageUrls.length, 0);
+  console.log("Loaded " + products.length + " products; " + candidates.length + " have usable image URLs across " + availableImageCount + " individual images.");
+  if (approvedKeys.size === 0) {
+    console.log("No individual images have been approved yet. Generating the visual review gallery.");
+    writeCandidateReport(candidates);
     saveState(state);
     return;
   }
   if (approved.length === 0) {
-    throw new Error("The allowlist has product IDs, but none matched the featured/in-stock product feed.");
+    throw new Error("The allowlist contains image entries, but none matched the exact product ID and image URL in the featured/in-stock product feed. Re-run the preview and update the allowlist.");
   }
 
-  const pending = approved.flatMap((product) =>
-    product.imageUrls.map((url) => ({
-      productId: product.id,
-      productName: product.name,
-      url,
-      sha256: sha256(url),
-    })),
-  ).filter((item) => !uploadedHashes.has(item.sha256));
+  console.log("Individually approved images: " + approved.length + ".");
+  const pending = approved.filter((item) => !uploadedHashes.has(item.sha256));
 
-  console.log(`Allowlisted products: ${approved.length}; unused image candidates: ${pending.length}.`);
+  console.log(`Allowlisted image URLs: ${approved.length}; not-yet-uploaded images: ${pending.length}.`);
   if (pending.length === 0) {
     console.log("All allowlisted image URLs have already been processed.");
     saveState(state);
@@ -376,6 +463,7 @@ function selfTest() {
   if (dimensions?.width !== 720 || dimensions?.height !== 640 || dimensions?.mime !== "image/png") {
     throw new Error("PNG dimension parser self-test failed.");
   }
+
   const urls = extractProductImages({
     images: JSON.stringify(["/products/drip.jpg", { url: "https://cdn.example.com/filter.png" }, "javascript:alert(1)"]),
   });
@@ -386,7 +474,29 @@ function selfTest() {
   ) {
     throw new Error("Product image URL extraction self-test failed.");
   }
-  console.log("GBP photo sync self-tests passed.");
+
+  const testCandidates = [{
+    id: "product-1",
+    name: "Test Dripline",
+    category: "drip_irrigation",
+    imageUrls: ["https://cdn.example.com/a.jpg", "https://cdn.example.com/b.jpg"],
+  }];
+  const oneImageApproval = new Set([
+    approvedImageKey("product-1", "https://cdn.example.com/b.jpg"),
+  ]);
+  const selected = selectApprovedImages(testCandidates, oneImageApproval);
+  if (selected.length !== 1 || selected[0].url !== "https://cdn.example.com/b.jpg" || selected[0].imageIndex !== 2) {
+    throw new Error("Image-level allowlist self-test failed: approving one image must not approve sibling images.");
+  }
+
+  const noWrongProductApproval = new Set([
+    approvedImageKey("different-product", "https://cdn.example.com/b.jpg"),
+  ]);
+  if (selectApprovedImages(testCandidates, noWrongProductApproval).length !== 0) {
+    throw new Error("Image-level allowlist self-test failed: image approvals must match the product ID too.");
+  }
+
+  console.log("GBP photo sync self-tests passed, including image-level approval.");
 }
 
 if (process.argv.includes("--self-test")) {
