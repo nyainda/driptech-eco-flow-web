@@ -22,6 +22,13 @@ const irrigationCropGapPages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/irrigationCropGapPages.json"), "utf8"),
 );
 
+// Authored SEO guides are complete static documents, not React placeholders.
+const staticSeoRoutes = new Set(
+  [...landingPages, ...locationPages, ...irrigationPricePages, ...irrigationCropGapPages]
+    .map((page) => page.route || (page.slug ? `/${page.slug}` : null))
+    .filter((route) => route && route !== "/"),
+);
+
 const categoryPages = [
   {
     route: "/products",
@@ -1219,9 +1226,10 @@ const renderPage = (page) => {
   html = replaceMeta(html, "twitter:description", page.description);
   html = replaceMeta(html, "twitter:url", canonical);
   html = replaceMeta(html, "twitter:image", imageUrl);
+  const staticSeoPage = staticSeoRoutes.has(page.route);
   html = html.replace(
     '<div id="root"></div>',
-    `<div id="root">${pageBody(page)}</div>`,
+    `<div id="root"${staticSeoPage ? ' data-seo-static-page="true"' : ""}>${pageBody(page)}</div>`,
   );
 
   const crumbs = getBreadcrumbs(page);
