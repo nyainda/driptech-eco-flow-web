@@ -9,6 +9,9 @@ const baseHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
 const landingPages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8"),
 );
+const locationPages = JSON.parse(
+  fs.readFileSync(path.join(root, "src/data/locationSeoPages.json"), "utf8"),
+);
 const irrigationPricePages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/irrigationPriceSeoPages.json"), "utf8"),
 );
@@ -339,6 +342,7 @@ const allPages = [
   ...categoryPages,
   irrigationCostCalculatorPage,
   ...landingPages.map((page) => ({ ...page, route: `/${page.slug}` })),
+  ...locationPages.map((page) => ({ ...page, route: `/${page.slug}` })),
   ...irrigationPricePages.map((page) => ({ ...page, route: `/${page.slug}` })),
   ...irrigationCropGapPages.map((page) => ({ ...page, route: `/${page.slug}` })),
 ];
