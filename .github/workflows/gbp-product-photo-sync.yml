@@ -22,7 +22,7 @@ concurrency:
 jobs:
   sync-product-photos:
     # Scheduled publishing remains off until the repository variable is deliberately enabled.
-    if: \${{ github.event_name == 'workflow_dispatch' || vars.GBP_PHOTO_SYNC_ENABLED == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.GBP_PHOTO_SYNC_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .cache/gbp-product-photo-sync.json
-          key: gbp-product-photo-sync-\${{ github.run_id }}
+          key: gbp-product-photo-sync-${{ github.run_id }}
           restore-keys: |
             gbp-product-photo-sync-
 
@@ -48,11 +48,11 @@ jobs:
           VITE_WORKER_URL: https://dripstech-api.dripstech.workers.dev
           GBP_ACCOUNT_ID: "107802453294630169300"
           GBP_LOCATION_ID: "11100731052159024871"
-          GBP_CLIENT_ID: \${{ secrets.GBP_CLIENT_ID }}
-          GBP_CLIENT_SECRET: \${{ secrets.GBP_CLIENT_SECRET }}
-          GBP_REFRESH_TOKEN: \${{ secrets.GBP_REFRESH_TOKEN }}
-          GBP_PHOTO_SYNC_ENABLED: \${{ vars.GBP_PHOTO_SYNC_ENABLED }}
-          GBP_DRY_RUN: \${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+          GBP_PHOTO_SYNC_ENABLED: ${{ vars.GBP_PHOTO_SYNC_ENABLED }}
+          GBP_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
           GBP_PHOTO_ALLOWLIST: src/data/gbp-photo-allowlist.json
           GBP_PHOTO_STATE: .cache/gbp-product-photo-sync.json
 
@@ -61,4 +61,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .cache/gbp-product-photo-sync.json
-          key: gbp-product-photo-sync-\${{ github.run_id }}
+          key: gbp-product-photo-sync-${{ github.run_id }}
