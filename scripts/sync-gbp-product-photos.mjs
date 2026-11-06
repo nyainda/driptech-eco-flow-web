@@ -312,6 +312,7 @@ function readState() {
   return {
     uploaded: Array.isArray(state.uploaded) ? state.uploaded : [],
     lastUploadAt: state.lastUploadAt || null,
+    lastMediaType: state.lastMediaType || null,
   };
 }
 
