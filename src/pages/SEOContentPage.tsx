@@ -6,9 +6,9 @@ import SEOHead from "@/components/common/SEOHead";
 import KitPriceTable from "@/components/SEO/KitPriceTable";
 import pages from "@/data/publicSeoPages.json";
 import locationPages from "@/data/locationSeoPages.json";
+import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
 const allPages = [...pages, ...locationPages];
-import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
 type SeoPage = (typeof pages)[number] | (typeof locationPages)[number];
 
