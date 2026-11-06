@@ -3,4 +3,10 @@ import App from "./App.tsx";
 import "./index.css";
 import "./styles/browser-compatibility.css";
 
-createRoot(document.getElementById("root")!).render(<App />);
+const root = document.getElementById("root");
+
+if (root?.hasAttribute("data-seo-static-page")) {
+  // Keep build-generated SEO guide HTML intact; createRoot would clear it.
+} else if (root) {
+  createRoot(root).render(<App />);
+}
