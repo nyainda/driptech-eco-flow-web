@@ -2074,5 +2074,726 @@
       }
     ],
     "image": "/seed-products/pump.jpg"
+  },
+  {
+    "slug": "irrigation-design-process-kenya",
+    "title": "Irrigation System Design Process in Kenya | DripTech Eco Flow",
+    "description": "Understand irrigation design in Kenya: farm assessment, water source, crop layout, hydraulics, zoning, filtration, costing and installation planning.",
+    "h1": "How irrigation system design works in Kenya",
+    "intro": "A reliable irrigation system starts with measurements and decisions, not a shopping list. DripTech Eco Flow helps farmers and project teams assess the field, water source, crop layout and operating requirements before selecting equipment.",
+    "sections": [
+      {
+        "heading": "1. Assess the farm and water source",
+        "paragraphs": [
+          "Record the irrigated area, field shape, elevation changes, crop and planting arrangement. Identify the water source, its dependable supply, seasonal changes and any storage between source and field.",
+          "Water quality matters too. Suspended solids, algae, sand and dissolved minerals can affect filtration choices and maintenance. Test or assess the source where the project requires it."
+        ]
+      },
+      {
+        "heading": "2. Calculate flow, pressure and zones",
+        "paragraphs": [
+          "Estimate the crop and system demand using the actual planting layout and emitter or sprinkler specifications. Divide the field into zones where the available supply cannot operate everything together uniformly.",
+          "Hydraulic design checks pipe sizes, friction losses, elevation, fittings and the pressure required at the irrigation device. Pump selection should follow this calculation—not acreage or horsepower alone."
+        ]
+      },
+      {
+        "heading": "3. Specify components and plan operation",
+        "bullets": [
+          "Mainline, submain and lateral pipe sizes",
+          "Dripline, tape, emitters or sprinklers matched to crop layout",
+          "Filtration and flushing arrangements appropriate to water quality",
+          "Valves, pressure regulation, gauges and zone controls",
+          "Pump, storage and power requirements",
+          "Access for maintenance, repairs and future expansion"
+        ]
+      },
+      {
+        "heading": "4. Prepare, install and test",
+        "paragraphs": [
+          "A design deliverable can include a layout drawing, equipment schedule, design assumptions, operating zones and a bill of quantities. Installation should be followed by flushing, pressure checks, zone-by-zone testing and operator handover.",
+          "Final specifications depend on verified site information. A concept estimate is not a substitute for a site-specific hydraulic design."
+        ]
+      },
+      {
+        "heading": "What to prepare for a design consultation",
+        "bullets": [
+          "Farm location and approximate area",
+          "Crop, row spacing and planting pattern",
+          "Water source, storage and pump details if available",
+          "Field sketch, dimensions, contour information or photographs",
+          "Power availability and project budget range",
+          "Whether you need design only, supply, installation or all three"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Request irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Irrigation pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Irrigation system cost guide",
+        "href": "/irrigation-system-cost-kenya"
+      },
+      {
+        "label": "Browse irrigation equipment",
+        "href": "/products"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "pump-selection-for-irrigation-kenya",
+    "title": "How to Choose an Irrigation Pump in Kenya | DripTech",
+    "description": "Learn how to select an irrigation pump by flow, total head, water source, pressure, pipe losses, pump curve and power supply—not horsepower alone.",
+    "h1": "How to choose the right irrigation pump",
+    "intro": "The right irrigation pump must deliver the required flow at the total head of your system. A pump that looks powerful on its horsepower rating may still fail to provide the pressure and flow your sprinklers or drip zones need.",
+    "sections": [
+      {
+        "heading": "Start with the duty point: flow and total head",
+        "paragraphs": [
+          "Flow is the volume of water delivered per unit time. Head represents the energy the pump must add to move water and overcome elevation, pipe friction, fittings and the pressure required at the irrigation equipment.",
+          "Calculate the required flow for the zone that will operate at one time. Then account for static lift or drawdown, elevation to the field, friction losses and required operating pressure."
+        ]
+      },
+      {
+        "heading": "Do not choose a pump by horsepower alone",
+        "paragraphs": [
+          "Horsepower is not a complete pump-selection specification. Compare the manufacturer's pump curve with the required flow and head, and check the efficiency and operating range at that duty point.",
+          "A borehole pump also needs the borehole's sustainable yield and dynamic water level considered. Pumping beyond the source's capacity can cause water-level problems and damage."
+        ]
+      },
+      {
+        "heading": "Check the complete installation",
+        "bullets": [
+          "Water source and dependable available flow",
+          "Required flow per irrigation zone",
+          "Total dynamic head and pressure at emitters or sprinklers",
+          "Pipe diameter, route length, elevation and friction losses",
+          "Pump curve, efficiency and motor requirements",
+          "Power source, controls, protection and maintenance access",
+          "Filtration, valves and any storage or pressure tank requirements"
+        ]
+      },
+      {
+        "heading": "Common pump-selection mistakes",
+        "bullets": [
+          "Buying the largest horsepower pump without hydraulic calculations",
+          "Ignoring elevation and pipe friction",
+          "Sizing for every zone when the system is designed to run zones separately—or vice versa",
+          "Assuming a pump's maximum flow and maximum head occur at the same time",
+          "Ignoring borehole yield, water quality or solar operating conditions",
+          "Failing to plan pressure gauges, protection and maintenance"
+        ]
+      },
+      {
+        "heading": "Before you request a pump recommendation",
+        "paragraphs": [
+          "Share the water source, water level or lift, distance to the field, elevation difference, pipe sizes, irrigation device and required operating zones. Existing pump model and performance details are helpful.",
+          "DripTech can help review the system requirements and equipment options. Final selection should be checked against the pump curve and site conditions."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Detailed irrigation pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps in Kenya",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Borehole water pumps",
+        "href": "/borehole-water-pumps-kenya"
+      },
+      {
+        "label": "Request design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "irrigation-dos-and-donts-kenya",
+    "title": "Irrigation Dos and Don'ts for Kenyan Farms | DripTech",
+    "description": "Practical irrigation dos and don'ts covering system design, pumps, filtration, dripline, sprinklers, installation, operation and maintenance in Kenya.",
+    "h1": "Irrigation dos and don'ts for farms in Kenya",
+    "intro": "Good irrigation depends on matching water delivery to the crop, soil, field and source. These practical checks help avoid preventable equipment problems and uneven watering; they do not replace a site-specific design or crop irrigation advice.",
+    "sections": [
+      {
+        "heading": "Do these things before buying",
+        "bullets": [
+          "Measure the field and map crop rows, beds and elevations",
+          "Confirm dependable water availability and source quality",
+          "Check required flow and pressure for the irrigation devices",
+          "Plan filtration, flushing and maintenance access",
+          "Compare complete system scope—not only the pump or dripline price",
+          "Ask for a written equipment list, assumptions and installation scope"
+        ]
+      },
+      {
+        "heading": "Avoid these common mistakes",
+        "bullets": [
+          "Do not select a pump from horsepower or acreage alone",
+          "Do not assume every crop or soil needs the same emitter spacing or watering schedule",
+          "Do not operate all zones together unless the design and supply support it",
+          "Do not ignore filters, pressure regulation, flushing points or gauges",
+          "Do not mix pipe, fittings and components without checking size, pressure rating and compatibility",
+          "Do not leave leaks, clogged filters or damaged lines unattended",
+          "Do not fertilise through irrigation equipment without compatible products, correct setup and safe handling guidance"
+        ]
+      },
+      {
+        "heading": "During installation and operation",
+        "paragraphs": [
+          "Flush pipes and laterals before normal operation, test each zone and inspect for leaks or pressure differences. Keep records of operating times, maintenance and recurring faults.",
+          "Monitor soil moisture and crop response rather than relying only on a fixed timer. Irrigation frequency and duration vary with crop stage, soil, weather, system performance and water availability."
+        ]
+      },
+      {
+        "heading": "A simple pre-start checklist",
+        "bullets": [
+          "Water source has adequate supply",
+          "Filters are clean and correctly installed",
+          "Valves and zones are labelled",
+          "Pressure and flow are within equipment specifications",
+          "End lines and flushing points are accessible",
+          "Leaks and damaged fittings are repaired",
+          "Operators know how to stop the pump and isolate the system"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation system maintenance",
+        "href": "/irrigation-system-maintenance-kenya"
+      },
+      {
+        "label": "Troubleshoot irrigation problems",
+        "href": "/irrigation-troubleshooting-kenya"
+      },
+      {
+        "label": "Pump sizing and selection",
+        "href": "/pump-selection-for-irrigation-kenya"
+      },
+      {
+        "label": "Book an irrigation consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "irrigation-consultation-checklist-kenya",
+    "title": "Irrigation Consultation in Kenya: What to Prepare | DripTech",
+    "description": "Prepare for an irrigation consultation with farm dimensions, crop spacing, water source, pump information, photos and project requirements for a more useful design and quotation.",
+    "h1": "What to prepare for an irrigation consultation",
+    "intro": "A useful irrigation consultation begins with the right farm information. The more clearly the crop, field, water source and project scope are described, the easier it is to assess options and identify missing measurements before a quotation.",
+    "sections": [
+      {
+        "heading": "Farm and crop information",
+        "bullets": [
+          "Farm location and access details",
+          "Approximate area and field dimensions",
+          "Crop, planting date or stage, row spacing and bed layout",
+          "Soil type or infiltration observations, if known",
+          "Slope, elevation changes and areas with different watering needs"
+        ]
+      },
+      {
+        "heading": "Water source and power",
+        "bullets": [
+          "Borehole, river, dam, tank, roof catchment or other source",
+          "Source capacity or dependable flow, where known",
+          "Borehole static/dynamic water level and yield information, if available",
+          "Tank volume, height and outlet details",
+          "Existing pump model, nameplate, pipe sizes and observed performance",
+          "Electricity, generator or solar power availability"
+        ]
+      },
+      {
+        "heading": "Photos, sketches and documents",
+        "paragraphs": [
+          "Send a clear field photo or sketch with dimensions, water point, proposed irrigated blocks and obstacles. Existing drawings, survey data, pump records or water test results can be useful.",
+          "If dimensions or flow are not known, say so rather than estimating them as confirmed facts. A site assessment or measurement may be the next step."
+        ]
+      },
+      {
+        "heading": "Clarify what service you need",
+        "bullets": [
+          "Advice or equipment selection",
+          "Concept layout or detailed irrigation design",
+          "Bill of quantities and quotation",
+          "Supply of materials",
+          "Installation, testing and commissioning",
+          "Repair, maintenance or upgrade of an existing system"
+        ]
+      },
+      {
+        "heading": "What happens next",
+        "paragraphs": [
+          "The team reviews the information, identifies assumptions and gaps, and recommends the next step—remote guidance, additional measurements, a site visit or a scoped design. Site visits, design fees, delivery and installation arrangements should be confirmed for the specific project before commitment."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Irrigation system design process",
+        "href": "/irrigation-design-process-kenya"
+      },
+      {
+        "label": "Irrigation system cost guide",
+        "href": "/irrigation-system-cost-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "solar-vs-electric-irrigation-pump-kenya",
+    "title": "Solar vs Electric Irrigation Pumps in Kenya | DripTech",
+    "description": "Compare solar and grid-powered irrigation pumps in Kenya by water demand, total head, energy availability, operating hours, storage, lifecycle cost and site constraints.",
+    "h1": "Solar vs electric pumps for irrigation",
+    "intro": "Solar and grid-powered pumps can both serve irrigation projects. The better option depends on the required flow and head, when water is needed, energy availability, storage, budget and maintenance—not simply the pump price.",
+    "sections": [
+      {
+        "heading": "When solar pumping may make sense",
+        "paragraphs": [
+          "Solar pumping can be attractive where grid power is unavailable or unreliable and daytime water production can be matched to irrigation or storage. The design must use the pump curve and solar operating range for the required duty.",
+          "Cloud cover, season, panel orientation, shading, controller limits and water storage influence performance. Solar systems may need storage or a carefully planned irrigation schedule to bridge periods without pumping."
+        ]
+      },
+      {
+        "heading": "When grid-powered pumping may fit",
+        "paragraphs": [
+          "Grid power can support predictable operating windows and may be practical where a reliable connection already exists. Energy costs, outages, electrical protection and installation conditions still need evaluation.",
+          "A grid pump should be selected for the actual duty point and motor supply. Electrical installation and protection should be handled by qualified personnel."
+        ]
+      },
+      {
+        "heading": "Compare the full system",
+        "bullets": [
+          "Required flow and total dynamic head",
+          "Daily and seasonal water demand",
+          "Energy availability and reliability",
+          "Storage volume and timing of irrigation",
+          "Pump, controller, panels or electrical connection costs",
+          "Installation, protection, maintenance and replacement costs",
+          "Water source yield and pump operating limits"
+        ]
+      },
+      {
+        "heading": "Avoid comparing only the purchase price",
+        "paragraphs": [
+          "Compare lifecycle cost and delivered water under the expected operating conditions. A cheaper pump or power arrangement can become costly if it cannot meet the irrigation schedule or requires frequent intervention.",
+          "The water source, hydraulic design and crop demand should be confirmed before deciding between solar and grid power."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Solar irrigation pumps",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Pump selection guide",
+        "href": "/pump-selection-for-irrigation-kenya"
+      },
+      {
+        "label": "Pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Book a design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "irrigation-system-startup-checklist-kenya",
+    "title": "Irrigation System Startup & Commissioning Checklist | Kenya",
+    "description": "Use a practical irrigation startup checklist for flushing, filter checks, pressure readings, zone tests, leaks, pump protection and operator handover.",
+    "h1": "Irrigation system startup and commissioning checklist",
+    "intro": "A system should be checked before routine irrigation begins and after major repairs or upgrades. Commissioning confirms that components are installed correctly and that each zone operates within its intended conditions.",
+    "sections": [
+      {
+        "heading": "Before switching on",
+        "bullets": [
+          "Confirm installation matches the approved layout and equipment schedule",
+          "Check valves, fittings, pipe supports and electrical protection",
+          "Confirm water source and pump operating limits",
+          "Ensure filters are installed and ready for cleaning",
+          "Identify zones, isolation valves and flushing points"
+        ]
+      },
+      {
+        "heading": "Flush and inspect",
+        "paragraphs": [
+          "Flush mainlines, submains and laterals in a controlled sequence according to the system design and component instructions. Keep flushing outlets accessible and avoid sending debris into emitters or sprinklers.",
+          "Inspect joints, filters, valves and end closures for leaks or blockages. Never exceed component pressure ratings during testing."
+        ]
+      },
+      {
+        "heading": "Test each zone",
+        "bullets": [
+          "Run zones individually as designed",
+          "Record inlet and end-of-line pressure where measurement points exist",
+          "Check uniform operation and obvious dry or over-watered areas",
+          "Inspect sprinkler rotation/coverage or dripline discharge",
+          "Verify pump behaviour, controls and protection",
+          "Correct leaks, air issues, blockages or pressure problems before handover"
+        ]
+      },
+      {
+        "heading": "Handover and maintenance records",
+        "paragraphs": [
+          "Record equipment models, settings, pressure readings, zone sequence and maintenance tasks. Show operators how to start, stop, isolate, clean filters and report faults.",
+          "Commissioning results should be compared with the design and manufacturer specifications. Persistent deviations need investigation rather than simply increasing pump pressure."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation maintenance guide",
+        "href": "/irrigation-system-maintenance-kenya"
+      },
+      {
+        "label": "Irrigation troubleshooting",
+        "href": "/irrigation-troubleshooting-kenya"
+      },
+      {
+        "label": "Pump selection guide",
+        "href": "/pump-selection-for-irrigation-kenya"
+      },
+      {
+        "label": "Request installation support",
+        "href": "/services"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "irrigation-site-assessment-kenya",
+    "title": "Irrigation Site Assessment in Kenya | DripTech Eco Flow",
+    "description": "What an irrigation site assessment checks: water supply, field layout, elevation, crop plan, soil, power, access and design requirements.",
+    "h1": "Irrigation site assessment: what should be checked?",
+    "intro": "A site assessment helps convert a farm's needs into a practical irrigation plan. It identifies the information that affects system choice, hydraulic design, installation and project cost.",
+    "sections": [
+      {
+        "heading": "Water source and supply reliability",
+        "bullets": [
+          "Source type, seasonal availability and dependable yield",
+          "Water quality and filtration considerations",
+          "Storage volume, inlet/outlet and tank elevation",
+          "Existing pump, water levels and operating records",
+          "Any restrictions on abstraction or water use"
+        ]
+      },
+      {
+        "heading": "Field, crop and terrain",
+        "bullets": [
+          "Field boundaries, dimensions and irrigated blocks",
+          "Crop type, row spacing, planting dates and rotation",
+          "Slope, elevation changes and drainage",
+          "Soil texture, infiltration and observed wetting behaviour",
+          "Access roads, obstacles and future expansion"
+        ]
+      },
+      {
+        "heading": "Infrastructure and project constraints",
+        "bullets": [
+          "Power availability and reliability",
+          "Existing pipework, structures and irrigation equipment",
+          "Installation access and maintenance routes",
+          "Budget, project timing and scope",
+          "Required design drawings, bill of quantities or installation support"
+        ]
+      },
+      {
+        "heading": "Assessment outcome",
+        "paragraphs": [
+          "A site assessment should clarify the design assumptions, missing measurements, recommended next steps and whether a concept layout, detailed design, quotation or site-specific investigation is appropriate.",
+          "Not every project requires the same level of assessment. The scope and deliverables should be agreed before work begins."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Prepare for an irrigation consultation",
+        "href": "/irrigation-consultation-checklist-kenya"
+      },
+      {
+        "label": "Irrigation design process",
+        "href": "/irrigation-design-process-kenya"
+      },
+      {
+        "label": "Irrigation system cost guide",
+        "href": "/irrigation-system-cost-kenya"
+      },
+      {
+        "label": "Contact DripTech",
+        "href": "/contact"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "irrigation-bill-of-quantities-kenya",
+    "title": "Irrigation Bill of Quantities (BOQ) Kenya | DripTech",
+    "description": "Understand irrigation BOQs: pipes, dripline, filters, pumps, valves, fittings, quantities, specifications, installation and quotation assumptions.",
+    "h1": "What should an irrigation bill of quantities include?",
+    "intro": "An irrigation bill of quantities (BOQ) turns a design into a measurable equipment and work schedule. A useful BOQ describes items, sizes, specifications, quantities and scope so a customer can compare quotations more accurately.",
+    "sections": [
+      {
+        "heading": "Typical equipment schedule",
+        "bullets": [
+          "Pumps and power/control equipment where applicable",
+          "Mainline, submain and lateral pipes with diameter and pressure class",
+          "Dripline, tape, emitters or sprinklers with relevant specifications",
+          "Filters, valves, regulators, gauges and flushing components",
+          "Fittings, connectors, reducers, tees, end closures and accessories",
+          "Storage, fertigation or automation components when included"
+        ]
+      },
+      {
+        "heading": "Quantities need a design basis",
+        "paragraphs": [
+          "Pipe lengths should follow the layout and routing; dripline quantities follow the crop and bed arrangement; valves and fittings follow the zones and connections. Pump and filter specifications follow the hydraulic and water-quality requirements.",
+          "A BOQ based only on acreage or a generic kit can omit critical items or include unsuitable sizes. State assumptions, exclusions and any provisional quantities clearly."
+        ]
+      },
+      {
+        "heading": "Compare quotations fairly",
+        "bullets": [
+          "Check that each supplier quoted the same item sizes and pressure ratings",
+          "Confirm whether quantities include all fittings, valves and connectors",
+          "Separate equipment, transport, installation, testing and taxes",
+          "Clarify brands/models or acceptable equivalents",
+          "Check warranty, delivery, commissioning and operator training scope",
+          "Ask how design changes or site conditions affect final cost"
+        ]
+      },
+      {
+        "heading": "Design and quotation support",
+        "paragraphs": [
+          "A BOQ should be traceable to a drawing or stated design assumptions. DripTech can help scope irrigation equipment and quotation requirements; final quantities depend on confirmed project information."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation design process",
+        "href": "/irrigation-design-process-kenya"
+      },
+      {
+        "label": "Irrigation system cost guide",
+        "href": "/irrigation-system-cost-kenya"
+      },
+      {
+        "label": "Prepare for consultation",
+        "href": "/irrigation-consultation-checklist-kenya"
+      },
+      {
+        "label": "Request design support",
+        "href": "/irrigation-design-consultation-kenya"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "irrigation-zone-design-kenya",
+    "title": "Irrigation Zones Explained: Planning Flow & Pressure | Kenya",
+    "description": "Learn how irrigation zones are planned using flow, pressure, field layout, crop needs, water supply and pump capacity.",
+    "h1": "How irrigation zones are designed",
+    "intro": "Irrigation zones divide a field into manageable sections that can be watered with the available flow and pressure. Good zoning helps control operating demand and makes troubleshooting and maintenance easier.",
+    "sections": [
+      {
+        "heading": "Why divide a farm into zones?",
+        "paragraphs": [
+          "A water source or pump may not supply the entire field at the required flow and pressure simultaneously. Zones allow the system to operate sections in sequence and can account for differences in crop, terrain or equipment.",
+          "Zoning is not simply splitting acreage equally. The flow and pressure requirements of each zone should be compatible with the supply and hydraulic design."
+        ]
+      },
+      {
+        "heading": "Factors that affect zone layout",
+        "bullets": [
+          "Emitter or sprinkler flow and spacing",
+          "Number of laterals or sprinklers operating together",
+          "Available pump flow and pressure at the duty point",
+          "Pipe diameters, route lengths and elevation",
+          "Crop blocks, soil differences and irrigation timing",
+          "Valve location, access, flushing and control requirements"
+        ]
+      },
+      {
+        "heading": "Common zoning errors",
+        "bullets": [
+          "Operating too many devices at once and losing pressure",
+          "Combining zones with very different hydraulic requirements without checking",
+          "Making zones difficult to isolate or maintain",
+          "Ignoring elevation changes and friction losses",
+          "Failing to label valves and document the operating sequence"
+        ]
+      },
+      {
+        "heading": "What a zone schedule should show",
+        "paragraphs": [
+          "A practical schedule identifies each zone, its area or crop block, expected flow, required operating pressure, control valve and sequence. These values should come from the system design and component specifications, not guesswork."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Pump selection guide",
+        "href": "/pump-selection-for-irrigation-kenya"
+      },
+      {
+        "label": "Irrigation design process",
+        "href": "/irrigation-design-process-kenya"
+      },
+      {
+        "label": "Low sprinkler pressure troubleshooting",
+        "href": "/low-irrigation-pressure-sprinklers-kenya"
+      },
+      {
+        "label": "Book design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      }
+    ],
+    "image": "/seed-products/dripline_roll.jpg"
+  },
+  {
+    "slug": "irrigation-filtration-by-water-source-kenya",
+    "title": "Irrigation Filter Selection by Water Source | Kenya",
+    "description": "Choose irrigation filtration based on borehole, river, dam, tank or harvested water, emitter requirements and contamination risks.",
+    "h1": "How to choose irrigation filtration for your water source",
+    "intro": "Filtration protects irrigation equipment from particles that can clog emitters and sprinklers. The appropriate filter depends on the source, contaminant type, system flow and the irrigation device manufacturer's requirements.",
+    "sections": [
+      {
+        "heading": "Understand what is in the water",
+        "paragraphs": [
+          "Borehole water may carry sand or other particles; surface water can contain silt, algae and organic debris; storage tanks can accumulate sediment. Water quality varies, so source labels alone do not determine the filter.",
+          "Where clogging or scaling is recurring, investigate the cause. Filtration removes suitable suspended material but does not automatically correct dissolved salts, chemical precipitation or biological growth."
+        ]
+      },
+      {
+        "heading": "Filter types and system checks",
+        "bullets": [
+          "Screen filters for suitable particulate loads and straightforward cleaning",
+          "Disc filters where the contaminant profile and manufacturer guidance suit them",
+          "Media filtration for certain higher organic loads, designed and maintained correctly",
+          "Pre-filtration or multiple stages where source conditions require it",
+          "Filter mesh or micron rating compatible with emitter specifications",
+          "Flow capacity, pressure loss, cleaning method and maintenance access"
+        ]
+      },
+      {
+        "heading": "Avoid these filtration mistakes",
+        "bullets": [
+          "Do not select a filter by connection size alone",
+          "Do not use a finer rating without checking flow and pressure loss",
+          "Do not ignore filter cleaning frequency or differential pressure",
+          "Do not assume a filter solves dissolved mineral or chemical problems",
+          "Do not bypass filtration to compensate for a blocked or undersized unit"
+        ]
+      },
+      {
+        "heading": "Design filtration into the system",
+        "paragraphs": [
+          "A filtration plan should identify the water source, expected contaminants, flow per zone, filter specification, installation location, flushing or cleaning arrangement and maintenance instructions. Water testing may be needed for difficult sources or fertigation projects."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation filter products",
+        "href": "/products/filters"
+      },
+      {
+        "label": "Filter and pump troubleshooting",
+        "href": "/irrigation-filter-pump-problems-kenya"
+      },
+      {
+        "label": "Dripper clogging guide",
+        "href": "/drip-irrigation-filter-clogging-kenya"
+      },
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
+  },
+  {
+    "slug": "gravity-fed-irrigation-vs-pumped-kenya",
+    "title": "Gravity-Fed vs Pumped Irrigation in Kenya | DripTech",
+    "description": "Compare gravity-fed and pumped irrigation by available elevation, pressure, flow, storage, field layout and operating requirements.",
+    "h1": "Gravity-fed vs pumped irrigation: which suits your farm?",
+    "intro": "Gravity-fed irrigation uses elevation to provide water pressure; pumped irrigation adds energy to meet flow and head requirements. Either approach must deliver the pressure and flow required by the irrigation equipment across the field.",
+    "sections": [
+      {
+        "heading": "When gravity supply may work",
+        "paragraphs": [
+          "A raised tank or reservoir can provide pressure where its water level is sufficiently above the irrigated area and pipe losses are manageable. The usable pressure changes as tank level falls.",
+          "Gravity supply may simplify energy needs, but it still requires hydraulic checks, filtration, suitable valves and an adequate source/storage volume."
+        ]
+      },
+      {
+        "heading": "When pumping may be necessary",
+        "paragraphs": [
+          "A pump may be required when source elevation, distance, field elevation or irrigation device pressure exceeds what gravity can provide. Pump selection should use the required flow and total head.",
+          "Pumping adds energy, equipment and maintenance considerations. The system should be designed around the actual operating duty, not maximum pump ratings alone."
+        ]
+      },
+      {
+        "heading": "Compare the full operating system",
+        "bullets": [
+          "Available elevation and pressure at the field",
+          "Required flow and pressure per zone",
+          "Pipe route, diameter and friction losses",
+          "Water source yield and storage capacity",
+          "Energy supply, reliability and lifecycle cost",
+          "Filtration, controls, maintenance and expansion"
+        ]
+      },
+      {
+        "heading": "Measure before choosing",
+        "paragraphs": [
+          "Record the water level, field elevation, distance, pipe sizes and irrigation equipment specifications. A site-specific calculation can determine whether gravity is sufficient or pumping is required."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Pump selection guide",
+        "href": "/pump-selection-for-irrigation-kenya"
+      },
+      {
+        "label": "Irrigation pump sizing",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Irrigation zone design",
+        "href": "/irrigation-zone-design-kenya"
+      },
+      {
+        "label": "Design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      }
+    ],
+    "image": "/seed-products/plant_drip.jpg"
   }
 ]
