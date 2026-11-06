@@ -547,16 +547,6 @@ const fetchJson = async (url, headers = {}) => {
     const detail = error instanceof Error ? error.message : String(error);
     throw new Error(`Invalid JSON from ${url}: ${detail}`);
   }
-    throw new Error(`${describeUrl(url)} is unreachable (${error.cause?.code || error.message})`);
-  }
-  if (!response.ok) {
-    throw new Error(`${describeUrl(url)} returned ${response.status} ${response.statusText}`);
-  }
-  try {
-    return await response.json();
-  } catch {
-    throw new Error(`${describeUrl(url)} did not return valid JSON`);
-  }
 };
 
 // The Worker wraps paginated lists as { data: [...], pagination }; Supabase and
