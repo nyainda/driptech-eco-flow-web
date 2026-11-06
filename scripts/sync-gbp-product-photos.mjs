@@ -168,24 +168,6 @@ async function loadVideos() {
   return videos;
 }
 
-function approvedImageKey(productId, imageUrl) {
-  return JSON.stringify([String(productId), imageUrl]);
-}
-
-function readAllowlist() {
-  const value = readJson(ALLOWLIST_PATH, {});
-  const entries = Array.isArray(value.approvedImages) ? value.approvedImages : [];
-  const approved = new Set();
-
-  for (const entry of entries) {
-    const productId = entry && entry.productId != null ? String(entry.productId).trim() : "";
-    const imageUrl = entry ? normalizePublicImageUrl(entry.imageUrl) : null;
-    if (productId && imageUrl) approved.add(approvedImageKey(productId, imageUrl));
-  }
-
-  return approved;
-}
-
 function makeCandidates(products) {
   return products
     .filter((product) => product && product.id != null && product.name)
@@ -199,86 +181,130 @@ function makeCandidates(products) {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function selectApprovedImages(candidates, approvedKeys) {
-  return candidates.flatMap((product) =>
-    product.imageUrls.map((url, index) => ({
-      productId: product.id,
-      productName: product.name,
-      category: product.category,
-      imageIndex: index + 1,
-      url,
-      sha256: sha256(url),
-    })).filter((item) => approvedKeys.has(approvedImageKey(item.productId, item.url))),
+function makeVideoCandidates(videos) {
+  return videos
+    .filter((video) => video && video.id != null && video.title && video.video_url)
+    .map((video) => ({
+      id: String(video.id),
+      title: String(video.title),
+      description: String(video.description || ""),
+      category: String(video.category || ""),
+      url: normalizePublicImageUrl(video.video_url),
+      thumbnailUrl: normalizePublicImageUrl(video.thumbnail_url),
+      declaredDuration: Number(video.duration) || null,
+    }))
+    .filter((video) => video.url)
+    .sort((a, b) => a.title.localeCompare(b.title));
+}
+
+function readMediaExclusions() {
+  const value = readJson(EXCLUSIONS_PATH, {});
+  return {
+    productIds: new Set((Array.isArray(value.excludedProductIds) ? value.excludedProductIds : []).map(String)),
+    imageUrls: new Set((Array.isArray(value.excludedImageUrls) ? value.excludedImageUrls : []).map((url) => normalizePublicImageUrl(url)).filter(Boolean)),
+    videoIds: new Set((Array.isArray(value.excludedVideoIds) ? value.excludedVideoIds : []).map(String)),
+  };
+}
+
+function buildMediaQueues(products, videos, exclusions, uploadedHashes) {
+  const images = products.flatMap((product) =>
+    (exclusions.productIds.has(product.id) ? [] : product.imageUrls)
+      .map((url, index) => ({
+        mediaType: "photo",
+        id: product.id,
+        title: product.name,
+        category: product.category,
+        index: index + 1,
+        url,
+        sha256: sha256(url),
+      }))
+      .filter((item) => !exclusions.imageUrls.has(item.url) && !uploadedHashes.has(item.sha256)),
   );
+
+  const clips = videos
+    .filter((video) => !exclusions.videoIds.has(video.id))
+    .map((video) => ({
+      mediaType: "video",
+      id: video.id,
+      title: video.title,
+      category: video.category,
+      description: video.description,
+      declaredDuration: video.declaredDuration,
+      thumbnailUrl: video.thumbnailUrl,
+      url: video.url,
+      sha256: sha256(video.url),
+    }))
+    .filter((item) => !uploadedHashes.has(item.sha256));
+
+  return { images, clips };
 }
 
 function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   })[character]);
 }
 
-function writeCandidateReport(candidates) {
-  const reportPath = process.env.GBP_PHOTO_CANDIDATE_REPORT || ".cache/gbp-product-photo-candidates.html";
+function writeCandidateReport(products, videos) {
+  const reportPath = process.env.GBP_MEDIA_CANDIDATE_REPORT || ".cache/gbp-media-candidates.html";
   const jsonPath = reportPath.replace(/\.html?$/i, ".json");
-  const imageRows = candidates.flatMap((product) =>
+  const imageRows = products.flatMap((product) =>
     product.imageUrls.map((url, index) => ({
-      productId: product.id,
-      productName: product.name,
-      category: product.category,
-      imageIndex: index + 1,
-      url,
+      mediaType: "photo", id: product.id, title: product.name,
+      category: product.category, index: index + 1, url,
     })),
   );
+  const videoRows = videos.map((video) => ({
+    mediaType: "video", id: video.id, title: video.title,
+    description: video.description, category: video.category,
+    declaredDuration: video.declaredDuration, thumbnailUrl: video.thumbnailUrl, url: video.url,
+  }));
 
-  const cards = imageRows.map((item) =>
+  const photoCards = imageRows.map((item) =>
+    '<article class="card"><a href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">' +
+    '<img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.title) + '">' +
+    '</a><div class="details"><strong>' + escapeHtml(item.title) + '</strong>' +
+    '<span>Product · ' + escapeHtml(item.category || "Uncategorised") + ' · Image ' + item.index + '</span>' +
+    '<code>ID: ' + escapeHtml(item.id) + '</code></div></article>',
+  ).join("\n");
+
+  const videoCards = videoRows.map((item) =>
     '<article class="card">' +
-      '<a href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">' +
-        '<img loading="lazy" src="' + escapeHtml(item.url) + '" alt="' + escapeHtml(item.productName) + ' image ' + item.imageIndex + '">' +
-      '</a>' +
-      '<div class="details">' +
-        '<strong>' + escapeHtml(item.productName) + '</strong>' +
-        '<span>' + escapeHtml(item.category || "Uncategorised") + ' · Image ' + item.imageIndex + '</span>' +
-        '<code>Product ID: ' + escapeHtml(item.productId) + '</code>' +
-        '<a class="url" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">Open original image</a>' +
-        '<code class="image-url">' + escapeHtml(item.url) + '</code>' +
-      '</div>' +
-    '</article>',
+    (item.thumbnailUrl
+      ? '<a href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="' + escapeHtml(item.thumbnailUrl) + '" alt="' + escapeHtml(item.title) + '"></a>'
+      : '<div class="placeholder">VIDEO</div>') +
+    '<div class="details"><strong>' + escapeHtml(item.title) + '</strong>' +
+    '<span>Video · ' + escapeHtml(item.category || "Uncategorised") + ' · API duration: ' + escapeHtml(item.declaredDuration ?? "unknown") + 's</span>' +
+    '<code>ID: ' + escapeHtml(item.id) + '</code>' +
+    '<a href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer">Open source video</a></div></article>',
   ).join("\n");
 
   const html = [
-    "<!doctype html>",
-    '<html lang="en"><head><meta charset="utf-8">',
+    "<!doctype html>", '<html lang="en"><head><meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
-    "<title>DripTech GBP product image review</title>",
-    "<style>",
+    "<title>DripTech GBP media candidates</title>", "<style>",
     "body{font:15px/1.5 system-ui,sans-serif;margin:0;background:#f5f7f8;color:#17202a}",
-    "header{padding:24px;background:#123b32;color:#fff}header p{margin:6px 0 0;color:#d9e8e2}",
-    ".notice{margin:18px;padding:14px;background:#fff4d6;border:1px solid #e8ce83;border-radius:10px}",
-    ".grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;padding:18px}",
+    "header{padding:24px;background:#123b32;color:#fff}header p{color:#d9e8e2}",
+    ".notice{margin:18px;padding:14px;background:#eaf4ed;border:1px solid #b8d4c0;border-radius:10px}",
+    ".section-title{padding:4px 18px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;padding:18px}",
     ".card{background:#fff;border:1px solid #dce3e0;border-radius:12px;overflow:hidden}",
-    ".card img{display:block;width:100%;height:210px;object-fit:contain;background:#eef1ef}",
-    ".details{display:grid;gap:5px;padding:12px}.details span{color:#66736e;font-size:13px}",
-    "code{font-size:11px;overflow-wrap:anywhere;background:#f1f4f2;padding:6px;border-radius:6px}",
-    ".url{font-size:13px;color:#087b60}.image-url{max-height:54px;overflow:auto}",
-    "</style></head><body>",
-    "<header><h1>DripTech Eco Flow · Product image review</h1>",
-    "<p>" + imageRows.length + " image candidates across " + candidates.length + " products</p></header>",
-    '<div class="notice"><strong>Review only:</strong> Nothing in this gallery is approved or uploaded. Approve images individually by adding both the matching productId and exact imageUrl to the GitHub allowlist.</div>',
-    '<main class="grid">' + cards + "</main>",
+    ".card img,.placeholder{display:grid;width:100%;height:210px;object-fit:contain;background:#eef1ef}",
+    ".placeholder{place-items:center;color:#315b4b;font-weight:700}.details{display:grid;gap:5px;padding:12px}",
+    ".details span{color:#66736e;font-size:13px}code{font-size:11px;overflow-wrap:anywhere;background:#f1f4f2;padding:6px;border-radius:6px}",
+    "a{font-size:13px;color:#087b60}", "</style></head><body>",
+    "<header><h1>DripTech Eco Flow · Automatic media candidates</h1><p>" +
+      imageRows.length + " product images · " + videoRows.length + " published, featured videos</p></header>",
+    '<div class="notice"><strong>Automatic selection:</strong> Product images are selected from featured, in-stock products. Video records are selected from published, featured videos; only direct MP4 media passing file, duration and resolution checks can upload. This report is informational, not an upload confirmation.</div>',
+    '<h2 class="section-title">Product images (' + imageRows.length + ')</h2><main class="grid">' + photoCards + '</main>',
+    '<h2 class="section-title">Featured videos (' + videoRows.length + ')</h2><main class="grid">' + videoCards + '</main>',
     "</body></html>",
   ].join("\n");
 
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.writeFileSync(reportPath, html);
-  writeJson(jsonPath, imageRows);
-  console.log("Product image review gallery: " + reportPath);
-  console.log("Machine-readable candidate list: " + jsonPath);
-  console.log("Review " + imageRows.length + " individual images; no image has been approved.");
+  writeJson(jsonPath, [...imageRows, ...videoRows]);
+  console.log("Media candidate gallery: " + reportPath);
+  console.log("Machine-readable media candidates: " + jsonPath);
 }
 
 function readState() {
