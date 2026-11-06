@@ -2846,59 +2846,56 @@
   },
   {
     "slug": "irrigation-boq-kenya",
-    "title": "Irrigation BOQ Example Kenya | Bill of Quantities Guide | DripTech",
-    "description": "Irrigation BOQ guide for Kenya with an illustrative bill of quantities, item descriptions, sizing notes and quantity take-off tips.",
-    "h1": "Irrigation bill of quantities (BOQ): example and preparation guide",
-    "intro": "A bill of quantities (BOQ) translates an irrigation design into a structured list of materials, descriptions, specifications and quantities for costing or procurement. This SEO guide shows an illustrative format—not a site-specific quotation or ready-to-build design.",
+    "title": "Irrigation BOQ Examples Kenya | Sample Quotations & BOQ Format | DripTech Eco-Flow",
+    "description": "See sample irrigation quotations and BOQ layouts from DripTech Eco-Flow: item descriptions, quantities, units, unit prices, totals and VAT—illustrative examples for SEO and learning.",
+    "h1": "Irrigation BOQ examples: how DripTech quotations are structured",
+    "intro": "These illustrative examples show how DripTech Eco-Flow presents irrigation equipment quotations: project overview, item number, item/description, quantity, unit, unit price (KES), line total, subtotal, VAT and total amount. They demonstrate document structure and clear item descriptions—not universal prices, standard quantities or a design for another farm.",
     "sections": [
       {
-        "heading": "Illustrative irrigation BOQ structure",
+        "heading": "Sample quotation: rain hose equipment",
         "paragraphs": [
-          "The sample below is a format example only. Actual quantities, pipe diameters, pump duty, filter rating and component specifications must come from a verified design and site measurements."
-        ],
+          "Example format: a rain-hose quotation can list the hose specification, compatible end connector and control valve as separate lines, each with quantity, unit, unit price and total. The actual hose diameter, length, pressure rating, spacing and accessories must match the project requirements."
+        ]
+      },
+      {
+        "heading": "Sample quotation: raingun design equipment",
+        "paragraphs": [
+          "A raingun equipment quotation may itemise the raingun sprinkler, tripod stand, connection kit, layflat pipe and layflat connectors. Each line should state the relevant model/size or specification, quantity, unit and price. The equipment combination and quantities should follow the approved layout and operating requirements."
+        ]
+      },
+      {
+        "heading": "What you will see in a DripTech BOQ or quotation",
         "bullets": [
-          "Water source and storage: source connection, tank/storage items where applicable",
-          "Pump set: selected duty point, controls and accessories (if required)",
-          "Filtration and fertigation: filter type/capacity, valves and injection components as specified",
-          "Distribution network: mainline, sub-main, zone manifolds and fittings",
-          "Field application: dripline/drip tape or sprinklers, connectors and end closures",
-          "Control and protection: isolation valves, pressure regulation, gauges and air-release/drain components as designed",
-          "Installation items: supports, excavation/backfill, flushing, testing and commissioning—if included in scope"
+          "Quotation reference, date and validity period",
+          "Supplier and customer/project details",
+          "Project name or overview",
+          "Numbered line items with product names and technical descriptions",
+          "Quantity and unit (for example, unit, pcs or set)",
+          "Unit price in KES and line total",
+          "Subtotal, applicable VAT and total amount"
         ]
       },
       {
-        "heading": "Example BOQ table headings",
-        "bullets": [
-          "Item number",
-          "Description and technical specification",
-          "Unit (m, No., set, roll, etc.)",
-          "Quantity from drawing or measurement",
-          "Rate (KES)",
-          "Amount (KES)",
-          "Remarks / design reference"
-        ]
-      },
-      {
-        "heading": "How quantities should be measured",
+        "heading": "Use sample BOQs correctly",
         "paragraphs": [
-          "Measure pipe routes from the layout and account for fittings, branches, crossings and installation conditions using the project’s agreed measurement rules. Count valves, filters, emitters, connectors and control items from zone details and component schedules. Do not estimate pump or filter specifications from acreage alone."
+          "The examples are reference formats only. Prices shown in sample quotations are time-bound and may no longer be current; they are not a live price list. A project-specific BOQ requires the field layout, water source, flow/head requirements, zone plan and measured quantities. Confirm current prices and quotation validity with DripTech before budgeting or ordering."
         ]
       },
       {
-        "heading": "Important limits of an online BOQ example",
+        "heading": "Request a project-specific irrigation BOQ",
         "paragraphs": [
-          "This page is an educational SEO resource, not a downloadable project BOQ, engineering certification, fixed-price offer or promise of standard quantities. A farm-specific BOQ needs crop and field data, water-source details, elevations, zone design and verified routes. Prices also change with product choice and availability."
+          "Share your farm dimensions, crop and spacing, water source, existing pump details and a sketch or site plan. DripTech Eco-Flow can review the information and agree whether you need a preliminary equipment list, a design-based BOQ, quotation or site assessment."
         ]
       }
     ],
     "links": [
       {
-        "label": "Irrigation design consultation",
-        "href": "/irrigation-design-consultation-kenya"
-      },
-      {
         "label": "Irrigation BOQ preparation checklist",
         "href": "/irrigation-boq-preparation-checklist-kenya"
+      },
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
       },
       {
         "label": "Irrigation site assessment guide",
