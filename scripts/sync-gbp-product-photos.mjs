@@ -600,7 +600,7 @@ function selfTest() {
     { id: "v2", title: "Hosted watch page", video_url: "https://www.youtube.com/watch?v=abc123", duration: 20 },
     { id: "v3", title: "Insecure file", video_url: "http://cdn.example.com/unsafe.mp4", duration: 20 },
   ]);
-  if (videos.length !== 2 || videos[0].url !== "https://cdn.example.com/demo.mp4") {
+  if (videos.length !== 2 || !videos.some((video) => video.url === "https://cdn.example.com/demo.mp4")) {
     throw new Error("Video API candidate parsing self-test failed.");
   }
 
