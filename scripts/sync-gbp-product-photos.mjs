@@ -616,7 +616,7 @@ function selfTest() {
 
   const excluded = buildMediaQueues(
     [{ id: "p1", name: "Dripline", category: "drip_irrigation", imageUrls: ["https://cdn.example.com/a.jpg"] }],
-    [videos[0]],
+    [videos.find((video) => video.id === "v1")],
     { productIds: new Set(["p1"]), imageUrls: new Set(), videoIds: new Set(["v1"]) },
     new Set(),
   );
