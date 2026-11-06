@@ -1,7 +1,7 @@
 [
   {
     "slug": "irrigation-pipe-prices-kenya",
-    "title": "Irrigation Pipe Prices in Kenya: HDPE, PVC & Rain Hose | DripTech",
+    "title": "Irrigation Pipe Prices Kenya: HDPE & PVC | DripTech",
     "description": "Compare irrigation pipe types, sizes, pressure ratings and public reference prices in Kenya. Check units carefully and request a current DripTech quotation.",
     "h1": "Irrigation pipe prices in Kenya",
     "intro": "Irrigation pipe costs depend on material, diameter, pressure rating and the length supplied. This guide compares public supplier listings as a planning reference—not DripTech's own price list. Confirm current stock, exact specifications, delivery and tax before buying.",
@@ -52,6 +52,10 @@
       {
         "label": "Request a current quotation",
         "href": "/contact"
+      },
+      {
+        "label": "Rain hose prices in Kenya",
+        "href": "/rain-hose-prices-kenya"
       }
     ],
     "image": "/seed-products/pipes_industrial.jpg",
@@ -119,6 +123,10 @@
       {
         "label": "Contact DripTech",
         "href": "/contact"
+      },
+      {
+        "label": "Rain hose prices in Kenya",
+        "href": "/rain-hose-prices-kenya"
       }
     ],
     "image": "/seed-products/pipes_industrial.jpg",
@@ -197,7 +205,7 @@
   },
   {
     "slug": "dripline-prices-kenya",
-    "title": "Dripline Prices in Kenya: 1000 m Rolls & Emitter Spacing | DripTech",
+    "title": "Dripline Prices Kenya: 1000 m Rolls & Spacing | DripTech",
     "description": "Compare public dripline price examples for 1000 m rolls in Kenya and understand thickness, emitter spacing, filtration and cost per metre.",
     "h1": "Dripline prices in Kenya",
     "intro": "Dripline prices depend on wall thickness, emitter spacing, flow rate, roll length and supplier. These public supplier examples are not DripTech selling prices. Confirm the exact product and current stock before buying.",
@@ -243,6 +251,14 @@
       {
         "label": "Contact DripTech for a quote",
         "href": "/contact"
+      },
+      {
+        "label": "Drip tape vs dripline: which is right for your farm?",
+        "href": "/drip-tape-vs-dripline-kenya"
+      },
+      {
+        "label": "How to choose dripline and emitter spacing",
+        "href": "/how-to-choose-dripline-spacing-kenya"
       }
     ],
     "image": "/seed-products/dripline_roll.jpg",

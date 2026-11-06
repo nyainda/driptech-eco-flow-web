@@ -1,8 +1,8 @@
 [
   {
     "slug": "drip-irrigation-kenya",
-    "title": "Drip Irrigation Systems Kenya | Design, Supply & Installation | DripTech Eco Flow",
-    "description": "Drip irrigation systems in Kenya for kitchen gardens, greenhouses and commercial farms. Compare driplines, filters, fittings and complete kits with DripTech Eco Flow support.",
+    "title": "Drip Irrigation Systems Kenya | DripTech Eco Flow",
+    "description": "Drip irrigation systems in Kenya for kitchen gardens, greenhouses and commercial farms. Compare driplines, filters, fittings and kits with DripTech support.",
     "h1": "Drip irrigation systems for Kenyan farms",
     "intro": "Drip irrigation delivers water close to the crop root zone, helping farmers manage water, pressure and fertiliser more precisely. DripTech Eco Flow supplies the parts and complete systems needed for small plots, greenhouses and larger farms across Kenya.",
     "sections": [
@@ -43,14 +43,34 @@
       {
         "label": "See installation and service support",
         "href": "/services"
+      },
+      {
+        "label": "Planning a drip irrigation system for one acre",
+        "href": "/one-acre-drip-irrigation-system-kenya"
+      },
+      {
+        "label": "How to choose dripline and emitter spacing",
+        "href": "/how-to-choose-dripline-spacing-kenya"
+      },
+      {
+        "label": "Drip tape vs dripline: which is right for your farm?",
+        "href": "/drip-tape-vs-dripline-kenya"
+      },
+      {
+        "label": "Irrigation system design and engineering consultation in Kenya",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Drip irrigation for tomato farming in Kenya",
+        "href": "/drip-irrigation-for-tomatoes-kenya"
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
   },
   {
     "slug": "drip-irrigation-kit-price-kenya",
-    "title": "Drip Irrigation Kit Prices in Kenya | Compare Kits | DripTech Eco Flow",
-    "description": "Compare drip irrigation kits in Kenya by plot size, crop and components. See current catalogue prices and get help choosing driplines, filters, fittings and installation support.",
+    "title": "Drip Irrigation Kit Prices Kenya | Compare Kits | DripTech",
+    "description": "Compare drip irrigation kits in Kenya by plot size, crop and components. See catalogue prices and get help with driplines, filters and installation.",
     "h1": "Drip irrigation kit prices in Kenya",
     "intro": "A useful drip irrigation kit price depends on more than acreage. Crop spacing, number of drip lines per bed, water pressure, filtration and whether installation is included all affect the final system.",
     "sections": [
@@ -90,14 +110,18 @@
       {
         "label": "Request irrigation guidance",
         "href": "/contact"
+      },
+      {
+        "label": "Planning a drip irrigation system for one acre",
+        "href": "/one-acre-drip-irrigation-system-kenya"
       }
     ],
     "image": "/seed-products/drip1.jpg"
   },
   {
     "slug": "driplines-for-sale-kenya",
-    "title": "Driplines for Sale in Kenya | Drip Tape & Emitters | DripTech Eco Flow",
-    "description": "Buy driplines, drip tape and emitters in Kenya for vegetables, greenhouse crops and open-field farms. Compare spacing, flow and supporting fittings from DripTech Eco Flow.",
+    "title": "Driplines for Sale Kenya | Drip Tape & Emitters | DripTech",
+    "description": "Buy driplines, drip tape and emitters in Kenya for vegetables, greenhouse and open-field crops. Compare spacing, flow and fittings from DripTech Eco Flow.",
     "h1": "Driplines and drip tape for sale in Kenya",
     "intro": "Driplines are the part of a drip system that places water beside the crop. The correct spacing, wall thickness, flow rate and filtration determine how evenly the field receives water.",
     "sections": [
@@ -137,6 +161,14 @@
       {
         "label": "View irrigation accessories",
         "href": "/products/accessories"
+      },
+      {
+        "label": "Drip tape vs dripline: which is right for your farm?",
+        "href": "/drip-tape-vs-dripline-kenya"
+      },
+      {
+        "label": "How to choose dripline and emitter spacing",
+        "href": "/how-to-choose-dripline-spacing-kenya"
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
@@ -219,8 +251,8 @@
   },
   {
     "slug": "irrigation-companies-kenya",
-    "title": "Irrigation Companies in Kenya | Supply, Design & Installation | DripTech Eco Flow",
-    "description": "Comparing irrigation companies in Kenya? See what to check before you buy, and how DripTech Eco Flow supplies, designs and installs drip and sprinkler systems nationwide.",
+    "title": "Irrigation Companies in Kenya | DripTech Eco Flow",
+    "description": "Comparing irrigation companies in Kenya? See what to check before you buy and how DripTech Eco Flow supplies, designs and installs systems nationwide.",
     "h1": "Choosing an irrigation company in Kenya",
     "intro": "Kenya has many irrigation suppliers, and quality varies widely between them. Before committing to a company, it helps to know what separates a reliable installation from one that fails within a season. DripTech Eco Flow supplies parts, designs systems and installs them for farms, greenhouses and commercial sites across the country.",
     "sections": [
@@ -266,14 +298,18 @@
       {
         "label": "See installation and service support",
         "href": "/services"
+      },
+      {
+        "label": "Irrigation system design and engineering consultation in Kenya",
+        "href": "/irrigation-design-consultation-kenya"
       }
     ],
     "image": "/seed-products/field_drip.jpg"
   },
   {
     "slug": "solar-irrigation-pumps-kenya",
-    "title": "Solar Irrigation Pumps Kenya | Solar Pump Systems & Prices | DripTech Eco Flow",
-    "description": "Solar-powered irrigation pumps for farms in Kenya without reliable grid power. Compare solar pump options and get help sizing a system to your water source and field.",
+    "title": "Solar Irrigation Pumps Kenya | DripTech Eco Flow",
+    "description": "Solar irrigation pumps for Kenyan farms without reliable grid power. Compare pump options and get help sizing a system to your water source and field.",
     "h1": "Solar irrigation pumps for Kenyan farms",
     "intro": "Solar pumping lets a farm move water where grid power is unreliable or unavailable, with lower running costs than a petrol or diesel pump over time. Sizing a solar pump correctly depends on your water source depth, the flow rate you need, and how many hours of usable sunlight your site gets.",
     "sections": [
@@ -318,8 +354,8 @@
   },
   {
     "slug": "borehole-water-pumps-kenya",
-    "title": "Borehole Water Pumps Kenya | Submersible & Solar Options | DripTech Eco Flow",
-    "description": "Submersible and solar borehole water pumps for irrigation in Kenya. Compare pump options for your borehole depth and yield, and get help sizing the right system.",
+    "title": "Borehole Water Pumps Kenya | DripTech Eco Flow",
+    "description": "Submersible and solar borehole pumps for irrigation in Kenya. Compare pump options for your borehole depth and yield and get help sizing the system.",
     "h1": "Borehole water pumps for irrigation",
     "intro": "Once a borehole is drilled and its yield known, the next decision is matching a pump to that depth and yield. DripTech Eco Flow supplies the pumps, controllers and fittings for borehole-fed irrigation — not the drilling itself, which is a specialised hydrogeological service.",
     "sections": [
@@ -364,7 +400,7 @@
   },
   {
     "slug": "water-storage-tanks-kenya",
-    "title": "Water Storage Tanks for Irrigation Kenya | Sizes & Prices | DripTech Eco Flow",
+    "title": "Irrigation Water Storage Tanks Kenya | DripTech",
     "description": "Water storage tanks sized for drip and sprinkler irrigation in Kenya. Compare tank sizes against your plot size, pump output and buffer requirements.",
     "h1": "Water storage tanks for farm irrigation",
     "intro": "A storage tank buffers supply between your water source and the field, smoothing out pump downtime, solar pumping hours, or an intermittent municipal or borehole supply. Sizing it against your daily water demand avoids both running dry mid-irrigation and paying for capacity you never use.",
@@ -410,7 +446,7 @@
   },
   {
     "slug": "greenhouse-drip-irrigation-kenya",
-    "title": "Greenhouse Drip Irrigation Kenya | Systems for Protected Crops | DripTech Eco Flow",
+    "title": "Greenhouse Drip Irrigation Kenya | DripTech Eco Flow",
     "description": "Drip irrigation systems designed for greenhouse crops in Kenya. Compare driplines, filtration and fertigation options suited to protected growing conditions.",
     "h1": "Greenhouse drip irrigation systems",
     "intro": "Greenhouse crops are grown in a more controlled environment than open-field crops, but that makes consistent, clog-free irrigation even more important — there's no rainfall to fall back on if a line blocks. DripTech Eco Flow supplies the drip components and filtration suited to greenhouse growing, though the greenhouse structure itself is a separate build.",
@@ -456,8 +492,8 @@
   },
   {
     "slug": "fertigation-systems-kenya",
-    "title": "Fertigation Systems Kenya | Feed Nutrients Through Drip Irrigation | DripTech Eco Flow",
-    "description": "Fertigation systems for Kenyan farms and greenhouses, feeding fertiliser through drip irrigation for even nutrient delivery. Compare dosing equipment and get setup help.",
+    "title": "Fertigation Systems Kenya | Fertiliser Dosing | DripTech",
+    "description": "Fertigation systems for Kenyan farms and greenhouses: feed fertiliser through drip irrigation for even nutrient delivery. Compare dosing equipment.",
     "h1": "Fertigation systems for drip irrigation",
     "intro": "Fertigation feeds water-soluble fertiliser through the same drip system that waters the crop, so every plant on the line gets a consistent dose instead of uneven hand application. It works alongside an existing drip layout rather than replacing it.",
     "sections": [
@@ -544,6 +580,14 @@
       {
         "label": "Request irrigation guidance",
         "href": "/contact"
+      },
+      {
+        "label": "Drip irrigation for onion farming in Kenya",
+        "href": "/drip-irrigation-for-onions-kenya"
+      },
+      {
+        "label": "Drip irrigation for potato farming in Kenya",
+        "href": "/drip-irrigation-for-potatoes-kenya"
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
@@ -592,13 +636,21 @@
       {
         "label": "Ask about installation support",
         "href": "/services"
+      },
+      {
+        "label": "Drip irrigation for potato farming in Kenya",
+        "href": "/drip-irrigation-for-potatoes-kenya"
+      },
+      {
+        "label": "Drip irrigation for capsicum farming in Kenya",
+        "href": "/drip-irrigation-for-capsicum-kenya"
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
   },
   {
     "slug": "irrigation-water-filters-kenya",
-    "title": "Irrigation Water Filters in Kenya | Drip System Filtration | DripTech",
+    "title": "Irrigation Water Filters Kenya | Drip Filtration | DripTech",
     "description": "Learn how to select irrigation filters in Kenya based on water source, flow rate and emitter requirements, and explore filters and strainers for farm systems.",
     "h1": "Irrigation water filters for farms in Kenya",
     "intro": "Filtration helps protect drip emitters and other irrigation components from particles that can cause blockages. The right filter depends on the water source, the contaminants present, system flow and the equipment manufacturer's requirements.",
@@ -688,6 +740,14 @@
       {
         "label": "Contact DripTech",
         "href": "/contact"
+      },
+      {
+        "label": "Drip irrigation for capsicum farming in Kenya",
+        "href": "/drip-irrigation-for-capsicum-kenya"
+      },
+      {
+        "label": "Drip irrigation for cabbage farming in Kenya",
+        "href": "/drip-irrigation-for-cabbage-kenya"
       }
     ],
     "image": "/seed-products/field_drip.jpg"
@@ -735,6 +795,14 @@
       {
         "label": "View fertigation equipment",
         "href": "/fertigation-systems-kenya"
+      },
+      {
+        "label": "Drip irrigation for cabbage farming in Kenya",
+        "href": "/drip-irrigation-for-cabbage-kenya"
+      },
+      {
+        "label": "Drip irrigation for watermelon farming in Kenya",
+        "href": "/drip-irrigation-for-watermelon-kenya"
       }
     ],
     "image": "/seed-products/greenhouse.jpg"
@@ -783,6 +851,14 @@
       {
         "label": "Request installation support",
         "href": "/services"
+      },
+      {
+        "label": "Drip irrigation for watermelon farming in Kenya",
+        "href": "/drip-irrigation-for-watermelon-kenya"
+      },
+      {
+        "label": "Irrigation planning for avocado orchards in Kenya",
+        "href": "/drip-irrigation-for-avocado-kenya"
       }
     ],
     "image": "/seed-products/field_drip.jpg"
@@ -831,13 +907,21 @@
       {
         "label": "Contact the team",
         "href": "/contact"
+      },
+      {
+        "label": "Irrigation planning for avocado orchards in Kenya",
+        "href": "/drip-irrigation-for-avocado-kenya"
+      },
+      {
+        "label": "Irrigation planning for coffee farms in Kenya",
+        "href": "/drip-irrigation-for-coffee-kenya"
       }
     ],
     "image": "/seed-products/field_drip.jpg"
   },
   {
     "slug": "drip-irrigation-for-avocado-kenya",
-    "title": "Drip Irrigation for Avocado Orchards in Kenya | DripTech Eco Flow",
+    "title": "Drip Irrigation for Avocado Orchards Kenya | DripTech",
     "description": "Plan irrigation for avocado orchards in Kenya with guidance on tree spacing, emitter placement, filtration, water supply and system expansion.",
     "h1": "Irrigation planning for avocado orchards in Kenya",
     "intro": "An avocado irrigation system needs to reflect orchard age, tree spacing, soil, slope and the available water supply. The layout for young trees may differ from the system needed as the orchard canopy and root zone expand.",
@@ -879,13 +963,21 @@
       {
         "label": "Request a farm consultation",
         "href": "/contact"
+      },
+      {
+        "label": "Irrigation planning for coffee farms in Kenya",
+        "href": "/drip-irrigation-for-coffee-kenya"
+      },
+      {
+        "label": "Irrigation options for maize farming in Kenya",
+        "href": "/drip-irrigation-for-maize-kenya"
       }
     ],
     "image": "/seed-products/plant_drip.jpg"
   },
   {
     "slug": "drip-vs-sprinkler-irrigation-kenya",
-    "title": "Drip vs Sprinkler Irrigation in Kenya | Which System Fits? | DripTech",
+    "title": "Drip vs Sprinkler Irrigation Kenya | Which Fits? | DripTech",
     "description": "Compare drip and sprinkler irrigation in Kenya by crop layout, soil, wind, water pressure, maintenance and budget before choosing a farm system.",
     "h1": "Drip vs sprinkler irrigation: how to choose in Kenya",
     "intro": "Drip and sprinkler systems apply water differently, and neither is automatically best for every farm. The right option depends on crop arrangement, soil, wind exposure, water quality, available flow, labour and the way the field is managed.",
@@ -982,6 +1074,14 @@
       {
         "label": "Contact DripTech",
         "href": "/contact"
+      },
+      {
+        "label": "Irrigation options for maize farming in Kenya",
+        "href": "/drip-irrigation-for-maize-kenya"
+      },
+      {
+        "label": "Garlic irrigation in Kenya",
+        "href": "/drip-irrigation-for-garlic-kenya"
       }
     ]
   },
@@ -1030,6 +1130,14 @@
       {
         "label": "Request guidance",
         "href": "/contact"
+      },
+      {
+        "label": "Garlic irrigation in Kenya",
+        "href": "/drip-irrigation-for-garlic-kenya"
+      },
+      {
+        "label": "Passion fruit irrigation in Kenya",
+        "href": "/passion-fruit-irrigation-kenya"
       }
     ]
   },
@@ -1083,7 +1191,7 @@
   },
   {
     "slug": "irrigation-system-cost-kenya",
-    "title": "Irrigation System Cost in Kenya | What Affects the Price? | DripTech",
+    "title": "Irrigation System Cost Kenya: Price Factors | DripTech",
     "description": "Understand what affects irrigation system cost in Kenya, from acreage and crop layout to pumps, filtration, pipes, installation and delivery.",
     "h1": "How much does an irrigation system cost in Kenya?",
     "intro": "Irrigation costs vary by field layout, crop, water source and equipment. A meaningful quote should list the components and installation scope instead of relying on acreage alone.",
@@ -1125,6 +1233,14 @@
       {
         "label": "Request a quote",
         "href": "/contact"
+      },
+      {
+        "label": "Planning a drip irrigation system for one acre",
+        "href": "/one-acre-drip-irrigation-system-kenya"
+      },
+      {
+        "label": "Irrigation system design and engineering consultation in Kenya",
+        "href": "/irrigation-design-consultation-kenya"
       }
     ]
   },
@@ -1172,6 +1288,14 @@
       {
         "label": "Request a farm quote",
         "href": "/contact"
+      },
+      {
+        "label": "How to choose dripline and emitter spacing",
+        "href": "/how-to-choose-dripline-spacing-kenya"
+      },
+      {
+        "label": "Drip irrigation for tomato farming in Kenya",
+        "href": "/drip-irrigation-for-tomatoes-kenya"
       }
     ]
   },
@@ -1219,12 +1343,16 @@
       {
         "label": "Contact DripTech",
         "href": "/contact"
+      },
+      {
+        "label": "Drip tape vs dripline: which is right for your farm?",
+        "href": "/drip-tape-vs-dripline-kenya"
       }
     ]
   },
   {
     "slug": "irrigation-pump-sizing-kenya",
-    "title": "Irrigation Pump Sizing in Kenya | Flow, Head & Power | DripTech",
+    "title": "Irrigation Pump Sizing Kenya: Flow & Head | DripTech",
     "description": "Learn the main inputs for irrigation pump sizing in Kenya, including required flow, total head, water source, pipe losses and power supply.",
     "h1": "How to size a pump for farm irrigation",
     "intro": "Pump selection should be based on the flow the irrigation system needs and the total head the pump must overcome. Choosing by horsepower alone can lead to a system that does not deliver the required flow or pressure.",
@@ -1366,13 +1494,17 @@
       {
         "label": "Book irrigation technician support",
         "href": "/technician-services"
+      },
+      {
+        "label": "Irrigation system design and engineering consultation in Kenya",
+        "href": "/irrigation-design-consultation-kenya"
       }
     ],
     "image": "/seed-products/dripline_roll.jpg"
   },
   {
     "slug": "blocked-drippers-uneven-watering-kenya",
-    "title": "Blocked Drippers & Uneven Watering: Troubleshooting Kenya | DripTech",
+    "title": "Blocked Drippers & Uneven Watering Kenya | DripTech",
     "description": "Learn what to check when drip emitters block or crop rows receive uneven water, including filters, flushing, pressure and line layout.",
     "h1": "How to troubleshoot blocked drippers and uneven watering",
     "intro": "Blocked emitters and uneven watering can result from sediment, biological growth, mineral deposits, leaks or pressure differences. Identify where the problem occurs before deciding which component needs attention.",
@@ -1480,7 +1612,7 @@
   },
   {
     "slug": "irrigation-pipe-leaks-fittings-kenya",
-    "title": "Irrigation Pipe Leaks & Fittings Troubleshooting Kenya | DripTech",
+    "title": "Irrigation Pipe Leaks & Fittings Kenya | DripTech",
     "description": "Find common causes of irrigation pipe leaks, loose connectors and damaged fittings, with safe checks before repairs or replacement.",
     "h1": "How to troubleshoot irrigation leaks and damaged fittings",
     "intro": "Leaks waste water and can reduce delivery to other parts of an irrigation system. Identify the damaged section and relieve pressure before inspecting or repairing pipes and fittings.",
@@ -1533,8 +1665,8 @@
   },
   {
     "slug": "drip-tape-vs-dripline-kenya",
-    "title": "Drip Tape vs Dripline in Kenya: Differences, Uses & Buying Guide | DripTech",
-    "description": "Compare drip tape and dripline for Kenyan farms. Learn about wall thickness, emitter spacing, durability, filtration, operating pressure and how to choose for your crop.",
+    "title": "Drip Tape vs Dripline in Kenya: Buying Guide | DripTech",
+    "description": "Compare drip tape and dripline for Kenyan farms: wall thickness, emitter spacing, durability, filtration and pressure, and how to choose for your crop.",
     "h1": "Drip tape vs dripline: which is right for your farm?",
     "intro": "Drip tape and dripline both deliver water near crop roots, but they are not interchangeable in every field. The better choice depends on crop spacing, season length, pressure, filtration, installation method and how often the lines will be moved.",
     "image": "/seed-products/drip2.jpg",
@@ -1608,7 +1740,7 @@
   },
   {
     "slug": "irrigation-filter-pump-problems-kenya",
-    "title": "Irrigation Filter & Pump Problems Kenya | Troubleshooting | DripTech",
+    "title": "Irrigation Filter & Pump Problems Kenya | DripTech",
     "description": "Troubleshoot common irrigation filter and pump symptoms, including repeated filter blockage, reduced flow and supply interruptions.",
     "h1": "Troubleshooting irrigation filter and pump problems",
     "intro": "Filters and pumps perform different jobs: filtration protects downstream equipment, while the pump or source must provide the flow and pressure the system needs. Symptoms should be checked against both components and the pipe layout.",
@@ -1661,8 +1793,8 @@
   },
   {
     "slug": "irrigation-design-consultation-kenya",
-    "title": "Irrigation System Design & Engineering Consultation Kenya | DripTech Eco-Flow",
-    "description": "Get irrigation system design and engineering consultation in Kenya. DripTech Eco-Flow helps plan drip and sprinkler layouts, water-source and pumping requirements, filtration, pipe sizing and farm irrigation systems.",
+    "title": "Irrigation Design & Consultation Kenya | DripTech",
+    "description": "Irrigation design and engineering consultation in Kenya: drip and sprinkler layouts, pumping, filtration and pipe sizing from DripTech Eco-Flow.",
     "h1": "Irrigation system design and engineering consultation in Kenya",
     "intro": "DripTech Eco-Flow provides irrigation equipment alongside engineering guidance to help farms plan practical water-delivery systems. Discuss your crop, field dimensions, water source and project goals with our team to identify the design information and equipment your project needs.",
     "sections": [
@@ -1735,7 +1867,7 @@
         "Water-source and pumping assessment",
         "Farm irrigation consultation"
       ],
-      "description": "Get irrigation system design and engineering consultation in Kenya. DripTech Eco-Flow helps plan drip and sprinkler layouts, water-source and pumping requirements, filtration, pipe sizing and farm irrigation systems.",
+      "description": "Irrigation design and engineering consultation in Kenya: drip and sprinkler layouts, pumping, filtration and pipe sizing from DripTech Eco-Flow.",
       "url": "https://www.dripstech.co.ke/irrigation-design-consultation-kenya",
       "image": "https://www.dripstech.co.ke/engineering/drip-irrigation-layout.svg",
       "provider": {
