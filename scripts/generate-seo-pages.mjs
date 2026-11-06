@@ -536,15 +536,19 @@ const fetchJson = async (url, headers = {}) => {
   try {
     response = await fetch(url, { headers });
   } catch (error) {
-    throw new Error(`${describeUrl(url)} is unreachable (${error.cause?.code || error.message})`);
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Request failed for ${url}: ${detail}`);
   }
+
   if (!response.ok) {
-    throw new Error(`${describeUrl(url)} returned ${response.status} ${response.statusText}`);
+    throw new Error(`${response.status} ${response.statusText} at ${url}`);
   }
+
   try {
     return await response.json();
-  } catch {
-    throw new Error(`${describeUrl(url)} did not return valid JSON`);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Invalid JSON from ${url}: ${detail}`);
   }
 };
 

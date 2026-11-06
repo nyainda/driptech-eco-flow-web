@@ -1934,5 +1934,145 @@
         "name": "Kenya"
       }
     }
+  },
+  {
+    "slug": "drip-irrigation-filter-clogging-kenya",
+    "title": "Why Drip Irrigation Emitters Get Blocked | Filter & Flushing Guide",
+    "description": "Troubleshoot blocked drip emitters in Kenya: water quality, filter selection, flushing, pressure checks and practical prevention.",
+    "h1": "Why drip irrigation emitters get blocked",
+    "intro": "Uneven watering or emitters that stop flowing can be caused by suspended particles, mineral deposits, biological growth, damaged lines or poor system operation. Diagnose the cause before replacing parts.",
+    "sections": [
+      {
+        "heading": "Start with the water and the filter",
+        "paragraphs": [
+          "Inspect the water source and filter before opening every lateral. Sand, algae, organic matter and fine particles can reach emitters when filtration is unsuitable, damaged or overdue for cleaning.",
+          "The correct filter depends on the water source, emitter passage specification and system flow. A filter that is too coarse may allow particles through; one that is too restrictive or dirty can reduce pressure."
+        ]
+      },
+      {
+        "heading": "A safe troubleshooting sequence",
+        "bullets": [
+          "Check whether the problem affects one lateral, one zone or the whole system.",
+          "Read pressure before and after the filter if gauges are installed; a large difference can indicate a dirty filter.",
+          "Shut the system down safely and clean the filter according to its manufacturer's instructions.",
+          "Flush accessible line ends into a suitable drain area, following the system design.",
+          "Inspect a sample of emitters and connectors for damage or deposits; replace damaged components rather than forcing them open.",
+          "Restart and check whether flow and pressure are more uniform."
+        ]
+      },
+      {
+        "heading": "Prevent repeat blockages",
+        "paragraphs": [
+          "Use water-source-appropriate filtration, routine filter cleaning, planned flushing and compatible fertigation practices. Keep chemical treatment decisions specific to the water analysis and product instructions; do not mix treatment chemicals casually.",
+          "Record filter cleaning, pressure readings and affected zones. A repeated pattern helps identify whether the source is filtration, hydraulics or damaged equipment."
+        ]
+      },
+      {
+        "heading": "Equipment to inspect or replace",
+        "bullets": [
+          "Screen or disc filters matched to the system",
+          "Filter mesh specification and spare elements",
+          "Flush valves and end caps",
+          "Pressure gauges and regulators",
+          "Compatible dripline connectors and replacement laterals"
+        ]
+      },
+      {
+        "heading": "When to request technical help",
+        "paragraphs": [
+          "If the blockage returns quickly, pressure changes unexpectedly or a whole zone is uneven, share the water source, filter type, pressure readings and a photo of the affected components with an irrigation technician."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse irrigation filters",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Browse drip irrigation products",
+        "href": "/products/drip"
+      },
+      {
+        "label": "Read irrigation maintenance guide",
+        "href": "/irrigation-system-maintenance-kenya"
+      },
+      {
+        "label": "Request technical support",
+        "href": "/technical-support"
+      }
+    ],
+    "image": "/seed-products/filter.jpg"
+  },
+  {
+    "slug": "irrigation-pump-low-pressure-kenya",
+    "title": "Irrigation Pump Low Pressure: Causes & Checks | DripTech Kenya",
+    "description": "Understand low irrigation pump pressure: suction leaks, blocked filters, pipe losses, pump sizing and practical checks before replacing equipment.",
+    "h1": "Why an irrigation pump has low pressure",
+    "intro": "Low pressure can originate at the water source, suction pipe, filter, pump, delivery pipe or irrigation zone. Check the whole system rather than assuming the pump itself has failed.",
+    "sections": [
+      {
+        "heading": "Common causes to investigate",
+        "bullets": [
+          "Water level too low or source flow insufficient",
+          "Air entering the suction line or a suction connection leaking",
+          "Blocked strainer or filter restricting flow",
+          "Pipe diameter too small or long pipe runs causing friction losses",
+          "Too many zones or sprinklers operating together",
+          "Pump operating outside its intended flow and head range",
+          "Worn components or electrical supply issues requiring qualified service"
+        ]
+      },
+      {
+        "heading": "Check the system in order",
+        "paragraphs": [
+          "Compare pressure at the pump outlet with pressure at the irrigation zone where gauges are available. A large loss between those points can indicate pipe, filter or valve restrictions.",
+          "Confirm the water source can supply the pump continuously. Check valves, strainers and visible connections with the equipment isolated and safe to inspect. Electrical or internal pump repairs should be handled by a qualified technician."
+        ]
+      },
+      {
+        "heading": "Pressure is not the same as flow",
+        "paragraphs": [
+          "A pump may show pressure while delivering too little flow, or deliver flow without enough pressure for the selected sprinkler or drip layout. Use the pump curve and system demand together; do not select a pump from horsepower alone.",
+          "Account for elevation, required operating pressure and friction losses in pipes, filters and fittings."
+        ]
+      },
+      {
+        "heading": "Information needed for pump selection",
+        "bullets": [
+          "Water source and static water level",
+          "Required flow and number of irrigation zones",
+          "Elevation difference from source to field",
+          "Pipe diameter, material and approximate lengths",
+          "Required pressure at dripline or sprinkler",
+          "Power source and operating hours"
+        ]
+      },
+      {
+        "heading": "Avoid replacing a pump by guesswork",
+        "paragraphs": [
+          "A pump replacement should follow measurements and the manufacturer's specifications. Share the model, pressure readings, flow estimate and system layout for a more reliable diagnosis."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Browse irrigation pumps",
+        "href": "/products/pumps"
+      },
+      {
+        "label": "Read pump sizing guide",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Compare sprinkler systems",
+        "href": "/products/sprinklers"
+      },
+      {
+        "label": "Request technical support",
+        "href": "/technical-support"
+      }
+    ],
+    "image": "/seed-products/pump.jpg"
   }
 ]
