@@ -2864,6 +2864,20 @@
         ]
       },
       {
+        "heading": "Illustrative raingun quotation schedule",
+        "paragraphs": [
+          "Below is a readable sample schedule based on DripTech's equipment quotation format. Final quantities, compatibility, specifications and prices are confirmed against the approved irrigation design and supplier offer."
+        ],
+        "bullets": [
+          "Item 1 — Raingun sprinkler (select PY30 / PY40 / PY50 to suit design): Qty ___ | Unit: pcs | Unit price: KES ___ | Amount: KES ___",
+          "Item 2 — Adjustable tripod stand (select matching 1-inch / 1.5-inch / 2-inch inlet): Qty ___ | Unit: pcs | Unit price: KES ___ | Amount: KES ___",
+          "Item 3 — Nozzle / inlet adaptor / connection kit (confirm inclusions for selected model): Qty ___ | Unit: set | Unit price: KES ___ | Amount: KES ___",
+          "Item 4 — Layflat pipe (diameter and length as designed): Qty ___ | Unit: m | Unit price: KES ___ | Amount: KES ___",
+          "Item 5 — Layflat connectors and fittings (compatible sizes): Qty ___ | Unit: pcs | Unit price: KES ___ | Amount: KES ___",
+          "Subtotal: KES ___ | VAT (if applicable): KES ___ | GRAND TOTAL: KES ___"
+        ]
+      },
+      {
         "heading": "What you will see in a DripTech BOQ or quotation",
         "bullets": [
           "Quotation reference, date and validity period",
