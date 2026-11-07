@@ -1,14 +1,32 @@
 import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import SEOHead from "@/components/common/SEOHead";
 import KitPriceTable from "@/components/SEO/KitPriceTable";
+import { dataService } from "@/services/dataService";
 import pages from "@/data/publicSeoPages.json";
 import locationPages from "@/data/locationSeoPages.json";
 import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
 const allPages = [...pages, ...locationPages];
+
+const seoProductCategory = (slug: string): string | undefined => {
+  if (/sprinkler|raingun/.test(slug)) return "sprinklers";
+  if (/pump|borehole|solar/.test(slug)) return "pumps";
+  if (/filter|filtration/.test(slug)) return "filtration";
+  if (/pipe|fitting/.test(slug)) return "pipes";
+  if (/fertigation/.test(slug)) return "fertigation";
+  if (/valve|control/.test(slug)) return "controls";
+  if (/drip|greenhouse|irrigation|boq|installation|maintenance|consultation|design/.test(slug)) return "drip";
+  return undefined;
+};
+
+const firstCatalogueImage = (product: any): string | undefined => {
+  const images = Array.isArray(product?.images) ? product.images : [];
+  return images.find((item: unknown) => typeof item === "string" && item.trim());
+};
 
 type SeoPage = ((typeof pages)[number] | (typeof locationPages)[number]) & {
   sources?: Array<{ label: string; url: string }>;
@@ -23,6 +41,23 @@ const SEOContentPage = () => {
   const location = useLocation();
   const slug = location.pathname.replace(/^\/+|\/+$/g, "");
   const page = allPages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
+  const [catalogueImage, setCatalogueImage] = useState<string>();
+
+  useEffect(() => {
+    let active = true;
+    setCatalogueImage(undefined);
+    const category = seoProductCategory(slug);
+    if (page && category) {
+      dataService.getProducts({ category, inStock: true, limit: 30, page: 1 })
+        .then((result: any) => {
+          const products = Array.isArray(result) ? result : result?.products ?? result?.data ?? [];
+          const image = products.map(firstCatalogueImage).find(Boolean);
+          if (active && image) setCatalogueImage(image);
+        })
+        .catch(() => undefined);
+    }
+    return () => { active = false; };
+  }, [slug, page]);
 
   if (!page) {
     return (
@@ -57,7 +92,7 @@ const SEOContentPage = () => {
         title={page.title}
         description={page.description}
         url={pageUrl}
-        image={page.image ? `${SITE_COMPANY.url}${page.image}` : undefined}
+        image={catalogueImage || (page.image ? `${SITE_COMPANY.url}${page.image}` : undefined)}
         schema={[
           buildLocalBusinessSchema(),
           breadcrumbSchema,
@@ -80,10 +115,10 @@ const SEOContentPage = () => {
             <p className="dt-section-label mb-3">DripTech Kenya</p>
             <h1 className="dt-section-title max-w-4xl">{page.h1}</h1>
             <p className="dt-section-subtitle mt-5 max-w-3xl">{page.intro}</p>
-            {page.image && (
+            {(catalogueImage || page.image) && (
               <figure className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                 <img
-                  src={page.image}
+                  src={catalogueImage || page.image}
                   alt={`${page.h1} — irrigation equipment and farm water delivery`}
                   width="1200"
                   height="675"
@@ -93,7 +128,7 @@ const SEOContentPage = () => {
                   className="aspect-video w-full object-cover"
                 />
                 <figcaption className="px-4 py-3 text-sm text-muted-foreground">
-                  Irrigation equipment and field setup relevant to this guide. Confirm crop-specific layout and specifications for your farm.
+                  DripTech catalogue equipment relevant to this guide. Confirm crop-specific layout and specifications for your farm.
                 </figcaption>
               </figure>
             )}
