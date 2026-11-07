@@ -3199,5 +3199,102 @@
         "href": "/contact"
       }
     ]
-  }
+  },
+  {
+    "slug": "irrigation-commissioning-checklist-kenya",
+    "title": "Irrigation Commissioning Checklist Kenya | DripTech Eco-Flow",
+    "description": "A practical irrigation commissioning checklist for Kenya: installation checks, flushing, pressure and flow verification, zone testing, controls and operator handover.",
+    "h1": "Irrigation installation and commissioning checklist",
+    "intro": "Commissioning verifies that an installed irrigation system follows its approved design and operates as intended before routine watering begins. Use project drawings, equipment manuals and agreed acceptance criteria as the reference.",
+    "sections": [
+      {
+        "heading": "1. Verify installation against the design",
+        "bullets": [
+          "Confirm pipe routes, sizes, zone boundaries and equipment locations against the approved layout",
+          "Check pump, filter, valves, fittings and control equipment are installed as specified",
+          "Confirm supports, anchoring, protection and access to isolation and flushing points",
+          "Verify electrical connections and protection through a qualified person where applicable",
+          "Record approved changes and outstanding items before testing"
+        ]
+      },
+      {
+        "heading": "2. Prepare the system for testing",
+        "bullets": [
+          "Confirm water availability and pump operating limits",
+          "Inspect filters and clean them according to manufacturer instructions",
+          "Flush pipe sections in a controlled sequence before connecting sensitive emitters",
+          "Keep debris away from emitters and sprinkler nozzles during flushing",
+          "Check joints, end closures and valves for leaks or damage"
+        ]
+      },
+      {
+        "heading": "3. Test pressure, flow and each irrigation zone",
+        "paragraphs": [
+          "Operate zones as specified by the design. Measure pressure and flow at designated points and compare readings with design values and equipment specifications. Never exceed component pressure ratings."
+        ],
+        "bullets": [
+          "Record pump operating observations and available pressure/flow readings",
+          "Check zone valves and control sequences",
+          "Inspect dripline discharge or sprinkler operation across the zone",
+          "Look for leaks, blocked outlets, air problems and uneven operation",
+          "Confirm filters, pressure regulators and protection devices function as intended",
+          "Correct defects and retest affected zones"
+        ]
+      },
+      {
+        "heading": "4. Controls, operation and safety",
+        "bullets": [
+          "Verify controller schedules, sensors and automatic/manual modes where fitted",
+          "Confirm isolation procedures and safe shutdown arrangements",
+          "Label zones, valves and key equipment clearly",
+          "Explain startup, shutdown, filter cleaning and flushing to the operator"
+        ]
+      },
+      {
+        "heading": "5. Handover and commissioning record",
+        "bullets": [
+          "Record date, project/site, responsible parties and zones tested",
+          "Document pressure/flow readings and test conditions",
+          "List defects, corrective actions and retest results",
+          "Provide approved drawings, equipment manuals and maintenance guidance",
+          "Agree outstanding works and acceptance sign-off with the project team"
+        ]
+      },
+      {
+        "heading": "Commissioning checklist template",
+        "paragraphs": [
+          "Use a record with columns for Check, Observation/Reading, Pass/Fail, Corrective Action and Sign-off. Include installation verification, flushing, filter inspection, pressure and flow readings, zone operation, controls, leaks and operator handover."
+        ]
+      },
+      {
+        "heading": "Need irrigation commissioning support in Kenya?",
+        "paragraphs": [
+          "DripTech Eco-Flow can discuss installation checks, system testing and operator handover based on the project design and agreed scope. Share your location, irrigation type, water source and project stage so the required support can be assessed."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Irrigation system installation in Kenya",
+        "href": "/irrigation-installation-kenya"
+      },
+      {
+        "label": "Irrigation system startup checklist",
+        "href": "/irrigation-system-startup-checklist-kenya"
+      },
+      {
+        "label": "Irrigation maintenance and repair",
+        "href": "/irrigation-maintenance-repair-kenya"
+      },
+      {
+        "label": "Irrigation design consultation",
+        "href": "/irrigation-design-consultation-kenya"
+      },
+      {
+        "label": "Contact DripTech Eco-Flow",
+        "href": "/contact"
+      }
+    ],
+    "image": "/engineering/drip-irrigation-layout.svg"
+  },
 ]
