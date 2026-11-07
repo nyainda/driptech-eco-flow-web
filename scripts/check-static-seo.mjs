@@ -229,8 +229,11 @@ for (const page of seoManifest) {
 // The homepage copy has a separate build-time SEO shell. Guard against the
 // previous regression where the fallback duplicated that introduction.
 const homepageHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
-if (homepageHtml.includes("html.js [data-seo-shell]")) {
-  failures.push("/: static SEO content must not be hidden when JavaScript is enabled");
+if (/\[data-seo-shell\][^{}]*\{[^}]*(display\s*:\s*none|visibility\s*:\s*hidden|content-visibility\s*:\s*hidden)/i.test(homepageHtml)) {
+  failures.push("/: static SEO content must not use display:none or visibility:hidden (off-screen clipping is allowed)");
+}
+if (!/html\.js\s+#root\s*>\s*\[data-seo-shell\]/.test(homepageHtml)) {
+  failures.push("/: missing pre-mount rule that keeps the SEO shell from flashing for JavaScript visitors");
 }
 if (!homepageHtml.includes("SEO HTML is generated per route at build time")) {
   failures.push("/: missing visible-static-HTML architecture marker in document head");

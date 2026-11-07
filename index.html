@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="google-site-verification" content="7kfckABSquTNISxd-uCE4q3AggSMDxyCPodZhcgLX6I" />
-  <!-- SEO HTML is generated per route at build time. Keep it visible and readable
-       in the first response; React enhances the same route after hydration. -->
+  <!-- SEO HTML is generated per route at build time and is present in the first
+       response for crawlers and visitors without JavaScript. React always mounts
+       over it, so it is kept out of the painted page for JavaScript visitors to avoid
+       a flash of unstyled HTML. It is clipped off-screen, never display:none, so the
+       text stays in the DOM until React replaces it. -->
   <style>
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0; }
+    html.js #root > [data-seo-shell] { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); clip-path:inset(50%); white-space:nowrap; border:0; }
   </style>
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />

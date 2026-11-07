@@ -179,6 +179,9 @@ const App = () => {
                   <Route path="/:seoSlug" element={<SEOContentPage />} />
 
                   {/* Catch-all route for 404 */}
+                  {/* Any authored SEO guide not listed above. SEOContentPage looks the slug up in the guide data and renders the real 404 when there is no match. */}
+                  <Route path="/:slug" element={<SEOContentPage />} />
+
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

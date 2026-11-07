@@ -6,8 +6,12 @@ const root = process.cwd();
 const dist = path.join(root, "dist");
 const siteUrl = "https://www.dripstech.co.ke";
 const baseHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
-if (/html\\.js\\s+\\[data-seo-shell\\]/i.test(baseHtml)) {
-  throw new Error("Static SEO content must not be hidden for JavaScript visitors. Remove the SEO-shell display:none rule.");
+// The static SEO document may be kept off-screen until React mounts (no flash of
+// unstyled HTML), but it must stay in the DOM and must never be removed from the
+// page's content with display:none or visibility:hidden.
+const SEO_SHELL_HIDING_PATTERN = /\[data-seo-shell\][^{}]*\{[^}]*(display\s*:\s*none|visibility\s*:\s*hidden|content-visibility\s*:\s*hidden)/i;
+if (SEO_SHELL_HIDING_PATTERN.test(baseHtml)) {
+  throw new Error("Static SEO content must not be hidden with display:none or visibility:hidden. Use off-screen clipping instead.");
 }
 const landingPages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/publicSeoPages.json"), "utf8"),
@@ -20,13 +24,6 @@ const irrigationPricePages = JSON.parse(
 );
 const irrigationCropGapPages = JSON.parse(
   fs.readFileSync(path.join(root, "src/data/irrigationCropGapPages.json"), "utf8"),
-);
-
-// Authored SEO guides are complete static documents, not React placeholders.
-const staticSeoRoutes = new Set(
-  [...landingPages, ...locationPages, ...irrigationPricePages, ...irrigationCropGapPages]
-    .map((page) => page.route || (page.slug ? `/${page.slug}` : null))
-    .filter((route) => route && route !== "/"),
 );
 
 const categoryPages = [
@@ -1226,10 +1223,9 @@ const renderPage = (page) => {
   html = replaceMeta(html, "twitter:description", page.description);
   html = replaceMeta(html, "twitter:url", canonical);
   html = replaceMeta(html, "twitter:image", imageUrl);
-  const staticSeoPage = staticSeoRoutes.has(page.route);
   html = html.replace(
     '<div id="root"></div>',
-    `<div id="root"${staticSeoPage ? ' data-seo-static-page="true"' : ""}>${pageBody(page)}</div>`,
+    `<div id="root">${pageBody(page)}</div>`,
   );
 
   const crumbs = getBreadcrumbs(page);

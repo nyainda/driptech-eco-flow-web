@@ -8,9 +8,14 @@ import KitPriceTable from "@/components/SEO/KitPriceTable";
 import { dataService } from "@/services/dataService";
 import pages from "@/data/publicSeoPages.json";
 import locationPages from "@/data/locationSeoPages.json";
+import pricePages from "@/data/irrigationPriceSeoPages.json";
+import cropPages from "@/data/irrigationCropGapPages.json";
+import NotFound from "@/pages/NotFound";
 import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
-const allPages = [...pages, ...locationPages];
+// Every authored guide the build prerenders must also resolve here, otherwise a
+// refresh would mount React and show "not found" for pages the static HTML served.
+const allPages = [...pages, ...locationPages, ...pricePages, ...cropPages] as unknown as SeoPage[];
 
 const seoProductCategory = (slug: string): string | undefined => {
   if (/sprinkler|raingun/.test(slug)) return "sprinklers";
@@ -28,8 +33,19 @@ const firstCatalogueImage = (product: any): string | undefined => {
   return images.find((item: unknown) => typeof item === "string" && item.trim());
 };
 
-type SeoPage = ((typeof pages)[number] | (typeof locationPages)[number]) & {
+// The four guide data files share this shape; optional fields differ per file.
+type SeoPage = {
+  slug: string;
+  title: string;
+  description: string;
+  h1: string;
+  intro: string;
+  sections: Array<{ heading: string; paragraphs?: string[]; bullets?: string[] }>;
+  links: Array<{ label: string; href: string }>;
+  image?: string;
+  schema?: unknown;
   sources?: Array<{ label: string; url: string }>;
+  [key: string]: any;
 };
 
 const SEOContentPage = () => {
@@ -40,7 +56,7 @@ const SEOContentPage = () => {
   // regardless of the real slug in the URL. Derive it from the path instead.
   const location = useLocation();
   const slug = location.pathname.replace(/^\/+|\/+$/g, "");
-  const page = allPages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
+  const page = allPages.find((candidate) => candidate.slug === slug);
   const [catalogueImage, setCatalogueImage] = useState<string>();
 
   useEffect(() => {
@@ -59,22 +75,7 @@ const SEOContentPage = () => {
     return () => { active = false; };
   }, [slug, page]);
 
-  if (!page) {
-    return (
-      <div className="min-h-screen bg-background text-foreground">
-        <Header />
-        <main className="dt-section">
-          <div className="dt-container text-center">
-            <h1 className="dt-section-title">Page not found</h1>
-            <Link to="/" className="dt-btn-primary mt-6 inline-flex">
-              Return home
-            </Link>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  if (!page) return <NotFound />;
 
   const pageUrl = `${SITE_COMPANY.url}/${page.slug}`;
   const breadcrumbSchema = {
