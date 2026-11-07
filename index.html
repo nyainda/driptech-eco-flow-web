@@ -10,6 +10,34 @@
   <style>
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0; }
   </style>
+  <style>
+    /* Static SEO documents must look like first-class site pages before React. */
+    #root[data-seo-static-page] { min-height: 100vh; }
+    #root[data-seo-static-page] > main[data-seo-shell] {
+      box-sizing: border-box; width: min(100% - 2rem,  min(72rem, 100% - 2rem));
+      margin: 0 auto; padding: clamp(1.5rem, 4vw, 3.5rem) 0 4rem;
+      color: var(--foreground, #17231d); font: 400 1rem/1.75 system-ui, sans-serif;
+    }
+    #root[data-seo-static-page] [data-seo-shell] h1 {
+      max-width: 52rem; margin: 1.25rem 0 1.5rem; font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1.12; letter-spacing: -.035em; font-weight: 750;
+    }
+    #root[data-seo-static-page] [data-seo-shell] h2 {
+      margin: 2.25rem 0 .75rem; font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+      line-height: 1.3; font-weight: 700; letter-spacing: -.02em;
+    }
+    #root[data-seo-static-page] [data-seo-shell] p { max-width: 72ch; margin: .75rem 0 1rem; }
+    #root[data-seo-static-page] [data-seo-shell] ul,
+    #root[data-seo-static-page] [data-seo-shell] ol { padding-left: 1.4rem; margin: .75rem 0 1.25rem; }
+    #root[data-seo-static-page] [data-seo-shell] li { padding-left: .25rem; margin: .4rem 0; }
+    #root[data-seo-static-page] [data-seo-shell] a { color: var(--primary, #236b4a); text-decoration: underline; text-underline-offset: .2em; }
+    #root[data-seo-static-page] [data-seo-shell] nav { margin-top: 2.5rem; padding: 1.25rem 1.5rem; border: 1px solid #d9e4dc; border-radius: 1rem; background: #f6faf7; }
+    #root[data-seo-static-page] [data-seo-shell] nav ul { margin-bottom: 0; }
+    @media (prefers-color-scheme: dark) {
+      #root[data-seo-static-page] [data-seo-shell] { color: #e8eee9; }
+      #root[data-seo-static-page] [data-seo-shell] nav { background: #17231d; border-color: #34483b; }
+    }
+  </style>
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
