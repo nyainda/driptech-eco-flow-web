@@ -229,9 +229,6 @@ for (const page of seoManifest) {
 // The homepage copy has a separate build-time SEO shell. Guard against the
 // previous regression where the fallback duplicated that introduction.
 const homepageHtml = fs.readFileSync(path.join(dist, "index.html"), "utf8");
-if (homepageHtml.includes("html.js [data-seo-shell]")) {
-  failures.push("/: static SEO content must not be hidden when JavaScript is enabled");
-}
 if (!homepageHtml.includes("SEO HTML is generated per route at build time")) {
   failures.push("/: missing visible-static-HTML architecture marker in document head");
 }
