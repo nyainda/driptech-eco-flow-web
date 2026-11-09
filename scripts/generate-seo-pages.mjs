@@ -1184,7 +1184,14 @@ const pageBody = (page) => {
       const bullets = Array.isArray(section.bullets) && section.bullets.length
         ? `<ul>${section.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>`
         : "";
-      return `<section><h2>${escapeHtml(section.heading)}</h2>${paragraphs}${bullets}</section>`;
+      const table = section.table && Array.isArray(section.table.headers) && Array.isArray(section.table.rows) && section.table.rows.length
+        ? `<table>${section.table.caption ? `<caption>${escapeHtml(section.table.caption)}</caption>` : ""}<thead><tr>${section.table.headers
+            .map((header) => `<th scope="col">${escapeHtml(header)}</th>`)
+            .join("")}</tr></thead><tbody>${section.table.rows
+            .map((row) => `<tr>${row.map((cell, i) => (i === 0 ? `<th scope="row">${escapeHtml(cell)}</th>` : `<td>${escapeHtml(cell)}</td>`)).join("")}</tr>`)
+            .join("")}</tbody></table>`
+        : "";
+      return `<section><h2>${escapeHtml(section.heading)}</h2>${paragraphs}${table}${bullets}</section>`;
     })
     .join("");
 
