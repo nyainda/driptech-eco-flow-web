@@ -12,6 +12,13 @@
   </style>
   <style>
     /* Static SEO documents must look like first-class site pages before React. */
+    /* Prerendered SEO markup is for crawlers and no-JS clients. For normal visitors the
+       React app replaces it, so keep it invisible while the bundle loads (no raw-HTML flash on
+       refresh). It stops matching as soon as React renders. The 6s animation is a safety net
+       that reveals the content if the JS bundle never loads. Static guide pages (marked
+       data-seo-static-page) are intentionally shown as-is. */
+    html.js #root:not([data-seo-static-page]) > main[data-seo-shell] { visibility: hidden; animation: seo-shell-reveal 0s 6s forwards; }
+    @keyframes seo-shell-reveal { to { visibility: visible; } }
     #root[data-seo-static-page] { min-height: 100vh; }
     #root[data-seo-static-page] > main[data-seo-shell] {
       box-sizing: border-box; width: min(100% - 2rem,  min(72rem, 100% - 2rem));
