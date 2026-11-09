@@ -1193,6 +1193,18 @@ const pageBody = (page) => {
     : "";
 
   const product = page.productDetails;
+  // Static guide pages are shown without React, so the hero photo must be in the
+  // HTML itself (it was only rendered client-side before, leaving pages image-less).
+  const FALLBACK_HERO = "/category-images/drip-irrigation-dripline-kenya.jpg";
+  const heroSource = !product && !articleImageUrl && page.route !== "/admin"
+    ? (page.image || FALLBACK_HERO)
+    : null;
+  const heroUrl = heroSource
+    ? (page.imageIsAbsolute ? heroSource : toAbsoluteSiteAssetUrl(heroSource, siteUrl))
+    : null;
+  const heroImage = heroUrl
+    ? `<figure data-seo-hero="true"><img src="${escapeHtml(heroUrl)}" alt="${escapeHtml(`${page.heading || page.h1 || "Irrigation"} - irrigation equipment and farm setup in Kenya`)}" width="1200" height="675" fetchpriority="high" decoding="async" /></figure>`
+    : "";
   const productImage = product?.images?.[0]
     ? `<figure data-seo-product-image="true"><img src="${escapeHtml(product.images[0])}" alt="${escapeHtml(product.name)}" width="900" height="900" fetchpriority="high" decoding="async" /><figcaption>${escapeHtml(product.name)} — irrigation equipment from DripTech Eco-Flow, Kenya.</figcaption></figure>`
     : "";
@@ -1256,6 +1268,7 @@ const pageBody = (page) => {
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       ${productImage}
       ${articleImage}
+      ${heroImage}
       <p>${escapeHtml(page.intro)}</p>
       ${articleDate}
       ${articleBody}
