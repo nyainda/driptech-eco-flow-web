@@ -1064,6 +1064,54 @@ for (const page of allPages) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// "Products in this guide": real catalogue items with their own photos, so guides
+// show products the reader can actually buy. Only products with a real photo
+// (not a shared category placeholder) are used, and the selection rotates per
+// guide so pages do not all show the same four items.
+// ---------------------------------------------------------------------------
+const guideCategoryRules = [
+  [/sprinkler|rain-?gun|rain-hose|low-irrigation-pressure/, ["sprinklers"]],
+  [/solar/, ["pumps", "solar"]],
+  [/borehole/, ["pumps", "borehole"]],
+  [/pump/, ["pumps"]],
+  [/filter|filtration|clog|blocked/, ["filtration", "filters-strainers", "drip"]],
+  [/pipe|hdpe|fitting|leak/, ["pipes"]],
+  [/fertigation/, ["fertigation", "filtration"]],
+  [/greenhouse/, ["greenhouse", "drip"]],
+  [/valve|control|zone/, ["valves", "controls", "controllers"]],
+  [/tank|storage/, ["storage", "pumps"]],
+];
+const isPlaceholderImage = (url = "") => /\/(category-images|seed-products)\//.test(url);
+const hashOf = (value) => [...value].reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) >>> 0, 7);
+const photoProducts = productPages.filter(
+  (product) => !product.thin && product.productDetails.images.some((url) => !isPlaceholderImage(url)),
+);
+if (photoProducts.length) {
+  for (const page of allPages) {
+    if (page.productDetails || !staticSeoRoutes.has(page.route) || page.thin) continue;
+    const rule = guideCategoryRules.find(([pattern]) => pattern.test(page.route));
+    const wanted = rule ? rule[1] : ["drip", "filtration"];
+    let pool = photoProducts.filter((product) => wanted.includes(product.route.split("/")[2]));
+    if (pool.length < 4) pool = [...pool, ...photoProducts.filter((product) => !pool.includes(product))];
+    pool = [...pool].sort(
+      (a, b) =>
+        Number(b.productDetails.inStock) - Number(a.productDetails.inStock) ||
+        Number(Boolean(b.productDetails.price)) - Number(Boolean(a.productDetails.price)) ||
+        a.route.localeCompare(b.route),
+    );
+    const start = pool.length ? hashOf(page.route) % pool.length : 0;
+    page.guideProducts = Array.from({ length: Math.min(4, pool.length) }, (_, i) => pool[(start + i) % pool.length]).map(
+      (product) => ({
+        name: product.heading,
+        href: product.route,
+        image: product.productDetails.images.find((url) => !isPlaceholderImage(url)),
+        price: product.productDetails.price,
+      }),
+    );
+  }
+}
+
 // Catch duplicate static routes before they silently overwrite one another.
 const seenRoutes = new Set();
 for (const page of allPages) {
@@ -1247,6 +1295,14 @@ const pageBody = (page) => {
         : "";
     })
     .join("")}</nav>`;
+  const guideProductsNav = Array.isArray(page.guideProducts) && page.guideProducts.length
+    ? `<section aria-label="Products for this guide" data-seo-guide-products="true"><h2>Products you can use for this</h2><ul>${page.guideProducts
+        .map(
+          (item) =>
+            `<li><a href="${escapeHtml(item.href)}"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" width="400" height="300" loading="lazy" decoding="async" /><span>${escapeHtml(item.name)}</span>${item.price ? `<small>KSh ${escapeHtml(item.price.toLocaleString("en-KE"))}</small>` : "<small>Ask for a quote</small>"}</a></li>`,
+        )
+        .join("")}</ul><p><a href="/products">Browse all irrigation products</a> or <a href="/contact">ask DripTech to size a system for your farm</a>.</p></section>`
+    : "";
   const faqItems = (Array.isArray(page.faqs) ? page.faqs : []).filter((faq) => faq?.q && faq?.a);
   const faqSection = faqItems.length
     ? `<section aria-label="Frequently asked questions"><h2>Frequently asked questions</h2>${faqItems
@@ -1281,6 +1337,7 @@ const pageBody = (page) => {
       ${KIT_TABLE_ROUTES.has(page.route) ? renderKitTable() : ""}
       ${sections}
       ${faqSection}
+      ${guideProductsNav}
       ${catalogNav}
       ${relatedProductsNav}
       ${sourceNav}
