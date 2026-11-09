@@ -1,6 +1,8 @@
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { serializeJsonLd, toAbsoluteSiteAssetUrl } from "./seo-url-helpers.mjs";
+import { buildOrganizationSchema } from "../src/config/company.ts";
 
 const root = process.cwd();
 const dist = path.join(root, "dist");
@@ -49,7 +51,7 @@ const categoryPages = [
   },
   {
     route: "/products/sprinklers",
-    title: "Farm Sprinklers & Rain Guns in Kenya | DripTech",
+    title: "Sprinkler & Rain Gun Products in Kenya | DripTech",
     description:
       "Compare farm sprinklers, rain guns and accessories in Kenya. Get help with coverage, operating pressure, spacing, pumps and installation from DripTech.",
     heading: "Farm sprinklers and rain guns in Kenya",
@@ -966,6 +968,58 @@ for (const route of sitemapRoutes) {
 
 allPages.push(...dynamicPages);
 
+// ---------------------------------------------------------------------------
+// Topic clusters: every guide links to the next few guides in its cluster so no
+// page is an orphan and link equity flows between related pages (crawlable HTML).
+// ---------------------------------------------------------------------------
+const routesOf = (list) => list.map((page) => page.route || `/${page.slug}`);
+const locationRoutes = routesOf(locationPages);
+const priceRoutes = new Set([
+  ...routesOf(irrigationPricePages),
+  "/irrigation-system-cost-kenya",
+  "/drip-irrigation-kit-price-kenya",
+  "/one-acre-drip-irrigation-system-kenya",
+  "/irrigation-boq-kenya",
+  "/irrigation-bill-of-quantities-kenya",
+]);
+const troubleshootRegex = /troubleshoot|blocked|low-|leaks|clogging|problems|maintenance|startup|commissioning/;
+const clusterOf = (route) => {
+  if (locationRoutes.includes(route)) return "location";
+  if (priceRoutes.has(route)) return "price";
+  if (/^\/drip-irrigation-for-|\/[a-z-]+-irrigation-kenya$/.test(route) && routesOf(irrigationCropGapPages).concat(
+    routesOf(landingPages).filter((r) => r.startsWith("/drip-irrigation-for-")),
+  ).includes(route)) return "crop";
+  if (troubleshootRegex.test(route)) return "troubleshoot";
+  if (staticSeoRoutes.has(route)) return "planning";
+  return null;
+};
+const clusterMembers = new Map();
+for (const page of allPages) {
+  const cluster = clusterOf(page.route);
+  if (!cluster || page.thin) continue;
+  clusterMembers.set(cluster, [...(clusterMembers.get(cluster) || []), page]);
+}
+const CLUSTER_HEADINGS = {
+  crop: "More crop irrigation guides",
+  location: "Irrigation by location in Kenya",
+  price: "More irrigation pricing guides",
+  troubleshoot: "More troubleshooting and maintenance guides",
+  planning: "More irrigation planning guides",
+};
+for (const [cluster, members] of clusterMembers) {
+  members.forEach((page, index) => {
+    const existing = new Set((page.links || []).map((link) => link.href));
+    const links = [];
+    for (let step = 1; step < members.length && links.length < 5; step += 1) {
+      const target = members[(index + step) % members.length];
+      if (target.route === page.route || existing.has(target.route)) continue;
+      links.push({ label: target.heading || target.h1 || target.title, href: target.route });
+    }
+    page.clusterLinks = links;
+    page.clusterHeading = CLUSTER_HEADINGS[cluster];
+  });
+}
+
 // Connect the existing catalogue URLs with crawlable HTML links. Category pages
 // list a manageable set of real products, and product pages link to related
 // products from the same category instead of relying on JavaScript navigation.
@@ -1007,6 +1061,54 @@ for (const page of allPages) {
       label: product.heading,
       href: product.route,
     }));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// "Products in this guide": real catalogue items with their own photos, so guides
+// show products the reader can actually buy. Only products with a real photo
+// (not a shared category placeholder) are used, and the selection rotates per
+// guide so pages do not all show the same four items.
+// ---------------------------------------------------------------------------
+const guideCategoryRules = [
+  [/sprinkler|rain-?gun|rain-hose|low-irrigation-pressure/, ["sprinklers"]],
+  [/solar/, ["pumps", "solar"]],
+  [/borehole/, ["pumps", "borehole"]],
+  [/pump/, ["pumps"]],
+  [/filter|filtration|clog|blocked/, ["filtration", "filters-strainers", "drip"]],
+  [/pipe|hdpe|fitting|leak/, ["pipes"]],
+  [/fertigation/, ["fertigation", "filtration"]],
+  [/greenhouse/, ["greenhouse", "drip"]],
+  [/valve|control|zone/, ["valves", "controls", "controllers"]],
+  [/tank|storage/, ["storage", "pumps"]],
+];
+const isPlaceholderImage = (url = "") => /\/(category-images|seed-products)\//.test(url);
+const hashOf = (value) => [...value].reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) >>> 0, 7);
+const photoProducts = productPages.filter(
+  (product) => !product.thin && product.productDetails.images.some((url) => !isPlaceholderImage(url)),
+);
+if (photoProducts.length) {
+  for (const page of allPages) {
+    if (page.productDetails || !staticSeoRoutes.has(page.route) || page.thin) continue;
+    const rule = guideCategoryRules.find(([pattern]) => pattern.test(page.route));
+    const wanted = rule ? rule[1] : ["drip", "filtration"];
+    let pool = photoProducts.filter((product) => wanted.includes(product.route.split("/")[2]));
+    if (pool.length < 4) pool = [...pool, ...photoProducts.filter((product) => !pool.includes(product))];
+    pool = [...pool].sort(
+      (a, b) =>
+        Number(b.productDetails.inStock) - Number(a.productDetails.inStock) ||
+        Number(Boolean(b.productDetails.price)) - Number(Boolean(a.productDetails.price)) ||
+        a.route.localeCompare(b.route),
+    );
+    const start = pool.length ? hashOf(page.route) % pool.length : 0;
+    page.guideProducts = Array.from({ length: Math.min(4, pool.length) }, (_, i) => pool[(start + i) % pool.length]).map(
+      (product) => ({
+        name: product.heading,
+        href: product.route,
+        image: product.productDetails.images.find((url) => !isPlaceholderImage(url)),
+        price: product.productDetails.price,
+      }),
+    );
   }
 }
 
@@ -1139,6 +1241,18 @@ const pageBody = (page) => {
     : "";
 
   const product = page.productDetails;
+  // Static guide pages are shown without React, so the hero photo must be in the
+  // HTML itself (it was only rendered client-side before, leaving pages image-less).
+  const FALLBACK_HERO = "/category-images/drip-irrigation-dripline-kenya.jpg";
+  const heroSource = !product && !articleImageUrl && page.route !== "/admin"
+    ? (page.image || FALLBACK_HERO)
+    : null;
+  const heroUrl = heroSource
+    ? (page.imageIsAbsolute ? heroSource : toAbsoluteSiteAssetUrl(heroSource, siteUrl))
+    : null;
+  const heroImage = heroUrl
+    ? `<figure data-seo-hero="true"><img src="${escapeHtml(heroUrl)}" alt="${escapeHtml(`${page.heading || page.h1 || "Irrigation"} - irrigation equipment and farm setup in Kenya`)}" width="1200" height="675" fetchpriority="high" decoding="async" /></figure>`
+    : "";
   const productImage = product?.images?.[0]
     ? `<figure data-seo-product-image="true"><img src="${escapeHtml(product.images[0])}" alt="${escapeHtml(product.name)}" width="900" height="900" fetchpriority="high" decoding="async" /><figcaption>${escapeHtml(product.name)} — irrigation equipment from DripTech Eco-Flow, Kenya.</figcaption></figure>`
     : "";
@@ -1162,6 +1276,40 @@ const pageBody = (page) => {
     ? `<p><a href="/contact">Ask DripTech about this product</a> for confirmation of current price, specifications, stock and delivery options.</p>`
     : "";
 
+  const clusterNav = Array.isArray(page.clusterLinks) && page.clusterLinks.length
+    ? `<nav aria-label="${escapeHtml(page.clusterHeading)}"><h2>${escapeHtml(page.clusterHeading)}</h2><ul>${page.clusterLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
+  const siteNavGroups = [
+    ["Products", ["/products", "/products/drip", "/products/sprinklers", "/products/pumps", "/products/pipes", "/products/filtration", "/products/filters-strainers", "/products/valves", "/products/controls", "/products/controllers", "/products/fertigation", "/products/solar", "/products/storage", "/products/borehole", "/products/greenhouse", "/irrigation-kits"]],
+    ["Company and resources", ["/about", "/contact", "/projects", "/case-studies", "/success-stories", "/blog", "/news", "/videos", "/installation-guides", "/certifications", "/team", "/careers"]],
+    ["Legal", ["/privacy", "/terms", "/cookies"]],
+  ];
+  const routeLabels = new Map(allPages.map((candidate) => [candidate.route, candidate.nav || candidate.heading || candidate.h1 || candidate.title]));
+  const siteNav = `<nav aria-label="DripTech site map">${siteNavGroups
+    .map(([group, routes]) => {
+      const items = routes.filter((route) => routeLabels.has(route) && route !== page.route);
+      return items.length
+        ? `<h2>${escapeHtml(group)}</h2><ul>${items.map((route) => `<li><a href="${route}">${escapeHtml(String(routeLabels.get(route)).replace(/\s*\|.*$/, ""))}</a></li>`).join("")}</ul>`
+        : "";
+    })
+    .join("")}</nav>`;
+  const guideProductsNav = Array.isArray(page.guideProducts) && page.guideProducts.length
+    ? `<section aria-label="Products for this guide" data-seo-guide-products="true"><h2>Products you can use for this</h2><ul>${page.guideProducts
+        .map(
+          (item) =>
+            `<li><a href="${escapeHtml(item.href)}"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" width="400" height="300" loading="lazy" decoding="async" /><span>${escapeHtml(item.name)}</span>${item.price ? `<small>KSh ${escapeHtml(item.price.toLocaleString("en-KE"))}</small>` : "<small>Ask for a quote</small>"}</a></li>`,
+        )
+        .join("")}</ul><p><a href="/products">Browse all irrigation products</a> or <a href="/contact">ask DripTech to size a system for your farm</a>.</p></section>`
+    : "";
+  const faqItems = (Array.isArray(page.faqs) ? page.faqs : []).filter((faq) => faq?.q && faq?.a);
+  const faqSection = faqItems.length
+    ? `<section aria-label="Frequently asked questions"><h2>Frequently asked questions</h2>${faqItems
+        .map((faq) => `<h3>${escapeHtml(faq.q)}</h3><p>${escapeHtml(faq.a)}</p>`)
+        .join("")}</section>`
+    : "";
+
   return `
     <main data-seo-shell="true"${product ? ' data-seo-product="true"' : ""}>
       ${(() => {
@@ -1176,6 +1324,7 @@ const pageBody = (page) => {
       <h1>${escapeHtml(page.heading || page.h1)}</h1>
       ${productImage}
       ${articleImage}
+      ${heroImage}
       <p>${escapeHtml(page.intro)}</p>
       ${articleDate}
       ${articleBody}
@@ -1187,14 +1336,34 @@ const pageBody = (page) => {
       ${productContact}
       ${KIT_TABLE_ROUTES.has(page.route) ? renderKitTable() : ""}
       ${sections}
+      ${faqSection}
+      ${guideProductsNav}
       ${catalogNav}
       ${relatedProductsNav}
       ${sourceNav}
       ${relatedNav}
+      ${clusterNav}
+      ${siteNav}
     </main>`;
 };
 
-const renderPage = (page) => {
+// Titles over ~60 characters are truncated in Google results. Shorten the brand
+// suffix first, then drop it, before giving up (the build still warns).
+const fitTitle = (title = "") => {
+  if (title.length <= 60) return title;
+  const withShortBrand = title.replace(/\s*\|\s*DripTech Eco[- ]?Flow$/i, " | DripTech");
+  if (withShortBrand.length <= 60) return withShortBrand;
+  const withoutBrand = withShortBrand.replace(/\s*\|\s*DripTech$/i, "");
+  return withoutBrand.length <= 60 ? withoutBrand : withShortBrand;
+};
+
+const toLastmod = (value) => {
+  const date = value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date.toISOString().slice(0, 10) : null;
+};
+
+const renderPage = (rawPage) => {
+  const page = { ...rawPage, title: fitTitle(rawPage.title) };
   const canonical = `${siteUrl}${page.route === "/" ? "/" : page.route}`;
   const imageUrl = page.imageIsAbsolute
     ? page.image
@@ -1285,6 +1454,44 @@ const renderPage = (page) => {
       })),
     });
   }
+  // Organization + WebSite once per page so WebPage/Article can reference them by @id
+  // even though most pages are served as static HTML without client-side schema.
+  extraSchemas.push(buildOrganizationSchema());
+  extraSchemas.push({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    url: siteUrl,
+    name: "DripTech Eco Flow",
+    publisher: { "@id": `${siteUrl}/#organization` },
+    inLanguage: "en-KE",
+  });
+  const faqItems = (Array.isArray(page.faqs) ? page.faqs : []).filter((faq) => faq?.q && faq?.a);
+  if (faqItems.length) {
+    extraSchemas.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqItems.map((faq) => ({
+        "@type": "Question",
+        name: faq.q,
+        acceptedAnswer: { "@type": "Answer", text: faq.a },
+      })),
+    });
+  }
+  if (!page.productDetails && page.route !== "/" && Array.isArray(page.sections) && page.sections.length) {
+    extraSchemas.push({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: (page.heading || page.title || "").slice(0, 110),
+      description: page.description,
+      mainEntityOfPage: canonical,
+      image: imageUrl,
+      dateModified: toLastmod(page.lastmod) || undefined,
+      author: { "@id": `${siteUrl}/#organization` },
+      publisher: { "@id": `${siteUrl}/#organization` },
+      inLanguage: "en-KE",
+    });
+  }
   const extraSchemaTags = extraSchemas
     .map((schema) => `<script type="application/ld+json">${serializeJsonLd(schema)}</script>`)
     .join("\n");
@@ -1305,6 +1512,29 @@ const renderPage = (page) => {
   )}`;
 };
 
+// <lastmod> only moves when a page's rendered content actually changes. The
+// manifest (committed) maps route -> content hash + date, so unchanged pages keep
+// a stable date and Google can trust the sitemap's freshness signal.
+const lastmodManifestPath = path.join(root, "scripts/seo-lastmod.json");
+const lastmodManifest = fs.existsSync(lastmodManifestPath)
+  ? JSON.parse(fs.readFileSync(lastmodManifestPath, "utf8"))
+  : {};
+const today = new Date().toISOString().slice(0, 10);
+const nextLastmodManifest = {};
+for (const page of allPages) {
+  if (page.lastmod || page.thin || page.productDetails) continue; // dynamic pages carry real dates
+  const hash = createHash("sha1")
+    .update(JSON.stringify([page.title, page.description, pageBody(page)]))
+    .digest("hex")
+    .slice(0, 12);
+  const previous = lastmodManifest[page.route];
+  nextLastmodManifest[page.route] = previous?.hash === hash ? previous : { hash, date: today };
+  page.lastmod = nextLastmodManifest[page.route].date;
+}
+if (!process.env.CI && !process.env.VERCEL) {
+  fs.writeFileSync(lastmodManifestPath, `${JSON.stringify(nextLastmodManifest, null, 2)}\n`);
+}
+
 for (const page of allPages) {
   const routeDirectory = page.route === "/" ? dist : path.join(dist, page.route);
   fs.mkdirSync(routeDirectory, { recursive: true });
@@ -1324,10 +1554,6 @@ for (const page of allPages) {
   if (page.thin) continue; // noindex pages must not be in the sitemap
   if (!sitemapPages.has(page.route)) sitemapPages.set(page.route, page);
 }
-const toLastmod = (value) => {
-  const date = value ? new Date(value) : null;
-  return date && !Number.isNaN(date.getTime()) ? date.toISOString().slice(0, 10) : null;
-};
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${[...sitemapPages.entries()]
@@ -1343,12 +1569,12 @@ ${[...sitemapPages.entries()]
 const TITLE_LIMIT = 60;
 const DESCRIPTION_LIMIT = 160;
 const longSnippets = allPages.filter(
-  (page) => !page.thin && ((page.title || "").length > TITLE_LIMIT || (page.description || "").length > DESCRIPTION_LIMIT),
+  (page) => !page.thin && (fitTitle(page.title || "").length > TITLE_LIMIT || (page.description || "").length > DESCRIPTION_LIMIT),
 );
 if (longSnippets.length) {
   console.warn(`WARNING: ${longSnippets.length} page(s) exceed ${TITLE_LIMIT}-char titles or ${DESCRIPTION_LIMIT}-char descriptions and may be truncated in search results:`);
   for (const page of longSnippets.slice(0, 20)) {
-    console.warn(`  ${page.route} (title ${(page.title || "").length}, description ${(page.description || "").length})`);
+    console.warn(`  ${page.route} (title ${fitTitle(page.title || "").length}, description ${(page.description || "").length})`);
   }
 }
 

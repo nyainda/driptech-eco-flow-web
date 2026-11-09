@@ -6,7 +6,7 @@
   "homepage": "https://driptech-eco-flow-web.vercel.app",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5000",
-    "build": "vite build && node scripts/generate-seo-pages.mjs && node scripts/check-static-seo.mjs && node --import tsx scripts/check-irrigation-content.mjs",
+    "build": "vite build && node --import tsx scripts/generate-seo-pages.mjs && node scripts/check-static-seo.mjs && node --import tsx scripts/check-irrigation-content.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0 --port 5000",
