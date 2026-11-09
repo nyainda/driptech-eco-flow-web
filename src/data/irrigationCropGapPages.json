@@ -14,6 +14,47 @@
         ]
       },
       {
+        "heading": "Planning figures at a glance",
+        "paragraphs": [
+          "These are common planning ranges, not a prescription. Variety, soil, climate, water quality and your agronomist's advice decide the final figures, so confirm them before ordering equipment."
+        ],
+        "table": {
+          "caption": "Garlic drip layout: typical planning ranges",
+          "headers": [
+            "Design item",
+            "Common planning range",
+            "What changes it"
+          ],
+          "rows": [
+            [
+              "Bed width",
+              "About 1.0–1.2 m raised beds",
+              "Soil type, drainage, how you walk and weed the beds"
+            ],
+            [
+              "Planting pattern",
+              "Rows roughly 15–25 cm apart, plants 8–15 cm apart in the row",
+              "Variety, bulb size target and local agronomy advice"
+            ],
+            [
+              "Dripline per bed",
+              "1–2 lines of drip tape or inline dripline",
+              "Bed width and how far water spreads sideways in your soil"
+            ],
+            [
+              "Emitter spacing",
+              "Commonly 10–30 cm, closer on lighter soils",
+              "Soil infiltration and the planting pattern"
+            ],
+            [
+              "Filtration",
+              "Screen or disc filter, commonly around 120 mesh for drip",
+              "Water source: borehole, river, dam or tank"
+            ]
+          ]
+        }
+      },
+      {
         "heading": "Equipment to include in the plan",
         "bullets": [
           "Drip tape or inline dripline matched to bed and plant spacing",
@@ -68,7 +109,25 @@
         "url": "https://grekkon.com/garlic-irrigation-farming-in-kenya/amp/"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "/seed-products/field_drip.jpg",
+    "faqs": [
+      {
+        "q": "What type of drip line suits garlic beds?",
+        "a": "Drip tape or inline dripline with closely spaced emitters often suits dense garlic beds. The right choice depends on the bed width, soil and the pressure your water supply can give, so check these before choosing."
+      },
+      {
+        "q": "How many drip lines does a garlic bed need?",
+        "a": "Many raised beds use one or two lines, but there is no fixed number. Bed width, number of planted rows and how far water spreads sideways in your soil decide it."
+      },
+      {
+        "q": "Do I need a filter for garlic drip irrigation?",
+        "a": "Yes. Drip emitters block easily, so every drip system needs a filter matched to the water source and the emitter specification. Borehole and river water need different filtration."
+      },
+      {
+        "q": "Can DripTech prepare a quotation for my garlic farm?",
+        "a": "Yes. Send the field dimensions, bed spacing, water source and available flow through the contact page, and DripTech can prepare an equipment list for your layout."
+      }
+    ]
   },
   {
     "slug": "passion-fruit-irrigation-kenya",
@@ -83,6 +142,47 @@
           "Button drippers connected to a lateral line are commonly considered for passion fruit because each vine is a distinct planting point. Dripper flow and the number of emitters per plant should be selected from crop stage, soil wetting, available pressure and the design—not chosen only because a particular emitter is popular.",
           "Some farms may use other irrigation methods during establishment or for specific field conditions. Compare water distribution, pumping needs, wind exposure and the crop's disease-management requirements before deciding."
         ]
+      },
+      {
+        "heading": "Planning figures at a glance",
+        "paragraphs": [
+          "These are common planning ranges, not a prescription. Variety, soil, climate, water quality and your agronomist's advice decide the final figures, so confirm them before ordering equipment."
+        ],
+        "table": {
+          "caption": "Passion fruit trellis irrigation: typical planning ranges",
+          "headers": [
+            "Design item",
+            "Common planning range",
+            "What changes it"
+          ],
+          "rows": [
+            [
+              "Vine spacing",
+              "Often about 2–3 m between plants along the trellis row",
+              "Variety, trellis design and training method"
+            ],
+            [
+              "Row spacing",
+              "Commonly about 2.5–3.5 m between trellis rows",
+              "Tractor or access needs and slope"
+            ],
+            [
+              "Laterals per row",
+              "Usually one dripline lateral along each trellis row",
+              "Soil texture and how wide the wetting pattern needs to be"
+            ],
+            [
+              "Emitters per plant",
+              "Commonly 1–2 emitters, often in the 2–4 L/h class",
+              "Soil, crop stage and the water you can supply"
+            ],
+            [
+              "Filtration",
+              "Screen or disc filter, commonly around 120 mesh for drip",
+              "Water source and emitter specification"
+            ]
+          ]
+        }
       },
       {
         "heading": "Plan the components together",
@@ -139,7 +239,25 @@
         "url": "https://grekkon.com/product/adjustable-button-dripper/"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "/seed-products/field_drip.jpg",
+    "faqs": [
+      {
+        "q": "Is drip irrigation suitable for passion fruit?",
+        "a": "Drip is widely used for trellised perennial crops because water goes to the root zone along each row. The layout should follow your trellis rows and vine spacing."
+      },
+      {
+        "q": "How many emitters does each passion fruit plant need?",
+        "a": "It depends on soil, climate and plant age. Many growers use one or two emitters per plant, but check the flow rate against your water supply and your agronomist's advice."
+      },
+      {
+        "q": "Should I use one lateral per row or two?",
+        "a": "One lateral per row is common. Sandier soils or wider spacing can need more coverage, so check how far water spreads in your own soil."
+      },
+      {
+        "q": "What should I send to get a passion fruit quotation?",
+        "a": "Send the plot dimensions, trellis row spacing, plant spacing, water source, elevation changes and available flow, and DripTech can prepare a farm-specific equipment list."
+      }
+    ]
   },
   {
     "slug": "macadamia-irrigation-kenya",
@@ -154,6 +272,47 @@
           "Button drippers or other suitable localized emitters may be used for widely spaced trees. The emitter count, discharge and position should be based on tree age, soil wetting pattern, water quality and available pressure. Do not assume one emitter arrangement fits every orchard.",
           "Consider how the wetted area will change as trees mature and whether the design should allow additional emitters or separate irrigation zones in future. Uneven terrain may require pressure management to keep delivery consistent."
         ]
+      },
+      {
+        "heading": "Planning figures at a glance",
+        "paragraphs": [
+          "These are common planning ranges, not a prescription. Variety, soil, climate, water quality and your agronomist's advice decide the final figures, so confirm them before ordering equipment."
+        ],
+        "table": {
+          "caption": "Macadamia orchard irrigation: typical planning ranges",
+          "headers": [
+            "Design item",
+            "Common planning range",
+            "What changes it"
+          ],
+          "rows": [
+            [
+              "Tree spacing",
+              "Orchard spacings such as 8 × 4 m or 10 × 5 m are common",
+              "Variety, slope and your planned canopy management"
+            ],
+            [
+              "Laterals per tree row",
+              "One or two dripline laterals per row",
+              "Tree age, soil and wetting pattern needed"
+            ],
+            [
+              "Emitters per tree",
+              "Often several emitters per tree, added as the tree grows",
+              "Tree size, soil infiltration and available flow"
+            ],
+            [
+              "Emitter flow class",
+              "Commonly 4–8 L/h per emitter in orchards",
+              "Pressure, terrain and the zone size your pump can run"
+            ],
+            [
+              "Zoning",
+              "Separate valves for young and mature blocks",
+              "Block layout, slope and the number of valves you can operate"
+            ]
+          ]
+        }
       },
       {
         "heading": "Macadamia system checklist",
@@ -210,7 +369,25 @@
         "url": "https://www.aquahubkenya.co.ke/button-dripper-irrigation/"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "/seed-products/field_drip.jpg",
+    "faqs": [
+      {
+        "q": "Do young macadamia trees need different irrigation from mature trees?",
+        "a": "Usually yes. Young trees have a small root zone, so fewer emitters close to the trunk are common, and more are added as the canopy and roots grow. Plan the layout so you can extend it."
+      },
+      {
+        "q": "Is drip or sprinkler irrigation better for macadamia?",
+        "a": "Both are used. Drip suits many orchards because it targets the root zone, but your slope, soil, wind and water supply should decide it."
+      },
+      {
+        "q": "How should I zone a macadamia orchard?",
+        "a": "Separate valves by block help you irrigate young and mature trees, or different slopes, on their own schedules. Match zone size to the flow your pump or tank can supply."
+      },
+      {
+        "q": "What information does DripTech need to quote an orchard system?",
+        "a": "Send the orchard size, tree spacing, tree age, slope or elevation change, water source and available flow so the equipment list can be sized properly."
+      }
+    ]
   },
   {
     "slug": "strawberry-irrigation-kenya",
@@ -225,6 +402,47 @@
           "Drip tape or inline dripline can suit bed production when emitter spacing and flow are matched to plant spacing and the root-zone wetting pattern. Container or substrate production may need a different emitter arrangement. Do not select line spacing based on crop name alone.",
           "Where fruit quality and disease pressure matter, compare localized watering with overhead methods in the context of the growing environment and crop-management plan."
         ]
+      },
+      {
+        "heading": "Planning figures at a glance",
+        "paragraphs": [
+          "These are common planning ranges, not a prescription. Variety, soil, climate, water quality and your agronomist's advice decide the final figures, so confirm them before ordering equipment."
+        ],
+        "table": {
+          "caption": "Strawberry bed irrigation: typical planning ranges",
+          "headers": [
+            "Design item",
+            "Common planning range",
+            "What changes it"
+          ],
+          "rows": [
+            [
+              "Bed width",
+              "About 0.8–1.2 m, often with two plant rows",
+              "Growing method: soil bed, raised bed, gutter or container"
+            ],
+            [
+              "Plant spacing",
+              "Commonly about 25–35 cm between plants",
+              "Variety and production system"
+            ],
+            [
+              "Dripline per bed",
+              "Usually one or two lines of drip tape or inline dripline",
+              "Bed width, substrate and wetting pattern"
+            ],
+            [
+              "Emitter spacing",
+              "Commonly 10–30 cm, closer on light or substrate-based beds",
+              "Soil or substrate and the plant spacing"
+            ],
+            [
+              "Filtration",
+              "Fine filtration, commonly around 120 mesh or finer",
+              "Water source and emitter specification; fertigation raises the need for clean water"
+            ]
+          ]
+        }
       },
       {
         "heading": "Equipment and design checks",
@@ -281,7 +499,25 @@
         "url": "https://grekkon.com/cost-of-drip-irrigation-in-kenya/"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "/seed-products/field_drip.jpg",
+    "faqs": [
+      {
+        "q": "Is drip irrigation good for strawberries?",
+        "a": "Drip is widely used for strawberries because it applies water at the plant row and keeps foliage drier. The layout should match your bed width, plant rows and growing method."
+      },
+      {
+        "q": "How many drip lines does a strawberry bed need?",
+        "a": "Many beds use one or two lines, depending on bed width and plant rows. Check how far water spreads sideways in your soil or substrate."
+      },
+      {
+        "q": "Can I fertigate strawberries through the drip system?",
+        "a": "Many growers do, but it needs a compatible injector, clean water and fine filtration. Plan the fertigation equipment together with the irrigation design, not after it."
+      },
+      {
+        "q": "Does the system change for greenhouse or tunnel strawberries?",
+        "a": "The principles are the same, but protected growing often needs tighter control of volumes and timing. Share your structure size and bed layout when asking for a quotation."
+      }
+    ]
   },
   {
     "slug": "french-beans-irrigation-kenya",
@@ -296,6 +532,47 @@
           "Drip tape or inline dripline may be appropriate for row-grown French beans when emitter spacing and discharge suit the planting pattern and soil. The number of lines per bed depends on bed width, rows per bed, plant spacing and the wetted width; it should not be chosen from acreage alone.",
           "Divide the field into practical zones based on flow available, pipe lengths, terrain and operational needs. A layout with too much demand in one zone may not irrigate uniformly if the source or pump cannot supply the required flow and pressure."
         ]
+      },
+      {
+        "heading": "Planning figures at a glance",
+        "paragraphs": [
+          "These are common planning ranges, not a prescription. Variety, soil, climate, water quality and your agronomist's advice decide the final figures, so confirm them before ordering equipment."
+        ],
+        "table": {
+          "caption": "French beans drip layout: typical planning ranges",
+          "headers": [
+            "Design item",
+            "Common planning range",
+            "What changes it"
+          ],
+          "rows": [
+            [
+              "Bed width",
+              "About 1.0–1.2 m with two planted rows",
+              "Soil type, drainage and picking access"
+            ],
+            [
+              "Plant spacing",
+              "Commonly about 40–50 cm between rows and 5–10 cm within the row",
+              "Variety, market specification and local agronomy advice"
+            ],
+            [
+              "Dripline per bed",
+              "Usually one drip tape per bed, sometimes two",
+              "Bed width and soil wetting pattern"
+            ],
+            [
+              "Emitter spacing",
+              "Commonly 15–30 cm along the tape",
+              "Soil infiltration and plant spacing"
+            ],
+            [
+              "Zones",
+              "Separate zones by planting date or block",
+              "Staggered planting, pump capacity and valve count"
+            ]
+          ]
+        }
       },
       {
         "heading": "Components to account for",
@@ -352,6 +629,24 @@
         "url": "https://www.aquahubkenya.co.ke/irrigation-system-installation-in-kenya/"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "/seed-products/field_drip.jpg",
+    "faqs": [
+      {
+        "q": "Is drip irrigation suitable for French beans?",
+        "a": "Yes, drip is commonly used for row-grown French beans because water is delivered along the bed. The layout should follow your rows and picking workflow."
+      },
+      {
+        "q": "How many drip tapes do I need per French bean bed?",
+        "a": "One tape per bed is common for a two-row bed, but wider beds or lighter soils can need two. Check the wetting pattern in your own soil."
+      },
+      {
+        "q": "Why should I zone French bean fields?",
+        "a": "Staggered plantings are at different stages and need water at different times. Separate valves let you irrigate each block on its own schedule."
+      },
+      {
+        "q": "How do I compare French bean irrigation quotations?",
+        "a": "Ask each supplier to quote the same bed layout, pressure rating, filter, valves, fittings and delivery, so the prices are comparable."
+      }
+    ]
   }
 ]
