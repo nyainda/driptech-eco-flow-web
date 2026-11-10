@@ -38,7 +38,7 @@ const corsFor = (req: Request) => {
   const origin = req.headers.get("origin") || "";
   const headers: Record<string, string> = {
     Vary: "Origin",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-my-custom-header",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Max-Age": "86400",
   };
