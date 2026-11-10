@@ -30,3 +30,10 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[userenv]
+
+[userenv.shared]
+VITE_SUPABASE_URL = "https://cnvtnxesywbzwsxwpejw.supabase.co"
+VITE_USE_D1 = "true"
+VITE_WORKER_URL = "https://dripstech-api.dripstech.workers.dev"
