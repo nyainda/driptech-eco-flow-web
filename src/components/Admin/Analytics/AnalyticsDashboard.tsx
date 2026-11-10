@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import GSCAnalytics from "./GSCAnalytics";
+import GrokSEOIntelligence from "./GrokSEOIntelligence";
 import {
   Card,
   CardContent,
@@ -25,6 +26,10 @@ import {
   TrendingUp,
   RefreshCw,
   SearchCheck,
+  Bot,
+  Sparkles,
+  Target,
+  ArrowRight,
   Monitor,
   Smartphone,
   Tablet,
@@ -120,6 +125,7 @@ const AnalyticsDashboard: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [secondsAgo, setSecondsAgo] = useState(0);
+  const [activeSection, setActiveSection] = useState("overview");
 
   // Auto-update the "seconds ago" counter every second
   useEffect(() => {
@@ -862,11 +868,19 @@ const AnalyticsDashboard: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="seo" className="w-full">
-        <TabsList className="grid h-auto w-full max-w-md grid-cols-2 rounded-xl bg-muted/60 p-1">
+      <Tabs value={activeSection} onValueChange={setActiveSection} className="w-full">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-2xl bg-muted/60 p-1 sm:grid-cols-4">
+          <TabsTrigger value="overview" className="rounded-xl py-3">
+            <Activity className="mr-2 h-4 w-4" />
+            Overview
+          </TabsTrigger>
           <TabsTrigger value="seo" className="rounded-lg py-2.5">
             <SearchCheck className="mr-2 h-4 w-4" />
             SEO performance
+          </TabsTrigger>
+          <TabsTrigger value="grok" className="rounded-xl py-3">
+            <Sparkles className="mr-2 h-4 w-4" />
+            AI intelligence
           </TabsTrigger>
           <TabsTrigger value="website" className="rounded-lg py-2.5">
             <Activity className="mr-2 h-4 w-4" />
@@ -874,6 +888,133 @@ const AnalyticsDashboard: React.FC = () => {
           </TabsTrigger>
         </TabsList>
 
+
+        <TabsContent value="overview" className="mt-5">
+          <div className="space-y-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400">DripTech command centre</p>
+                <h2 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Your website, products & search at a glance</h2>
+                <p className="mt-1 text-sm text-muted-foreground">A business-focused view of visitor activity and the next growth opportunities.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={() => setActiveSection("seo")}><SearchCheck className="mr-2 h-4 w-4" /> Search performance</Button>
+                <Button onClick={() => setActiveSection("grok")}><Sparkles className="mr-2 h-4 w-4" /> Ask Grok to analyse</Button>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <Card className="rounded-2xl border-border/70 shadow-sm"><CardContent className="p-5">
+                <div className="flex items-center justify-between"><p className="text-sm text-muted-foreground">Visitors</p><Users className="h-5 w-5 text-emerald-600" /></div>
+                <p className="mt-3 text-3xl font-bold tracking-tight">{(periodData?.visitors || 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Unique visitors · {dateRange.toUpperCase()}</p>
+              </CardContent></Card>
+              <Card className="rounded-2xl border-border/70 shadow-sm"><CardContent className="p-5">
+                <div className="flex items-center justify-between"><p className="text-sm text-muted-foreground">Page views</p><Eye className="h-5 w-5 text-sky-600" /></div>
+                <p className="mt-3 text-3xl font-bold tracking-tight">{(periodData?.pageViews || 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Content and product page activity</p>
+              </CardContent></Card>
+              <Card className="rounded-2xl border-border/70 shadow-sm"><CardContent className="p-5">
+                <div className="flex items-center justify-between"><p className="text-sm text-muted-foreground">Sessions</p><Activity className="h-5 w-5 text-violet-600" /></div>
+                <p className="mt-3 text-3xl font-bold tracking-tight">{(periodData?.sessions || 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{(periodData?.pagesPerSession || 0).toFixed(1)} pages per session</p>
+              </CardContent></Card>
+              <Card className="rounded-2xl border-border/70 shadow-sm"><CardContent className="p-5">
+                <div className="flex items-center justify-between"><p className="text-sm text-muted-foreground">WhatsApp clicks</p><MessageCircle className="h-5 w-5 text-green-600" /></div>
+                <p className="mt-3 text-3xl font-bold tracking-tight">{(periodData?.whatsappClicks || 0).toLocaleString()}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Tracked contact actions · not confirmed sales</p>
+              </CardContent></Card>
+            </div>
+
+            <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.9fr)]">
+              <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader className="flex flex-row items-start justify-between space-y-0">
+                  <div><CardTitle>Website traffic trend</CardTitle><CardDescription>Daily visitors and page views for the selected period</CardDescription></div>
+                  <Badge variant="outline">{dateRange.toUpperCase()}</Badge>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={periodData?.dailyActivity || []} margin={{ top: 10, right: 12, left: -18, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="overviewPageViews" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.25} /><stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.02} /></linearGradient>
+                          <linearGradient id="overviewVisitors" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#059669" stopOpacity={0.22} /><stop offset="95%" stopColor="#059669" stopOpacity={0.02} /></linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
+                        <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(value) => { const date = new Date(value); return date.toLocaleDateString("en-KE", { day: "numeric", month: "short" }); }} stroke="#94a3b8" minTickGap={24} />
+                        <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
+                        <Tooltip labelFormatter={(value) => new Date(String(value)).toLocaleDateString("en-KE", { dateStyle: "medium" })} />
+                        <Legend />
+                        <Area type="monotone" dataKey="page_views" name="Page views" stroke="#0ea5e9" fill="url(#overviewPageViews)" strokeWidth={2.5} />
+                        <Area type="monotone" dataKey="visitors" name="Visitors" stroke="#059669" fill="url(#overviewVisitors)" strokeWidth={2.5} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader><CardTitle>Quick business signals</CardTitle><CardDescription>What visitors are doing on DripTech</CardDescription></CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="rounded-xl bg-emerald-500/5 p-4">
+                    <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300"><MessageCircle className="h-4 w-4" /><p className="text-sm font-semibold">Contact interest</p></div>
+                    <p className="mt-2 text-2xl font-bold">{(periodData?.uniqueWhatsappVisitors || 0).toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">Unique visitors who clicked WhatsApp</p>
+                  </div>
+                  <div className="rounded-xl bg-sky-500/5 p-4">
+                    <div className="flex items-center gap-2 text-sky-700 dark:text-sky-300"><Target className="h-4 w-4" /><p className="text-sm font-semibold">Engagement rate</p></div>
+                    <p className="mt-2 text-2xl font-bold">{(periodData?.engagementRate || 0).toFixed(1)}%</p>
+                    <p className="text-xs text-muted-foreground">Sessions with more than one page view</p>
+                  </div>
+                  <div className="rounded-xl bg-violet-500/5 p-4">
+                    <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Clock className="h-4 w-4" /><p className="text-sm font-semibold">Average session duration</p></div>
+                    <p className="mt-2 text-2xl font-bold">{Math.round((periodData?.avgDuration || 0) / 60)} min</p>
+                    <p className="text-xs text-muted-foreground">Based on recorded session duration</p>
+                  </div>
+                  <div className="text-xs text-muted-foreground">Visitor analytics and Search Console use separate reporting sources and date windows.</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid gap-5 xl:grid-cols-2">
+              <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0"><div><CardTitle>Products attracting attention</CardTitle><CardDescription>Most interacted-with products in the selected period</CardDescription></div><Button variant="ghost" size="sm" onClick={() => setActiveSection("website")}>Website analytics <ArrowRight className="ml-1 h-4 w-4" /></Button></CardHeader>
+                <CardContent className="space-y-3">
+                  {(periodData?.topProducts || []).slice(0, 6).length ? (periodData?.topProducts || []).slice(0, 6).map((product, index) => (
+                    <div key={product.product_name + index} className="flex items-center justify-between gap-3 rounded-xl border border-border/60 p-3">
+                      <div className="flex min-w-0 items-center gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold">{index + 1}</span><div className="min-w-0"><p className="truncate text-sm font-semibold">{product.product_name}</p><p className="truncate text-xs text-muted-foreground">{product.interaction_type} · {product.unique_visitors} unique visitors</p></div></div>
+                      <Badge variant="secondary">{product.interaction_count.toLocaleString()} events</Badge>
+                    </div>
+                  )) : <p className="py-8 text-center text-sm text-muted-foreground">No product interactions recorded for this period.</p>}
+                  <p className="text-xs text-muted-foreground">Interactions are interest signals; they do not confirm enquiries, orders or revenue.</p>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0"><div><CardTitle>Most visited pages</CardTitle><CardDescription>Where visitors spend their time</CardDescription></div><Button variant="ghost" size="sm" onClick={() => setActiveSection("website")}>View analytics <ArrowRight className="ml-1 h-4 w-4" /></Button></CardHeader>
+                <CardContent className="space-y-3">
+                  {(periodData?.topPages || []).slice(0, 6).length ? (periodData?.topPages || []).slice(0, 6).map((page, index) => (
+                    <div key={page.page_path + index} className="flex items-center justify-between gap-3 rounded-xl border border-border/60 p-3">
+                      <div className="flex min-w-0 items-center gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold">{index + 1}</span><div className="min-w-0"><p className="truncate text-sm font-semibold">{page.page_title}</p><p className="truncate text-xs text-muted-foreground">{page.page_path}</p></div></div>
+                      <Badge variant="secondary">{page.total_views.toLocaleString()} views</Badge>
+                    </div>
+                  )) : <p className="py-8 text-center text-sm text-muted-foreground">No page views recorded for this period.</p>}
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="overflow-hidden rounded-2xl border-emerald-500/20 bg-gradient-to-r from-emerald-500/5 via-card to-sky-500/5 shadow-sm">
+              <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+                <div className="flex items-start gap-3"><div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-600"><Bot className="h-5 w-5" /></div><div><p className="font-semibold">Turn analytics into your next growth plan</p><p className="mt-1 max-w-2xl text-sm text-muted-foreground">Grok can combine product interest, Google Search Console and public competitor research into an evidence-backed report for DripTech.</p></div></div>
+                <Button onClick={() => setActiveSection("grok")} className="shrink-0"><Sparkles className="mr-2 h-4 w-4" /> Open Grok intelligence</Button>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="grok" className="mt-5">
+          <GrokSEOIntelligence />
+        </TabsContent>
         <TabsContent value="seo" className="mt-5">
           <GSCAnalytics />
         </TabsContent>
