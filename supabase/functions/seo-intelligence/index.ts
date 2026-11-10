@@ -18,7 +18,7 @@ const corsFor = (req: Request) => {
   const origin = req.headers.get("origin") || "";
   const headers: Record<string, string> = {
     "Vary": "Origin",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-my-custom-header",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Max-Age": "86400",
   };
@@ -62,7 +62,7 @@ const normaliseCompetitors = (value: unknown) => {
         .replace(/\/.*$/, "");
       const name = String(candidate.name || "").trim().slice(0, 80);
       const focus = String(candidate.focus || "").trim().slice(0, 180);
-      if (!name || !/^[a-z0-9.-]+\\.[a-z]{2,}$/i.test(domain)) return null;
+      if (!name || !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(domain)) return null;
       return { name, domain, focus };
     })
     .filter((item): item is { name: string; domain: string; focus: string } => !!item);
