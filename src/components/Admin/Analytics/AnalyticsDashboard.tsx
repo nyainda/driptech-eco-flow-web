@@ -1437,6 +1437,10 @@ const AnalyticsDashboard: React.FC = () => {
               >
                 Technographics
               </TabsTrigger>
+
+              <TabsTrigger value="seo" className="rounded-lg px-6">
+                SEO Search
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="seo"><GSCAnalytics /></TabsContent>
