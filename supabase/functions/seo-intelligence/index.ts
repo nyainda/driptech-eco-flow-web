@@ -34,6 +34,10 @@ const json = (req: Request, body: unknown, status = 200) =>
 
 const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 
+// External calls must not consume the entire Edge Function wall-clock budget.
+const fetchWithTimeout = (url: string, init: RequestInit = {}, timeoutMs = 12_000) =>
+  fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
+
 const shiftDate = (value: string, days: number) => {
   const date = new Date(value + "T00:00:00.000Z");
   date.setUTCDate(date.getUTCDate() + days);
@@ -83,7 +87,7 @@ async function searchConsoleSnapshot(admin: ReturnType<typeof createClient>, day
     return { connected: false, reason: "Search Console OAuth secrets are not configured." };
   }
 
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+  const tokenResponse = await fetchWithTimeout("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -395,13 +399,13 @@ async function buildBusinessSnapshot(
     pageViewRowsAnalysed: pageViews.length,
     topProducts,
     topPages,
-    catalogueSample: products.slice(0, 40).map((product) => ({
+    catalogueSample: products.slice(0, 25).map((product) => ({
       name: product.name,
       category: product.category,
       subcategory: product.subcategory,
       priceKes: product.price,
       inStock: product.in_stock,
-      description: String(product.description || "").slice(0, 240),
+      
     })),
     searchConsole: gsc,
     limitations: [
@@ -478,7 +482,7 @@ async function runGrokResearch(
     "Keep the recommendations specific to DripTech's supplied metrics and catalogue. Prefer the ten most useful actions over a long generic checklist.",
   ].join("\n");
 
-  const response = await fetch("https://api.x.ai/v1/responses", {
+  const response = await fetchWithTimeout("https://api.x.ai/v1/responses", {
     method: "POST",
     headers: {
       Authorization: "Bearer " + apiKey,
@@ -489,7 +493,7 @@ async function runGrokResearch(
       prompt_cache_key: "driptech-seo-intelligence-v1",
       input: [{ role: "user", content: prompt }],
       tools: [{ type: "web_search" }],
-      max_output_tokens: 5000,
+      max_output_tokens: 3000,
     }),
   });
 
