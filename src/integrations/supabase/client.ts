@@ -87,12 +87,6 @@ export const supabase = (SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY)
         detectSessionInUrl: true, // For OAuth flows
         flowType: "pkce", // More secure auth flow
       },
-      // Optional: Add global settings
-      global: {
-        headers: {
-          "x-my-custom-header": "my-app-name",
-        },
-      },
     },
   )
   : createMockSupabaseClient();
