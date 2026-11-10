@@ -24,6 +24,7 @@ import {
   Clock,
   TrendingUp,
   RefreshCw,
+  SearchCheck,
   Monitor,
   Smartphone,
   Tablet,
@@ -799,12 +800,12 @@ const AnalyticsDashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-            Analytics Dashboard
+            Analytics & SEO Intelligence
           </h1>
 
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <p className="text-muted-foreground">
-              Comprehensive overview of system performance and user engagement.
+              Search visibility, website traffic and the next opportunities for growth.
             </p>
 
             {lastUpdated && !refreshing && (
@@ -861,6 +862,23 @@ const AnalyticsDashboard: React.FC = () => {
         </div>
       </div>
 
+      <Tabs defaultValue="seo" className="w-full">
+        <TabsList className="grid h-auto w-full max-w-md grid-cols-2 rounded-xl bg-muted/60 p-1">
+          <TabsTrigger value="seo" className="rounded-lg py-2.5">
+            <SearchCheck className="mr-2 h-4 w-4" />
+            SEO performance
+          </TabsTrigger>
+          <TabsTrigger value="website" className="rounded-lg py-2.5">
+            <Activity className="mr-2 h-4 w-4" />
+            Website analytics
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="seo" className="mt-5">
+          <GSCAnalytics />
+        </TabsContent>
+
+        <TabsContent value="website" className="mt-5">
       {/* Lifetime Stats */}
 
       {lifetimeData && (
@@ -1438,12 +1456,7 @@ const AnalyticsDashboard: React.FC = () => {
                 Technographics
               </TabsTrigger>
 
-              <TabsTrigger value="seo" className="rounded-lg px-6">
-                SEO Search
-              </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="seo"><GSCAnalytics /></TabsContent>
 
             {/* Pages */}
 
@@ -1749,6 +1762,8 @@ const AnalyticsDashboard: React.FC = () => {
           </Tabs>
         </div>
       )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
