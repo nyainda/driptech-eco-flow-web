@@ -35,7 +35,7 @@ const json = (req: Request, body: unknown, status = 200) =>
 const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 
 // External calls must not consume the entire Edge Function wall-clock budget.
-const fetchWithTimeout = (url: string, init: RequestInit = {}, timeoutMs = 12_000) =>
+const fetchWithTimeout = (url: string, init: RequestInit = {}, timeoutMs = url.includes("api.x.ai") ? 95_000 : 12_000) =>
   fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
 
 const shiftDate = (value: string, days: number) => {
@@ -409,7 +409,7 @@ async function buildBusinessSnapshot(
     })),
     searchConsole: gsc,
     limitations: [
-      "Website product/page metrics are aggregated from up to 1,500 most recent rows per table for the selected period, fetched in 500-row pages.",
+      "Website product/page metrics are aggregated from up to 500 most recent rows per table for the selected period, fetched in 250-row pages.",
       "Product interactions are recorded events, not sales or revenue.",
       "Search Console query and page tables are ranked samples; sitewide totals are obtained separately.",
     ],
