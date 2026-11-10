@@ -272,8 +272,8 @@ async function buildBusinessSnapshot(
   const fetchInteractions = async () => {
     const rows: Array<Record<string, any>> = [];
     // Bounded sample to keep Supabase reads predictable.
-    const pageSize = 500;
-    const maxRows = 1500;
+    const pageSize = 250;
+    const maxRows = 500;
     for (let offset = 0; offset < maxRows; offset += pageSize) {
       const { data, error } = await admin
         .from("product_interactions")
@@ -313,8 +313,8 @@ async function buildBusinessSnapshot(
     fetchPageViews(),
     admin
       .from("products")
-      .select("id,name,category,subcategory,price,in_stock,description")
-      .limit(500),
+      .select("id,name,category,subcategory,price,in_stock")
+      .limit(200),
   ]);
 
   if (productResult.error) throw new Error("Could not read product catalogue: " + productResult.error.message);
