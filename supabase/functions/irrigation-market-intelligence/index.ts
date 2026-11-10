@@ -465,7 +465,7 @@ Deno.serve(async (req) => {
     const competitors = normaliseCompetitors(competitorSettings?.competitors || DEFAULT_COMPETITORS);
     const result = await runGrok(apiKey, gsc, keywordData, competitors);
     const normaliseEvidenceText = (value: unknown) =>
-      typeof value === "string" ? value.trim().toLowerCase().replace(/\\s+/g, " ") : "";
+      typeof value === "string" ? value.trim().toLowerCase().replace(/\s+/g, " ") : "";
     const gscQueries = new Set(
       (Array.isArray((gsc as Record<string, unknown>).queries)
         ? (gsc as Record<string, unknown>).queries as Array<Record<string, unknown>>
