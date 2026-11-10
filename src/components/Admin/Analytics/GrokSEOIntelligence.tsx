@@ -7,10 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Activity,
   ArrowRight,
-  BookOpen,
   Bot,
   Check,
   ExternalLink,
+  Download,
   FileSearch,
   Globe2,
   Lightbulb,
@@ -176,6 +176,50 @@ const GrokSEOIntelligence: React.FC = () => {
   const reportDate = selectedReport
     ? new Date(selectedReport.created_at).toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" })
     : "No report yet";
+  const downloadReport = () => {
+    if (!selectedReport) return;
+    const report = selectedReport.report_data || {};
+    const assessment = (report.overall_assessment || {}) as Record<string, unknown>;
+    const content = [
+      "# " + selectedReport.title,
+      "",
+      "Generated: " + reportDate,
+      "Model: " + selectedReport.model,
+      "",
+      "## Executive summary",
+      selectedReport.executive_summary || "",
+      "",
+      "## Overall assessment",
+      "Status: " + textOf(assessment.status, "Not provided"),
+      "",
+      "### What is working",
+      ...stringsOf(assessment.what_is_working).map((item) => "- " + item),
+      "",
+      "### Main risks",
+      ...stringsOf(assessment.main_risks).map((item) => "- " + item),
+      "",
+      "### Recommended next 30 days",
+      ...stringsOf(assessment.next_30_days).map((item) => "- " + item),
+      "",
+      "## Full structured findings",
+      "\\x60\\x60\\x60json",
+      JSON.stringify(report, null, 2),
+      "\\x60\\x60\\x60",
+      "",
+      "## Sources",
+      ...(selectedReport.source_links || []).map((source) => "- [" + source.title + "](" + source.url + ")"),
+      "",
+      "## Evidence note",
+      "Product interaction counts are interest signals, not confirmed sales. Competitor observations are based on public sources only.",
+    ].join("\\n");
+    const blob = new Blob([content], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "driptech-seo-intelligence-" + selectedReport.id + ".md";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <section className="space-y-6">
@@ -328,7 +372,12 @@ const GrokSEOIntelligence: React.FC = () => {
                     <CardTitle className="mt-2 text-xl">{selectedReport.title}</CardTitle>
                     <CardDescription className="mt-2 text-sm leading-6">{selectedReport.executive_summary}</CardDescription>
                   </div>
-                  <Badge variant="secondary" className="shrink-0">{selectedReport.model}</Badge>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Badge variant="secondary">{selectedReport.model}</Badge>
+                    <Button variant="outline" size="sm" onClick={downloadReport}>
+                      <Download className="mr-2 h-4 w-4" /> Export
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="grid gap-4 border-t pt-5 sm:grid-cols-2">
                   <div>
