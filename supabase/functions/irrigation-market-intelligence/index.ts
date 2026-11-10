@@ -202,8 +202,9 @@ async function keywordEstimates() {
     }]),
   });
   const payload = await response.json();
-  if (!response.ok || payload.status_code !== 20000) {
-    const taskMessage = payload?.tasks?.[0]?.status_message;
+  const task = Array.isArray(payload.tasks) ? payload.tasks[0] : null;
+  if (!response.ok || payload.status_code !== 20000 || (task && task.status_code !== 20000)) {
+    const taskMessage = task?.status_message;
     return {
       connected: false,
       provider: "DataForSEO",
@@ -214,7 +215,6 @@ async function keywordEstimates() {
     };
   }
 
-  const task = Array.isArray(payload.tasks) ? payload.tasks[0] : null;
   const result = Array.isArray(task?.result) ? task.result[0] : null;
   const items = Array.isArray(result?.items) ? result.items : [];
   const estimates = items.map((item: Record<string, any>) => {
