@@ -96,7 +96,7 @@ type ActionItem = {
   id: string;
   title: string;
   detail: string;
-  kind: "snippet" | "ranking" | "content" | "internal";
+  kind: "snippet" | "ranking" | "content";
   impact: string;
 };
 
@@ -316,6 +316,7 @@ const GSCAnalytics: React.FC = () => {
   const connected = !!payload?.connected;
   const queries = payload?.queries || [];
   const pages = payload?.pages || [];
+  const devices = payload?.devices || [];
   const totals = payload?.totals || {};
   const previousTotals = payload?.previousTotals || {};
 
@@ -718,7 +719,7 @@ const GSCAnalytics: React.FC = () => {
                             <YAxis yAxisId="impressions" orientation="right" tick={{ fontSize: 11 }} stroke="#0ea5e9" />
                             <Tooltip
                               labelFormatter={(value) => shortDate(String(value))}
-                              formatter={(value: number, name: string) => [numberFormat(value), name]}
+                              formatter={(value, name) => [numberFormat(Number(value)), String(name)]}
                               contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
                             />
                             <Legend />
@@ -751,7 +752,7 @@ const GSCAnalytics: React.FC = () => {
                                   <Cell key={entry.name} fill={entry.fill} />
                                 ))}
                               </Pie>
-                              <Tooltip formatter={(value: number) => [value + " queries", "Sample count"]} />
+                              <Tooltip formatter={(value) => [String(value) + " queries", "Sample count"]} />
                             </PieChart>
                           </ResponsiveContainer>
                         </div>
@@ -776,7 +777,7 @@ const GSCAnalytics: React.FC = () => {
                 </Card>
               </div>
 
-              <div className="grid gap-5 xl:grid-cols-2">
+              <div className="grid gap-5 xl:grid-cols-3">
                 <Card className="rounded-2xl">
                   <CardHeader>
                     <div className="flex items-center justify-between gap-2">
@@ -839,6 +840,38 @@ const GSCAnalytics: React.FC = () => {
                       </div>
                     ) : (
                       <p className="py-8 text-center text-sm text-muted-foreground">No page currently meets the CTR filter for this period.</p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card className="rounded-2xl">
+                  <CardHeader>
+                    <CardTitle>Device visibility</CardTitle>
+                    <CardDescription>Impressions split by search device</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {devices.length ? (
+                      <div className="h-[230px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={devices.map((row) => ({
+                              device: (row.keys?.[0] || "Unknown").toLowerCase(),
+                              impressions: Number(row.impressions || 0),
+                            }))}
+                            margin={{ top: 8, right: 8, left: -18, bottom: 0 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
+                            <XAxis dataKey="device" tick={{ fontSize: 11 }} stroke="#94a3b8" />
+                            <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
+                            <Tooltip formatter={(value) => [numberFormat(Number(value)), "Impressions"]} />
+                            <Bar dataKey="impressions" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <div className="flex h-[230px] items-center justify-center text-sm text-muted-foreground">
+                        No device breakdown returned for this period.
+                      </div>
                     )}
                   </CardContent>
                 </Card>
