@@ -267,8 +267,10 @@ async function buildBusinessSnapshot(
 
   const fetchInteractions = async () => {
     const rows: Array<Record<string, any>> = [];
-    const pageSize = 1000;
-    for (let offset = 0; offset < 5000; offset += pageSize) {
+    // Bounded sample to keep Supabase reads predictable.
+    const pageSize = 500;
+    const maxRows = 1500;
+    for (let offset = 0; offset < maxRows; offset += pageSize) {
       const { data, error } = await admin
         .from("product_interactions")
         .select("product_name,product_id,product_category,interaction_type,page_path,timestamp,visitor_id")
@@ -285,8 +287,10 @@ async function buildBusinessSnapshot(
 
   const fetchPageViews = async () => {
     const rows: Array<Record<string, any>> = [];
-    const pageSize = 1000;
-    for (let offset = 0; offset < 5000; offset += pageSize) {
+    // Bounded sample to keep Supabase reads predictable.
+    const pageSize = 500;
+    const maxRows = 1500;
+    for (let offset = 0; offset < maxRows; offset += pageSize) {
       const { data, error } = await admin
         .from("page_views")
         .select("page_path,page_title,visitor_id,timestamp")
@@ -401,7 +405,7 @@ async function buildBusinessSnapshot(
     })),
     searchConsole: gsc,
     limitations: [
-      "Website product/page metrics are aggregated from up to 5,000 most recent rows per table for the selected period, fetched in 1,000-row pages.",
+      "Website product/page metrics are aggregated from up to 1,500 most recent rows per table for the selected period, fetched in 500-row pages.",
       "Product interactions are recorded events, not sales or revenue.",
       "Search Console query and page tables are ranked samples; sitewide totals are obtained separately.",
     ],

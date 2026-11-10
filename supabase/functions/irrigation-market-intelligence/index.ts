@@ -10,6 +10,9 @@ const DATAFORSEO_KEYWORD_IDEAS_URL =
 const DATAFORSEO_DOCS_URL =
   "https://docs.dataforseo.com/v3/dataforseo_labs-google-keyword_ideas-live/";
 
+// Keep imported rows focused on irrigation/commercial intent before storing or sending them to Grok.
+const IRRIGATION_QUERY_RE = /irrigat|drip|sprinkl|greenhouse|pump|water tank|fertigat|filter|filtrat|borehole|farm|agricultur|hydropon|irrigation kit|layflat|lay flat|solar water|valve|pipe|fittings|emitters|seedling|acre|hectare/i;
+const LOW_VALUE_QUERY_RE = /\b(job|jobs|vacanc|salary|career|internship|pdf download|meaning|definition|wiki|course|training certificate)\b/i;
 const DEFAULT_COMPETITORS = [
   { name: "Grekkon Limited", domain: "grekkon.com", focus: "Irrigation systems, greenhouses, pumps" },
   { name: "Afrodrip Limited", domain: "afrodrip.co.ke", focus: "Dripline, pipes, irrigation manufacturing" },
@@ -166,8 +169,16 @@ async function searchConsoleSnapshot(admin: ReturnType<typeof createClient>, day
       startDate,
       endDate,
       totals: totals[0] || { clicks: 0, impressions: 0, ctr: 0, position: 0 },
-      queries,
-      pages,
+      // GSC returns a ranked sample; retain only irrigation-relevant queries and drop obvious non-buying noise.
+      rawQueryRowsReturned: queries.length,
+      queries: queries.filter((row: Record<string, any>) => {
+        const query = String(row.keys?.[0] || "");
+        return IRRIGATION_QUERY_RE.test(query) && !LOW_VALUE_QUERY_RE.test(query);
+      }).slice(0, 60),
+      pages: pages.filter((row: Record<string, any>) => {
+        const page = String(row.keys?.[0] || "");
+        return page.startsWith("https://www.dripstech.co.ke/") || page.startsWith("https://dripstech.co.ke/");
+      }).slice(0, 40),
       countries,
       queryRowsReturned: queries.length,
       pageRowsReturned: pages.length,
@@ -250,6 +261,7 @@ async function keywordEstimates() {
 
   const result = Array.isArray(task?.result) ? task.result[0] : null;
   const items = Array.isArray(result?.items) ? result.items : [];
+  const seenKeywords = new Set<string>();
   const estimates = items.map((item: Record<string, any>) => {
     const info = item.keyword_info || {};
     return {
@@ -266,7 +278,12 @@ async function keywordEstimates() {
           }))
         : [],
     };
-  }).filter((item: Record<string, any>) => item.keyword);
+  }).filter((item: Record<string, any>) => {
+    const keyword = item.keyword.toLowerCase().trim();
+    if (!item.keyword || !IRRIGATION_QUERY_RE.test(keyword) || LOW_VALUE_QUERY_RE.test(keyword) || seenKeywords.has(keyword)) return false;
+    seenKeywords.add(keyword);
+    return true;
+  }).slice(0, 40);
 
   return {
     connected: true,
