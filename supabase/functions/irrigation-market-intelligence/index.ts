@@ -505,6 +505,35 @@ Deno.serve(async (req) => {
 
   const days = Math.min(Math.max(Math.floor(safeNumber(body.days) || 28), 7), 90);
 
+  // Reuse a recent report for 24 hours: never call Grok/DataForSEO just to refresh the same scan.
+  const { data: cachedReport } = await admin
+    .from("irrigation_market_reports")
+    .select("id,title,executive_summary,report_data,search_console_snapshot,keyword_estimates,source_links,model,created_at")
+    .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (cachedReport) {
+    return json(req, { success: true, cached: true, report: cachedReport, model: MODEL, usage: null });
+  }
+
+  // Reserve before any provider call; a failed/timeout attempt still counts against the daily cap.
+  const { data: reservation, error: reservationError } = await admin.rpc("reserve_grok_request", {
+    p_function_name: "irrigation-market-intelligence",
+    p_model: MODEL,
+    p_daily_limit: 4,
+    p_cooldown_minutes: 30,
+  });
+  if (reservationError) return json(req, { error: "Grok quota guard is unavailable; no provider call was made. " + reservationError.message }, 503);
+  if (!reservation?.ok) {
+    const reason = reservation.reason === "cooldown"
+      ? "A Grok analysis ran recently. Please wait before starting another."
+      : "The shared Grok daily limit has been reached. Try again tomorrow.";
+    return json(req, { error: reason, quota: reservation }, 429);
+  }
+  const usageLogId = reservation.usage_log_id;
+  const requestStartedAt = Date.now();
+
   try {
     const [{ data: competitorSettings }, gsc, keywordData] = await Promise.all([
       admin.from("seo_intelligence_settings").select("competitors").eq("id", 1).maybeSingle(),
@@ -513,6 +542,15 @@ Deno.serve(async (req) => {
     ]);
     const competitors = normaliseCompetitors(competitorSettings?.competitors || DEFAULT_COMPETITORS);
     const result = await runGrok(apiKey, gsc, keywordData, competitors);
+    await admin.from("grok_usage_logs").update({
+      status: "success",
+      request_finished_at: new Date().toISOString(),
+      duration_ms: Date.now() - requestStartedAt,
+      input_tokens: (result.usage as Record<string, unknown> | null)?.input_tokens ?? null,
+      output_tokens: (result.usage as Record<string, unknown> | null)?.output_tokens ?? null,
+      total_tokens: (result.usage as Record<string, unknown> | null)?.total_tokens ?? null,
+      metadata: { gsc_connected: !!(gsc as Record<string, unknown>).connected, dataforseo_connected: !!(keywordData as Record<string, unknown>).connected },
+    }).eq("id", usageLogId);
     const normaliseEvidenceText = (value: unknown) =>
       typeof value === "string" ? value.trim().toLowerCase().replace(/\s+/g, " ") : "";
     const gscQueries = new Set(
@@ -621,6 +659,13 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Market intelligence scan failed.";
+    await admin.from("grok_usage_logs").update({
+      status: /429|rate.?limit/i.test(message) ? "rate_limited" : /timeout|timed out/i.test(message) ? "timeout" : "error",
+      request_finished_at: new Date().toISOString(),
+      duration_ms: Date.now() - requestStartedAt,
+      error_code: /429|rate.?limit/i.test(message) ? "429" : null,
+      error_message: message.slice(0, 1000),
+    }).eq("id", usageLogId);
     return json(req, { error: message }, 502);
   }
 });

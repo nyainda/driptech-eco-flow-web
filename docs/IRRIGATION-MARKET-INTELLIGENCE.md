@@ -56,3 +56,19 @@ Deploy `irrigation-market-intelligence` after applying the migration. The functi
 3. Review the third-party Kenya keyword-estimate table separately.
 4. Open the cited public competitor sources and verify time-sensitive prices or product claims.
 5. Treat Grok's prioritized page/content recommendations as hypotheses to validate, then track the changes in Search Console over the following weeks.
+
+
+## 6. Queue and API-cost protection (new migration)
+
+Apply `supabase/migrations/202611100004_market_intelligence_queue_controls.sql` after the existing market-intelligence migration. It creates:
+
+- `market_intelligence_jobs`: durable queued/running/succeeded/failed job records.
+- `grok_usage_logs`: request reservations and outcome/token/cost telemetry.
+- `enqueue_market_intelligence_job()`: atomic shared quota check (one active job across SEO + market scans, 30-minute cooldown, four reservations/day by default).
+- `claim_market_intelligence_job()`: concurrency-safe worker claim using `FOR UPDATE SKIP LOCKED`.
+
+The quota counts reservations before an outbound request, so timeouts and API failures still consume a slot. This is intentional: retrying failed requests automatically can multiply spend. These database primitives are not sufficient on their own—the Edge Functions must enqueue, reserve/log each actual Grok call, and a worker must claim/process jobs. Do not consider the queue live until the worker and UI polling are deployed too.
+
+Recommended operating limits: 1 Grok request per job; no automatic retries for 429, timeout or 5xx; maximum 4 combined Grok jobs/day; 30-minute cooldown; successful report cache for 24 hours; DataForSEO remains separately metered and should only run when the cache is stale and the provider is enabled.
+
+The queue worker should be invoked from a scheduled job (pg_cron + pg_net) using a secret stored in Supabase Vault—not from a public browser request. Configure the schedule only after the worker endpoint and its secret validation are deployed.
