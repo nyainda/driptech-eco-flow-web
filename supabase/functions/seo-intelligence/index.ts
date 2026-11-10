@@ -187,6 +187,10 @@ function extractCitations(response: Record<string, unknown>) {
 
   if (Array.isArray(response.citations)) {
     for (const citation of response.citations) {
+      if (typeof citation === "string") {
+        add(undefined, citation);
+        continue;
+      }
       if (!citation || typeof citation !== "object") continue;
       const item = citation as Record<string, unknown>;
       add(item.title, item.url);
@@ -473,6 +477,7 @@ async function runGrokResearch(
     },
     body: JSON.stringify({
       model: MODEL,
+      prompt_cache_key: "driptech-seo-intelligence-v1",
       input: [{ role: "user", content: prompt }],
       tools: [{ type: "web_search" }],
       max_output_tokens: 5000,
