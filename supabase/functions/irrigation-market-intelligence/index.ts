@@ -198,6 +198,7 @@ async function keywordEstimates() {
       location_name: "Kenya",
       language_name: "English",
       limit: 80,
+      order_by: ["relevance,desc", "keyword_info.search_volume,desc"],
       closely_variants: true,
     }]),
   });
@@ -357,16 +358,16 @@ async function runGrok(
       title: "Irrigation market intelligence — Kenya",
       executive_summary: "Concise decision summary with evidence qualifiers.",
       market_topics: [
-        { topic: "topic or query phrase", evidence_class: "Third-party estimate | Search Console measurement | Public web observation | AI hypothesis", linked_keyword: "exact supplied keyword or empty", why_it_matters: "reason", next_step: "specific page or product action" }
+        { topic: "topic or query phrase", evidence_refs: { gsc_query: "exact query copied from supplied Search Console rows or empty", third_party_keyword: "exact keyword copied from supplied DataForSEO rows or empty", public_source_urls: ["exact URLs returned by web search"] }, why_it_matters: "reason", next_step: "specific page or product action" }
       ],
       customer_questions: [
-        { question: "customer question", evidence_class: "Search Console measurement | Public web observation | AI hypothesis", supporting_evidence: "what supports this classification", suggested_destination: "existing/new page idea" }
+        { question: "customer question", evidence_refs: { gsc_query: "exact supplied query or empty", third_party_keyword: "exact supplied keyword or empty", public_source_urls: ["exact URLs returned by web search"] }, supporting_evidence: "what supports this classification", suggested_destination: "existing/new page idea" }
       ],
       competitor_observations: [
         { name: "competitor", domain: "domain", observed_offering: ["publicly visible products/services"], content_observations: ["publicly visible pages/content"], opportunity_for_driptech: ["specific response"], source_urls: ["URLs from searched pages"] }
       ],
       product_page_priorities: [
-        { product_or_category: "real catalogue/category term", reason: "evidence basis", evidence_class: "Search Console measurement | Third-party estimate | Public web observation | AI hypothesis", recommended_improvement: "specific page change", priority: "High | Medium | Low" }
+        { product_or_category: "real catalogue/category term", evidence_refs: { gsc_query: "exact supplied query or empty", third_party_keyword: "exact supplied keyword or empty", public_source_urls: ["exact URLs returned by web search"] }, reason: "evidence basis", recommended_improvement: "specific page change", priority: "High | Medium | Low" }
       ],
       recommendations: [
         { title: "action", category: "Product page | Content | Technical SEO | Internal linking | Conversion", priority: "High | Medium | Low", basis: "exact evidence and source category", expected_outcome: "directional, not guaranteed", steps: ["..."] }
@@ -463,8 +464,67 @@ Deno.serve(async (req) => {
     ]);
     const competitors = normaliseCompetitors(competitorSettings?.competitors || DEFAULT_COMPETITORS);
     const result = await runGrok(apiKey, gsc, keywordData, competitors);
+    const normaliseEvidenceText = (value: unknown) =>
+      typeof value === "string" ? value.trim().toLowerCase().replace(/\\s+/g, " ") : "";
+    const gscQueries = new Set(
+      (Array.isArray((gsc as Record<string, unknown>).queries)
+        ? (gsc as Record<string, unknown>).queries as Array<Record<string, unknown>>
+        : [])
+        .map((row) => Array.isArray(row.keys) ? normaliseEvidenceText(row.keys[0]) : "")
+        .filter(Boolean),
+    );
+    const estimateRows = Array.isArray((keywordData as Record<string, unknown>).estimates)
+      ? (keywordData as Record<string, unknown>).estimates as Array<Record<string, unknown>>
+      : [];
+    const thirdPartyKeywords = new Set(estimateRows.map((row) => normaliseEvidenceText(row.keyword)).filter(Boolean));
+    const citationUrls = new Set(result.citations.map((source) => source.url));
+    const classifyEvidenceRows = (value: unknown) => {
+      if (!Array.isArray(value)) return [];
+      return value.slice(0, 30).map((item) => {
+        const row = item && typeof item === "object" ? item as Record<string, unknown> : {};
+        const refs = row.evidence_refs && typeof row.evidence_refs === "object"
+          ? row.evidence_refs as Record<string, unknown>
+          : {};
+        const gscQuery = normaliseEvidenceText(refs.gsc_query);
+        const thirdPartyKeyword = normaliseEvidenceText(refs.third_party_keyword);
+        const matchedGscQuery = gscQuery && gscQueries.has(gscQuery) ? gscQuery : "";
+        const matchedThirdPartyKeyword =
+          thirdPartyKeyword && thirdPartyKeywords.has(thirdPartyKeyword) ? thirdPartyKeyword : "";
+        const publicSourceUrls = Array.isArray(refs.public_source_urls)
+          ? refs.public_source_urls.filter((url): url is string => typeof url === "string" && citationUrls.has(url))
+          : [];
+        const evidenceClass = matchedGscQuery
+          ? "Search Console measurement"
+          : matchedThirdPartyKeyword
+          ? "Third-party estimate"
+          : publicSourceUrls.length
+          ? "Public web observation"
+          : "AI hypothesis";
+        return {
+          ...row,
+          evidence_class: evidenceClass,
+          evidence_refs: {
+            gsc_query: matchedGscQuery,
+            third_party_keyword: matchedThirdPartyKeyword,
+            public_source_urls: publicSourceUrls,
+          },
+        };
+      });
+    };
+    const competitorRows = Array.isArray(result.report.competitor_observations)
+      ? result.report.competitor_observations
+      : [];
     const report = {
       ...result.report,
+      market_topics: classifyEvidenceRows(result.report.market_topics),
+      customer_questions: classifyEvidenceRows(result.report.customer_questions),
+      product_page_priorities: classifyEvidenceRows(result.report.product_page_priorities),
+      competitor_observations: competitorRows.slice(0, 20).map((item: Record<string, unknown>) => ({
+        ...item,
+        source_urls: Array.isArray(item.source_urls)
+          ? item.source_urls.filter((url): url is string => typeof url === "string" && citationUrls.has(url))
+          : [],
+      })).filter((item: Record<string, unknown>) => (item.source_urls as string[]).length > 0),
       evidence_limits: Array.isArray(result.report.evidence_limits) ? result.report.evidence_limits : [],
       evidence_legend: {
         first_party: "Measured directly by Google Search Console for the DripTech property and stated date window.",
