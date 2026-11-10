@@ -4,3 +4,6 @@ verify_jwt = false
 
 [functions.seo-intelligence]
 verify_jwt = false
+
+[functions.irrigation-market-intelligence]
+verify_jwt = false
