@@ -10,3 +10,5 @@ alter table public.invoices
 
 create index if not exists invoice_items_invoice_sort_idx
   on public.invoice_items (invoice_id, sort_order);
+
+notify pgrst, 'reload schema';
