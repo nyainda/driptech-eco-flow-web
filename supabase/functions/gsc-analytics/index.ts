@@ -1,0 +1,19 @@
+import { createClient } from "npm:@supabase/supabase-js@2";
+const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS"};
+const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,"Content-Type":"application/json"}});
+Deno.serve(async req=>{
+ if(req.method==="OPTIONS")return new Response("ok",{headers:cors});if(req.method!=="POST")return json({error:"POST required"},405);
+ const auth=req.headers.get("Authorization");if(!auth)return json({error:"Sign in required"},401);
+ const admin=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+ const uc=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_ANON_KEY")!,{global:{headers:{Authorization:auth}}});
+ const {data:{user},error:uerr}=await uc.auth.getUser();if(uerr||!user||!(user.email?.endsWith("@driptech.com")||["admin@driptech.com","support@driptech.com"].includes(user.email||"")))return json({error:"Admin access required"},403);
+ const {data:conn}=await admin.from("gsc_oauth_tokens").select("refresh_token,connected_email,property_url,updated_at").eq("id",1).maybeSingle();if(!conn)return json({connected:false,rows:[]});
+ const tr=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({client_id:Deno.env.get("GSC_CLIENT_ID")!,client_secret:Deno.env.get("GSC_CLIENT_SECRET")!,refresh_token:conn.refresh_token,grant_type:"refresh_token"})});
+ const tok=await tr.json();if(!tr.ok)return json({connected:true,error:"Google token refresh failed. Reconnect Search Console.",rows:[]},502);
+ const body=await req.json().catch(()=>({}));const days=Math.min(Math.max(Number(body.days)||28,7),90);const end=new Date(Date.now()-3*86400000),start=new Date(end);start.setDate(start.getDate()-days);
+ const query=await fetch("https://www.googleapis.com/webmasters/v3/sites/"+encodeURIComponent(conn.property_url)+"/searchAnalytics/query",{method:"POST",headers:{Authorization:"Bearer "+tok.access_token,"Content-Type":"application/json"},body:JSON.stringify({startDate:start.toISOString().slice(0,10),endDate:end.toISOString().slice(0,10),dimensions:["query"],rowLimit:100,aggregationType:"auto"})});
+ const result=await query.json();if(!query.ok)return json({connected:true,error:result.error?.message||"Search Console query failed",rows:[]},502);
+ const pages=await fetch("https://www.googleapis.com/webmasters/v3/sites/"+encodeURIComponent(conn.property_url)+"/searchAnalytics/query",{method:"POST",headers:{Authorization:"Bearer "+tok.access_token,"Content-Type":"application/json"},body:JSON.stringify({startDate:start.toISOString().slice(0,10),endDate:end.toISOString().slice(0,10),dimensions:["page"],rowLimit:100,aggregationType:"auto"})});
+ const pageResult=await pages.json();
+ return json({connected:true,email:conn.connected_email,property:conn.property_url,startDate:start.toISOString().slice(0,10),endDate:end.toISOString().slice(0,10),queries:result.rows||[],pages:pageResult.rows||[]});
+});
