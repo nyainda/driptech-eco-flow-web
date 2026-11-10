@@ -124,3 +124,42 @@ revoke all on function public.claim_market_intelligence_job() from public, anon,
 grant execute on function public.claim_market_intelligence_job() to service_role;
 
 -- Usage reservation is written before the outbound API call; failed calls count toward the cap.
+
+-- Direct reservation RPC for existing synchronous endpoints during the queue rollout.
+-- Returns a usage log id or a structured denial. The lock serializes all Grok usage across both functions.
+create or replace function public.reserve_grok_request(
+  p_function_name text,
+  p_model text,
+  p_daily_limit integer default 4,
+  p_cooldown_minutes integer default 30
+) returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_last timestamptz;
+  v_count integer;
+  v_retry integer;
+  v_log_id bigint;
+begin
+  perform pg_advisory_xact_lock(hashtext('driptech-grok-analysis-quota'));
+  select max(request_started_at) into v_last from public.grok_usage_logs
+   where status in ('reserved','success','error','timeout','rate_limited');
+  if v_last is not null and v_last > now() - make_interval(mins => p_cooldown_minutes) then
+    v_retry := greatest(1,ceil(extract(epoch from (v_last + make_interval(mins => p_cooldown_minutes) - now())))::integer);
+    return jsonb_build_object('ok',false,'reason','cooldown','retry_after_seconds',v_retry);
+  end if;
+  select count(*) into v_count from public.grok_usage_logs
+   where request_started_at >= date_trunc('day', now())
+     and status in ('reserved','success','error','timeout','rate_limited');
+  if v_count >= greatest(1,p_daily_limit) then
+    return jsonb_build_object('ok',false,'reason','daily_limit','daily_limit',p_daily_limit);
+  end if;
+  insert into public.grok_usage_logs(function_name,model,status)
+  values (p_function_name,p_model,'reserved') returning id into v_log_id;
+  return jsonb_build_object('ok',true,'usage_log_id',v_log_id);
+end;
+$$;
+revoke all on function public.reserve_grok_request(text,text,integer,integer) from public, anon, authenticated;
+grant execute on function public.reserve_grok_request(text,text,integer,integer) to service_role;
