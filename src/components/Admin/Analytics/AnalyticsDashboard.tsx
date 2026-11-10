@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";\nimport GSCAnalytics from "./GSCAnalytics";
 import {
   Card,
   CardContent,
@@ -1438,7 +1438,7 @@ const AnalyticsDashboard: React.FC = () => {
               </TabsTrigger>
             </TabsList>
 
-            {/* Pages */}
+            <TabsContent value="seo"><GSCAnalytics /></TabsContent>\n\n            {/* Pages */}
 
             <TabsContent value="pages">
               <Card>
