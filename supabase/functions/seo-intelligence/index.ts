@@ -58,8 +58,8 @@ const normaliseCompetitors = (value: unknown) => {
       const domain = String(candidate.domain || "")
         .trim()
         .toLowerCase()
-        .replace(/^https?:\\/\\//, "")
-        .replace(/\\/.*$/, "");
+        .replace(/^https?:\/\//, "")
+        .replace(/\/.*$/, "");
       const name = String(candidate.name || "").trim().slice(0, 80);
       const focus = String(candidate.focus || "").trim().slice(0, 180);
       if (!name || !/^[a-z0-9.-]+\\.[a-z]{2,}$/i.test(domain)) return null;
@@ -170,14 +170,14 @@ function extractResponseText(response: Record<string, unknown>) {
       if (typeof text === "string" && text.trim()) fragments.push(text.trim());
     }
   }
-  return fragments.join("\\n");
+  return fragments.join("\n");
 }
 
 function extractCitations(response: Record<string, unknown>) {
   const citations: Array<{ title: string; url: string }> = [];
   const seen = new Set<string>();
   const add = (title: unknown, url: unknown) => {
-    if (typeof url !== "string" || !/^https?:\\/\\//i.test(url) || seen.has(url)) return;
+    if (typeof url !== "string" || !/^https?:\/\//i.test(url) || seen.has(url)) return;
     seen.add(url);
     citations.push({
       title: typeof title === "string" && title.trim() ? title.trim().slice(0, 180) : new URL(url).hostname,
@@ -215,8 +215,8 @@ function extractCitations(response: Record<string, unknown>) {
 
 function parseReport(text: string) {
   const cleaned = text
-    .replace(/^\x60\x60\x60(?:json)?\\s*/i, "")
-    .replace(/\\s*\x60\x60\x60$/, "")
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "")
     .trim();
   try {
     return JSON.parse(cleaned);
@@ -476,7 +476,7 @@ async function runGrokResearch(
     if (!source || typeof source !== "object") continue;
     const item = source as Record<string, unknown>;
     const url = typeof item.url === "string" ? item.url : "";
-    if (!/^https?:\\/\\//i.test(url)) continue;
+    if (!/^https?:\/\//i.test(url)) continue;
     const title = typeof item.title === "string" && item.title.trim()
       ? item.title.trim()
       : new URL(url).hostname;
