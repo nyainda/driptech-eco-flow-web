@@ -97,19 +97,28 @@ async function searchConsoleSnapshot(admin: ReturnType<typeof createClient>, day
     return { connected: false, reason: "Search Console OAuth secrets are not configured." };
   }
 
-  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      refresh_token: connection.refresh_token,
-      grant_type: "refresh_token",
-    }),
-  });
-  const token = await tokenResponse.json();
-  if (!tokenResponse.ok || !token.access_token) {
-    return { connected: false, reason: "Search Console token refresh failed. Reconnect Google Search Console." };
+  let token: Record<string, unknown>;
+  try {
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: connection.refresh_token,
+        grant_type: "refresh_token",
+      }),
+    });
+    token = await tokenResponse.json();
+    if (!tokenResponse.ok || !token.access_token) {
+      return { connected: false, reason: "Search Console token refresh failed. Reconnect Google Search Console." };
+    }
+  } catch (error) {
+    return {
+      connected: false,
+      reason: "Search Console token refresh could not be reached: " +
+        (error instanceof Error ? error.message : "network or response error"),
+    };
   }
 
   const end = new Date();
@@ -187,22 +196,45 @@ async function keywordEstimates() {
   }
 
   const authorization = "Basic " + btoa(login + ":" + password);
-  const response = await fetch(DATAFORSEO_KEYWORD_IDEAS_URL, {
-    method: "POST",
-    headers: {
-      Authorization: authorization,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify([{
-      keywords: SEED_KEYWORDS,
-      location_name: "Kenya",
-      language_name: "English",
-      limit: 80,
-      order_by: ["relevance,desc", "keyword_info.search_volume,desc"],
-      closely_variants: true,
-    }]),
-  });
-  const payload = await response.json();
+  let payload: Record<string, any>;
+  try {
+    const response = await fetch(DATAFORSEO_KEYWORD_IDEAS_URL, {
+      method: "POST",
+      headers: {
+        Authorization: authorization,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([{
+        keywords: SEED_KEYWORDS,
+        location_name: "Kenya",
+        language_name: "English",
+        limit: 80,
+        order_by: ["relevance,desc", "keyword_info.search_volume,desc"],
+        closely_variants: true,
+      }]),
+    });
+    payload = await response.json();
+    if (!response.ok) {
+      return {
+        connected: false,
+        provider: "DataForSEO",
+        reason: String(payload?.status_message || "Keyword estimate request failed.").slice(0, 500),
+        estimates: [],
+        seedKeywords: SEED_KEYWORDS,
+        documentationUrl: DATAFORSEO_DOCS_URL,
+      };
+    }
+  } catch (error) {
+    return {
+      connected: false,
+      provider: "DataForSEO",
+      reason: "Keyword provider could not be reached or returned invalid JSON: " +
+        (error instanceof Error ? error.message : "network or response error"),
+      estimates: [],
+      seedKeywords: SEED_KEYWORDS,
+      documentationUrl: DATAFORSEO_DOCS_URL,
+    };
+  }
   const task = Array.isArray(payload.tasks) ? payload.tasks[0] : null;
   if (!response.ok || payload.status_code !== 20000 || (task && task.status_code !== 20000)) {
     const taskMessage = task?.status_message;
