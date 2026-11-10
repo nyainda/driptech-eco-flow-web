@@ -546,9 +546,9 @@ Deno.serve(async (req) => {
       status: "success",
       request_finished_at: new Date().toISOString(),
       duration_ms: Date.now() - requestStartedAt,
-      input_tokens: result.usage?.input_tokens ?? null,
-      output_tokens: result.usage?.output_tokens ?? null,
-      total_tokens: result.usage?.total_tokens ?? null,
+      input_tokens: (result.usage as Record<string, unknown> | null)?.input_tokens ?? null,
+      output_tokens: (result.usage as Record<string, unknown> | null)?.output_tokens ?? null,
+      total_tokens: (result.usage as Record<string, unknown> | null)?.total_tokens ?? null,
       metadata: { gsc_connected: !!(gsc as Record<string, unknown>).connected, dataforseo_connected: !!(keywordData as Record<string, unknown>).connected },
     }).eq("id", usageLogId);
     const normaliseEvidenceText = (value: unknown) =>
