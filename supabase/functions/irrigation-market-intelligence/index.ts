@@ -71,10 +71,10 @@ const normaliseCompetitors = (value: unknown) => {
   return value.slice(0, 10).map((item) => {
     const candidate = item as Record<string, unknown>;
     const domain = String(candidate.domain || "")
-      .trim().toLowerCase().replace(/^https?:\\/\\//, "").replace(/\\/.*$/, "");
+      .trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
     const name = String(candidate.name || "").trim().slice(0, 80);
     const focus = String(candidate.focus || "").trim().slice(0, 180);
-    if (!name || !/^[a-z0-9.-]+\\.[a-z]{2,}$/i.test(domain)) return null;
+    if (!name || !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(domain)) return null;
     return { name, domain, focus };
   }).filter((item): item is { name: string; domain: string; focus: string } => !!item);
 };
@@ -263,14 +263,14 @@ function extractResponseText(response: Record<string, unknown>) {
       if (typeof part.text === "string" && part.text.trim()) fragments.push(part.text.trim());
     }
   }
-  return fragments.join("\\n");
+  return fragments.join("\n");
 }
 
 function extractCitations(response: Record<string, unknown>) {
   const citations: Array<{ title: string; url: string; domain: string }> = [];
   const seen = new Set<string>();
   const add = (title: unknown, url: unknown) => {
-    if (typeof url !== "string" || !/^https?:\\/\\//i.test(url) || seen.has(url)) return;
+    if (typeof url !== "string" || !/^https?:\/\//i.test(url) || seen.has(url)) return;
     seen.add(url);
     const domain = new URL(url).hostname;
     citations.push({
@@ -305,7 +305,7 @@ function extractCitations(response: Record<string, unknown>) {
 }
 
 function parseJsonReport(value: string) {
-  const clean = value.replace(/^\`\`\`(?:json)?\\s*/i, "").replace(/\\s*\`\`\`$/, "").trim();
+  const clean = value.replace(/^\x60{3}(?:json)?\s*/i, "").replace(/\s*\x60{3}$/, "").trim();
   try {
     return JSON.parse(clean);
   } catch {
@@ -375,7 +375,7 @@ async function runGrok(
     }, null, 2),
     "",
     "Never return any monthly search volume or keyword metric in market_topics or recommendations. The UI will display exact DataForSEO estimate rows in a separate third-party evidence table.",
-  ].join("\\n");
+  ].join("\n");
 
   const response = await fetch("https://api.x.ai/v1/responses", {
     method: "POST",
