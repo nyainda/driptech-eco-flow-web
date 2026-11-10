@@ -242,7 +242,7 @@ async function keywordEstimates() {
     market: "Kenya",
     language: "English",
     returnedAt: new Date().toISOString(),
-    providerCostUsd: payload.cost == null ? null : safeNumber(payload.cost),
+    providerCostUsd: task?.cost == null ? null : safeNumber(task.cost),
     sourceUrl: DATAFORSEO_DOCS_URL,
     seedKeywords: SEED_KEYWORDS,
     totalItemsReturned: estimates.length,
@@ -493,16 +493,16 @@ Deno.serve(async (req) => {
         const publicSourceUrls = Array.isArray(refs.public_source_urls)
           ? refs.public_source_urls.filter((url): url is string => typeof url === "string" && citationUrls.has(url))
           : [];
-        const evidenceClass = matchedGscQuery
-          ? "Search Console measurement"
-          : matchedThirdPartyKeyword
-          ? "Third-party estimate"
-          : publicSourceUrls.length
-          ? "Public web observation"
-          : "AI hypothesis";
+        const evidenceClasses = [
+          ...(matchedGscQuery ? ["Search Console measurement"] : []),
+          ...(matchedThirdPartyKeyword ? ["Third-party estimate"] : []),
+          ...(publicSourceUrls.length ? ["Public web observation"] : []),
+        ];
+        if (!evidenceClasses.length) evidenceClasses.push("AI hypothesis");
         return {
           ...row,
-          evidence_class: evidenceClass,
+          evidence_class: evidenceClasses[0],
+          evidence_classes: evidenceClasses,
           evidence_refs: {
             gsc_query: matchedGscQuery,
             third_party_keyword: matchedThirdPartyKeyword,
