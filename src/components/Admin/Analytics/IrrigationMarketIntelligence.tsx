@@ -4,12 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Activity,
-  ArrowUpRight,
   BarChart3,
-  Bot,
   CalendarClock,
-  CheckCircle2,
   Database,
   Download,
   ExternalLink,
@@ -21,7 +17,6 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  Target,
   TrendingUp,
 } from "lucide-react";
 
