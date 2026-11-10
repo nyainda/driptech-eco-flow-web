@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import GSCAnalytics from "./GSCAnalytics";
 import GrokSEOIntelligence from "./GrokSEOIntelligence";
+import IrrigationMarketIntelligence from "./IrrigationMarketIntelligence";
 import {
   Card,
   CardContent,
@@ -26,6 +27,7 @@ import {
   TrendingUp,
   RefreshCw,
   SearchCheck,
+  Radar,
   Bot,
   Sparkles,
   Target,
@@ -869,7 +871,7 @@ const AnalyticsDashboard: React.FC = () => {
       </div>
 
       <Tabs value={activeSection} onValueChange={setActiveSection} className="w-full">
-        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-2xl bg-muted/60 p-1 sm:grid-cols-4">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-2xl bg-muted/60 p-1 sm:grid-cols-3 xl:grid-cols-5">
           <TabsTrigger value="overview" className="rounded-xl py-3">
             <Activity className="mr-2 h-4 w-4" />
             Overview
@@ -881,6 +883,10 @@ const AnalyticsDashboard: React.FC = () => {
           <TabsTrigger value="grok" className="rounded-xl py-3">
             <Sparkles className="mr-2 h-4 w-4" />
             AI intelligence
+          </TabsTrigger>
+          <TabsTrigger value="market" className="rounded-xl py-3">
+            <Radar className="mr-2 h-4 w-4" />
+            Market intelligence
           </TabsTrigger>
           <TabsTrigger value="website" className="rounded-lg py-2.5">
             <Activity className="mr-2 h-4 w-4" />
@@ -900,6 +906,7 @@ const AnalyticsDashboard: React.FC = () => {
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" onClick={() => setActiveSection("seo")}><SearchCheck className="mr-2 h-4 w-4" /> Search performance</Button>
                 <Button onClick={() => setActiveSection("grok")}><Sparkles className="mr-2 h-4 w-4" /> Ask Grok to analyse</Button>
+                <Button variant="outline" onClick={() => setActiveSection("market")}><Radar className="mr-2 h-4 w-4" /> Market demand</Button>
               </div>
             </div>
 
@@ -1014,6 +1021,9 @@ const AnalyticsDashboard: React.FC = () => {
 
         <TabsContent value="grok" className="mt-5">
           <GrokSEOIntelligence />
+        </TabsContent>
+        <TabsContent value="market" className="mt-5">
+          <IrrigationMarketIntelligence />
         </TabsContent>
         <TabsContent value="seo" className="mt-5">
           <GSCAnalytics />
