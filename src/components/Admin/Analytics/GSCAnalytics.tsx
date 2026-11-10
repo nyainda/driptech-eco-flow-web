@@ -33,12 +33,10 @@ import {
   BookOpen,
   Check,
   ChevronRight,
-  CircleHelp,
   ClipboardList,
   Download,
   ExternalLink,
   Eye,
-  FileSearch,
   Filter,
   Gauge,
   Globe2,
@@ -49,10 +47,8 @@ import {
   Search,
   SearchCheck,
   SearchX,
-  Sparkles,
   Target,
   TrendingUp,
-  Users,
 } from "lucide-react";
 
 type MetricRow = {
@@ -245,7 +241,14 @@ const GSCAnalytics: React.FC = () => {
   const [activeView, setActiveView] = useState("overview");
   const [querySearch, setQuerySearch] = useState("");
   const [pageSearch, setPageSearch] = useState("");
-  const [completedActions, setCompletedActions] = useState<string[]>([]);
+  const [completedActions, setCompletedActions] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      return JSON.parse(window.localStorage.getItem("driptech-gsc-completed-actions") || "[]");
+    } catch {
+      return [];
+    }
+  });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -287,15 +290,6 @@ const GSCAnalytics: React.FC = () => {
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem("driptech-gsc-completed-actions");
-      if (saved) setCompletedActions(JSON.parse(saved));
-    } catch {
-      setCompletedActions([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
       window.localStorage.setItem(
         "driptech-gsc-completed-actions",
         JSON.stringify(completedActions),
@@ -324,6 +318,15 @@ const GSCAnalytics: React.FC = () => {
   const pages = payload?.pages || [];
   const totals = payload?.totals || {};
   const previousTotals = payload?.previousTotals || {};
+
+  const trendData = useMemo(
+    () =>
+      (payload?.trend || []).map((row) => ({
+        ...row,
+        date: row.keys?.[0] || "",
+      })),
+    [payload?.trend],
+  );
 
   const queryRows = useMemo(
     () =>
@@ -692,7 +695,7 @@ const GSCAnalytics: React.FC = () => {
                     {payload?.trend?.length ? (
                       <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={payload.trend} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
+                          <AreaChart data={trendData} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
                             <defs>
                               <linearGradient id="gscClicksFill" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#059669" stopOpacity={0.28} />
@@ -705,7 +708,7 @@ const GSCAnalytics: React.FC = () => {
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
                             <XAxis
-                              dataKey="keys[0]"
+                              dataKey="date"
                               tickFormatter={(value) => shortDate(String(value))}
                               minTickGap={24}
                               tick={{ fontSize: 11 }}
