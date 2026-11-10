@@ -134,11 +134,11 @@ const readablePage = (value?: string) => {
 
 const classifyIntent = (rawQuery: string): IntentName => {
   const query = rawQuery.toLowerCase();
-  if (/drip\\s?tech|dripstech/.test(query)) return "Branded";
+  if (/drip\s?tech|dripstech/.test(query)) return "Branded";
   if (/price|prices|cost|buy|purchase|supplier|shop|quote|for sale|near me/.test(query)) {
     return "Transactional";
   }
-  if (/best|top|compare|comparison|review|vs\\b|company|companies/.test(query)) {
+  if (/best|top|compare|comparison|review|vs\b|company|companies/.test(query)) {
     return "Commercial research";
   }
   if (/design|sizing|calculation|pressure|flow rate|spacing|filter|filtration|clog|repair|installation|install|maintenance|troubleshoot|pump|boq|emitter/.test(query)) {
@@ -167,7 +167,7 @@ const exportCsv = (filename: string, rows: MetricRow[]) => {
         .map(escapeCell)
         .join(","),
     ),
-  ].join("\\r\\n");
+  ].join("\r\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
@@ -658,28 +658,40 @@ const GSCAnalytics: React.FC = () => {
             />
           </div>
 
-          <div className="flex gap-1 overflow-x-auto rounded-xl border border-border/70 bg-muted/40 p-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = activeView === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveView(item.id)}
-                  className={
-                    "inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors " +
-                    (active
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:bg-background/70 hover:text-foreground")
-                  }
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
+          <div className="grid gap-5 lg:grid-cols-[224px_minmax(0,1fr)]">
+            <aside className="rounded-2xl border border-border/70 bg-card p-3 shadow-sm">
+              <p className="px-3 pb-3 pt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                SEO workspace
+              </p>
+              <nav aria-label="SEO dashboard sections" className="flex gap-1 overflow-x-auto lg:flex-col">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = activeView === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setActiveView(item.id)}
+                      aria-current={active ? "page" : undefined}
+                      className={
+                        "inline-flex shrink-0 items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium transition-colors " +
+                        (active
+                          ? "bg-emerald-500/10 text-emerald-700 shadow-sm dark:text-emerald-300"
+                          : "text-muted-foreground hover:bg-muted/70 hover:text-foreground")
+                      }
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span>{item.label}</span>
+                      {active && <span className="ml-auto hidden h-1.5 w-1.5 rounded-full bg-emerald-500 lg:block" />}
+                    </button>
+                  );
+                })}
+              </nav>
+              <div className="mt-4 hidden rounded-xl bg-muted/50 p-3 text-xs leading-5 text-muted-foreground lg:block">
+                Use live Search Console data to decide which pages and search topics to improve next.
+              </div>
+            </aside>
+            <div className="min-w-0 space-y-5">
 
           {activeView === "overview" && (
             <div className="space-y-5">
@@ -1148,6 +1160,8 @@ const GSCAnalytics: React.FC = () => {
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
             <span>Property: {payload?.property || "Google Search Console"}</span>
             <span>Sitewide totals come from an ungrouped GSC request; query and page tables are ranked samples returned by Google.</span>
+          </div>
+            </div>
           </div>
         </>
       )}
