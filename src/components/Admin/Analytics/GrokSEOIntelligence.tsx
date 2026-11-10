@@ -202,16 +202,16 @@ const GrokSEOIntelligence: React.FC = () => {
       ...stringsOf(assessment.next_30_days).map((item) => "- " + item),
       "",
       "## Full structured findings",
-      "\\x60\\x60\\x60json",
+      "\x60\x60\x60json",
       JSON.stringify(report, null, 2),
-      "\\x60\\x60\\x60",
+      "\x60\x60\x60",
       "",
       "## Sources",
       ...(selectedReport.source_links || []).map((source) => "- [" + source.title + "](" + source.url + ")"),
       "",
       "## Evidence note",
       "Product interaction counts are interest signals, not confirmed sales. Competitor observations are based on public sources only.",
-    ].join("\\n");
+    ].join("\n");
     const blob = new Blob([content], { type: "text/markdown;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
