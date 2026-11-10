@@ -1,9 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
-const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,"Content-Type":"application/json"}});
+const allowedOrigins = new Set(["https://www.dripstech.co.ke", "https://dripstech.co.ke"]);
+const corsFor = (req: Request) => { const origin=req.headers.get("origin")||""; return {"Access-Control-Allow-Origin":allowedOrigins.has(origin)?origin:"https://www.dripstech.co.ke","Vary":"Origin","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type, x-my-custom-header","Access-Control-Allow-Methods":"POST, OPTIONS","Access-Control-Max-Age":"86400"}; };
+const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...corsFor(req),"Content-Type":"application/json"}});
 async function sha(value:string){return [...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)))].map(b=>b.toString(16).padStart(2,"0")).join("");}
 Deno.serve(async req=>{
- if(req.method==="OPTIONS") return new Response("ok",{headers:cors});
+ if(req.method==="OPTIONS") return new Response(null,{status:204,headers:corsFor(req)});
  if(req.method!=="POST") return json({error:"POST required"},405);
  const auth=req.headers.get("Authorization"); if(!auth) return json({error:"Sign in required"},401);
  const admin=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
