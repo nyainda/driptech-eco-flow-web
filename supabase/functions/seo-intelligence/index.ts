@@ -258,9 +258,12 @@ async function buildBusinessSnapshot(
   days: number,
   gsc: Record<string, unknown>,
 ) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
+  const periodEnd = typeof gsc.endDate === "string" ? gsc.endDate : isoDate(new Date());
+  const endDate = new Date(periodEnd + "T23:59:59.999Z");
+  const startDate = new Date(periodEnd + "T00:00:00.000Z");
+  startDate.setUTCDate(startDate.getUTCDate() - (days - 1));
   const startIso = startDate.toISOString();
+  const endIso = endDate.toISOString();
 
   const fetchInteractions = async () => {
     const rows: Array<Record<string, any>> = [];
@@ -270,6 +273,7 @@ async function buildBusinessSnapshot(
         .from("product_interactions")
         .select("product_name,product_id,product_category,interaction_type,page_path,timestamp,visitor_id")
         .gte("timestamp", startIso)
+        .lte("timestamp", endIso)
         .order("timestamp", { ascending: false })
         .range(offset, offset + pageSize - 1);
       if (error) throw new Error("Could not read product interactions: " + error.message);
@@ -382,6 +386,7 @@ async function buildBusinessSnapshot(
   return {
     periodDays: days,
     analyticsWindowStart: startIso.slice(0, 10),
+    analyticsWindowEnd: endIso.slice(0, 10),
     productInteractionRowsAnalysed: interactions.length,
     pageViewRowsAnalysed: pageViews.length,
     topProducts,
