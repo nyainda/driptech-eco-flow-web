@@ -27,6 +27,10 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
+import {
+  StealthAdminGate,
+  cloakStaffPortal,
+} from "@/components/Admin/StealthAdminGate";
 
 interface AdminUser {
   id: string;
@@ -688,6 +692,18 @@ const AdminLogin = () => {
                   Authorized personnel only. Role verification is enforced via Supabase <code className="font-mono text-[11px]">is_admin</code> security policies.
                 </span>
               </div>
+              <div className="mt-3 flex items-center justify-between rounded-xl border border-border/50 bg-background/60 px-3.5 py-2.5 text-[11px] text-muted-foreground">
+                <span>Stealth mode active for public visitors</span>
+                <button
+                  type="button"
+                  onClick={() => cloakStaffPortal()}
+                  className="inline-flex items-center gap-1 font-semibold text-foreground hover:text-primary transition-colors"
+                  title="Re-cloak /admin so this browser shows the 404 NotFound page until unlocked with Ctrl+Shift+L"
+                >
+                  <EyeOff className="h-3.5 w-3.5" />
+                  Cloak Portal (404)
+                </button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -711,18 +727,22 @@ export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (sessionExpired) {
     return (
-      <>
+      <StealthAdminGate>
         <AdminLogin />
         <SessionExpiredWarning
           onRefresh={refreshSession}
           onLogin={logout}
         />
-      </>
+      </StealthAdminGate>
     );
   }
 
   if (!isAuthenticated) {
-    return <AdminLogin />;
+    return (
+      <StealthAdminGate>
+        <AdminLogin />
+      </StealthAdminGate>
+    );
   }
 
   return <>{children}</>;
@@ -731,8 +751,13 @@ export const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
 export const AdminHeader = () => {
   const { user, logout } = useAdminAuth();
 
+  const handleCloakAndSignOut = async () => {
+    cloakStaffPortal();
+    await logout();
+  };
+
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-2">
       <div className="hidden md:flex items-center gap-2.5 rounded-xl border border-border/80 bg-muted/40 px-3 py-1.5">
         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-primary text-xs font-bold">
           {(user?.name || user?.email || "A").charAt(0).toUpperCase()}
@@ -742,6 +767,16 @@ export const AdminHeader = () => {
           <p className="text-[10px] text-muted-foreground">{user?.email || "Administrator"}</p>
         </div>
       </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleCloakAndSignOut}
+        className="h-9 rounded-xl text-muted-foreground hover:text-foreground hidden sm:inline-flex"
+        title="Sign out and re-cloak /admin behind 404 mode"
+      >
+        <EyeOff className="h-4 w-4 mr-1.5" />
+        <span className="text-xs font-medium">Cloak & Lock</span>
+      </Button>
       <Button
         variant="outline"
         size="sm"

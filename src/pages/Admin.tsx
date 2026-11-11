@@ -823,13 +823,14 @@ const Admin = () => {
   return (
     <>
       <Helmet>
-        <title>DripTech Admin</title>
         <meta name="robots" content="noindex, nofollow, noarchive" />
         <meta name="googlebot" content="noindex, nofollow, noarchive" />
-        <link rel="canonical" href="https://www.dripstech.co.ke/admin" />
       </Helmet>
       <AdminAuthProvider>
         <AdminAuthGuard>
+          <Helmet>
+            <title>DripTech Admin — Operations Command Center</title>
+          </Helmet>
           <AdminContent />
         </AdminAuthGuard>
       </AdminAuthProvider>
