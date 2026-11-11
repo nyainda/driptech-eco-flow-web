@@ -6,19 +6,26 @@ import {
   Download,
   Printer,
   Send,
-  CheckCircle,
+  CheckCircle2,
   Trash2,
-  Clock,
+  Receipt,
+  Building2,
+  Calendar,
 } from "lucide-react";
 import { Invoice } from "../types/InvoiceTypes";
-import { formatCurrency, formatDate } from "../utils/formatters";
+import { formatCurrency } from "../utils/formatters";
 import StatusBadge from "./StatusBadge";
+import { getReceiptNumber } from "@/hooks/useInvoiceOperations";
+import { Button } from "@/components/ui/button";
 
 interface InvoicesTableProps {
   invoices: Invoice[];
   onViewInvoice: (invoice: Invoice) => void;
+  onViewReceipt?: (invoice: Invoice) => void;
   onEditInvoice: (invoice: Invoice) => void;
   onDownloadPDF: (invoice: Invoice) => void;
+  onDownloadReceiptPDF?: (invoice: Invoice) => void;
+  onPrintInvoice?: (invoice: Invoice) => void;
   onUpdateStatus: (invoiceId: string, status: string) => void;
   onDeleteInvoice: (invoiceId: string) => void;
   getDaysOverdue: (dueDate: string, status: string) => number;
@@ -27,228 +34,303 @@ interface InvoicesTableProps {
 const InvoicesTable: React.FC<InvoicesTableProps> = ({
   invoices,
   onViewInvoice,
+  onViewReceipt,
   onEditInvoice,
   onDownloadPDF,
+  onDownloadReceiptPDF,
+  onPrintInvoice,
   onUpdateStatus,
   onDeleteInvoice,
   getDaysOverdue,
 }) => {
-  const formatCompactDate = (dateString: string) => {
+  const formatCompactDate = (dateString?: string | null) => {
+    if (!dateString) return "—";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    if (Number.isNaN(date.getTime())) return "—";
+    return date.toLocaleDateString("en-KE", {
+      day: "2-digit",
       month: "short",
-      day: "numeric",
+      year: "numeric",
     });
   };
 
   if (invoices.length === 0) {
     return (
-      <div className="bg-background rounded-xl shadow-lg border border-border">
-        <div className="text-center py-12">
-          <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-foreground mb-2">
-            No invoices found
-          </h3>
-          <p className="text-muted-foreground text-sm">
-            Try adjusting your search or filter criteria
-          </p>
+      <div className="rounded-2xl border border-dashed border-border bg-card/60 py-16 px-6 text-center shadow-sm">
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <FileText className="w-7 h-7" />
         </div>
+        <h3 className="text-base font-bold text-foreground mb-1">
+          No billing documents match your filter
+        </h3>
+        <p className="text-muted-foreground text-xs max-w-md mx-auto">
+          Create a new commercial invoice or adjust your search query and status filter above.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-background rounded-xl shadow-lg border border-border overflow-hidden">
-      <div className="relative overflow-auto max-h-[70vh] scrollbar-thin scrollbar-thumb-muted scrollbar-track-background">
-        <table className="w-full">
-          <thead className="sticky top-0 z-10">
-            <tr className="bg-muted border-b border-border">
-              <th className="px-3 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wide">
-                Invoice
-              </th>
-              <th className="px-3 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wide">
-                Customer
-              </th>
-              <th className="px-3 py-3 text-right text-xs font-semibold text-foreground uppercase tracking-wide">
-                Amount
-              </th>
-              <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wide">
-                Status
-              </th>
-              <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wide">
-                Due Date
-              </th>
-              <th className="px-3 py-3 text-center text-xs font-semibold text-foreground uppercase tracking-wide">
-                Actions
-              </th>
+    <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-muted/50 border-b border-border/80 text-left text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              <th className="px-4 py-3.5">Document Ref</th>
+              <th className="px-4 py-3.5">Client / Account</th>
+              <th className="px-4 py-3.5">Issue & Due Schedule</th>
+              <th className="px-4 py-3.5 text-center">Settlement Status</th>
+              <th className="px-4 py-3.5 text-right">Total Valuation</th>
+              <th className="px-4 py-3.5 text-right">Actions & PDFs</th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-border">
-            {invoices.map((invoice, index) => {
+          <tbody className="divide-y divide-border/60">
+            {invoices.map((invoice) => {
               const daysOverdue = getDaysOverdue(
                 invoice.due_date,
                 invoice.status || "draft",
               );
-              const isOverdue = daysOverdue > 0 && invoice.status !== "paid";
+              const isPaid = invoice.status === "paid";
+              const isOverdue = daysOverdue > 0 && !isPaid;
+              const receiptNo = getReceiptNumber(invoice.invoice_number);
 
               return (
                 <tr
                   key={invoice.id}
-                  className="group hover:bg-muted transition-colors duration-200"
+                  className="group hover:bg-muted/30 transition-colors"
                 >
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-4 h-4 text-primary-foreground" />
+                  {/* Document Ref */}
+                  <td className="px-4 py-4 align-top">
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
+                          isPaid
+                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                            : "bg-primary/10 text-primary border-primary/20"
+                        }`}
+                      >
+                        {isPaid ? (
+                          <Receipt className="w-4 h-4" />
+                        ) : (
+                          <FileText className="w-4 h-4" />
+                        )}
                       </div>
                       <div className="min-w-0">
-                        <div className="text-sm font-semibold text-foreground truncate">
+                        <button
+                          type="button"
+                          onClick={() => onViewInvoice(invoice)}
+                          className="font-mono text-xs font-bold text-primary hover:underline block"
+                        >
                           {invoice.invoice_number}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {formatCompactDate(
-                            invoice.created_at || new Date().toISOString(),
-                          )}{" "}
-                          •{" "}
-                          {new Date(
-                            invoice.created_at || new Date().toISOString(),
-                          ).toLocaleTimeString("en-US", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })}
-                        </div>
+                        </button>
+                        {isPaid ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onViewReceipt
+                                ? onViewReceipt(invoice)
+                                : onViewInvoice(invoice)
+                            }
+                            className="mt-1 inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20"
+                            title="Open Official Payment Receipt"
+                          >
+                            <CheckCircle2 className="h-2.5 w-2.5" />
+                            {receiptNo}
+                          </button>
+                        ) : (
+                          <p className="text-[11px] text-muted-foreground mt-0.5">
+                            {invoice.invoice_items?.length || 0} line item
+                            {(invoice.invoice_items?.length || 0) === 1
+                              ? ""
+                              : "s"}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </td>
 
-                  <td className="px-3 py-3">
+                  {/* Client */}
+                  <td className="px-4 py-4 align-top">
                     <div className="min-w-0">
-                      <div className="text-sm font-medium text-foreground truncate">
-                        {invoice.customer?.company_name || "Unknown Company"}
+                      <div className="font-semibold text-foreground flex items-center gap-1.5">
+                        <Building2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <span className="truncate">
+                          {invoice.customer?.company_name ||
+                            invoice.customer?.contact_person ||
+                            "Valued Corporate Client"}
+                        </span>
                       </div>
                       {invoice.customer?.contact_person && (
-                        <div className="text-xs text-muted-foreground truncate">
-                          {invoice.customer.contact_person}
+                        <div className="text-xs text-muted-foreground truncate mt-0.5">
+                          Attn: {invoice.customer.contact_person}
+                        </div>
+                      )}
+                      {invoice.customer?.email && (
+                        <div className="text-[11px] text-muted-foreground/80 truncate">
+                          {invoice.customer.email}
                         </div>
                       )}
                     </div>
                   </td>
 
-                  <td className="px-3 py-3 text-right">
-                    <div className="text-sm font-bold text-foreground">
-                      {formatCurrency(invoice.total_amount)}
+                  {/* Dates */}
+                  <td className="px-4 py-4 align-top text-xs">
+                    <div className="flex items-center gap-1.5 text-foreground font-medium">
+                      <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <span>Issued: {formatCompactDate(invoice.issue_date)}</span>
                     </div>
-                    {invoice.tax_amount && invoice.tax_amount > 0 && (
-                      <div className="text-xs text-muted-foreground">
-                        +{formatCurrency(invoice.tax_amount)}
-                      </div>
-                    )}
-                  </td>
-
-                  <td className="px-3 py-3 text-center">
-                    <StatusBadge status={invoice.status || "draft"} />
-                    {isOverdue && (
-                      <div className="text-xs text-destructive font-medium mt-1">
-                        {daysOverdue}d overdue
-                      </div>
-                    )}
-                  </td>
-
-                  <td className="px-3 py-3 text-center">
                     <div
-                      className={`text-sm font-medium ${
-                        isOverdue ? "text-destructive" : "text-foreground"
+                      className={`mt-1 text-[11px] font-medium ${
+                        isOverdue
+                          ? "text-rose-600 dark:text-rose-400 font-semibold"
+                          : "text-muted-foreground"
                       }`}
                     >
-                      {formatCompactDate(invoice.due_date)}
+                      {isPaid && invoice.paid_at
+                        ? `Paid: ${formatCompactDate(invoice.paid_at)}`
+                        : `Due: ${formatCompactDate(invoice.due_date)}`}
                     </div>
-                    {isOverdue && (
-                      <div className="w-2 h-2 bg-destructive rounded-full mx-auto mt-1"></div>
-                    )}
                   </td>
 
-                  <td className="px-3 py-3">
-                    <div className="flex items-center justify-center gap-1">
-                      <button
+                  {/* Status */}
+                  <td className="px-4 py-4 align-top text-center">
+                    <div className="inline-flex flex-col items-center gap-1">
+                      <StatusBadge status={invoice.status || "draft"} />
+                      {isOverdue && (
+                        <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400">
+                          {daysOverdue}d past due
+                        </span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Amount */}
+                  <td className="px-4 py-4 align-top text-right">
+                    <div className="font-mono text-sm font-extrabold text-foreground">
+                      {formatCurrency(invoice.total_amount)}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">
+                      {invoice.tax_amount && invoice.tax_amount > 0
+                        ? `Incl. VAT ${formatCurrency(invoice.tax_amount)}`
+                        : "VAT Excl. / Zero"}
+                    </div>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-4 py-4 align-top text-right">
+                    <div className="flex items-center justify-end gap-1 flex-wrap">
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => onViewInvoice(invoice)}
-                        className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200"
-                        title="View"
+                        className="h-8 px-2.5 rounded-lg text-xs gap-1"
+                        title="Preview Invoice / Receipt"
                       >
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
+                        <Eye className="w-3.5 h-3.5 text-primary" />
+                        <span className="hidden xl:inline">Preview</span>
+                      </Button>
 
-                      <button
-                        onClick={() => onEditInvoice(invoice)}
-                        className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Edit"
-                        disabled={invoice.status === "paid"}
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => onDownloadPDF(invoice)}
-                        className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200"
-                        title="Download"
+                        className="h-8 px-2.5 rounded-lg text-xs gap-1"
+                        title="Download Commercial Invoice PDF"
                       >
-                        <Download className="w-3.5 h-3.5" />
-                      </button>
+                        <Download className="w-3.5 h-3.5 text-primary" />
+                        <span className="hidden xl:inline">Invoice PDF</span>
+                      </Button>
+
+                      {/* Official Receipt Button */}
+                      {onDownloadReceiptPDF && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            isPaid
+                              ? onDownloadReceiptPDF(invoice)
+                              : onViewReceipt
+                                ? onViewReceipt(invoice)
+                                : onDownloadReceiptPDF(invoice)
+                          }
+                          className={`h-8 px-2.5 rounded-lg text-xs gap-1 ${
+                            isPaid
+                              ? "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 font-semibold"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                          title={
+                            isPaid
+                              ? `Download Official Receipt (${receiptNo})`
+                              : "Preview Official Receipt layout"
+                          }
+                        >
+                          <Receipt className="w-3.5 h-3.5" />
+                          <span className="hidden xl:inline">Receipt PDF</span>
+                        </Button>
+                      )}
+
+                      {onPrintInvoice && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onPrintInvoice(invoice)}
+                          className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+                          title="Print Document"
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                        </Button>
+                      )}
 
                       {invoice.status === "draft" && (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => onUpdateStatus(invoice.id, "sent")}
-                          className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200"
-                          title="Send"
+                          className="h-8 w-8 rounded-lg text-sky-600 hover:bg-sky-500/10"
+                          title="Mark as Sent to Client"
                         >
                           <Send className="w-3.5 h-3.5" />
-                        </button>
+                        </Button>
                       )}
 
-                      {invoice.status === "sent" && (
-                        <button
+                      {!isPaid && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => onUpdateStatus(invoice.id, "paid")}
-                          className="p-1.5 text-primary hover:bg-muted rounded-lg transition-colors duration-200"
-                          title="Mark Paid"
+                          className="h-8 px-2 rounded-lg text-xs gap-1 text-emerald-600 hover:bg-emerald-500/10 font-semibold"
+                          title="Record Payment & Issue Official Receipt"
                         >
-                          <CheckCircle className="w-3.5 h-3.5" />
-                        </button>
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span className="hidden 2xl:inline">Mark Paid</span>
+                        </Button>
                       )}
 
-                      <div className="relative group">
-                        <button
-                          className="p-1.5 text-muted-foreground hover:bg-muted rounded-lg transition-colors duration-200"
-                          title="More actions"
-                        >
-                          <svg
-                            className="w-3.5 h-3.5"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                          </svg>
-                        </button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onEditInvoice(invoice)}
+                        disabled={isPaid}
+                        className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground disabled:opacity-35"
+                        title={
+                          isPaid
+                            ? "Paid invoices are locked"
+                            : "Edit Invoice"
+                        }
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </Button>
 
-                        <div className="absolute right-0 top-full mt-1 w-32 bg-background rounded-lg shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-20">
-                          <button
-                            onClick={() =>
-                              console.log("Print invoice:", invoice.id)
-                            }
-                            className="w-full px-3 py-2 text-left text-xs text-foreground hover:bg-muted flex items-center gap-2 rounded-t-lg"
-                          >
-                            <Printer className="w-3 h-3" />
-                            Print
-                          </button>
-                          <button
-                            onClick={() => onDeleteInvoice(invoice.id)}
-                            className="w-full px-3 py-2 text-left text-xs text-destructive hover:bg-destructive/10 flex items-center gap-2 rounded-b-lg"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                            Delete
-                          </button>
-                        </div>
-                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDeleteInvoice(invoice.id)}
+                        className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        title="Delete Invoice"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -258,44 +340,33 @@ const InvoicesTable: React.FC<InvoicesTableProps> = ({
         </table>
       </div>
 
-      <div className="bg-muted px-4 py-2 border-t border-border">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+      {/* Table Footer Summary */}
+      <div className="bg-muted/40 px-4 py-3 border-t border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>
+          Showing <strong className="text-foreground">{invoices.length}</strong>{" "}
+          document{invoices.length !== 1 ? "s" : ""}
+        </span>
+        <div className="flex items-center gap-4">
           <span>
-            {invoices.length} invoice{invoices.length !== 1 ? "s" : ""}
-          </span>
-          <div className="flex items-center gap-4">
-            <span className="font-medium text-foreground">
-              Total:{" "}
+            Paid Receipts:{" "}
+            <strong className="font-mono text-emerald-600 dark:text-emerald-400">
               {formatCurrency(
-                invoices.reduce(
-                  (sum, invoice) => sum + invoice.total_amount,
-                  0,
-                ),
+                invoices
+                  .filter((i) => i.status === "paid")
+                  .reduce((sum, i) => sum + i.total_amount, 0),
               )}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              Scroll for more
-            </span>
-          </div>
+            </strong>
+          </span>
+          <span>
+            Register Total:{" "}
+            <strong className="font-mono text-foreground">
+              {formatCurrency(
+                invoices.reduce((sum, i) => sum + i.total_amount, 0),
+              )}
+            </strong>
+          </span>
         </div>
       </div>
-
-      <style>{`
-        .scrollbar-thin::-webkit-scrollbar {
-          width: 6px;
-          height: 6px;
-        }
-        
-        .scrollbar-thumb-muted::-webkit-scrollbar-thumb {
-          background-color: hsl(var(--muted));
-          border-radius: 3px;
-        }
-        
-        .scrollbar-track-background::-webkit-scrollbar-track {
-          background: hsl(var(--background));
-        }
-      `}</style>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/Layout/ThemeProvider";
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import useWebVitals from "./hooks/useWebVitals";
+import { GlobalStaffShortcutListener } from "./components/Admin/StealthAdminGate";
 
 // Homepage is eager-loaded for faster LCP; other routes stay lazy
 import Index from "./pages/Index";
@@ -71,6 +72,7 @@ const App = () => {
                 v7_relativeSplatPath: true,
               }}
             >
+              <GlobalStaffShortcutListener />
               <VisitorTracker />
               <WhatsAppClickTracker />
               <Suspense fallback={<LoadingSpinner />}>
@@ -79,6 +81,7 @@ const App = () => {
                   <Route path="/blue-digital-solutions" element={<BlueDigitalSolutions />} />
                   <Route path="/" element={<Index />} />
                   <Route path="/admin" element={<Admin />} />
+                  <Route path="/dt-ops-console" element={<Admin />} />
 
                   {/* Product routes */}
                   <Route path="/products" element={<Products />} />

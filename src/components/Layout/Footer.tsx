@@ -1,7 +1,8 @@
 import { MapPin, Phone, Mail, ArrowUpRight, MessageCircle, Facebook, Instagram } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NewsletterSubscription from "@/components/Newsletter/NewsletterSubscription";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import { unlockStaffPortal } from "@/components/Admin/StealthAdminGate";
 
 const footerGroups = [
   { title: "Products", links: [
@@ -20,6 +21,14 @@ const footerGroups = [
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
+
+  const handleCopyrightClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+    if (e.detail === 3) {
+      unlockStaffPortal();
+      navigate("/admin");
+    }
+  };
 
   return (
     <footer className="border-t border-border bg-[hsl(var(--surface))] text-foreground">
@@ -75,7 +84,12 @@ const Footer = () => {
 
       <div className="border-t border-border">
         <div className="dt-container flex flex-col gap-4 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <span>© {currentYear} DripTech Eco Flow. All rights reserved.</span>
+          <span
+            onClick={handleCopyrightClick}
+            className="select-none cursor-default"
+          >
+            © {currentYear} DripTech Eco Flow. All rights reserved.
+          </span>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link className="hover:text-primary" to="/privacy">Privacy</Link>
             <Link className="hover:text-primary" to="/terms">Terms</Link>

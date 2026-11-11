@@ -1,10 +1,9 @@
-// components/StatusBadge.tsx
 import React from "react";
 import {
-  Edit,
+  FileEdit,
   Send,
-  CheckCircle,
-  AlertCircle,
+  CheckCircle2,
+  AlertTriangle,
   XCircle,
   Clock,
 } from "lucide-react";
@@ -14,48 +13,49 @@ interface StatusBadgeProps {
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  const getStatusConfig = (status: string) => {
-    switch (status) {
+  const getStatusConfig = (value: string) => {
+    switch (value) {
       case "draft":
         return {
           color:
-            "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
-          icon: Edit,
+            "bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/25",
+          icon: FileEdit,
           label: "Draft",
         };
       case "sent":
         return {
           color:
-            "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+            "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/25",
           icon: Send,
-          label: "Sent",
+          label: "Issued / Sent",
         };
       case "paid":
         return {
           color:
-            "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-          icon: CheckCircle,
-          label: "Paid",
+            "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
+          icon: CheckCircle2,
+          label: "Paid • Receipted",
         };
       case "overdue":
         return {
-          color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-          icon: AlertCircle,
+          color:
+            "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30",
+          icon: AlertTriangle,
           label: "Overdue",
         };
       case "cancelled":
         return {
           color:
-            "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+            "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/25",
           icon: XCircle,
           label: "Cancelled",
         };
       default:
         return {
           color:
-            "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+            "bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-500/25",
           icon: Clock,
-          label: "Unknown",
+          label: value || "Pending",
         };
     }
   };
@@ -65,9 +65,9 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${config.color}`}
     >
-      <Icon className="w-3 h-3 mr-1" />
+      <Icon className="w-3 h-3 shrink-0" />
       {config.label}
     </span>
   );

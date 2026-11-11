@@ -240,15 +240,23 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
     }
   };
 
-  const addSection = () => {
+  const addSection = (presetName?: string, presetDesc?: string) => {
     const nextSection: BOQSection = {
       id: makeId(),
-      name: `Section ${sections.length + 1}`,
-      description: "",
+      name: presetName || `Section ${sections.length + 1}`,
+      description: presetDesc || "",
       sort_order: sections.length,
     };
     onSectionsChange([...sections, nextSection]);
   };
+
+  const SECTION_PRESETS = [
+    { name: "Headworks & Filtration Unit", desc: "Screen/disc filters, fertigation venturi, pressure gauges, and control valves" },
+    { name: "Mainline & Sub-Main Pipework", desc: "HDPE/PVC supply pipes, elbows, tees, reducers, and saddle clamps" },
+    { name: "In-Field Drip Laterals & Fittings", desc: "Dripline rolls, start connectors, offtake grommets, couplings, and end caps" },
+    { name: "Solar Pumping & Control System", desc: "Submersible/surface pump, solar PV array, controller, and mounting structure" },
+    { name: "Civil Works, Trenching & Commissioning", desc: "Site layout, trenching, installation labor, pressure testing, and agronomic handover" },
+  ];
 
   const removeSection = (section: BOQSection) => {
     if (sections.length <= 1) return;
@@ -382,26 +390,42 @@ const BOQSectionBuilder: React.FC<BOQSectionBuilderProps> = ({
 
   return (
     <Card className="overflow-hidden border-border bg-background shadow-lg">
-      <CardHeader className="border-b border-border bg-muted/30">
+      <CardHeader className="border-b border-border bg-muted/30 space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-foreground">
-              Bill of Quantities
+              Engineering Bill of Quantities (BOQ)
             </CardTitle>
             <CardDescription className="mt-1">
-              Build the BOQ in sections. Select saved products or add a custom
-              line when it is not in the catalogue.
+              Structure the quotation into engineering work packages. Pick saved catalogue SKUs or add custom site works.
             </CardDescription>
           </div>
           <Button
             type="button"
             variant="secondary"
             className={primaryActionClass}
-            onClick={addSection}
+            onClick={() => addSection()}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Add Section
+            Add Custom Section
           </Button>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5 pt-1">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mr-1">
+            Quick Add Package:
+          </span>
+          {SECTION_PRESETS.map((preset) => (
+            <Button
+              key={preset.name}
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => addSection(preset.name, preset.desc)}
+              className="h-7 rounded-full px-2.5 text-[11px] font-medium border-border/80 bg-background hover:border-primary/50 hover:bg-primary/5"
+            >
+              + {preset.name}
+            </Button>
+          ))}
         </div>
       </CardHeader>
 
