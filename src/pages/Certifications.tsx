@@ -20,6 +20,8 @@ import {
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 
 const Certifications = () => {
   const certifications = [
@@ -143,6 +145,11 @@ const Certifications = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="DripTech Certifications | Irrigation Solutions Kenya"
+        description="Learn about DripTech's irrigation solutions and the standards that support dependable farm irrigation equipment and services in Kenya."
+        url={`${SITE_COMPANY.url}/certifications`}
+      />
       <Header />
 
       <main className="py-20">

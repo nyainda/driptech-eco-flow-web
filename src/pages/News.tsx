@@ -28,6 +28,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 
 // Types
 interface NewsArticle {
@@ -537,6 +539,11 @@ const News: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Irrigation News and Updates Kenya | DripTech"
+        description="Irrigation news, DripTech updates and water-efficient farming information for farmers and agricultural businesses in Kenya."
+        url={`${SITE_COMPANY.url}/news`}
+      />
       <Header />
       <main className="pt-16 sm:pt-20 pb-8">
         <HeroSection

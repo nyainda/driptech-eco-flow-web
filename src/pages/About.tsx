@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import {
   Users,
   Award,
@@ -94,6 +96,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="About DripTech | Irrigation Solutions Provider Kenya"
+        description="Learn about DripTech, a Kenyan irrigation equipment and services provider helping farms with products, system design and installation support."
+        url={`${SITE_COMPANY.url}/about`}
+      />
       <Header />
       <main>
         {/* Hero Section */}

@@ -48,6 +48,8 @@ import {
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import { supabase } from "@/integrations/supabase/client";
 import { dataService } from "@/services/dataService";
 import { useToast } from "@/hooks/use-toast";
@@ -385,6 +387,11 @@ ${supportForm.steps_taken}`,
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Irrigation Technical Support Kenya | DripTech"
+        description="Get technical support for drip irrigation, sprinklers, pumps, filters and farm irrigation systems from DripTech in Kenya."
+        url={`${SITE_COMPANY.url}/technical-support`}
+      />
       <Header />
 
       <main className="py-20">

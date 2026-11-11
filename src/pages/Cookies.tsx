@@ -1,6 +1,8 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +18,11 @@ import {
 const Cookies = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Cookie Policy | DripTech"
+        description="Read how DripTech uses cookies to support website functionality and improve visitor experience."
+        url={`${SITE_COMPANY.url}/cookies`}
+      />
       <Header />
 
       <main className="py-20">

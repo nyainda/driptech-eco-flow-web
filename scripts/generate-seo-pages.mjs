@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import { serializeJsonLd, toAbsoluteSiteAssetUrl } from "./seo-url-helpers.mjs";
 import { buildOrganizationSchema } from "../src/config/company.ts";
+import { COMMON_FAQS } from "../src/lib/seo-config.ts";
 
 const root = process.cwd();
 const dist = path.join(root, "dist");
@@ -286,6 +287,7 @@ const homePage = {
   intro:
     "DripTech supplies irrigation equipment and complete systems for Kenyan farms, greenhouses and kitchen gardens. Browse products, compare kits and ask for help before you buy.",
   image: "/seed-products/field_drip.jpg",
+  faqs: COMMON_FAQS.homepage.map((faq) => ({ q: faq.question, a: faq.answer })),
   links: [
     { label: "Drip irrigation systems in Kenya", href: "/drip-irrigation-kenya" },
     { label: "Sprinkler systems in Kenya", href: "/sprinkler-systems-kenya" },

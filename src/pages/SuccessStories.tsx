@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,6 +40,11 @@ const SuccessStories = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title="Irrigation Success Stories Kenya | DripTech"
+        description="Read irrigation success stories from Kenyan farms and customers using DripTech equipment, design and installation support."
+        url={`${SITE_COMPANY.url}/success-stories`}
+      />
       <Header />
       <main className="flex-grow">
         {/* Hero */}

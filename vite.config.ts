@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     ViteImageOptimizer({
       png: { quality: 80 },
       jpeg: { quality: 80 },
-      webp: { quality: 80, lossless: true },
+      webp: { quality: 80 },
     }),
     VitePWA({
       registerType: 'autoUpdate',

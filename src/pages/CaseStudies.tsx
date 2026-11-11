@@ -35,6 +35,8 @@ import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import { useToast } from "@/hooks/use-toast";
 
 const CaseStudies = () => {
@@ -181,6 +183,11 @@ const CaseStudies = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Irrigation Case Studies Kenya | Farm Projects | DripTech"
+        description="Explore DripTech irrigation case studies, farm projects and practical lessons from irrigation installations in Kenya."
+        url={`${SITE_COMPANY.url}/case-studies`}
+      />
       <Header />
 
       <main className="py-20">
