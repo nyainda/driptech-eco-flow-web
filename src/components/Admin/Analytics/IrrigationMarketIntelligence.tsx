@@ -6,10 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import {
   BarChart3,
   CalendarClock,
+  Check,
   Database,
   Download,
   ExternalLink,
   FileSearch,
+  FilePlus2,
   Globe2,
   Loader2,
   Radar,
@@ -49,8 +51,17 @@ type SearchConsoleSnapshot = {
   startDate?: string;
   endDate?: string;
   totals?: { clicks?: number; impressions?: number; ctr?: number; position?: number };
+  previousPeriod?: {
+    startDate?: string;
+    endDate?: string;
+    totals?: { clicks?: number; impressions?: number; ctr?: number; position?: number };
+  };
   queries?: Array<{ keys?: string[]; clicks?: number; impressions?: number; ctr?: number; position?: number }>;
   pages?: Array<{ keys?: string[]; clicks?: number; impressions?: number; ctr?: number; position?: number }>;
+  queryPages?: Array<{ keys?: string[]; clicks?: number; impressions?: number; ctr?: number; position?: number }>;
+  countries?: Array<{ keys?: string[]; clicks?: number; impressions?: number; ctr?: number; position?: number }>;
+  devices?: Array<{ keys?: string[]; clicks?: number; impressions?: number; ctr?: number; position?: number }>;
+  computedInsights?: DataRow;
   queryRowsReturned?: number;
   note?: string;
 };
@@ -64,6 +75,15 @@ type MarketReport = {
   source_links: SourceLink[];
   model: string;
   created_at: string;
+  scan_parameters?: DataRow;
+  cache_key?: string;
+};
+type MarketJob = {
+  id: string;
+  status: "queued" | "running" | "succeeded" | "failed";
+  progress_message?: string;
+  error_message?: string;
+  result_report_id?: string;
 };
 
 const objectRows = (value: unknown): DataRow[] =>
@@ -89,6 +109,14 @@ const priorityVariant = (value: unknown): "destructive" | "secondary" | "outline
   return "outline";
 };
 const safeRows = (value: unknown) => objectRows(value);
+const metricChange = (currentValue: unknown, previousValue: unknown, digits = 1) => {
+  const current = numberOf(currentValue);
+  const previous = numberOf(previousValue);
+  if (previous === 0) return current === 0 ? "0%" : "New";
+  const change = ((current - previous) / Math.abs(previous)) * 100;
+  return `${change > 0 ? "+" : ""}${change.toFixed(digits)}%`;
+};
+const recommendationStatusKey = (reportId: string, index: number) => `${reportId}:${index}`;
 
 const IrrigationMarketIntelligence: React.FC = () => {
   const [reports, setReports] = useState<MarketReport[]>([]);
@@ -98,6 +126,12 @@ const IrrigationMarketIntelligence: React.FC = () => {
   const [model, setModel] = useState("grok-4.7");
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
+  const [periodDays, setPeriodDays] = useState(28);
+  const [activeJob, setActiveJob] = useState<MarketJob | null>(null);
+  const [anotherAdminScanning, setAnotherAdminScanning] = useState(false);
+  const [recommendationStatuses, setRecommendationStatuses] = useState<Record<string, "open" | "done">>({});
+  const [savingRecommendationIndex, setSavingRecommendationIndex] = useState<number | null>(null);
+  const [draftingRecommendationIndex, setDraftingRecommendationIndex] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -115,6 +149,16 @@ const IrrigationMarketIntelligence: React.FC = () => {
       setGrokConfigured(!!data?.configured);
       setKeywordProviderConfigured(!!data?.keywordProviderConfigured);
       setModel(data?.model || "grok-4.7");
+      const statuses: Record<string, "open" | "done"> = {};
+      for (const status of Array.isArray(data?.recommendationStatuses) ? data.recommendationStatuses : []) {
+        if (status?.report_id && Number.isInteger(status.recommendation_index)) {
+          statuses[recommendationStatusKey(status.report_id, status.recommendation_index)] = status.status === "done" ? "done" : "open";
+        }
+      }
+      setRecommendationStatuses(statuses);
+      const job = data?.activeJob;
+      setAnotherAdminScanning(!!job && !job.ownedByUser);
+      setActiveJob(job?.ownedByUser ? job : null);
       setSelectedId((current) => current || nextReports[0]?.id || "");
     } catch (loadError: unknown) {
       setError(loadError instanceof Error ? loadError.message : "Could not load market intelligence.");
@@ -124,6 +168,45 @@ const IrrigationMarketIntelligence: React.FC = () => {
   }, []);
 
   useEffect(() => { loadContext(); }, [loadContext]);
+
+  useEffect(() => {
+    const jobId = activeJob?.id;
+    if (!jobId || !["queued", "running"].includes(activeJob.status)) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const { data, error: invokeError } = await supabase.functions.invoke("irrigation-market-intelligence", {
+          body: { action: "job", jobId },
+        });
+        if (invokeError) throw invokeError;
+        if (data?.error) throw new Error(data.error);
+        if (cancelled) return;
+        setActiveJob(data as MarketJob);
+        if (data.status === "succeeded") {
+          if (data.result_report_id) setSelectedId(data.result_report_id);
+          setNotice("Market scan finished and the report is saved.");
+          await loadContext();
+          return;
+        }
+        if (data.status === "failed") {
+          setError(data.error_message || "The background market scan failed.");
+          return;
+        }
+        timer = setTimeout(poll, 2500);
+      } catch (pollError: unknown) {
+        if (!cancelled) {
+          setError(pollError instanceof Error ? pollError.message : "Could not check scan progress.");
+          setActiveJob(null);
+        }
+      }
+    };
+    timer = setTimeout(poll, 1800);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [activeJob?.id, activeJob?.status, loadContext]);
 
   const selectedReport = useMemo(
     () => reports.find((report) => report.id === selectedId) || reports[0] || null,
@@ -138,6 +221,23 @@ const IrrigationMarketIntelligence: React.FC = () => {
   const productPriorities = safeRows(reportData.product_page_priorities);
   const recommendations = safeRows(reportData.recommendations);
   const sources = selectedReport?.source_links || [];
+  const insights = gsc?.computedInsights || {};
+  const ctrOpportunities = safeRows(insights.ctrOpportunities);
+  const pageOneOpportunities = safeRows(insights.pageOneOpportunities);
+  const multiPageQueries = safeRows(insights.multipleLandingPages);
+  const brandSplit = insights.brandedVsNonBranded && typeof insights.brandedVsNonBranded === "object"
+    ? insights.brandedVsNonBranded as DataRow
+    : {};
+  const brandedTotals = brandSplit.branded && typeof brandSplit.branded === "object" ? brandSplit.branded as DataRow : {};
+  const nonBrandedTotals = brandSplit.nonBranded && typeof brandSplit.nonBranded === "object" ? brandSplit.nonBranded as DataRow : {};
+  const countryBreakdown = safeRows(insights.topCountries);
+  const deviceBreakdown = safeRows(insights.devices);
+  const selectedIndex = selectedReport ? reports.findIndex((report) => report.id === selectedReport.id) : -1;
+  const previousSavedReport = selectedIndex >= 0 ? reports[selectedIndex + 1] || null : null;
+  const scanBusy = !!activeJob && ["queued", "running"].includes(activeJob.status);
+  const completedRecommendations = selectedReport
+    ? recommendations.filter((_, index) => recommendationStatuses[recommendationStatusKey(selectedReport.id, index)] === "done").length
+    : 0;
 
   const runScan = async () => {
     setRunning(true);
@@ -145,19 +245,73 @@ const IrrigationMarketIntelligence: React.FC = () => {
     setNotice("");
     try {
       const { data, error: invokeError } = await supabase.functions.invoke("irrigation-market-intelligence", {
-        body: { action: "run", days: 28 },
+        body: { action: "run", days: periodDays },
       });
       if (invokeError) throw invokeError;
       if (data?.error) throw new Error(data.error);
-      const report = data?.report as MarketReport | undefined;
-      if (!report?.id) throw new Error("The scan finished without a saved report.");
-      setReports((current) => [report, ...current.filter((item) => item.id !== report.id)]);
-      setSelectedId(report.id);
-      setNotice("Market intelligence scan saved. Review each evidence layer separately.");
+      if (data?.cached && data?.report?.id) {
+        const report = data.report as MarketReport;
+        setReports((current) => [report, ...current.filter((item) => item.id !== report.id)]);
+        setSelectedId(report.id);
+        setNotice("Loaded the matching saved scan. No new provider requests were made.");
+      } else if (data?.queued && data?.job?.id) {
+        setActiveJob(data.job as MarketJob);
+        setAnotherAdminScanning(false);
+        setNotice("Scan queued. You can keep working while the report is prepared.");
+      } else {
+        throw new Error("The scan was not queued and no saved report was returned.");
+      }
     } catch (runError: unknown) {
       setError(runError instanceof Error ? runError.message : "Market intelligence scan failed.");
     } finally {
       setRunning(false);
+    }
+  };
+
+  const updateRecommendationStatus = async (index: number, status: "open" | "done") => {
+    if (!selectedReport) return;
+    setSavingRecommendationIndex(index);
+    setError("");
+    try {
+      const { data, error: invokeError } = await supabase.functions.invoke("irrigation-market-intelligence", {
+        body: { action: "recommendation_status", reportId: selectedReport.id, recommendationIndex: index, status },
+      });
+      if (invokeError) throw invokeError;
+      if (data?.error) throw new Error(data.error);
+      setRecommendationStatuses((current) => ({
+        ...current,
+        [recommendationStatusKey(selectedReport.id, index)]: status,
+      }));
+    } catch (statusError: unknown) {
+      setError(statusError instanceof Error ? statusError.message : "Could not update recommendation progress.");
+    } finally {
+      setSavingRecommendationIndex(null);
+    }
+  };
+
+  const createGuideDraft = async (item: DataRow, index: number) => {
+    setDraftingRecommendationIndex(index);
+    setError("");
+    setNotice("");
+    try {
+      const { data, error: invokeError } = await supabase.functions.invoke("generate-blog-posts", {
+        body: {
+          action: "createDraft",
+          title: textOf(item.title, ""),
+          keywords: [textOf(item.title, ""), textOf(item.category, ""), textOf(item.basis, "")].filter(Boolean).join(", "),
+          category: textOf(item.category, ""),
+          evidence: [textOf(item.basis, ""), textOf(item.expected_outcome, "")].filter(Boolean).join(" — "),
+          steps: stringRows(item.steps),
+          reportTitle: selectedReport?.title || "",
+        },
+      });
+      if (invokeError) throw invokeError;
+      if (data?.error) throw new Error(data.error);
+      setNotice(`Unpublished guide draft created: ${textOf(data?.draft?.title, "open it in Admin → News")}.`);
+    } catch (draftError: unknown) {
+      setError(draftError instanceof Error ? draftError.message : "Could not create the guide draft.");
+    } finally {
+      setDraftingRecommendationIndex(null);
     }
   };
 
@@ -214,10 +368,24 @@ const IrrigationMarketIntelligence: React.FC = () => {
               Combine DripTech's actual Google Search Console data, optional third-party keyword estimates and Grok's research of public competitor pages. Each source is labelled so estimates and AI ideas never masquerade as measured demand.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button onClick={runScan} disabled={running || loading || !grokConfigured} className="bg-emerald-500 text-white hover:bg-emerald-600">
-              {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radar className="mr-2 h-4 w-4" />}
-              {running ? "Researching the market…" : "Run market scan"}
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-slate-200">
+              Scan window
+              <select
+                aria-label="Scan window"
+                value={periodDays}
+                onChange={(event) => setPeriodDays(Number(event.target.value))}
+                disabled={scanBusy || anotherAdminScanning}
+                className="rounded-md border-0 bg-transparent text-sm font-semibold text-white outline-none"
+              >
+                <option className="text-slate-900" value={28}>28 days</option>
+                <option className="text-slate-900" value={56}>56 days</option>
+                <option className="text-slate-900" value={90}>90 days</option>
+              </select>
+            </label>
+            <Button onClick={runScan} disabled={running || loading || !grokConfigured || scanBusy || anotherAdminScanning} className="bg-emerald-500 text-white hover:bg-emerald-600">
+              {running || scanBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radar className="mr-2 h-4 w-4" />}
+              {scanBusy ? "Scan in progress…" : anotherAdminScanning ? "Another scan is running" : running ? "Starting scan…" : "Run market scan"}
             </Button>
             <Button variant="outline" onClick={loadContext} disabled={loading || running} className="border-white/20 bg-white/5 text-white hover:bg-white/10">
               <RefreshCw className={"mr-2 h-4 w-4 " + (loading ? "animate-spin" : "")} /> Refresh
@@ -241,9 +409,74 @@ const IrrigationMarketIntelligence: React.FC = () => {
         </CardContent></Card>
         <Card className="rounded-2xl border-border/70"><CardContent className="flex items-center gap-3 p-4">
           <div className="rounded-xl bg-amber-500/10 p-3 text-amber-600"><Sparkles className="h-5 w-5" /></div>
-          <div><p className="text-xs text-muted-foreground">AI recommendations</p><p className="text-2xl font-bold">{selectedReport ? countFormat(recommendations.length) : "—"}</p></div>
+          <div><p className="text-xs text-muted-foreground">Action items completed</p><p className="text-2xl font-bold">{selectedReport ? `${completedRecommendations}/${recommendations.length}` : "—"}</p></div>
         </CardContent></Card>
       </div>
+
+      {activeJob && ["queued", "running"].includes(activeJob.status) && (
+        <Card className="rounded-2xl border-emerald-500/30 bg-emerald-500/[0.04]">
+          <CardContent className="flex items-center gap-4 p-4">
+            <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-700 dark:text-emerald-300"><Loader2 className="h-5 w-5 animate-spin" /></div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2"><p className="font-semibold">Market scan is processing</p><Badge variant="outline">{activeJob.status}</Badge></div>
+              <p className="mt-1 text-sm text-muted-foreground">{activeJob.progress_message || "Preparing the report…"}</p>
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-emerald-500/10"><div className="h-full w-1/2 animate-pulse rounded-full bg-emerald-500" /></div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {anotherAdminScanning && !activeJob && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-amber-800 dark:text-amber-200">
+          Another administrator has a market scan in progress. Refresh this page to check again.
+        </div>
+      )}
+
+      {selectedReport && (
+        <Card className="rounded-2xl">
+          <CardHeader className="gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <CardTitle className="text-base">Compared with the previous saved scan</CardTitle>
+              <CardDescription>
+                {previousSavedReport
+                  ? `${new Date(selectedReport.created_at).toLocaleDateString("en-KE")} versus ${new Date(previousSavedReport.created_at).toLocaleDateString("en-KE")}`
+                  : "This is the first saved scan available for comparison."}
+              </CardDescription>
+            </div>
+            {previousSavedReport && <Badge variant="outline">Scan to scan</Badge>}
+          </CardHeader>
+          <CardContent>
+            {previousSavedReport?.search_console_snapshot?.connected && gsc?.connected ? (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {[
+                  { label: "Clicks", current: gsc.totals?.clicks, previous: previousSavedReport.search_console_snapshot.totals?.clicks },
+                  { label: "Impressions", current: gsc.totals?.impressions, previous: previousSavedReport.search_console_snapshot.totals?.impressions },
+                  { label: "CTR", current: gsc.totals?.ctr, previous: previousSavedReport.search_console_snapshot.totals?.ctr },
+                  { label: "Average position", current: gsc.totals?.position, previous: previousSavedReport.search_console_snapshot.totals?.position },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-xl border bg-muted/20 p-3">
+                    <p className="text-xs text-muted-foreground">{item.label}</p>
+                    <p className="mt-1 text-lg font-semibold tabular-nums">{item.label === "CTR" ? `${decimalFormat(numberOf(item.current) * 100)}%` : item.label === "Average position" ? decimalFormat(item.current) : countFormat(item.current)}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Previous: {item.label === "CTR" ? `${decimalFormat(numberOf(item.previous) * 100)}%` : item.label === "Average position" ? decimalFormat(item.previous) : countFormat(item.previous)}</p>
+                    <p className="mt-1 text-xs font-medium text-foreground">
+                      {item.label === "CTR"
+                        ? `${(numberOf(item.current) - numberOf(item.previous)) >= 0 ? "+" : ""}${decimalFormat((numberOf(item.current) - numberOf(item.previous)) * 100)} percentage points`
+                        : item.label === "Average position"
+                          ? `${numberOf(item.current) < numberOf(item.previous) ? "Improved by" : "Changed by"} ${decimalFormat(Math.abs(numberOf(item.current) - numberOf(item.previous)))} positions`
+                          : metricChange(item.current, item.previous)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                {previousSavedReport
+                  ? "A scan-to-scan comparison needs Search Console data in both reports."
+                  : "Run another scan to compare measured clicks, impressions, CTR and average position over time."}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {error && <div className="rounded-xl border border-rose-500/30 bg-rose-500/5 p-4 text-sm text-rose-700 dark:text-rose-300">{error}</div>}
       {notice && <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4 text-sm text-emerald-700 dark:text-emerald-300">{notice}</div>}
@@ -337,6 +570,81 @@ const IrrigationMarketIntelligence: React.FC = () => {
                         <div className="rounded-xl bg-muted/50 p-3"><p className="text-xs text-muted-foreground">CTR</p><p className="text-xl font-bold">{decimalFormat(numberOf(gscTotals?.ctr) * 100)}%</p></div>
                         <div className="rounded-xl bg-muted/50 p-3"><p className="text-xs text-muted-foreground">Average position</p><p className="text-xl font-bold">{decimalFormat(gscTotals?.position)}</p></div>
                       </div>
+                      {gsc.previousPeriod?.totals && (
+                        <div className="rounded-xl border bg-muted/20 p-4">
+                          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+                            <div><p className="text-sm font-semibold">Period-over-period change</p><p className="text-xs text-muted-foreground">Equal-length windows; the latest three days are excluded.</p></div>
+                            <Badge variant="outline">{gsc.previousPeriod.startDate} – {gsc.previousPeriod.endDate}</Badge>
+                          </div>
+                          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                            {[
+                              { label: "Clicks", current: gscTotals?.clicks, previous: gsc.previousPeriod.totals.clicks },
+                              { label: "Impressions", current: gscTotals?.impressions, previous: gsc.previousPeriod.totals.impressions },
+                              { label: "CTR", current: gscTotals?.ctr, previous: gsc.previousPeriod.totals.ctr },
+                              { label: "Average position", current: gscTotals?.position, previous: gsc.previousPeriod.totals.position },
+                            ].map((item) => (
+                              <div key={item.label} className="rounded-lg bg-background/80 p-3">
+                                <p className="text-xs text-muted-foreground">{item.label}</p>
+                                <p className="mt-1 font-semibold tabular-nums">
+                                  {item.label === "CTR" ? `${decimalFormat(numberOf(item.current) * 100)}%` : item.label === "Average position" ? decimalFormat(item.current) : countFormat(item.current)}
+                                </p>
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                  {item.label === "CTR"
+                                    ? `${(numberOf(item.current) - numberOf(item.previous)) >= 0 ? "+" : ""}${decimalFormat((numberOf(item.current) - numberOf(item.previous)) * 100)} pp`
+                                    : item.label === "Average position"
+                                      ? `${numberOf(item.current) < numberOf(item.previous) ? "Improved" : "Changed"} ${decimalFormat(Math.abs(numberOf(item.current) - numberOf(item.previous)))} positions`
+                                      : metricChange(item.current, item.previous)}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <details className="rounded-xl border p-4">
+                        <summary className="cursor-pointer text-sm font-semibold">Computed opportunities and audience segments</summary>
+                        <p className="mt-2 text-xs text-muted-foreground">These rules are calculated from the Search Console samples, not generated by AI.</p>
+                        <div className="mt-4 grid gap-3 md:grid-cols-2">
+                          <div className="rounded-lg bg-muted/30 p-3">
+                            <p className="text-sm font-semibold">Branded vs non-branded sample</p>
+                            <p className="mt-1 text-xs text-muted-foreground">Query rows containing “DripTech” are grouped as branded. Other returned irrigation queries are grouped as non-branded.</p>
+                            <div className="mt-3 grid grid-cols-2 gap-2">
+                              {[["Branded", brandedTotals], ["Non-branded", nonBrandedTotals]].map(([label, metrics]) => {
+                                const row = metrics as DataRow;
+                                return <div key={String(label)} className="rounded-md bg-background p-2">
+                                  <p className="text-xs font-medium">{label}</p>
+                                  <p className="mt-1 text-sm font-semibold">{countFormat(row.clicks)} clicks</p>
+                                  <p className="text-xs text-muted-foreground">{countFormat(row.impressions)} impressions</p>
+                                </div>;
+                              })}
+                            </div>
+                          </div>
+                          <div className="rounded-lg bg-muted/30 p-3">
+                            <p className="text-sm font-semibold">CTR review opportunities</p>
+                            <p className="mt-1 text-xs text-muted-foreground">Returned queries with at least 25 impressions and a CTR below the property average.</p>
+                            {ctrOpportunities.length ? <ul className="mt-2 space-y-1 text-xs">{ctrOpportunities.slice(0, 5).map((row, index) => <li key={index} className="flex justify-between gap-3"><span className="truncate">{textOf(row.query)}</span><span className="shrink-0 tabular-nums">{countFormat(row.impressions)} imp. · {decimalFormat(numberOf(row.ctr) * 100)}%</span></li>)}</ul> : <p className="mt-2 text-xs text-muted-foreground">No rows met this rule in the returned sample.</p>}
+                          </div>
+                          <div className="rounded-lg bg-muted/30 p-3">
+                            <p className="text-sm font-semibold">Near page-one queries</p>
+                            <p className="mt-1 text-xs text-muted-foreground">Returned queries averaging positions 11–20 with at least 10 impressions.</p>
+                            {pageOneOpportunities.length ? <ul className="mt-2 space-y-1 text-xs">{pageOneOpportunities.slice(0, 5).map((row, index) => <li key={index} className="flex justify-between gap-3"><span className="truncate">{textOf(row.query)}</span><span className="shrink-0 tabular-nums">Pos. {decimalFormat(row.position)} · {countFormat(row.impressions)} imp.</span></li>)}</ul> : <p className="mt-2 text-xs text-muted-foreground">No rows met this rule in the returned sample.</p>}
+                          </div>
+                          <div className="rounded-lg bg-muted/30 p-3">
+                            <p className="text-sm font-semibold">Queries across multiple pages</p>
+                            <p className="mt-1 text-xs text-muted-foreground">Review these page associations; multiple URLs do not by themselves prove cannibalization.</p>
+                            {multiPageQueries.length ? <ul className="mt-2 space-y-2 text-xs">{multiPageQueries.slice(0, 5).map((row, index) => <li key={index}><p className="font-medium">{textOf(row.query)} · {countFormat(row.impressions)} impressions</p><p className="mt-0.5 break-all text-muted-foreground">{stringRows(row.pages).slice(0, 3).join(" · ")}</p></li>)}</ul> : <p className="mt-2 text-xs text-muted-foreground">No repeated query-to-page rows in this sample.</p>}
+                          </div>
+                        </div>
+                        <div className="mt-3 grid gap-3 md:grid-cols-2">
+                          <div className="rounded-lg border p-3">
+                            <p className="text-sm font-semibold">Top countries</p>
+                            <div className="mt-2 flex flex-wrap gap-2">{countryBreakdown.slice(0, 6).map((row, index) => <Badge key={index} variant="outline">{textOf(row.country)} · {countFormat(row.clicks)} clicks</Badge>)}</div>
+                          </div>
+                          <div className="rounded-lg border p-3">
+                            <p className="text-sm font-semibold">Device mix</p>
+                            <div className="mt-2 flex flex-wrap gap-2">{deviceBreakdown.map((row, index) => <Badge key={index} variant="outline">{textOf(row.device)} · {countFormat(row.clicks)} clicks</Badge>)}</div>
+                          </div>
+                        </div>
+                      </details>
                       <div className="overflow-x-auto">
                         <table className="w-full min-w-[580px] text-sm">
                           <thead><tr className="border-b text-left text-xs text-muted-foreground"><th className="py-2 pr-3 font-medium">Actual search query (sample)</th><th className="py-2 px-2 text-right font-medium">Clicks</th><th className="py-2 px-2 text-right font-medium">Impressions</th><th className="py-2 px-2 text-right font-medium">CTR</th><th className="py-2 pl-2 text-right font-medium">Avg. position</th></tr></thead>
@@ -419,16 +727,39 @@ const IrrigationMarketIntelligence: React.FC = () => {
                   )}
                   {recommendations.length > 0 && (
                     <div>
-                      <h3 className="mb-2 text-sm font-semibold">Prioritized action plan</h3>
+                      <h3 className="mb-2 text-sm font-semibold">Action plan · {completedRecommendations} of {recommendations.length} complete</h3>
                       <div className="space-y-2">
                         {recommendations.slice(0, 10).map((item, index) => (
-                          <div key={index} className="flex gap-3 rounded-xl border p-3">
+                          <div key={index} className={"flex gap-3 rounded-xl border p-3 " + (recommendationStatuses[recommendationStatusKey(selectedReport.id, index)] === "done" ? "border-emerald-500/30 bg-emerald-500/[0.04]" : "")}>
                             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-sm font-bold text-amber-700 dark:text-amber-300">{index + 1}</span>
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2"><p className="text-sm font-semibold">{textOf(item.title)}</p><Badge variant={priorityVariant(item.priority)}>{textOf(item.priority, "Review")}</Badge></div>
                               <p className="mt-1 text-xs text-muted-foreground">{textOf(item.category)} · Basis: {textOf(item.basis)}</p>
                               <p className="mt-2 text-sm text-muted-foreground">{textOf(item.expected_outcome)}</p>
                               {stringRows(item.steps).length > 0 && <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground">{stringRows(item.steps).slice(0, 4).map((step, stepIndex) => <li key={stepIndex}>{step}</li>)}</ul>}
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                <Button
+                                  size="sm"
+                                  variant={recommendationStatuses[recommendationStatusKey(selectedReport.id, index)] === "done" ? "secondary" : "outline"}
+                                  disabled={savingRecommendationIndex === index}
+                                  onClick={() => updateRecommendationStatus(
+                                    index,
+                                    recommendationStatuses[recommendationStatusKey(selectedReport.id, index)] === "done" ? "open" : "done",
+                                  )}
+                                >
+                                  {savingRecommendationIndex === index ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
+                                  {recommendationStatuses[recommendationStatusKey(selectedReport.id, index)] === "done" ? "Reopen" : "Mark done"}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={draftingRecommendationIndex === index}
+                                  onClick={() => createGuideDraft(item, index)}
+                                >
+                                  {draftingRecommendationIndex === index ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <FilePlus2 className="mr-1.5 h-3.5 w-3.5" />}
+                                  {draftingRecommendationIndex === index ? "Creating draft…" : "Create guide draft"}
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         ))}

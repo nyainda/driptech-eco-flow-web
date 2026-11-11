@@ -119,7 +119,7 @@ export type Database = {
         Returns: undefined;
       };
       is_admin: {
-        Args: Record<PropertyKey, never>;
+        Args: { _user_id: string };
         Returns: boolean;
       };
       keep_database_active: {
