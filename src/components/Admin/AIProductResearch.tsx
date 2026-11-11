@@ -364,9 +364,9 @@ export default function AIProductResearch() {
                 return acc;
               }, {}),
             )
-              .sort((a, b) => b[1] - a[1])
+              .sort((a, b) => Number(b[1]) - Number(a[1]))
               .slice(0, 30)
-              .map(([query, count]) => ({ query, count }))
+              .map(([query, count]) => ({ query, count: Number(count) }))
           : KENYA_MARKET_DEMAND.map((query, i) => ({
               query,
               count: 100 - i,

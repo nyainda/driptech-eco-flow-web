@@ -42,6 +42,7 @@ type KeywordSnapshot = {
   providerCostUsd?: number | null;
   estimates?: KeywordEstimate[];
   seedKeywords?: string[];
+  sourceUrl?: string;
   note?: string;
 };
 type SearchConsoleSnapshot = {
@@ -608,9 +609,8 @@ const IrrigationMarketIntelligence: React.FC = () => {
                             <p className="text-sm font-semibold">Branded vs non-branded sample</p>
                             <p className="mt-1 text-xs text-muted-foreground">Query rows containing “DripTech” are grouped as branded. Other returned irrigation queries are grouped as non-branded.</p>
                             <div className="mt-3 grid grid-cols-2 gap-2">
-                              {[["Branded", brandedTotals], ["Non-branded", nonBrandedTotals]].map(([label, metrics]) => {
-                                const row = metrics as DataRow;
-                                return <div key={String(label)} className="rounded-md bg-background p-2">
+                              {([["Branded", brandedTotals], ["Non-branded", nonBrandedTotals]] as Array<[string, DataRow]>).map(([label, row]) => {
+                                return <div key={label} className="rounded-md bg-background p-2">
                                   <p className="text-xs font-medium">{label}</p>
                                   <p className="mt-1 text-sm font-semibold">{countFormat(row.clicks)} clicks</p>
                                   <p className="text-xs text-muted-foreground">{countFormat(row.impressions)} impressions</p>

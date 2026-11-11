@@ -1,7 +1,11 @@
 import RealDataDashboard from "./Dashboard";
 
-const AdminDashboard = () => {
-  return <RealDataDashboard />;
+interface AdminDashboardProps {
+  onNavigate?: (tabId: string) => void;
+}
+
+const AdminDashboard = ({ onNavigate }: AdminDashboardProps) => {
+  return <RealDataDashboard onNavigate={onNavigate} />;
 };
 
 export default AdminDashboard;

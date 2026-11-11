@@ -13,6 +13,9 @@ import { Search, Filter, Plus } from "lucide-react";
 interface BlogFiltersProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  selectedCategory?: string;
+  setSelectedCategory?: (category: string) => void;
+  categories?: Array<{ id: string; name: string; slug: string }>;
   statusFilter: string;
   setStatusFilter: (status: string) => void;
   sortBy: string;
@@ -23,6 +26,9 @@ interface BlogFiltersProps {
 const BlogFilters: React.FC<BlogFiltersProps> = ({
   searchQuery,
   setSearchQuery,
+  selectedCategory,
+  setSelectedCategory,
+  categories,
   statusFilter,
   setStatusFilter,
   sortBy,
@@ -30,8 +36,8 @@ const BlogFilters: React.FC<BlogFiltersProps> = ({
   onCreatePost,
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
-      <div className="relative flex-1">
+    <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div className="relative flex-1 min-w-[220px]">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           placeholder="Search blog posts..."
@@ -40,6 +46,22 @@ const BlogFilters: React.FC<BlogFiltersProps> = ({
           className="pl-10 text-sm sm:text-base"
         />
       </div>
+
+      {setSelectedCategory && categories && (
+        <Select value={selectedCategory || "all"} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-full sm:w-[170px]">
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id}>
+                {cat.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
 
       <Select value={statusFilter} onValueChange={setStatusFilter}>
         <SelectTrigger className="w-full sm:w-[160px]">
