@@ -8,15 +8,22 @@ import KitPriceTable from "@/components/SEO/KitPriceTable";
 import { dataService } from "@/services/dataService";
 import pages from "@/data/publicSeoPages.json";
 import locationPages from "@/data/locationSeoPages.json";
+import irrigationPricePages from "@/data/irrigationPriceSeoPages.json";
+import irrigationCropGapPages from "@/data/irrigationCropGapPages.json";
 import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
-const allPages = [...pages, ...locationPages];
+const allPages = [
+  ...pages,
+  ...locationPages,
+  ...irrigationPricePages,
+  ...irrigationCropGapPages,
+];
 
 const seoProductCategory = (slug: string): string | undefined => {
-  if (/sprinkler|raingun/.test(slug)) return "sprinklers";
+  if (/sprinkler|raingun|rain-hose/.test(slug)) return "sprinklers";
   if (/pump|borehole|solar/.test(slug)) return "pumps";
   if (/filter|filtration/.test(slug)) return "filtration";
-  if (/pipe|fitting/.test(slug)) return "pipes";
+  if (/pipe|fitting|hdpe/.test(slug)) return "pipes";
   if (/fertigation/.test(slug)) return "fertigation";
   if (/valve|control/.test(slug)) return "controls";
   if (/drip|greenhouse|irrigation|boq|installation|maintenance|consultation|design/.test(slug)) return "drip";
@@ -28,16 +35,37 @@ const firstCatalogueImage = (product: any): string | undefined => {
   return images.find((item: unknown) => typeof item === "string" && item.trim());
 };
 
-type SeoPage = ((typeof pages)[number] | (typeof locationPages)[number]) & {
+interface SeoSectionTable {
+  caption?: string;
+  headers: string[];
+  rows: string[][];
+}
+
+interface SeoSection {
+  heading: string;
+  paragraphs?: string[];
+  bullets?: string[];
+  table?: SeoSectionTable;
+}
+
+type SeoPage = {
+  slug: string;
+  title: string;
+  description: string;
+  h1: string;
+  intro: string;
+  image?: string;
+  schema?: Record<string, unknown>;
+  sections: SeoSection[];
+  links: Array<{ label: string; href: string }>;
   sources?: Array<{ label: string; url: string }>;
+  faqs?: Array<{ q: string; a: string }>;
 };
 
 const SEOContentPage = () => {
   // These landing pages are registered in App.tsx as fixed literal routes
-  // (e.g. "/drip-irrigation-kenya"), not a dynamic "/:slug" route, so
-  // useParams() has nothing to return here -- it was always undefined,
-  // which meant every one of these pages rendered "Page not found"
-  // regardless of the real slug in the URL. Derive it from the path instead.
+  // (e.g. "/drip-irrigation-kenya") or matched by "/:seoSlug", so derive
+  // the slug from location.pathname.
   const location = useLocation();
   const slug = location.pathname.replace(/^\/+|\/+$/g, "");
   const page = allPages.find((candidate) => candidate.slug === slug) as SeoPage | undefined;
@@ -62,6 +90,12 @@ const SEOContentPage = () => {
   if (!page) {
     return (
       <div className="min-h-screen bg-background text-foreground">
+        <SEOHead
+          title={`Page Not Found | ${SITE_COMPANY.name}`}
+          description={`The requested irrigation guide could not be found. Browse current ${SITE_COMPANY.name} products and guides.`}
+          url={`${SITE_COMPANY.url}${location.pathname}`}
+          noindex
+        />
         <Header />
         <main className="dt-section">
           <div className="dt-container text-center">
@@ -85,6 +119,23 @@ const SEOContentPage = () => {
       { "@type": "ListItem", position: 2, name: page.h1, item: pageUrl },
     ],
   };
+  const faqItems = (Array.isArray(page.faqs) ? page.faqs : []).filter(
+    (faq) => faq?.q && faq?.a,
+  );
+  const faqSchema = faqItems.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqItems.map((faq) => ({
+          "@type": "Question",
+          name: faq.q,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.a,
+          },
+        })),
+      }
+    : undefined;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -97,6 +148,7 @@ const SEOContentPage = () => {
           buildLocalBusinessSchema(),
           breadcrumbSchema,
           ...(page.schema ? [page.schema] : []),
+          ...(faqSchema ? [faqSchema] : []),
           {
             "@context": "https://schema.org",
             "@type": "Article",
@@ -158,6 +210,43 @@ const SEOContentPage = () => {
                       {paragraph}
                     </p>
                   ))}
+                  {section.table && section.table.headers?.length > 0 && section.table.rows?.length > 0 && (
+                    <div className="mt-5 overflow-x-auto">
+                      <table className="w-full border-collapse text-left text-sm">
+                        {section.table.caption && (
+                          <caption className="mb-2 text-left text-xs font-medium text-muted-foreground">
+                            {section.table.caption}
+                          </caption>
+                        )}
+                        <thead>
+                          <tr className="border-b border-border bg-muted/40">
+                            {section.table.headers.map((header) => (
+                              <th key={header} scope="col" className="px-4 py-3 font-semibold text-foreground">
+                                {header}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                          {section.table.rows.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                              {row.map((cell, cellIndex) =>
+                                cellIndex === 0 ? (
+                                  <th key={cellIndex} scope="row" className="px-4 py-3 font-medium text-foreground">
+                                    {cell}
+                                  </th>
+                                ) : (
+                                  <td key={cellIndex} className="px-4 py-3 text-muted-foreground">
+                                    {cell}
+                                  </td>
+                                ),
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                   {section.bullets && (
                     <ul className="mt-5 space-y-3">
                       {section.bullets.map((bullet) => (
@@ -170,6 +259,19 @@ const SEOContentPage = () => {
                   )}
                 </article>
               ))}
+              {faqItems.length > 0 && (
+                <section aria-label="Frequently asked questions" className="dt-card p-6 sm:p-8">
+                  <h2 className="text-2xl font-bold text-foreground">Frequently asked questions</h2>
+                  <div className="mt-5 space-y-6">
+                    {faqItems.map((faq) => (
+                      <div key={faq.q}>
+                        <h3 className="text-lg font-semibold text-foreground">{faq.q}</h3>
+                        <p className="mt-2 leading-7 text-muted-foreground">{faq.a}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
             <aside className="h-fit rounded-xl border border-border bg-card p-6 lg:sticky lg:top-24">

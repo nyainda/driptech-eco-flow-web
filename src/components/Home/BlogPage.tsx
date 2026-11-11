@@ -40,6 +40,8 @@ import {
 import { Link } from "react-router-dom";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 
 interface BlogPost {
   id: string;
@@ -300,6 +302,11 @@ const BlogPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title="Irrigation Advice for Kenyan Farmers | DripTech Blog"
+        description="Irrigation advice, crop watering guides, equipment explanations and farm water planning tips for Kenyan farmers from DripTech."
+        url={`${SITE_COMPANY.url}/blog`}
+      />
       <Header />
       <main>
         <section className="bg-background border-t border-border">

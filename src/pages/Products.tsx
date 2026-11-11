@@ -1005,6 +1005,7 @@ const Products = () => {
           title={`Product not found | ${SITE_COMPANY.name}`}
           description={`The requested irrigation product is not available. Browse the current ${SITE_COMPANY.name} catalogue.`}
           url={`https://www.dripstech.co.ke/products/${category || "all"}/${productSlug}`}
+          noindex
         />
         <Header />
         <main className="flex-1">

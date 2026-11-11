@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import DOMPurify from "dompurify";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
 const BlogPostPage = () => {
   const { slug } = useParams();
@@ -74,6 +76,12 @@ const BlogPostPage = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background border-t border-border">
+        <SEOHead
+          title={`Article Not Found | ${SITE_COMPANY.name} Blog`}
+          description={`The requested blog post could not be found. Read practical irrigation guides on the ${SITE_COMPANY.name} blog.`}
+          url={`${SITE_COMPANY.url}/blog/${slug || ""}`}
+          noindex
+        />
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto text-center bg-background shadow-md rounded-xl p-6">
             <h1 className="text-3xl font-bold text-foreground mb-4">
@@ -98,8 +106,52 @@ const BlogPostPage = () => {
     );
   }
 
+  const postUrl = `${SITE_COMPANY.url}/blog/${post.slug}`;
+  const postDescription =
+    (post.excerpt || post.content || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 160) ||
+    `${post.title} — irrigation guide from ${SITE_COMPANY.name}.`;
+  const postImage =
+    post.featured_image_url || post.featured_image || `${SITE_COMPANY.url}/driptech-logo.png`;
+
   return (
     <div className="min-h-screen bg-background border-t border-border">
+      <SEOHead
+        title={`${post.title} | DripTech Blog`}
+        description={postDescription}
+        url={postUrl}
+        image={postImage}
+        type="article"
+        publishedTime={post.published_at || post.created_at}
+        modifiedTime={post.updated_at || post.published_at || post.created_at}
+        schema={[
+          buildLocalBusinessSchema(),
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_COMPANY.url },
+              { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_COMPANY.url}/blog` },
+              { "@type": "ListItem", position: 3, name: post.title, item: postUrl },
+            ],
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: postDescription,
+            image: postImage,
+            url: postUrl,
+            datePublished: post.published_at || post.created_at,
+            dateModified: post.updated_at || post.published_at || post.created_at,
+            author: { "@type": "Organization", name: SITE_COMPANY.name },
+            publisher: { "@type": "Organization", name: SITE_COMPANY.name, url: SITE_COMPANY.url },
+          },
+        ]}
+      />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Back button */}

@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +14,11 @@ const Careers = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
+            <SEOHead
+                title="Careers at DripTech | Irrigation Jobs Kenya"
+                description="Explore opportunities to work with DripTech, a Kenyan provider of irrigation equipment and farm water solutions."
+                url={`${SITE_COMPANY.url}/careers`}
+            />
             <Header />
             <main className="flex-1">
                 {/* Hero Section */}

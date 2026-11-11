@@ -80,9 +80,6 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                                     key={index}
                                     className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                                     onClick={() => toggleFAQ(index)}
-                                    itemScope
-                                    itemProp="mainEntity"
-                                    itemType="https://schema.org/Question"
                                 >
                                     <CardContent className="p-6 md:p-8">
                                         <div className="flex items-start gap-4">
@@ -94,7 +91,6 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                                                 <div className="flex items-start justify-between gap-4">
                                                     <h3
                                                         className="text-lg md:text-xl font-bold text-foreground group-hover:text-primary transition-colors"
-                                                        itemProp="name"
                                                     >
                                                         {faq.question}
                                                     </h3>
@@ -107,21 +103,17 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                                                     </div>
                                                 </div>
 
-                                                {isExpanded && (
-                                                    <div
-                                                        className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300"
-                                                        itemScope
-                                                        itemProp="acceptedAnswer"
-                                                        itemType="https://schema.org/Answer"
+                                                <div
+                                                    hidden={!isExpanded}
+                                                    aria-hidden={!isExpanded}
+                                                    className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300"
+                                                >
+                                                    <p
+                                                        className="text-muted-foreground leading-relaxed"
                                                     >
-                                                        <p
-                                                            className="text-muted-foreground leading-relaxed"
-                                                            itemProp="text"
-                                                        >
-                                                            {faq.answer}
-                                                        </p>
-                                                    </div>
-                                                )}
+                                                        {faq.answer}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </CardContent>

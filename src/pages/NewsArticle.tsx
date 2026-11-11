@@ -18,6 +18,8 @@ import { formatDistanceToNow } from "date-fns";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
 interface NewsArticle {
   id: number;
@@ -145,6 +147,12 @@ const NewsArticle = () => {
   if (error || !article) {
     return (
       <div className="min-h-screen bg-background">
+        <SEOHead
+          title={`News Article Not Found | ${SITE_COMPANY.name}`}
+          description={`The requested news article could not be found. Browse the latest irrigation news from ${SITE_COMPANY.name}.`}
+          url={`${SITE_COMPANY.url}/news/${slug || ""}`}
+          noindex
+        />
         <Header />
         <main className="pt-16 sm:pt-20 pb-8">
           <div className="container mx-auto px-4 max-w-4xl text-center py-16">
@@ -192,8 +200,53 @@ const NewsArticle = () => {
     );
   }
 
+  const articleUrl = `${SITE_COMPANY.url}/news/${article.slug}`;
+  const articleDescription =
+    (article.excerpt || article.content || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 160) ||
+    `${article.title} — irrigation news and updates from ${SITE_COMPANY.name}.`;
+  const articleImage =
+    article.featured_image_url || `${SITE_COMPANY.url}/driptech-logo.png`;
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${article.title} | DripTech News`}
+        description={articleDescription}
+        url={articleUrl}
+        image={articleImage}
+        type="article"
+        author={article.author || SITE_COMPANY.name}
+        publishedTime={article.created_at}
+        modifiedTime={article.updated_at || article.created_at}
+        schema={[
+          buildLocalBusinessSchema(),
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_COMPANY.url },
+              { "@type": "ListItem", position: 2, name: "News", item: `${SITE_COMPANY.url}/news` },
+              { "@type": "ListItem", position: 3, name: article.title, item: articleUrl },
+            ],
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: article.title,
+            description: articleDescription,
+            image: articleImage,
+            url: articleUrl,
+            datePublished: article.created_at,
+            dateModified: article.updated_at || article.created_at,
+            author: { "@type": "Organization", name: article.author || SITE_COMPANY.name },
+            publisher: { "@type": "Organization", name: SITE_COMPANY.name, url: SITE_COMPANY.url },
+          },
+        ]}
+      />
       <Header />
 
       <main className="pt-16 sm:pt-20 pb-8">

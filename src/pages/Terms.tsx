@@ -1,6 +1,8 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Mail, Phone, MapPin, AlertTriangle } from "lucide-react";
@@ -8,6 +10,11 @@ import { FileText, Mail, Phone, MapPin, AlertTriangle } from "lucide-react";
 const Terms = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Terms and Conditions | DripTech"
+        description="Read the terms and conditions for using the DripTech website, products and services."
+        url={`${SITE_COMPANY.url}/terms`}
+      />
       <Header />
 
       <main className="py-20">

@@ -1,6 +1,8 @@
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { SITE_COMPANY } from "@/config/company";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Mail, Phone, MapPin, Clock } from "lucide-react";
@@ -8,6 +10,11 @@ import { Shield, Mail, Phone, MapPin, Clock } from "lucide-react";
 const Privacy = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Privacy Policy | DripTech"
+        description="Read the DripTech privacy policy and how we handle customer and website information."
+        url={`${SITE_COMPANY.url}/privacy`}
+      />
       <Header />
 
       <main className="py-20">

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { SITE_COMPANY, buildLocalBusinessSchema } from "@/config/company";
 
@@ -12,6 +13,7 @@ interface SEOHeadProps {
   author?: string;
   publishedTime?: string;
   modifiedTime?: string;
+  noindex?: boolean;
   schema?: any; // Single schema object or array of schema objects
 }
 
@@ -26,10 +28,34 @@ export default function SEOHead({
   author = SITE_COMPANY.name,
   publishedTime,
   modifiedTime,
+  noindex = false,
   schema,
 }: SEOHeadProps) {
   const schemaData = schema || buildLocalBusinessSchema();
   const schemas = Array.isArray(schemaData) ? schemaData : [schemaData];
+  const robotsContent = noindex
+    ? "noindex, nofollow"
+    : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+
+  useEffect(() => {
+    // Remove prerendered static head tags that lack data-rh="true" so react-helmet-async
+    // never leaves duplicate canonical URLs, descriptions, or JSON-LD blocks after hydration
+    // or client-side route transitions.
+    const selectors = [
+      'link[rel="canonical"]:not([data-rh])',
+      'meta[name="title"]:not([data-rh])',
+      'meta[name="description"]:not([data-rh])',
+      'meta[name="keywords"]:not([data-rh])',
+      'meta[name="author"]:not([data-rh])',
+      'meta[name="robots"]:not([data-rh])',
+      'meta[property^="og:"]:not([data-rh])',
+      'meta[name^="twitter:"]:not([data-rh])',
+      'script[type="application/ld+json"]:not([data-rh])',
+    ];
+    document.head
+      .querySelectorAll(selectors.join(", "))
+      .forEach((node) => node.remove());
+  }, [url, title]);
 
   return (
     <Helmet>
@@ -73,12 +99,9 @@ export default function SEOHead({
       <meta name="twitter:image:alt" content={imageAlt} />
 
       {/* Additional SEO Tags */}
-      <meta
-        name="robots"
-        content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-      />
-      <meta name="googlebot" content="index, follow" />
-      <meta name="bingbot" content="index, follow" />
+      <meta name="robots" content={robotsContent} />
+      <meta name="googlebot" content={noindex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="bingbot" content={noindex ? "noindex, nofollow" : "index, follow"} />
       <meta name="revisit-after" content="7 days" />
       <meta name="language" content="English" />
 
@@ -96,11 +119,12 @@ export default function SEOHead({
       />
 
       {/* Structured Data */}
-      {schemas.map((s, idx) => (
-        <script key={idx} type="application/ld+json">
-          {JSON.stringify(s)}
-        </script>
-      ))}
+      {!noindex &&
+        schemas.map((s, idx) => (
+          <script key={idx} type="application/ld+json">
+            {JSON.stringify(s)}
+          </script>
+        ))}
     </Helmet>
   );
 }
