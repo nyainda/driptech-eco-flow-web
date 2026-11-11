@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { hasAdminRole } from "../_shared/admin-auth.ts";
 
 const MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
 const ALLOWED_ORIGINS = new Set([
@@ -43,10 +44,6 @@ const shiftDate = (value: string, days: number) => {
   date.setUTCDate(date.getUTCDate() + days);
   return isoDate(date);
 };
-
-const isAdminEmail = (email: string) =>
-  email.endsWith("@driptech.com") ||
-  ["admin@driptech.com", "support@driptech.com"].includes(email);
 
 const safeNumber = (value: unknown) => {
   const number = Number(value);
@@ -552,8 +549,7 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: auth } },
     });
     const { data: userData, error: userError } = await userClient.auth.getUser();
-    const email = userData.user?.email || "";
-    if (userError || !userData.user || !isAdminEmail(email)) {
+    if (userError || !userData.user || !(await hasAdminRole(admin, userData.user.id))) {
       return json(req, { error: "Admin access required." }, 403);
     }
   }

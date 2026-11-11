@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { hasAdminRole } from "../_shared/admin-auth.ts";
 
 const allowedOrigins = new Set([
   "https://www.dripstech.co.ke",
@@ -61,12 +62,8 @@ Deno.serve(async (req) => {
   });
 
   const { data: userData, error } = await userClient.auth.getUser();
-  const email = userData.user?.email || "";
-  const isAdmin =
-    email.endsWith("@driptech.com") ||
-    ["admin@driptech.com", "support@driptech.com"].includes(email);
 
-  if (error || !userData.user || !isAdmin) {
+  if (error || !userData.user || !(await hasAdminRole(admin, userData.user.id))) {
     return json(req, { error: "Admin access required" }, 403);
   }
 

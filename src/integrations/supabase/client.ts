@@ -62,6 +62,7 @@ const createMockSupabaseClient = () => {
       signUp: async () => ({ data: null, error: new Error('Supabase not configured') }),
     },
     from: () => createMockQueryBuilder(),
+    rpc: async () => ({ data: false, error: null }),
     storage: {
       from: () => ({
         upload: async () => ({ data: null, error: new Error('Supabase not configured') }),

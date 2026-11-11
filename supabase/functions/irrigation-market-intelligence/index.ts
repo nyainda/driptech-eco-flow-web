@@ -67,12 +67,6 @@ const json = (req: Request, body: unknown, status = 200) =>
     headers: { ...corsFor(req), "Content-Type": "application/json" },
   });
 
-const isoDate = (date: Date) => date.toISOString().slice(0, 10);
-const shiftDate = (value: string, days: number) => {
-  const date = new Date(value + "T00:00:00.000Z");
-  date.setUTCDate(date.getUTCDate() + days);
-  return isoDate(date);
-};
 const safeNumber = (value: unknown) => {
   const number = Number(value);
   return Number.isFinite(number) ? number : 0;
@@ -124,6 +118,7 @@ async function searchConsoleSnapshot(
         refresh_token: connection.refresh_token,
         grant_type: "refresh_token",
       }),
+      signal: AbortSignal.timeout(12_000),
     });
     token = await tokenResponse.json();
     if (!tokenResponse.ok || !token.access_token) {
@@ -154,6 +149,7 @@ async function searchConsoleSnapshot(
           Authorization: "Bearer " + token.access_token,
           "Content-Type": "application/json",
         },
+        signal: AbortSignal.timeout(18_000),
         body: JSON.stringify({
           startDate: rangeStart,
           endDate: rangeEnd,
@@ -258,6 +254,7 @@ async function keywordEstimates() {
         Authorization: authorization,
         "Content-Type": "application/json",
       },
+      signal: AbortSignal.timeout(15_000),
       body: JSON.stringify([{
         keywords: SEED_KEYWORDS,
         location_name: "Kenya",
@@ -634,16 +631,14 @@ async function processMarketScan(
     if (usageError) throw new Error("Could not reserve Grok usage for this scan: " + usageError.message);
     usageLogId = Number(usageLog.id);
 
-    const [{ data: competitorSettings }, gsc, keywordData] = await Promise.all([
-      admin.from("seo_intelligence_settings").select("competitors").eq("id", 1).maybeSingle(),
+    const [gsc, keywordData] = await Promise.all([
       searchConsoleSnapshot(admin, days, window),
       keywordEstimates(),
     ]);
-    const latestCompetitors = normaliseCompetitors(competitorSettings?.competitors || competitors);
     await admin.from("market_intelligence_jobs")
       .update({ progress_message: "Analysing search opportunities and public competitor pages", updated_at: new Date().toISOString() })
       .eq("id", jobId);
-    const result = await runGrok(apiKey, gsc, keywordData, latestCompetitors, catalogContext);
+    const result = await runGrok(apiKey, gsc, keywordData, competitors, catalogContext);
 
     const normaliseEvidenceText = (value: unknown) =>
       typeof value === "string" ? value.trim().toLowerCase().replace(/\s+/g, " ") : "";
@@ -968,10 +963,10 @@ Deno.serve(async (req) => {
       competitors,
       catalogue: {
         productNames: Array.isArray(catalogContext.products)
-          ? (catalogContext.products as Array<Record<string, unknown>>).map((product) => [product.name, product.category, product.subcategory])
+          ? (catalogContext.products as Array<Record<string, unknown>>).map((product) => [product.name, product.category, product.subcategory, product.description])
           : [],
         kitNames: Array.isArray(catalogContext.irrigationKits)
-          ? (catalogContext.irrigationKits as Array<Record<string, unknown>>).map((kit) => [kit.name, kit.type, kit.coverageArea])
+          ? (catalogContext.irrigationKits as Array<Record<string, unknown>>).map((kit) => [kit.name, kit.type, kit.coverageArea, kit.description])
           : [],
       },
     };
@@ -1039,183 +1034,4 @@ Deno.serve(async (req) => {
   }
 
   return json(req, { error: "Unsupported action." }, 400);
-
-  /*
-   * Kept out of the request path: all market scans are enqueued above so the
-   * browser never waits for Search Console, DataForSEO and Grok in one request.
-   */
-  if (action !== "run") return json(req, { error: "Unsupported action." }, 400);
-  const apiKey = Deno.env.get("XAI_API_KEY");
-  if (!apiKey) {
-    return json(req, {
-      error: "Grok is not configured. Add XAI_API_KEY in Supabase Edge Function Secrets, then retry.",
-      configurationRequired: true,
-    }, 503);
-  }
-
-  const days = Math.min(Math.max(Math.floor(safeNumber(body.days) || 28), 7), 90);
-
-  // Reuse a recent report for 24 hours: never call Grok/DataForSEO just to refresh the same scan.
-  const { data: cachedReport } = await admin
-    .from("irrigation_market_reports")
-    .select("id,title,executive_summary,report_data,search_console_snapshot,keyword_estimates,source_links,model,created_at")
-    .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (cachedReport) {
-    return json(req, { success: true, cached: true, report: cachedReport, model: MODEL, usage: null });
-  }
-
-  // Reserve before any provider call; a failed/timeout attempt still counts against the daily cap.
-  const { data: reservation, error: reservationError } = await admin.rpc("reserve_grok_request", {
-    p_function_name: "irrigation-market-intelligence",
-    p_model: MODEL,
-    p_daily_limit: 4,
-    p_cooldown_minutes: 30,
-  });
-  if (reservationError) return json(req, { error: "Grok quota guard is unavailable; no provider call was made. " + reservationError.message }, 503);
-  if (!reservation?.ok) {
-    const reason = reservation.reason === "cooldown"
-      ? "A Grok analysis ran recently. Please wait before starting another."
-      : "The shared Grok daily limit has been reached. Try again tomorrow.";
-    return json(req, { error: reason, quota: reservation }, 429);
-  }
-  const usageLogId = reservation.usage_log_id;
-  const requestStartedAt = Date.now();
-
-  try {
-    const [{ data: competitorSettings }, gsc, keywordData] = await Promise.all([
-      admin.from("seo_intelligence_settings").select("competitors").eq("id", 1).maybeSingle(),
-      searchConsoleSnapshot(admin, days),
-      keywordEstimates(),
-    ]);
-    const competitors = normaliseCompetitors(competitorSettings?.competitors || DEFAULT_COMPETITORS);
-    const result = await runGrok(apiKey, gsc, keywordData, competitors);
-    await admin.from("grok_usage_logs").update({
-      status: "success",
-      request_finished_at: new Date().toISOString(),
-      duration_ms: Date.now() - requestStartedAt,
-      input_tokens: (result.usage as Record<string, unknown> | null)?.input_tokens ?? null,
-      output_tokens: (result.usage as Record<string, unknown> | null)?.output_tokens ?? null,
-      total_tokens: (result.usage as Record<string, unknown> | null)?.total_tokens ?? null,
-      metadata: { gsc_connected: !!(gsc as Record<string, unknown>).connected, dataforseo_connected: !!(keywordData as Record<string, unknown>).connected },
-    }).eq("id", usageLogId);
-    const normaliseEvidenceText = (value: unknown) =>
-      typeof value === "string" ? value.trim().toLowerCase().replace(/\s+/g, " ") : "";
-    const gscQueries = new Set(
-      (Array.isArray((gsc as Record<string, unknown>).queries)
-        ? (gsc as Record<string, unknown>).queries as Array<Record<string, unknown>>
-        : [])
-        .map((row) => Array.isArray(row.keys) ? normaliseEvidenceText(row.keys[0]) : "")
-        .filter(Boolean),
-    );
-    const estimateRows = Array.isArray((keywordData as Record<string, unknown>).estimates)
-      ? (keywordData as Record<string, unknown>).estimates as Array<Record<string, unknown>>
-      : [];
-    const thirdPartyKeywords = new Set(estimateRows.map((row) => normaliseEvidenceText(row.keyword)).filter(Boolean));
-    const citationUrls = new Set(result.citations.map((source) => source.url));
-    const classifyEvidenceRows = (value: unknown) => {
-      if (!Array.isArray(value)) return [];
-      return value.slice(0, 30).map((item) => {
-        const row = item && typeof item === "object" ? item as Record<string, unknown> : {};
-        const refs = row.evidence_refs && typeof row.evidence_refs === "object"
-          ? row.evidence_refs as Record<string, unknown>
-          : {};
-        const gscQuery = normaliseEvidenceText(refs.gsc_query);
-        const thirdPartyKeyword = normaliseEvidenceText(refs.third_party_keyword);
-        const matchedGscQuery = gscQuery && gscQueries.has(gscQuery) ? gscQuery : "";
-        const matchedThirdPartyKeyword =
-          thirdPartyKeyword && thirdPartyKeywords.has(thirdPartyKeyword) ? thirdPartyKeyword : "";
-        const publicSourceUrls = Array.isArray(refs.public_source_urls)
-          ? refs.public_source_urls.filter((url): url is string => typeof url === "string" && citationUrls.has(url))
-          : [];
-        const evidenceClasses = [
-          ...(matchedGscQuery ? ["Search Console measurement"] : []),
-          ...(matchedThirdPartyKeyword ? ["Third-party estimate"] : []),
-          ...(publicSourceUrls.length ? ["Public web observation"] : []),
-        ];
-        if (!evidenceClasses.length) evidenceClasses.push("AI hypothesis");
-        return {
-          ...row,
-          evidence_class: evidenceClasses[0],
-          evidence_classes: evidenceClasses,
-          evidence_refs: {
-            gsc_query: matchedGscQuery,
-            third_party_keyword: matchedThirdPartyKeyword,
-            public_source_urls: publicSourceUrls,
-          },
-        };
-      });
-    };
-    const competitorRows = Array.isArray(result.report.competitor_observations)
-      ? result.report.competitor_observations
-      : [];
-    const report = {
-      ...result.report,
-      market_topics: classifyEvidenceRows(result.report.market_topics),
-      customer_questions: classifyEvidenceRows(result.report.customer_questions),
-      product_page_priorities: classifyEvidenceRows(result.report.product_page_priorities),
-      competitor_observations: competitorRows.slice(0, 20).map((item: Record<string, unknown>) => ({
-        ...item,
-        source_urls: Array.isArray(item.source_urls)
-          ? item.source_urls.filter((url): url is string => typeof url === "string" && citationUrls.has(url))
-          : [],
-      })).filter((item: Record<string, unknown>) => (item.source_urls as string[]).length > 0),
-      evidence_limits: Array.isArray(result.report.evidence_limits) ? result.report.evidence_limits : [],
-      evidence_legend: {
-        first_party: "Measured directly by Google Search Console for the DripTech property and stated date window.",
-        third_party: "Estimated by DataForSEO using its Google keyword database for Kenya/English; not a first-party measurement.",
-        public_web: "Information visible on public pages/search results; does not reveal private competitor metrics.",
-        ai: "Grok interpretation and recommendations; not a measurement or guaranteed outcome.",
-      },
-    };
-    const sources = result.citations.slice(0, 40);
-    if (keywordData.connected) {
-      sources.push({
-        title: "DataForSEO Google Keyword Ideas API documentation",
-        url: DATAFORSEO_DOCS_URL,
-        domain: "docs.dataforseo.com",
-      });
-    }
-    const title = String(report.title || "Irrigation Market Intelligence — Kenya").slice(0, 180);
-    const summary = String(report.executive_summary || "Market intelligence report generated.").slice(0, 12000);
-
-    const { data: saved, error: saveError } = await admin
-      .from("irrigation_market_reports")
-      .insert({
-        title,
-        executive_summary: summary,
-        report_data: report,
-        search_console_snapshot: gsc,
-        keyword_estimates: keywordData,
-        source_links: sources,
-        model: MODEL,
-      })
-      .select("id,title,executive_summary,report_data,search_console_snapshot,keyword_estimates,source_links,model,created_at")
-      .single();
-
-    if (saveError) throw new Error("The report was generated but could not be saved: " + saveError.message);
-
-    return json(req, {
-      success: true,
-      report: saved,
-      model: MODEL,
-      gscConnected: !!(gsc as Record<string, unknown>).connected,
-      dataForSeoConnected: !!(keywordData as Record<string, unknown>).connected,
-      citationCount: sources.length,
-      providerCostUsd: (keywordData as Record<string, unknown>).providerCostUsd ?? null,
-      usage: result.usage,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Market intelligence scan failed.";
-    await admin.from("grok_usage_logs").update({
-      status: /429|rate.?limit/i.test(message) ? "rate_limited" : /timeout|timed out/i.test(message) ? "timeout" : "error",
-      request_finished_at: new Date().toISOString(),
-      duration_ms: Date.now() - requestStartedAt,
-      error_code: /429|rate.?limit/i.test(message) ? "429" : null,
-      error_message: message.slice(0, 1000),
-    }).eq("id", usageLogId);
-    return json(req, { error: message }, 502);
-  }
 });

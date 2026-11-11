@@ -58,23 +58,16 @@ export const AdminAuthProvider = ({
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastActivityRef = useRef<number>(Date.now());
 
-  // Check if user is admin by checking their email domain or specific emails
+  // Check the role table; email domains are not an authorization boundary.
   const checkAdminRole = async (
     supabaseUser: SupabaseUser,
   ): Promise<AdminUser | null> => {
     try {
       const email = supabaseUser.email;
-
-      // Define admin emails or email patterns
-      const adminEmails = [
-        "admin@driptech.com",
-        "support@driptech.com",
-        // Add more admin emails as needed
-      ];
-
-      // Check if user email is in admin list or has admin domain
-      const isAdmin =
-        adminEmails.includes(email || "") || email?.endsWith("@driptech.com");
+      const { data: isAdmin, error } = await supabase.rpc("is_admin", {
+        _user_id: supabaseUser.id,
+      });
+      if (error) throw error;
 
       if (!isAdmin) {
         return null;
