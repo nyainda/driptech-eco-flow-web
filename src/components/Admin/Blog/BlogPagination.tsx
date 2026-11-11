@@ -6,8 +6,10 @@ interface BlogPaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  totalItems: number;
-  itemsPerPage: number;
+  totalItems?: number;
+  itemsPerPage?: number;
+  totalPosts?: number;
+  postsPerPage?: number;
 }
 
 const BlogPagination: React.FC<BlogPaginationProps> = ({
@@ -16,16 +18,20 @@ const BlogPagination: React.FC<BlogPaginationProps> = ({
   onPageChange,
   totalItems,
   itemsPerPage,
+  totalPosts,
+  postsPerPage,
 }) => {
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+  const resolvedTotal = totalItems ?? totalPosts ?? 0;
+  const resolvedPerPage = itemsPerPage ?? postsPerPage ?? 10;
+  const startItem = (currentPage - 1) * resolvedPerPage + 1;
+  const endItem = Math.min(currentPage * resolvedPerPage, resolvedTotal);
 
   if (totalPages <= 1) return null;
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 sm:mt-8">
       <div className="text-sm text-muted-foreground order-2 sm:order-1">
-        Showing {startItem}-{endItem} of {totalItems} posts
+        Showing {startItem}-{endItem} of {resolvedTotal} posts
       </div>
 
       <div className="flex items-center gap-2 order-1 sm:order-2">

@@ -60,6 +60,8 @@ interface ProductFormProps {
   setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
+  onImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveImage?: (index: number) => void;
   editingProduct: any;
   uploading: boolean;
 }

@@ -22,11 +22,15 @@ interface BlogPost {
   excerpt: string;
   content: string;
   featured_image: string | null;
-  status: "draft" | "published";
+  featured_image_url?: string;
+  status?: "draft" | "published";
+  published?: boolean;
+  published_at?: string | null;
   views: number;
   likes: number;
-  comments_count: number;
-  author_name: string;
+  comments_count?: number;
+  author_name?: string;
+  blog_categories?: { name: string };
   created_at: string;
   updated_at: string;
   tags: string[];
@@ -35,7 +39,7 @@ interface BlogPost {
 interface BlogListProps {
   posts: BlogPost[];
   loading: boolean;
-  onEdit: (post: BlogPost) => void;
+  onEdit: (post: any) => void;
   onDelete: (postId: string) => void;
 }
 
@@ -84,18 +88,21 @@ const BlogList: React.FC<BlogListProps> = ({
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:gap-6">
-      {posts.map((post) => (
+      {posts.map((post) => {
+        const isPublished = post.published ?? post.status === "published";
+        const imageUrl = post.featured_image_url || post.featured_image;
+        return (
         <Card
           key={post.id}
-          className="border-0 bg-card shadow-lg hover:shadow-xl transition-shadow"
+          className="border border-border/70 bg-card shadow-sm hover:shadow-md transition-shadow"
         >
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Featured Image */}
               <div className="w-full sm:w-32 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg overflow-hidden flex-shrink-0">
-                {post.featured_image ? (
+                {imageUrl ? (
                   <img
-                    src={post.featured_image}
+                    src={imageUrl}
                     alt={post.title}
                     className="w-full h-full object-cover"
                   />
@@ -119,12 +126,10 @@ const BlogList: React.FC<BlogListProps> = ({
                   </div>
                   <div className="flex flex-row sm:flex-col gap-2 flex-shrink-0">
                     <Badge
-                      variant={
-                        post.status === "published" ? "default" : "secondary"
-                      }
+                      variant={isPublished ? "default" : "secondary"}
                       className="text-xs"
                     >
-                      {post.status === "published" ? (
+                      {isPublished ? (
                         <>
                           <Globe className="h-3 w-3 mr-1" />
                           Published
@@ -140,7 +145,7 @@ const BlogList: React.FC<BlogListProps> = ({
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-muted-foreground mb-3">
                   <div className="flex items-center gap-1">
                     <User className="h-3 w-3" />
-                    <span>{post.author_name}</span>
+                    <span>{post.author_name || post.blog_categories?.name || "DripTech Editorial"}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -157,15 +162,15 @@ const BlogList: React.FC<BlogListProps> = ({
                   <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Eye className="h-3 w-3" />
-                      <span>{post.views}</span>
+                      <span>{post.views || 0}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <ThumbsUp className="h-3 w-3" />
-                      <span>{post.likes}</span>
+                      <span>{post.likes || 0}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <MessageCircle className="h-3 w-3" />
-                      <span>{post.comments_count}</span>
+                      <span>{post.comments_count || 0}</span>
                     </div>
                   </div>
 
@@ -194,7 +199,8 @@ const BlogList: React.FC<BlogListProps> = ({
             </div>
           </CardContent>
         </Card>
-      ))}
+      );
+      })}
     </div>
   );
 };

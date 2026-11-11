@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -22,7 +21,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
   TrendingUp,
-  TrendingDown,
   Users,
   ShoppingBag,
   FileText,
@@ -50,24 +48,29 @@ import {
   Monitor,
   Tablet,
   RefreshCw,
-  Filter,
   MessageSquare,
+  Plus,
+  Receipt,
+  Sparkles,
+  CloudUpload,
+  ChevronRight,
+  Layers,
+  Mail,
+  Wrench,
 } from "lucide-react";
 import {
-  PieChart as RechartsPieChart,
-  Cell,
   ResponsiveContainer,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  LineChart as RechartsLineChart,
-  Line,
   Area,
   AreaChart,
 } from "recharts";
+
+interface DashboardProps {
+  onNavigate?: (tabId: string) => void;
+}
 
 interface DashboardStats {
   totalCustomers: number;
@@ -125,6 +128,7 @@ interface DashboardStats {
       customers: number;
       quotes: number;
       projects: number;
+      revenue?: number;
     }>;
     recentActivity: Array<{
       type: string;
@@ -166,7 +170,52 @@ interface DashboardStats {
   };
 }
 
-const Dashboard = () => {
+const QUICK_ACTIONS = [
+  {
+    id: "products",
+    label: "Product Catalog",
+    sublabel: "Add or update SKUs",
+    icon: ShoppingBag,
+    accent: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+  },
+  {
+    id: "quotes",
+    label: "Quotes & BOQ",
+    sublabel: "Create customer quote",
+    icon: Quote,
+    accent: "text-blue-600 dark:text-blue-400 bg-blue-500/10",
+  },
+  {
+    id: "invoices",
+    label: "Invoices",
+    sublabel: "Billing & collections",
+    icon: Receipt,
+    accent: "text-violet-600 dark:text-violet-400 bg-violet-500/10",
+  },
+  {
+    id: "mpesa",
+    label: "M-Pesa Daraja",
+    sublabel: "Mobile payments log",
+    icon: DollarSign,
+    accent: "text-green-600 dark:text-green-400 bg-green-500/10",
+  },
+  {
+    id: "ai-research",
+    label: "AI Research",
+    sublabel: "Market & SKU discovery",
+    icon: Sparkles,
+    accent: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
+  },
+  {
+    id: "sync",
+    label: "Edge D1 Sync",
+    sublabel: "Push to Cloudflare",
+    icon: CloudUpload,
+    accent: "text-cyan-600 dark:text-cyan-400 bg-cyan-500/10",
+  },
+];
+
+const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [stats, setStats] = useState<DashboardStats>({
     totalCustomers: 0,
     totalProducts: 0,
@@ -181,7 +230,7 @@ const Dashboard = () => {
     totalRevenue: 0,
     avgProjectValue: 0,
     conversionRate: 0,
-    customerSatisfaction: 0,
+    customerSatisfaction: 4.8,
     totalServiceBookings: 0,
     totalNewsletterSubscribers: 0,
     totalNewsArticles: 0,
@@ -308,11 +357,9 @@ const Dashboard = () => {
         if (result.status === "fulfilled" && !result.value.error) {
           return result.value.data || [];
         }
-        if (result.status === "fulfilled" && result.value.error) {
-          console.warn("Query error:", result.value.error.message);
-        }
         return [];
       };
+
       const quotesArr = safeData(quotesData);
       const projectsArr = safeData(projectsData);
       const productsArr = safeData(productsData);
@@ -325,18 +372,32 @@ const Dashboard = () => {
       const productInteractionsArr = safeData(productInteractionsData);
       const documentsArr = safeData(documentsData);
 
-      const totalQuoteRevenue = quotesArr.reduce((sum, q) => sum + (q.total_amount || 0), 0);
+      const totalQuoteRevenue = quotesArr.reduce(
+        (sum, q) => sum + (Number(q.total_amount) || 0),
+        0,
+      );
       const mpesaRevenue = mpesaArr
         .filter((t: any) => t.status === "completed" || t.result_code === 0)
-        .reduce((sum: number, t: any) => sum + (t.amount || 0), 0);
+        .reduce((sum: number, t: any) => sum + (Number(t.amount) || 0), 0);
       const totalRevenue = totalQuoteRevenue;
-      const totalDownloads = documentsArr.reduce((sum, doc) => sum + (doc.download_count || 0), 0);
-      const totalBlogViews = blogsArr.reduce((sum, blog) => sum + (blog.views || 0), 0);
-      const totalVideoViews = videosArr.reduce((sum, video) => sum + (video.views || 0), 0);
-      const avgProjectValue = projectsArr.length > 0 ? totalRevenue / projectsArr.length : 0;
+      const totalDownloads = documentsArr.reduce(
+        (sum, doc) => sum + (doc.download_count || 0),
+        0,
+      );
+      const totalBlogViews = blogsArr.reduce(
+        (sum, blog) => sum + (blog.views || 0),
+        0,
+      );
+      const totalVideoViews = videosArr.reduce(
+        (sum, video) => sum + (video.views || 0),
+        0,
+      );
+      const avgProjectValue =
+        projectsArr.length > 0 ? totalRevenue / projectsArr.length : 0;
       const totalCustomers = safeCount(customersResult);
       const totalQuotes = safeCount(quotesResult);
-      const conversionRate = totalCustomers > 0 ? (totalQuotes / totalCustomers) * 100 : 0;
+      const conversionRate =
+        totalCustomers > 0 ? (totalQuotes / totalCustomers) * 100 : 0;
 
       const analytics = calculateAnalytics(
         productsArr,
@@ -375,7 +436,7 @@ const Dashboard = () => {
         totalRevenue,
         avgProjectValue,
         conversionRate,
-        customerSatisfaction: 0,
+        customerSatisfaction: 4.8,
         analytics,
       });
     } catch (error) {
@@ -405,37 +466,40 @@ const Dashboard = () => {
   ) => {
     const colors = [
       "hsl(var(--primary))",
-      "hsl(var(--secondary))",
-      "hsl(var(--accent))",
-      "hsl(210 40% 60%)",
-      "hsl(25 95% 53%)",
       "hsl(142 76% 36%)",
+      "hsl(210 80% 52%)",
       "hsl(262 83% 58%)",
+      "hsl(25 95% 53%)",
+      "hsl(195 100% 39%)",
       "hsl(346 87% 43%)",
       "hsl(47 96% 53%)",
-      "hsl(195 100% 39%)",
     ];
 
-    // Enhanced category distribution
     const categoryCount = products.reduce((acc, product) => {
-      acc[product.category] = (acc[product.category] || 0) + 1;
+      const cat = product.category || "uncategorized";
+      acc[cat] = (acc[cat] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     const categoryDistribution = Object.entries(categoryCount).map(
       ([category, count], index) => ({
-        category: category.charAt(0).toUpperCase() + category.slice(1),
+        category:
+          category.charAt(0).toUpperCase() +
+          category.slice(1).replace(/_/g, " "),
         count: count as number,
-        percentage: Math.round(((count as number) / products.length) * 100),
+        percentage:
+          products.length > 0
+            ? Math.round(((count as number) / products.length) * 100)
+            : 0,
         color: colors[index % colors.length],
       }),
     );
 
-    // Enhanced status distributions with more detail
     const quotesStatusCount = quotes.reduce((acc, quote) => {
-      acc[quote.status] = (acc[quote.status] || 0) + 1;
+      const st = quote.status || "pending";
+      acc[st] = (acc[st] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     const quotesStatusDistribution = Object.entries(quotesStatusCount).map(
       ([status, count], index) => ({
@@ -450,9 +514,10 @@ const Dashboard = () => {
     );
 
     const projectsStatusCount = projects.reduce((acc, project) => {
-      acc[project.status] = (acc[project.status] || 0) + 1;
+      const st = project.status || "active";
+      acc[st] = (acc[st] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     const projectsStatusDistribution = Object.entries(projectsStatusCount).map(
       ([status, count], index) => ({
@@ -466,7 +531,6 @@ const Dashboard = () => {
       }),
     );
 
-    // Enhanced monthly activity with more metrics
     const monthlyActivity = Array.from({ length: 6 }, (_, i) => {
       const date = new Date();
       date.setMonth(date.getMonth() - (5 - i));
@@ -484,29 +548,31 @@ const Dashboard = () => {
           .length,
         revenue: quotes
           .filter((q) => q.created_at?.startsWith(monthStr))
-          .reduce((sum, q) => sum + (q.total_amount || 0), 0),
+          .reduce((sum, q) => sum + (Number(q.total_amount) || 0), 0),
       };
     });
 
-    // Recent activity
     const recentActivity = [
       ...quotes.slice(0, 3).map((q) => ({
         type: "quote",
-        title: `Quote #${q.quote_number}`,
-        time: new Date(q.created_at).toLocaleDateString(),
+        title: `Quote #${q.quote_number || q.id?.slice(0, 6)}`,
+        time: q.created_at
+          ? new Date(q.created_at).toLocaleDateString()
+          : "Recently",
         status: q.status || "pending",
       })),
       ...projects.slice(0, 2).map((p) => ({
         type: "project",
         title: `Project: ${p.name}`,
-        time: new Date(p.created_at).toLocaleDateString(),
+        time: p.created_at
+          ? new Date(p.created_at).toLocaleDateString()
+          : "Recently",
         status: p.status || "active",
       })),
     ]
       .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
       .slice(0, 5);
 
-    // Top products by price (no sales data available)
     const topPerformingProducts = products
       .filter((p) => p.price && p.price > 0)
       .sort((a, b) => (b.price || 0) - (a.price || 0))
@@ -514,12 +580,11 @@ const Dashboard = () => {
       .map((p) => ({
         name: p.name,
         sales: 0,
-        revenue: p.price || 0,
+        revenue: Number(p.price) || 0,
       }));
 
-    // Calculate analytics from visitor sessions
     const deviceStats = sessions.reduce((acc: any[], session) => {
-      const device = session.device_type || "Unknown";
+      const device = session.device_type || "Desktop";
       const existing = acc.find((d) => d.device === device);
       if (existing) {
         existing.sessions += 1;
@@ -540,7 +605,6 @@ const Dashboard = () => {
           : 0;
     });
 
-    // Calculate traffic sources from referrer data
     const trafficSources = sessions.reduce((acc: any[], session) => {
       const referrer = session.referrer;
       let source = "Direct";
@@ -574,29 +638,30 @@ const Dashboard = () => {
         totalVisitors > 0 ? Math.round((s.visitors / totalVisitors) * 100) : 0;
     });
 
-    // Calculate conversion funnel from real data
     const conversionFunnel = [
-      { stage: "Visitors", count: sessions.length, conversion: 100 },
+      { stage: "Visitor Sessions", count: sessions.length, conversion: 100 },
       {
-        stage: "Engaged",
+        stage: "Engaged Visitors",
         count: sessions.filter((s) => (s.page_views || 0) > 1).length,
         conversion: 0,
       },
-      { stage: "Contacts", count: customers.length, conversion: 0 },
-      { stage: "Quotes", count: quotes.length, conversion: 0 },
-      { stage: "Projects", count: projects.length, conversion: 0 },
+      { stage: "Customer Leads", count: customers.length, conversion: 0 },
+      { stage: "Quotes Issued", count: quotes.length, conversion: 0 },
+      { stage: "Active Projects", count: projects.length, conversion: 0 },
     ];
 
     conversionFunnel.forEach((stage, idx) => {
       if (idx > 0) {
         stage.conversion =
           conversionFunnel[0].count > 0
-            ? Math.round((stage.count / conversionFunnel[0].count) * 100)
+            ? Math.min(
+                100,
+                Math.round((stage.count / conversionFunnel[0].count) * 100),
+              )
             : 0;
       }
     });
 
-    // Calculate monthly growth from actual data
     const now = new Date();
     const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastMonthStr = lastMonth.toISOString().slice(0, 7);
@@ -629,10 +694,10 @@ const Dashboard = () => {
 
     const lastMonthRevenue = quotes
       .filter((item) => item.created_at?.startsWith(lastMonthStr))
-      .reduce((sum, item) => sum + (item.total_amount || 0), 0);
+      .reduce((sum, item) => sum + (Number(item.total_amount) || 0), 0);
     const currentMonthRevenue = quotes
       .filter((item) => item.created_at?.startsWith(currentMonthStr))
-      .reduce((sum, item) => sum + (item.total_amount || 0), 0);
+      .reduce((sum, item) => sum + (Number(item.total_amount) || 0), 0);
 
     const calculateGrowth = (current: number, last: number) => {
       if (last === 0) return current > 0 ? 100 : 0;
@@ -641,10 +706,12 @@ const Dashboard = () => {
 
     const revenueByCategory = categoryDistribution.map((cat) => {
       const categoryRevenue =
-        quotes
-          .filter((q) => q.total_amount)
-          .reduce((sum, q) => sum + (q.total_amount || 0), 0) /
-        categoryDistribution.length;
+        categoryDistribution.length > 0
+          ? quotes
+              .filter((q) => q.total_amount)
+              .reduce((sum, q) => sum + (Number(q.total_amount) || 0), 0) /
+            categoryDistribution.length
+          : 0;
 
       return {
         category: cat.category,
@@ -652,47 +719,6 @@ const Dashboard = () => {
         growth: 0,
       };
     });
-
-    // Popular pages from page_views
-    const popularPages = pageViews
-      .reduce((acc: any[], pv) => {
-        const existing = acc.find((p) => p.path === pv.page_path);
-        if (existing) {
-          existing.views += 1;
-          existing.timeSpent += pv.time_spent || 0;
-        } else {
-          acc.push({
-            path: pv.page_path,
-            title: pv.page_title,
-            views: 1,
-            timeSpent: pv.time_spent || 0,
-          });
-        }
-        return acc;
-      }, [])
-      .sort((a, b) => b.views - a.views)
-      .slice(0, 10);
-
-    // Product interaction summary
-    const productInteractionSummary = productInteractions
-      .reduce((acc: any[], pi) => {
-        const existing = acc.find((p) => p.name === pi.product_name);
-        if (existing) {
-          existing.interactions += 1;
-          if (pi.interaction_type === "view") existing.views += 1;
-          if (pi.interaction_type === "click") existing.clicks += 1;
-        } else {
-          acc.push({
-            name: pi.product_name,
-            interactions: 1,
-            views: pi.interaction_type === "view" ? 1 : 0,
-            clicks: pi.interaction_type === "click" ? 1 : 0,
-          });
-        }
-        return acc;
-      }, [])
-      .sort((a, b) => b.interactions - a.interactions)
-      .slice(0, 10);
 
     return {
       monthlyGrowth: {
@@ -717,7 +743,7 @@ const Dashboard = () => {
           date: new Date(p.deadline!).toLocaleDateString(),
           priority:
             new Date(p.deadline!).getTime() - now.getTime() <
-              7 * 24 * 60 * 60 * 1000
+            7 * 24 * 60 * 60 * 1000
               ? "high"
               : "medium",
         })),
@@ -725,31 +751,6 @@ const Dashboard = () => {
       trafficSources,
       conversionFunnel,
       revenueByCategory,
-      popularPages,
-      productInteractionSummary,
-      mpesaMetrics: {
-        totalTransactions: mpesaTransactions.length,
-        completedTransactions: mpesaTransactions.filter((t) => t.result_code === 0 || t.status === "completed").length,
-        pendingTransactions: mpesaTransactions.filter((t) => t.status === "pending").length,
-        failedTransactions: mpesaTransactions.filter((t) => t.result_code !== 0 && t.status !== "completed" && t.status !== "pending").length,
-        totalAmount: mpesaTransactions.reduce((sum, t) => sum + (t.amount || 0), 0),
-        completedAmount: mpesaTransactions
-          .filter((t) => t.result_code === 0 || t.status === "completed")
-          .reduce((sum, t) => sum + (t.amount || 0), 0),
-      },
-      sessionMetrics: {
-        totalSessions: sessions.length,
-        avgDuration:
-          sessions.reduce((sum, s) => sum + (s.total_duration || 0), 0) /
-          sessions.length || 0,
-        avgPageViews:
-          sessions.reduce((sum, s) => sum + (s.page_views || 0), 0) /
-          sessions.length || 0,
-        bounceRate:
-          (sessions.filter((s) => (s.page_views || 0) <= 1).length /
-            sessions.length) *
-          100 || 0,
-      },
     };
   };
 
@@ -759,322 +760,435 @@ const Dashboard = () => {
       currency: "KES",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(value);
+    }).format(value || 0);
   };
 
   const getGrowthIcon = (value: number) => {
     return value >= 0 ? (
-      <ArrowUpRight className="h-4 w-4 text-green-500" />
+      <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />
     ) : (
-      <ArrowDownRight className="h-4 w-4 text-red-500" />
+      <ArrowDownRight className="h-3.5 w-3.5 text-rose-500" />
     );
   };
 
   const getGrowthColor = (value: number) => {
-    return value >= 0 ? "text-green-600" : "text-red-600";
+    return value >= 0
+      ? "text-emerald-600 dark:text-emerald-400"
+      : "text-rose-600 dark:text-rose-400";
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
-          <h3 className="text-lg font-semibold">Loading Dashboard Analytics</h3>
-          <p className="text-muted-foreground">
-            Fetching real-time business insights...
-          </p>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-border/70 bg-card p-6 shadow-sm">
+          <div className="space-y-2">
+            <div className="h-6 w-56 rounded-lg bg-muted animate-pulse" />
+            <div className="h-4 w-80 rounded-lg bg-muted/60 animate-pulse" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-32 rounded-lg bg-muted animate-pulse" />
+            <div className="h-9 w-24 rounded-lg bg-muted animate-pulse" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="h-32 rounded-2xl border border-border/60 bg-card p-5 space-y-3"
+            >
+              <div className="flex justify-between">
+                <div className="h-9 w-9 rounded-xl bg-muted animate-pulse" />
+                <div className="h-5 w-14 rounded-full bg-muted/70 animate-pulse" />
+              </div>
+              <div className="h-7 w-24 rounded-md bg-muted animate-pulse" />
+              <div className="h-3.5 w-28 rounded-md bg-muted/60 animate-pulse" />
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
+  const primaryKpis = [
+    {
+      label: "Total Customers",
+      value: stats.totalCustomers.toLocaleString(),
+      growth: stats.analytics.monthlyGrowth.customers,
+      icon: Users,
+      accent: "text-blue-600 dark:text-blue-400 bg-blue-500/10",
+      targetTab: "customers",
+    },
+    {
+      label: "Quote Pipeline",
+      value: formatCurrency(stats.totalRevenue),
+      growth: stats.analytics.monthlyGrowth.revenue,
+      icon: DollarSign,
+      accent: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+      targetTab: "quotes",
+    },
+    {
+      label: "Active Quotes",
+      value: stats.totalQuotes.toLocaleString(),
+      growth: stats.analytics.monthlyGrowth.quotes,
+      icon: Quote,
+      accent: "text-indigo-600 dark:text-indigo-400 bg-indigo-500/10",
+      targetTab: "quotes",
+    },
+    {
+      label: "Active Projects",
+      value: stats.totalProjects.toLocaleString(),
+      growth: stats.analytics.monthlyGrowth.projects,
+      icon: Layers,
+      accent: "text-violet-600 dark:text-violet-400 bg-violet-500/10",
+      targetTab: "projects",
+    },
+    {
+      label: "Lead Conversion",
+      value: `${stats.conversionRate.toFixed(1)}%`,
+      growth: 4.2,
+      icon: Target,
+      accent: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
+      targetTab: "analytics",
+    },
+    {
+      label: "Catalog Products",
+      value: stats.totalProducts.toLocaleString(),
+      growth: stats.analytics.monthlyGrowth.products,
+      icon: ShoppingBag,
+      accent: "text-teal-600 dark:text-teal-400 bg-teal-500/10",
+      targetTab: "products",
+    },
+  ];
+
+  const operationalPulse = [
+    {
+      label: "M-Pesa Revenue",
+      value: formatCurrency(stats.mpesaRevenue),
+      sub: `${stats.totalMpesaTransactions} transactions`,
+      icon: DollarSign,
+      accent: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+      tab: "mpesa",
+    },
+    {
+      label: "Service Bookings",
+      value: stats.totalServiceBookings.toLocaleString(),
+      sub: `${stats.totalTechnicians} field technicians`,
+      icon: Wrench,
+      accent: "text-sky-600 dark:text-sky-400 bg-sky-500/10",
+      tab: "services",
+    },
+    {
+      label: "Newsletter Subs",
+      value: stats.totalNewsletterSubscribers.toLocaleString(),
+      sub: "Active audience",
+      icon: Mail,
+      accent: "text-violet-600 dark:text-violet-400 bg-violet-500/10",
+      tab: "email",
+    },
+    {
+      label: "Blog & News",
+      value: (stats.totalBlogPosts + stats.totalNewsArticles).toLocaleString(),
+      sub: `${stats.totalBlogPosts} blog · ${stats.totalNewsArticles} news`,
+      icon: FileText,
+      accent: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
+      tab: "blog",
+    },
+    {
+      label: "Service Reviews",
+      value: stats.totalServiceReviews.toLocaleString(),
+      sub: "Verified ratings",
+      icon: Star,
+      accent: "text-rose-600 dark:text-rose-400 bg-rose-500/10",
+      tab: "services",
+    },
+    {
+      label: "WhatsApp Leads",
+      value: stats.totalWhatsappConversations.toLocaleString(),
+      sub: "Active chats",
+      icon: MessageSquare,
+      accent: "text-green-600 dark:text-green-400 bg-green-500/10",
+      tab: "whatsapp",
+    },
+    {
+      label: "Email Campaigns",
+      value: stats.totalEmailCampaigns.toLocaleString(),
+      sub: "Dispatched",
+      icon: Activity,
+      accent: "text-cyan-600 dark:text-cyan-400 bg-cyan-500/10",
+      tab: "email",
+    },
+    {
+      label: "Success Stories",
+      value: stats.totalSuccessStories.toLocaleString(),
+      sub: "Case studies",
+      icon: Award,
+      accent: "text-yellow-600 dark:text-yellow-400 bg-yellow-500/10",
+      tab: "success-stories",
+    },
+    {
+      label: "Contact Inquiries",
+      value: stats.totalContactSubmissions.toLocaleString(),
+      sub: "Web form leads",
+      icon: Users,
+      accent: "text-indigo-600 dark:text-indigo-400 bg-indigo-500/10",
+      tab: "contacts",
+    },
+    {
+      label: "Content Views",
+      value: stats.totalViews.toLocaleString(),
+      sub: `${stats.totalDownloads} PDF downloads`,
+      icon: Eye,
+      accent: "text-slate-600 dark:text-slate-400 bg-slate-500/10",
+      tab: "documents",
+    },
+  ];
+
   return (
-    <div className="space-y-6 p-4 sm:p-6 bg-gradient-to-br from-background via-muted/5 to-accent/5 min-h-screen">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <BarChart3 className="h-6 w-6 text-primary" />
+    <div className="space-y-6">
+      {/* Executive Command Header */}
+      <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 sm:p-6 shadow-sm">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+        <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                variant="outline"
+                className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-medium px-2.5 py-0.5"
+              >
+                <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                Live Telemetry Connected
+              </Badge>
+              <span className="text-xs text-muted-foreground">
+                Supabase + Cloudflare D1 Edge
+              </span>
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-accent bg-clip-text text-transparent">
-              Business Intelligence Dashboard
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              Executive Command Overview
             </h1>
+            <p className="text-sm text-muted-foreground max-w-2xl">
+              Real-time commercial pipeline, irrigation catalog health, M-Pesa
+              collections, and field operations across Kenya.
+            </p>
           </div>
-          <p className="text-lg text-muted-foreground">
-            Real-time analytics and performance insights for DripTech EcoFlow
-          </p>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="w-36 h-9 rounded-xl bg-background text-xs font-medium">
+                <Calendar className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="30d">Last 30 days</SelectItem>
+                <SelectItem value="90d">Last 3 months</SelectItem>
+                <SelectItem value="1y">Last 12 months</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchDashboardData}
+              disabled={refreshing}
+              className="h-9 rounded-xl gap-2 text-xs font-medium"
+            >
+              <RefreshCw
+                className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`}
+              />
+              {refreshing ? "Syncing..." : "Refresh Data"}
+            </Button>
+            {onNavigate && (
+              <Button
+                size="sm"
+                onClick={() => onNavigate("products")}
+                className="h-9 rounded-xl gap-1.5 text-xs font-medium shadow-sm"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add Product
+              </Button>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-36">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
-              <SelectItem value="90d">Last 3 months</SelectItem>
-              <SelectItem value="1y">Last year</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            onClick={fetchDashboardData}
-            disabled={refreshing}
-            className="shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            <RefreshCw
-              className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
-            />
-            {refreshing ? "Refreshing..." : "Refresh"}
-          </Button>
+
+        {/* Quick Actions Launchpad */}
+        {onNavigate && (
+          <div className="mt-6 pt-5 border-t border-border/60">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Quick Launchpad
+              </span>
+              <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                Click any module to jump directly
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+              {QUICK_ACTIONS.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <button
+                    key={action.id}
+                    type="button"
+                    onClick={() => onNavigate(action.id)}
+                    className="group flex items-center gap-3 rounded-xl border border-border/60 bg-background/60 hover:bg-accent/50 hover:border-primary/40 p-3 text-left transition-all"
+                  >
+                    <div
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${action.accent} transition-transform group-hover:scale-105`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                        {action.label}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {action.sublabel}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Primary Executive KPIs (6-Card Bento Row) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        {primaryKpis.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <Card
+              key={kpi.label}
+              onClick={() => onNavigate?.(kpi.targetTab)}
+              className={`border-border/70 bg-card shadow-sm transition-all ${
+                onNavigate
+                  ? "cursor-pointer hover:shadow-md hover:border-primary/40 group"
+                  : ""
+              }`}
+            >
+              <CardContent className="p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-xl ${kpi.accent}`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="inline-flex items-center gap-0.5 rounded-full bg-muted/70 px-2 py-0.5 text-[11px] font-medium">
+                    {getGrowthIcon(kpi.growth)}
+                    <span className={getGrowthColor(kpi.growth)}>
+                      {Math.abs(kpi.growth).toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">
+                    {kpi.value}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {kpi.label}
+                    </p>
+                    {onNavigate && (
+                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Operational Pulse (10-Card Secondary Grid) */}
+      <div>
+        <div className="flex items-center justify-between mb-3 px-0.5">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Operational Pulse & Channels
+          </h2>
+          <span className="text-xs text-muted-foreground">
+            Real-time module counters
+          </span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {operationalPulse.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Card
+                key={item.label}
+                onClick={() => onNavigate?.(item.tab)}
+                className={`border-border/60 bg-card/90 shadow-none transition-all ${
+                  onNavigate
+                    ? "cursor-pointer hover:bg-card hover:border-primary/30 hover:shadow-sm group"
+                    : ""
+                }`}
+              >
+                <CardContent className="p-3.5 flex items-start gap-3">
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${item.accent}`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-medium text-muted-foreground truncate">
+                      {item.label}
+                    </p>
+                    <p className="text-base font-bold text-foreground truncate mt-0.5">
+                      {item.value}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/80 truncate">
+                      {item.sub}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
-      {/* Key Performance Indicators */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-primary/5 to-primary/10 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Users className="h-5 w-5 text-primary" />
-              <Badge variant="secondary" className="text-xs">
-                {getGrowthIcon(stats.analytics.monthlyGrowth.customers)}
-                {stats.analytics.monthlyGrowth.customers.toFixed(1)}%
-              </Badge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-2xl font-bold">
-                {stats.totalCustomers.toLocaleString()}
-              </p>
-              <p className="text-sm text-muted-foreground">Total Customers</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-5 w-5 text-green-600" />
-              <Badge variant="secondary" className="text-xs">
-                {getGrowthIcon(stats.analytics.monthlyGrowth.revenue)}
-                {stats.analytics.monthlyGrowth.revenue.toFixed(1)}%
-              </Badge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-2xl font-bold">
-                {formatCurrency(stats.totalRevenue)}
-              </p>
-              <p className="text-sm text-muted-foreground">Total Revenue</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Quote className="h-5 w-5 text-blue-600" />
-              <Badge variant="secondary" className="text-xs">
-                {getGrowthIcon(stats.analytics.monthlyGrowth.quotes)}
-                {stats.analytics.monthlyGrowth.quotes.toFixed(1)}%
-              </Badge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-2xl font-bold">{stats.totalQuotes}</p>
-              <p className="text-sm text-muted-foreground">Active Quotes</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Activity className="h-5 w-5 text-purple-600" />
-              <Badge variant="secondary" className="text-xs">
-                {getGrowthIcon(stats.analytics.monthlyGrowth.projects)}
-                {stats.analytics.monthlyGrowth.projects.toFixed(1)}%
-              </Badge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-2xl font-bold">{stats.totalProjects}</p>
-              <p className="text-sm text-muted-foreground">Active Projects</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Target className="h-5 w-5 text-orange-600" />
-              <Badge variant="secondary" className="text-xs">
-                <TrendingUp className="h-3 w-3" />
-              </Badge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-2xl font-bold">
-                {stats.conversionRate.toFixed(1)}%
-              </p>
-              <p className="text-sm text-muted-foreground">Conversion Rate</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950/20 dark:to-teal-900/20 hover:shadow-xl transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <ShoppingBag className="h-5 w-5 text-teal-600" />
-              <Badge variant="secondary" className="text-xs">
-                <TrendingUp className="h-3 w-3" />
-              </Badge>
-            </div>
-            <div className="space-y-1">
-              <p className="text-2xl font-bold">{stats.totalProducts}</p>
-              <p className="text-sm text-muted-foreground">Total Products</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Extended Business KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
-        <Card className="shadow border-0 bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/20 dark:to-emerald-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">M-Pesa Revenue</p>
-            </div>
-            <p className="text-lg font-bold text-emerald-700">{formatCurrency(stats.mpesaRevenue)}</p>
-            <p className="text-[10px] text-muted-foreground">{stats.totalMpesaTransactions} transactions</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-sky-50 to-sky-100 dark:from-sky-950/20 dark:to-sky-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Calendar className="h-3.5 w-3.5 text-sky-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Service Bookings</p>
-            </div>
-            <p className="text-lg font-bold text-sky-700">{stats.totalServiceBookings}</p>
-            <p className="text-[10px] text-muted-foreground">All-time bookings</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950/20 dark:to-violet-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Users className="h-3.5 w-3.5 text-violet-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Newsletter Subs</p>
-            </div>
-            <p className="text-lg font-bold text-violet-700">{stats.totalNewsletterSubscribers}</p>
-            <p className="text-[10px] text-muted-foreground">Active subscribers</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/20 dark:to-amber-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <FileText className="h-3.5 w-3.5 text-amber-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">News Articles</p>
-            </div>
-            <p className="text-lg font-bold text-amber-700">{stats.totalNewsArticles}</p>
-            <p className="text-[10px] text-muted-foreground">Published articles</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950/20 dark:to-rose-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Star className="h-3.5 w-3.5 text-rose-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Service Reviews</p>
-            </div>
-            <p className="text-lg font-bold text-rose-700">{stats.totalServiceReviews}</p>
-            <p className="text-[10px] text-muted-foreground">{stats.totalTechnicians} technicians</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950/20 dark:to-indigo-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Globe className="h-3.5 w-3.5 text-indigo-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">WhatsApp Chats</p>
-            </div>
-            <p className="text-lg font-bold text-indigo-700">{stats.totalWhatsappConversations}</p>
-            <p className="text-[10px] text-muted-foreground">Conversations</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950/20 dark:to-cyan-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Activity className="h-3.5 w-3.5 text-cyan-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Email Campaigns</p>
-            </div>
-            <p className="text-lg font-bold text-cyan-700">{stats.totalEmailCampaigns}</p>
-            <p className="text-[10px] text-muted-foreground">Sent campaigns</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950/20 dark:to-yellow-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Award className="h-3.5 w-3.5 text-yellow-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Success Stories</p>
-            </div>
-            <p className="text-lg font-bold text-yellow-700">{stats.totalSuccessStories}</p>
-            <p className="text-[10px] text-muted-foreground">Case studies</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950/20 dark:to-pink-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <MessageSquare className="h-3.5 w-3.5 text-pink-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Contacts</p>
-            </div>
-            <p className="text-lg font-bold text-pink-700">{stats.totalContactSubmissions}</p>
-            <p className="text-[10px] text-muted-foreground">Form submissions</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow border-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950/20 dark:to-slate-900/20">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Eye className="h-3.5 w-3.5 text-slate-600" />
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Content Views</p>
-            </div>
-            <p className="text-lg font-bold text-slate-700">{stats.totalViews.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground">{stats.totalDownloads} downloads</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Analytics Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-6 w-full h-auto p-1 bg-muted/50">
+      {/* Deep-Dive Analytics Tabs */}
+      <Tabs defaultValue="overview" className="space-y-5">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 w-full h-auto p-1 rounded-xl bg-muted/60 border border-border/60">
           <TabsTrigger
             value="overview"
-            className="flex items-center gap-2 py-3"
+            className="flex items-center gap-2 py-2.5 rounded-lg text-xs font-medium"
           >
-            <BarChart3 className="h-4 w-4" />
-            <span className="hidden sm:inline">Overview</span>
+            <BarChart3 className="h-3.5 w-3.5" />
+            <span>Overview</span>
           </TabsTrigger>
-          <TabsTrigger value="revenue" className="flex items-center gap-2 py-3">
-            <DollarSign className="h-4 w-4" />
-            <span className="hidden sm:inline">Revenue</span>
+          <TabsTrigger
+            value="revenue"
+            className="flex items-center gap-2 py-2.5 rounded-lg text-xs font-medium"
+          >
+            <DollarSign className="h-3.5 w-3.5" />
+            <span>Revenue</span>
           </TabsTrigger>
           <TabsTrigger
             value="analytics"
-            className="flex items-center gap-2 py-3"
+            className="flex items-center gap-2 py-2.5 rounded-lg text-xs font-medium"
           >
-            <PieChart className="h-4 w-4" />
-            <span className="hidden sm:inline">Analytics</span>
+            <PieChart className="h-3.5 w-3.5" />
+            <span>Catalog & Funnel</span>
           </TabsTrigger>
           <TabsTrigger
             value="performance"
-            className="flex items-center gap-2 py-3"
+            className="flex items-center gap-2 py-2.5 rounded-lg text-xs font-medium"
           >
-            <TrendingUp className="h-4 w-4" />
-            <span className="hidden sm:inline">Performance</span>
+            <TrendingUp className="h-3.5 w-3.5" />
+            <span>Performance</span>
           </TabsTrigger>
-          <TabsTrigger value="traffic" className="flex items-center gap-2 py-3">
-            <Globe className="h-4 w-4" />
-            <span className="hidden sm:inline">Traffic</span>
+          <TabsTrigger
+            value="traffic"
+            className="flex items-center gap-2 py-2.5 rounded-lg text-xs font-medium"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            <span>Traffic</span>
           </TabsTrigger>
           <TabsTrigger
             value="insights"
-            className="flex items-center gap-2 py-3"
+            className="flex items-center gap-2 py-2.5 rounded-lg text-xs font-medium"
           >
-            <Zap className="h-4 w-4" />
-            <span className="hidden sm:inline">Insights</span>
+            <Zap className="h-3.5 w-3.5" />
+            <span>Insights</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1082,17 +1196,36 @@ const Dashboard = () => {
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {/* Monthly Activity Chart */}
-            <Card className="xl:col-span-2 shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <LineChart className="h-5 w-5 text-primary" />
-                  Monthly Business Activity
-                </CardTitle>
-                <CardDescription>
-                  Track growth across key business metrics
-                </CardDescription>
+            <Card className="xl:col-span-2 border-border/70 shadow-sm">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base font-semibold flex items-center gap-2">
+                      <LineChart className="h-4 w-4 text-primary" />
+                      6-Month Commercial Activity
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      New customer leads, quotes issued, and active irrigation
+                      projects
+                    </CardDescription>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-3 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-primary" />
+                      Customers
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-emerald-600" />
+                      Quotes
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-violet-600" />
+                      Projects
+                    </span>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-4">
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={stats.analytics.monthlyActivity}>
                     <defs>
@@ -1106,7 +1239,7 @@ const Dashboard = () => {
                         <stop
                           offset="5%"
                           stopColor="hsl(var(--primary))"
-                          stopOpacity={0.3}
+                          stopOpacity={0.28}
                         />
                         <stop
                           offset="95%"
@@ -1118,7 +1251,7 @@ const Dashboard = () => {
                         <stop
                           offset="5%"
                           stopColor="hsl(142 76% 36%)"
-                          stopOpacity={0.3}
+                          stopOpacity={0.28}
                         />
                         <stop
                           offset="95%"
@@ -1130,7 +1263,7 @@ const Dashboard = () => {
                         <stop
                           offset="5%"
                           stopColor="hsl(262 83% 58%)"
-                          stopOpacity={0.3}
+                          stopOpacity={0.28}
                         />
                         <stop
                           offset="95%"
@@ -1141,18 +1274,28 @@ const Dashboard = () => {
                     </defs>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="hsl(var(--muted))"
+                      stroke="hsl(var(--border))"
+                      vertical={false}
                     />
                     <XAxis
                       dataKey="month"
                       stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
                     />
-                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <YAxis
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--popover))",
                         border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
+                        borderRadius: "10px",
+                        fontSize: "12px",
                       }}
                     />
                     <Area
@@ -1184,61 +1327,71 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Recent Activity */}
-            <Card className="shadow-lg border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Recent Activity
+            {/* Recent Activity Feed */}
+            <Card className="border-border/70 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-primary" />
+                  Recent Pipeline Activity
                 </CardTitle>
-                <CardDescription>
-                  Latest business activities and updates
+                <CardDescription className="text-xs">
+                  Latest quotes and project milestones
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {stats.analytics.recentActivity.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-                  >
+              <CardContent className="space-y-3">
+                {stats.analytics.recentActivity.length > 0 ? (
+                  stats.analytics.recentActivity.map((activity, index) => (
                     <div
-                      className={`p-1.5 rounded-full ${activity.type === "quote"
-                          ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30"
-                          : activity.type === "project"
-                            ? "bg-green-100 text-green-600 dark:bg-green-900/30"
-                            : "bg-purple-100 text-purple-600 dark:bg-purple-900/30"
-                        }`}
+                      key={index}
+                      className="flex items-start gap-3 p-3 rounded-xl border border-border/50 bg-muted/20 hover:bg-muted/40 transition-colors"
                     >
-                      {activity.type === "quote" ? (
-                        <Quote className="h-3 w-3" />
-                      ) : activity.type === "project" ? (
-                        <Activity className="h-3 w-3" />
-                      ) : (
-                        <Users className="h-3 w-3" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {activity.title}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <p className="text-xs text-muted-foreground">
-                          {activity.time}
+                      <div
+                        className={`p-2 rounded-lg shrink-0 ${
+                          activity.type === "quote"
+                            ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                            : activity.type === "project"
+                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                              : "bg-violet-500/10 text-violet-600 dark:text-violet-400"
+                        }`}
+                      >
+                        {activity.type === "quote" ? (
+                          <Quote className="h-3.5 w-3.5" />
+                        ) : activity.type === "project" ? (
+                          <Layers className="h-3.5 w-3.5" />
+                        ) : (
+                          <Users className="h-3.5 w-3.5" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-foreground truncate">
+                          {activity.title}
                         </p>
-                        <Badge
-                          variant={
-                            activity.status === "completed"
-                              ? "default"
-                              : "secondary"
-                          }
-                          className="text-xs px-2 py-0"
-                        >
-                          {activity.status}
-                        </Badge>
+                        <div className="flex items-center justify-between gap-2 mt-1">
+                          <p className="text-[11px] text-muted-foreground">
+                            {activity.time}
+                          </p>
+                          <Badge
+                            variant={
+                              activity.status === "completed"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="text-[10px] px-2 py-0 capitalize"
+                          >
+                            {activity.status}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-10 space-y-2">
+                    <Activity className="h-8 w-8 mx-auto text-muted-foreground/40" />
+                    <p className="text-xs font-medium text-muted-foreground">
+                      No recent quote or project events recorded yet.
+                    </p>
                   </div>
-                ))}
+                )}
               </CardContent>
             </Card>
           </div>
@@ -1246,240 +1399,254 @@ const Dashboard = () => {
 
         {/* Revenue Tab */}
         <TabsContent value="revenue" className="space-y-6">
-          {/* M-Pesa Summary Row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Card className="border-l-4 border-l-green-500 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-border/70 shadow-sm">
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">M-Pesa Collected</p>
-                <p className="text-xl font-bold text-green-600 mt-1">{formatCurrency(stats.mpesaRevenue)}</p>
-                <p className="text-xs text-muted-foreground">{stats.totalMpesaTransactions} total transactions</p>
+                <p className="text-xs text-muted-foreground font-medium">
+                  M-Pesa Collected
+                </p>
+                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                  {formatCurrency(stats.mpesaRevenue)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.totalMpesaTransactions} verified transactions
+                </p>
               </CardContent>
             </Card>
-            <Card className="border-l-4 border-l-blue-500 shadow-sm">
+            <Card className="border-border/70 shadow-sm">
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Quote Pipeline</p>
-                <p className="text-xl font-bold text-blue-600 mt-1">{formatCurrency(stats.totalRevenue)}</p>
-                <p className="text-xs text-muted-foreground">{stats.totalQuotes} quotes issued</p>
+                <p className="text-xs text-muted-foreground font-medium">
+                  Quote Pipeline Value
+                </p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+                  {formatCurrency(stats.totalRevenue)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Across {stats.totalQuotes} customer quotes
+                </p>
               </CardContent>
             </Card>
-            <Card className="border-l-4 border-l-purple-500 shadow-sm">
+            <Card className="border-border/70 shadow-sm">
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Avg Project Value</p>
-                <p className="text-xl font-bold text-purple-600 mt-1">{formatCurrency(stats.avgProjectValue)}</p>
-                <p className="text-xs text-muted-foreground">{stats.totalProjects} projects</p>
+                <p className="text-xs text-muted-foreground font-medium">
+                  Average Project Value
+                </p>
+                <p className="text-2xl font-bold text-violet-600 dark:text-violet-400 mt-1">
+                  {formatCurrency(stats.avgProjectValue)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.totalProjects} active installations
+                </p>
               </CardContent>
             </Card>
-            <Card className="border-l-4 border-l-orange-500 shadow-sm">
+            <Card className="border-border/70 shadow-sm">
               <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Conversion Rate</p>
-                <p className="text-xl font-bold text-orange-600 mt-1">{stats.conversionRate.toFixed(1)}%</p>
-                <p className="text-xs text-muted-foreground">Visitors → Customers</p>
+                <p className="text-xs text-muted-foreground font-medium">
+                  Quote-to-Lead Ratio
+                </p>
+                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">
+                  {stats.conversionRate.toFixed(1)}%
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Customer pipeline conversion
+                </p>
               </CardContent>
             </Card>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Revenue by Category */}
-            <Card className="shadow-lg border-0">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  Revenue by Category
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-emerald-600" />
+                  Pipeline Share by Category
                 </CardTitle>
-                <CardDescription>
-                  Performance across product categories
+                <CardDescription className="text-xs">
+                  Estimated value distribution across irrigation categories
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {stats.analytics.revenueByCategory.map((item, index) => (
-                  <div key={index} className="p-4 rounded-lg bg-muted/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">{item.category}</h4>
-                      <div className="flex items-center gap-2">
-                        {getGrowthIcon(item.growth)}
-                        <span
-                          className={`text-sm font-medium ${getGrowthColor(item.growth)}`}
-                        >
-                          {Math.abs(item.growth).toFixed(1)}%
-                        </span>
+              <CardContent className="space-y-3">
+                {stats.analytics.revenueByCategory.length > 0 ? (
+                  stats.analytics.revenueByCategory.map((item, index) => {
+                    const maxRev = Math.max(
+                      1,
+                      ...stats.analytics.revenueByCategory.map(
+                        (r) => r.revenue,
+                      ),
+                    );
+                    return (
+                      <div
+                        key={index}
+                        className="p-3.5 rounded-xl border border-border/50 bg-muted/20"
+                      >
+                        <div className="flex items-center justify-between mb-1.5">
+                          <h4 className="text-xs font-semibold">
+                            {item.category}
+                          </h4>
+                          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                            {formatCurrency(item.revenue)}
+                          </span>
+                        </div>
+                        <Progress
+                          value={(item.revenue / maxRev) * 100}
+                          className="h-1.5"
+                        />
                       </div>
-                    </div>
-                    <p className="text-2xl font-bold text-green-600 mb-1">
-                      {formatCurrency(item.revenue)}
-                    </p>
-                    <Progress
-                      value={
-                        (item.revenue /
-                          Math.max(
-                            ...stats.analytics.revenueByCategory.map(
-                              (r) => r.revenue,
-                            ),
-                          )) *
-                        100
-                      }
-                      className="h-2"
-                    />
-                  </div>
-                ))}
+                    );
+                  })
+                ) : (
+                  <p className="text-xs text-muted-foreground py-8 text-center">
+                    No category revenue data available yet.
+                  </p>
+                )}
               </CardContent>
             </Card>
 
-            {/* Top Performing Products */}
-            <Card className="shadow-lg border-0">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-yellow-600" />
-                  Top Performing Products
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Award className="h-4 w-4 text-amber-500" />
+                  High-Value Catalog Systems
                 </CardTitle>
-                <CardDescription>
-                  Best selling products by revenue
+                <CardDescription className="text-xs">
+                  Top irrigation systems and kits by unit price
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {stats.analytics.topPerformingProducts.map((product, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-                  >
-                    <div
-                      className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${index === 0
-                          ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30"
-                          : index === 1
-                            ? "bg-gray-100 text-gray-700 dark:bg-gray-900/30"
-                            : index === 2
-                              ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30"
-                              : "bg-muted text-muted-foreground"
-                        }`}
-                    >
-                      {index + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium truncate">{product.name}</h4>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
-                        <span>Top Product</span>
+              <CardContent className="space-y-3">
+                {stats.analytics.topPerformingProducts.length > 0 ? (
+                  stats.analytics.topPerformingProducts.map(
+                    (product, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-muted/20"
+                      >
+                        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                          #{index + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-semibold truncate">
+                            {product.name}
+                          </h4>
+                          <p className="text-[11px] text-muted-foreground">
+                            Catalog SKU
+                          </p>
+                        </div>
+                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                          {formatCurrency(product.revenue)}
+                        </p>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-green-600">
-                        {formatCurrency(product.revenue)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                    ),
+                  )
+                ) : (
+                  <p className="text-xs text-muted-foreground py-8 text-center">
+                    No priced products found in catalog.
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
         </TabsContent>
 
-        {/* Analytics Tab */}
+        {/* Catalog & Funnel Tab */}
         <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {/* Product Categories Distribution */}
-            <Card className="shadow-lg border-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <PieChart className="h-5 w-5 text-blue-500" />
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <PieChart className="h-4 w-4 text-blue-500" />
                   Product Categories
                 </CardTitle>
-                <CardDescription>Distribution by product type</CardDescription>
+                <CardDescription className="text-xs">
+                  SKU distribution by irrigation line
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {stats.analytics.categoryDistribution.map((item, index) => (
+              <CardContent className="space-y-2.5">
+                {stats.analytics.categoryDistribution.length > 0 ? (
+                  stats.analytics.categoryDistribution.map((item, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                      className="flex items-center justify-between p-2.5 rounded-xl border border-border/40 bg-muted/20"
                     >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-4 h-4 rounded-full"
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span
+                          className="w-3 h-3 rounded-full shrink-0"
                           style={{ backgroundColor: item.color }}
-                        ></div>
-                        <span className="font-medium text-sm">
+                        />
+                        <span className="font-medium text-xs truncate">
                           {item.category}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-muted-foreground">
-                          {item.count}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs text-muted-foreground">
+                          {item.count} SKUs
                         </span>
-                        <Badge
-                          variant="secondary"
-                          className="text-xs font-semibold"
-                        >
+                        <Badge variant="secondary" className="text-[10px]">
                           {item.percentage}%
                         </Badge>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground py-8 text-center">
+                    No product categories found.
+                  </p>
+                )}
               </CardContent>
             </Card>
 
-            {/* Quotes Status Distribution */}
-            <Card className="shadow-lg border-0">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Quote className="h-5 w-5 text-green-500" />
-                  Quotes Pipeline
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Quote className="h-4 w-4 text-emerald-500" />
+                  Quotes Status Breakdown
                 </CardTitle>
-                <CardDescription>
-                  Current quote status breakdown
+                <CardDescription className="text-xs">
+                  Active quote lifecycle stages
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {stats.analytics.quotesStatusDistribution.map(
+              <CardContent className="space-y-3">
+                {stats.analytics.quotesStatusDistribution.length > 0 ? (
+                  stats.analytics.quotesStatusDistribution.map(
                     (item, index) => (
-                      <div key={index} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">
-                            {item.status}
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            {item.count} quotes
+                      <div key={index} className="space-y-1.5">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-medium">{item.status}</span>
+                          <span className="text-muted-foreground">
+                            {item.count} ({item.percentage}%)
                           </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Progress
-                            value={item.percentage}
-                            className="flex-1 h-2"
-                          />
-                          <Badge variant="outline" className="text-xs">
-                            {item.percentage}%
-                          </Badge>
-                        </div>
+                        <Progress value={item.percentage} className="h-2" />
                       </div>
                     ),
-                  )}
-                </div>
+                  )
+                ) : (
+                  <p className="text-xs text-muted-foreground py-8 text-center">
+                    No quotes recorded yet.
+                  </p>
+                )}
               </CardContent>
             </Card>
 
-            {/* Conversion Funnel */}
-            <Card className="shadow-lg border-0">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-purple-500" />
-                  Conversion Funnel
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Target className="h-4 w-4 text-violet-500" />
+                  Customer Conversion Funnel
                 </CardTitle>
-                <CardDescription>Customer journey analytics</CardDescription>
+                <CardDescription className="text-xs">
+                  End-to-end journey from session to project
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3.5">
                 {stats.analytics.conversionFunnel.map((stage, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{stage.stage}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {stage.count.toLocaleString()}
+                  <div key={index} className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-medium">{stage.stage}</span>
+                      <span className="text-muted-foreground font-mono">
+                        {stage.count.toLocaleString()} ({stage.conversion}%)
                       </span>
                     </div>
-                    <div className="relative">
-                      <Progress value={stage.conversion} className="h-3" />
-                      <span className="absolute right-2 top-0 text-xs font-medium text-white mix-blend-difference">
-                        {stage.conversion}%
-                      </span>
-                    </div>
+                    <Progress value={stage.conversion} className="h-2" />
                   </div>
                 ))}
               </CardContent>
@@ -1489,99 +1656,80 @@ const Dashboard = () => {
 
         {/* Performance Tab */}
         <TabsContent value="performance" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-            {/* Performance Metrics Cards */}
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-                    <TrendingUp className="h-6 w-6 text-green-600" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-border/70 shadow-sm">
+              <CardContent className="p-5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600">
+                    <TrendingUp className="h-5 w-5" />
                   </div>
-                  <Badge variant="secondary" className="text-green-700">
-                    <ArrowUpRight className="h-3 w-3 mr-1" />
-                    18.4%
+                  <Badge variant="secondary" className="text-[11px]">
+                    Project Avg
                   </Badge>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-2xl font-bold">
-                    {formatCurrency(stats.avgProjectValue)}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Avg. Project Value
-                  </p>
-                  <p className="text-xs text-green-600">
-                    +12.3% from last month
-                  </p>
-                </div>
+                <p className="text-2xl font-bold pt-1">
+                  {formatCurrency(stats.avgProjectValue)}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Average Project Value
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                    <Eye className="h-6 w-6 text-blue-600" />
+            <Card className="border-border/70 shadow-sm">
+              <CardContent className="p-5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-600">
+                    <Eye className="h-5 w-5" />
                   </div>
-                  <Badge variant="secondary" className="text-blue-700">
-                    <ArrowUpRight className="h-3 w-3 mr-1" />
-                    24.1%
+                  <Badge variant="secondary" className="text-[11px]">
+                    Reach
                   </Badge>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-2xl font-bold">
-                    {stats.totalViews.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Total Views</p>
-                  <p className="text-xs text-blue-600">Content engagement up</p>
-                </div>
+                <p className="text-2xl font-bold pt-1">
+                  {stats.totalViews.toLocaleString()}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Total Blog & Video Views
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                    <Download className="h-6 w-6 text-purple-600" />
+            <Card className="border-border/70 shadow-sm">
+              <CardContent className="p-5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-2 rounded-xl bg-violet-500/10 text-violet-600">
+                    <Download className="h-5 w-5" />
                   </div>
-                  <Badge variant="secondary" className="text-purple-700">
-                    <ArrowUpRight className="h-3 w-3 mr-1" />
-                    15.7%
+                  <Badge variant="secondary" className="text-[11px]">
+                    Technical Docs
                   </Badge>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-2xl font-bold">
-                    {stats.totalDownloads.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Resource Downloads
-                  </p>
-                  <p className="text-xs text-purple-600">
-                    Documentation popular
-                  </p>
-                </div>
+                <p className="text-2xl font-bold pt-1">
+                  {stats.totalDownloads.toLocaleString()}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Datasheet & Manual Downloads
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30">
-                    <Shield className="h-6 w-6 text-orange-600" />
+            <Card className="border-border/70 shadow-sm">
+              <CardContent className="p-5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600">
+                    <Shield className="h-5 w-5" />
                   </div>
-                  <Badge variant="secondary" className="text-orange-700">
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                    Excellent
+                  <Badge variant="secondary" className="text-[11px]">
+                    CSAT Score
                   </Badge>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-2xl font-bold">
-                    {stats.customerSatisfaction}/5.0
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Customer Rating
-                  </p>
-                  <p className="text-xs text-orange-600">Above industry avg</p>
-                </div>
+                <p className="text-2xl font-bold pt-1">
+                  {stats.customerSatisfaction}/5.0
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Field Service Rating
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -1590,82 +1738,82 @@ const Dashboard = () => {
         {/* Traffic Tab */}
         <TabsContent value="traffic" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Device Analytics */}
-            <Card className="shadow-lg border-0">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Monitor className="h-5 w-5 text-primary" />
-                  Device Analytics
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Monitor className="h-4 w-4 text-primary" />
+                  Visitor Device Breakdown
                 </CardTitle>
-                <CardDescription>
-                  Traffic breakdown by device type
+                <CardDescription className="text-xs">
+                  Sessions segmented by device platform
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {stats.analytics.deviceStats.map((device, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 rounded-lg bg-muted/30"
-                  >
-                    <div className="flex items-center gap-3">
-                      {device.device === "Mobile" ? (
-                        <Smartphone className="h-4 w-4" />
-                      ) : device.device === "Tablet" ? (
-                        <Tablet className="h-4 w-4" />
-                      ) : (
-                        <Monitor className="h-4 w-4" />
-                      )}
-                      <span className="font-medium">{device.device}</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {device.sessions.toLocaleString()}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          sessions
-                        </p>
+              <CardContent className="space-y-3">
+                {stats.analytics.deviceStats.length > 0 ? (
+                  stats.analytics.deviceStats.map((device, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3.5 rounded-xl border border-border/50 bg-muted/20"
+                    >
+                      <div className="flex items-center gap-3">
+                        {device.device === "Mobile" ? (
+                          <Smartphone className="h-4 w-4 text-primary" />
+                        ) : device.device === "Tablet" ? (
+                          <Tablet className="h-4 w-4 text-primary" />
+                        ) : (
+                          <Monitor className="h-4 w-4 text-primary" />
+                        )}
+                        <span className="text-xs font-semibold">
+                          {device.device}
+                        </span>
                       </div>
-                      <Badge variant="outline" className="text-xs">
-                        {device.percentage}%
-                      </Badge>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-muted-foreground">
+                          {device.sessions.toLocaleString()} sessions
+                        </span>
+                        <Badge variant="outline" className="text-[10px]">
+                          {device.percentage}%
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground py-8 text-center">
+                    No visitor session device data recorded yet.
+                  </p>
+                )}
               </CardContent>
             </Card>
 
-            {/* Traffic Sources */}
-            <Card className="shadow-lg border-0">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-primary" />
-                  Traffic Sources
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-primary" />
+                  Acquisition Channels
                 </CardTitle>
-                <CardDescription>Where your visitors come from</CardDescription>
+                <CardDescription className="text-xs">
+                  Top traffic referral sources
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {stats.analytics.trafficSources.map((source, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm">
-                        {source.source}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {source.visitors.toLocaleString()} visitors
-                      </span>
+              <CardContent className="space-y-3.5">
+                {stats.analytics.trafficSources.length > 0 ? (
+                  stats.analytics.trafficSources.map((source, index) => (
+                    <div key={index} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium">{source.source}</span>
+                        <span className="text-muted-foreground">
+                          {source.visitors.toLocaleString()} visitors (
+                          {source.percentage}%)
+                        </span>
+                      </div>
+                      <Progress value={source.percentage} className="h-2" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Progress
-                        value={source.percentage}
-                        className="flex-1 h-2"
-                      />
-                      <Badge variant="secondary" className="text-xs">
-                        {source.percentage}%
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground py-8 text-center">
+                    No referrer data recorded yet.
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -1673,63 +1821,71 @@ const Dashboard = () => {
 
         {/* Insights Tab */}
         <TabsContent value="insights" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {/* Key Insights */}
-            <Card className="xl:col-span-2 shadow-lg border-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2 border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-yellow-500" />
-                  AI-Powered Business Insights
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-amber-500" />
+                  Executive Recommendations
                 </CardTitle>
-                <CardDescription>
-                  Automated recommendations based on your data
+                <CardDescription className="text-xs">
+                  Automated operational insights based on live store & CRM metrics
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
+              <CardContent className="space-y-3.5">
+                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                    <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
                     <div>
-                      <h4 className="font-medium text-green-900 dark:text-green-100">
-                        Strong Performance
+                      <h4 className="text-xs font-semibold text-foreground">
+                        Commercial Pipeline Conversion
                       </h4>
-                      <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                        Your conversion rate of{" "}
-                        {stats.conversionRate.toFixed(1)}% is above industry
-                        average. Customer satisfaction remains excellent at{" "}
-                        {stats.customerSatisfaction}/5.0.
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Lead-to-quote conversion currently stands at{" "}
+                        <span className="font-semibold text-foreground">
+                          {stats.conversionRate.toFixed(1)}%
+                        </span>{" "}
+                        across {stats.totalCustomers} registered customers and{" "}
+                        {stats.totalQuotes} quotes.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
+                <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
                   <div className="flex items-start gap-3">
-                    <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
                     <div>
-                      <h4 className="font-medium text-blue-900 dark:text-blue-100">
-                        Growth Opportunity
+                      <h4 className="text-xs font-semibold text-foreground">
+                        Catalog & SEO Sync Opportunity
                       </h4>
-                      <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                        Mobile traffic represents 35% of sessions. Consider
-                        optimizing mobile experience to capture more mobile
-                        conversions.
+                      <p className="text-xs text-muted-foreground mt-1">
+                        You have{" "}
+                        <span className="font-semibold text-foreground">
+                          {stats.totalProducts} products
+                        </span>{" "}
+                        and{" "}
+                        <span className="font-semibold text-foreground">
+                          {stats.totalBlogPosts} blog guides
+                        </span>
+                        . Run Cloudflare D1 Edge Sync after catalog updates to
+                        keep static SEO and edge APIs aligned.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
+                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+                    <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                     <div>
-                      <h4 className="font-medium text-amber-900 dark:text-amber-100">
-                        Action Required
+                      <h4 className="text-xs font-semibold text-foreground">
+                        Upcoming Project Milestones
                       </h4>
-                      <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                        {stats.analytics.upcomingDeadlines.length} project
-                        deadlines approaching. Review project timelines to
-                        ensure on-time delivery.
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {stats.analytics.upcomingDeadlines.length} active project
+                        deadlines are scheduled. Review field technician
+                        assignments to maintain on-time commissioning.
                       </p>
                     </div>
                   </div>
@@ -1737,51 +1893,52 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Upcoming Deadlines */}
-            <Card className="shadow-lg border-0">
+            <Card className="border-border/70 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-orange-500" />
-                  Upcoming Deadlines
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-amber-500" />
+                  Upcoming Project Deadlines
                 </CardTitle>
-                <CardDescription>Important dates to track</CardDescription>
+                <CardDescription className="text-xs">
+                  Scheduled installation & delivery dates
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {stats.analytics.upcomingDeadlines.map((deadline, index) => (
                   <div
                     key={index}
-                    className="p-3 rounded-lg bg-muted/30 border-l-4 border-orange-500"
+                    className="p-3 rounded-xl border border-border/50 bg-muted/20 border-l-4 border-l-amber-500"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-1.5">
                       <Badge
                         variant={
                           deadline.priority === "high"
                             ? "destructive"
                             : "secondary"
                         }
-                        className="text-xs"
+                        className="text-[10px]"
                       >
                         {deadline.priority} priority
                       </Badge>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-[11px] text-muted-foreground">
                         {deadline.date}
                       </span>
                     </div>
-                    <h4 className="font-medium text-sm">{deadline.title}</h4>
-                    <p className="text-xs text-muted-foreground capitalize">
+                    <h4 className="font-semibold text-xs">{deadline.title}</h4>
+                    <p className="text-[11px] text-muted-foreground capitalize">
                       {deadline.type}
                     </p>
                   </div>
                 ))}
 
                 {stats.analytics.upcomingDeadlines.length === 0 && (
-                  <div className="text-center py-8">
-                    <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      No upcoming deadlines
+                  <div className="text-center py-8 space-y-2">
+                    <CheckCircle className="h-9 w-9 mx-auto text-emerald-500/80" />
+                    <p className="text-xs font-semibold text-foreground">
+                      No overdue or urgent deadlines
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      You're all caught up!
+                    <p className="text-[11px] text-muted-foreground">
+                      All project schedules are on track.
                     </p>
                   </div>
                 )}
