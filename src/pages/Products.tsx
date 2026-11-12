@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,6 +69,7 @@ import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { trackSearch } from "@/services/aiProductService";
 import { cn } from "@/lib/utils";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import { openInstantProductQuotePdf, openProductCataloguePdf } from "@/lib/catalogAndQuotePdf";
 
 interface Variant {
   name: string;
@@ -123,6 +124,9 @@ const CATEGORY_NAV = [
   ["greenhouse_systems", "Greenhouse", "greenhouse"],
   ["emitters_drippers", "Emitters", "emitters"],
   ["valves_regulators", "Valves", "valves"],
+  ["control_systems", "Controls & Timers", "controls"],
+  ["borehole_equipment", "Borehole & Solar", "borehole"],
+  ["accessories", "Accessories", "accessories"],
 ] as const;
 
 const CATEGORY_PATHS: Record<string, string> = {
@@ -160,9 +164,11 @@ const Products = () => {
     category?: string;
     product?: string;
   }>();
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
@@ -176,6 +182,23 @@ const Products = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [compareList, setCompareList] = useState<Product[]>([]);
   const [showComparison, setShowComparison] = useState(false);
+
+  // Sync URL ?q= parameter changes and reset pagination on category/filter changes
+  useEffect(() => {
+    const queryParam = searchParams.get("q");
+    if (queryParam !== null && queryParam !== searchTerm) {
+      setSearchTerm(queryParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    setSubcategoryFilter("");
+    setCurrentPage(1);
+  }, [category]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, showFeaturedOnly, showInStockOnly, subcategoryFilter, sortBy, sortOrder]);
 
   const { data: products = [], isLoading: loading, error: queryError } = useQuery({
     queryKey: ["products", category],
@@ -1149,7 +1172,20 @@ const Products = () => {
                   </div>
                 </div>
 
-                <Button className="w-full" size="sm">Get Quote</Button>
+                <Button
+                  className="w-full"
+                  size="sm"
+                  onClick={() => {
+                    openInstantProductQuotePdf({
+                      product: p,
+                      quantity: 1,
+                      autoPrint: true,
+                      alsoOpenWhatsApp: true,
+                    });
+                  }}
+                >
+                  WhatsApp + Auto PDF Quote
+                </Button>
               </div>
             ))}
           </div>
@@ -1178,6 +1214,39 @@ const Products = () => {
                     ? `Explore ${getCategoryTitle(category).toLowerCase()} for farms, greenhouses and irrigation projects across Kenya.`
                     : "Find drip, sprinkler, pumping, filtration, fertigation and greenhouse equipment in one practical catalogue."}
                 </p>
+                <div className="mt-5 flex flex-wrap items-center gap-2.5">
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() =>
+                      openProductCataloguePdf(
+                        filteredProducts.length > 0 ? filteredProducts : products,
+                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
+                        false,
+                      )
+                    }
+                    className="rounded-xl bg-primary text-primary-foreground font-bold shadow-sm hover:bg-primary/90"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Official PDF Catalogue
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      openProductCataloguePdf(
+                        filteredProducts.length > 0 ? filteredProducts : products,
+                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
+                        true,
+                      )
+                    }
+                    className="rounded-xl border-[hsl(var(--dt-whatsapp)/0.4)] bg-[hsl(var(--dt-whatsapp)/0.07)] text-[hsl(var(--dt-whatsapp))] font-bold hover:bg-[hsl(var(--dt-whatsapp)/0.15)]"
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Get PDF Catalogue + WhatsApp
+                  </Button>
+                </div>
               </div>
               <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm backdrop-blur">
                 <div className="border-r border-border px-4 py-4 text-center sm:px-6">
@@ -1185,12 +1254,12 @@ const Products = () => {
                   <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Products</p>
                 </div>
                 <div className="border-r border-border px-4 py-4 text-center sm:px-6">
-                  <p className="font-mono text-xl font-black text-foreground">9+</p>
+                  <p className="font-mono text-xl font-black text-foreground">{CATEGORY_NAV.length}</p>
                   <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Categories</p>
                 </div>
                 <div className="px-4 py-4 text-center sm:px-6">
-                  <p className="font-mono text-xl font-black text-primary">KE</p>
-                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Delivery</p>
+                  <p className="font-mono text-xl font-black text-primary">47</p>
+                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted-foreground">Counties</p>
                 </div>
               </div>
             </div>
@@ -1222,6 +1291,12 @@ const Products = () => {
                     </Link>
                   );
                 })}
+                <Link
+                  to="/irrigation-kits"
+                  className="rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-xs font-bold text-primary transition-all hover:bg-primary hover:text-primary-foreground"
+                >
+                  Complete Farm Kits →
+                </Link>
               </div>
             </nav>
           </div>
@@ -1233,17 +1308,17 @@ const Products = () => {
 
             {/* Enhanced Sticky Filter Bar */}
             <div className="sticky top-16 z-20 border-y border-border bg-background/95 backdrop-blur-sm mb-8">
-              <div className={`py-4 ${showFilters ? "block" : "hidden sm:block"}`}>
-                {/* Search and Controls Row */}
-                <div className="flex flex-col lg:flex-row gap-4 mb-4">
+              <div className="py-4">
+                {/* Search and Controls Row — always visible on mobile and desktop */}
+                <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 mb-3">
                   {/* Enhanced Search */}
                   <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary" />
                     <Input
-                      placeholder="Search by name, model, or features..."
+                      placeholder="Search by product name, diameter, flow rate, or model..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-12 pr-12 h-12 bg-card border-border focus:border-primary focus:ring-2 focus:ring-primary/20 text-base transition-all"
+                      className="pl-12 pr-12 h-11 sm:h-12 bg-card border-border focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm sm:text-base transition-all"
                     />
                     {searchTerm && (
                       <Button
@@ -1260,7 +1335,7 @@ const Products = () => {
                   {/* Sort and View Controls */}
                   <div className="flex gap-2">
                     <Select value={sortBy} onValueChange={setSortBy}>
-                      <SelectTrigger className="w-full sm:w-[160px] h-12 bg-background border-border hover:border-primary/50 rounded-xl text-base transition-all">
+                      <SelectTrigger className="flex-1 sm:w-[160px] h-11 sm:h-12 bg-background border-border hover:border-primary/50 rounded-xl text-sm sm:text-base transition-all">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1271,7 +1346,8 @@ const Products = () => {
                     </Select>
 
                     <Button
-                      className="px-4 h-12 bg-background border border-border hover:border-primary/50 hover:bg-muted transition-all"
+                      variant="outline"
+                      className="px-3.5 h-11 sm:h-12 bg-background border border-border hover:border-primary/50 hover:bg-muted transition-all"
                       onClick={() =>
                         setSortOrder(sortOrder === "asc" ? "desc" : "asc")
                       }
@@ -1286,14 +1362,16 @@ const Products = () => {
 
                     <div className="hidden sm:flex border border-border rounded-xl bg-background overflow-hidden">
                       <Button
-                        className={`h-12 w-12 p-0 rounded-none ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "hover:bg-muted"} transition-all`}
+                        variant="ghost"
+                        className={`h-11 sm:h-12 w-11 sm:w-12 p-0 rounded-none ${viewMode === "grid" ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" : "hover:bg-muted"} transition-all`}
                         onClick={() => setViewMode("grid")}
                         title="Grid View"
                       >
                         <Grid3x3 className="h-5 w-5" />
                       </Button>
                       <Button
-                        className={`h-12 w-12 p-0 rounded-none ${viewMode === "list" ? "bg-primary text-primary-foreground" : "hover:bg-muted"} transition-all`}
+                        variant="ghost"
+                        className={`h-11 sm:h-12 w-11 sm:w-12 p-0 rounded-none ${viewMode === "list" ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" : "hover:bg-muted"} transition-all`}
                         onClick={() => setViewMode("list")}
                         title="List View"
                       >
@@ -1302,47 +1380,64 @@ const Products = () => {
                     </div>
 
                     <Button
-                      className="sm:hidden h-12 px-4 bg-background border border-border hover:border-primary/50 hover:bg-muted transition-all"
+                      variant={showFilters ? "default" : "outline"}
+                      className="sm:hidden h-11 px-3.5 transition-all"
                       onClick={() => setShowFilters(!showFilters)}
                     >
-                      <Filter className="h-5 w-5 mr-2" />
+                      <Filter className="h-4 w-4 mr-1.5" />
                       Filters
                     </Button>
                   </div>
                 </div>
 
-                {/* Filter Chips Row */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-muted-foreground font-medium">Filters:</span>
+                {/* Filter & Subcategory Chips Row */}
+                <div className={`${showFilters ? "flex" : "hidden sm:flex"} flex-wrap items-center gap-2 pt-1`}>
+                  <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider mr-1">Filters:</span>
 
                   <Button
                     variant="outline"
-                    className={`h-9 ${showFeaturedOnly ? "bg-primary text-primary-foreground border-primary" : ""} hover:bg-primary/10 rounded-full transition-all`}
+                    className={`h-8 text-xs ${showFeaturedOnly ? "bg-primary text-primary-foreground border-primary" : ""} hover:bg-primary/10 rounded-full transition-all`}
                     size="sm"
                     onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
                   >
-                    <Star className={`h-4 w-4 mr-2 ${showFeaturedOnly ? "fill-current" : ""}`} />
+                    <Star className={`h-3.5 w-3.5 mr-1.5 ${showFeaturedOnly ? "fill-current" : ""}`} />
                     Featured
                   </Button>
 
                   <Button
                     variant="outline"
-                    className={`h-9 ${showInStockOnly ? "bg-primary text-primary-foreground border-primary" : ""} hover:bg-primary/10 rounded-full transition-all`}
+                    className={`h-8 text-xs ${showInStockOnly ? "bg-primary text-primary-foreground border-primary" : ""} hover:bg-primary/10 rounded-full transition-all`}
                     size="sm"
                     onClick={() => setShowInStockOnly(!showInStockOnly)}
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
                     In Stock
                   </Button>
+
+                  {getUniqueSubcategories().slice(0, 6).map((sub) => (
+                    <Button
+                      key={sub}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSubcategoryFilter(subcategoryFilter === sub ? "" : sub)}
+                      className={`h-8 text-xs rounded-full transition-all ${
+                        subcategoryFilter === sub
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "hover:bg-primary/10"
+                      }`}
+                    >
+                      {sub}
+                    </Button>
+                  ))}
 
                   {(searchTerm || showFeaturedOnly || showInStockOnly || subcategoryFilter) && (
                     <Button
                       variant="outline"
-                      className="h-9 hover:bg-destructive/10 hover:text-destructive hover:border-destructive rounded-full transition-all"
+                      className="h-8 text-xs hover:bg-destructive/10 hover:text-destructive hover:border-destructive rounded-full transition-all"
                       size="sm"
                       onClick={clearAllFilters}
                     >
-                      <X className="h-4 w-4 mr-2" />
+                      <X className="h-3.5 w-3.5 mr-1" />
                       Clear All
                     </Button>
                   )}
@@ -1359,7 +1454,13 @@ const Products = () => {
                     }`}
                 >
                   {currentProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      viewMode={viewMode}
+                      isCompared={compareList.some((item) => item.id === product.id)}
+                      onToggleCompare={toggleCompare}
+                    />
                   ))}
                 </div>
 

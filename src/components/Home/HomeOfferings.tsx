@@ -1,5 +1,5 @@
 import ProductsShowcase from "@/components/Home/ProductsShowcase";
 
 export default function HomeOfferings() {
-  return <ProductsShowcase hideHeader hideBenefits hideKitsBanner />;
+  return <ProductsShowcase hideBenefits hideKitsBanner />;
 }

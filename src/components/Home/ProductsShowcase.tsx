@@ -42,6 +42,7 @@ import QuoteModal from "./QuoteModal";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import { StructuredData } from "@/components/SEO/StructuredData";
 import { getProductPath } from "@/lib/productUrl";
+import { openInstantProductQuotePdf, openProductCataloguePdf } from "@/lib/catalogAndQuotePdf";
 
 interface Variant {
   name: string;
@@ -414,9 +415,38 @@ const ProductsShowcase = ({
               <span className="text-primary">pick what fits</span>
             </h2>
             <p className="dt-section-subtitle mx-auto mt-3">
-              Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes and full kits. Filter by type, check the price, or message us if you are unsure.
-
+              Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes and full kits. Filter by type, check the price, or download our official PDF product catalogue.
             </p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+              <button
+                type="button"
+                onClick={() =>
+                  openProductCataloguePdf(
+                    allProducts,
+                    "Complete DripTech Irrigation & Farm Equipment Catalogue",
+                    false,
+                  )
+                }
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+              >
+                <Download className="h-4 w-4" />
+                Download PDF Product Catalogue
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  openProductCataloguePdf(
+                    allProducts,
+                    "Complete DripTech Irrigation & Farm Equipment Catalogue",
+                    true,
+                  )
+                }
+                className="inline-flex items-center gap-2 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+              >
+                <span>💬</span>
+                Get PDF Catalogue + WhatsApp
+              </button>
+            </div>
           </div>
         )}
 

@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, MessageCircle, Package, Sprout } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  FileText,
+  MessageCircle,
+  Package,
+  Sprout,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { dataService } from "@/services/dataService";
+import QuoteModal from "@/components/Home/QuoteModal";
 
 interface IrrigationKit {
   id: string;
@@ -27,7 +35,12 @@ const parseImages = (images: any): string[] => {
   return Array.isArray(images) ? images : [];
 };
 
-const parseComponents = (components: any): { main_components?: string[]; pricing_tiers?: Array<{ price: number }> } => {
+const parseComponents = (
+  components: any,
+): {
+  main_components?: string[];
+  pricing_tiers?: Array<{ price: number }>;
+} => {
   if (typeof components === "string") {
     try {
       return JSON.parse(components);
@@ -55,58 +68,89 @@ export default function HomeKitsShowcase() {
     dataService
       .getIrrigationKits({ sortBy: "featured" })
       .then((data) => setKits((data || []).slice(0, 4) as IrrigationKit[]))
-      .catch((error) => console.error("Error fetching homepage irrigation kits:", error))
+      .catch((error) =>
+        console.error("Error fetching homepage irrigation kits:", error),
+      )
       .finally(() => setLoading(false));
   }, []);
 
   if (!loading && kits.length === 0) return null;
 
   return (
-    <section className="overflow-hidden border-y border-border bg-muted/40 py-10 sm:py-14 lg:py-16">
+    <section className="overflow-hidden border-y border-border bg-muted/40 py-12 sm:py-16 lg:py-20">
       <div className="dt-container">
-        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.8fr] lg:items-center lg:gap-10">
+        <div className="grid gap-8 lg:grid-cols-[0.82fr_1.78fr] lg:items-center lg:gap-10">
           <div>
             <p className="dt-section-label flex items-center gap-2">
               <Sprout className="h-4 w-4" aria-hidden="true" />
-              Irrigation kits
+              Ready-to-Install Packages
             </p>
             <h2 className="mt-2 font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
-              Complete irrigation kits
+              Complete{" "}
+              <span className="text-primary">Acreage Irrigation Kits</span>
             </h2>
             <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
-              Everything you need to get a practical irrigation system running, grouped by plot size so you can buy with less guesswork.
+              Pre-engineered packages with matched driplines, mainline pipes,
+              connectors, valves, and filtration—grouped by plot size so you can
+              deploy without missing a single fitting.
             </p>
 
             <ul className="mt-5 space-y-2.5 text-sm text-foreground">
-              {["Pre-configured for common farm sizes", "Main components grouped together", "Installation guidance available"].map((item) => (
+              {[
+                "Sized for ⅛, ¼, ½, and 1+ Acre plots",
+                "Includes driplines, filtration, valves & all fittings",
+                "Custom BOQ adjustments available for any terrain",
+              ].map((item) => (
                 <li key={item} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                  <CheckCircle2
+                    className="h-4 w-4 shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
                   {item}
                 </li>
               ))}
             </ul>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/irrigation-kits" className="dt-btn-primary inline-flex items-center gap-2">
-                Explore all kits <ArrowRight className="h-4 w-4" />
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              <Link
+                to="/irrigation-kits"
+                className="dt-btn-primary inline-flex items-center gap-2"
+              >
+                Explore All Kits <ArrowRight className="h-4 w-4" />
               </Link>
+              <QuoteModal>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-[10px] border border-primary/40 bg-card px-4 py-2.5 text-sm font-bold text-primary hover:bg-primary/10 transition-colors"
+                >
+                  <FileText className="h-4 w-4" /> Custom Kit Quote
+                </button>
+              </QuoteModal>
               <a
-                href={"https://wa.me/254723407849?text=" + encodeURIComponent("Hi DripTech! Please help me choose an irrigation kit.")}
+                href={
+                  "https://wa.me/254723407849?text=" +
+                  encodeURIComponent(
+                    "Hi DripTech! Please help me choose an irrigation kit for my farm.",
+                  )
+                }
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-[10px] border border-[hsl(var(--dt-whatsapp)/0.35)] bg-background px-4 py-2.5 text-sm font-bold text-[hsl(var(--dt-whatsapp))] hover:bg-[hsl(var(--dt-whatsapp)/0.06)]"
               >
-                <MessageCircle className="h-4 w-4" /> Ask us
+                <MessageCircle className="h-4 w-4" /> WhatsApp Us
               </a>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-4">
             {loading
               ? Array.from({ length: 4 }).map((_, index) => (
-                  <div key={index} className="animate-pulse overflow-hidden rounded-[14px] border border-border bg-card">
+                  <div
+                    key={index}
+                    className="animate-pulse overflow-hidden rounded-[16px] border border-border bg-card"
+                  >
                     <div className="aspect-[4/3] bg-muted" />
-                    <div className="space-y-2 p-3.5">
+                    <div className="space-y-2 p-4">
                       <div className="h-3 w-1/2 rounded bg-muted" />
                       <div className="h-5 w-3/4 rounded bg-muted" />
                       <div className="h-8 rounded bg-muted" />
@@ -116,15 +160,25 @@ export default function HomeKitsShowcase() {
               : kits.map((kit) => {
                   const images = parseImages(kit.images);
                   const components = parseComponents(kit.components);
-                  const tierPrices = components.pricing_tiers?.map((tier) => tier.price).filter((price) => Number.isFinite(price)) || [];
-                  const price = tierPrices.length ? Math.min(...tierPrices) : kit.price;
+                  const tierPrices =
+                    components.pricing_tiers
+                      ?.map((tier) => tier.price)
+                      .filter((price) => Number.isFinite(price)) || [];
+                  const price = tierPrices.length
+                    ? Math.min(...tierPrices)
+                    : kit.price;
                   const coverage = kit.coverage_area
-                    ? `${kit.coverage_area} acre${kit.coverage_area === 1 ? "" : "s"}`
-                    : "Custom";
+                    ? `${kit.coverage_area} Acre${
+                        kit.coverage_area === 1 ? "" : "s"
+                      } Coverage`
+                    : "Custom Coverage";
 
                   return (
-                    <article key={kit.id} className="group flex min-w-0 flex-col overflow-hidden rounded-[14px] border border-[hsl(var(--dt-stone-200))] bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-md">
-                      <div className="relative aspect-[4/3] min-h-[170px] overflow-hidden bg-[hsl(var(--dt-stone-100))] sm:min-h-[190px] lg:min-h-[210px]">
+                    <article
+                      key={kit.id}
+                      className="group flex min-w-0 flex-col overflow-hidden rounded-[16px] border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+                    >
+                      <div className="relative aspect-[4/3] min-h-[175px] overflow-hidden bg-muted sm:min-h-[185px]">
                         {images[0] ? (
                           <img
                             src={images[0]}
@@ -139,19 +193,34 @@ export default function HomeKitsShowcase() {
                           </div>
                         )}
                         {kit.featured && (
-                          <span className="absolute left-2.5 top-2.5 rounded-full bg-[hsl(var(--dt-gold-500))] px-2 py-1 text-[8px] font-extrabold uppercase tracking-[0.08em] text-[hsl(var(--dt-green-900))]">
-                            Popular
+                          <span className="absolute left-2.5 top-2.5 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-[hsl(var(--dt-green-900))] shadow-sm">
+                            Best Seller
                           </span>
                         )}
                       </div>
-                      <div className="flex flex-1 flex-col p-3.5">
-                        <p className="text-[9px] font-extrabold uppercase tracking-[0.13em] text-[hsl(var(--dt-green-600))]">{coverage}</p>
-                        <h3 className="mt-1 line-clamp-2 font-heading text-sm font-bold leading-snug text-foreground">{kit.name}</h3>
-                        <p className="mt-1.5 line-clamp-2 text-[11px] leading-4.5 text-muted-foreground">{kit.description || "A practical irrigation package for your farm."}</p>
-                        <div className="mt-auto pt-3">
-                          <p className="font-mono text-sm font-black text-[hsl(var(--dt-green-800))]">{formatCurrency(price)}</p>
-                          <Link to="/irrigation-kits" className="mt-2 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg bg-primary px-2 text-[10px] font-bold text-primary-foreground hover:bg-primary/90">
-                            View kit <ArrowRight className="h-3 w-3" />
+                      <div className="flex flex-1 flex-col p-4">
+                        <p className="text-[10px] font-extrabold uppercase tracking-[0.13em] text-primary">
+                          {coverage}
+                        </p>
+                        <h3 className="mt-1 line-clamp-2 font-heading text-sm font-bold leading-snug text-foreground">
+                          {kit.name}
+                        </h3>
+                        <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                          {kit.description ||
+                            "Complete farm-ready irrigation package with mainline, laterals, filtration, and fittings."}
+                        </p>
+                        <div className="mt-auto pt-4 border-t border-border/60">
+                          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            Complete Kit Price
+                          </p>
+                          <p className="font-mono text-base font-black text-foreground mt-0.5">
+                            {formatCurrency(price)}
+                          </p>
+                          <Link
+                            to="/irrigation-kits"
+                            className="mt-2.5 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
+                          >
+                            View Kit Specs <ArrowRight className="h-3.5 w-3.5" />
                           </Link>
                         </div>
                       </div>

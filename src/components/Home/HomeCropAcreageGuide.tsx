@@ -1,0 +1,305 @@
+import { useState } from "react";
+import {
+  ArrowRight,
+  Calculator,
+  CheckCircle2,
+  Droplets,
+  Layers,
+  Leaf,
+  Sprout,
+  Sun,
+  TreePine,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import QuoteModal from "@/components/Home/QuoteModal";
+
+const ACREAGE_PACKAGES = [
+  {
+    badge: "Starter Plot",
+    size: "¼ Acre Drip Setup",
+    idealFor: "Kitchen gardens, high-value vegetables & starter greenhouses",
+    highlights: [
+      "1,000m – 1,500m UV-stabilized drip tape",
+      "32mm HDPE mainline & sub-main fittings",
+      "¾\" or 1\" screen/disc water filter",
+      "Works with a 1,000L – 2,500L raised tank",
+    ],
+    href: "/irrigation-kits",
+    cta: "Compare ¼ Acre Kits",
+  },
+  {
+    badge: "Market Grower",
+    size: "½ Acre Commercial Setup",
+    idealFor: "Commercial tomatoes, onions, capsicum & watermelon plots",
+    highlights: [
+      "2,500m – 3,000m turbulent dripline",
+      "40mm HDPE mainline + zoned control valves",
+      "High-capacity disc filtration unit",
+      "Optional venturi fertigation injector",
+    ],
+    href: "/irrigation-kits",
+    cta: "Compare ½ Acre Kits",
+  },
+  {
+    badge: "Most Popular",
+    size: "1 Acre Full Drip System",
+    idealFor: "2-line or 3-line bed layouts with 4 zoned irrigation blocks",
+    highlights: [
+      "4,000m – 6,000m dripline (15cm/20cm/30cm)",
+      "50mm/63mm HDPE mainline & sub-mains",
+      "1½\" or 2\" dual disc filter headworks",
+      "5,000L – 10,000L tank or booster pump ready",
+    ],
+    href: "/one-acre-drip-irrigation-system-kenya",
+    cta: "1-Acre System Guide",
+    featured: true,
+  },
+  {
+    badge: "Commercial Estate",
+    size: "5 to 50+ Acres Full System",
+    idealFor: "Agribusinesses, orchards, NGOs & institutional estates",
+    highlights: [
+      "Full topographic & hydraulic CAD design",
+      "Solar or electric borehole/river pump station",
+      "Multi-block manifold & pressure regulation",
+      "Certified field trenching & commissioning",
+    ],
+    href: "/irrigation-design-consultation-kenya",
+    cta: "Book Engineering Survey",
+  },
+];
+
+const CROP_SOLUTIONS = [
+  {
+    title: "Tomatoes & Capsicum",
+    spec: "20cm / 30cm Spacing · 2 Lines/Bed",
+    detail:
+      "Keeps foliage dry to reduce blight while delivering uniform moisture and soluble fertilizer directly to the root zone.",
+    href: "/drip-irrigation-for-tomatoes-kenya",
+    icon: Sprout,
+  },
+  {
+    title: "Red Bulb Onions & Garlic",
+    spec: "15cm Close Spacing · 3–4 Lines/Bed",
+    detail:
+      "High-density emitter distribution for shallow-rooted bulb crops to maximize uniform bulb size across every bed.",
+    href: "/drip-irrigation-for-onions-kenya",
+    icon: Layers,
+  },
+  {
+    title: "Hass Avocado & Orchards",
+    spec: "Button Drippers (4–8 L/hr) or PC Line",
+    detail:
+      "Adjustable or pressure-compensating basin watering tailored for young seedlings through mature fruit-bearing trees.",
+    href: "/drip-irrigation-for-avocado-kenya",
+    icon: TreePine,
+  },
+  {
+    title: "Greenhouse Irrigation",
+    spec: "Drip Laterals + Overhead Misting",
+    detail:
+      "Precision root-zone drip lines paired with foggers/misters for humidity control and venturi fertigation.",
+    href: "/greenhouse-irrigation-systems-kenya",
+    icon: Leaf,
+  },
+  {
+    title: "Cabbage, Kales & Melons",
+    spec: "20cm / 30cm Dripline or Sprinklers",
+    detail:
+      "Flexible row-crop layouts engineered for fast turnaround cycles and reliable water conservation.",
+    href: "/drip-irrigation-for-cabbage-kenya",
+    icon: Droplets,
+  },
+  {
+    title: "Solar & Borehole Pumping",
+    spec: "Submersible & Surface Solar Pumps",
+    detail:
+      "Eliminate daily fuel costs with matched solar arrays, MPPT controllers, and elevated tank feeding.",
+    href: "/solar-irrigation-pumps-kenya",
+    icon: Sun,
+  },
+];
+
+export default function HomeCropAcreageGuide() {
+  const [activeTab, setActiveTab] = useState<"crops" | "acreage">("crops");
+
+  return (
+    <section
+      className="border-b border-border bg-background py-12 sm:py-16"
+      aria-labelledby="home-crop-acreage-title"
+    >
+      <div className="dt-container space-y-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="dt-section-label mb-2">Agronomic &amp; Acreage Matching</p>
+            <h2
+              id="home-crop-acreage-title"
+              className="font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl"
+            >
+              Engineered Setups by{" "}
+              <span className="text-primary">Kenyan Crop &amp; Farm Scale</span>
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Switch between crop-specific emitter setups and acreage package configurations.
+            </p>
+          </div>
+
+          {/* Compact Tab Switcher */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab("crops")}
+                className={`rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+                  activeTab === "crops"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                By Kenyan Crop (6)
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("acreage")}
+                className={`rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+                  activeTab === "acreage"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                By Farm Acreage (¼ to 50+ Acres)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {activeTab === "crops" ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {CROP_SOLUTIONS.map(({ title, spec, detail, href, icon: Icon }) => (
+              <Link
+                key={title}
+                to={href}
+                className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span className="rounded-lg bg-muted px-2.5 py-1 font-mono text-[10px] font-bold text-foreground">
+                      {spec}
+                    </span>
+                  </div>
+                  <h3 className="mt-3.5 font-heading text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                    {title}
+                  </h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {detail}
+                  </p>
+                </div>
+
+                <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-primary">
+                  View system specs &amp; pricing{" "}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {ACREAGE_PACKAGES.map((pkg) => (
+              <div
+                key={pkg.size}
+                className={`flex flex-col justify-between rounded-2xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                  pkg.featured
+                    ? "border-primary bg-primary/[0.04] shadow-md ring-1 ring-primary/25"
+                    : "border-border bg-card shadow-sm hover:border-primary/40"
+                }`}
+              >
+                <div>
+                  <span
+                    className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider ${
+                      pkg.featured
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {pkg.badge}
+                  </span>
+                  <h3 className="mt-3 font-heading text-lg font-bold text-foreground">
+                    {pkg.size}
+                  </h3>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {pkg.idealFor}
+                  </p>
+
+                  <ul className="mt-4 space-y-2 border-t border-border/70 pt-4 text-xs text-foreground/90">
+                    {pkg.highlights.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <Link
+                  to={pkg.href}
+                  className={`mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-extrabold transition-colors ${
+                    pkg.featured
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "border border-border bg-background text-foreground hover:border-primary hover:text-primary"
+                  }`}
+                >
+                  {pkg.cta}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Compact Planning & Cost Calculator Bar (replaces the tall standalone HomePlanningSection) */}
+        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Calculator className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-bold text-foreground">
+                Planning your farm budget or comparing dripline spacing?
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Use our interactive Kenyan cost calculator or read the 15cm vs 20cm vs 30cm spacing guide.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Link
+              to="/irrigation-cost-calculator-kenya"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90"
+            >
+              Cost Calculator <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              to="/how-to-choose-dripline-spacing-kenya"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-bold text-foreground hover:border-primary/50 hover:text-primary"
+            >
+              Spacing Guide
+            </Link>
+            <QuoteModal
+              trigger={
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-bold text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  Custom Acreage BOQ
+                </button>
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

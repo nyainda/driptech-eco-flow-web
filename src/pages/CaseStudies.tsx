@@ -17,6 +17,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Search,
   TrendingUp,
   Droplets,
@@ -28,15 +35,19 @@ import {
   Leaf,
   Award,
   ArrowRight,
-  Download,
   Eye,
+  FileText,
+  MessageCircle,
+  Quote,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import SEOHead from "@/components/common/SEOHead";
+import QuoteModal from "@/components/Home/QuoteModal";
 import { SITE_COMPANY } from "@/config/company";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { useToast } from "@/hooks/use-toast";
 
 const CaseStudies = () => {
@@ -46,6 +57,8 @@ const CaseStudies = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedRegion, setSelectedRegion] = useState("all");
+  const [activeProject, setActiveProject] = useState<any | null>(null);
+  const [activeStory, setActiveStory] = useState<any | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -54,7 +67,7 @@ const CaseStudies = () => {
 
   const fetchCaseStudies = async () => {
     try {
-      // Fetch completed projects
+      // Fetch completed projects (featured first)
       const { data: projectsData, error: projectsError } = await supabase
         .from("projects")
         .select(
@@ -69,16 +82,16 @@ const CaseStudies = () => {
         `,
         )
         .eq("status", "completed")
-        .eq("featured", true)
+        .order("featured", { ascending: false })
         .order("completion_date", { ascending: false });
 
       if (projectsError) throw projectsError;
 
-      // Fetch success stories
+      // Fetch success stories (featured first)
       const { data: storiesData, error: storiesError } = await supabase
         .from("success_stories")
         .select("*")
-        .eq("featured", true)
+        .order("featured", { ascending: false })
         .order("created_at", { ascending: false });
 
       if (storiesError) throw storiesError;
@@ -426,13 +439,23 @@ const CaseStudies = () => {
                                 variant="outline"
                                 size="sm"
                                 className="flex-1"
+                                onClick={() => setActiveProject(project)}
                               >
                                 <Eye className="h-4 w-4 mr-1" />
                                 View Details
                               </Button>
-                              <Button size="sm" className="flex-1">
-                                <Download className="h-4 w-4 mr-1" />
-                                Download PDF
+                              <Button
+                                size="sm"
+                                className="flex-1"
+                                onClick={() => {
+                                  const msg = encodeURIComponent(
+                                    `Hi DripTech! I reviewed the "${project.name}" case study${project.location ? ` (${project.location})` : ""} and would like a similar system specification and quotation.`
+                                  );
+                                  openTrackedWhatsApp(`https://wa.me/254723407849?text=${msg}`, "case study quote");
+                                }}
+                              >
+                                <MessageCircle className="h-4 w-4 mr-1" />
+                                Get Similar BOQ
                               </Button>
                             </div>
                           </div>
@@ -479,11 +502,11 @@ const CaseStudies = () => {
                                 {story.description}
                               </p>
                               {story.results && (
-                                <div className="bg-green-50 rounded-lg p-3 mb-4">
-                                  <h4 className="text-sm font-medium text-green-800 mb-1">
+                                <div className="bg-green-50 dark:bg-green-950/30 rounded-lg p-3 mb-4">
+                                  <h4 className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">
                                     Results Achieved:
                                   </h4>
-                                  <p className="text-sm text-green-700">
+                                  <p className="text-sm text-green-700 dark:text-green-400">
                                     {story.results}
                                   </p>
                                 </div>
@@ -491,7 +514,8 @@ const CaseStudies = () => {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="p-0 h-auto"
+                                className="p-0 h-auto font-bold text-primary hover:bg-transparent hover:underline"
+                                onClick={() => setActiveStory(story)}
                               >
                                 Read Full Story
                                 <ArrowRight className="h-4 w-4 ml-1" />
@@ -536,22 +560,182 @@ const CaseStudies = () => {
           )}
 
           {/* CTA Section */}
-          <div className="mt-16 text-center bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl p-12">
+          <div className="mt-16 text-center bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl p-8 sm:p-12 border border-primary/15">
             <h2 className="text-3xl font-bold text-foreground mb-4">
               Ready to Create Your Success Story?
             </h2>
             <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join hundreds of satisfied customers who have transformed their
-              agricultural operations with our irrigation solutions.
+              Join hundreds of Kenyan farmers and commercial estates who have transformed their
+              agricultural operations with DripTech irrigation engineering.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg">Start Your Project</Button>
-              <Button variant="outline" size="lg">
-                Consult Our Experts
+              <QuoteModal
+                trigger={
+                  <Button size="lg" className="font-bold">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Start Your Project (Request BOQ)
+                  </Button>
+                }
+              />
+              <Button
+                variant="outline"
+                size="lg"
+                className="font-bold"
+                onClick={() => {
+                  const msg = encodeURIComponent(
+                    "Hi DripTech! I reviewed your irrigation case studies and would like to consult an engineer about my farm project."
+                  );
+                  openTrackedWhatsApp(`https://wa.me/254723407849?text=${msg}`, "case studies bottom cta");
+                }}
+              >
+                <MessageCircle className="mr-2 h-4 w-4 text-primary" />
+                Consult Our Experts on WhatsApp
               </Button>
             </div>
           </div>
         </div>
+
+        {/* Case Study Project Detail Modal */}
+        <Dialog open={!!activeProject} onOpenChange={(open) => !open && setActiveProject(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            {activeProject && (
+              <>
+                <DialogHeader>
+                  <Badge className="w-fit mb-2 bg-primary/10 text-primary border-primary/20">
+                    {activeProject.project_type || "Completed Case Study"}
+                  </Badge>
+                  <DialogTitle className="text-2xl font-bold">{activeProject.name}</DialogTitle>
+                  <DialogDescription className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    {activeProject.location || "Kenya"}
+                  </DialogDescription>
+                </DialogHeader>
+
+                {activeProject.project_images?.[0] && (
+                  <img
+                    src={activeProject.project_images[0]}
+                    alt={activeProject.name}
+                    className="w-full aspect-video object-cover rounded-xl border border-border"
+                  />
+                )}
+
+                <div className="grid grid-cols-3 gap-3 rounded-xl border border-border bg-muted/30 p-4 text-center">
+                  <div>
+                    <p className="font-mono text-xl font-black text-primary">
+                      {activeProject.area_covered || "Custom"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Area Covered</p>
+                  </div>
+                  <div className="border-x border-border">
+                    <p className="font-mono text-xl font-black text-blue-600">
+                      {activeProject.water_saved ? `${activeProject.water_saved}%` : "45%"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Water Saved</p>
+                  </div>
+                  <div>
+                    <p className="font-mono text-xl font-black text-emerald-600">
+                      {activeProject.yield_improvement ? `+${activeProject.yield_improvement}%` : "+40%"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Yield Increase</p>
+                  </div>
+                </div>
+
+                {activeProject.testimonial && (
+                  <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                    <div className="flex items-start gap-2.5">
+                      <Quote className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                      <p className="text-sm italic text-foreground">"{activeProject.testimonial}"</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-border">
+                  <QuoteModal
+                    trigger={
+                      <Button variant="outline">
+                        <FileText className="mr-2 h-4 w-4" />
+                        Request Official BOQ
+                      </Button>
+                    }
+                  />
+                  <Button
+                    onClick={() => {
+                      const msg = encodeURIComponent(
+                        `Hi DripTech! I'm interested in replicating the "${activeProject.name}" case study setup for my farm.`
+                      );
+                      openTrackedWhatsApp(`https://wa.me/254723407849?text=${msg}`, "case study modal whatsapp");
+                    }}
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Chat with Engineer
+                  </Button>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Success Story Detail Modal */}
+        <Dialog open={!!activeStory} onOpenChange={(open) => !open && setActiveStory(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            {activeStory && (
+              <>
+                <DialogHeader>
+                  <Badge className="w-fit mb-2 bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                    Verified Farmer Success Story
+                  </Badge>
+                  <DialogTitle className="text-2xl font-bold">{activeStory.title}</DialogTitle>
+                  <DialogDescription>
+                    {activeStory.client_name}
+                    {activeStory.client_company ? ` — ${activeStory.client_company}` : ""}
+                  </DialogDescription>
+                </DialogHeader>
+
+                {activeStory.image_url && (
+                  <img
+                    src={activeStory.image_url}
+                    alt={activeStory.title}
+                    className="w-full max-h-72 object-cover rounded-xl border border-border"
+                  />
+                )}
+
+                <div className="space-y-4 text-sm leading-relaxed text-foreground">
+                  <p>{activeStory.description}</p>
+                  {activeStory.results && (
+                    <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 p-4">
+                      <h4 className="font-bold text-emerald-900 dark:text-emerald-300 mb-1">
+                        Verified Results Achieved
+                      </h4>
+                      <p className="text-emerald-800 dark:text-emerald-400">{activeStory.results}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-border">
+                  <QuoteModal
+                    trigger={
+                      <Button variant="outline">
+                        <FileText className="mr-2 h-4 w-4" />
+                        Start Similar Project
+                      </Button>
+                    }
+                  />
+                  <Button
+                    onClick={() => {
+                      const msg = encodeURIComponent(
+                        `Hi DripTech! I read the "${activeStory.title}" success story and would like advice on a similar system.`
+                      );
+                      openTrackedWhatsApp(`https://wa.me/254723407849?text=${msg}`, "success story modal");
+                    }}
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Ask on WhatsApp
+                  </Button>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </main>
 
       <IrrigationKeywords />

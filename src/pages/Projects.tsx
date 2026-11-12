@@ -19,15 +19,28 @@ import {
   Loader2,
   Grid,
   List,
+  TrendingUp,
+  Eye,
+  Quote,
+  FileText,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import SEOHead from "@/components/common/SEOHead";
 import Breadcrumbs from "@/components/Layout/Breadcrumbs";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import QuoteModal from "@/components/Home/QuoteModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { isIrrigationRelatedContent } from "@/lib/irrigationContent";
 
@@ -120,11 +133,30 @@ const ProjectHero = ({ onGoBack }: { onGoBack: () => void }) => (
         <h1 className="storefront-heading max-w-4xl text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-7xl">
           Irrigation built for <span className="text-[hsl(var(--dt-gold-400))]">real farms.</span>
         </h1>
-        <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">Explore selected DripTech Eco-Flow installations, from efficient drip systems to tailored farm irrigation solutions across Kenya.</p>
+        <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">
+          Explore verified DripTech Eco-Flow installations—from commercial drip systems and solar borehole pumping to greenhouse fertigation projects across Kenya.
+        </p>
+        <div className="mt-7 flex flex-wrap items-center gap-3">
+          <QuoteModal
+            trigger={
+              <Button className="h-11 rounded-xl bg-[hsl(var(--dt-gold-400))] px-5 text-sm font-bold text-slate-950 hover:bg-[hsl(var(--dt-gold-400)/0.9)]">
+                <FileText className="mr-2 h-4 w-4" />
+                Request Similar Project BOQ
+              </Button>
+            }
+          />
+          <Button
+            asChild
+            variant="outline"
+            className="h-11 rounded-xl border-white/25 bg-white/5 px-5 text-sm font-bold text-white hover:bg-white/15 hover:text-white"
+          >
+            <Link to="/case-studies">View Detailed Case Studies →</Link>
+          </Button>
+        </div>
         <div className="mt-8 flex flex-wrap items-center gap-3 text-sm text-white/70">
           <span className="inline-flex items-center gap-2"><Droplets className="h-4 w-4 text-[hsl(var(--dt-gold-400))]" /> Water-smart systems</span>
           <span className="hidden h-1 w-1 rounded-full bg-white/40 sm:block" />
-          <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-[hsl(var(--dt-gold-400))]" /> Projects across Kenya</span>
+          <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-[hsl(var(--dt-gold-400))]" /> Projects across all 47 counties</span>
         </div>
       </div>
     </div>
@@ -135,17 +167,21 @@ interface ProjectCardProps {
   project: Project;
   viewMode: "grid" | "list";
   index: number;
+  onSelectProject: (project: Project) => void;
 }
 
-const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
+const ProjectCard = ({ project, viewMode, index, onSelectProject }: ProjectCardProps) => (
   <Card
-    className={`group overflow-hidden rounded-2xl border border-border bg-card shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-[hsl(var(--dt-green-300))] hover:shadow-[var(--shadow-float)] ${viewMode === "list" ? "flex" : ""
+    className={`group overflow-hidden rounded-2xl border border-border bg-card shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-[hsl(var(--dt-green-300))] hover:shadow-[var(--shadow-float)] ${viewMode === "list" ? "flex flex-col sm:flex-row" : "flex flex-col"
       }`}
     style={{ animationDelay: `${index * 100}ms` }}
   >
     {viewMode === "grid" ? (
       <>
-        <div className="relative aspect-[5/4] overflow-hidden bg-muted">
+        <div
+          className="relative aspect-[5/4] cursor-pointer overflow-hidden bg-muted"
+          onClick={() => onSelectProject(project)}
+        >
           {project.project_images?.length ? (
             <img
               src={project.project_images[0]}
@@ -154,26 +190,34 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           ) : (
-            <div className="w-full h-full flex h-full w-full items-center justify-center bg-[hsl(var(--dt-green-50))] dark:bg-[hsl(var(--dt-green-900))]">
+            <div className="flex h-full w-full items-center justify-center bg-[hsl(var(--dt-green-50))] dark:bg-[hsl(var(--dt-green-900))]">
               <Droplets className="h-16 w-16 text-primary/40" />
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-          <div className="absolute top-4 right-4">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+          <div className="absolute top-4 right-4 flex gap-1.5">
+            {project.featured && (
+              <Badge className="bg-[hsl(var(--dt-gold-400))] text-slate-950 border-none font-bold">
+                Featured
+              </Badge>
+            )}
             <Badge className={getStatusColor(project.status)}>
               {getStatusIcon(project.status)}
-              <span className="ml-1">{project.status}</span>
+              <span className="ml-1 capitalize">{(project.status || "completed").replace("_", " ")}</span>
             </Badge>
           </div>
         </div>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-2 mb-4">
+        <CardContent className="flex flex-1 flex-col p-6">
+          <div className="flex items-center justify-between gap-2 mb-3">
             <Badge className="bg-muted/30 border-border text-foreground">
-              <Target className="h-3 w-3 mr-1" />
+              <Target className="h-3 w-3 mr-1 text-primary" />
               {project.project_type || "Irrigation Project"}
             </Badge>
           </div>
-          <h3 className="text-xl font-bold text-foreground mb-3 leading-tight group-hover:text-primary transition-colors">
+          <h3
+            onClick={() => onSelectProject(project)}
+            className="cursor-pointer text-xl font-bold text-foreground mb-3 leading-tight group-hover:text-primary transition-colors"
+          >
             {project.name}
           </h3>
           <div className="space-y-2 mb-4">
@@ -196,90 +240,151 @@ const ProjectCard = ({ project, viewMode, index }: ProjectCardProps) => (
               </div>
             )}
           </div>
-                    {/* WhatsApp Inquiry Button */}
-          <Button
-            onClick={() => {
-              const message = encodeURIComponent(
-                `Hi DripTech! I'm interested in the "${project.name}" project${project.location ? ` in ${project.location}` : ''}. Can you share more details?`
-              );
-              openTrackedWhatsApp(`https://wa.me/254723407849?text=${message}`, "project inquiry");
-            }}
-            className="w-full dt-btn-whatsapp w-full rounded-xl shadow-none transition-all hover:-translate-y-0.5 text-sm"
-          >
-            <span className="mr-2 text-lg">💬</span>
-            Inquire About This Project
-          </Button>
+
+          {(project.area_covered || project.water_saved || project.yield_improvement) && (
+            <div className="mb-4 grid grid-cols-3 gap-2 rounded-xl border border-border bg-muted/30 p-2.5 text-center">
+              <div>
+                <p className="font-mono text-xs font-black text-foreground">
+                  {project.area_covered ? `${project.area_covered} ac` : "Custom"}
+                </p>
+                <p className="text-[9px] font-semibold uppercase text-muted-foreground">Area</p>
+              </div>
+              <div className="border-x border-border">
+                <p className="font-mono text-xs font-black text-primary">
+                  {project.water_saved ? `${project.water_saved}%` : "40%+"}
+                </p>
+                <p className="text-[9px] font-semibold uppercase text-muted-foreground">Water Saved</p>
+              </div>
+              <div>
+                <p className="font-mono text-xs font-black text-emerald-600 dark:text-emerald-400">
+                  {project.yield_improvement ? `+${project.yield_improvement}%` : "High ROI"}
+                </p>
+                <p className="text-[9px] font-semibold uppercase text-muted-foreground">Yield</p>
+              </div>
+            </div>
+          )}
+
+          {project.testimonial && (
+            <p className="mb-4 line-clamp-2 rounded-lg border-l-2 border-primary bg-primary/5 px-3 py-2 text-xs italic text-muted-foreground">
+              "{project.testimonial}"
+            </p>
+          )}
+
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => onSelectProject(project)}
+              className="rounded-xl text-xs font-bold"
+            >
+              <Eye className="mr-1.5 h-3.5 w-3.5" />
+              Project Details
+            </Button>
+            <Button
+              onClick={() => {
+                const message = encodeURIComponent(
+                  `Hi DripTech! I'm interested in a system similar to the "${project.name}" project${project.location ? ` in ${project.location}` : ""}. Please share a quote.`
+                );
+                openTrackedWhatsApp(`https://wa.me/254723407849?text=${message}`, "project inquiry");
+              }}
+              className="dt-btn-whatsapp rounded-xl shadow-none text-xs font-bold"
+            >
+              💬 Get Similar Quote
+            </Button>
+          </div>
         </CardContent>
       </>
     ) : (
-      <div className="flex w-full">
-        <div className="relative w-48 flex-shrink-0 overflow-hidden">
+      <div className="flex flex-col sm:flex-row w-full">
+        <div
+          onClick={() => onSelectProject(project)}
+          className="relative sm:w-56 flex-shrink-0 cursor-pointer overflow-hidden"
+        >
           {project.project_images?.length ? (
             <img
               src={project.project_images[0]}
               alt={`Image of ${project.name} project`}
               loading="lazy"
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              className="w-full h-48 sm:h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
           ) : (
-            <div className="w-full h-full bg-muted flex items-center justify-center">
+            <div className="w-full h-48 sm:h-full bg-muted flex items-center justify-center">
               <Droplets className="h-12 w-12 text-primary/60" />
             </div>
           )}
         </div>
         <CardContent className="flex-1 p-6">
-          <div className="flex justify-between items-start mb-4">
+          <div className="flex justify-between items-start mb-3">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
                 <Badge className="bg-muted/30 border-border text-foreground">
-                  <Target className="h-3 w-3 mr-1" />
+                  <Target className="h-3 w-3 mr-1 text-primary" />
                   {project.project_type || "Irrigation Project"}
                 </Badge>
                 <Badge className={getStatusColor(project.status)}>
                   {getStatusIcon(project.status)}
-                  <span className="ml-1">{project.status}</span>
+                  <span className="ml-1 capitalize">{(project.status || "completed").replace("_", " ")}</span>
                 </Badge>
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+              <h3
+                onClick={() => onSelectProject(project)}
+                className="cursor-pointer text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors"
+              >
                 {project.name}
               </h3>
             </div>
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              {project.location && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
-                  <span className="text-sm">{project.location}</span>
-                </div>
-              )}
-              {project.completion_date &&
-                project.status?.toLowerCase() === "completed" &&
-                Number.isFinite(new Date(project.completion_date).getTime()) &&
-                new Date(project.completion_date).getTime() <= Date.now() && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="h-4 w-4 flex-shrink-0 text-primary" />
-                  <span className="text-sm">
-                    Completed{" "}
-                    {new Date(project.completion_date).toLocaleDateString()}
-                  </span>
-                </div>
-              )}
-            </div>
+          <div className="flex flex-wrap gap-4 mb-4 text-sm text-muted-foreground">
+            {project.location && (
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span>{project.location}</span>
+              </div>
+            )}
+            {project.area_covered && (
+              <div className="flex items-center gap-1.5">
+                <Target className="h-4 w-4 text-primary" />
+                <span>{project.area_covered} Acres Covered</span>
+              </div>
+            )}
+            {project.water_saved && (
+              <div className="flex items-center gap-1.5">
+                <Droplets className="h-4 w-4 text-primary" />
+                <span>{project.water_saved}% Water Saved</span>
+              </div>
+            )}
+            {project.yield_improvement && (
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <span>+{project.yield_improvement}% Yield</span>
+              </div>
+            )}
           </div>
-          {/* WhatsApp Inquiry Button */}
-          <Button
-            onClick={() => {
-              const message = encodeURIComponent(
-                `Hi DripTech! I'm interested in the "${project.name}" project${project.location ? ` in ${project.location}` : ''}. Can you share more details?`
-              );
-              openTrackedWhatsApp(`https://wa.me/254723407849?text=${message}`, "project inquiry");
-            }}
-            className="w-full mt-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all text-sm font-semibold py-3"
-          >
-            <span className="mr-2 text-lg">💬</span>
-            Inquire About This Project
-          </Button>
+          {project.testimonial && (
+            <p className="mb-4 line-clamp-2 rounded-lg border-l-2 border-primary bg-primary/5 px-3 py-2 text-xs italic text-muted-foreground">
+              "{project.testimonial}"
+            </p>
+          )}
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              onClick={() => onSelectProject(project)}
+              className="rounded-xl text-xs font-bold"
+            >
+              <Eye className="mr-1.5 h-3.5 w-3.5" />
+              View Project Details
+            </Button>
+            <Button
+              onClick={() => {
+                const message = encodeURIComponent(
+                  `Hi DripTech! I'm interested in the "${project.name}" project${project.location ? ` in ${project.location}` : ""}. Can you share a similar system quotation?`
+                );
+                openTrackedWhatsApp(`https://wa.me/254723407849?text=${message}`, "project inquiry");
+              }}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl text-xs font-bold"
+            >
+              💬 Inquire on WhatsApp
+            </Button>
+          </div>
         </CardContent>
       </div>
     )}
@@ -590,6 +695,7 @@ interface ProjectsListProps {
   totalPages: number;
   setCurrentPage: (page: number) => void;
   clearAllFilters: () => void;
+  onSelectProject: (project: Project) => void;
 }
 
 const ProjectsList = ({
@@ -602,6 +708,7 @@ const ProjectsList = ({
   totalPages,
   setCurrentPage,
   clearAllFilters,
+  onSelectProject,
 }: ProjectsListProps) => (
   <section className="py-12 sm:py-16 lg:py-20 bg-background">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -676,6 +783,7 @@ const ProjectsList = ({
                 project={project}
                 viewMode={viewMode}
                 index={index}
+                onSelectProject={onSelectProject}
               />
             ))}
           </div>
@@ -725,17 +833,22 @@ const Projects: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  // Fetch projects
+  // Fetch all irrigation projects (featured sorted first)
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await dataService.getProjects({ featured: true });
-        setProjects(
-          (data || []).filter((project) =>
-            isIrrigationRelatedContent(project.name, project.project_type),
-          ),
+        const data = await dataService.getProjects();
+        const irrigationProjects = (data || []).filter((project) =>
+          isIrrigationRelatedContent(project.name, project.project_type),
         );
+        irrigationProjects.sort((a: Project, b: Project) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        });
+        setProjects(irrigationProjects);
       } catch (error) {
         console.error("Error fetching projects:", error);
         setError("Failed to load projects. Please try again later.");
@@ -877,7 +990,109 @@ const Projects: React.FC = () => {
           totalPages={totalPages}
           setCurrentPage={setCurrentPage}
           clearAllFilters={clearAllFilters}
+          onSelectProject={setSelectedProject}
         />
+
+        {/* Project Quick-View Modal */}
+        <Dialog open={!!selectedProject} onOpenChange={(open) => !open && setSelectedProject(null)}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            {selectedProject && (
+              <>
+                <DialogHeader>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <Badge className="bg-primary/10 text-primary border-primary/20">
+                      {selectedProject.project_type || "Irrigation Installation"}
+                    </Badge>
+                    {selectedProject.status && (
+                      <Badge className={getStatusColor(selectedProject.status)}>
+                        {getStatusIcon(selectedProject.status)}
+                        <span className="ml-1 capitalize">{selectedProject.status.replace("_", " ")}</span>
+                      </Badge>
+                    )}
+                  </div>
+                  <DialogTitle className="text-2xl font-bold text-foreground">
+                    {selectedProject.name}
+                  </DialogTitle>
+                  {selectedProject.location && (
+                    <DialogDescription className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      {selectedProject.location}
+                    </DialogDescription>
+                  )}
+                </DialogHeader>
+
+                {selectedProject.project_images && selectedProject.project_images.length > 0 && (
+                  <div className="grid gap-3 sm:grid-cols-2 mt-2">
+                    {selectedProject.project_images.slice(0, 4).map((img, i) => (
+                      <img
+                        key={i}
+                        src={img}
+                        alt={`${selectedProject.name} photo ${i + 1}`}
+                        className={`w-full rounded-xl object-cover border border-border ${
+                          selectedProject.project_images!.length === 1 ? "sm:col-span-2 aspect-video" : "aspect-[4/3]"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-3 gap-3 rounded-xl border border-border bg-muted/30 p-4 text-center mt-4">
+                  <div>
+                    <p className="font-mono text-xl font-black text-foreground">
+                      {selectedProject.area_covered ? `${selectedProject.area_covered} Acres` : "Custom Scale"}
+                    </p>
+                    <p className="text-xs font-medium text-muted-foreground">Area Covered</p>
+                  </div>
+                  <div className="border-x border-border">
+                    <p className="font-mono text-xl font-black text-primary">
+                      {selectedProject.water_saved ? `${selectedProject.water_saved}%` : "45%+"}
+                    </p>
+                    <p className="text-xs font-medium text-muted-foreground">Water Efficiency</p>
+                  </div>
+                  <div>
+                    <p className="font-mono text-xl font-black text-emerald-600 dark:text-emerald-400">
+                      {selectedProject.yield_improvement ? `+${selectedProject.yield_improvement}%` : "High ROI"}
+                    </p>
+                    <p className="text-xs font-medium text-muted-foreground">Yield Impact</p>
+                  </div>
+                </div>
+
+                {selectedProject.testimonial && (
+                  <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 p-4">
+                    <div className="flex items-start gap-2.5">
+                      <Quote className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                      <p className="text-sm italic text-foreground leading-relaxed">
+                        "{selectedProject.testimonial}"
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-border pt-4">
+                  <QuoteModal
+                    trigger={
+                      <Button variant="outline" className="rounded-xl font-bold">
+                        <FileText className="mr-2 h-4 w-4 text-primary" />
+                        Request Similar System BOQ
+                      </Button>
+                    }
+                  />
+                  <Button
+                    onClick={() => {
+                      const msg = encodeURIComponent(
+                        `Hi DripTech! I viewed the "${selectedProject.name}" project${selectedProject.location ? ` in ${selectedProject.location}` : ""} and would like a quotation for a similar irrigation installation.`
+                      );
+                      openTrackedWhatsApp(`https://wa.me/254723407849?text=${msg}`, "project modal inquiry");
+                    }}
+                    className="dt-btn-whatsapp rounded-xl font-bold"
+                  >
+                    💬 Chat with Project Engineer
+                  </Button>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </main>
       <IrrigationKeywords />
 

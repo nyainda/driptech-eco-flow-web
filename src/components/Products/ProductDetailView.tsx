@@ -19,6 +19,8 @@ import {
   FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import QuoteModal from "@/components/Home/QuoteModal";
+import { openInstantProductQuotePdf } from "@/lib/catalogAndQuotePdf";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { formatPrice } from "@/lib/productUrl";
 
@@ -274,7 +276,14 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
 
               <div className="mt-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <label htmlFor="product-quantity" className="text-sm font-bold text-foreground">Quantity</label>
+                  <div>
+                    <label htmlFor="product-quantity" className="text-sm font-bold text-foreground">Quantity</label>
+                    {displayPrice != null && quantity > 1 && (
+                      <p className="mt-0.5 text-xs font-semibold text-primary">
+                        Subtotal ({quantity} units): <span className="font-mono font-extrabold">{formatPrice(displayPrice * quantity)}</span>
+                      </p>
+                    )}
+                  </div>
                   <div className="inline-flex h-10 items-center overflow-hidden rounded-lg border border-border bg-background">
                     <button
                       type="button"
@@ -298,28 +307,66 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                   </div>
                 </div>
 
-                <div className="mt-4 grid gap-3 sm:grid-cols-[1.25fr_0.9fr]">
+                <div className="mt-4 grid gap-3 sm:grid-cols-[1.2fr_1fr]">
                   <Button
                     size="lg"
                     className="h-12 min-h-12 w-full rounded-xl bg-[hsl(var(--dt-whatsapp))] text-sm font-extrabold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
-                    onClick={() => openTrackedWhatsApp(whatsappUrl, "product detail page order")}
+                    onClick={() =>
+                      openInstantProductQuotePdf({
+                        product: {
+                          ...product,
+                          category: "drip_irrigation",
+                        },
+                        quantity,
+                        selectedVariant,
+                        autoPrint: true,
+                        alsoOpenWhatsApp: true,
+                      })
+                    }
                   >
                     <MessageCircle className="mr-2 h-5 w-5" />
-                    Order on WhatsApp
+                    WhatsApp + Auto PDF Quote
                     <ArrowUpRight className="ml-auto h-4 w-4" />
                   </Button>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="h-12 min-h-12 w-full rounded-xl border-2 text-sm font-bold"
-                    onClick={() => openTrackedWhatsApp(quoteUrl, "product detail page quote request")}
+                    className="h-12 min-h-12 w-full rounded-xl border-2 border-primary text-sm font-extrabold text-primary hover:bg-primary hover:text-primary-foreground"
+                    onClick={() =>
+                      openInstantProductQuotePdf({
+                        product: {
+                          ...product,
+                          category: "drip_irrigation",
+                        },
+                        quantity,
+                        selectedVariant,
+                        autoPrint: true,
+                        alsoOpenWhatsApp: false,
+                      })
+                    }
                   >
-                    <FileCheck className="mr-2 h-4 w-4 shrink-0" />
-                    Request a Quote
+                    <Download className="mr-2 h-4 w-4 shrink-0" />
+                    Download Instant PDF Quote
                   </Button>
                 </div>
+
+                <div className="mt-2.5">
+                  <QuoteModal
+                    trigger={
+                      <Button
+                        size="default"
+                        variant="secondary"
+                        className="h-10 w-full rounded-xl border border-border bg-muted/60 text-xs font-bold text-foreground hover:bg-primary/10 hover:text-primary"
+                      >
+                        <FileText className="mr-2 h-4 w-4 text-primary" />
+                        Request Custom Multi-Item Project BOQ
+                      </Button>
+                    }
+                  />
+                </div>
+
                 <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
-                  Confirm stock, delivery and bulk-order pricing with our team.
+                  Clicking <strong>WhatsApp + Auto PDF Quote</strong> generates your official A4 PDF quotation and sends the Quote Ref directly to our WhatsApp desk.
                 </p>
               </div>
             </div>

@@ -25,62 +25,62 @@ const Services = () => {
   const services = [
     {
       icon: PenTool,
-      title: "System Design",
+      title: "Hydraulic System Design & BOQ",
       description:
-        "Custom irrigation system design tailored to your specific needs and terrain.",
+        "Custom irrigation layout, block zoning, pipe sizing, and itemized Bills of Quantities tailored to your crop spacing and terrain.",
       features: [
-        "Site assessment",
-        "CAD drawings",
-        "Water flow calculations",
-        "ROI analysis",
+        "On-farm GPS site & slope assessment",
+        "CAD block layout & hydraulic zoning",
+        "Water flow & pump head (TDH) calculations",
+        "Corporate, NGO & bank-ready BOQs",
       ],
     },
     {
       icon: Wrench,
-      title: "Installation",
+      title: "Full Field Installation",
       description:
-        "Professional installation by certified technicians with quality guarantee.",
+        "End-to-end installation of drip, sprinkler, rain gun, and pop-up irrigation systems by certified field technicians.",
       features: [
-        "Professional setup",
-        "Quality testing",
-        "System commissioning",
-        "Training included",
+        "Mainline & sub-main trenching & piping",
+        "Filtration & fertigation headworks setup",
+        "Operating pressure & uniformity testing",
+        "Hands-on farm operator handover",
       ],
     },
     {
       icon: Settings,
-      title: "Maintenance",
+      title: "HDPE Dam Liners & Water Pans",
       description:
-        "Regular maintenance and repair services to keep your system running optimally.",
+        "Supply and on-site hot-wedge welding of 0.5mm, 0.75mm, and 1.0mm UV-stabilized HDPE dam liners for water harvesting.",
       features: [
-        "Preventive maintenance",
-        "Emergency repairs",
-        "Component replacement",
-        "Performance optimization",
-      ],
-    },
-    {
-      icon: GraduationCap,
-      title: "Training",
-      description:
-        "Clear training for operators and maintenance staff.",
-      features: [
-        "Operator training",
-        "Maintenance workshops",
-        "Technical support",
-        "Certification programs",
+        "Dam volume & liner sheet calculation",
+        "0.5mm, 0.75mm & 1.0mm virgin HDPE liners",
+        "On-site technician hot-wedge welding",
+        "Trench anchoring & outlet pipe sealing",
       ],
     },
     {
       icon: Users,
-      title: "Consultation",
+      title: "Greenhouse & Shade Net Construction",
       description:
-        "Expert consultation for system optimization and efficiency improvements.",
+        "Galvanized steel and treated-timber greenhouses, shade net houses, and complete indoor drip & misting installations.",
       features: [
-        "System analysis",
-        "Efficiency audits",
-        "Upgrade recommendations",
-        "Cost optimization",
+        "8×15m, 8×24m, 8×30m & custom sizes",
+        "UV greenhouse polythene & insect netting",
+        "Crop trellising & raised tank setup",
+        "Automated drip & micro-misting lines",
+      ],
+    },
+    {
+      icon: GraduationCap,
+      title: "System Maintenance & Rehabilitation",
+      description:
+        "Preventive maintenance, lateral flushing, acid/chlorine treatment, and rehabilitation of blocked or aging farm systems.",
+      features: [
+        "Blocked dripper & line flushing",
+        "Filter, valve & pump servicing",
+        "Damaged HDPE/PVC pipe repair",
+        "Seasonal agronomic & operator training",
       ],
     },
   ];
