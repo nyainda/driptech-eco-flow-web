@@ -17,6 +17,7 @@ export interface PdfProductItem {
   category: string;
   subcategory?: string | null;
   model_number?: string | null;
+  images?: string[] | null;
   in_stock?: boolean | null;
   features?: string[] | null;
   applications?: string[] | null;
@@ -60,6 +61,21 @@ const formatDate = (date: Date): string =>
     year: "numeric",
   });
 
+/** Resolves Cloudflare R2 URLs or relative public paths into absolute URLs for the PDF window. */
+const resolveImageUrl = (rawUrl?: string | null): string => {
+  if (!rawUrl || typeof rawUrl !== "string") return "";
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("data:")) {
+    return trimmed;
+  }
+  const origin =
+    typeof window !== "undefined" && window.location?.origin
+      ? window.location.origin
+      : "https://www.dripstech.co.ke";
+  return trimmed.startsWith("/") ? `${origin}${trimmed}` : `${origin}/${trimmed}`;
+};
+
 export const generateWebQuoteNumber = (productId?: string): string => {
   const now = new Date();
   const y = now.getFullYear();
@@ -72,7 +88,39 @@ export const generateWebQuoteNumber = (productId?: string): string => {
 };
 
 /**
- * Generates and opens an Executive A4 Instant Product Quotation PDF (printable/saveable as PDF)
+ * Script injected into the print window that waits for all Cloudflare/product images
+ * to finish loading (up to 3000ms max) before opening the browser Save-as-PDF dialog.
+ */
+const WAIT_FOR_IMAGES_PRINT_SCRIPT = `
+<script>
+  window.addEventListener("load", function () {
+    var imgs = Array.prototype.slice.call(document.images || []);
+    var pending = imgs.filter(function (img) { return !img.complete; });
+    if (pending.length === 0) {
+      setTimeout(function () { window.print(); }, 250);
+      return;
+    }
+    var done = false;
+    var trigger = function () {
+      if (done) return;
+      done = true;
+      setTimeout(function () { window.print(); }, 200);
+    };
+    var remaining = pending.length;
+    pending.forEach(function (img) {
+      var onFinish = function () {
+        remaining -= 1;
+        if (remaining <= 0) trigger();
+      };
+      img.addEventListener("load", onFinish);
+      img.addEventListener("error", onFinish);
+    });
+    setTimeout(trigger, 3000);
+  });
+</script>`;
+
+/**
+ * Generates and opens an Executive A4 Instant Product Quotation PDF (with Cloudflare product images)
  * and optionally launches WhatsApp with the matching Quote Reference Number.
  */
 export function openInstantProductQuotePdf({
@@ -105,12 +153,18 @@ export function openInstantProductQuotePdf({
     ? `${product.name} — Option: ${chosenVariant.name}`
     : product.name;
 
+  const productImages = (product.images || [])
+    .map((u) => resolveImageUrl(u))
+    .filter(Boolean);
+  const primaryImage = productImages[0] || getLogoUrl({ forPrint: true });
+  const fallbackLogo = getLogoUrl({ forPrint: true });
+
   const whatsappText = [
     `Hi DripTech EcoFlow! Here is my Instant Product Quotation request:`,
     `• Quote Ref: *${quoteNumber}*`,
     `• Item: *${quantity} × ${itemFullTitle}*`,
     hasNumericPrice
-      ? `• Quoted Amount: *KES ${ lineTotal.toLocaleString("en-KE") }* (${formatPrice(unitPrice)} each)`
+      ? `• Quoted Amount: *KES ${lineTotal.toLocaleString("en-KE")}* (${formatPrice(unitPrice)} each)`
       : `• Pricing: *Please confirm current unit price*`,
     `Please confirm availability, delivery cost to my location, and payment details.`,
   ].join("\n");
@@ -266,6 +320,22 @@ export function openInstantProductQuotePdf({
       text-align: left;
     }
     .boq td { padding: 10px; border-bottom: 1px solid var(--line-soft); border-right: 1px solid var(--line-soft); vertical-align: top; }
+    .quote-img-box {
+      width: 78px;
+      height: 78px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .quote-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .item-name { font-weight: 800; font-size: 12.5px; color: var(--ink); }
     .item-desc { color: var(--muted); font-size: 10.5px; margin-top: 4px; }
     .feature-list { margin-top: 6px; padding-left: 16px; color: var(--primary-mid); font-size: 10px; }
@@ -366,7 +436,7 @@ export function openInstantProductQuotePdf({
   <div class="toolbar no-print">
     <div>
       <div class="toolbar-title">Official DripTech Product Quotation (${escapeHtml(quoteNumber)})</div>
-      <div class="toolbar-sub">Click "Save / Print PDF" (choose "Save as PDF") or send this quote reference directly to our WhatsApp desk.</div>
+      <div class="toolbar-sub">Click "Save / Download as PDF" (choose "Save as PDF") or send this quote reference directly to our WhatsApp desk.</div>
     </div>
     <div class="toolbar-actions">
       <button class="btn btn-pdf" onclick="window.print()">🖨️ Save / Download as PDF</button>
@@ -423,16 +493,20 @@ export function openInstantProductQuotePdf({
       <table class="boq">
         <thead>
           <tr>
-            <th style="width:45px;text-align:center;">Item</th>
+            <th style="width:94px;text-align:center;">Product Photo</th>
             <th>Equipment Description &amp; Technical Specifications</th>
-            <th style="width:65px;text-align:center;">Qty</th>
-            <th style="width:115px;text-align:right;">Unit Price (KES)</th>
-            <th style="width:120px;text-align:right;">Line Total (KES)</th>
+            <th style="width:58px;text-align:center;">Qty</th>
+            <th style="width:110px;text-align:right;">Unit Price (KES)</th>
+            <th style="width:118px;text-align:right;">Line Total (KES)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="text-align:center;font-weight:700;">01</td>
+            <td style="text-align:center;">
+              <div class="quote-img-box" style="margin:0 auto;">
+                <img src="${escapeHtml(primaryImage)}" alt="${escapeHtml(product.name)}" onerror="this.onerror=null;this.src='${fallbackLogo}';this.style.objectFit='contain';this.style.padding='12px';" />
+              </div>
+            </td>
             <td>
               <div class="item-name">${escapeHtml(itemFullTitle)}</div>
               <div class="item-desc">${escapeHtml(product.description || "Field-grade UV-stabilized irrigation equipment supplied by DripTech EcoFlow Ltd.")}</div>
@@ -503,11 +577,7 @@ export function openInstantProductQuotePdf({
       </footer>
     </div>
   </div>
-  ${
-    autoPrint
-      ? `<script>window.addEventListener("load", function() { setTimeout(function() { window.print(); }, 350); });</script>`
-      : ""
-  }
+  ${autoPrint ? WAIT_FOR_IMAGES_PRINT_SCRIPT : ""}
 </body>
 </html>`;
 
@@ -526,7 +596,8 @@ export function openInstantProductQuotePdf({
 }
 
 /**
- * Generates and opens an Executive Multi-Category A4 Product & Contracting Catalogue PDF.
+ * Generates and opens an Executive Multi-Category A4 Product & Contracting Catalogue PDF
+ * complete with Cloudflare R2 product thumbnail photos in every row.
  */
 export function openProductCataloguePdf(
   products: PdfProductItem[],
@@ -535,6 +606,7 @@ export function openProductCataloguePdf(
 ): void {
   const issueDate = new Date();
   const catalogueRef = `DT-CAT-${issueDate.getFullYear()}-${String(issueDate.getMonth() + 1).padStart(2, "0")}`;
+  const fallbackLogo = getLogoUrl({ forPrint: true });
 
   // Group products by category
   const grouped = new Map<string, PdfProductItem[]>();
@@ -548,7 +620,7 @@ export function openProductCataloguePdf(
   const categoryEntries = Array.from(grouped.entries());
 
   const whatsappCatalogMsg = [
-    `Hi DripTech EcoFlow! I have downloaded your *${categoryScopeLabel}* (Ref: *${catalogueRef}* with ${products.length} products).`,
+    `Hi DripTech EcoFlow! I have downloaded your illustrated *${categoryScopeLabel}* (Ref: *${catalogueRef}* with ${products.length} products).`,
     `Please share any current bulk discounts or assist me with a custom quotation for my farm.`,
   ].join("\n");
   const whatsappUrl = `https://wa.me/254723407849?text=${encodeURIComponent(whatsappCatalogMsg)}`;
@@ -593,19 +665,32 @@ export function openProductCataloguePdf(
                 .join(" · ")}`
             : "";
 
+          const imgUrl = resolveImageUrl(item.images?.[0]) || fallbackLogo;
+          const isFallback = !item.images?.[0];
+
           return `
             <tr>
-              <td style="text-align:center;font-weight:700;color:#64748b;">${catIdx + 1}.${String(idx + 1).padStart(2, "0")}</td>
+              <td style="text-align:center;font-weight:700;color:#64748b;vertical-align:middle;">${catIdx + 1}.${String(idx + 1).padStart(2, "0")}</td>
+              <td style="text-align:center;vertical-align:middle;padding:6px;">
+                <div class="cat-thumb">
+                  <img
+                    src="${escapeHtml(imgUrl)}"
+                    alt="${escapeHtml(item.name)}"
+                    style="${isFallback ? "object-fit:contain;padding:8px;" : "object-fit:cover;"}"
+                    onerror="this.onerror=null;this.src='${fallbackLogo}';this.style.objectFit='contain';this.style.padding='8px';"
+                  />
+                </div>
+              </td>
               <td>
                 <div style="font-weight:800;color:#0f172a;font-size:11.5px;">${escapeHtml(item.name)}</div>
-                ${item.description ? `<div style="color:#475569;font-size:10px;margin-top:2px;">${escapeHtml(item.description.slice(0, 140))}${item.description.length > 140 ? "..." : ""}</div>` : ""}
+                ${item.description ? `<div style="color:#475569;font-size:10px;margin-top:2px;">${escapeHtml(item.description.slice(0, 135))}${item.description.length > 135 ? "..." : ""}</div>` : ""}
                 ${variantSummary ? `<div style="color:#1b4332;font-size:9.5px;font-weight:700;margin-top:3px;">${escapeHtml(variantSummary)}</div>` : ""}
               </td>
-              <td style="text-align:center;font-family:monospace;font-size:10px;color:#475569;">${escapeHtml(item.model_number || item.id.slice(0, 8).toUpperCase())}</td>
-              <td style="text-align:center;font-size:10px;font-weight:700;color:${item.in_stock !== false ? "#15803d" : "#b45309"};">
+              <td style="text-align:center;font-family:monospace;font-size:10px;color:#475569;vertical-align:middle;">${escapeHtml(item.model_number || item.id.slice(0, 8).toUpperCase())}</td>
+              <td style="text-align:center;font-size:10px;font-weight:700;vertical-align:middle;color:${item.in_stock !== false ? "#15803d" : "#b45309"};">
                 ${item.in_stock !== false ? "In Stock" : "On Request"}
               </td>
-              <td style="text-align:right;font-weight:800;color:#0f172a;white-space:nowrap;">${escapeHtml(priceStr)}</td>
+              <td style="text-align:right;font-weight:800;color:#0f172a;white-space:nowrap;vertical-align:middle;">${escapeHtml(priceStr)}</td>
             </tr>`;
         })
         .join("");
@@ -619,11 +704,12 @@ export function openProductCataloguePdf(
           <table class="cat-table">
             <thead>
               <tr>
-                <th style="width:48px;text-align:center;">Code</th>
+                <th style="width:42px;text-align:center;">Code</th>
+                <th style="width:68px;text-align:center;">Photo</th>
                 <th>Product Name, Specifications &amp; Available Options</th>
-                <th style="width:82px;text-align:center;">Model / SKU</th>
-                <th style="width:78px;text-align:center;">Stock</th>
-                <th style="width:125px;text-align:right;">Unit Price (KES)</th>
+                <th style="width:76px;text-align:center;">Model / SKU</th>
+                <th style="width:72px;text-align:center;">Stock</th>
+                <th style="width:118px;text-align:right;">Unit Price (KES)</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -797,6 +883,23 @@ export function openProductCataloguePdf(
     }
     .cat-table tbody tr { break-inside: avoid; page-break-inside: avoid; }
     .cat-table tbody tr:nth-child(even) td { background: #f8fafc; }
+    .cat-thumb {
+      width: 54px;
+      height: 46px;
+      margin: 0 auto;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cat-thumb img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
     .footer-cta {
       margin-top: 22px;
       border: 1.5px solid var(--primary);
@@ -820,7 +923,7 @@ export function openProductCataloguePdf(
 <body>
   <div class="toolbar no-print">
     <div>
-      <div style="font-size:13px;font-weight:700;">${escapeHtml(COMPANY.name)} — Official PDF Product Catalogue (${escapeHtml(catalogueRef)})</div>
+      <div style="font-size:13px;font-weight:700;">${escapeHtml(COMPANY.name)} — Illustrated PDF Product Catalogue (${escapeHtml(catalogueRef)})</div>
       <div style="font-size:11px;color:#94a3b8;">Click "Save / Download PDF" (choose "Save as PDF" in your print destination) or request a custom BOQ on WhatsApp.</div>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -846,7 +949,7 @@ export function openProductCataloguePdf(
       </div>
 
       <div class="doc-box">
-        <span class="doc-eyebrow">Official Price List &amp; Guide</span>
+        <span class="doc-eyebrow">Illustrated Price List &amp; Guide</span>
         <div class="doc-type">CATALOGUE</div>
         <div class="doc-ref">
           <div class="doc-ref-row"><span>Catalogue Ref:</span><strong>${escapeHtml(catalogueRef)}</strong></div>
@@ -911,7 +1014,7 @@ export function openProductCataloguePdf(
       </div>
     </div>
   </div>
-  <script>window.addEventListener("load", function() { setTimeout(function() { window.print(); }, 400); });</script>
+  ${WAIT_FOR_IMAGES_PRINT_SCRIPT}
 </body>
 </html>`;
 
