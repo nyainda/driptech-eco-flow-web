@@ -129,6 +129,61 @@ const PACKAGE_INCLUDED_ITEMS = [
   },
 ];
 
+const SPECIALIZED_INSTALLATIONS = [
+  {
+    badge: "0.5mm • 0.75mm • 1.0mm HDPE",
+    title: "Dam Liners & Water Pan Installation",
+    description:
+      "UV-stabilized virgin HDPE geomembrane liners with professional on-site hot-wedge welding, trench anchoring, and water pan volume calculation.",
+    bullets: [
+      "0.5mm (fine soil), 0.75mm (murram) & 1.0mm (rocky/commercial dams)",
+      "On-site technician welding, repair & spillway integration",
+    ],
+    ctaLabel: "Quote Dam Liner & Welding",
+    whatsappPrompt:
+      "Hi DripTech! I need a quotation for an HDPE Dam Liner and installation. My dam dimensions (length × width × depth) and location are:",
+  },
+  {
+    badge: "¼ Acre to 50+ Acres",
+    title: "Drip & Sprinkler System Installation",
+    description:
+      "Complete field installation from water source headworks and mainline trenching to sub-main manifolds, lateral flushing, and pressure testing.",
+    bullets: [
+      "HDPE/PVC mainline piping, gate valves & filtration headworks",
+      "Turbulent/PC driplines, rain guns, or pop-up lawn sprinklers",
+    ],
+    ctaLabel: "Quote Field Installation",
+    whatsappPrompt:
+      "Hi DripTech! I need a quotation for full irrigation system installation. My farm size, crop, and location are:",
+  },
+  {
+    badge: "Galvanized Steel & Shade Nets",
+    title: "Greenhouses & Shade House Construction",
+    description:
+      "wooden or galvanized steel greenhouses and shade net structures fitted with UV polythene, insect nets, crop support wires, and drip/misting kits.",
+    bullets: [
+      "8×15m, 8×24m, 8×30m & custom multi-span commercial units",
+      "Complete with elevated tank, venturi fertigation & foggers",
+    ],
+    ctaLabel: "Quote Greenhouse / Shade Net",
+    whatsappPrompt:
+      "Hi DripTech! I would like a quotation for Greenhouse / Shade House construction and irrigation. My preferred size and location are:",
+  },
+  {
+    badge: "Borehole, River & Tank",
+    title: "Solar Pumping & Water Storage Setup",
+    description:
+      "Off-grid solar water pumping, submersible/surface pump installation, and raised tank plumbing to power your drip or sprinkler blocks with zero fuel cost.",
+    bullets: [
+      "Total Dynamic Head (TDH) pump & solar PV panel array sizing",
+      "Borehole drawdown protection, float switches & booster pumps",
+    ],
+    ctaLabel: "Size & Quote Solar Pump",
+    whatsappPrompt:
+      "Hi DripTech! I need help sizing and installing a solar/electric water pump for my farm. My water source, depth/distance, and location are:",
+  },
+];
+
 export default function HomeEngineeringServices() {
   const [activePillarId, setActivePillarId] = useState<string>("design");
   const activePillar =
@@ -375,6 +430,75 @@ export default function HomeEngineeringServices() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Specialized Farm Infrastructure & Installation Solutions (Dam Liners, Installation, Greenhouses, Solar) */}
+        <div className="rounded-3xl border border-primary/20 bg-card p-5 sm:p-8 shadow-sm">
+          <div className="mb-6 flex flex-col justify-between gap-3 border-b border-border pb-5 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
+                Complete On-Farm Contracting &amp; Supply
+              </p>
+              <h3 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">
+                Dam Liners, Field Installation, Greenhouses &amp; Solar Pumping
+              </h3>
+              <p className="mt-1.5 max-w-2xl text-xs leading-5 text-muted-foreground sm:text-sm">
+                Beyond equipment supply, our field crews fabricate, weld, and install complete water storage and crop production infrastructure across Kenya.
+              </p>
+            </div>
+            <Link
+              to="/services"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-xs font-extrabold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              View Full Installation Portfolio <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {SPECIALIZED_INSTALLATIONS.map((item) => (
+              <div
+                key={item.title}
+                className="flex flex-col justify-between rounded-2xl border border-border bg-background/80 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
+              >
+                <div>
+                  <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary">
+                    {item.badge}
+                  </span>
+                  <h4 className="mt-3 font-heading text-base font-bold leading-snug text-foreground sm:text-lg">
+                    {item.title}
+                  </h4>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    {item.description}
+                  </p>
+                  <ul className="mt-3 space-y-1.5 border-t border-border/70 pt-3">
+                    {item.bullets.map((bullet) => (
+                      <li
+                        key={bullet}
+                        className="flex items-start gap-2 text-[11px] font-medium leading-4 text-foreground/90"
+                      >
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    openTrackedWhatsApp(
+                      `https://wa.me/254723407849?text=${encodeURIComponent(item.whatsappPrompt)}`,
+                      `specialized installation card: ${item.title}`
+                    )
+                  }
+                  className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3.5 py-2.5 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  {item.ctaLabel}
+                </button>
+              </div>
+            ))}
           </div>
         </div>
 

@@ -223,7 +223,7 @@ export default function HeroSectionVibe() {
               </h1>
 
               <p className="mt-4 max-w-xl text-sm leading-6 text-foreground/85 sm:text-base sm:leading-7">
-                From single-roll driplines and solar borehole pumps to complete{" "}
+                From single-roll driplines, <strong>HDPE dam liners</strong>, and solar borehole pumps to complete{" "}
                 <strong>¼-acre through 50+ acre farm installations</strong>.
                 We survey, design hydraulic layouts, supply genuine UV-stabilized
                 equipment, and install across all 47 counties.
@@ -233,8 +233,8 @@ export default function HeroSectionVibe() {
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold text-foreground/90">
                 {[
                   "15cm, 20cm & 30cm Driplines",
-                  "Complete Acreage Kits",
-                  "Same-Day Itemized BOQs",
+                  "HDPE Dam Liners & Welding",
+                  "Full Field Installation & BOQs",
                 ].map((point) => (
                   <span key={point} className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
