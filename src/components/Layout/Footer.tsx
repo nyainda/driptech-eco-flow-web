@@ -5,18 +5,35 @@ import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { unlockStaffPortal } from "@/components/Admin/StealthAdminGate";
 
 const footerGroups = [
-  { title: "Products", links: [
-    ["Drip irrigation", "/products/drip"], ["Sprinkler systems", "/products/sprinklers"],
-    ["Pumps & motors", "/products/pumps"], ["Irrigation kits", "/irrigation-kits"], ["View catalogue", "/products"],
+  { title: "Products & Pricing", links: [
+    ["Drip irrigation", "/products/drip"], ["HDPE dam liners", "/dam-liners-kenya"], ["Sprinkler systems", "/products/sprinklers"],
+    ["Pumps & solar", "/solar-irrigation-pumps-kenya"], ["Irrigation kits & prices", "/drip-irrigation-kit-price-kenya"], ["View full catalogue", "/products"],
   ] },
-  { title: "Support", links: [
-    ["System design", "/services#system-design"], ["Technician services", "/technician-services"],
-    ["Installation guides", "/installation-guides"], ["Technical support", "/technical-support"], ["Areas we serve", "/irrigation-areas-kenya"], ["Contact us", "/contact"],
+  { title: "Engineering & Guides", links: [
+    ["All 100+ Kenya guides", "/irrigation-guides-kenya"], ["Irrigation cost calculator", "/irrigation-cost-calculator-kenya"], ["System design & BOQ", "/services#system-design"],
+    ["Installation guides", "/installation-guides"], ["Technical support", "/technical-support"], ["Counties we serve", "/irrigation-areas-kenya"],
   ] },
   { title: "Company", links: [
-    ["About DripTech", "/about"], ["Projects", "/projects"], ["Success stories", "/success-stories"],
-    ["Blog", "/blog"], ["News", "/news"],
+    ["About DripTech", "/about"], ["Completed projects", "/projects"], ["Case studies", "/case-studies"],
+    ["Success stories", "/success-stories"], ["Blog & news", "/blog"], ["Contact us", "/contact"],
   ] },
+];
+
+const seoQuickLinks = [
+  ["Drip Irrigation Kenya", "/drip-irrigation-kenya"],
+  ["Dam Liner Prices Kenya", "/dam-liner-prices-kenya"],
+  ["1 Acre Drip Kit Cost", "/one-acre-drip-irrigation-system-kenya"],
+  ["1/8, 1/4 & 1/2 Acre Kits", "/eighth-quarter-half-acre-drip-kit-kenya"],
+  ["Tomato Drip Irrigation", "/drip-irrigation-for-tomatoes-kenya"],
+  ["Onion Drip Irrigation", "/drip-irrigation-for-onions-kenya"],
+  ["Avocado Orchard Drip", "/drip-irrigation-for-avocado-kenya"],
+  ["Pixie Orange Irrigation", "/drip-irrigation-for-citrus-pixie-oranges-kenya"],
+  ["Button Drippers Kenya", "/button-dripper-orchard-irrigation-kenya"],
+  ["Rain Gun Sprinklers", "/rain-gun-sprinkler-prices-kenya"],
+  ["Pop-Up Lawn Sprinklers", "/pop-up-lawn-sprinklers-kenya"],
+  ["Shade Nets & Greenhouses", "/shade-net-greenhouse-prices-kenya"],
+  ["HDPE Pipe Prices", "/hdpe-pipe-prices-kenya"],
+  ["Dripline Prices (1000m)", "/dripline-prices-kenya"],
 ];
 
 const Footer = () => {
@@ -79,6 +96,26 @@ const Footer = () => {
               </ul>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="border-t border-border/80 bg-background/50">
+        <div className="dt-container py-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              Popular Kenya Irrigation & Engineering Guides
+            </span>
+            <Link to="/irrigation-guides-kenya" className="text-xs font-semibold text-primary hover:underline">
+              Browse All 100+ Guides →
+            </Link>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+            {seoQuickLinks.map(([label, href]) => (
+              <Link key={href} to={href} className="transition-colors hover:text-primary hover:underline">
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 

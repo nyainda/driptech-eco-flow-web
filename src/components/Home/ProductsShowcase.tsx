@@ -89,8 +89,8 @@ const CATEGORIES = [
   { key: "accessories", label: "Accessories" },
 ];
 
-const INITIAL_SHOW = 8;
-const LOAD_MORE_COUNT = 4;
+const INITIAL_SHOW = 12;
+const LOAD_MORE_COUNT = 8;
 const SITE_ORIGIN = "https://www.dripstech.co.ke";
 
 const toAbsoluteSiteAssetUrl = (value: string | null | undefined) => {
@@ -178,10 +178,10 @@ const ProductsShowcase = ({
       try {
         const [counts, featured, ...categoryResults] = await Promise.all([
           dataService.getProductCategoryCounts(),
-          dataService.getProducts({ featured: true, limit: 4, inStock: true }),
+          dataService.getProducts({ featured: true, limit: 12 }),
           ...CATEGORIES
             .filter((cat) => cat.key !== "all")
-            .map((cat) => dataService.getProducts({ category: cat.key, limit: 4, inStock: true })),
+            .map((cat) => dataService.getProducts({ category: cat.key, limit: 20 })),
         ]);
 
         const countMap: Record<string, number> = {};

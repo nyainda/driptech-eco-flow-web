@@ -8,6 +8,7 @@ import {
   getCategoryTitleFromCategory,
 } from "@/lib/productUrl";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import { dataService } from "@/services/dataService";
 
 export interface PdfProductItem {
   id: string;
@@ -18,6 +19,7 @@ export interface PdfProductItem {
   subcategory?: string | null;
   model_number?: string | null;
   images?: string[] | null;
+  featured?: boolean | null;
   in_stock?: boolean | null;
   features?: string[] | null;
   applications?: string[] | null;
@@ -76,6 +78,20 @@ const resolveImageUrl = (rawUrl?: string | null): string => {
   return trimmed.startsWith("/") ? `${origin}${trimmed}` : `${origin}/${trimmed}`;
 };
 
+const parseJsonArray = (val: any): string[] => {
+  if (!val) return [];
+  if (Array.isArray(val)) return val.filter((x) => typeof x === "string");
+  if (typeof val === "string") {
+    try {
+      const parsed = JSON.parse(val);
+      return Array.isArray(parsed) ? parsed.filter((x) => typeof x === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
 export const generateWebQuoteNumber = (productId?: string): string => {
   const now = new Date();
   const y = now.getFullYear();
@@ -89,7 +105,7 @@ export const generateWebQuoteNumber = (productId?: string): string => {
 
 /**
  * Script injected into the print window that waits for all Cloudflare/product images
- * to finish loading (up to 3000ms max) before opening the browser Save-as-PDF dialog.
+ * to finish loading (up to 3500ms max) before opening the browser Save-as-PDF dialog.
  */
 const WAIT_FOR_IMAGES_PRINT_SCRIPT = `
 <script>
@@ -104,7 +120,7 @@ const WAIT_FOR_IMAGES_PRINT_SCRIPT = `
     var trigger = function () {
       if (done) return;
       done = true;
-      setTimeout(function () { window.print(); }, 200);
+      setTimeout(function () { window.print(); }, 250);
     };
     var remaining = pending.length;
     pending.forEach(function (img) {
@@ -115,7 +131,7 @@ const WAIT_FOR_IMAGES_PRINT_SCRIPT = `
       img.addEventListener("load", onFinish);
       img.addEventListener("error", onFinish);
     });
-    setTimeout(trigger, 3000);
+    setTimeout(trigger, 3500);
   });
 </script>`;
 
@@ -596,21 +612,53 @@ export function openInstantProductQuotePdf({
 }
 
 /**
- * Generates and opens an Executive Multi-Category A4 Product & Contracting Catalogue PDF
- * complete with Cloudflare R2 product thumbnail photos in every row.
+ * Generates and opens an Executive Multi-Category A4 Company Profile & Illustrated Master Product Catalogue PDF.
+ * Automatically fetches ALL products and ALL irrigation kits from the database so the catalogue is 100% complete.
  */
-export function openProductCataloguePdf(
-  products: PdfProductItem[],
-  categoryScopeLabel = "Complete Irrigation & Farm Equipment Catalogue",
+export async function openProductCataloguePdf(
+  initialProducts: PdfProductItem[] = [],
+  categoryScopeLabel = "Master Irrigation Equipment & Engineering Catalogue",
   alsoOpenWhatsApp = false,
-): void {
+): Promise<void> {
   const issueDate = new Date();
   const catalogueRef = `DT-CAT-${issueDate.getFullYear()}-${String(issueDate.getMonth() + 1).padStart(2, "0")}`;
   const fallbackLogo = getLogoUrl({ forPrint: true });
 
+  // Open window synchronously so popup blockers never block it
+  const printWin = window.open("", "_blank");
+  if (printWin) {
+    printWin.document.open();
+    printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Preparing ${escapeHtml(COMPANY.name)} Catalogue...</title></head><body style="font-family:system-ui,sans-serif;background:#0d281e;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;max-width:440px;padding:24px;"><div style="font-size:18px;font-weight:800;color:#fde68a;margin-bottom:8px;">Compiling Full Illustrated Product Catalogue...</div><div style="font-size:13px;color:#cbd5e1;">Loading all products, Cloudflare images, and irrigation kits for ${escapeHtml(COMPANY.name)}.</div></div></body></html>`);
+    printWin.document.close();
+  }
+
+  // Fetch the ENTIRE product catalogue and irrigation kits from dataService so nothing is missing
+  let fullProducts: PdfProductItem[] = [...initialProducts];
+  let kitsList: any[] = [];
+  try {
+    const [fetchedProducts, fetchedKits] = await Promise.all([
+      dataService.getProducts({ limit: 500 }),
+      dataService.getIrrigationKits().catch(() => []),
+    ]);
+    if (Array.isArray(fetchedProducts) && fetchedProducts.length > fullProducts.length) {
+      fullProducts = fetchedProducts;
+    } else if (Array.isArray(fetchedProducts) && fetchedProducts.length > 0) {
+      const map = new Map<string, PdfProductItem>();
+      [...fullProducts, ...fetchedProducts].forEach((p: any) => {
+        if (p && p.id) map.set(p.id, p);
+      });
+      fullProducts = Array.from(map.values());
+    }
+    if (Array.isArray(fetchedKits)) {
+      kitsList = fetchedKits;
+    }
+  } catch (err) {
+    console.warn("Using currently loaded products for PDF catalogue:", err);
+  }
+
   // Group products by category
   const grouped = new Map<string, PdfProductItem[]>();
-  for (const product of products) {
+  for (const product of fullProducts) {
     const label = getCategoryTitleFromCategory(product.category || "accessories");
     const list = grouped.get(label) || [];
     list.push(product);
@@ -620,8 +668,8 @@ export function openProductCataloguePdf(
   const categoryEntries = Array.from(grouped.entries());
 
   const whatsappCatalogMsg = [
-    `Hi DripTech EcoFlow! I have downloaded your illustrated *${categoryScopeLabel}* (Ref: *${catalogueRef}* with ${products.length} products).`,
-    `Please share any current bulk discounts or assist me with a custom quotation for my farm.`,
+    `Hi DripTech EcoFlow! I have downloaded your *${categoryScopeLabel}* (Ref: *${catalogueRef}* with ${fullProducts.length} products & ${kitsList.length} complete kits).`,
+    `Please share current bulk discounts or assist me with a custom BOQ quotation for my farm.`,
   ].join("\n");
   const whatsappUrl = `https://wa.me/254723407849?text=${encodeURIComponent(whatsappCatalogMsg)}`;
 
@@ -638,13 +686,69 @@ export function openProductCataloguePdf(
       const minPrice = prices.length ? `From KES ${money(Math.min(...prices))}` : "Price on Request";
       return `
         <tr>
-          <td style="text-align:center;font-weight:700;color:#475569;">${String(idx + 1).padStart(2, "0")}</td>
+          <td style="text-align:center;font-weight:800;color:#1b4332;">SEC-${String(idx + 1).padStart(2, "0")}</td>
           <td><strong>${escapeHtml(catName)}</strong></td>
-          <td style="text-align:center;font-weight:700;">${items.length}</td>
-          <td style="text-align:right;font-weight:700;color:#1b4332;">${minPrice}</td>
+          <td style="text-align:center;font-weight:700;">${items.length} Items</td>
+          <td style="text-align:right;font-weight:800;color:#1b4332;">${minPrice}</td>
         </tr>`;
     })
     .join("");
+
+  const kitsSectionHtml =
+    kitsList.length > 0
+      ? `
+        <section class="cat-section">
+          <div class="cat-banner" style="background:linear-gradient(90deg,#12372a,#1b4332);color:#fff;border-color:#c59b27;">
+            <span>COMPLETE ACREAGE IRRIGATION KITS (READY-TO-INSTALL FARM PACKAGES)</span>
+            <span style="color:#fde68a;">${kitsList.length} Complete Packages</span>
+          </div>
+          <table class="cat-table">
+            <thead>
+              <tr>
+                <th style="width:44px;text-align:center;">Kit</th>
+                <th style="width:74px;text-align:center;">Photo</th>
+                <th>Kit Name, Target Acreage &amp; Included Components</th>
+                <th style="width:90px;text-align:center;">Coverage</th>
+                <th style="width:125px;text-align:right;">Package Price (KES)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${kitsList
+                .map((kit: any, idx: number) => {
+                  const imgs = parseJsonArray(kit.images);
+                  const imgUrl = resolveImageUrl(imgs[0]) || fallbackLogo;
+                  const isFallback = !imgs[0];
+                  const coverage = kit.coverage_area ? `${kit.coverage_area} Acre(s)` : "Custom Plot";
+                  const priceStr =
+                    typeof kit.price === "number" && kit.price > 0
+                      ? `KES ${money(kit.price)}`
+                      : "On Request";
+                  return `
+                    <tr>
+                      <td style="text-align:center;font-weight:800;color:#1b4332;vertical-align:middle;">K-${String(idx + 1).padStart(2, "0")}</td>
+                      <td style="text-align:center;vertical-align:middle;padding:6px;">
+                        <div class="cat-thumb">
+                          <img
+                            src="${escapeHtml(imgUrl)}"
+                            alt="${escapeHtml(kit.name)}"
+                            style="${isFallback ? "object-fit:contain;padding:8px;" : "object-fit:cover;"}"
+                            onerror="this.onerror=null;this.src='${fallbackLogo}';this.style.objectFit='contain';this.style.padding='8px';"
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div style="font-weight:800;color:#0f172a;font-size:11.5px;">${escapeHtml(kit.name)}</div>
+                        ${kit.description ? `<div style="color:#475569;font-size:10px;margin-top:2px;">${escapeHtml(kit.description)}</div>` : ""}
+                      </td>
+                      <td style="text-align:center;font-weight:700;font-size:10px;color:#1b4332;vertical-align:middle;">${escapeHtml(coverage)}</td>
+                      <td style="text-align:right;font-weight:800;color:#0f172a;white-space:nowrap;vertical-align:middle;">${escapeHtml(priceStr)}</td>
+                    </tr>`;
+                })
+                .join("")}
+            </tbody>
+          </table>
+        </section>`
+      : "";
 
   const categorySectionsHtml = categoryEntries
     .map(([catName, items], catIdx) => {
@@ -660,10 +764,14 @@ export function openProductCataloguePdf(
               : "On Request";
           const variantSummary = hasVariants
             ? `Options (${item.variants!.length}): ${item.variants!
-                .slice(0, 4)
+                .slice(0, 5)
                 .map((v) => `${v.name} (KES ${v.price.toLocaleString()})`)
                 .join(" · ")}`
             : "";
+          const featuresLine =
+            item.features && item.features.length > 0
+              ? `Key Specs: ${item.features.filter(Boolean).slice(0, 3).join(" • ")}`
+              : "";
 
           const imgUrl = resolveImageUrl(item.images?.[0]) || fallbackLogo;
           const isFallback = !item.images?.[0];
@@ -683,7 +791,8 @@ export function openProductCataloguePdf(
               </td>
               <td>
                 <div style="font-weight:800;color:#0f172a;font-size:11.5px;">${escapeHtml(item.name)}</div>
-                ${item.description ? `<div style="color:#475569;font-size:10px;margin-top:2px;">${escapeHtml(item.description.slice(0, 135))}${item.description.length > 135 ? "..." : ""}</div>` : ""}
+                ${item.description ? `<div style="color:#475569;font-size:10px;margin-top:2px;">${escapeHtml(item.description.slice(0, 160))}${item.description.length > 160 ? "..." : ""}</div>` : ""}
+                ${featuresLine ? `<div style="color:#0f172a;font-size:9.5px;font-weight:600;margin-top:2px;">${escapeHtml(featuresLine)}</div>` : ""}
                 ${variantSummary ? `<div style="color:#1b4332;font-size:9.5px;font-weight:700;margin-top:3px;">${escapeHtml(variantSummary)}</div>` : ""}
               </td>
               <td style="text-align:center;font-family:monospace;font-size:10px;color:#475569;vertical-align:middle;">${escapeHtml(item.model_number || item.id.slice(0, 8).toUpperCase())}</td>
@@ -705,10 +814,10 @@ export function openProductCataloguePdf(
             <thead>
               <tr>
                 <th style="width:42px;text-align:center;">Code</th>
-                <th style="width:68px;text-align:center;">Photo</th>
-                <th>Product Name, Specifications &amp; Available Options</th>
+                <th style="width:72px;text-align:center;">Photo</th>
+                <th>Product Name, Technical Specifications &amp; Available Options</th>
                 <th style="width:76px;text-align:center;">Model / SKU</th>
-                <th style="width:72px;text-align:center;">Stock</th>
+                <th style="width:70px;text-align:center;">Stock</th>
                 <th style="width:118px;text-align:right;">Unit Price (KES)</th>
               </tr>
             </thead>
@@ -730,6 +839,7 @@ export function openProductCataloguePdf(
       --primary-mid: #1b4332;
       --primary-soft: #eef5f0;
       --gold: #c59b27;
+      --gold-soft: #fbf7eb;
       --ink: #0f172a;
       --muted: #475569;
       --line: #cbd5e1;
@@ -782,10 +892,10 @@ export function openProductCataloguePdf(
       overflow: hidden;
     }
     .masthead {
-      background: linear-gradient(135deg, #0d281e 0%, #1b4332 65%, #2d6a4f 100%);
+      background: linear-gradient(135deg, #0d281e 0%, #1b4332 62%, #2d6a4f 100%);
       color: #fff;
-      padding: 26px 30px 22px;
-      border-bottom: 4px solid var(--gold);
+      padding: 28px 30px 24px;
+      border-bottom: 5px solid var(--gold);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -793,8 +903,8 @@ export function openProductCataloguePdf(
     }
     .brand { display: flex; gap: 14px; align-items: flex-start; }
     .logo-box {
-      width: 54px;
-      height: 54px;
+      width: 58px;
+      height: 58px;
       border-radius: 12px;
       background: #fff;
       padding: 7px;
@@ -802,11 +912,12 @@ export function openProductCataloguePdf(
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
     }
     .logo-box img { width: 100%; height: 100%; object-fit: contain; }
-    .brand-title { font-size: 20px; font-weight: 800; color: #fff; }
-    .brand-sub { font-size: 11px; color: #a7f3d0; font-weight: 600; margin-top: 2px; }
-    .brand-meta { font-size: 10px; color: #cbd5e1; margin-top: 6px; line-height: 1.5; }
+    .brand-title { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+    .brand-sub { font-size: 11.5px; color: #a7f3d0; font-weight: 700; margin-top: 2px; }
+    .brand-meta { font-size: 10px; color: #cbd5e1; margin-top: 6px; line-height: 1.55; }
     .doc-box { text-align: right; flex-shrink: 0; }
     .doc-eyebrow {
       display: inline-block;
@@ -820,36 +931,84 @@ export function openProductCataloguePdf(
       padding: 3px 9px;
       border-radius: 999px;
     }
-    .doc-type { font-size: 20px; font-weight: 900; letter-spacing: 0.05em; color: #fff; margin-top: 6px; }
+    .doc-type { font-size: 21px; font-weight: 900; letter-spacing: 0.04em; color: #fff; margin-top: 6px; }
     .doc-ref {
       margin-top: 8px;
-      background: rgba(15, 23, 42, 0.35);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(15, 23, 42, 0.38);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 8px;
-      padding: 7px 12px;
+      padding: 8px 12px;
       font-size: 10px;
       text-align: left;
-      min-width: 210px;
+      min-width: 220px;
     }
     .doc-ref-row { display: flex; justify-content: space-between; gap: 12px; padding: 1.5px 0; }
     .doc-ref-row span:first-child { color: #cbd5e1; }
     .doc-ref-row strong { color: #fff; }
     .body-wrap { padding: 22px 30px 28px; }
-    .services-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+
+    /* Executive Company Profile Section */
+    .profile-card {
+      border: 1.5px solid var(--primary);
+      border-radius: 10px;
+      overflow: hidden;
       margin-bottom: 18px;
+      background: #fff;
     }
-    .service-pill {
+    .profile-header {
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile-header h2 {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fde68a;
+    }
+    .profile-header span {
+      font-size: 10px;
+      font-weight: 700;
+      color: #a7f3d0;
+    }
+    .profile-body {
+      padding: 14px 16px;
+    }
+    .profile-lead {
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .divisions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .division-box {
       border: 1px solid var(--line);
-      border-top: 3px solid var(--primary);
+      border-left: 3.5px solid var(--gold);
       background: #f8fafc;
       border-radius: 6px;
       padding: 8px 10px;
     }
-    .service-pill strong { display: block; font-size: 10.5px; color: var(--primary); }
-    .service-pill span { font-size: 9.5px; color: var(--muted); }
+    .division-box strong {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+    .division-box p {
+      font-size: 9.5px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
     .cat-section { margin-top: 20px; }
     .cat-banner {
       background: var(--primary-soft);
@@ -884,8 +1043,8 @@ export function openProductCataloguePdf(
     .cat-table tbody tr { break-inside: avoid; page-break-inside: avoid; }
     .cat-table tbody tr:nth-child(even) td { background: #f8fafc; }
     .cat-thumb {
-      width: 54px;
-      height: 46px;
+      width: 60px;
+      height: 50px;
       margin: 0 auto;
       border-radius: 6px;
       border: 1px solid var(--line);
@@ -900,17 +1059,33 @@ export function openProductCataloguePdf(
       height: 100%;
       display: block;
     }
-    .footer-cta {
+    .ordering-grid {
       margin-top: 22px;
-      border: 1.5px solid var(--primary);
-      background: var(--primary-soft);
-      border-radius: 8px;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
       break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .order-box {
+      border: 1.5px solid var(--primary);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: var(--primary-soft);
+    }
+    .order-box h3 {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .order-box p {
+      font-size: 10px;
+      color: var(--ink);
+      line-height: 1.5;
+      white-space: pre-line;
     }
     @page { size: A4 portrait; margin: 10mm; }
     @media print {
@@ -923,8 +1098,8 @@ export function openProductCataloguePdf(
 <body>
   <div class="toolbar no-print">
     <div>
-      <div style="font-size:13px;font-weight:700;">${escapeHtml(COMPANY.name)} — Illustrated PDF Product Catalogue (${escapeHtml(catalogueRef)})</div>
-      <div style="font-size:11px;color:#94a3b8;">Click "Save / Download PDF" (choose "Save as PDF" in your print destination) or request a custom BOQ on WhatsApp.</div>
+      <div style="font-size:13px;font-weight:700;">${escapeHtml(COMPANY.name)} — Master Illustrated Product Catalogue (${escapeHtml(catalogueRef)})</div>
+      <div style="font-size:11px;color:#94a3b8;">Showing ${fullProducts.length} Products &amp; ${kitsList.length} Complete Farm Kits. Click "Save / Download PDF" or send an inquiry to WhatsApp.</div>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <button class="btn btn-pdf" onclick="window.print()">🖨️ Save / Download PDF Catalogue</button>
@@ -949,67 +1124,92 @@ export function openProductCataloguePdf(
       </div>
 
       <div class="doc-box">
-        <span class="doc-eyebrow">Illustrated Price List &amp; Guide</span>
-        <div class="doc-type">CATALOGUE</div>
+        <span class="doc-eyebrow">Corporate Profile &amp; Price List</span>
+        <div class="doc-type">MASTER CATALOGUE</div>
         <div class="doc-ref">
           <div class="doc-ref-row"><span>Catalogue Ref:</span><strong>${escapeHtml(catalogueRef)}</strong></div>
-          <div class="doc-ref-row"><span>Date Generated:</span><strong>${escapeHtml(formatDate(issueDate))}</strong></div>
-          <div class="doc-ref-row"><span>Listed Products:</span><strong>${products.length} Items</strong></div>
-          <div class="doc-ref-row"><span>Currency:</span><strong>KES (Kenya Shillings)</strong></div>
+          <div class="doc-ref-row"><span>Date Issued:</span><strong>${escapeHtml(formatDate(issueDate))}</strong></div>
+          <div class="doc-ref-row"><span>Total Catalogue:</span><strong>${fullProducts.length} Products + ${kitsList.length} Kits</strong></div>
+          <div class="doc-ref-row"><span>KRA PIN:</span><strong>${escapeHtml(COMPANY.kraPin)}</strong></div>
         </div>
       </div>
     </header>
 
     <div class="body-wrap">
-      <div class="services-strip">
-        <div class="service-pill">
-          <strong>Drip &amp; Sprinkler Kits</strong>
-          <span>¼ Acre to 50+ Acre farm packages</span>
+      <!-- Executive Company Profile: Who We Are & What We Do -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <h2>About ${escapeHtml(COMPANY.name)} — What We Do as a Company</h2>
+          <span>Serving All 47 Counties in Kenya</span>
         </div>
-        <div class="service-pill">
-          <strong>HDPE Dam Liners</strong>
-          <span>0.5mm, 0.75mm &amp; 1.0mm + Welding</span>
-        </div>
-        <div class="service-pill">
-          <strong>Greenhouses &amp; Nets</strong>
-          <span>Steel/Timber structures &amp; misting</span>
-        </div>
-        <div class="service-pill">
-          <strong>Solar &amp; Field Install</strong>
-          <span>Pump sizing &amp; 47-county dispatch</span>
+        <div class="profile-body">
+          <p class="profile-lead">
+            <strong>${escapeHtml(COMPANY.name)}</strong> is Kenya's trusted irrigation engineering, water harvesting, and agricultural infrastructure partner. We combine <strong>agronomic &amp; hydraulic system design</strong>, <strong>direct supply of genuine UV-stabilized equipment</strong>, and <strong>certified on-farm installation</strong> for smallholder farmers, commercial estates, greenhouses, NGOs, and government water projects.
+          </p>
+          <div class="divisions-grid">
+            <div class="division-box">
+              <strong>1. Drip &amp; Sprinkler Irrigation</strong>
+              <p>Complete ¼-acre to 50+ acre systems, 15cm/20cm/30cm driplines, rain guns, pop-up sprinklers &amp; HDPE/PVC mainlines.</p>
+            </div>
+            <div class="division-box">
+              <strong>2. HDPE Dam Liners &amp; Welding</strong>
+              <p>Supply and on-site hot-wedge welding of 0.5mm, 0.75mm &amp; 1.0mm virgin UV-stabilized geomembrane dam liners.</p>
+            </div>
+            <div class="division-box">
+              <strong>3. Greenhouses &amp; Shade Houses</strong>
+              <p>Galvanized steel &amp; timber greenhouses (8×15m to multi-span), UV polythene, insect/shade nets &amp; misting setups.</p>
+            </div>
+            <div class="division-box">
+              <strong>4. Solar Borehole &amp; Water Pumping</strong>
+              <p>Total Dynamic Head (TDH) pump sizing, submersible/surface solar pumps, PV arrays, controllers &amp; raised tanks.</p>
+            </div>
+            <div class="division-box">
+              <strong>5. Filtration, Fertigation &amp; Valves</strong>
+              <p>Screen &amp; disc filters, Venturi fertilizer injectors, pressure regulators, air release valves &amp; smart timers.</p>
+            </div>
+            <div class="division-box">
+              <strong>6. Survey, BOQ Design &amp; Installation</strong>
+              <p>On-farm GPS site surveys, bank/LPO-ready Bills of Quantities (BOQ), trenching, commissioning &amp; staff training.</p>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Master Category Index -->
       <section>
         <div class="cat-banner">
-          <span>EXECUTIVE CATEGORY INDEX — ${escapeHtml(categoryScopeLabel.toUpperCase())}</span>
-          <span>${categoryEntries.length} Equipment Categories</span>
+          <span>EXECUTIVE EQUIPMENT DIRECTORY — ${escapeHtml(categoryScopeLabel.toUpperCase())}</span>
+          <span>${categoryEntries.length} Categories · ${fullProducts.length} Products</span>
         </div>
         <table class="cat-table">
           <thead>
             <tr>
-              <th style="width:48px;text-align:center;">Sec</th>
-              <th>Equipment Category</th>
-              <th style="width:90px;text-align:center;">Items Listed</th>
-              <th style="width:150px;text-align:right;">Starting Price Range</th>
+              <th style="width:64px;text-align:center;">Section</th>
+              <th>Equipment Category / Division</th>
+              <th style="width:110px;text-align:center;">Products Listed</th>
+              <th style="width:160px;text-align:right;">Starting Price Range</th>
             </tr>
           </thead>
           <tbody>${summaryRows}</tbody>
         </table>
       </section>
 
+      ${kitsSectionHtml}
+
       ${categorySectionsHtml}
 
-      <div class="footer-cta">
-        <div>
-          <div style="font-size:12px;font-weight:800;color:var(--primary);">Need an Official Multi-Item BOQ, LPO Proforma, or On-Farm Installation?</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">
-            Call/WhatsApp <strong>${escapeHtml(COMPANY.phone)}</strong> or email <strong>${escapeHtml(COMPANY.email)}</strong> with your item codes or farm acreage.
-          </div>
+      <div class="ordering-grid">
+        <div class="order-box">
+          <h3>How to Order, Request a Custom BOQ, or Book Installation</h3>
+          <p>1. <strong>Instant Order / Quote:</strong> Share the Item Code or Product Name via WhatsApp to <strong>${escapeHtml(COMPANY.phone)}</strong> or email <strong>${escapeHtml(COMPANY.email)}</strong>.
+2. <strong>Corporate &amp; NGO Procurement:</strong> We issue official Proforma Invoices, itemized BOQs, and accept LPOs, Bank Transfers, and M-Pesa.
+3. <strong>Nationwide Dispatch &amp; Field Installation:</strong> Same-day/next-day dispatch from our Nairobi Industrial Area hub to all 47 counties.</p>
         </div>
-        <div style="text-align:right;font-size:10px;font-weight:700;color:var(--primary);">
-          ${escapeHtml(COMPANY.website)}<br>
-          Ref: ${escapeHtml(catalogueRef)}
+        <div class="order-box" style="background:var(--gold-soft);border-color:var(--gold);">
+          <h3 style="color:#92400e;">Official Payment &amp; Contact Desk</h3>
+          <p>${escapeHtml(COMPANY.defaultPaymentDetails)}
+Tel: <strong>${escapeHtml(COMPANY.phone)}</strong>
+Web: <strong>${escapeHtml(COMPANY.website)}</strong></p>
         </div>
       </div>
     </div>
@@ -1018,7 +1218,6 @@ export function openProductCataloguePdf(
 </body>
 </html>`;
 
-  const printWin = window.open("", "_blank");
   if (printWin) {
     printWin.document.open();
     printWin.document.write(html);

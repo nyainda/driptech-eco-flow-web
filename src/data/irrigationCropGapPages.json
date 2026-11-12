@@ -648,5 +648,520 @@
         "a": "Ask each supplier to quote the same bed layout, pressure rating, filter, valves, fittings and delivery, so the prices are comparable."
       }
     ]
+  },
+  {
+    "slug": "drip-irrigation-for-sukuma-wiki-spinach-kenya",
+    "title": "Sukuma Wiki & Spinach Drip Irrigation Kenya | DripTech",
+    "description": "Plan drip irrigation for sukuma wiki (kale), spinach and African leafy vegetables in Kenya: bed spacing, emitter spacing, filtration and kits.",
+    "h1": "Drip irrigation for sukuma wiki (kale) and spinach in Kenya",
+    "intro": "Leafy greens such as sukuma wiki (collard/kale), spinach, managu (black nightshade) and terere are harvested continuously for local markets and supermarkets in Kenya. Drip irrigation keeps leaves dry, reduces fungal leaf-spot pressure and supports rapid leaf regrowth after every picking.",
+    "image": "/seed-products/field_drip.jpg",
+    "sections": [
+      {
+        "heading": "Bed layout and dripline spacing for leafy vegetables",
+        "table": {
+          "caption": "Planning ranges for sukuma wiki, spinach and indigenous greens",
+          "headers": [
+            "Crop",
+            "Typical bed width",
+            "Drip lines per bed",
+            "Common emitter spacing"
+          ],
+          "rows": [
+            [
+              "Sukuma wiki (Kale)",
+              "1.0 – 1.2 m beds",
+              "2 lines per bed",
+              "20 cm or 30 cm emitter spacing"
+            ],
+            [
+              "Spinach (Fordhook / Swiss chard)",
+              "1.0 – 1.2 m beds",
+              "2 to 3 lines per bed",
+              "15 cm or 20 cm emitter spacing"
+            ],
+            [
+              "Managu, Terere & Saga",
+              "1.0 – 1.2 m raised beds",
+              "3 lines per bed",
+              "15 cm or 20 cm emitter spacing"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Managing continuous harvest and soluble top-dressing",
+        "bullets": [
+          "Divide the plot into staggered planting blocks with individual zone ball valves",
+          "Apply soluble nitrogen/calcium top-dressing through a Venturi fertigation injector after leaf harvests",
+          "Clean the screen or disc filter weekly and flush lateral ends to maintain even moisture along the bed"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "1/8, 1/4 & 1/2 acre drip kits",
+        "href": "/eighth-quarter-half-acre-drip-kit-kenya"
+      },
+      {
+        "label": "Drip irrigation for cabbage in Kenya",
+        "href": "/drip-irrigation-for-cabbage-kenya"
+      },
+      {
+        "label": "Compare drip irrigation kit prices",
+        "href": "/drip-irrigation-kit-price-kenya"
+      },
+      {
+        "label": "Request a vegetable farm quotation",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why is drip preferred over overhead sprinklers for sukuma wiki and spinach?",
+        "a": "Drip applies water directly to the soil root zone without wetting the foliage, which helps reduce leaf diseases and allows harvesting while other blocks are being irrigated."
+      }
+    ]
+  },
+  {
+    "slug": "drip-irrigation-for-chilli-peppers-kenya",
+    "title": "Chilli & Habanero Pepper Drip Irrigation Kenya | DripTech",
+    "description": "Design drip irrigation and fertigation for African bird's eye, Cayennes, bullet and Habanero chilli peppers in Kenya with DripTech Eco Flow.",
+    "h1": "Drip irrigation for chilli and Habanero peppers in Kenya",
+    "intro": "Export and local-market chilli varieties—including bullet chillies, Cayenne, African bird's eye and Habanero—flower and fruit over several months. Uniform root-zone moisture prevents blossom drop and fruit splitting while supporting strict export residue and hygiene standards.",
+    "image": "/seed-products/plant_drip.jpg",
+    "sections": [
+      {
+        "heading": "Dripline layout for open-field and greenhouse chillies",
+        "bullets": [
+          "Raised beds 1.0 m to 1.2 m wide with 1 or 2 drip lines per bed depending on single-row or double-row planting",
+          "20 cm or 30 cm emitter spacing matched to plant spacing and soil texture",
+          "Black-and-silver plastic mulch is frequently laid over the drip lines to conserve moisture and suppress weeds",
+          "Venturi fertigation allows balanced potassium and calcium feeding during heavy flowering and pod set"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Capsicum irrigation guide in Kenya",
+        "href": "/drip-irrigation-for-capsicum-kenya"
+      },
+      {
+        "label": "Tomato drip irrigation in Kenya",
+        "href": "/drip-irrigation-for-tomatoes-kenya"
+      },
+      {
+        "label": "Venturi fertilizer injectors",
+        "href": "/venturi-fertilizer-injector-kenya"
+      },
+      {
+        "label": "Get a chilli farm irrigation quote",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What causes blossom drop in irrigated chilli crops?",
+        "a": "Sudden moisture stress, waterlogging or extreme heat during flowering can trigger flower drop. Consistent, scheduled drip irrigation helps keep root-zone moisture steady."
+      }
+    ]
+  },
+  {
+    "slug": "drip-irrigation-for-bananas-plantains-kenya",
+    "title": "Banana & Plantain Orchard Irrigation Kenya | DripTech",
+    "description": "Plan tissue-culture banana and plantain irrigation in Kenya using dual driplines, button drippers or under-canopy micro-sprinklers.",
+    "h1": "Banana and plantain orchard irrigation systems in Kenya",
+    "intro": "Tissue-culture bananas have high year-round water and potassium demands due to their broad leaf area and shallow fibrous root mat. Well-designed drip or under-tree micro-sprinkler systems support heavier bunch weights and predictable harvest timing.",
+    "image": "/seed-products/plant_drip.jpg",
+    "sections": [
+      {
+        "heading": "Double dripline vs button drippers vs micro-sprinklers for bananas",
+        "table": {
+          "caption": "Comparing banana irrigation methods in Kenya",
+          "headers": [
+            "System option",
+            "Layout around banana stools",
+            "Advantages & considerations"
+          ],
+          "rows": [
+            [
+              "Dual integral driplines",
+              "Two 16mm lines laid on either side of the banana row",
+              "Wets a continuous strip along the mat; popular in commercial blocks"
+            ],
+            [
+              "Heavy-duty button drippers",
+              "2–4 PC drippers (4 L/h or 8 L/h) on blind PE pipe per stool",
+              "Flexible placement as suckers and daughter plants shift position"
+            ],
+            [
+              "Under-canopy micro-sprinklers",
+              "One micro-sprinkler between stools wetting a 2–3 m circle",
+              "Wide shallow root coverage; requires higher pump flow and filtration"
+            ]
+          ]
+        }
+      }
+    ],
+    "links": [
+      {
+        "label": "Button drippers & orchard irrigation",
+        "href": "/button-dripper-orchard-irrigation-kenya"
+      },
+      {
+        "label": "Fertigation systems in Kenya",
+        "href": "/fertigation-systems-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps in Kenya",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Request a banana orchard BOQ",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why do commercial banana orchards often use two drip lines per row?",
+        "a": "Banana roots spread wide around the mother stem and follower suckers. Two parallel drip lines wet both sides of the stool evenly."
+      }
+    ]
+  },
+  {
+    "slug": "drip-irrigation-for-citrus-pixie-oranges-kenya",
+    "title": "Pixie Orange & Citrus Drip Irrigation Kenya | DripTech",
+    "description": "Design button dripper and micro-sprinkler irrigation for Pixie oranges, tangerines, lemons and Washington navels in Makueni, Machakos and Kenya.",
+    "h1": "Pixie orange, lemon and citrus orchard irrigation in Kenya",
+    "intro": "Pixie oranges, tangerines, Meyer lemons and sweet oranges thrive in warm semi-arid counties such as Makueni, Machakos, Kitui, Kajiado and coastal Kenya when supported by reliable button-dripper or micro-sprinkler irrigation.",
+    "image": "/seed-products/plant_drip.jpg",
+    "sections": [
+      {
+        "heading": "Designing an expandable orchard system for Pixie oranges",
+        "bullets": [
+          "Lay 16 mm or 20 mm UV-stabilized blind HDPE lateral pipe along each tree row (typically spaced 4 m × 5 m or 5 m × 5 m)",
+          "Start young grafted seedlings with 2 × 4 L/h or 8 L/h button drippers positioned near the root zone",
+          "Add a 3rd and 4th dripper or a 16 mm drip ring around the canopy edge in years 3 to 5 so water stays away from the trunk collar",
+          "Pair with a lined water pan or solar borehole pump and 120-mesh disc filtration"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Button drippers for orchards",
+        "href": "/button-dripper-orchard-irrigation-kenya"
+      },
+      {
+        "label": "Irrigation in Kitui, Makueni & Kibwezi",
+        "href": "/irrigation-systems-kitui-makueni-kibwezi"
+      },
+      {
+        "label": "HDPE dam liners for orchard water pans",
+        "href": "/dam-liners-kenya"
+      },
+      {
+        "label": "Get a citrus orchard irrigation quote",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why should drippers be moved slightly away from the citrus trunk as the tree grows?",
+        "a": "Keeping the trunk collar dry reduces the risk of collar rot (Phytophthora) while placing water where active feeder roots are expanding under the canopy edge."
+      }
+    ]
+  },
+  {
+    "slug": "drip-irrigation-for-mango-orchards-kenya",
+    "title": "Mango Orchard Drip Irrigation Systems Kenya | DripTech",
+    "description": "Plan button dripper and micro-sprinkler irrigation for Apple and Tommy Atkins mango orchards in Kenya to improve fruit size and dry-season establishment.",
+    "h1": "Mango orchard irrigation systems in Kenya",
+    "intro": "Supplemental irrigation during fruit set and cell expansion helps Kenyan mango growers reduce premature fruit drop and harvest uniform export-grade Apple, Ngowe, Kent and Tommy Atkins mangoes.",
+    "image": "/seed-products/plant_drip.jpg",
+    "sections": [
+      {
+        "heading": "Controlled irrigation scheduling for mango flowering and fruiting",
+        "paragraphs": [
+          "Mango trees benefit from a controlled dry rest period to encourage uniform floral induction, followed by steady root-zone irrigation once flowering and pea-size fruit set are underway.",
+          "Using zone control valves and button drippers on blind 16 mm or 20 mm HDPE pipe lets orchard managers control moisture block by block according to variety and flowering stage."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Button dripper orchard systems",
+        "href": "/button-dripper-orchard-irrigation-kenya"
+      },
+      {
+        "label": "Pixie orange & citrus irrigation",
+        "href": "/drip-irrigation-for-citrus-pixie-oranges-kenya"
+      },
+      {
+        "label": "Avocado orchard irrigation guide",
+        "href": "/drip-irrigation-for-avocado-kenya"
+      },
+      {
+        "label": "Request a mango orchard quote",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Should mango trees be irrigated heavily all year round?",
+        "a": "Young mango trees need regular moisture for establishment, while bearing orchards use controlled dry stress before flowering followed by regular watering during fruit development."
+      }
+    ]
+  },
+  {
+    "slug": "drip-irrigation-for-papaya-pawpaw-kenya",
+    "title": "Papaya (Pawpaw) Drip Irrigation Guide Kenya | DripTech",
+    "description": "Design well-drained mounded drip irrigation for Solo Sunrise, Malkia and Red Royale papaya (pawpaw) orchards in Kenya with DripTech.",
+    "h1": "Papaya (pawpaw) drip irrigation layout and equipment in Kenya",
+    "intro": "Hybrid papaya (pawpaw) varieties produce fruit rapidly and continuously, requiring steady moisture and nutrition without ever sitting in waterlogged soil.",
+    "image": "/seed-products/plant_drip.jpg",
+    "sections": [
+      {
+        "heading": "Preventing papaya root rot while maintaining steady moisture",
+        "bullets": [
+          "Plant papaya on raised beds or well-drained mounds so rain and irrigation water never pond around the stem base",
+          "Use two inline driplines (one on each side of the mound) or 2 to 4 pressure-compensating button drippers positioned away from the stem",
+          "Irrigate in shorter, more frequent cycles on sandy-loam soils rather than heavy flooding",
+          "Include a Venturi injector for regular boron, potassium and calcium fertigation to support sweet, firm fruit"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Button dripper orchard guide",
+        "href": "/button-dripper-orchard-irrigation-kenya"
+      },
+      {
+        "label": "Venturi fertilizer injectors",
+        "href": "/venturi-fertilizer-injector-kenya"
+      },
+      {
+        "label": "Watermelon drip irrigation guide",
+        "href": "/drip-irrigation-for-watermelon-kenya"
+      },
+      {
+        "label": "Contact DripTech for pawpaw layouts",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why is drainage so critical when irrigating pawpaw?",
+        "a": "Papaya roots are highly sensitive to oxygen starvation and Pythium/Phytophthora root rot if water pools around the collar for even 24–48 hours."
+      }
+    ]
+  },
+  {
+    "slug": "drip-irrigation-for-courgette-cucumber-kenya",
+    "title": "Courgette, Cucumber & Butternut Irrigation Kenya | DripTech",
+    "description": "Plan drip irrigation for courgette (zucchini), greenhouse cucumber and butternut squash in Kenya: row spacing, emitters and fertigation.",
+    "h1": "Drip irrigation for courgette, cucumber and butternut in Kenya",
+    "intro": "Fast-maturing cucurbits—including courgette (zucchini), slicing and English cucumbers, and butternut squash—rely on drip irrigation to keep foliage dry against powdery and downy mildew while supplying steady water during rapid fruit sizing.",
+    "image": "/seed-products/field_drip.jpg",
+    "sections": [
+      {
+        "heading": "Layout differences between courgette, cucumber and butternut",
+        "table": {
+          "caption": "Typical cucurbit drip layout ranges in Kenya",
+          "headers": [
+            "Crop",
+            "Common growing setup",
+            "Typical dripline arrangement"
+          ],
+          "rows": [
+            [
+              "Courgette (Zucchini)",
+              "Open-field raised beds (bush habit)",
+              "1 or 2 drip lines per bed, 20–30 cm emitter spacing"
+            ],
+            [
+              "Greenhouse Cucumber",
+              "Trellised vertical rows or grow bags",
+              "1 drip line per row (20 cm spacing) or PC button drippers"
+            ],
+            [
+              "Butternut Squash",
+              "Wide creeping beds (1.5–2.0 m spacing)",
+              "1 drip line per planted row with 30 cm emitter spacing"
+            ]
+          ]
+        }
+      }
+    ],
+    "links": [
+      {
+        "label": "Watermelon drip irrigation in Kenya",
+        "href": "/drip-irrigation-for-watermelon-kenya"
+      },
+      {
+        "label": "Greenhouse drip irrigation systems",
+        "href": "/greenhouse-drip-irrigation-kenya"
+      },
+      {
+        "label": "Compare drip irrigation kit prices",
+        "href": "/drip-irrigation-kit-price-kenya"
+      },
+      {
+        "label": "Request a cucurbit irrigation quote",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why do courgettes and cucumbers sometimes develop narrow or misshapen fruit ends?",
+        "a": "Irregular watering and calcium/potassium imbalances during rapid fruit elongation are common causes, along with incomplete pollination in open-pollinated types."
+      }
+    ]
+  },
+  {
+    "slug": "fodder-napier-lucerne-rhodes-grass-irrigation-kenya",
+    "title": "Dairy Fodder, Lucerne & Napier Irrigation Kenya | DripTech",
+    "description": "Compare rain gun sprinklers, impact sprinklers and drip irrigation for lucerne (alfalfa), Super Napier, Brachiaria and Rhodes grass in Kenya.",
+    "h1": "Dairy fodder, lucerne, Super Napier and pasture irrigation in Kenya",
+    "intro": "Commercial dairy and beef farms in Kenya use irrigation to harvest multiple cuts of lucerne (alfalfa), Pakchong Super Napier, Brachiaria, Desmodium and Boma Rhodes grass throughout the dry season, cutting reliance on expensive purchased hay.",
+    "image": "/seed-products/sprinkler.jpg",
+    "sections": [
+      {
+        "heading": "Choosing between sprinklers, rain guns and drip for livestock fodder",
+        "table": {
+          "caption": "Comparing irrigation methods for Kenyan fodder crops",
+          "headers": [
+            "Fodder crop",
+            "Preferred irrigation options",
+            "Key operational notes"
+          ],
+          "rows": [
+            [
+              "Lucerne (Alfalfa)",
+              "Impact sprinklers, rain hose or close-spaced drip",
+              "Needs well-drained soil and quick regrowth watering after cutting"
+            ],
+            [
+              "Pakchong / Super Napier",
+              "Heavy-wall dripline, furrow-assisted drip or rain guns",
+              "Tall canopy blocks low risers; use tall sprinkler risers or drip"
+            ],
+            [
+              "Brachiaria & Rhodes Grass",
+              "Impact sprinklers or movable rain gun hydrants",
+              "Broadcast/sward coverage suits overhead sprinkler overlap"
+            ]
+          ]
+        }
+      }
+    ],
+    "links": [
+      {
+        "label": "Rain gun sprinkler prices & sizing",
+        "href": "/rain-gun-sprinkler-prices-kenya"
+      },
+      {
+        "label": "Sprinkler systems in Kenya",
+        "href": "/sprinkler-systems-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps for dairy farms",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Talk to DripTech fodder specialists",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "How do you irrigate tall Super Napier grass with sprinklers?",
+        "a": "Either mount sprinklers on tall stabilized risers above the canopy, use a high-trajectory rain gun from perimeter lanes, or lay surface/subsurface heavy-wall dripline along the cane rows."
+      }
+    ]
+  },
+  {
+    "slug": "flower-rose-greenhouse-irrigation-kenya",
+    "title": "Cut Flower & Rose Greenhouse Irrigation Kenya | DripTech",
+    "description": "Precision drip, hydroponic arrow drippers, misting and automated fertigation systems for rose, gypsophila and summer flower farms in Kenya.",
+    "h1": "Cut flower, rose and ornamental greenhouse irrigation in Kenya",
+    "intro": "Kenya's floriculture sector—from Naivasha, Thika and Kiambu to Nanyuki, Timau, Nakuru and Eldoret—requires high-uniformity drip laterals, pressure-compensating button/arrow drippers, misting lines and multi-channel fertigation.",
+    "image": "/seed-products/greenhouse.jpg",
+    "sections": [
+      {
+        "heading": "Precision hydraulic and fertigation components for flower blocks",
+        "bullets": [
+          "Pressure-compensating (PC/CNL) non-leakage drippers that prevent low-end drainage between short pulse irrigations",
+          "4-way manifold + micro-tubing arrow pegs for hydroponic coco-peat or pumice troughs",
+          "High-pressure overhead misting and fogging nozzles for rooting benches and VPD humidity management",
+          "Automated EC/pH dosing, disc/sand media filtration and 24V AC solenoid valve manifolds"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Greenhouse irrigation systems in Kenya",
+        "href": "/greenhouse-irrigation-systems-kenya"
+      },
+      {
+        "label": "Irrigation in Naivasha & Gilgil",
+        "href": "/irrigation-systems-naivasha-gilgil"
+      },
+      {
+        "label": "Fertigation systems in Kenya",
+        "href": "/fertigation-systems-kenya"
+      },
+      {
+        "label": "Contact DripTech commercial projects desk",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What is a CNL (compensating non-leakage) dripper used for in flower greenhouses?",
+        "a": "CNL drippers shut off at a set closing pressure when the zone valve closes, preventing water in the lateral from draining out of the lowest emitters during short pulse-irrigation cycles."
+      }
+    ]
+  },
+  {
+    "slug": "herbs-coriander-mint-basil-irrigation-kenya",
+    "title": "Dhania, Basil & Mint Herb Irrigation Kenya | DripTech",
+    "description": "Plan dense raised-bed drip and micro-sprinkler irrigation for coriander (dhania), sweet basil, mint, rosemary and export herbs in Kenya.",
+    "h1": "Coriander (dhania), basil, mint and export herb irrigation in Kenya",
+    "intro": "Culinary and export herbs such as coriander (dhania), sweet basil, mint, chives, thyme, rosemary and parsley are grown on intensive raised beds with fine seeds or cuttings that require even, gentle moisture across the full bed width.",
+    "image": "/seed-products/field_drip.jpg",
+    "sections": [
+      {
+        "heading": "Designing multi-line raised beds for herbs",
+        "bullets": [
+          "Use 3 to 4 closely spaced drip lines (15 cm or 20 cm emitter spacing) per 1.0–1.2 m raised bed so moisture meets across all seeded drills",
+          "Optional fine overhead micro-sprinklers or misting lines can assist initial seed germination for direct-seeded dhania before switching to drip",
+          "Install individual bed mini-valves so freshly harvested beds, newly seeded beds and mature beds can be watered independently"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Garlic drip irrigation in Kenya",
+        "href": "/drip-irrigation-for-garlic-kenya"
+      },
+      {
+        "label": "Onion drip irrigation guide",
+        "href": "/drip-irrigation-for-onions-kenya"
+      },
+      {
+        "label": "Shade net & shade house kits",
+        "href": "/shade-net-greenhouse-prices-kenya"
+      },
+      {
+        "label": "Request an herb farm irrigation quote",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "How many drip lines per bed do I need for coriander (dhania)?",
+        "a": "Because dhania is drilled in multiple close rows across a 1.0–1.2 m bed, 3 to 4 drip lines with 15 cm or 20 cm emitter spacing are commonly used to avoid dry strips between lines."
+      }
+    ]
   }
 ]
