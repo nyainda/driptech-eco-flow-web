@@ -6,7 +6,6 @@ import HomeCropAcreageGuide from "@/components/Home/HomeCropAcreageGuide";
 import HomeEngineeringServices from "@/components/Home/HomeEngineeringServices";
 import HomeKitsShowcase from "@/components/Home/HomeKitsShowcase";
 import ProjectsSection from "@/components/Home/ProjectsSection";
-import HomePlanningSection from "@/components/Home/HomePlanningSection";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
@@ -45,14 +44,10 @@ const Home = () => {
         <ProjectsSection compact />
       </ScrollReveal>
 
-      <ScrollReveal>
-        <HomePlanningSection />
-      </ScrollReveal>
-
       <FAQSection
         title="Questions before you choose?"
         faqs={COMMON_FAQS.homepage}
-        className="py-12 sm:py-16 lg:py-20"
+        className="py-10 sm:py-14"
       />
 
       {/* Keep these resources discoverable without making them compete with products */}

@@ -5,15 +5,11 @@ import {
   CalendarCheck,
   CheckCircle2,
   Compass,
-  Droplets,
-  FileCheck2,
   FileText,
-  Gauge,
   Layers,
   MapPin,
   MessageCircle,
   Ruler,
-  ShieldCheck,
   Sprout,
   Truck,
   Wrench,
@@ -106,29 +102,6 @@ const ENGINEERING_PILLARS: EngineeringPillar[] = [
   },
 ];
 
-const PACKAGE_INCLUDED_ITEMS = [
-  {
-    icon: Layers,
-    title: "Hydraulic Block Zoning",
-    detail: "Balanced blocks so every plant receives equal water & nutrients",
-  },
-  {
-    icon: Gauge,
-    title: "Pump & Filter Matching",
-    detail: "Exact TDH pump sizing and micron filtration for your water source",
-  },
-  {
-    icon: FileCheck2,
-    title: "Corporate & Farm BOQs",
-    detail: "Itemized quotes for private farms, estates, NGOs & county tenders",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Field Warranty & Support",
-    detail: "Direct access to DripTech agronomists and repair technicians",
-  },
-];
-
 const SPECIALIZED_INSTALLATIONS = [
   {
     badge: "0.5mm • 0.75mm • 1.0mm HDPE",
@@ -160,7 +133,7 @@ const SPECIALIZED_INSTALLATIONS = [
     badge: "Galvanized Steel & Shade Nets",
     title: "Greenhouses & Shade House Construction",
     description:
-      "wooden or galvanized steel greenhouses and shade net structures fitted with UV polythene, insect nets, crop support wires, and drip/misting kits.",
+      "Galvanized steel or treated-timber greenhouses and shade net structures fitted with UV polythene, insect nets, crop support wires, and drip/misting kits.",
     bullets: [
       "8×15m, 8×24m, 8×30m & custom multi-span commercial units",
       "Complete with elevated tank, venturi fertigation & foggers",
@@ -185,6 +158,7 @@ const SPECIALIZED_INSTALLATIONS = [
 ];
 
 export default function HomeEngineeringServices() {
+  const [activeView, setActiveView] = useState<"contracting" | "process">("contracting");
   const [activePillarId, setActivePillarId] = useState<string>("design");
   const activePillar =
     ENGINEERING_PILLARS.find((p) => p.id === activePillarId) ||
@@ -202,60 +176,58 @@ export default function HomeEngineeringServices() {
 
   return (
     <section
-      className="relative overflow-hidden border-y border-border bg-gradient-to-b from-muted/30 via-background to-muted/20 py-14 sm:py-18 lg:py-22"
+      className="relative overflow-hidden border-y border-border bg-gradient-to-b from-muted/30 via-background to-muted/20 py-12 sm:py-16"
       aria-labelledby="home-engineering-title"
     >
-      <div className="dt-container space-y-10 sm:space-y-12">
-        {/* Top Header + Executive Positioning */}
-        <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+      <div className="dt-container space-y-8">
+        {/* Top Header + Executive Action Card */}
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
               <Award className="h-3.5 w-3.5" aria-hidden="true" />
-              End-to-End Irrigation Engineering & Installation
+              End-to-End Irrigation Engineering &amp; Installation
             </div>
             <h2
               id="home-engineering-title"
-              className="font-heading text-3xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-5xl"
+              className="font-heading text-3xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[42px]"
             >
               More than equipment supply.
               <span className="mt-1 block text-primary">
                 We survey, design, supply &amp; install the complete system.
               </span>
             </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-              Buying pipes and driplines is only half the job—an irrigation
-              system succeeds or fails on pressure balance, pipe sizing, and
-              filtration. From ¼-acre kitchen gardens to 50+ acre commercial
-              estates, our engineers handle the entire journey from water source
-              to harvest.
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+              From <strong>HDPE dam liners</strong>, <strong>greenhouses</strong>, and{" "}
+              <strong>solar borehole pumps</strong> to complete ¼-acre through 50+ acre
+              commercial drip installations—our engineers handle the entire project.
             </p>
           </div>
 
           {/* Right Quick Action & Assurance Card */}
-          <div className="rounded-2xl border border-primary/20 bg-card p-5 sm:p-6 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3.5">
+          <div className="rounded-2xl border border-primary/20 bg-card p-4 sm:p-5 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
               <div>
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">
-                  Engineering Desk • Nairobi &amp; Nationwide
+                  Engineering &amp; Contracting Desk • All 47 Counties
                 </p>
-                <p className="mt-0.5 font-heading text-base font-bold text-foreground sm:text-lg">
-                  Need a custom farm layout or official project BOQ?
+                <p className="mt-0.5 font-heading text-sm font-bold text-foreground sm:text-base">
+                  Need a site survey, dam liner, or official project BOQ?
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Engineers Online
               </span>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2.5">
+            <div className="mt-3.5 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={handleEngineerWhatsApp}
-                className="dt-btn-primary inline-flex flex-1 min-w-[190px] items-center justify-center gap-2 text-xs sm:text-sm shadow-sm"
+                className="dt-btn-primary inline-flex flex-1 min-w-[180px] items-center justify-center gap-2 text-xs sm:text-sm py-2.5 shadow-sm"
               >
                 <MessageCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                Talk to an Irrigation Engineer
+                Talk to an Engineer
                 <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
               </button>
 
@@ -263,7 +235,7 @@ export default function HomeEngineeringServices() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex flex-1 min-w-[170px] items-center justify-center gap-2 rounded-[10px] border-2 border-primary bg-primary/10 px-4 py-2.5 text-xs sm:text-sm font-extrabold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                    className="inline-flex flex-1 min-w-[160px] items-center justify-center gap-2 rounded-[10px] border-2 border-primary bg-primary/10 px-3.5 py-2 text-xs sm:text-sm font-extrabold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                   >
                     <FileText className="h-4 w-4 shrink-0" aria-hidden="true" />
                     Request Itemized BOQ
@@ -272,202 +244,75 @@ export default function HomeEngineeringServices() {
               />
             </div>
 
-            <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 pt-1 text-xs text-muted-foreground">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
               <Link
                 to="/book-technician"
                 className="inline-flex items-center gap-1.5 font-bold text-foreground hover:text-primary transition-colors"
               >
                 <CalendarCheck className="h-3.5 w-3.5 text-primary" />
-                Book an On-Farm Site Survey →
+                Book On-Farm Site Survey →
               </Link>
               <Link
                 to="/services"
                 className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
               >
-                View All Engineering Services →
+                All Engineering Services →
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Interactive 4-Stage Full-System Engineering Blueprint */}
-        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
-          {/* Left: 4 Selectable Engineering Stages */}
-          <div className="flex flex-col justify-between gap-3">
-            {ENGINEERING_PILLARS.map((pillar) => {
-              const Icon = pillar.icon;
-              const isActive = pillar.id === activePillar.id;
-              return (
-                <button
-                  key={pillar.id}
-                  type="button"
-                  onClick={() => setActivePillarId(pillar.id)}
-                  aria-pressed={isActive}
-                  className={`group flex w-full items-start gap-4 rounded-2xl border p-4 sm:p-5 text-left transition-all duration-200 ${
-                    isActive
-                      ? "border-primary bg-card shadow-md ring-2 ring-primary/15"
-                      : "border-border bg-card/60 hover:border-primary/40 hover:bg-card"
-                  }`}
-                >
-                  <div
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl font-mono text-sm font-black transition-colors ${
-                      isActive
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "bg-primary/10 text-primary group-hover:bg-primary/20"
-                    }`}
-                  >
-                    {pillar.step}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-primary">
-                        {pillar.badge}
-                      </span>
-                      <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
-                        {pillar.metricValue}
-                      </span>
-                    </div>
-                    <h3 className="mt-1 font-heading text-base font-bold text-foreground sm:text-lg">
-                      {pillar.title}
-                    </h3>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground line-clamp-2">
-                      {pillar.subtitle}
-                    </p>
-                  </div>
-
-                  <Icon
-                    className={`mt-1 h-5 w-5 shrink-0 transition-transform ${
-                      isActive
-                        ? "text-primary translate-x-0.5"
-                        : "text-muted-foreground/60 group-hover:text-primary"
-                    }`}
-                    aria-hidden="true"
-                  />
-                </button>
-              );
-            })}
+        {/* Compact View Switcher: Contracting Services vs 4-Stage Engineering Process */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+          <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveView("contracting")}
+              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+                activeView === "contracting"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Wrench className="h-4 w-4" />
+              Dam Liners, Installation &amp; Greenhouses
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveView("process")}
+              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+                activeView === "process"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Layers className="h-4 w-4" />
+              How We Engineer Your System (4 Steps)
+            </button>
           </div>
 
-          {/* Right: Active Stage Deep-Dive + Visual Schematic Banner */}
-          <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card shadow-md">
-            {/* Visual CAD Schematic Header */}
-            <div className="relative h-48 overflow-hidden sm:h-56">
-              <img
-                src="/engineering/drip-irrigation-layout.svg"
-                alt="Engineered drip irrigation layout showing zoned blocks, mainline, sub-main, filtration headworks, tank, and pump"
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--dt-green-900)/0.94)] via-[hsl(var(--dt-green-900)/0.45)] to-transparent" />
-              <div className="absolute top-3.5 left-4 right-4 flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--dt-gold-400))] px-3 py-1 text-[11px] font-extrabold text-[hsl(var(--dt-green-900))] shadow-sm">
-                  <Sprout className="h-3.5 w-3.5" aria-hidden="true" />
-                  Stage {activePillar.step} of 04 • {activePillar.badge}
-                </span>
-                <span className="rounded-full bg-black/55 backdrop-blur-sm px-3 py-1 font-mono text-[11px] font-bold text-white border border-white/15">
-                  {activePillar.metricLabel}: {activePillar.metricValue}
-                </span>
-              </div>
-              <div className="absolute inset-x-5 bottom-4 sm:inset-x-6 sm:bottom-5">
-                <h3 className="font-heading text-xl font-bold text-white sm:text-2xl">
-                  {activePillar.title}
-                </h3>
-                <p className="mt-1 text-xs text-white/80 sm:text-sm">
-                  {activePillar.subtitle}
-                </p>
-              </div>
-            </div>
-
-            {/* Active Pillar Detailed Scope & Deliverables */}
-            <div className="flex flex-1 flex-col justify-between p-5 sm:p-7">
-              <div>
-                <p className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-                  {activePillar.description}
-                </p>
-
-                <div className="mt-5 rounded-xl border border-border bg-muted/30 p-4">
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.15em] text-primary">
-                    What You Receive in Stage {activePillar.step}
-                  </p>
-                  <ul className="mt-3 space-y-2.5">
-                    {activePillar.deliverables.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-start gap-2.5 text-xs font-semibold text-foreground sm:text-sm"
-                      >
-                        <CheckCircle2
-                          className="mt-0.5 h-4 w-4 shrink-0 text-primary"
-                          aria-hidden="true"
-                        />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
-                <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-                  <MapPin className="h-4 w-4 text-primary shrink-0" />
-                  <span>Designed for smallholder farms, estates &amp; NGO projects</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {ENGINEERING_PILLARS.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setActivePillarId(p.id)}
-                      className={`h-2.5 rounded-full transition-all ${
-                        p.id === activePillar.id
-                          ? "w-7 bg-primary"
-                          : "w-2.5 bg-muted-foreground/30 hover:bg-primary/50"
-                      }`}
-                      aria-label={`Show stage ${p.step}: ${p.title}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <p className="text-xs font-semibold text-muted-foreground">
+            {activeView === "contracting"
+              ? "Click any service below for an instant WhatsApp quotation"
+              : "Click any stage to inspect our engineering deliverables"}
+          </p>
         </div>
 
-        {/* Specialized Farm Infrastructure & Installation Solutions (Dam Liners, Installation, Greenhouses, Solar) */}
-        <div className="rounded-3xl border border-primary/20 bg-card p-5 sm:p-8 shadow-sm">
-          <div className="mb-6 flex flex-col justify-between gap-3 border-b border-border pb-5 lg:flex-row lg:items-end">
-            <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-primary">
-                Complete On-Farm Contracting &amp; Supply
-              </p>
-              <h3 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">
-                Dam Liners, Field Installation, Greenhouses &amp; Solar Pumping
-              </h3>
-              <p className="mt-1.5 max-w-2xl text-xs leading-5 text-muted-foreground sm:text-sm">
-                Beyond equipment supply, our field crews fabricate, weld, and install complete water storage and crop production infrastructure across Kenya.
-              </p>
-            </div>
-            <Link
-              to="/services"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-xs font-extrabold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-            >
-              View Full Installation Portfolio <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
+        {/* Tab 1: Specialized Farm Infrastructure & Installation Solutions */}
+        {activeView === "contracting" ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {SPECIALIZED_INSTALLATIONS.map((item) => (
               <div
                 key={item.title}
-                className="flex flex-col justify-between rounded-2xl border border-border bg-background/80 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
+                className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
               >
                 <div>
                   <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary">
                     {item.badge}
                   </span>
-                  <h4 className="mt-3 font-heading text-base font-bold leading-snug text-foreground sm:text-lg">
+                  <h3 className="mt-3 font-heading text-base font-bold leading-snug text-foreground sm:text-lg">
                     {item.title}
-                  </h4>
+                  </h3>
                   <p className="mt-2 text-xs leading-5 text-muted-foreground">
                     {item.description}
                   </p>
@@ -500,29 +345,132 @@ export default function HomeEngineeringServices() {
               </div>
             ))}
           </div>
-        </div>
+        ) : (
+          /* Tab 2: Interactive 4-Stage Full-System Engineering Blueprint */
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+            <div className="flex flex-col justify-between gap-2.5">
+              {ENGINEERING_PILLARS.map((pillar) => {
+                const Icon = pillar.icon;
+                const isActive = pillar.id === activePillar.id;
+                return (
+                  <button
+                    key={pillar.id}
+                    type="button"
+                    onClick={() => setActivePillarId(pillar.id)}
+                    aria-pressed={isActive}
+                    className={`group flex w-full items-start gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200 ${
+                      isActive
+                        ? "border-primary bg-card shadow-md ring-2 ring-primary/15"
+                        : "border-border bg-card/60 hover:border-primary/40 hover:bg-card"
+                    }`}
+                  >
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-mono text-xs font-black transition-colors ${
+                        isActive
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "bg-primary/10 text-primary group-hover:bg-primary/20"
+                      }`}
+                    >
+                      {pillar.step}
+                    </div>
 
-        {/* Bottom 4-Card Guarantee Strip: Why Engineered Systems Outperform */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PACKAGE_INCLUDED_ITEMS.map(({ icon: Icon, title, detail }) => (
-            <div
-              key={title}
-              className="flex items-start gap-3.5 rounded-2xl border border-border/80 bg-card p-4 sm:p-5 shadow-sm"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Icon className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <div>
-                <h3 className="font-heading text-sm font-bold text-foreground">
-                  {title}
-                </h3>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  {detail}
-                </p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-primary">
+                          {pillar.badge}
+                        </span>
+                        <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-[10px] font-bold text-muted-foreground">
+                          {pillar.metricValue}
+                        </span>
+                      </div>
+                      <h3 className="mt-0.5 font-heading text-sm font-bold text-foreground sm:text-base">
+                        {pillar.title}
+                      </h3>
+                      <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">
+                        {pillar.subtitle}
+                      </p>
+                    </div>
+
+                    <Icon
+                      className={`mt-1 h-4 w-4 shrink-0 ${
+                        isActive ? "text-primary" : "text-muted-foreground/60"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card shadow-md">
+              <div className="relative h-44 overflow-hidden sm:h-48">
+                <img
+                  src="/engineering/drip-irrigation-layout.svg"
+                  alt="Engineered drip irrigation layout showing zoned blocks, mainline, sub-main, filtration headworks, tank, and pump"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--dt-green-900)/0.94)] via-[hsl(var(--dt-green-900)/0.45)] to-transparent" />
+                <div className="absolute top-3 left-4 right-4 flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--dt-gold-400))] px-3 py-1 text-[11px] font-extrabold text-[hsl(var(--dt-green-900))] shadow-sm">
+                    <Sprout className="h-3.5 w-3.5" aria-hidden="true" />
+                    Stage {activePillar.step} of 04 • {activePillar.badge}
+                  </span>
+                  <span className="rounded-full bg-black/55 backdrop-blur-sm px-3 py-1 font-mono text-[11px] font-bold text-white border border-white/15">
+                    {activePillar.metricLabel}: {activePillar.metricValue}
+                  </span>
+                </div>
+                <div className="absolute inset-x-5 bottom-3.5">
+                  <h3 className="font-heading text-lg font-bold text-white sm:text-xl">
+                    {activePillar.title}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="flex flex-1 flex-col justify-between p-5">
+                <div>
+                  <p className="text-xs sm:text-sm leading-6 text-muted-foreground">
+                    {activePillar.description}
+                  </p>
+
+                  <div className="mt-4 rounded-xl border border-border bg-muted/30 p-3.5">
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-primary">
+                      What You Receive in Stage {activePillar.step}
+                    </p>
+                    <ul className="mt-2 space-y-2">
+                      {activePillar.deliverables.map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-start gap-2 text-xs font-semibold text-foreground"
+                        >
+                          <CheckCircle2
+                            className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary"
+                            aria-hidden="true"
+                          />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5 font-semibold">
+                    <MapPin className="h-3.5 w-3.5 text-primary" />
+                    Smallholder farms, commercial estates &amp; NGOs
+                  </span>
+                  <Link
+                    to="/irrigation-design-consultation-kenya"
+                    className="font-bold text-primary hover:underline"
+                  >
+                    Design details →
+                  </Link>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );
