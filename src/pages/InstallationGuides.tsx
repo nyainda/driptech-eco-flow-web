@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -574,6 +575,81 @@ const InstallationGuides = () => {
                     </p>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Interactive Kenyan Field Sizing & Installation Guides */}
+          <div className="mb-12 rounded-3xl border border-border bg-muted/20 p-6 sm:p-8">
+            <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+              <div>
+                <Badge variant="outline" className="mb-2 border-primary/30 text-primary">
+                  Interactive Engineering Guides
+                </Badge>
+                <h2 className="text-2xl font-bold text-foreground">
+                  Kenyan Irrigation Design & Installation Manuals
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Read complete field layout, pipe sizing, emitter spacing, and pump selection guides online.
+                </p>
+              </div>
+              <Link
+                to="/technical-support"
+                className="text-xs font-bold text-primary hover:underline"
+              >
+                Need help? Contact Technical Support →
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                {
+                  title: "1-Acre Drip Irrigation Layout & BOM Guide",
+                  desc: "Complete mainline, sub-main, filtration, and dripline layout for 1-acre vegetable and fruit farms.",
+                  to: "/one-acre-drip-irrigation-system-kenya",
+                },
+                {
+                  title: "How to Choose Dripline Emitter Spacing",
+                  desc: "Selecting 15cm, 20cm, or 30cm emitter spacing and wall thickness for onions, tomatoes, and orchards.",
+                  to: "/how-to-choose-dripline-spacing-kenya",
+                },
+                {
+                  title: "Irrigation Pump Sizing & Total Dynamic Head",
+                  desc: "Calculating flow rate (m³/hr) and total dynamic head (TDH) for boreholes, rivers, and raised tanks.",
+                  to: "/irrigation-pump-sizing-kenya",
+                },
+                {
+                  title: "Greenhouse Drip & Misting Setup Guide",
+                  desc: "Fertigation venturi installation, manifold zoning, and micro-climate misting for Kenyan greenhouses.",
+                  to: "/greenhouse-drip-irrigation-kenya",
+                },
+                {
+                  title: "Solar Irrigation Pumping Systems Guide",
+                  desc: "Sizing PV arrays, MPPT controllers, and submersible/surface solar pumps for off-grid farms.",
+                  to: "/solar-irrigation-pumps-kenya",
+                },
+                {
+                  title: "Pre-Installation Quotation & Site Checklist",
+                  desc: "Water quality, slope, soil type, and source measurements to prepare before ordering equipment.",
+                  to: "/irrigation-quotation-checklist-kenya",
+                },
+              ].map((guide) => (
+                <Link
+                  key={guide.to}
+                  to={guide.to}
+                  className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md"
+                >
+                  <div>
+                    <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                      {guide.title}
+                    </h3>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                      {guide.desc}
+                    </p>
+                  </div>
+                  <span className="mt-4 inline-flex items-center text-xs font-bold text-primary">
+                    Open installation guide →
+                  </span>
+                </Link>
               ))}
             </div>
           </div>

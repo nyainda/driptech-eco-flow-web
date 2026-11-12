@@ -19,6 +19,7 @@ import {
   FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import QuoteModal from "@/components/Home/QuoteModal";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { formatPrice } from "@/lib/productUrl";
 
@@ -274,7 +275,14 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
 
               <div className="mt-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <label htmlFor="product-quantity" className="text-sm font-bold text-foreground">Quantity</label>
+                  <div>
+                    <label htmlFor="product-quantity" className="text-sm font-bold text-foreground">Quantity</label>
+                    {displayPrice != null && quantity > 1 && (
+                      <p className="mt-0.5 text-xs font-semibold text-primary">
+                        Subtotal ({quantity} units): <span className="font-mono font-extrabold">{formatPrice(displayPrice * quantity)}</span>
+                      </p>
+                    )}
+                  </div>
                   <div className="inline-flex h-10 items-center overflow-hidden rounded-lg border border-border bg-background">
                     <button
                       type="button"
@@ -315,11 +323,27 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                     onClick={() => openTrackedWhatsApp(quoteUrl, "product detail page quote request")}
                   >
                     <FileCheck className="mr-2 h-4 w-4 shrink-0" />
-                    Request a Quote
+                    WhatsApp Quote
                   </Button>
                 </div>
+
+                <div className="mt-2.5">
+                  <QuoteModal
+                    trigger={
+                      <Button
+                        size="default"
+                        variant="secondary"
+                        className="h-10 w-full rounded-xl border border-border bg-muted/60 text-xs font-bold text-foreground hover:bg-primary/10 hover:text-primary"
+                      >
+                        <FileText className="mr-2 h-4 w-4 text-primary" />
+                        Request Official Proforma / Multi-Item BOQ
+                      </Button>
+                    }
+                  />
+                </div>
+
                 <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
-                  Confirm stock, delivery and bulk-order pricing with our team.
+                  Confirm stock, county delivery and bulk-order pricing with our engineering desk.
                 </p>
               </div>
             </div>

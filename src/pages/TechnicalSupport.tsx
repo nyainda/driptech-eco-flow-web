@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import {
   Card,
   CardContent,
@@ -156,38 +158,48 @@ const TechnicalSupport = () => {
     {
       icon: Phone,
       title: "Phone Support",
-      description: "Immediate assistance for urgent issues",
-      contact: "+254-111-409454 / +254-114-575401",
-      hours: "Mon-Fri: 8AM-6PM EAT",
+      description: "Immediate assistance for urgent field issues",
+      contact: `${SITE_COMPANY.phoneDisplay} / 0757 716 018`,
+      hours: "Mon-Sat: 8AM-6PM EAT",
       response: "Immediate",
       badge: "Fastest",
+      href: `tel:${SITE_COMPANY.phonePrimary}`,
     },
     {
       icon: Mail,
-      title: "Email Support",
-      description: "Detailed technical assistance",
-      contact: "driptechs.info@gmail.com / driptech2025@gmail.com",
+      title: "Email Engineering Desk",
+      description: "Detailed technical & schematic assistance",
+      contact: SITE_COMPANY.email,
       hours: "24/7 submission",
       response: "Within 4 hours",
       badge: "Detailed",
+      href: `mailto:${SITE_COMPANY.email}`,
     },
     {
       icon: MessageSquare,
-      title: "WhatsApp Support",
-      description: "Real-time messaging with experts",
-      contact: "+254-111-409454 / +254-114-575401",
-      hours: "Mon-Fri: 8AM-8PM EAT",
+      title: "WhatsApp Field Support",
+      description: "Send photos/videos of field issues to our engineers",
+      contact: SITE_COMPANY.phoneDisplay,
+      hours: "Mon-Sat: 7AM-8PM EAT",
       response: "Within minutes",
       badge: "Popular",
+      onClick: () =>
+        openTrackedWhatsApp(
+          `https://wa.me/254723407849?text=${encodeURIComponent(
+            "Hi DripTech Technical Support! I need assistance with my irrigation system."
+          )}`,
+          "tech support channel card"
+        ),
     },
     {
       icon: Calendar,
-      title: "Remote Support",
-      description: "Screen sharing for complex issues",
-      contact: "Schedule appointment",
-      hours: "By appointment",
-      response: "Scheduled",
-      badge: "By appointment",
+      title: "Book Field Technician",
+      description: "On-farm diagnostic, repair & maintenance visit",
+      contact: "Schedule technician visit",
+      hours: "All 47 Counties",
+      response: "Scheduled dispatch",
+      badge: "On-Site",
+      to: "/book-technician",
     },
   ];
 
@@ -416,7 +428,8 @@ ${supportForm.steps_taken}`,
             {supportChannels.map((channel, index) => (
               <Card
                 key={index}
-                className="relative hover:shadow-lg transition-shadow"
+                onClick={channel.onClick}
+                className="relative hover:shadow-lg hover:border-primary/40 transition-all cursor-pointer"
               >
                 <CardHeader className="text-center">
                   {channel.badge && (
@@ -431,7 +444,23 @@ ${supportForm.steps_taken}`,
                   <CardDescription>{channel.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center space-y-2">
-                  <p className="font-medium text-primary">{channel.contact}</p>
+                  {channel.href ? (
+                    <a
+                      href={channel.href}
+                      className="block font-bold text-primary hover:underline"
+                    >
+                      {channel.contact}
+                    </a>
+                  ) : channel.to ? (
+                    <Link
+                      to={channel.to}
+                      className="block font-bold text-primary hover:underline"
+                    >
+                      {channel.contact} →
+                    </Link>
+                  ) : (
+                    <p className="font-bold text-primary">{channel.contact}</p>
+                  )}
                   <p className="text-sm text-muted-foreground">
                     {channel.hours}
                   </p>
@@ -722,7 +751,74 @@ ${supportForm.steps_taken}`,
             </TabsContent>
 
             <TabsContent value="resources">
-              <div className="space-y-8">
+              <div className="space-y-10">
+                {/* Kenyan Field Troubleshooting & Maintenance Guides */}
+                <div className="rounded-2xl border border-border bg-muted/20 p-6 sm:p-8">
+                  <div className="mb-6">
+                    <Badge variant="outline" className="mb-2 border-primary/30 text-primary">
+                      Step-by-Step Engineering Guides
+                    </Badge>
+                    <h2 className="text-2xl font-bold text-foreground">
+                      Field Troubleshooting & Maintenance Manuals
+                    </h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Practical diagnostic checklists written by DripTech field engineers for Kenyan farms.
+                    </p>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {[
+                      {
+                        title: "Complete Irrigation Troubleshooting Hub",
+                        desc: "Master diagnostic checklist for pressure drops, uneven watering, and pump faults.",
+                        to: "/irrigation-troubleshooting-kenya",
+                      },
+                      {
+                        title: "Blocked Drippers & Uneven Watering",
+                        desc: "How to flush laterals, treatemitter scale/algae, and restore uniform emitter discharge.",
+                        to: "/blocked-drippers-uneven-watering-kenya",
+                      },
+                      {
+                        title: "Low Irrigation Pressure & Sprinkler Issues",
+                        desc: "Diagnosing suction leaks, clogged filters, undersized sub-mains, and elevation losses.",
+                        to: "/low-irrigation-pressure-sprinklers-kenya",
+                      },
+                      {
+                        title: "Pipe Leaks, Couplings & Fitting Repairs",
+                        desc: "Repairing HDPE, PVC, and drip take-off leaks without replacing entire field lines.",
+                        to: "/irrigation-pipe-leaks-fittings-kenya",
+                      },
+                      {
+                        title: "Filter & Pump Problem Diagnostics",
+                        desc: "Screen vs disc filter cleaning, cavitation checks, and solar/electric pump protection.",
+                        to: "/irrigation-filter-pump-problems-kenya",
+                      },
+                      {
+                        title: "Preventive System Maintenance Schedule",
+                        desc: "Weekly, monthly, and seasonal maintenance routines to double dripline lifespan.",
+                        to: "/irrigation-system-maintenance-kenya",
+                      },
+                    ].map((guide) => (
+                      <Link
+                        key={guide.to}
+                        to={guide.to}
+                        className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md"
+                      >
+                        <div>
+                          <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                            {guide.title}
+                          </h3>
+                          <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                            {guide.desc}
+                          </p>
+                        </div>
+                        <span className="mt-4 inline-flex items-center text-xs font-bold text-primary">
+                          Read field guide →
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Video Tutorials Section */}
                 <div>
                   <div className="text-center mb-8">
