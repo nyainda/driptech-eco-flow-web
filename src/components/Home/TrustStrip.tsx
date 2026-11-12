@@ -31,7 +31,7 @@ const capabilities = [
   },
   {
     icon: Wrench,
-    badge: "Turnkey Support",
+    badge: "Full Installation",
     title: "Certified Installation & Handover",
     detail:
       "Experienced irrigation technicians for headworks assembly, zoning, and agronomic commissioning.",

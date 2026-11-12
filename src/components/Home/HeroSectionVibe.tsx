@@ -224,9 +224,9 @@ export default function HeroSectionVibe() {
 
               <p className="mt-4 max-w-xl text-sm leading-6 text-foreground/85 sm:text-base sm:leading-7">
                 From single-roll driplines and solar borehole pumps to complete{" "}
-                <strong>¼-acre through 50+ acre turnkey installations</strong>.
-                We engineer hydraulic layouts, supply genuine UV-stabilized
-                equipment, and support farms across all 47 counties.
+                <strong>¼-acre through 50+ acre farm installations</strong>.
+                We survey, design hydraulic layouts, supply genuine UV-stabilized
+                equipment, and install across all 47 counties.
               </p>
 
               {/* Key Trust Badges */}
