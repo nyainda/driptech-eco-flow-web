@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import QuoteModal from "@/components/Home/QuoteModal";
+import { openInstantProductQuotePdf } from "@/lib/catalogAndQuotePdf";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { formatPrice } from "@/lib/productUrl";
 
@@ -306,24 +307,46 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                   </div>
                 </div>
 
-                <div className="mt-4 grid gap-3 sm:grid-cols-[1.25fr_0.9fr]">
+                <div className="mt-4 grid gap-3 sm:grid-cols-[1.2fr_1fr]">
                   <Button
                     size="lg"
                     className="h-12 min-h-12 w-full rounded-xl bg-[hsl(var(--dt-whatsapp))] text-sm font-extrabold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
-                    onClick={() => openTrackedWhatsApp(whatsappUrl, "product detail page order")}
+                    onClick={() =>
+                      openInstantProductQuotePdf({
+                        product: {
+                          ...product,
+                          category: "drip_irrigation",
+                        },
+                        quantity,
+                        selectedVariant,
+                        autoPrint: true,
+                        alsoOpenWhatsApp: true,
+                      })
+                    }
                   >
                     <MessageCircle className="mr-2 h-5 w-5" />
-                    Order on WhatsApp
+                    WhatsApp + Auto PDF Quote
                     <ArrowUpRight className="ml-auto h-4 w-4" />
                   </Button>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="h-12 min-h-12 w-full rounded-xl border-2 text-sm font-bold"
-                    onClick={() => openTrackedWhatsApp(quoteUrl, "product detail page quote request")}
+                    className="h-12 min-h-12 w-full rounded-xl border-2 border-primary text-sm font-extrabold text-primary hover:bg-primary hover:text-primary-foreground"
+                    onClick={() =>
+                      openInstantProductQuotePdf({
+                        product: {
+                          ...product,
+                          category: "drip_irrigation",
+                        },
+                        quantity,
+                        selectedVariant,
+                        autoPrint: true,
+                        alsoOpenWhatsApp: false,
+                      })
+                    }
                   >
-                    <FileCheck className="mr-2 h-4 w-4 shrink-0" />
-                    WhatsApp Quote
+                    <Download className="mr-2 h-4 w-4 shrink-0" />
+                    Download Instant PDF Quote
                   </Button>
                 </div>
 
@@ -336,14 +359,14 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                         className="h-10 w-full rounded-xl border border-border bg-muted/60 text-xs font-bold text-foreground hover:bg-primary/10 hover:text-primary"
                       >
                         <FileText className="mr-2 h-4 w-4 text-primary" />
-                        Request Official Proforma / Multi-Item BOQ
+                        Request Custom Multi-Item Project BOQ
                       </Button>
                     }
                   />
                 </div>
 
                 <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
-                  Confirm stock, county delivery and bulk-order pricing with our engineering desk.
+                  Clicking <strong>WhatsApp + Auto PDF Quote</strong> generates your official A4 PDF quotation and sends the Quote Ref directly to our WhatsApp desk.
                 </p>
               </div>
             </div>

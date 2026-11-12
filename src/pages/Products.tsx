@@ -69,6 +69,7 @@ import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { trackSearch } from "@/services/aiProductService";
 import { cn } from "@/lib/utils";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import { openInstantProductQuotePdf, openProductCataloguePdf } from "@/lib/catalogAndQuotePdf";
 
 interface Variant {
   name: string;
@@ -1175,13 +1176,15 @@ const Products = () => {
                   className="w-full"
                   size="sm"
                   onClick={() => {
-                    const msg = encodeURIComponent(
-                      `Hi DripTech! I'm comparing irrigation products and would like a quotation for ${p.name}${p.price ? ` (KES ${p.price.toLocaleString()})` : ""}.`
-                    );
-                    openTrackedWhatsApp(`https://wa.me/254723407849?text=${msg}`, "comparison modal quote");
+                    openInstantProductQuotePdf({
+                      product: p,
+                      quantity: 1,
+                      autoPrint: true,
+                      alsoOpenWhatsApp: true,
+                    });
                   }}
                 >
-                  Get Quote on WhatsApp
+                  WhatsApp + Auto PDF Quote
                 </Button>
               </div>
             ))}
@@ -1211,6 +1214,39 @@ const Products = () => {
                     ? `Explore ${getCategoryTitle(category).toLowerCase()} for farms, greenhouses and irrigation projects across Kenya.`
                     : "Find drip, sprinkler, pumping, filtration, fertigation and greenhouse equipment in one practical catalogue."}
                 </p>
+                <div className="mt-5 flex flex-wrap items-center gap-2.5">
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() =>
+                      openProductCataloguePdf(
+                        filteredProducts.length > 0 ? filteredProducts : products,
+                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
+                        false,
+                      )
+                    }
+                    className="rounded-xl bg-primary text-primary-foreground font-bold shadow-sm hover:bg-primary/90"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Official PDF Catalogue
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      openProductCataloguePdf(
+                        filteredProducts.length > 0 ? filteredProducts : products,
+                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
+                        true,
+                      )
+                    }
+                    className="rounded-xl border-[hsl(var(--dt-whatsapp)/0.4)] bg-[hsl(var(--dt-whatsapp)/0.07)] text-[hsl(var(--dt-whatsapp))] font-bold hover:bg-[hsl(var(--dt-whatsapp)/0.15)]"
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Get PDF Catalogue + WhatsApp
+                  </Button>
+                </div>
               </div>
               <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm backdrop-blur">
                 <div className="border-r border-border px-4 py-4 text-center sm:px-6">
