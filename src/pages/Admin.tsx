@@ -34,6 +34,7 @@ import {
   ChevronRight,
   PlusCircle,
   Command,
+  Radar,
 } from "lucide-react";
 import {
   AdminAuthProvider,
@@ -88,6 +89,7 @@ const PaymentIntegrations = lazy(() => import("@/components/Admin/PaymentIntegra
 const WhatsAppManagement = lazy(() => import("@/components/Admin/WhatsAppManagement"));
 const TechnicianManagement = lazy(() => import("@/components/Admin/TechnicianManagement"));
 const ServiceBookingManagement = lazy(() => import("@/components/Admin/ServiceBookingManagement"));
+const GrokLeadOutreach = lazy(() => import("@/components/Admin/GrokLeadOutreach"));
 
 interface AdminSection {
   id: string;
@@ -186,6 +188,14 @@ const ADMIN_SECTIONS: AdminSection[] = [
   },
 
   // CRM & Field Operations
+  {
+    id: "grok-outreach",
+    label: "Grok Client Finder",
+    icon: Radar,
+    description: "Discover commercial farms, agrovets & tenders with Grok + send approved email & WhatsApp pitches",
+    group: "operations",
+    badge: "Grok",
+  },
   {
     id: "customers",
     label: "Customers (CRM)",
@@ -491,6 +501,8 @@ const AdminContent = () => {
         return <ServiceBookingManagement />;
       case "ai-research":
         return <AIProductResearch />;
+      case "grok-outreach":
+        return <GrokLeadOutreach />;
       default:
         return <AdminDashboard onNavigate={selectModule} />;
     }

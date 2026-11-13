@@ -72,6 +72,9 @@ const createMockSupabaseClient = () => {
         getPublicUrl: () => ({ data: { publicUrl: '' } }),
       }),
     },
+    functions: {
+      invoke: async () => ({ data: null, error: new Error('Supabase not configured') }),
+    },
   };
   return mockClient;
 };
