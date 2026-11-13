@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import useWebVitals from "./hooks/useWebVitals";
 import { GlobalStaffShortcutListener } from "./components/Admin/StealthAdminGate";
+import MobileActionBar from "./components/Layout/MobileActionBar";
 
 // Homepage is eager-loaded for faster LCP; other routes stay lazy
 import Index from "./pages/Index";
@@ -186,6 +187,7 @@ const App = () => {
                 </Routes>
               </Suspense>
               <ScrollToTop />
+              <MobileActionBar />
             </BrowserRouter>
           </TooltipProvider>
         </ThemeProvider>

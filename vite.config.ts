@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { VitePWA } from 'vite-plugin-pwa';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { defineConfig, type PluginOption } from "vite";
@@ -6,8 +7,31 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  const appBuildId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const versionManifestPlugin: PluginOption = {
+    name: 'driptech-version-manifest',
+    configureServer(server) {
+      server.middlewares.use('/version.json', (_req, res) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.end(JSON.stringify({ buildId: appBuildId, builtAt: new Date().toISOString() }));
+      });
+    },
+    writeBundle(outputOptions) {
+      const outDir = outputOptions.dir || path.resolve(__dirname, 'dist');
+      fs.mkdirSync(outDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(outDir, 'version.json'),
+        JSON.stringify({ buildId: appBuildId, builtAt: new Date().toISOString() }, null, 2),
+        'utf-8',
+      );
+    },
+  };
+
   const plugins: PluginOption[] = [
     react(),
+    versionManifestPlugin,
     ViteImageOptimizer({
       png: { quality: 80 },
       jpeg: { quality: 80 },
@@ -33,14 +57,28 @@ export default defineConfig(({ mode }) => {
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,json,txt,xml}'], // Removed svg to avoid conflict with favicon.svg in includeAssets
-        globIgnores: ['**/favicon.svg'], // Explicitly ignore favicon.svg in glob generation
+        // Never precache HTML or version.json so deploys take effect automatically
+        // without forcing visitors to clear cookies or site data.
+        globPatterns: ['assets/**/*.{js,css,ico,png,webp,woff2}', 'manifest.webmanifest'],
+        globIgnores: ['**/favicon.svg', '**/version.json'],
+        navigateFallback: null,
         cleanupOutdatedCaches: true,
-        // A new SW normally waits for every open tab to close before taking
-        // over, which is why changes only showed up after clearing site
-        // data. These two make a new version take control immediately.
         skipWaiting: true,
         clientsClaim: true,
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'driptech-html-nav',
+              networkTimeoutSeconds: 3,
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 300,
+              },
+            },
+          },
+        ],
       }
     }),
   ];
@@ -48,6 +86,9 @@ export default defineConfig(({ mode }) => {
   // componentTagger removed (ESM doesn't support require())
 
   return {
+    define: {
+      __APP_BUILD_ID__: JSON.stringify(appBuildId),
+    },
     server: {
       host: "0.0.0.0",
       port: 5000,

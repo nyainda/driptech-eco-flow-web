@@ -224,11 +224,12 @@ export const ProductCard = ({
                   alsoOpenWhatsApp: true,
                 })
               }
-              className="inline-flex items-center justify-center gap-1 rounded-lg border border-[hsl(var(--dt-whatsapp)/0.3)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-2 py-1.5 text-[10px] font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+              className="inline-flex min-h-10 items-center justify-center gap-1 rounded-lg border border-[hsl(var(--dt-whatsapp)/0.3)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-2 py-1.5 text-[10px] font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
               title="Generates an automatic PDF quote and opens WhatsApp with the quote reference"
             >
               <MessageCircle className="h-3.5 w-3.5 shrink-0" />
-              <span>WhatsApp + PDF Quote</span>
+              <span className="sm:hidden">WhatsApp Quote</span>
+              <span className="hidden sm:inline">WhatsApp + PDF Quote</span>
             </button>
             <button
               type="button"
@@ -240,11 +241,12 @@ export const ProductCard = ({
                   alsoOpenWhatsApp: false,
                 })
               }
-              className="inline-flex items-center justify-center gap-1 rounded-lg border border-primary/25 bg-primary/5 px-2 py-1.5 text-[10px] font-extrabold text-primary transition-colors hover:bg-primary/15"
+              className="inline-flex min-h-10 items-center justify-center gap-1 rounded-lg border border-primary/25 bg-primary/5 px-2 py-1.5 text-[10px] font-extrabold text-primary transition-colors hover:bg-primary/15"
               title="Download an instant official PDF quotation for this product"
             >
               <FileText className="h-3.5 w-3.5 shrink-0" />
-              <span>Instant PDF Quote</span>
+              <span className="sm:hidden">PDF Quote</span>
+              <span className="hidden sm:inline">Instant PDF Quote</span>
             </button>
           </div>
         </div>

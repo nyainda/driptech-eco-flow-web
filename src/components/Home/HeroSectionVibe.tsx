@@ -202,19 +202,19 @@ export default function HeroSectionVibe() {
           </picture>
 
           {/* Rich multi-stop gradient overlay for legibility in light & dark mode */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/90 via-58% to-background/35 dark:from-background/95 dark:via-background/90 dark:to-background/45" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/92 to-background/80 lg:bg-gradient-to-r lg:from-background/95 lg:via-background/90 lg:via-58% lg:to-background/35 dark:from-background/95 dark:via-background/90 dark:to-background/45" />
 
-          <div className="relative grid gap-8 px-4 py-7 sm:px-8 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:items-center lg:gap-10 lg:px-10 lg:py-12 xl:px-12">
+          <div className="relative grid gap-6 px-4 py-6 sm:gap-8 sm:px-8 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:items-center lg:gap-10 lg:px-10 lg:py-12 xl:px-12">
             {/* Left Column: Value Proposition & Direct CTAs */}
             <div className="max-w-2xl">
-              <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1.5 text-xs font-extrabold text-primary backdrop-blur-sm mb-4">
-                <ShieldCheck className="h-4 w-4 shrink-0" />
+              <div className="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-[11px] sm:px-3.5 sm:py-1.5 sm:text-xs font-extrabold text-primary backdrop-blur-sm mb-3 sm:mb-4">
+                <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                 <span>Kenya's Premier Irrigation Engineering & Supply Partner</span>
               </div>
 
               <h1
                 id="home-hero-title"
-                className="font-heading text-3xl font-bold leading-[1.03] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-[54px] xl:text-6xl"
+                className="font-heading text-[28px] font-bold leading-[1.06] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-[54px] xl:text-6xl"
               >
                 Precision Irrigation{" "}
                 <span className="text-primary block mt-1">
@@ -222,7 +222,7 @@ export default function HeroSectionVibe() {
                 </span>
               </h1>
 
-              <p className="mt-4 max-w-xl text-sm leading-6 text-foreground/85 sm:text-base sm:leading-7">
+              <p className="mt-3 sm:mt-4 max-w-xl text-sm leading-6 text-foreground/85 sm:text-base sm:leading-7">
                 From single-roll driplines, <strong>HDPE dam liners</strong>, and solar borehole pumps to complete{" "}
                 <strong>¼-acre through 50+ acre farm installations</strong>.
                 We survey, design hydraulic layouts, supply genuine UV-stabilized
@@ -230,24 +230,24 @@ export default function HeroSectionVibe() {
               </p>
 
               {/* Key Trust Badges */}
-              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold text-foreground/90">
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-[11px] sm:text-xs font-semibold text-foreground/90">
                 {[
                   "15cm, 20cm & 30cm Driplines",
                   "HDPE Dam Liners & Welding",
                   "Full Field Installation & BOQs",
                 ].map((point) => (
                   <span key={point} className="inline-flex items-center gap-1.5">
-                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0" />
                     {point}
                   </span>
                 ))}
               </div>
 
               {/* Primary CTA Row */}
-              <div className="mt-6 flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <div className="mt-5 sm:mt-6 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
                 <Link
                   to="/products"
-                  className="dt-btn-primary inline-flex items-center gap-2 shadow-md"
+                  className="dt-btn-primary col-span-2 inline-flex min-h-11 items-center justify-center gap-2 shadow-md sm:col-span-1"
                 >
                   Shop Equipment <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -255,19 +255,20 @@ export default function HeroSectionVibe() {
                 <QuoteModal>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-[10px] border-2 border-primary bg-primary/10 px-4 py-2.5 text-sm font-extrabold text-primary backdrop-blur-sm transition-all hover:bg-primary hover:text-primary-foreground"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border-2 border-primary bg-primary/10 px-3 py-2.5 text-xs sm:px-4 sm:text-sm font-extrabold text-primary backdrop-blur-sm transition-all hover:bg-primary hover:text-primary-foreground"
                   >
-                    <FileText className="h-4 w-4" />
-                    Request Official BOQ
+                    <FileText className="h-4 w-4 shrink-0" />
+                    <span className="sm:hidden">Official BOQ</span>
+                    <span className="hidden sm:inline">Request Official BOQ</span>
                   </button>
                 </QuoteModal>
 
                 <Link
                   to="/irrigation-cost-calculator-kenya"
-                  className="inline-flex items-center gap-2 rounded-[10px] border border-border bg-card/90 px-4 py-2.5 text-sm font-bold text-foreground backdrop-blur-sm transition-colors hover:border-primary/50 hover:bg-card"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border border-border bg-card/90 px-3 py-2.5 text-xs sm:px-4 sm:text-sm font-bold text-foreground backdrop-blur-sm transition-colors hover:border-primary/50 hover:bg-card"
                 >
-                  <Calculator className="h-4 w-4 text-primary" />
-                  Cost Calculator
+                  <Calculator className="h-4 w-4 shrink-0 text-primary" />
+                  <span>Cost Calculator</span>
                 </Link>
               </div>
 

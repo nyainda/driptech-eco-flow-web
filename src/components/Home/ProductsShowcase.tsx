@@ -417,7 +417,7 @@ const ProductsShowcase = ({
             <p className="dt-section-subtitle mx-auto mt-3">
               Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes and full kits. Filter by type, check the price, or download our official PDF product catalogue.
             </p>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+            <div className="mt-5 flex flex-col items-stretch justify-center gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
               <button
                 type="button"
                 onClick={() =>
@@ -427,7 +427,7 @@ const ProductsShowcase = ({
                     false,
                   )
                 }
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+                className="inline-flex min-h-11 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
               >
                 <Download className="h-4 w-4" />
                 Download PDF Product Catalogue
@@ -441,7 +441,7 @@ const ProductsShowcase = ({
                     true,
                   )
                 }
-                className="inline-flex items-center gap-2 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+                className="inline-flex min-h-11 w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
               >
                 <span>💬</span>
                 Get PDF Catalogue + WhatsApp
@@ -517,7 +517,7 @@ const ProductsShowcase = ({
               View all categories <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-8">
             {CATEGORIES.filter((cat) => cat.key !== "all").map((cat) => {
               const count = categoryCounts[cat.key] ?? 0;
               if (count === 0) return null;
@@ -526,7 +526,7 @@ const ProductsShowcase = ({
                 <button
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className="group rounded-xl border border-border bg-card px-2 py-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm"
+                  className="group min-w-[116px] shrink-0 snap-start rounded-xl border border-border bg-card px-2.5 py-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm sm:min-w-0"
                 >
                   <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="h-4.5 w-4.5" />
@@ -563,7 +563,7 @@ const ProductsShowcase = ({
                 <button
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-colors ${
+                  className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 sm:px-3 sm:py-1.5 text-[11px] sm:text-[10px] font-bold transition-colors ${
                     activeCategory === cat.key
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
