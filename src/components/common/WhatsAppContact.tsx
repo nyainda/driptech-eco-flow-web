@@ -230,7 +230,7 @@ const WhatsAppContact = ({
         return (
           <button
             onClick={currentProduct ? openWhatsApp : () => setIsDialogOpen(true)}
-            className="fixed bottom-5 right-4 z-50 inline-flex min-h-14 items-center gap-3 rounded-full bg-[hsl(var(--dt-whatsapp))] px-4 text-white shadow-[0_10px_30px_hsl(var(--dt-whatsapp)/0.28)] transition-all duration-200 hover:-translate-y-1 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-[0_14px_34px_hsl(var(--dt-whatsapp)/0.35)] sm:bottom-8 sm:right-8 sm:px-5"
+            className="hidden md:inline-flex fixed bottom-8 right-8 z-50 min-h-14 items-center gap-3 rounded-full bg-[hsl(var(--dt-whatsapp))] px-5 text-white shadow-[0_10px_30px_hsl(var(--dt-whatsapp)/0.28)] transition-all duration-200 hover:-translate-y-1 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-[0_14px_34px_hsl(var(--dt-whatsapp)/0.35)]"
             aria-label="Contact us on WhatsApp"
             title="Open WhatsApp and choose what you need"
           >

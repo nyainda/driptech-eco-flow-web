@@ -135,7 +135,7 @@ export default function ProductDetailView({ product }: { product: ProductDetailD
                   src={images[activeImage] || images[0]}
                   alt={product.name}
                   className="h-full w-full object-contain object-center transition-opacity duration-300"
-                  fetchPriority="high"
+                  {...({ fetchpriority: "high" } as Record<string, string>)}
                 />
               ) : (
                 <div className="flex flex-col items-center gap-3 text-muted-foreground/50">

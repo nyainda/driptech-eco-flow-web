@@ -119,7 +119,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="border-t border-border">
+      <div className="border-t border-border pb-20 md:pb-0">
         <div className="dt-container flex flex-col gap-4 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span
             onClick={handleCopyrightClick}

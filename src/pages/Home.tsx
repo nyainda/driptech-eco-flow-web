@@ -9,7 +9,6 @@ import ProjectsSection from "@/components/Home/ProjectsSection";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
-import ScrollReveal from "@/components/common/ScrollReveal";
 
 const Home = () => {
   return (
@@ -19,49 +18,39 @@ const Home = () => {
       {/* Executive credibility & capabilities band right below the hero */}
       <TrustStrip />
 
-      {/* Product discovery stays the primary purpose of the homepage */}
-      <ScrollReveal>
-        <HomeOfferings />
-      </ScrollReveal>
+      {/* Product discovery renders immediately with no scroll-hiding wrapper */}
+      <HomeOfferings />
 
       {/* Complete acreage kits comparison */}
-      <ScrollReveal delay={40}>
-        <HomeKitsShowcase />
-      </ScrollReveal>
+      <HomeKitsShowcase />
 
       {/* Shop by Farm Acreage (1/4, 1/2, 1, 5+ Acres) & Kenyan Crop Solutions */}
-      <ScrollReveal>
-        <HomeCropAcreageGuide />
-      </ScrollReveal>
+      <HomeCropAcreageGuide />
 
       {/* Turnkey engineering design, consultation & 4-step execution pipeline */}
-      <ScrollReveal>
-        <HomeEngineeringServices />
-      </ScrollReveal>
+      <HomeEngineeringServices />
 
       {/* Verified irrigation project records */}
-      <ScrollReveal>
-        <ProjectsSection compact />
-      </ScrollReveal>
+      <ProjectsSection compact />
 
       <FAQSection
         title="Questions before you choose?"
         faqs={COMMON_FAQS.homepage}
-        className="py-10 sm:py-14"
+        className="py-7 sm:py-14"
       />
 
       {/* Keep these resources discoverable without making them compete with products */}
       <section
-        className="border-t border-border bg-background py-6 sm:py-8"
+        className="border-t border-border bg-background py-5 sm:py-8"
         aria-label="More irrigation resources"
       >
-        <div className="dt-container flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-semibold text-foreground">
+        <div className="dt-container flex flex-col gap-2.5 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs sm:text-sm font-semibold text-foreground">
             Still researching your irrigation setup?
           </p>
           <nav
             aria-label="Irrigation resources"
-            className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium"
+            className="flex flex-wrap items-center gap-x-4 gap-y-1.5 sm:gap-x-5 sm:gap-y-2 text-xs sm:text-sm font-medium"
           >
             <Link
               to="/irrigation-areas-kenya"

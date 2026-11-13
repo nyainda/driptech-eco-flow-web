@@ -499,13 +499,13 @@ const Header = () => {
       )}
 
       {/* Premium contact / trust bar */}
-      <div className="border-b border-border bg-muted/35 text-foreground">
-        <div className="container mx-auto px-3 sm:px-4">
-          <div className="flex min-h-10 items-center justify-between gap-2 py-1.5 text-[11px]">
-            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2.5">
+      <div className="border-b border-border bg-card text-foreground">
+        <div className="container mx-auto px-2.5 sm:px-4">
+          <div className="flex min-h-9 sm:min-h-10 items-center justify-between gap-1.5 sm:gap-2 py-1 text-[11px]">
+            <div className="flex min-w-0 items-center gap-1 sm:gap-2.5">
               <a
                 href="tel:0723407849"
-                className="group inline-flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 font-semibold transition-colors hover:bg-card hover:text-primary"
+                className="group inline-flex min-w-0 items-center gap-1.5 sm:gap-2 rounded-lg px-1.5 sm:px-2 py-1 font-semibold transition-colors hover:bg-card hover:text-primary"
               >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/10 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Phone className="h-3 w-3" />
@@ -520,19 +520,18 @@ const Header = () => {
 
               <a
                 href="mailto:info@dripstech.co.ke"
-                className="group inline-flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 font-semibold transition-colors hover:bg-card hover:text-primary"
+                className="group hidden sm:inline-flex min-w-0 items-center gap-2 rounded-lg px-2 py-1 font-semibold transition-colors hover:bg-card hover:text-primary"
               >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-primary/10 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Mail className="h-3 w-3" />
                 </span>
-                <span className="hidden truncate sm:inline">info@dripstech.co.ke</span>
-                <span className="sr-only sm:hidden">Email DripTech</span>
+                <span className="truncate">info@dripstech.co.ke</span>
               </a>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
               <div
-                className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1.5 font-bold text-foreground shadow-sm"
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2 sm:px-2.5 py-1 font-bold text-foreground shadow-sm text-[10px] sm:text-[11px]"
                 aria-label="Powered by Blue Digital Solutions"
                 title="Powered by Blue Digital Solutions"
               >
@@ -663,6 +662,16 @@ const Header = () => {
                 className="hidden md:flex h-9 xl:h-10 px-3 lg:px-4 xl:px-6 rounded-xl border-primary/20 hover:border-primary hover:bg-primary/5 text-primary hover:text-primary transition-all duration-300 font-bold text-xs lg:text-sm"
               >
                 Get Quote
+              </Button>
+            </QuoteModal>
+
+            <QuoteModal>
+              <Button
+                variant="outline"
+                size="sm"
+                className="md:hidden h-8 rounded-lg border-primary/30 bg-primary/5 px-2.5 text-[11px] font-extrabold text-primary"
+              >
+                Quote
               </Button>
             </QuoteModal>
 

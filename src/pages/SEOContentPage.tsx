@@ -268,6 +268,15 @@ const SEOContentPage = () => {
     : undefined;
 
   const isMasterHub = page.slug === "irrigation-guides-kenya";
+  const resolvedPageImage = page.image
+    ? /^https?:\/\//i.test(page.image)
+      ? page.image
+      : `${SITE_COMPANY.url}${page.image}`
+    : undefined;
+  const heroImageUrl =
+    (page.image && /^https?:\/\//i.test(page.image) ? page.image : undefined) ||
+    catalogueImage ||
+    page.image;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -275,7 +284,7 @@ const SEOContentPage = () => {
         title={page.title}
         description={page.description}
         url={pageUrl}
-        image={catalogueImage || (page.image ? `${SITE_COMPANY.url}${page.image}` : undefined)}
+        image={heroImageUrl || resolvedPageImage}
         schema={[
           buildLocalBusinessSchema(),
           breadcrumbSchema,
@@ -312,25 +321,29 @@ const SEOContentPage = () => {
               </span>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-              <div>
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:items-center">
+              <div className="min-w-0">
                 <p className="dt-section-label mb-2">DripTech EcoFlow Engineering Guide</p>
                 <h1 className="dt-section-title text-3xl sm:text-4xl lg:text-5xl">{page.h1}</h1>
                 <p className="dt-section-subtitle mt-4 text-base sm:text-lg leading-relaxed">{page.intro}</p>
 
                 {/* Primary Conversion CTA Bar */}
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <Link to="/products" className="dt-btn-primary inline-flex items-center gap-2">
+                <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-7 sm:flex sm:flex-wrap sm:gap-3">
+                  <Link
+                    to="/products"
+                    className="dt-btn-primary col-span-2 inline-flex min-h-11 items-center justify-center gap-2 sm:col-span-1"
+                  >
                     Browse Products & Prices <ArrowRight className="h-4 w-4" />
                   </Link>
                   <button
                     type="button"
                     onClick={handleDownloadCatalogue}
                     disabled={downloadingCat}
-                    className="dt-btn-secondary inline-flex items-center gap-2 border-primary/40 bg-primary/5 text-primary hover:bg-primary/10"
+                    className="dt-btn-secondary inline-flex min-h-11 items-center justify-center gap-1.5 border-primary/40 bg-primary/5 px-3 text-xs sm:px-5 sm:text-sm text-primary hover:bg-primary/10"
                   >
-                    <Download className="h-4 w-4" />
-                    {downloadingCat ? "Preparing PDF..." : "Download PDF Catalogue"}
+                    <Download className="h-4 w-4 shrink-0" />
+                    <span className="sm:hidden">{downloadingCat ? "PDF..." : "PDF Catalogue"}</span>
+                    <span className="hidden sm:inline">{downloadingCat ? "Preparing PDF..." : "Download PDF Catalogue"}</span>
                   </button>
                   <button
                     type="button"
@@ -342,29 +355,33 @@ const SEOContentPage = () => {
                         `SEO guide hero WhatsApp: ${page.slug}`,
                       )
                     }
-                    className="dt-btn-whatsapp inline-flex items-center gap-2"
+                    className="dt-btn-whatsapp inline-flex min-h-11 items-center justify-center gap-1.5 px-3 text-xs sm:px-5 sm:text-sm"
                   >
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp Engineer
+                    <MessageCircle className="h-4 w-4 shrink-0" />
+                    <span className="sm:hidden">WhatsApp</span>
+                    <span className="hidden sm:inline">WhatsApp Engineer</span>
                   </button>
-                  <Link to="/irrigation-cost-calculator-kenya" className="dt-btn-secondary inline-flex items-center gap-2">
-                    <Calculator className="h-4 w-4" />
+                  <Link
+                    to="/irrigation-cost-calculator-kenya"
+                    className="dt-btn-secondary col-span-2 inline-flex min-h-11 items-center justify-center gap-2 sm:col-span-1"
+                  >
+                    <Calculator className="h-4 w-4 shrink-0" />
                     Cost Calculator
                   </Link>
                 </div>
 
                 {/* Quick Jump Table of Contents */}
                 {page.sections.length > 0 && (
-                  <div className="mt-6 rounded-xl border border-border/80 bg-card/60 p-3.5">
+                  <div className="mt-6 min-w-0 max-w-full rounded-xl border border-border/80 bg-card/60 p-3.5">
                     <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                       In This Technical Guide:
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="scrollbar-hide -mx-1 flex flex-nowrap gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
                       {page.sections.map((section, idx) => (
                         <a
                           key={section.heading}
                           href={`#section-${slugifyHeading(section.heading)}`}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+                          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary sm:whitespace-normal"
                         >
                           <span className="font-bold text-primary">{idx + 1}.</span>
                           {section.heading}
@@ -373,7 +390,7 @@ const SEOContentPage = () => {
                       {faqItems.length > 0 && (
                         <a
                           href="#guide-faqs"
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
+                          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-primary/30 bg-primary/5 px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
                         >
                           <HelpCircle className="h-3.5 w-3.5" />
                           FAQs ({faqItems.length})
@@ -384,15 +401,15 @@ const SEOContentPage = () => {
                 )}
               </div>
 
-              {(catalogueImage || page.image) && (
-                <figure className="overflow-hidden rounded-2xl border border-border bg-card shadow-md">
+              {heroImageUrl && (
+                <figure className="min-w-0 overflow-hidden rounded-2xl border border-border bg-card shadow-md">
                   <img
-                    src={catalogueImage || page.image}
+                    src={heroImageUrl}
                     alt={`${page.h1} — irrigation equipment and farm water delivery`}
                     width="1200"
                     height="675"
                     loading="eager"
-                    fetchPriority="high"
+                    {...({ fetchpriority: "high" } as Record<string, string>)}
                     decoding="async"
                     className="aspect-[16/10] w-full object-cover"
                   />
@@ -410,8 +427,8 @@ const SEOContentPage = () => {
 
         {/* Main Content + Sticky Engineering Sidebar */}
         <section className="dt-section">
-          <div className="dt-container max-w-6xl grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="space-y-8">
+          <div className="dt-container max-w-6xl grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="min-w-0 space-y-8">
               {(slug === "drip-irrigation-kit-price-kenya" || slug === "eighth-quarter-half-acre-drip-kit-kenya") && (
                 <KitPriceTable />
               )}
@@ -420,7 +437,7 @@ const SEOContentPage = () => {
                 <article
                   key={section.heading}
                   id={`section-${slugifyHeading(section.heading)}`}
-                  className="dt-card scroll-mt-24 p-6 sm:p-8"
+                  className="dt-card min-w-0 scroll-mt-24 p-4 sm:p-8"
                 >
                   <div className="flex items-center gap-2.5 mb-2">
                     <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-xs font-extrabold text-primary">
@@ -437,8 +454,12 @@ const SEOContentPage = () => {
                     </p>
                   ))}
                   {section.table && section.table.headers?.length > 0 && section.table.rows?.length > 0 && (
-                    <div className="mt-6 overflow-x-auto rounded-xl border border-border">
-                      <table className="w-full border-collapse text-left text-sm">
+                    <div className="mt-6">
+                      <p className="mb-1.5 text-[11px] font-semibold text-muted-foreground sm:hidden">
+                        Swipe table horizontally to compare specs →
+                      </p>
+                      <div className="overflow-x-auto rounded-xl border border-border">
+                        <table className="w-full min-w-[480px] border-collapse text-left text-xs sm:text-sm">
                         {section.table.caption && (
                           <caption className="border-b border-border bg-muted/20 px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
                             {section.table.caption}
@@ -447,7 +468,7 @@ const SEOContentPage = () => {
                         <thead>
                           <tr className="border-b border-border bg-muted/50">
                             {section.table.headers.map((header) => (
-                              <th key={header} scope="col" className="px-4 py-3 font-bold text-foreground">
+                              <th key={header} scope="col" className="px-3 py-2.5 sm:px-4 sm:py-3 font-bold text-foreground">
                                 {header}
                               </th>
                             ))}
@@ -458,11 +479,11 @@ const SEOContentPage = () => {
                             <tr key={rowIndex} className="hover:bg-muted/20">
                               {row.map((cell, cellIndex) =>
                                 cellIndex === 0 ? (
-                                  <th key={cellIndex} scope="row" className="px-4 py-3 font-semibold text-foreground">
+                                  <th key={cellIndex} scope="row" className="px-3 py-2.5 sm:px-4 sm:py-3 font-semibold text-foreground">
                                     {cell}
                                   </th>
                                 ) : (
-                                  <td key={cellIndex} className="px-4 py-3 text-muted-foreground">
+                                  <td key={cellIndex} className="px-3 py-2.5 sm:px-4 sm:py-3 text-muted-foreground">
                                     {cell}
                                   </td>
                                 ),
@@ -470,7 +491,8 @@ const SEOContentPage = () => {
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                        </table>
+                      </div>
                     </div>
                   )}
                   {section.bullets && (
@@ -503,7 +525,7 @@ const SEOContentPage = () => {
                     </Link>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {matchingProducts.map((product) => {
                       const img = firstCatalogueImage(product) || "/driptech-logo.png";
                       const price = Number(product.price);
@@ -580,7 +602,7 @@ const SEOContentPage = () => {
             </div>
 
             {/* Sticky Engineering Sidebar */}
-            <aside className="h-fit space-y-6 lg:sticky lg:top-24">
+            <aside className="min-w-0 h-fit space-y-6 lg:sticky lg:top-24">
               {/* Related Guides Card */}
               <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <h2 className="text-base font-bold text-foreground flex items-center gap-2">
@@ -704,7 +726,7 @@ const SEOContentPage = () => {
             </div>
 
             {/* Category Filter Pills */}
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="scrollbar-hide -mx-1 mt-6 flex flex-nowrap gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
               {([
                 { key: "all", label: `All Guides (${allPages.length - 1})`, icon: Layers },
                 { key: "dam_storage", label: "Dam Liners & Storage", icon: Sparkles },
@@ -720,7 +742,7 @@ const SEOContentPage = () => {
                     key={tab.key}
                     type="button"
                     onClick={() => setHubCluster(tab.key)}
-                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all ${
+                    className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-bold transition-all ${
                       active
                         ? "border-primary bg-primary text-primary-foreground shadow-sm"
                         : "border-border bg-card text-foreground hover:border-primary/40"
@@ -734,7 +756,7 @@ const SEOContentPage = () => {
             </div>
 
             {/* Directory Grid */}
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {(isMasterHub || hubQuery || hubCluster !== "all"
                 ? filteredHubPages
                 : filteredHubPages.slice(0, 18)
@@ -744,7 +766,7 @@ const SEOContentPage = () => {
                   <Link
                     key={item.slug}
                     to={`/${item.slug}`}
-                    className="group flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-sm"
+                    className="group min-w-0 flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-sm"
                   >
                     <div>
                       <span className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${itemCluster.badgeClass}`}>
