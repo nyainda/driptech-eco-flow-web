@@ -9,7 +9,6 @@ import ProjectsSection from "@/components/Home/ProjectsSection";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
-import ScrollReveal from "@/components/common/ScrollReveal";
 
 const Home = () => {
   return (
@@ -19,30 +18,20 @@ const Home = () => {
       {/* Executive credibility & capabilities band right below the hero */}
       <TrustStrip />
 
-      {/* Product discovery stays the primary purpose of the homepage */}
-      <ScrollReveal>
-        <HomeOfferings />
-      </ScrollReveal>
+      {/* Product discovery renders immediately with no scroll-hiding wrapper */}
+      <HomeOfferings />
 
       {/* Complete acreage kits comparison */}
-      <ScrollReveal delay={40}>
-        <HomeKitsShowcase />
-      </ScrollReveal>
+      <HomeKitsShowcase />
 
       {/* Shop by Farm Acreage (1/4, 1/2, 1, 5+ Acres) & Kenyan Crop Solutions */}
-      <ScrollReveal>
-        <HomeCropAcreageGuide />
-      </ScrollReveal>
+      <HomeCropAcreageGuide />
 
       {/* Turnkey engineering design, consultation & 4-step execution pipeline */}
-      <ScrollReveal>
-        <HomeEngineeringServices />
-      </ScrollReveal>
+      <HomeEngineeringServices />
 
       {/* Verified irrigation project records */}
-      <ScrollReveal>
-        <ProjectsSection compact />
-      </ScrollReveal>
+      <ProjectsSection compact />
 
       <FAQSection
         title="Questions before you choose?"
