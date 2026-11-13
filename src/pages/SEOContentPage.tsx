@@ -197,7 +197,8 @@ const SEOContentPage = () => {
     setDownloadingCat(true);
     try {
       await openProductCataloguePdf({
-        title: "Complete Irrigation Equipment, Kits & Dam Liners Catalogue",
+        title: "Key Irrigation Equipment, Kits & Dam Liners Catalogue",
+        mode: "executive",
       });
     } finally {
       setDownloadingCat(false);
@@ -688,7 +689,7 @@ const SEOContentPage = () => {
                     className="dt-btn-secondary inline-flex w-full items-center justify-center gap-2 text-xs font-semibold"
                   >
                     <FileText className="h-4 w-4 text-primary" />
-                    {downloadingCat ? "Generating PDF..." : "Download Full PDF Catalogue"}
+                    {downloadingCat ? "Generating PDF..." : "Download Light PDF Catalogue"}
                   </button>
                 </div>
               </div>

@@ -42,7 +42,7 @@ import QuoteModal from "./QuoteModal";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import { StructuredData } from "@/components/SEO/StructuredData";
 import { getProductPath } from "@/lib/productUrl";
-import { openInstantProductQuotePdf, openProductCataloguePdf } from "@/lib/catalogAndQuotePdf";
+import { CataloguePdfModal } from "@/components/Products/CataloguePdfModal";
 
 interface Variant {
   name: string;
@@ -418,36 +418,35 @@ const ProductsShowcase = ({
               Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes &amp; kits. Tap any item for specs or download the PDF catalogue.
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-2.5">
-              <button
-                type="button"
-                onClick={() =>
-                  openProductCataloguePdf(
-                    allProducts,
-                    "Complete DripTech Irrigation & Farm Equipment Catalogue",
-                    false,
-                  )
-                }
-                className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl bg-primary px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+              <CataloguePdfModal
+                products={allProducts}
+                categoryCounts={categoryCounts}
+                activeCategoryKey={activeCategory}
               >
-                <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                <span className="sm:hidden">PDF Catalogue</span>
-                <span className="hidden sm:inline">Download PDF Product Catalogue</span>
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  openProductCataloguePdf(
-                    allProducts,
-                    "Complete DripTech Irrigation & Farm Equipment Catalogue",
-                    true,
-                  )
-                }
-                className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+                <button
+                  type="button"
+                  className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl bg-primary px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+                >
+                  <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                  <span className="sm:hidden">PDF Catalogue</span>
+                  <span className="hidden sm:inline">Download PDF Product Catalogue</span>
+                </button>
+              </CataloguePdfModal>
+              <CataloguePdfModal
+                products={allProducts}
+                categoryCounts={categoryCounts}
+                activeCategoryKey={activeCategory}
+                defaultWhatsApp
               >
-                <span>💬</span>
-                <span className="sm:hidden">Catalogue + WA</span>
-                <span className="hidden sm:inline">Get PDF Catalogue + WhatsApp</span>
-              </button>
+                <button
+                  type="button"
+                  className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+                >
+                  <span>💬</span>
+                  <span className="sm:hidden">Catalogue + WA</span>
+                  <span className="hidden sm:inline">Get PDF Catalogue + WhatsApp</span>
+                </button>
+              </CataloguePdfModal>
             </div>
           </div>
         )}

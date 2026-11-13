@@ -69,7 +69,8 @@ import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { trackSearch } from "@/services/aiProductService";
 import { cn } from "@/lib/utils";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
-import { openInstantProductQuotePdf, openProductCataloguePdf } from "@/lib/catalogAndQuotePdf";
+import { openInstantProductQuotePdf } from "@/lib/catalogAndQuotePdf";
+import { CataloguePdfModal } from "@/components/Products/CataloguePdfModal";
 
 interface Variant {
   name: string;
@@ -1215,37 +1216,42 @@ const Products = () => {
                     : "Find drip, sprinkler, pumping, filtration, fertigation and greenhouse equipment in one practical catalogue."}
                 </p>
                 <div className="mt-5 flex flex-wrap items-center gap-2.5">
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() =>
-                      openProductCataloguePdf(
-                        filteredProducts.length > 0 ? filteredProducts : products,
-                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
-                        false,
-                      )
+                  <CataloguePdfModal
+                    products={filteredProducts.length > 0 ? filteredProducts : products}
+                    activeCategoryKey={
+                      category
+                        ? Object.entries(CATEGORY_PATHS).find(([, slug]) => slug === category)?.[0] || "all"
+                        : "all"
                     }
-                    className="rounded-xl bg-primary text-primary-foreground font-bold shadow-sm hover:bg-primary/90"
                   >
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Official PDF Catalogue
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      openProductCataloguePdf(
-                        filteredProducts.length > 0 ? filteredProducts : products,
-                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
-                        true,
-                      )
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="rounded-xl bg-primary text-primary-foreground font-bold shadow-sm hover:bg-primary/90"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Light PDF Catalogue
+                    </Button>
+                  </CataloguePdfModal>
+                  <CataloguePdfModal
+                    products={filteredProducts.length > 0 ? filteredProducts : products}
+                    activeCategoryKey={
+                      category
+                        ? Object.entries(CATEGORY_PATHS).find(([, slug]) => slug === category)?.[0] || "all"
+                        : "all"
                     }
-                    className="rounded-xl border-[hsl(var(--dt-whatsapp)/0.4)] bg-[hsl(var(--dt-whatsapp)/0.07)] text-[hsl(var(--dt-whatsapp))] font-bold hover:bg-[hsl(var(--dt-whatsapp)/0.15)]"
+                    defaultWhatsApp
                   >
-                    <FileText className="mr-2 h-4 w-4" />
-                    Get PDF Catalogue + WhatsApp
-                  </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="rounded-xl border-[hsl(var(--dt-whatsapp)/0.4)] bg-[hsl(var(--dt-whatsapp)/0.07)] text-[hsl(var(--dt-whatsapp))] font-bold hover:bg-[hsl(var(--dt-whatsapp)/0.15)]"
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Get PDF Catalogue + WhatsApp
+                    </Button>
+                  </CataloguePdfModal>
                 </div>
               </div>
               <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm backdrop-blur">
