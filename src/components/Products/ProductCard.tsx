@@ -55,6 +55,12 @@ export const ProductCard = ({
     product.applications?.filter(Boolean).slice(0, 2) ||
     []
   );
+  const cleanDescription = (
+    product.description ||
+    "Professional irrigation equipment for dependable field use."
+  )
+    .replace(/\s+/g, " ")
+    .trim();
 
   const whatsappMessage = encodeURIComponent(
     `Hi DripTech! I'm interested in ${product.name}${
@@ -156,45 +162,45 @@ export const ProductCard = ({
         </div>
 
         <div className="flex flex-1 flex-col p-2.5 sm:p-5">
-          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-            <div className="flex items-center gap-1.5 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-1.5">
               <p className="truncate text-[8px] sm:text-[9px] font-extrabold uppercase tracking-[0.12em] sm:tracking-[0.16em] text-primary">
                 {categoryLabel}
               </p>
               {product.model_number && (
-                <span className="hidden sm:inline-block rounded bg-muted px-1.5 py-0.5 font-mono text-[9px] font-semibold text-muted-foreground">
+                <span className="hidden sm:inline-block shrink-0 max-w-[96px] truncate rounded bg-muted px-1.5 py-0.5 font-mono text-[9px] font-semibold text-muted-foreground">
                   {product.model_number}
                 </span>
               )}
             </div>
-            <span className="hidden sm:inline-flex items-center gap-1 text-[9px] font-semibold text-muted-foreground">
+            <span className="hidden sm:inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[9px] font-semibold text-muted-foreground">
               <Truck className="h-3 w-3 shrink-0 text-primary" />
               <span>Kenya delivery</span>
             </span>
           </div>
 
-          <h3 className="mt-1 sm:mt-1.5 line-clamp-2 min-h-[2rem] sm:min-h-0 font-heading text-xs font-bold leading-snug tracking-tight text-foreground sm:text-lg">
+          <h3 className="mt-1 sm:mt-1.5 line-clamp-2 min-h-[2rem] sm:min-h-[3.1rem] font-heading text-xs font-bold leading-snug tracking-tight text-foreground sm:text-lg">
             <Link to={path} className="transition-colors hover:text-primary">
               {product.name}
             </Link>
           </h3>
 
-          <p className="hidden sm:block mt-2 line-clamp-2 min-h-[40px] text-sm leading-5 text-muted-foreground">
-            {product.description || "Professional irrigation equipment for dependable field use."}
-          </p>
+          <div className="hidden sm:block mt-2">
+            <p className="line-clamp-2 min-h-[2.5rem] text-sm leading-5 text-muted-foreground">
+              {cleanDescription}
+            </p>
+          </div>
 
-          {highlightTags.length > 0 && (
-            <div className="hidden sm:flex mt-2.5 flex-wrap gap-1.5">
-              {highlightTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex max-w-full truncate rounded-md bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+          <div className="hidden sm:flex mt-2.5 min-h-[24px] items-center gap-1.5 overflow-hidden">
+            {highlightTags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-block max-w-[48%] truncate rounded-md bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
 
           <div className="mt-auto flex flex-col gap-2 border-t border-border pt-2.5 sm:pt-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">

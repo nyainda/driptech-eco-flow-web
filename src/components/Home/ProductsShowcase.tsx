@@ -89,8 +89,8 @@ const CATEGORIES = [
   { key: "accessories", label: "Accessories" },
 ];
 
-const INITIAL_SHOW = 8;
-const LOAD_MORE_COUNT = 8;
+const INITIAL_SHOW = 6;
+const LOAD_MORE_COUNT = 6;
 const SITE_ORIGIN = "https://www.dripstech.co.ke";
 
 const toAbsoluteSiteAssetUrl = (value: string | null | undefined) => {
@@ -481,9 +481,13 @@ const ProductsShowcase = ({
                 <h3 id="featured-product-title" className="mt-1 sm:mt-2 max-w-xl line-clamp-2 font-heading text-sm font-bold leading-snug tracking-tight text-foreground sm:text-3xl">
                   {featuredProduct.name}
                 </h3>
-                <p className="hidden sm:block mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-                  {featuredProduct.description || "A dependable irrigation component selected from our current catalogue."}
-                </p>
+                <div className="hidden sm:block mt-3 max-w-xl">
+                  <p className="line-clamp-3 text-sm leading-6 text-muted-foreground sm:text-base">
+                    {(featuredProduct.description || "A dependable irrigation component selected from our current catalogue.")
+                      .replace(/\s+/g, " ")
+                      .trim()}
+                  </p>
+                </div>
                 <div className="mt-2.5 sm:mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2.5 sm:pt-5">
                   <div>
                     <p className="hidden sm:block text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Starting price</p>
@@ -592,8 +596,8 @@ const ProductsShowcase = ({
           )}
         </section>
 
-        {/* Products grid — 2 crisp columns on mobile phones, expanding to 4 on desktop */}
-        <div className="mb-6 sm:mb-8 grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
+        {/* Products grid — 2 columns on mobile phones, 3 balanced columns on desktop */}
+        <div className="mb-6 sm:mb-8 grid grid-cols-2 gap-2.5 sm:gap-5 lg:grid-cols-3">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
               <Card key={index} className="dt-card overflow-hidden flex flex-col">
