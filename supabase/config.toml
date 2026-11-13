@@ -7,3 +7,6 @@ verify_jwt = false
 
 [functions.irrigation-market-intelligence]
 verify_jwt = false
+
+[functions.b2b-lead-outreach]
+verify_jwt = false
