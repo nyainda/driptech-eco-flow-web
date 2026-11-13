@@ -62,6 +62,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
+import type { SettingsTab } from "@/components/Admin/SystemSettings";
 
 // Lazy loaded admin components
 const AdminDashboard = lazy(() => import("@/components/Admin/AdminDashboard"));
@@ -322,6 +323,7 @@ const AdminLoading = () => (
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>("company");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [sidebarFilter, setSidebarFilter] = useState("");
@@ -379,7 +381,10 @@ const AdminContent = () => {
     );
   }, [commandQuery]);
 
-  const selectModule = (id: string) => {
+  const selectModule = (id: string, settingsTab: SettingsTab = "company") => {
+    if (id === "settings") {
+      setSettingsInitialTab(settingsTab);
+    }
     setActiveTab(id);
     setMobileDrawerOpen(false);
     setCommandOpen(false);
@@ -492,7 +497,7 @@ const AdminContent = () => {
       case "whatsapp":
         return <WhatsAppManagement />;
       case "settings":
-        return <SystemSettings />;
+        return <SystemSettings initialTab={settingsInitialTab} />;
       case "sync":
         return <SyncDashboard />;
       case "technicians":
@@ -502,7 +507,7 @@ const AdminContent = () => {
       case "ai-research":
         return <AIProductResearch />;
       case "grok-outreach":
-        return <GrokLeadOutreach />;
+        return <GrokLeadOutreach onOpenApiSettings={() => selectModule("settings", "api")} />;
       default:
         return <AdminDashboard onNavigate={selectModule} />;
     }

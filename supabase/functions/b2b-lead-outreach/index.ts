@@ -1,7 +1,13 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { hasAdminRole } from "../_shared/admin-auth.ts";
+import {
+  OUTREACH_SECRET_KEYS,
+  loadRuntimeSettingsMap,
+  maskSecretValue,
+  saveRuntimeSecrets,
+} from "../_shared/api-secrets.ts";
 
-const MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
+const DEFAULT_MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
 const DEFAULT_DAILY_EMAIL_CAP = 25;
 const MAX_DAILY_EMAIL_CAP = 50;
 const UNSUBSCRIBE_TTL_MS = 90 * 24 * 60 * 60 * 1000;
@@ -286,10 +292,31 @@ function getDailyEmailCap() {
   return Math.min(Math.floor(parsed), MAX_DAILY_EMAIL_CAP);
 }
 
-function getSenderAddress() {
-  const configured = (Deno.env.get("OUTREACH_FROM_EMAIL") || "").trim();
+function resolveSenderAddress(configuredFrom?: string) {
+  const configured = (configuredFrom || Deno.env.get("OUTREACH_FROM_EMAIL") || "").trim();
   if (configured && configured.includes("@")) return configured;
   return "DripTech Eco Flow Sales <info@dripstech.co.ke>";
+}
+
+async function getOutreachRuntimeConfig(admin: AdminClient) {
+  const settings = await loadRuntimeSettingsMap(admin, OUTREACH_SECRET_KEYS, {
+    xai_api_key: "XAI_API_KEY",
+    resend_api_key: "RESEND_API_KEY",
+    outreach_from_email: "OUTREACH_FROM_EMAIL",
+    xai_grok_model: "XAI_GROK_MODEL",
+  });
+  const xaiApiKey = settings.xai_api_key || "";
+  const resendApiKey = settings.resend_api_key || "";
+  const senderEmail = resolveSenderAddress(settings.outreach_from_email);
+  const model = settings.xai_grok_model || DEFAULT_MODEL;
+  return {
+    xaiApiKey,
+    resendApiKey,
+    senderEmail,
+    model,
+    usingSubdomainSender: isSubdomainSender(senderEmail),
+    rawOutreachFromEmail: settings.outreach_from_email || "",
+  };
 }
 
 function isSubdomainSender(fromAddress: string) {
@@ -415,7 +442,7 @@ async function getDailyEmailsSentCount(admin: AdminClient) {
 }
 
 async function loadOutreachContext(admin: AdminClient) {
-  const [campaignsRes, leadsRes, suppressionRes, dailySentCount] = await Promise.all([
+  const [campaignsRes, leadsRes, suppressionRes, dailySentCount, runtime] = await Promise.all([
     admin
       .from("b2b_outreach_campaigns")
       .select("id,segment,region,product_focus,model,summary,source_links,lead_count,created_at")
@@ -430,6 +457,7 @@ async function loadOutreachContext(admin: AdminClient) {
       .from("b2b_outreach_suppression")
       .select("id", { count: "exact", head: true }),
     getDailyEmailsSentCount(admin),
+    getOutreachRuntimeConfig(admin),
   ]);
 
   if (campaignsRes.error) {
@@ -439,16 +467,14 @@ async function loadOutreachContext(admin: AdminClient) {
     throw new Error("Could not load outreach leads: " + leadsRes.error.message);
   }
 
-  const senderEmail = getSenderAddress();
-
   return {
-    configured: !!Deno.env.get("XAI_API_KEY"),
-    emailConfigured: !!Deno.env.get("RESEND_API_KEY"),
-    senderEmail,
-    usingSubdomainSender: isSubdomainSender(senderEmail),
+    configured: !!runtime.xaiApiKey,
+    emailConfigured: !!runtime.resendApiKey,
+    senderEmail: runtime.senderEmail,
+    usingSubdomainSender: runtime.usingSubdomainSender,
     dailyEmailSentCount: dailySentCount,
     dailyEmailCap: getDailyEmailCap(),
-    model: MODEL,
+    model: runtime.model,
     catalogLinks: VERIFIED_DRIPTECH_LINKS,
     campaigns: campaignsRes.data || [],
     leads: leadsRes.data || [],
@@ -458,13 +484,14 @@ async function loadOutreachContext(admin: AdminClient) {
 
 async function discoverProspectsWithGrok(params: {
   apiKey: string;
+  model: string;
   segment: string;
   region: string;
   productFocus: string;
   maxLeads: number;
   catalogContext: Record<string, unknown>;
 }) {
-  const { apiKey, segment, region, productFocus, maxLeads, catalogContext } = params;
+  const { apiKey, model, segment, region, productFocus, maxLeads, catalogContext } = params;
 
   const prompt = [
     "You are the B2B Agricultural & Irrigation Prospect Researcher for DripTech Eco Flow in Kenya (https://www.dripstech.co.ke).",
@@ -526,7 +553,7 @@ async function discoverProspectsWithGrok(params: {
     },
     signal: AbortSignal.timeout(55_000),
     body: JSON.stringify({
-      model: MODEL,
+      model,
       input: [{ role: "user", content: prompt }],
       tools: [{ type: "web_search" }],
       max_output_tokens: 4500,
@@ -742,13 +769,60 @@ Deno.serve(async (req) => {
       return json(req, await loadOutreachContext(admin));
     }
 
+    if (action === "api_key_status") {
+      const runtime = await getOutreachRuntimeConfig(admin);
+      return json(req, {
+        xaiConfigured: !!runtime.xaiApiKey,
+        xaiPreview: maskSecretValue(runtime.xaiApiKey),
+        resendConfigured: !!runtime.resendApiKey,
+        resendPreview: maskSecretValue(runtime.resendApiKey),
+        outreachFromEmail: runtime.rawOutreachFromEmail,
+        xaiGrokModel: runtime.model,
+      });
+    }
+
+    if (action === "save_api_keys") {
+      const updates: Record<string, string | null | undefined> = {};
+      if (body.clear_xai_api_key === true) {
+        updates.xai_api_key = null;
+      } else if (typeof body.xai_api_key === "string" && body.xai_api_key.trim()) {
+        updates.xai_api_key = body.xai_api_key.trim();
+      }
+      if (body.clear_resend_api_key === true) {
+        updates.resend_api_key = null;
+      } else if (typeof body.resend_api_key === "string" && body.resend_api_key.trim()) {
+        updates.resend_api_key = body.resend_api_key.trim();
+      }
+      if (typeof body.outreach_from_email === "string") {
+        const trimmed = body.outreach_from_email.trim();
+        updates.outreach_from_email = trimmed ? trimmed : null;
+      }
+      if (typeof body.xai_grok_model === "string") {
+        const trimmed = body.xai_grok_model.trim();
+        updates.xai_grok_model = trimmed ? trimmed : null;
+      }
+
+      await saveRuntimeSecrets(admin, userData.user.id, updates);
+      const runtime = await getOutreachRuntimeConfig(admin);
+      return json(req, {
+        success: true,
+        xaiConfigured: !!runtime.xaiApiKey,
+        xaiPreview: maskSecretValue(runtime.xaiApiKey),
+        resendConfigured: !!runtime.resendApiKey,
+        resendPreview: maskSecretValue(runtime.resendApiKey),
+        outreachFromEmail: runtime.rawOutreachFromEmail,
+        xaiGrokModel: runtime.model,
+      });
+    }
+
     if (action === "discover") {
-      const apiKey = Deno.env.get("XAI_API_KEY");
+      const runtime = await getOutreachRuntimeConfig(admin);
+      const apiKey = runtime.xaiApiKey;
       if (!apiKey) {
         return json(
           req,
           {
-            error: "Grok is not configured. Add XAI_API_KEY in Supabase Edge Function Secrets, then retry.",
+            error: "Grok API key is not configured yet. Paste it in Admin -> System Settings -> API Keys and save.",
             configurationRequired: true,
           },
           503,
@@ -763,6 +837,7 @@ Deno.serve(async (req) => {
       const catalogContext = await loadCatalogContext(admin);
       const discovery = await discoverProspectsWithGrok({
         apiKey,
+        model: runtime.model,
         segment,
         region,
         productFocus,
@@ -803,7 +878,7 @@ Deno.serve(async (req) => {
           segment,
           region,
           product_focus: productFocus,
-          model: MODEL,
+          model: runtime.model,
           summary: discovery.summary,
           source_links: discovery.citations,
           lead_count: 0,
@@ -909,12 +984,13 @@ Deno.serve(async (req) => {
     }
 
     if (action === "send_email") {
-      const resendApiKey = Deno.env.get("RESEND_API_KEY");
+      const runtime = await getOutreachRuntimeConfig(admin);
+      const resendApiKey = runtime.resendApiKey;
       if (!resendApiKey) {
         return json(
           req,
           {
-            error: "RESEND_API_KEY is not configured in Supabase Edge Function Secrets.",
+            error: "Resend API key is not configured yet. Add it in Admin -> System Settings -> API Keys and save.",
             configurationRequired: true,
           },
           503,
@@ -977,7 +1053,7 @@ Deno.serve(async (req) => {
       );
       const token = await createUnsubscribeToken(unsubSecret, toEmail);
       const unsubscribeUrl = `${supabaseUrl}/functions/v1/b2b-lead-outreach?unsubscribe=${encodeURIComponent(token)}`;
-      const fromAddress = getSenderAddress();
+      const fromAddress = runtime.senderEmail;
 
       const html = renderOutreachEmailHtml({
         companyName: String(lead.company_name || ""),

@@ -17,6 +17,7 @@ import {
   Download,
   ExternalLink,
   Globe2,
+  KeyRound,
   Loader2,
   Mail,
   MessageCircle,
@@ -539,7 +540,11 @@ const LeadOutreachCard: React.FC<LeadCardProps> = ({
   );
 };
 
-const GrokLeadOutreach: React.FC = () => {
+interface GrokLeadOutreachProps {
+  onOpenApiSettings?: () => void;
+}
+
+const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }) => {
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -874,10 +879,10 @@ const GrokLeadOutreach: React.FC = () => {
               Grok B2B Client Finder & Outreach Desk
             </h2>
             <Badge variant={grokConfigured ? "default" : "destructive"}>
-              {grokConfigured ? `Grok (${model}) ready` : "Grok secret needed"}
+              {grokConfigured ? `Grok (${model}) ready` : "Grok key needed"}
             </Badge>
             <Badge variant={emailConfigured ? "secondary" : "outline"}>
-              {emailConfigured ? "Resend email ready" : "RESEND_API_KEY needed"}
+              {emailConfigured ? "Resend email ready" : "Resend key needed"}
             </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -885,7 +890,13 @@ const GrokLeadOutreach: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {onOpenApiSettings && (
+            <Button variant="outline" size="sm" onClick={onOpenApiSettings}>
+              <KeyRound className="h-4 w-4 mr-1.5" />
+              Manage API Keys
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={loadContext} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-1.5 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -896,6 +907,28 @@ const GrokLeadOutreach: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {!loading && (!grokConfigured || !emailConfigured) && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 text-xs text-amber-800 dark:text-amber-300 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-2.5">
+            <KeyRound className="h-4 w-4 shrink-0 mt-0.5" />
+            <div>
+              <strong>API Key Setup Needed:</strong>{" "}
+              {!grokConfigured && !emailConfigured
+                ? "Add your xAI Grok API key and Resend API key in System Settings -> API Keys to enable AI discovery and email sending."
+                : !grokConfigured
+                  ? "Add your xAI Grok API key in System Settings -> API Keys to enable live B2B prospect discovery."
+                  : "Add your Resend API key in System Settings -> API Keys to send direct outreach emails (WhatsApp outreach still works right away)."}
+            </div>
+          </div>
+          {onOpenApiSettings && (
+            <Button type="button" size="sm" variant="outline" onClick={onOpenApiSettings} className="shrink-0">
+              <KeyRound className="h-3.5 w-3.5 mr-1.5" />
+              Open API Key Settings
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* Safety & Deliverability Metrics */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -926,7 +959,7 @@ const GrokLeadOutreach: React.FC = () => {
             <p className="text-xs text-muted-foreground mt-1">
               {usingSubdomainSender
                 ? "Dedicated subdomain active"
-                : "Tip: set OUTREACH_FROM_EMAIL to a subdomain"}
+                : "Tip: set Outreach Sender in Settings → API Keys"}
             </p>
           </CardContent>
         </Card>
@@ -945,7 +978,9 @@ const GrokLeadOutreach: React.FC = () => {
           <div>
             <strong>Deliverability recommendation:</strong> Cold outreach currently sends via{" "}
             <code className="font-mono">{senderEmail}</code>. Once ready to scale, verify a dedicated subdomain in Resend (for example{" "}
-            <code className="font-mono">sales@mail.dripstech.co.ke</code>) and set <code className="font-mono">OUTREACH_FROM_EMAIL</code> in Supabase Secrets so your primary <code className="font-mono">info@dripstech.co.ke</code> inbox never catches cold-outreach spam flags.
+            <code className="font-mono">sales@mail.dripstech.co.ke</code>) and update Outreach From Email in{" "}
+            <span className="font-medium">System Settings → API Keys</span> so your primary{" "}
+            <code className="font-mono">info@dripstech.co.ke</code> inbox stays clean.
           </div>
         </div>
       )}
@@ -957,7 +992,7 @@ const GrokLeadOutreach: React.FC = () => {
             {error}
           </p>
           <p className="text-xs text-rose-600/90 dark:text-rose-300/80">
-            Make sure you have signed into Admin with Supabase Auth, pushed the <code className="font-mono">202611130001_b2b_outreach_leads.sql</code> migration, deployed the <code className="font-mono">b2b-lead-outreach</code> Edge Function, and configured <code className="font-mono">XAI_API_KEY</code> and <code className="font-mono">RESEND_API_KEY</code> in Supabase Edge Function Secrets.
+            Make sure you have signed into Admin with Supabase Auth, pushed the <code className="font-mono">202611130001_b2b_outreach_leads.sql</code> migration, deployed the <code className="font-mono">b2b-lead-outreach</code> Edge Function, and added your xAI Grok Key &amp; Resend Key in <span className="font-medium">Admin → System Settings → API Keys</span>.
           </p>
         </div>
       )}

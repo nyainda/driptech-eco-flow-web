@@ -1,8 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { hasAdminRole } from "../_shared/admin-auth.ts";
+import { loadRuntimeSettingsMap } from "../_shared/api-secrets.ts";
 import { buildSearchInsights, getScanWindow } from "../_shared/market-insights.ts";
 
-const MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
+const DEFAULT_MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
 const ALLOWED_ORIGINS = new Set([
   "https://www.dripstech.co.ke",
   "https://dripstech.co.ke",
@@ -410,6 +411,7 @@ function parseJsonReport(value: string) {
 
 async function runGrok(
   apiKey: string,
+  model: string,
   gsc: Record<string, unknown>,
   keywordData: Record<string, unknown>,
   competitors: Array<{ name: string; domain: string; focus: string }>,
@@ -502,7 +504,7 @@ async function runGrok(
       headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
       signal: AbortSignal.timeout(attempt.timeoutMs),
       body: JSON.stringify({
-        model: MODEL,
+        model,
         input: [{ role: "user", content: prompt + attempt.extra }],
         tools: [{ type: "web_search" }],
         max_output_tokens: attempt.maxOutputTokens,
@@ -582,6 +584,7 @@ async function processMarketScan(
   admin: ReturnType<typeof createClient>,
   jobId: string,
   apiKey: string,
+  activeModel: string = DEFAULT_MODEL,
 ) {
   let usageLogId: number | null = null;
   const requestStartedAt = Date.now();
@@ -622,7 +625,7 @@ async function processMarketScan(
       .insert({
         job_id: jobId,
         function_name: "irrigation-market-intelligence",
-        model: MODEL,
+        model: activeModel,
         status: "reserved",
         metadata: { scan_window: window },
       })
@@ -638,7 +641,7 @@ async function processMarketScan(
     await admin.from("market_intelligence_jobs")
       .update({ progress_message: "Analysing search opportunities and public competitor pages", updated_at: new Date().toISOString() })
       .eq("id", jobId);
-    const result = await runGrok(apiKey, gsc, keywordData, competitors, catalogContext);
+    const result = await runGrok(apiKey, activeModel, gsc, keywordData, competitors, catalogContext);
 
     const normaliseEvidenceText = (value: unknown) =>
       typeof value === "string" ? value.trim().toLowerCase().replace(/\s+/g, " ") : "";
@@ -737,7 +740,7 @@ async function processMarketScan(
         search_console_snapshot: gsc,
         keyword_estimates: keywordData,
         source_links: sources,
-        model: MODEL,
+        model: activeModel,
         cache_key: String(requestPayload.cacheKey || ""),
         scan_parameters: scanParameters,
       })
@@ -814,6 +817,12 @@ Deno.serve(async (req) => {
 
   const body = await req.json().catch(() => ({}));
   const action = String(body.action || "context");
+  const runtimeSecrets = await loadRuntimeSettingsMap(admin, ["xai_api_key", "xai_grok_model"], {
+    xai_api_key: "XAI_API_KEY",
+    xai_grok_model: "XAI_GROK_MODEL",
+  });
+  const activeApiKey = runtimeSecrets.xai_api_key || "";
+  const activeModel = runtimeSecrets.xai_grok_model || DEFAULT_MODEL;
 
   if (action === "context") {
     const [{ data: reports, error }, { data: activeJobs, error: jobsError }] = await Promise.all([
@@ -859,9 +868,9 @@ Deno.serve(async (req) => {
           }
       : null;
     return json(req, {
-      configured: !!Deno.env.get("XAI_API_KEY"),
+      configured: !!activeApiKey,
       keywordProviderConfigured: !!(Deno.env.get("DATAFORSEO_LOGIN") && Deno.env.get("DATAFORSEO_PASSWORD")),
-      model: MODEL,
+      model: activeModel,
       competitors: DEFAULT_COMPETITORS,
       reports: reports || [],
       recommendationStatuses: recommendationStatuses || [],
@@ -938,10 +947,10 @@ Deno.serve(async (req) => {
   }
 
   if (action === "run") {
-    const apiKey = Deno.env.get("XAI_API_KEY");
+    const apiKey = activeApiKey;
     if (!apiKey) {
       return json(req, {
-        error: "Grok is not configured. Add XAI_API_KEY in Supabase Edge Function Secrets, then retry.",
+        error: "Grok is not configured yet. Add your xAI Grok API key in Admin -> System Settings -> API Keys (or as XAI_API_KEY secret), then retry.",
         configurationRequired: true,
       }, 503);
     }
@@ -959,7 +968,7 @@ Deno.serve(async (req) => {
       version: 2,
       days,
       window,
-      model: MODEL,
+      model: activeModel,
       competitors,
       catalogue: {
         productNames: Array.isArray(catalogContext.products)
@@ -983,7 +992,7 @@ Deno.serve(async (req) => {
       return json(req, { error: "Scan cache is unavailable. Apply the market intelligence migration, then retry." }, 503);
     }
     if (cachedReport) {
-      return json(req, { success: true, cached: true, report: cachedReport, model: MODEL, usage: null });
+      return json(req, { success: true, cached: true, report: cachedReport, model: activeModel, usage: null });
     }
 
     const { data: reservation, error: reservationError } = await admin.rpc("enqueue_market_intelligence_job", {
@@ -1020,7 +1029,7 @@ Deno.serve(async (req) => {
       }).eq("id", jobId);
       return json(req, { error: "The background scan worker is unavailable in this environment." }, 503);
     }
-    edgeRuntime.waitUntil(processMarketScan(admin, jobId, apiKey));
+    edgeRuntime.waitUntil(processMarketScan(admin, jobId, apiKey, activeModel));
     return json(req, {
       success: true,
       queued: true,
