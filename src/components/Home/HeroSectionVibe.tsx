@@ -194,7 +194,7 @@ export default function HeroSectionVibe() {
               src="/hero-bg-new-desktop.webp"
               alt="Precision drip-irrigated crop rows on a Kenyan commercial farm"
               className="absolute inset-0 h-full w-full object-cover"
-              fetchPriority="high"
+              {...({ fetchpriority: "high" } as Record<string, string>)}
               decoding="async"
               width="1920"
               height="1080"

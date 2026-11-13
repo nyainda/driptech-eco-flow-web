@@ -409,7 +409,7 @@ const SEOContentPage = () => {
                     width="1200"
                     height="675"
                     loading="eager"
-                    fetchPriority="high"
+                    {...({ fetchpriority: "high" } as Record<string, string>)}
                     decoding="async"
                     className="aspect-[16/10] w-full object-cover"
                   />
