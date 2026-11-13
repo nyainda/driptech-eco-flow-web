@@ -58,7 +58,7 @@
         "href": "/rain-hose-prices-kenya"
       }
     ],
-    "image": "/seed-products/pipes_industrial.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1776095886973-anr31yorc3d.webp",
     "sources": [
       {
         "label": "Faulu Irrigation — HDPE pipe prices by size",
@@ -129,7 +129,7 @@
         "href": "/rain-hose-prices-kenya"
       }
     ],
-    "image": "/seed-products/pipes_industrial.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1776095886973-anr31yorc3d.webp",
     "sources": [
       {
         "label": "Faulu Irrigation — HDPE pipe price guide",
@@ -191,7 +191,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/pipes_industrial.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/0.769215904263397.jpg",
     "sources": [
       {
         "label": "Grekkon — rain hose irrigation",
@@ -261,7 +261,7 @@
         "href": "/how-to-choose-dripline-spacing-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1761308001850-d8da829cdkb.webp",
     "sources": [
       {
         "label": "Faulu Irrigation — 1000 m dripline rolls",
@@ -283,7 +283,7 @@
     "description": "Plan orchard irrigation in Kenya with adjustable and pressure-compensating button drippers (4L/h, 8L/h), 16mm blind HDPE tubing and filtration.",
     "h1": "Button drippers and orchard irrigation systems in Kenya",
     "intro": "Fruit trees such as avocado, mango, citrus, macadamia and pawpaw are planted at wide spacing where pre-punched vegetable drip tape would waste water between trees. Button drippers mounted on 16 mm or 20 mm blind HDPE laterals deliver water directly to each tree basin.",
-    "image": "/seed-products/plant_drip.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/vpguiibqi4h-1762448690092.webp",
     "sections": [
       {
         "heading": "Adjustable vs pressure-compensating (PC) button drippers",
@@ -370,7 +370,7 @@
     "description": "Supply and installation of pop-up lawn sprinklers, gear-drive rotors, solenoid valves and automatic turf timers in Kenya from DripTech.",
     "h1": "Pop-up lawn sprinklers and landscape irrigation in Kenya",
     "intro": "Residential compounds, hotels, schools, sports pitches and commercial landscapes in Kenya use underground pop-up sprinklers and drip shrub lines for tidy, even watering without surface hoses.",
-    "image": "/seed-products/sprinkler.jpg",
+    "image": "https://www.dripstech.co.ke/category-images/sprinkler-system-kenya.jpg",
     "sections": [
       {
         "heading": "Spray heads vs gear-drive rotor pop-up sprinklers",
@@ -425,7 +425,7 @@
     "description": "Compare rain gun sprinklers, tripod stands, high-pressure pumps and mainline pipe requirements for fodder, maize and pasture irrigation in Kenya.",
     "h1": "Rain gun sprinklers and large-area field irrigation in Kenya",
     "intro": "Rain gun sprinklers irrigate large blocks of fodder, pasture, maize, sugarcane and established field crops using a smaller number of movable or permanent hydrants. Because rain guns require substantial pressure and flow, the gun, pump and mainline must be engineered as one unit.",
-    "image": "/seed-products/sprinkler.jpg",
+    "image": "https://www.dripstech.co.ke/category-images/sprinkler-system-kenya.jpg",
     "sections": [
       {
         "heading": "Matching rain gun nozzle size to pump pressure and flow",
@@ -512,7 +512,7 @@
     "description": "Compare 50%, 60%, 75% and 90% agricultural shade nets, insect nets, greenhouse polythene and shade house irrigation kits in Kenya from DripTech.",
     "h1": "Agricultural shade nets, shade houses and greenhouse kits in Kenya",
     "intro": "Shade houses and greenhouses protect high-value vegetable nurseries, herbs, ornamentals, capsicum and strawberries from intense solar radiation, hail, wind and insect pests while reducing crop water stress.",
-    "image": "/seed-products/greenhouse.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794483385803-32352196f2o.webp",
     "sections": [
       {
         "heading": "Choosing shade net percentage (50%, 60%, 75% or 90%)",
@@ -592,7 +592,7 @@
     "description": "Size and install 3/4\", 1\", 1.5\" and 2\" Venturi fertilizer injectors, bypass manifolds and soluble fertigation systems in Kenya with DripTech.",
     "h1": "Venturi fertilizer injectors and farm fertigation kits in Kenya",
     "intro": "A Venturi injector uses a pressure differential across a bypass manifold on your irrigation mainline to draw dissolved soluble fertilizer from a mixing tank directly into the irrigation water stream.",
-    "image": "/seed-products/drip2.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1764837014553-9krir9ltbw.jpeg",
     "sections": [
       {
         "heading": "How to size and install a Venturi injector manifold",
@@ -636,7 +636,7 @@
     "description": "Automate farm, greenhouse and lawn watering in Kenya with 24V AC / 9V DC latching solenoid valves, multi-zone timers and smart controllers.",
     "h1": "Solenoid valves, water timers and automatic irrigation controllers in Kenya",
     "intro": "Automatic irrigation controllers and solenoid valves open and close irrigation zones on a programmed schedule, ensuring greenhouses, orchards and landscapes receive consistent water even when staff are away.",
-    "image": "/seed-products/drip3.jpg",
+    "image": "https://images.thdstatic.com/productImages/aa7dce61-644a-4090-b8a3-2ea8999bb522/svn/orbit-sprinkler-valves-51023p-64_1000.jpg",
     "sections": [
       {
         "heading": "Choosing between tap timers, 9V DC battery controllers and 24V AC panels",
@@ -710,7 +710,7 @@
     "description": "Compare uPVC pressure pipes (PN6, PN10, PN12.5, PN16), solvent-weld/rubber-ring joints and HDPE transitions for Kenyan farm irrigation mainlines.",
     "h1": "uPVC pressure pipes and fittings for farm irrigation in Kenya",
     "intro": "Buried uPVC pressure pipes are widely used for permanent farm mainlines and submain headers in Kenya, often paired with HDPE risers and drip or sprinkler laterals above ground.",
-    "image": "/seed-products/pipes_industrial.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1776095886973-anr31yorc3d.webp",
     "sections": [
       {
         "heading": "Understanding uPVC pressure classes (PN6, PN10, PN12.5 and PN16)",
@@ -757,7 +757,7 @@
     "description": "Compare 1/8 acre, 1/4 acre and 1/2 acre drip irrigation kits in Kenya: dripline rolls, tank heights, filters, fittings and crop layouts.",
     "h1": "1/8 acre, 1/4 acre and 1/2 acre drip irrigation kits in Kenya",
     "intro": "Smallholder and peri-urban growers in Kenya often start commercial vegetable or herb production on 1/8 acre (500 m²), 1/4 acre (1,000 m²) or 1/2 acre (2,000 m²) plots using gravity-fed elevated tanks or compact booster pumps.",
-    "image": "/seed-products/drip3.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/jlrrlep0loo-1760172981637.jpg",
     "sections": [
       {
         "heading": "Comparing smallholder drip kit sizes at a glance",

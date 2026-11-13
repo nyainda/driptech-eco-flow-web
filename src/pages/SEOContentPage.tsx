@@ -268,6 +268,15 @@ const SEOContentPage = () => {
     : undefined;
 
   const isMasterHub = page.slug === "irrigation-guides-kenya";
+  const resolvedPageImage = page.image
+    ? /^https?:\/\//i.test(page.image)
+      ? page.image
+      : `${SITE_COMPANY.url}${page.image}`
+    : undefined;
+  const heroImageUrl =
+    (page.image && /^https?:\/\//i.test(page.image) ? page.image : undefined) ||
+    catalogueImage ||
+    page.image;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -275,7 +284,7 @@ const SEOContentPage = () => {
         title={page.title}
         description={page.description}
         url={pageUrl}
-        image={catalogueImage || (page.image ? `${SITE_COMPANY.url}${page.image}` : undefined)}
+        image={heroImageUrl || resolvedPageImage}
         schema={[
           buildLocalBusinessSchema(),
           breadcrumbSchema,
@@ -384,10 +393,10 @@ const SEOContentPage = () => {
                 )}
               </div>
 
-              {(catalogueImage || page.image) && (
+              {heroImageUrl && (
                 <figure className="overflow-hidden rounded-2xl border border-border bg-card shadow-md">
                   <img
-                    src={catalogueImage || page.image}
+                    src={heroImageUrl}
                     alt={`${page.h1} — irrigation equipment and farm water delivery`}
                     width="1200"
                     height="675"
