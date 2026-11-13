@@ -203,13 +203,17 @@ export default function HomeKitsShowcase() {
                           <p className="text-[10px] font-extrabold uppercase tracking-[0.13em] text-primary">
                             {coverage}
                           </p>
-                          <h3 className="mt-1 line-clamp-2 font-heading text-sm font-bold leading-snug text-foreground">
+                          <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] font-heading text-sm font-bold leading-snug text-foreground">
                             {kit.name}
                           </h3>
-                          <p className="mt-1.5 hidden text-xs leading-relaxed text-muted-foreground sm:line-clamp-2 sm:block">
-                            {kit.description ||
-                              "Complete farm-ready irrigation package with mainline, laterals, filtration, and fittings."}
-                          </p>
+                          <div className="mt-1.5 hidden sm:block">
+                            <p className="line-clamp-2 min-h-[2.5rem] text-xs leading-5 text-muted-foreground">
+                              {(kit.description ||
+                                "Complete farm-ready irrigation package with mainline, laterals, filtration, and fittings.")
+                                .replace(/\s+/g, " ")
+                                .trim()}
+                            </p>
+                          </div>
                           <div className="mt-auto border-t border-border/60 pt-3 sm:pt-4">
                             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                               Complete Kit Price
