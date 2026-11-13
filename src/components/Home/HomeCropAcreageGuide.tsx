@@ -125,80 +125,82 @@ export default function HomeCropAcreageGuide() {
 
   return (
     <section
-      className="border-b border-border bg-background py-12 sm:py-16"
+      className="overflow-hidden border-b border-border bg-background py-8 sm:py-16"
       aria-labelledby="home-crop-acreage-title"
     >
-      <div className="dt-container space-y-8">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="dt-container space-y-5 sm:space-y-8">
+        <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <p className="dt-section-label mb-2">Agronomic &amp; Acreage Matching</p>
+            <p className="dt-section-label mb-1.5 sm:mb-2">Agronomic &amp; Acreage Matching</p>
             <h2
               id="home-crop-acreage-title"
-              className="font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl"
+              className="font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl"
             >
               Engineered Setups by{" "}
               <span className="text-primary">Kenyan Crop &amp; Farm Scale</span>
             </h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            <p className="mt-1.5 sm:mt-2 text-xs leading-5 sm:text-sm sm:leading-6 text-muted-foreground">
               Switch between crop-specific emitter setups and acreage package configurations.
             </p>
           </div>
 
           {/* Compact Tab Switcher */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
+          <div className="flex items-center">
+            <div className="grid w-full grid-cols-2 rounded-xl border border-border bg-muted/50 p-1 sm:inline-flex sm:w-auto">
               <button
                 type="button"
                 onClick={() => setActiveTab("crops")}
-                className={`rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+                className={`rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-extrabold transition-all whitespace-nowrap ${
                   activeTab === "crops"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                By Kenyan Crop (6)
+                <span className="sm:hidden">By Crop (6)</span>
+                <span className="hidden sm:inline">By Kenyan Crop (6)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("acreage")}
-                className={`rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+                className={`rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-extrabold transition-all whitespace-nowrap ${
                   activeTab === "acreage"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                By Farm Acreage (¼ to 50+ Acres)
+                <span className="sm:hidden">By Acreage (¼–50+)</span>
+                <span className="hidden sm:inline">By Farm Acreage (¼ to 50+ Acres)</span>
               </button>
             </div>
           </div>
         </div>
 
         {activeTab === "crops" ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
             {CROP_SOLUTIONS.map(({ title, spec, detail, href, icon: Icon }) => (
               <Link
                 key={title}
                 to={href}
-                className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
+                className="group flex w-[74vw] max-w-[275px] shrink-0 snap-start sm:w-auto sm:max-w-none flex-col justify-between rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                      <Icon className="h-5 w-5" />
+                    <span className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </span>
-                    <span className="rounded-lg bg-muted px-2.5 py-1 font-mono text-[10px] font-bold text-foreground">
+                    <span className="rounded-lg bg-muted px-2 sm:px-2.5 py-1 font-mono text-[10px] font-bold text-foreground">
                       {spec}
                     </span>
                   </div>
-                  <h3 className="mt-3.5 font-heading text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="mt-3 sm:mt-3.5 font-heading text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
                     {title}
                   </h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  <p className="mt-1 sm:mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-3 sm:line-clamp-none">
                     {detail}
                   </p>
                 </div>
 
-                <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-primary">
+                <span className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-primary">
                   View system specs &amp; pricing{" "}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </span>
@@ -206,11 +208,11 @@ export default function HomeCropAcreageGuide() {
             ))}
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
             {ACREAGE_PACKAGES.map((pkg) => (
               <div
                 key={pkg.size}
-                className={`flex flex-col justify-between rounded-2xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                className={`flex w-[76vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none flex-col justify-between rounded-2xl border p-4 sm:p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
                   pkg.featured
                     ? "border-primary bg-primary/[0.04] shadow-md ring-1 ring-primary/25"
                     : "border-border bg-card shadow-sm hover:border-primary/40"
@@ -226,14 +228,14 @@ export default function HomeCropAcreageGuide() {
                   >
                     {pkg.badge}
                   </span>
-                  <h3 className="mt-3 font-heading text-lg font-bold text-foreground">
+                  <h3 className="mt-2.5 sm:mt-3 font-heading text-base sm:text-lg font-bold text-foreground">
                     {pkg.size}
                   </h3>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     {pkg.idealFor}
                   </p>
 
-                  <ul className="mt-4 space-y-2 border-t border-border/70 pt-4 text-xs text-foreground/90">
+                  <ul className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2 border-t border-border/70 pt-3 sm:pt-4 text-xs text-foreground/90">
                     {pkg.highlights.map((item) => (
                       <li key={item} className="flex items-start gap-2">
                         <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
@@ -245,7 +247,7 @@ export default function HomeCropAcreageGuide() {
 
                 <Link
                   to={pkg.href}
-                  className={`mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-extrabold transition-colors ${
+                  className={`mt-4 sm:mt-5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-extrabold transition-colors ${
                     pkg.featured
                       ? "bg-primary text-primary-foreground hover:bg-primary/90"
                       : "border border-border bg-background text-foreground hover:border-primary hover:text-primary"

@@ -176,27 +176,27 @@ export default function HomeEngineeringServices() {
 
   return (
     <section
-      className="relative overflow-hidden border-y border-border bg-gradient-to-b from-muted/30 via-background to-muted/20 py-12 sm:py-16"
+      className="relative overflow-hidden border-y border-border bg-gradient-to-b from-muted/30 via-background to-muted/20 py-8 sm:py-16"
       aria-labelledby="home-engineering-title"
     >
-      <div className="dt-container space-y-8">
+      <div className="dt-container space-y-5 sm:space-y-8">
         {/* Top Header + Executive Action Card */}
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
-              <Award className="h-3.5 w-3.5" aria-hidden="true" />
-              End-to-End Irrigation Engineering &amp; Installation
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+          <div className="min-w-0">
+            <div className="mb-2 sm:mb-3 inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 sm:px-3.5 sm:py-1.5 text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-primary">
+              <Award className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              End-to-End Engineering &amp; Installation
             </div>
             <h2
               id="home-engineering-title"
-              className="font-heading text-3xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[42px]"
+              className="font-heading text-2xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-4xl lg:text-[42px]"
             >
               More than equipment supply.
               <span className="mt-1 block text-primary">
                 We survey, design, supply &amp; install the complete system.
               </span>
             </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+            <p className="mt-2 sm:mt-3 max-w-2xl text-xs leading-5 sm:text-base sm:leading-6 text-muted-foreground">
               From <strong>HDPE dam liners</strong>, <strong>greenhouses</strong>, and{" "}
               <strong>solar borehole pumps</strong> to complete ¼-acre through 50+ acre
               commercial drip installations—our engineers handle the entire project.
@@ -204,11 +204,11 @@ export default function HomeEngineeringServices() {
           </div>
 
           {/* Right Quick Action & Assurance Card */}
-          <div className="rounded-2xl border border-primary/20 bg-card p-4 sm:p-5 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+          <div className="min-w-0 rounded-2xl border border-primary/20 bg-card p-3.5 sm:p-5 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2.5 sm:pb-3">
               <div>
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">
-                  Engineering &amp; Contracting Desk • All 47 Counties
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-primary">
+                  Engineering &amp; Contracting Desk • 47 Counties
                 </p>
                 <p className="mt-0.5 font-heading text-sm font-bold text-foreground sm:text-base">
                   Need a site survey, dam liner, or official project BOQ?
@@ -220,11 +220,11 @@ export default function HomeEngineeringServices() {
               </span>
             </div>
 
-            <div className="mt-3.5 flex flex-wrap gap-2">
+            <div className="mt-3 sm:mt-3.5 grid grid-cols-1 sm:flex sm:flex-wrap gap-2">
               <button
                 type="button"
                 onClick={handleEngineerWhatsApp}
-                className="dt-btn-primary inline-flex flex-1 min-w-[180px] items-center justify-center gap-2 text-xs sm:text-sm py-2.5 shadow-sm"
+                className="dt-btn-primary inline-flex sm:flex-1 items-center justify-center gap-2 text-xs sm:text-sm py-2.5 shadow-sm"
               >
                 <MessageCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
                 Talk to an Engineer
@@ -235,7 +235,7 @@ export default function HomeEngineeringServices() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex flex-1 min-w-[160px] items-center justify-center gap-2 rounded-[10px] border-2 border-primary bg-primary/10 px-3.5 py-2 text-xs sm:text-sm font-extrabold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                    className="inline-flex sm:flex-1 items-center justify-center gap-2 rounded-[10px] border-2 border-primary bg-primary/10 px-3.5 py-2 text-xs sm:text-sm font-extrabold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                   >
                     <FileText className="h-4 w-4 shrink-0" aria-hidden="true" />
                     Request Itemized BOQ
@@ -244,7 +244,7 @@ export default function HomeEngineeringServices() {
               />
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+            <div className="mt-2.5 sm:mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
               <Link
                 to="/book-technician"
                 className="inline-flex items-center gap-1.5 font-bold text-foreground hover:text-primary transition-colors"
@@ -263,35 +263,37 @@ export default function HomeEngineeringServices() {
         </div>
 
         {/* Compact View Switcher: Contracting Services vs 4-Stage Engineering Process */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-          <div className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 border-b border-border pb-2.5 sm:pb-3">
+          <div className="grid w-full grid-cols-2 rounded-xl border border-border bg-muted/50 p-1 sm:inline-flex sm:w-auto">
             <button
               type="button"
               onClick={() => setActiveView("contracting")}
-              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+              className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-extrabold transition-all whitespace-nowrap ${
                 activeView === "contracting"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Wrench className="h-4 w-4" />
-              Dam Liners, Installation &amp; Greenhouses
+              <Wrench className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="sm:hidden">Services &amp; Liners</span>
+              <span className="hidden sm:inline">Dam Liners, Installation &amp; Greenhouses</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveView("process")}
-              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-extrabold transition-all ${
+              className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-extrabold transition-all whitespace-nowrap ${
                 activeView === "process"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Layers className="h-4 w-4" />
-              How We Engineer Your System (4 Steps)
+              <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="sm:hidden">4-Step Process</span>
+              <span className="hidden sm:inline">How We Engineer Your System (4 Steps)</span>
             </button>
           </div>
 
-          <p className="text-xs font-semibold text-muted-foreground">
+          <p className="hidden sm:block text-xs font-semibold text-muted-foreground">
             {activeView === "contracting"
               ? "Click any service below for an instant WhatsApp quotation"
               : "Click any stage to inspect our engineering deliverables"}
@@ -300,23 +302,23 @@ export default function HomeEngineeringServices() {
 
         {/* Tab 1: Specialized Farm Infrastructure & Installation Solutions */}
         {activeView === "contracting" ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
             {SPECIALIZED_INSTALLATIONS.map((item) => (
               <div
                 key={item.title}
-                className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
+                className="flex w-[78vw] max-w-[290px] shrink-0 snap-start sm:w-auto sm:max-w-none flex-col justify-between rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/45 hover:shadow-md"
               >
                 <div>
                   <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary">
                     {item.badge}
                   </span>
-                  <h3 className="mt-3 font-heading text-base font-bold leading-snug text-foreground sm:text-lg">
+                  <h3 className="mt-2.5 sm:mt-3 font-heading text-base font-bold leading-snug text-foreground sm:text-lg">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  <p className="mt-1.5 sm:mt-2 text-xs leading-5 text-muted-foreground">
                     {item.description}
                   </p>
-                  <ul className="mt-3 space-y-1.5 border-t border-border/70 pt-3">
+                  <ul className="hidden sm:block mt-3 space-y-1.5 border-t border-border/70 pt-3">
                     {item.bullets.map((bullet) => (
                       <li
                         key={bullet}
@@ -337,7 +339,7 @@ export default function HomeEngineeringServices() {
                       `specialized installation card: ${item.title}`
                     )
                   }
-                  className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3.5 py-2.5 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                  className="mt-3.5 sm:mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3.5 py-2.5 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   <MessageCircle className="h-3.5 w-3.5" />
                   {item.ctaLabel}
@@ -347,8 +349,8 @@ export default function HomeEngineeringServices() {
           </div>
         ) : (
           /* Tab 2: Interactive 4-Stage Full-System Engineering Blueprint */
-          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
-            <div className="flex flex-col justify-between gap-2.5">
+          <div className="grid gap-4 sm:gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+            <div className="flex flex-col justify-between gap-2 sm:gap-2.5">
               {ENGINEERING_PILLARS.map((pillar) => {
                 const Icon = pillar.icon;
                 const isActive = pillar.id === activePillar.id;
@@ -358,7 +360,7 @@ export default function HomeEngineeringServices() {
                     type="button"
                     onClick={() => setActivePillarId(pillar.id)}
                     aria-pressed={isActive}
-                    className={`group flex w-full items-start gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200 ${
+                    className={`group flex w-full items-start gap-3 sm:gap-3.5 rounded-2xl border p-3 sm:p-4 text-left transition-all duration-200 ${
                       isActive
                         ? "border-primary bg-card shadow-md ring-2 ring-primary/15"
                         : "border-border bg-card/60 hover:border-primary/40 hover:bg-card"

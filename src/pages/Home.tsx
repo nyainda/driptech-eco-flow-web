@@ -36,21 +36,21 @@ const Home = () => {
       <FAQSection
         title="Questions before you choose?"
         faqs={COMMON_FAQS.homepage}
-        className="py-10 sm:py-14"
+        className="py-7 sm:py-14"
       />
 
       {/* Keep these resources discoverable without making them compete with products */}
       <section
-        className="border-t border-border bg-background py-6 sm:py-8"
+        className="border-t border-border bg-background py-5 sm:py-8"
         aria-label="More irrigation resources"
       >
-        <div className="dt-container flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-semibold text-foreground">
+        <div className="dt-container flex flex-col gap-2.5 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs sm:text-sm font-semibold text-foreground">
             Still researching your irrigation setup?
           </p>
           <nav
             aria-label="Irrigation resources"
-            className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium"
+            className="flex flex-wrap items-center gap-x-4 gap-y-1.5 sm:gap-x-5 sm:gap-y-2 text-xs sm:text-sm font-medium"
           >
             <Link
               to="/irrigation-areas-kenya"
