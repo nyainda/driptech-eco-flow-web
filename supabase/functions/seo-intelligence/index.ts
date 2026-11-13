@@ -1,7 +1,8 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { hasAdminRole } from "../_shared/admin-auth.ts";
+import { loadRuntimeSettingsMap } from "../_shared/api-secrets.ts";
 
-const MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
+const DEFAULT_MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
 const ALLOWED_ORIGINS = new Set([
   "https://www.dripstech.co.ke",
   "https://dripstech.co.ke",
@@ -415,6 +416,7 @@ async function buildBusinessSnapshot(
 
 async function runGrokResearch(
   apiKey: string,
+  model: string,
   snapshot: Record<string, unknown>,
   competitors: Array<{ name: string; domain: string; focus: string }>,
 ) {
@@ -486,7 +488,7 @@ async function runGrokResearch(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
+      model,
       prompt_cache_key: "driptech-seo-intelligence-v1",
       input: [{ role: "user", content: prompt }],
       tools: [{ type: "web_search" }],
@@ -530,13 +532,18 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  const xaiApiKey = Deno.env.get("XAI_API_KEY");
 
   if (!supabaseUrl || !serviceRoleKey || !anonKey) {
     return json(req, { error: "Supabase server configuration is incomplete." }, 500);
   }
 
   const admin = createClient(supabaseUrl, serviceRoleKey);
+  const runtimeSecrets = await loadRuntimeSettingsMap(admin, ["xai_api_key", "xai_grok_model"], {
+    xai_api_key: "XAI_API_KEY",
+    xai_grok_model: "XAI_GROK_MODEL",
+  });
+  const xaiApiKey = runtimeSecrets.xai_api_key || "";
+  const activeModel = runtimeSecrets.xai_grok_model || DEFAULT_MODEL;
   const cronSecret = Deno.env.get("SEO_CRON_SECRET");
   const suppliedCronSecret = req.headers.get("x-seo-cron-secret") || "";
   const isScheduledCall = !!cronSecret && suppliedCronSecret.length > 0 &&
@@ -568,7 +575,7 @@ Deno.serve(async (req) => {
     if (error) return json(req, { error: "Could not load SEO intelligence reports." }, 500);
     return json(req, {
       configured: !!xaiApiKey,
-      model: MODEL,
+      model: activeModel,
       competitors: normaliseCompetitors(settings?.competitors || DEFAULT_COMPETITORS),
       settingsUpdatedAt: settings?.updated_at || null,
       reports: reports || [],
@@ -593,7 +600,7 @@ Deno.serve(async (req) => {
   if (action !== "run") return json(req, { error: "Unsupported action." }, 400);
   if (!xaiApiKey) {
     return json(req, {
-      error: "Grok is not configured yet. Add XAI_API_KEY in Supabase Edge Function Secrets, then retry.",
+      error: "Grok is not configured yet. Add your xAI Grok API key in Admin -> System Settings -> API Keys (or as XAI_API_KEY secret), then retry.",
       configurationRequired: true,
     }, 503);
   }
@@ -610,12 +617,12 @@ Deno.serve(async (req) => {
     .limit(1)
     .maybeSingle();
   if (cachedReport) {
-    return json(req, { success: true, cached: true, report: cachedReport, model: MODEL, usage: null });
+    return json(req, { success: true, cached: true, report: cachedReport, model: activeModel, usage: null });
   }
 
   const { data: reservation, error: reservationError } = await admin.rpc("reserve_grok_request", {
     p_function_name: "seo-intelligence",
-    p_model: MODEL,
+    p_model: activeModel,
     p_daily_limit: 4,
     p_cooldown_minutes: 30,
   });
@@ -641,7 +648,7 @@ Deno.serve(async (req) => {
   try {
     const gsc = await searchConsoleSnapshot(admin, days);
     const snapshot = await buildBusinessSnapshot(admin, days, gsc);
-    const result = await runGrokResearch(xaiApiKey, snapshot, competitors);
+    const result = await runGrokResearch(xaiApiKey, activeModel, snapshot, competitors);
     await admin.from("grok_usage_logs").update({
       status: "success",
       request_finished_at: new Date().toISOString(),
@@ -663,7 +670,7 @@ Deno.serve(async (req) => {
         report_data: result.report,
         source_links: result.sources,
         metrics_snapshot: snapshot,
-        model: MODEL,
+        model: activeModel,
       })
       .select("id,report_type,title,executive_summary,report_data,source_links,metrics_snapshot,model,created_at")
       .single();
@@ -672,7 +679,7 @@ Deno.serve(async (req) => {
     return json(req, {
       success: true,
       report: saved,
-      model: MODEL,
+      model: activeModel,
       competitorCount: competitors.length,
       sourcesCount: result.sources.length,
       searchConsoleConnected: !!(gsc as Record<string, unknown>).connected,

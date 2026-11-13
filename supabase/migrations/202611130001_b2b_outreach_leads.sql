@@ -92,6 +92,22 @@ create trigger trg_b2b_outreach_leads_updated_at
   before update on public.b2b_outreach_leads
   for each row execute function public.update_b2b_outreach_updated_at();
 
+create table if not exists public.admin_api_secrets (
+  secret_key text primary key,
+  secret_value text not null default '',
+  updated_by uuid,
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_admin_api_secrets_updated_at on public.admin_api_secrets;
+create trigger trg_admin_api_secrets_updated_at
+  before update on public.admin_api_secrets
+  for each row execute function public.update_b2b_outreach_updated_at();
+
+alter table public.admin_api_secrets enable row level security;
+revoke all on public.admin_api_secrets from anon, authenticated;
+grant all on public.admin_api_secrets to service_role;
+
 alter table public.b2b_outreach_campaigns enable row level security;
 alter table public.b2b_outreach_leads enable row level security;
 alter table public.b2b_outreach_suppression enable row level security;
