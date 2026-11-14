@@ -4,7 +4,7 @@ export const COMPANY = {
   name: "DripTech EcoFlow Ltd",
   legalName: "DripTech EcoFlow Irrigation & Water Systems",
   tagline: "Precision Irrigation, Solar Pumping & Water Engineering Solutions",
-  phone: "+254 723 407 849 / +254 757 716 018",
+  phone: "+254 723 407 849 / 0141294497",
   email: "info@dripstech.co.ke",
   emailAlt: "driptechs.info@gmail.com",
   website: "www.dripstech.co.ke",
@@ -16,7 +16,7 @@ export const COMPANY = {
   primaryLight: "#40916c",
   accentGold: "#c59b27",
   defaultPaymentDetails: [
-    "M-PESA PAYBILL / TILL: Contact Finance Desk (+254 723 407 849) for Official Reference",
+    "M-PESA PAYBILL / TILL: Contact Finance Desk (0723 407 849) for Official Reference",
     "BANK TRANSFER: DripTech EcoFlow · Account Currency: KES",
     "PAYMENT REFERENCE: Please quote the Document / Invoice Number on all remittances.",
   ].join("\n"),
