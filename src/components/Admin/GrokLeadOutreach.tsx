@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured } from "@/integrations/supabase/client";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -103,43 +104,8 @@ interface OutreachJob {
   completed_at?: string | null;
 }
 
-async function extractEdgeFunctionError(invokeError: unknown, data: unknown): Promise<string> {
-  if (data && typeof data === "object" && "error" in data && typeof (data as { error?: unknown }).error === "string") {
-    return String((data as { error: string }).error);
-  }
-  if (invokeError && typeof invokeError === "object") {
-    const errObj = invokeError as { message?: string; context?: Response };
-    if (errObj.context && typeof errObj.context.clone === "function") {
-      try {
-        const payload = await errObj.context.clone().json();
-        if (payload && typeof payload.error === "string" && payload.error.trim()) {
-          return payload.error.trim();
-        }
-      } catch {
-        try {
-          const text = await errObj.context.clone().text();
-          if (text.trim()) return text.trim().slice(0, 300);
-        } catch {
-          // Ignore response body fallback errors.
-        }
-      }
-    }
-    if (errObj.message) return errObj.message;
-  }
-  return "Request failed.";
-}
-
-async function invokeOutreach(body: Record<string, unknown>): Promise<Record<string, unknown>> {
-  const { data, error } = await supabase.functions.invoke("b2b-lead-outreach", { body });
-  if (error) {
-    throw new Error(await extractEdgeFunctionError(error, data));
-  }
-  const payload = (data && typeof data === "object" ? data : {}) as Record<string, unknown>;
-  if (typeof payload.error === "string" && payload.error) {
-    throw new Error(payload.error);
-  }
-  return payload;
-}
+const invokeOutreach = (body: Record<string, unknown>) =>
+  invokeEdgeFunction("b2b-lead-outreach", body);
 
 const SEGMENT_PRESETS = [
   "Commercial Avocado & Horticulture Farms",

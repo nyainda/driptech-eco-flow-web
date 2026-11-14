@@ -1,12 +1,23 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { hasAdminRole } from "../_shared/admin-auth.ts";
 import { loadRuntimeSettingsMap } from "../_shared/api-secrets.ts";
+import {
+  buildCorsHeaders,
+  callXaiResponses,
+  extractGrokCitations,
+  extractGrokResponseText,
+  isTimeoutError,
+} from "../_shared/grok-client.ts";
+import {
+  cancelMarketJob,
+  expireStaleMarketJobs,
+  getActiveMarketJobForUser,
+  getMarketJobStatus,
+  recordGrokUsageFailure,
+  recordGrokUsageSuccess,
+} from "../_shared/market-jobs.ts";
 
 const DEFAULT_MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
-const ALLOWED_ORIGINS = new Set([
-  "https://www.dripstech.co.ke",
-  "https://dripstech.co.ke",
-]);
 
 const DEFAULT_COMPETITORS = [
   { name: "Grekkon Limited", domain: "grekkon.com", focus: "Irrigation systems, greenhouses, pumps" },
@@ -16,17 +27,7 @@ const DEFAULT_COMPETITORS = [
   { name: "IrriGuru", domain: "irriguru.co.ke", focus: "Drip and sprinkler irrigation systems" },
 ];
 
-const corsFor = (req: Request) => {
-  const origin = req.headers.get("origin") || "";
-  const headers: Record<string, string> = {
-    "Vary": "Origin",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-my-custom-header",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Max-Age": "86400",
-  };
-  if (ALLOWED_ORIGINS.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
-  return headers;
-};
+const corsFor = (req: Request) => buildCorsHeaders(req, "POST, OPTIONS");
 
 const json = (req: Request, body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -107,7 +108,7 @@ async function searchConsoleSnapshot(admin: ReturnType<typeof createClient>, day
   const startDate = shiftDate(endDate, -(days - 1));
 
   const request = async (dimensions?: string[], rowLimit = 50) => {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       "https://www.googleapis.com/webmasters/v3/sites/" +
         encodeURIComponent(connection.property_url) +
         "/searchAnalytics/query",
@@ -125,6 +126,7 @@ async function searchConsoleSnapshot(admin: ReturnType<typeof createClient>, day
           aggregationType: "auto",
         }),
       },
+      15_000,
     );
     const data = await response.json();
     if (!response.ok) throw new Error(data?.error?.message || "Search Console report request failed.");
@@ -154,69 +156,6 @@ async function searchConsoleSnapshot(admin: ReturnType<typeof createClient>, day
       reason: error instanceof Error ? error.message : "Search Console data could not be loaded.",
     };
   }
-}
-
-function extractResponseText(response: Record<string, unknown>) {
-  if (typeof response.output_text === "string" && response.output_text.trim()) {
-    return response.output_text.trim();
-  }
-  const output = Array.isArray(response.output) ? response.output : [];
-  const fragments: string[] = [];
-  for (const item of output) {
-    if (!item || typeof item !== "object") continue;
-    const content = (item as Record<string, unknown>).content;
-    if (!Array.isArray(content)) continue;
-    for (const part of content) {
-      if (!part || typeof part !== "object") continue;
-      const text = (part as Record<string, unknown>).text;
-      if (typeof text === "string" && text.trim()) fragments.push(text.trim());
-    }
-  }
-  return fragments.join("\n");
-}
-
-function extractCitations(response: Record<string, unknown>) {
-  const citations: Array<{ title: string; url: string }> = [];
-  const seen = new Set<string>();
-  const add = (title: unknown, url: unknown) => {
-    if (typeof url !== "string" || !/^https?:\/\//i.test(url) || seen.has(url)) return;
-    seen.add(url);
-    citations.push({
-      title: typeof title === "string" && title.trim() ? title.trim().slice(0, 180) : new URL(url).hostname,
-      url,
-    });
-  };
-
-  if (Array.isArray(response.citations)) {
-    for (const citation of response.citations) {
-      if (typeof citation === "string") {
-        add(undefined, citation);
-        continue;
-      }
-      if (!citation || typeof citation !== "object") continue;
-      const item = citation as Record<string, unknown>;
-      add(item.title, item.url);
-    }
-  }
-
-  if (Array.isArray(response.output)) {
-    for (const item of response.output) {
-      if (!item || typeof item !== "object") continue;
-      const content = (item as Record<string, unknown>).content;
-      if (!Array.isArray(content)) continue;
-      for (const part of content) {
-        if (!part || typeof part !== "object") continue;
-        const annotations = (part as Record<string, unknown>).annotations;
-        if (!Array.isArray(annotations)) continue;
-        for (const annotation of annotations) {
-          if (!annotation || typeof annotation !== "object") continue;
-          const citation = annotation as Record<string, unknown>;
-          if (citation.type === "url_citation") add(citation.title, citation.url);
-        }
-      }
-    }
-  }
-  return citations;
 }
 
 function parseReport(text: string) {
@@ -437,7 +376,7 @@ async function runGrokResearch(
     JSON.stringify(snapshot, null, 2),
     "",
     "RESEARCH INSTRUCTIONS",
-    "1. Use the web_search tool to inspect public competitor websites, public product/category pages, public price information where available, public educational content, FAQs, titles/headings and apparent positioning. Make a focused research pass; avoid repeated searches for the same domain.",
+    "1. Use the web_search tool when enabled to inspect public competitor websites, public product/category pages, public price information where available, public educational content, FAQs, titles/headings and apparent positioning. Make at most 2 concise web searches; skip slow deep crawls and return valid JSON quickly.",
     "2. Compare the observed pages with DripTech's product/category structure and the supplied Search Console query/page sample.",
     "3. Identify products that attract repeated onsite interactions. Treat interaction counts as interest signals only, not purchases or revenue.",
     "4. Identify public content/product gaps, search-intent gaps, title/snippet opportunities, useful FAQs, comparison pages and missing internal links.",
@@ -481,32 +420,53 @@ async function runGrokResearch(
     "Keep the recommendations specific to DripTech's supplied metrics and catalogue. Prefer the ten most useful actions over a long generic checklist.",
   ].join("\n");
 
-  const response = await fetchWithTimeout("https://api.x.ai/v1/responses", {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + apiKey,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      prompt_cache_key: "driptech-seo-intelligence-v1",
-      input: [{ role: "user", content: prompt }],
-      tools: [{ type: "web_search" }],
-      max_output_tokens: 3000,
-    }),
-  });
+  const compactFallbackPrompt = [
+    prompt,
+    "",
+    "IMPORTANT FALLBACK MODE: Live web browsing timed out on the initial pass. Do NOT browse external pages; generate the report strictly from the supplied Search Console snapshot, website analytics, catalogue sample and competitor watchlist domains, and explicitly note under evidence_limits that live competitor browsing was skipped due to timeout.",
+  ].join("\n");
 
-  const data = await response.json();
-  if (!response.ok) {
-    const message = data?.error?.message || data?.message || "Grok research request failed.";
-    throw new Error("Grok API error: " + message);
+  let data: Record<string, unknown> | null = null;
+  let webSearchUsed = true;
+  let lastError: unknown = null;
+
+  // Keep total execution bounded under Supabase Free 150s worker timeout (92s + 38s = 130s).
+  const attempts = [
+    { useWebSearch: true, timeoutMs: 92_000, maxOutputTokens: 2800, attemptPrompt: prompt },
+    { useWebSearch: false, timeoutMs: 38_000, maxOutputTokens: 2400, attemptPrompt: compactFallbackPrompt },
+  ];
+
+  for (const attempt of attempts) {
+    try {
+      data = await callXaiResponses({
+        apiKey,
+        model,
+        prompt: attempt.attemptPrompt,
+        maxOutputTokens: attempt.maxOutputTokens,
+        timeoutMs: attempt.timeoutMs,
+        useWebSearch: attempt.useWebSearch,
+      });
+      webSearchUsed = attempt.useWebSearch;
+      lastError = null;
+      break;
+    } catch (error) {
+      lastError = error;
+      if (attempt.useWebSearch && isTimeoutError(error)) {
+        continue;
+      }
+      throw error;
+    }
   }
 
-  const rawText = extractResponseText(data);
+  if (!data) {
+    throw (lastError instanceof Error ? lastError : new Error("Grok SEO analysis timed out."));
+  }
+
+  const rawText = extractGrokResponseText(data);
   if (!rawText) throw new Error("Grok returned no report text.");
   const report = parseReport(rawText);
   const modelSources = Array.isArray(report.sources) ? report.sources : [];
-  const citations = extractCitations(data);
+  const citations = extractGrokCitations(data);
   const sources = new Map<string, { title: string; url: string; domain?: string }>();
 
   for (const source of [...citations, ...modelSources]) {
@@ -514,15 +474,158 @@ async function runGrokResearch(
     const item = source as Record<string, unknown>;
     const url = typeof item.url === "string" ? item.url : "";
     if (!/^https?:\/\//i.test(url)) continue;
-    const title = typeof item.title === "string" && item.title.trim()
-      ? item.title.trim()
-      : new URL(url).hostname;
-    sources.set(url, { title, url, domain: new URL(url).hostname });
+    try {
+      const domain = new URL(url).hostname;
+      const title = typeof item.title === "string" && item.title.trim() ? item.title.trim() : domain;
+      sources.set(url, { title, url, domain });
+    } catch {
+      // Ignore malformed URLs.
+    }
   }
 
   report.sources = Array.from(sources.values()).slice(0, 30);
   report.evidence_limits = Array.isArray(report.evidence_limits) ? report.evidence_limits : [];
-  return { report, rawText, sources: report.sources, usage: data.usage || null };
+  return { report, rawText, sources: report.sources, usage: data.usage || null, webSearchUsed };
+}
+
+async function processSeoIntelligenceJob(
+  admin: ReturnType<typeof createClient>,
+  jobId: string,
+  apiKey: string,
+  activeModel: string = DEFAULT_MODEL,
+) {
+  let usageLogId: number | null = null;
+  const requestStartedAt = Date.now();
+  try {
+    const { data: job, error: claimError } = await admin
+      .from("market_intelligence_jobs")
+      .update({
+        status: "running",
+        started_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        progress_message: "Loading Search Console and website analytics",
+      })
+      .eq("id", jobId)
+      .eq("function_name", "seo-intelligence")
+      .eq("status", "queued")
+      .select("id,request_payload")
+      .maybeSingle();
+
+    if (claimError) throw new Error("Could not claim the SEO analysis job: " + claimError.message);
+    if (!job) return;
+
+    const requestPayload = job.request_payload && typeof job.request_payload === "object"
+      ? (job.request_payload as Record<string, unknown>)
+      : {};
+    const days = Math.min(Math.max(Math.floor(safeNumber(requestPayload.days) || 28), 7), 90);
+    const competitors = normaliseCompetitors(requestPayload.competitors || DEFAULT_COMPETITORS);
+
+    const { data: usageLog, error: usageError } = await admin
+      .from("grok_usage_logs")
+      .insert({
+        job_id: jobId,
+        function_name: "seo-intelligence",
+        model: activeModel,
+        status: "reserved",
+        metadata: { days, competitor_count: competitors.length },
+      })
+      .select("id")
+      .single();
+
+    if (usageError) throw new Error("Could not reserve Grok usage for this SEO scan: " + usageError.message);
+    usageLogId = Number(usageLog.id);
+
+    const gsc = await searchConsoleSnapshot(admin, days);
+    const snapshot = await buildBusinessSnapshot(admin, days, gsc);
+
+    await admin
+      .from("market_intelligence_jobs")
+      .update({
+        progress_message: "Analysing Kenya SEO opportunities and competitor positioning",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", jobId);
+
+    const result = await runGrokResearch(apiKey, activeModel, snapshot, competitors);
+
+    await admin
+      .from("market_intelligence_jobs")
+      .update({
+        progress_message: "Saving SEO report and citations",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", jobId);
+
+    const title = String(result.report.title || "DripTech SEO & Competitor Intelligence").slice(0, 180);
+    const summary = String(result.report.executive_summary || result.rawText).slice(0, 12000);
+
+    const { data: saved, error: saveError } = await admin
+      .from("seo_intelligence_reports")
+      .insert({
+        report_type: "full_audit",
+        title,
+        executive_summary: summary,
+        report_data: result.report,
+        source_links: result.sources,
+        metrics_snapshot: snapshot,
+        model: activeModel,
+      })
+      .select("id")
+      .single();
+
+    if (saveError) throw new Error("Grok completed, but the report could not be saved: " + saveError.message);
+
+    await recordGrokUsageSuccess(
+      admin,
+      usageLogId,
+      requestStartedAt,
+      result.usage as Record<string, unknown> | null,
+      {
+        gsc_connected: !!(gsc as Record<string, unknown>).connected,
+        web_search_used: result.webSearchUsed,
+      },
+    );
+
+    const { data: currentJob } = await admin
+      .from("market_intelligence_jobs")
+      .select("status")
+      .eq("id", jobId)
+      .maybeSingle();
+    if (currentJob?.status === "failed") {
+      return;
+    }
+
+    const nowIso = new Date().toISOString();
+    const { error: completeError } = await admin
+      .from("market_intelligence_jobs")
+      .update({
+        status: "succeeded",
+        result_report_id: saved.id,
+        progress_message: "SEO report ready",
+        error_message: null,
+        completed_at: nowIso,
+        updated_at: nowIso,
+      })
+      .eq("id", jobId);
+    if (completeError) throw new Error("SEO report saved, but job status could not be updated: " + completeError.message);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "SEO intelligence analysis failed.";
+    if (usageLogId) {
+      await recordGrokUsageFailure(admin, usageLogId, requestStartedAt, message);
+    }
+    const nowIso = new Date().toISOString();
+    await admin
+      .from("market_intelligence_jobs")
+      .update({
+        status: "failed",
+        progress_message: "Analysis failed",
+        error_message: message.slice(0, 1000),
+        completed_at: nowIso,
+        updated_at: nowIso,
+      })
+      .eq("id", jobId)
+      .in("status", ["queued", "running"]);
+  }
 }
 
 Deno.serve(async (req) => {
@@ -549,6 +652,7 @@ Deno.serve(async (req) => {
   const isScheduledCall = !!cronSecret && suppliedCronSecret.length > 0 &&
     suppliedCronSecret === cronSecret;
 
+  let requestingUserId: string | null = null;
   if (!isScheduledCall) {
     const auth = req.headers.get("Authorization");
     if (!auth) return json(req, { error: "Sign in required." }, 401);
@@ -559,18 +663,22 @@ Deno.serve(async (req) => {
     if (userError || !userData.user || !(await hasAdminRole(admin, userData.user.id))) {
       return json(req, { error: "Admin access required." }, 403);
     }
+    requestingUserId = userData.user.id;
   }
 
   const body = await req.json().catch(() => ({}));
   const action = String(body.action || "context");
 
   if (action === "context") {
-    const [{ data: settings }, { data: reports, error }] = await Promise.all([
+    const [{ data: settings }, { data: reports, error }, activeJob] = await Promise.all([
       admin.from("seo_intelligence_settings").select("competitors,updated_at").eq("id", 1).maybeSingle(),
       admin.from("seo_intelligence_reports")
         .select("id,report_type,title,executive_summary,report_data,source_links,metrics_snapshot,model,created_at")
         .order("created_at", { ascending: false })
         .limit(15),
+      requestingUserId
+        ? getActiveMarketJobForUser(admin, requestingUserId, "seo-intelligence")
+        : Promise.resolve(null),
     ]);
     if (error) return json(req, { error: "Could not load SEO intelligence reports." }, 500);
     return json(req, {
@@ -579,7 +687,25 @@ Deno.serve(async (req) => {
       competitors: normaliseCompetitors(settings?.competitors || DEFAULT_COMPETITORS),
       settingsUpdatedAt: settings?.updated_at || null,
       reports: reports || [],
+      activeJob,
     });
+  }
+
+  if (action === "job") {
+    if (!requestingUserId) return json(req, { error: "Admin session required." }, 403);
+    const jobId = typeof body.jobId === "string" ? body.jobId : "";
+    if (!jobId) return json(req, { error: "A scan job ID is required." }, 400);
+    const job = await getMarketJobStatus(admin, jobId, requestingUserId);
+    if (!job) return json(req, { error: "SEO scan job not found." }, 404);
+    return json(req, job);
+  }
+
+  if (action === "cancel_job") {
+    if (!requestingUserId) return json(req, { error: "Admin session required." }, 403);
+    const jobId = typeof body.jobId === "string" ? body.jobId : "";
+    if (!jobId) return json(req, { error: "A scan job ID is required." }, 400);
+    await cancelMarketJob(admin, jobId, requestingUserId);
+    return json(req, { success: true });
   }
 
   if (action === "save_competitors") {
@@ -620,22 +746,6 @@ Deno.serve(async (req) => {
     return json(req, { success: true, cached: true, report: cachedReport, model: activeModel, usage: null });
   }
 
-  const { data: reservation, error: reservationError } = await admin.rpc("reserve_grok_request", {
-    p_function_name: "seo-intelligence",
-    p_model: activeModel,
-    p_daily_limit: 4,
-    p_cooldown_minutes: 30,
-  });
-  if (reservationError) return json(req, { error: "Grok quota guard is unavailable; no provider call was made. " + reservationError.message }, 503);
-  if (!reservation?.ok) {
-    const reason = reservation.reason === "cooldown"
-      ? "A Grok analysis ran recently. Please wait before starting another."
-      : "The shared Grok daily limit has been reached. Try again tomorrow.";
-    return json(req, { error: reason, quota: reservation }, 429);
-  }
-  const usageLogId = reservation.usage_log_id;
-  const requestStartedAt = Date.now();
-
   const { data: settings } = await admin
     .from("seo_intelligence_settings")
     .select("competitors")
@@ -645,55 +755,61 @@ Deno.serve(async (req) => {
   const competitors = normaliseCompetitors(body.competitors || settings?.competitors || DEFAULT_COMPETITORS);
   if (competitors.length === 0) return json(req, { error: "The competitor watchlist is empty." }, 400);
 
-  try {
-    const gsc = await searchConsoleSnapshot(admin, days);
-    const snapshot = await buildBusinessSnapshot(admin, days, gsc);
-    const result = await runGrokResearch(xaiApiKey, activeModel, snapshot, competitors);
-    await admin.from("grok_usage_logs").update({
-      status: "success",
-      request_finished_at: new Date().toISOString(),
-      duration_ms: Date.now() - requestStartedAt,
-      input_tokens: (result.usage as Record<string, unknown> | null)?.input_tokens ?? null,
-      output_tokens: (result.usage as Record<string, unknown> | null)?.output_tokens ?? null,
-      total_tokens: (result.usage as Record<string, unknown> | null)?.total_tokens ?? null,
-      metadata: { gsc_connected: !!(gsc as Record<string, unknown>).connected },
-    }).eq("id", usageLogId);
-    const title = String(result.report.title || "DripTech SEO & Competitor Intelligence").slice(0, 180);
-    const summary = String(result.report.executive_summary || result.rawText).slice(0, 12000);
+  await expireStaleMarketJobs(admin);
 
-    const { data: saved, error: saveError } = await admin
-      .from("seo_intelligence_reports")
-      .insert({
-        report_type: "full_audit",
-        title,
-        executive_summary: summary,
-        report_data: result.report,
-        source_links: result.sources,
-        metrics_snapshot: snapshot,
-        model: activeModel,
-      })
-      .select("id,report_type,title,executive_summary,report_data,source_links,metrics_snapshot,model,created_at")
-      .single();
+  const { data: reservation, error: reservationError } = await admin.rpc("enqueue_market_intelligence_job", {
+    p_function_name: "seo-intelligence",
+    p_requested_by: requestingUserId,
+    p_payload: { days, competitors },
+    p_daily_limit: 4,
+    p_cooldown_minutes: 30,
+  });
 
-    if (saveError) throw new Error("Grok completed, but the report could not be saved: " + saveError.message);
-    return json(req, {
-      success: true,
-      report: saved,
-      model: activeModel,
-      competitorCount: competitors.length,
-      sourcesCount: result.sources.length,
-      searchConsoleConnected: !!(gsc as Record<string, unknown>).connected,
-      usage: result.usage,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "SEO intelligence analysis failed.";
-    await admin.from("grok_usage_logs").update({
-      status: /429|rate.?limit/i.test(message) ? "rate_limited" : /timeout|timed out/i.test(message) ? "timeout" : "error",
-      request_finished_at: new Date().toISOString(),
-      duration_ms: Date.now() - requestStartedAt,
-      error_code: /429|rate.?limit/i.test(message) ? "429" : null,
-      error_message: message.slice(0, 1000),
-    }).eq("id", usageLogId);
-    return json(req, { error: message }, 502);
+  if (reservationError) {
+    return json(req, { error: "SEO analysis queue is unavailable; no provider call was made. " + reservationError.message }, 503);
   }
+  if (!reservation?.ok) {
+    if (reservation.reason === "analysis_already_active") {
+      return json(req, { error: "An intelligence analysis is already queued or running. Wait briefly and refresh." }, 409);
+    }
+    if (reservation.reason === "cooldown") {
+      const mins = Math.max(1, Math.ceil(Number(reservation.retry_after_seconds || 60) / 60));
+      return json(req, {
+        error: `A Grok analysis ran recently. Cooldown protects API quota — retry in ~${mins} min.`,
+        quota: reservation,
+      }, 429);
+    }
+    return json(req, { error: "The shared Grok daily limit has been reached. Try again tomorrow.", quota: reservation }, 429);
+  }
+
+  const jobId = String(reservation.job_id || "");
+  if (!jobId) {
+    return json(req, { error: "The queue accepted the SEO analysis but did not return a job ID." }, 503);
+  }
+
+  const edgeRuntime = (globalThis as unknown as {
+    EdgeRuntime?: { waitUntil: (promise: Promise<unknown>) => void };
+  }).EdgeRuntime;
+  if (!edgeRuntime?.waitUntil) {
+    await admin.from("market_intelligence_jobs").update({
+      status: "failed",
+      progress_message: "Background worker unavailable",
+      error_message: "Supabase EdgeRuntime.waitUntil is unavailable in this environment.",
+      completed_at: new Date().toISOString(),
+    }).eq("id", jobId);
+    return json(req, { error: "The background SEO analysis worker is unavailable in this environment." }, 503);
+  }
+
+  edgeRuntime.waitUntil(processSeoIntelligenceJob(admin, jobId, xaiApiKey, activeModel));
+  return json(req, {
+    success: true,
+    queued: true,
+    model: activeModel,
+    job: {
+      id: jobId,
+      status: "queued",
+      progress_message: "Waiting for the SEO analysis worker",
+      created_at: new Date().toISOString(),
+    },
+  }, 202);
 });
