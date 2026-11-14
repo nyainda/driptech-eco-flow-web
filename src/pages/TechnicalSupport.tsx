@@ -159,7 +159,7 @@ const TechnicalSupport = () => {
       icon: Phone,
       title: "Phone Support",
       description: "Immediate assistance for urgent field issues",
-      contact: `${SITE_COMPANY.phoneDisplay} / 0757 716 018`,
+      contact: `${SITE_COMPANY.phoneDisplay} / 0141294497`,
       hours: "Mon-Sat: 8AM-6PM EAT",
       response: "Immediate",
       badge: "Fastest",
