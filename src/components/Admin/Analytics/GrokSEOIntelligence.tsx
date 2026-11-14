@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,6 +37,16 @@ type Report = {
   created_at: string;
 };
 
+type SeoJob = {
+  id: string;
+  status: "queued" | "running" | "succeeded" | "failed";
+  progress_message?: string;
+  error_message?: string;
+  result_report_id?: string;
+  created_at?: string;
+  started_at?: string;
+};
+
 const listOf = (value: unknown): Array<Record<string, unknown>> =>
   Array.isArray(value)
     ? value.filter((item) => item && typeof item === "object") as Array<Record<string, unknown>>
@@ -68,6 +78,10 @@ const GrokSEOIntelligence: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [running, setRunning] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [activeJob, setActiveJob] = useState<SeoJob | null>(null);
+  const [anotherAdminScanning, setAnotherAdminScanning] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -75,20 +89,21 @@ const GrokSEOIntelligence: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("seo-intelligence", {
-        body: { action: "context" },
-      });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      const nextCompetitors: Competitor[] = Array.isArray(data?.competitors) ? data.competitors : [];
-      const nextReports: Report[] = Array.isArray(data?.reports) ? data.reports : [];
+      const data = await invokeEdgeFunction("seo-intelligence", { action: "context" });
+      const nextCompetitors: Competitor[] = Array.isArray(data?.competitors) ? (data.competitors as Competitor[]) : [];
+      const nextReports: Report[] = Array.isArray(data?.reports) ? (data.reports as Report[]) : [];
       setCompetitors(nextCompetitors);
       setCompetitorDraft(
         nextCompetitors.map((item) => item.name + " | " + item.domain + " | " + (item.focus || "")).join("\n"),
       );
       setReports(nextReports);
       setConfigured(!!data?.configured);
-      setModel(data?.model || "grok-4.7");
+      setModel(typeof data?.model === "string" && data.model ? data.model : "grok-4.7");
+      const job = data?.activeJob && typeof data.activeJob === "object"
+        ? (data.activeJob as SeoJob & { ownedByUser?: boolean })
+        : null;
+      setAnotherAdminScanning(!!job && !job.ownedByUser);
+      setActiveJob(job?.ownedByUser ? job : null);
       setSelectedReportId((current) => current || nextReports[0]?.id || "");
     } catch (loadError: unknown) {
       setError(loadError instanceof Error ? loadError.message : "Could not load Grok intelligence settings.");
@@ -100,6 +115,58 @@ const GrokSEOIntelligence: React.FC = () => {
   useEffect(() => {
     loadContext();
   }, [loadContext]);
+
+  useEffect(() => {
+    const jobId = activeJob?.id;
+    const jobStatus = activeJob?.status;
+    if (!jobId || !jobStatus || !["queued", "running"].includes(jobStatus)) {
+      setElapsedSeconds(0);
+      return;
+    }
+    const anchorIso = activeJob.started_at || activeJob.created_at;
+    const startMs = anchorIso ? new Date(anchorIso).getTime() : Date.now();
+    const updateElapsed = () => {
+      const secs = Math.max(0, Math.floor((Date.now() - (Number.isFinite(startMs) ? startMs : Date.now())) / 1000));
+      setElapsedSeconds(secs);
+    };
+    updateElapsed();
+    const ticker = setInterval(updateElapsed, 1000);
+    return () => clearInterval(ticker);
+  }, [activeJob?.id, activeJob?.status, activeJob?.started_at, activeJob?.created_at]);
+
+  useEffect(() => {
+    const jobId = activeJob?.id;
+    if (!jobId || !["queued", "running"].includes(activeJob.status)) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const data = await invokeEdgeFunction("seo-intelligence", { action: "job", jobId });
+        if (cancelled) return;
+        const job = data as unknown as SeoJob;
+        setActiveJob(job);
+        if (job.status === "succeeded") {
+          if (job.result_report_id) setSelectedReportId(job.result_report_id);
+          setNotice("SEO intelligence analysis finished and the report is saved.");
+          await loadContext();
+          return;
+        }
+        if (job.status === "failed") {
+          setError(job.error_message || "The background SEO analysis failed.");
+          return;
+        }
+        timer = setTimeout(poll, 2500);
+      } catch (pollError: unknown) {
+        if (cancelled) return;
+        setError(pollError instanceof Error ? pollError.message : "Could not check SEO analysis status.");
+      }
+    };
+    timer = setTimeout(poll, 2500);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [activeJob?.id, activeJob?.status, loadContext]);
 
   const selectedReport = useMemo(
     () => reports.find((report) => report.id === selectedReportId) || reports[0] || null,
@@ -136,12 +203,11 @@ const GrokSEOIntelligence: React.FC = () => {
     setError("");
     setNotice("");
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("seo-intelligence", {
-        body: { action: "save_competitors", competitors: parsed },
+      const data = await invokeEdgeFunction("seo-intelligence", {
+        action: "save_competitors",
+        competitors: parsed,
       });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      const saved: Competitor[] = data.competitors || parsed;
+      const saved: Competitor[] = Array.isArray(data?.competitors) ? (data.competitors as Competitor[]) : parsed;
       setCompetitors(saved);
       setCompetitorDraft(saved.map((item) => item.name + " | " + item.domain + " | " + (item.focus || "")).join("\n"));
       setNotice("Competitor watchlist saved.");
@@ -152,20 +218,46 @@ const GrokSEOIntelligence: React.FC = () => {
     }
   };
 
+  const scanBusy = running || (!!activeJob && ["queued", "running"].includes(activeJob.status));
+
+  const cancelAnalysis = async () => {
+    if (!activeJob?.id) return;
+    setCancelling(true);
+    setError("");
+    try {
+      await invokeEdgeFunction("seo-intelligence", { action: "cancel_job", jobId: activeJob.id });
+      setActiveJob(null);
+      setNotice("SEO analysis cancelled.");
+    } catch (cancelError: unknown) {
+      setError(cancelError instanceof Error ? cancelError.message : "Could not cancel the SEO analysis.");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   const runAnalysis = async () => {
     setRunning(true);
     setError("");
     setNotice("");
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("seo-intelligence", {
-        body: { action: "run", days: 28 },
-      });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      if (!data?.report) throw new Error("Grok did not return a saved report.");
-      setReports((current) => [data.report, ...current.filter((item) => item.id !== data.report.id)]);
-      setSelectedReportId(data.report.id);
-      setNotice("Research completed with " + metric(data.sourcesCount) + " cited sources.");
+      const data = await invokeEdgeFunction("seo-intelligence", { action: "run", days: 28 });
+      const returnedReport = data?.report && typeof data.report === "object" ? (data.report as Report) : null;
+      const queuedJob = data?.queued && data?.job && typeof data.job === "object" ? (data.job as SeoJob) : null;
+      if (returnedReport?.id) {
+        setReports((current) => [returnedReport, ...current.filter((item) => item.id !== returnedReport.id)]);
+        setSelectedReportId(returnedReport.id);
+        setNotice(
+          data?.cached
+            ? "Loaded the latest saved SEO report from the last 24 hours. No new Grok call was needed."
+            : "Research completed with " + metric(data.sourcesCount) + " cited sources.",
+        );
+      } else if (queuedJob?.id) {
+        setActiveJob(queuedJob);
+        setAnotherAdminScanning(false);
+        setNotice("SEO analysis queued. You can keep working while Grok prepares the report.");
+      } else {
+        throw new Error("Grok did not start or return a saved report.");
+      }
     } catch (runError: unknown) {
       setError(runError instanceof Error ? runError.message : "Grok analysis failed.");
     } finally {
@@ -241,11 +333,11 @@ const GrokSEOIntelligence: React.FC = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={runAnalysis} disabled={running || loading || !configured} className="bg-emerald-500 text-white hover:bg-emerald-600">
-              {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radar className="mr-2 h-4 w-4" />}
-              {running ? "Researching competitors…" : "Run full intelligence scan"}
+            <Button onClick={runAnalysis} disabled={scanBusy || loading || !configured || anotherAdminScanning} className="bg-emerald-500 text-white hover:bg-emerald-600">
+              {scanBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radar className="mr-2 h-4 w-4" />}
+              {scanBusy ? "Researching competitors…" : "Run full intelligence scan"}
             </Button>
-            <Button variant="outline" onClick={loadContext} disabled={loading || running} className="border-white/20 bg-white/5 text-white hover:bg-white/10">
+            <Button variant="outline" onClick={loadContext} disabled={loading} className="border-white/20 bg-white/5 text-white hover:bg-white/10">
               <RefreshCw className={"mr-2 h-4 w-4 " + (loading ? "animate-spin" : "")} /> Refresh
             </Button>
           </div>
@@ -259,11 +351,38 @@ const GrokSEOIntelligence: React.FC = () => {
             <div>
               <p className="font-semibold">Connect Grok securely</p>
               <p className="mt-1 text-sm leading-5 text-muted-foreground">
-                Add XAI_API_KEY in Supabase → Edge Functions → Secrets. The key belongs on the server and must not be placed in frontend settings or source code.
+                Add your xAI Grok key in <strong>Admin → System Settings → API Keys</strong> (or set <code>XAI_API_KEY</code> in Supabase Edge Function Secrets). Keys remain server-side only.
               </p>
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {activeJob && ["queued", "running"].includes(activeJob.status) && (
+        <Card className="rounded-2xl border-emerald-500/30 bg-emerald-500/[0.04]">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-4">
+            <div className="flex min-w-0 flex-1 items-center gap-4">
+              <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-700 dark:text-emerald-300"><Loader2 className="h-5 w-5 animate-spin" /></div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-semibold">SEO analysis is processing</p>
+                  <Badge variant="outline">{activeJob.status}</Badge>
+                  <span className="text-xs text-muted-foreground">{elapsedSeconds}s elapsed</span>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">{activeJob.progress_message || "Preparing the report…"}</p>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-emerald-500/10"><div className="h-full w-1/2 animate-pulse rounded-full bg-emerald-500" /></div>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" onClick={cancelAnalysis} disabled={cancelling}>
+              {cancelling ? "Cancelling…" : "Cancel Scan"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+      {anotherAdminScanning && !activeJob && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-amber-800 dark:text-amber-200">
+          Another administrator or scheduled run is currently generating an intelligence report. Refresh shortly to view its progress.
+        </div>
       )}
 
       {error && (
@@ -358,7 +477,7 @@ const GrokSEOIntelligence: React.FC = () => {
                 </p>
                 {!configured && (
                   <p className="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-                    Add XAI_API_KEY to Supabase Edge Function Secrets. Keep the key out of frontend settings and source code.
+                    Add your xAI Grok key in Admin → System Settings → API Keys (or as <code>XAI_API_KEY</code> in Supabase Edge Function Secrets). Keys remain server-side only.
                   </p>
                 )}
               </CardContent>

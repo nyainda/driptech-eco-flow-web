@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,6 +86,8 @@ type MarketJob = {
   progress_message?: string;
   error_message?: string;
   result_report_id?: string;
+  created_at?: string;
+  started_at?: string;
 };
 
 const objectRows = (value: unknown): DataRow[] =>
@@ -130,6 +133,8 @@ const IrrigationMarketIntelligence: React.FC = () => {
   const [periodDays, setPeriodDays] = useState(28);
   const [activeJob, setActiveJob] = useState<MarketJob | null>(null);
   const [anotherAdminScanning, setAnotherAdminScanning] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [recommendationStatuses, setRecommendationStatuses] = useState<Record<string, "open" | "done">>({});
   const [savingRecommendationIndex, setSavingRecommendationIndex] = useState<number | null>(null);
   const [draftingRecommendationIndex, setDraftingRecommendationIndex] = useState<number | null>(null);
@@ -140,16 +145,12 @@ const IrrigationMarketIntelligence: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("irrigation-market-intelligence", {
-        body: { action: "context" },
-      });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      const nextReports: MarketReport[] = Array.isArray(data?.reports) ? data.reports : [];
+      const data = await invokeEdgeFunction("irrigation-market-intelligence", { action: "context" });
+      const nextReports: MarketReport[] = Array.isArray(data?.reports) ? (data.reports as MarketReport[]) : [];
       setReports(nextReports);
       setGrokConfigured(!!data?.configured);
       setKeywordProviderConfigured(!!data?.keywordProviderConfigured);
-      setModel(data?.model || "grok-4.7");
+      setModel(typeof data?.model === "string" && data.model ? data.model : "grok-4.7");
       const statuses: Record<string, "open" | "done"> = {};
       for (const status of Array.isArray(data?.recommendationStatuses) ? data.recommendationStatuses : []) {
         if (status?.report_id && Number.isInteger(status.recommendation_index)) {
@@ -157,7 +158,9 @@ const IrrigationMarketIntelligence: React.FC = () => {
         }
       }
       setRecommendationStatuses(statuses);
-      const job = data?.activeJob;
+      const job = data?.activeJob && typeof data.activeJob === "object"
+        ? (data.activeJob as MarketJob & { ownedByUser?: boolean })
+        : null;
       setAnotherAdminScanning(!!job && !job.ownedByUser);
       setActiveJob(job?.ownedByUser ? job : null);
       setSelectedId((current) => current || nextReports[0]?.id || "");
@@ -172,26 +175,41 @@ const IrrigationMarketIntelligence: React.FC = () => {
 
   useEffect(() => {
     const jobId = activeJob?.id;
+    const jobStatus = activeJob?.status;
+    if (!jobId || !jobStatus || !["queued", "running"].includes(jobStatus)) {
+      setElapsedSeconds(0);
+      return;
+    }
+    const anchorIso = activeJob.started_at || activeJob.created_at;
+    const startMs = anchorIso ? new Date(anchorIso).getTime() : Date.now();
+    const updateElapsed = () => {
+      const secs = Math.max(0, Math.floor((Date.now() - (Number.isFinite(startMs) ? startMs : Date.now())) / 1000));
+      setElapsedSeconds(secs);
+    };
+    updateElapsed();
+    const ticker = setInterval(updateElapsed, 1000);
+    return () => clearInterval(ticker);
+  }, [activeJob?.id, activeJob?.status, activeJob?.started_at, activeJob?.created_at]);
+
+  useEffect(() => {
+    const jobId = activeJob?.id;
     if (!jobId || !["queued", "running"].includes(activeJob.status)) return;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
     const poll = async () => {
       try {
-        const { data, error: invokeError } = await supabase.functions.invoke("irrigation-market-intelligence", {
-          body: { action: "job", jobId },
-        });
-        if (invokeError) throw invokeError;
-        if (data?.error) throw new Error(data.error);
+        const data = await invokeEdgeFunction("irrigation-market-intelligence", { action: "job", jobId });
         if (cancelled) return;
-        setActiveJob(data as MarketJob);
-        if (data.status === "succeeded") {
-          if (data.result_report_id) setSelectedId(data.result_report_id);
+        const job = data as unknown as MarketJob;
+        setActiveJob(job);
+        if (job.status === "succeeded") {
+          if (job.result_report_id) setSelectedId(job.result_report_id);
           setNotice("Market scan finished and the report is saved.");
           await loadContext();
           return;
         }
-        if (data.status === "failed") {
-          setError(data.error_message || "The background market scan failed.");
+        if (job.status === "failed") {
+          setError(job.error_message || "The background market scan failed.");
           return;
         }
         timer = setTimeout(poll, 2500);
@@ -240,23 +258,47 @@ const IrrigationMarketIntelligence: React.FC = () => {
     ? recommendations.filter((_, index) => recommendationStatuses[recommendationStatusKey(selectedReport.id, index)] === "done").length
     : 0;
 
+  const cancelScan = async () => {
+    if (!activeJob?.id) return;
+    setCancelling(true);
+    setError("");
+    try {
+      await invokeEdgeFunction("irrigation-market-intelligence", {
+        action: "cancel_job",
+        jobId: activeJob.id,
+      });
+      setActiveJob(null);
+      setNotice("Market scan cancelled.");
+    } catch (cancelError: unknown) {
+      setError(cancelError instanceof Error ? cancelError.message : "Could not cancel the active market scan.");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   const runScan = async () => {
     setRunning(true);
     setError("");
     setNotice("");
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("irrigation-market-intelligence", {
-        body: { action: "run", days: periodDays },
+      const data = await invokeEdgeFunction("irrigation-market-intelligence", {
+        action: "run",
+        days: periodDays,
       });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      if (data?.cached && data?.report?.id) {
-        const report = data.report as MarketReport;
-        setReports((current) => [report, ...current.filter((item) => item.id !== report.id)]);
-        setSelectedId(report.id);
+      const cachedReport =
+        data?.cached && data?.report && typeof data.report === "object"
+          ? (data.report as MarketReport)
+          : null;
+      const queuedJob =
+        data?.queued && data?.job && typeof data.job === "object"
+          ? (data.job as MarketJob)
+          : null;
+      if (cachedReport?.id) {
+        setReports((current) => [cachedReport, ...current.filter((item) => item.id !== cachedReport.id)]);
+        setSelectedId(cachedReport.id);
         setNotice("Loaded the matching saved scan. No new provider requests were made.");
-      } else if (data?.queued && data?.job?.id) {
-        setActiveJob(data.job as MarketJob);
+      } else if (queuedJob?.id) {
+        setActiveJob(queuedJob);
         setAnotherAdminScanning(false);
         setNotice("Scan queued. You can keep working while the report is prepared.");
       } else {
@@ -274,11 +316,12 @@ const IrrigationMarketIntelligence: React.FC = () => {
     setSavingRecommendationIndex(index);
     setError("");
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("irrigation-market-intelligence", {
-        body: { action: "recommendation_status", reportId: selectedReport.id, recommendationIndex: index, status },
+      await invokeEdgeFunction("irrigation-market-intelligence", {
+        action: "recommendation_status",
+        reportId: selectedReport.id,
+        recommendationIndex: index,
+        status,
       });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
       setRecommendationStatuses((current) => ({
         ...current,
         [recommendationStatusKey(selectedReport.id, index)]: status,
@@ -416,13 +459,22 @@ const IrrigationMarketIntelligence: React.FC = () => {
 
       {activeJob && ["queued", "running"].includes(activeJob.status) && (
         <Card className="rounded-2xl border-emerald-500/30 bg-emerald-500/[0.04]">
-          <CardContent className="flex items-center gap-4 p-4">
-            <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-700 dark:text-emerald-300"><Loader2 className="h-5 w-5 animate-spin" /></div>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2"><p className="font-semibold">Market scan is processing</p><Badge variant="outline">{activeJob.status}</Badge></div>
-              <p className="mt-1 text-sm text-muted-foreground">{activeJob.progress_message || "Preparing the report…"}</p>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-emerald-500/10"><div className="h-full w-1/2 animate-pulse rounded-full bg-emerald-500" /></div>
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-4">
+            <div className="flex min-w-0 flex-1 items-center gap-4">
+              <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-700 dark:text-emerald-300"><Loader2 className="h-5 w-5 animate-spin" /></div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-semibold">Market scan is processing</p>
+                  <Badge variant="outline">{activeJob.status}</Badge>
+                  <span className="text-xs text-muted-foreground">{elapsedSeconds}s elapsed</span>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">{activeJob.progress_message || "Preparing the report…"}</p>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-emerald-500/10"><div className="h-full w-1/2 animate-pulse rounded-full bg-emerald-500" /></div>
+              </div>
             </div>
+            <Button variant="outline" size="sm" onClick={cancelScan} disabled={cancelling}>
+              {cancelling ? "Cancelling…" : "Cancel Scan"}
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -486,7 +538,7 @@ const IrrigationMarketIntelligence: React.FC = () => {
         <Card className="rounded-2xl border-amber-500/30 bg-amber-500/5">
           <CardContent className="flex items-start gap-3 p-4">
             <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
-            <div><p className="font-semibold">Connect Grok securely</p><p className="mt-1 text-sm leading-5 text-muted-foreground">Add XAI_API_KEY to Supabase Edge Function Secrets. The key stays server-side and is never exposed in the browser.</p></div>
+            <div><p className="font-semibold">Connect Grok securely</p><p className="mt-1 text-sm leading-5 text-muted-foreground">Add your xAI Grok key in <strong>Admin → System Settings → API Keys</strong> (or set <code>XAI_API_KEY</code> in Supabase Edge Function Secrets). Keys remain server-side only.</p></div>
           </CardContent>
         </Card>
       )}
