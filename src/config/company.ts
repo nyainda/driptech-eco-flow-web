@@ -14,8 +14,8 @@ export const SITE_COMPANY = {
   phonePrimary: "+254723407849",
   phonePrimaryDisplay: "0723 407 849",
   /** Secondary click-to-call / WhatsApp line */
-  phoneSecondary: "+254757716018",
-  phoneSecondaryDisplay: "0757 716 018",
+  phoneSecondary: "+254141294497",
+  phoneSecondaryDisplay: "0141294497",
   areaServed: [
     "Kenya",
     "Nairobi",
