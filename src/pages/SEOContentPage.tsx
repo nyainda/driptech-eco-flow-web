@@ -350,7 +350,7 @@ const SEOContentPage = () => {
                     type="button"
                     onClick={() =>
                       openTrackedWhatsApp(
-                        `https://wa.me/254111409454?text=${encodeURIComponent(
+                        `https://wa.me/254723407849?text=${encodeURIComponent(
                           `Hi DripTech EcoFlow, I am reading your guide on "${page.h1}" (${pageUrl}) and would like engineering advice and a quotation for my farm.`,
                         )}`,
                         `SEO guide hero WhatsApp: ${page.slug}`,
@@ -670,7 +670,7 @@ const SEOContentPage = () => {
                     type="button"
                     onClick={() =>
                       openTrackedWhatsApp(
-                        `https://wa.me/254111409454?text=${encodeURIComponent(
+                        `https://wa.me/254723407849?text=${encodeURIComponent(
                           `Hi DripTech EcoFlow, I read your guide "${page.h1}" and need help sizing a system / getting a quotation for my farm.`,
                         )}`,
                         `SEO sidebar WhatsApp: ${page.slug}`,
@@ -679,7 +679,7 @@ const SEOContentPage = () => {
                     className="dt-btn-whatsapp inline-flex w-full items-center justify-center gap-2 text-sm"
                   >
                     <MessageCircle className="h-4 w-4" />
-                    WhatsApp 0111 409 454
+                    WhatsApp 0723 407 849
                   </button>
 
                   <button
