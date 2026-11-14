@@ -4,7 +4,7 @@ export const COMPANY = {
   name: "DripTech EcoFlow Ltd",
   legalName: "DripTech EcoFlow Irrigation & Water Systems",
   tagline: "Precision Irrigation, Solar Pumping & Water Engineering Solutions",
-  phone: "+254 723 407 849 / 0141294497",
+  phone: "Sales/WhatsApp: 0723 407 849 · Engineering/WhatsApp: 0141294497",
   email: "info@dripstech.co.ke",
   emailAlt: "driptechs.info@gmail.com",
   website: "www.dripstech.co.ke",
