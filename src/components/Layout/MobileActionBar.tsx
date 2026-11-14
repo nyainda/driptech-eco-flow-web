@@ -16,7 +16,7 @@ export default function MobileActionBar() {
       typeof window !== "undefined" ? window.location.href : "https://dripstech.co.ke";
     const text = `Hi DripTech EcoFlow, I'm browsing ${pageUrl} on mobile and need help sizing or quoting irrigation equipment.`;
     openTrackedWhatsApp(
-      `https://wa.me/254111409454?text=${encodeURIComponent(text)}`,
+      `https://wa.me/254723407849?text=${encodeURIComponent(text)}`,
       "Mobile bottom dock WhatsApp",
     );
   };
@@ -64,7 +64,7 @@ export default function MobileActionBar() {
         </Link>
 
         <a
-          href="tel:0111409454"
+          href="tel:0723407849"
           className="flex min-h-11 flex-col items-center justify-center gap-1 rounded-xl px-1 py-1.5 text-[10px] font-bold leading-none text-foreground/80 transition-colors hover:bg-muted"
         >
           <Phone className="h-4 w-4 shrink-0 text-primary" />
