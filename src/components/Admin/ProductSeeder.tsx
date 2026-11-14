@@ -20,7 +20,12 @@ interface SeederStats {
   progress: number;
 }
 
-const ProductSeeder = () => {
+interface ProductSeederProps {
+  embedded?: boolean;
+  onSeeded?: () => void;
+}
+
+const ProductSeeder = ({ embedded = false, onSeeded }: ProductSeederProps) => {
   const [isSeeding, setIsSeeding] = useState(false);
   const [isCleaning, setIsCleaning] = useState(false);
   const [hasSeeded, setHasSeeded] = useState(false);
@@ -85,6 +90,7 @@ const ProductSeeder = () => {
 
       if (error) throw error;
       await checkExistingProducts();
+      onSeeded?.();
       toast({
         title: "Previous seed removed",
         description: `Removed ${count} old seed products. Other product records were left unchanged.`,
@@ -167,6 +173,7 @@ const ProductSeeder = () => {
       }
 
       setHasSeeded(true);
+      onSeeded?.();
       toast({
         title: "Irrigation reference catalog imported",
         description: `Inserted ${successCount} new review items. ${failedCount} failed. Existing products unchanged.`,
@@ -183,8 +190,8 @@ const ProductSeeder = () => {
   };
 
   return (
-    <Card className="mb-6 border-0 bg-card shadow-lg">
-      <CardHeader className="p-4 sm:p-6">
+    <Card className={embedded ? "border-0 bg-transparent shadow-none" : "mb-6 border-border/80 bg-card shadow-sm"}>
+      <CardHeader className={embedded ? "px-0 pt-0 pb-4" : "p-4 sm:p-6"}>
         <CardTitle className="flex items-center gap-2 text-lg sm:text-xl lg:text-2xl">
           <Database className="h-4 w-4 sm:h-5 sm:w-5" />
           Product Database Seeder
@@ -196,7 +203,7 @@ const ProductSeeder = () => {
           </span>
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+      <CardContent className={embedded ? "px-0 pb-0 space-y-4 sm:space-y-6" : "p-4 sm:p-6 space-y-4 sm:space-y-6"}>
         {isSeeding && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs sm:text-sm">
