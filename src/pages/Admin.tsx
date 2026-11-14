@@ -34,6 +34,7 @@ import {
   ChevronRight,
   PlusCircle,
   Command,
+  Radar,
 } from "lucide-react";
 import {
   AdminAuthProvider,
@@ -61,6 +62,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
+import type { SettingsTab } from "@/components/Admin/SystemSettings";
 
 // Lazy loaded admin components
 const AdminDashboard = lazy(() => import("@/components/Admin/AdminDashboard"));
@@ -88,6 +90,7 @@ const PaymentIntegrations = lazy(() => import("@/components/Admin/PaymentIntegra
 const WhatsAppManagement = lazy(() => import("@/components/Admin/WhatsAppManagement"));
 const TechnicianManagement = lazy(() => import("@/components/Admin/TechnicianManagement"));
 const ServiceBookingManagement = lazy(() => import("@/components/Admin/ServiceBookingManagement"));
+const GrokLeadOutreach = lazy(() => import("@/components/Admin/GrokLeadOutreach"));
 
 interface AdminSection {
   id: string;
@@ -186,6 +189,14 @@ const ADMIN_SECTIONS: AdminSection[] = [
   },
 
   // CRM & Field Operations
+  {
+    id: "grok-outreach",
+    label: "Grok Client Finder",
+    icon: Radar,
+    description: "Discover commercial farms, agrovets & tenders with Grok + send approved email & WhatsApp pitches",
+    group: "operations",
+    badge: "Grok",
+  },
   {
     id: "customers",
     label: "Customers (CRM)",
@@ -312,6 +323,7 @@ const AdminLoading = () => (
 
 const AdminContent = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>("company");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [sidebarFilter, setSidebarFilter] = useState("");
@@ -369,7 +381,10 @@ const AdminContent = () => {
     );
   }, [commandQuery]);
 
-  const selectModule = (id: string) => {
+  const selectModule = (id: string, settingsTab: SettingsTab = "company") => {
+    if (id === "settings") {
+      setSettingsInitialTab(settingsTab);
+    }
     setActiveTab(id);
     setMobileDrawerOpen(false);
     setCommandOpen(false);
@@ -482,7 +497,7 @@ const AdminContent = () => {
       case "whatsapp":
         return <WhatsAppManagement />;
       case "settings":
-        return <SystemSettings />;
+        return <SystemSettings initialTab={settingsInitialTab} />;
       case "sync":
         return <SyncDashboard />;
       case "technicians":
@@ -491,6 +506,8 @@ const AdminContent = () => {
         return <ServiceBookingManagement />;
       case "ai-research":
         return <AIProductResearch />;
+      case "grok-outreach":
+        return <GrokLeadOutreach onOpenApiSettings={() => selectModule("settings", "api")} />;
       default:
         return <AdminDashboard onNavigate={selectModule} />;
     }

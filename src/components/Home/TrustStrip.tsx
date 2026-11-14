@@ -44,7 +44,27 @@ const TrustStrip = () => (
     className="border-b border-border bg-card/90 backdrop-blur-sm"
     aria-label="Why farms and commercial estates choose DripTech EcoFlow"
   >
-    <div className="dt-container py-6 sm:py-8">
+    {/* Compact 1-row horizontal pill ticker on mobile so shoppers reach Products immediately */}
+    <div className="sm:hidden">
+      <div className="dt-container py-2.5">
+        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 scrollbar-hide">
+          {capabilities.map(({ icon: Icon, badge, title }) => (
+            <div
+              key={title}
+              className="flex shrink-0 items-center gap-2 rounded-xl border border-border/80 bg-background/80 px-2.5 py-1.5 text-[11px] font-bold text-foreground shadow-sm"
+            >
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+              <span className="whitespace-nowrap">{badge}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* Full 4-column executive capability cards + assurance strip on tablet & desktop */}
+    <div className="hidden sm:block dt-container py-8">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {capabilities.map(({ icon: Icon, badge, title, detail }) => (
           <div

@@ -21,9 +21,14 @@ import {
   Shield,
   Database,
   Save,
+  KeyRound,
+  Trash2,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+
+export type SettingsTab = "company" | "contact" | "social" | "seo" | "api";
 
 interface SystemSetting {
   id: string;
@@ -32,11 +37,20 @@ interface SystemSetting {
   description: string;
 }
 
-const SystemSettings = () => {
+interface SystemSettingsProps {
+  initialTab?: SettingsTab;
+}
+
+const SystemSettings = ({ initialTab = "company" }: SystemSettingsProps) => {
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
   const [settings, setSettings] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   const [companyInfo, setCompanyInfo] = useState({
     name: "",
@@ -78,8 +92,57 @@ const SystemSettings = () => {
     searchapi_key: "",
   });
 
+  const [secureSecrets, setSecureSecrets] = useState({
+    xai_api_key: "",
+    resend_api_key: "",
+    outreach_from_email: "",
+    xai_grok_model: "grok-4.7",
+  });
+  const [loadedOutreachMeta, setLoadedOutreachMeta] = useState({
+    outreach_from_email: "",
+    xai_grok_model: "grok-4.7",
+  });
+  const [secretStatus, setSecretStatus] = useState({
+    available: false,
+    xaiConfigured: false,
+    xaiPreview: "",
+    resendConfigured: false,
+    resendPreview: "",
+  });
+
+  const fetchSecureSecretStatus = async () => {
+    if (!isSupabaseConfigured) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("b2b-lead-outreach", {
+        body: { action: "api_key_status" },
+      });
+      if (error || !data || data.error) return;
+      const fromEmail = String(data.outreachFromEmail || "");
+      const grokModel = String(data.xaiGrokModel || "grok-4.7");
+      setSecretStatus({
+        available: true,
+        xaiConfigured: !!data.xaiConfigured,
+        xaiPreview: String(data.xaiPreview || ""),
+        resendConfigured: !!data.resendConfigured,
+        resendPreview: String(data.resendPreview || ""),
+      });
+      setLoadedOutreachMeta({
+        outreach_from_email: fromEmail,
+        xai_grok_model: grokModel,
+      });
+      setSecureSecrets((prev) => ({
+        ...prev,
+        outreach_from_email: fromEmail,
+        xai_grok_model: grokModel,
+      }));
+    } catch {
+      // Non-fatal: Edge Function may not be deployed yet.
+    }
+  };
+
   useEffect(() => {
     fetchSettings();
+    fetchSecureSecretStatus();
   }, []);
 
   const fetchSettings = async () => {
@@ -271,14 +334,92 @@ const SystemSettings = () => {
         updateSetting("serper_api_key", apiKeys.serper_api_key),
         updateSetting("searchapi_key", apiKeys.searchapi_key),
       ]);
+
+      const hasSecureSecretChanges =
+        !!secureSecrets.xai_api_key.trim() ||
+        !!secureSecrets.resend_api_key.trim() ||
+        secureSecrets.outreach_from_email.trim() !== loadedOutreachMeta.outreach_from_email ||
+        secureSecrets.xai_grok_model.trim() !== loadedOutreachMeta.xai_grok_model;
+
+      if (hasSecureSecretChanges) {
+        if (!isSupabaseConfigured) {
+          throw new Error("Connect Supabase before saving Grok / Resend server keys.");
+        }
+        const { data, error } = await supabase.functions.invoke("b2b-lead-outreach", {
+          body: {
+            action: "save_api_keys",
+            ...(secureSecrets.xai_api_key.trim() ? { xai_api_key: secureSecrets.xai_api_key.trim() } : {}),
+            ...(secureSecrets.resend_api_key.trim()
+              ? { resend_api_key: secureSecrets.resend_api_key.trim() }
+              : {}),
+            outreach_from_email: secureSecrets.outreach_from_email.trim(),
+            xai_grok_model: secureSecrets.xai_grok_model.trim() || "grok-4.7",
+          },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        const nextFrom = String(data?.outreachFromEmail || "");
+        const nextModel = String(data?.xaiGrokModel || "grok-4.7");
+        setSecretStatus({
+          available: true,
+          xaiConfigured: !!data?.xaiConfigured,
+          xaiPreview: String(data?.xaiPreview || ""),
+          resendConfigured: !!data?.resendConfigured,
+          resendPreview: String(data?.resendPreview || ""),
+        });
+        setLoadedOutreachMeta({ outreach_from_email: nextFrom, xai_grok_model: nextModel });
+        setSecureSecrets({
+          xai_api_key: "",
+          resend_api_key: "",
+          outreach_from_email: nextFrom,
+          xai_grok_model: nextModel,
+        });
+      }
+
       toast({
         title: "Success",
-        description: "API keys saved successfully",
+        description: hasSecureSecretChanges
+          ? "API keys and Grok / Resend server secrets saved successfully"
+          : "API keys saved successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to save API key",
+        description: error instanceof Error ? error.message : "Failed to save API key",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleClearSecureSecret = async (target: "xai" | "resend") => {
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("b2b-lead-outreach", {
+        body: {
+          action: "save_api_keys",
+          ...(target === "xai" ? { clear_xai_api_key: true } : { clear_resend_api_key: true }),
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setSecretStatus((prev) => ({
+        ...prev,
+        xaiConfigured: !!data?.xaiConfigured,
+        xaiPreview: String(data?.xaiPreview || ""),
+        resendConfigured: !!data?.resendConfigured,
+        resendPreview: String(data?.resendPreview || ""),
+      }));
+      toast({
+        title: "Key Removed",
+        description: target === "xai" ? "Cleared stored Grok API key." : "Cleared stored Resend API key.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Could not clear key",
         variant: "destructive",
       });
     } finally {
@@ -318,7 +459,7 @@ const SystemSettings = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="company" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as SettingsTab)} className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="company" className="flex items-center gap-2">
             <Building className="h-4 w-4" />
@@ -868,6 +1009,172 @@ const SystemSettings = () => {
                 />
               </div>
 
+              <div className="border-t pt-5 space-y-4">
+                <div>
+                  <h4 className="text-sm font-semibold flex items-center gap-2 mb-1">
+                    <KeyRound className="h-4 w-4 text-emerald-600" />
+                    Grok AI &amp; B2B Outreach Keys (Server-Side Only)
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Powers <strong>Grok Client Finder</strong>, <strong>SEO Intelligence</strong>, and <strong>Irrigation Market Intelligence</strong>. Keys saved here are stored in a locked service-role table and never returned to public browsers.
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <Label htmlFor="xai_api_key">xAI Grok API Key</Label>
+                    <div className="flex items-center gap-2">
+                      {secretStatus.xaiConfigured ? (
+                        <>
+                          <Badge variant="secondary" className="text-xs font-mono text-emerald-700 dark:text-emerald-300">
+                            Configured ({secretStatus.xaiPreview || "saved"})
+                          </Badge>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2 text-xs text-rose-600 hover:text-rose-700"
+                            onClick={() => handleClearSecureSecret("xai")}
+                            disabled={saving}
+                          >
+                            <Trash2 className="h-3 w-3 mr-1" />
+                            Clear
+                          </Button>
+                        </>
+                      ) : (
+                        <Badge variant="outline" className="text-xs">Not set</Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Input
+                    id="xai_api_key"
+                    type="password"
+                    value={secureSecrets.xai_api_key}
+                    onChange={(e) =>
+                      setSecureSecrets({
+                        ...secureSecrets,
+                        xai_api_key: e.target.value,
+                      })
+                    }
+                    placeholder={
+                      secretStatus.xaiConfigured
+                        ? "Saved on server — paste a new key only to replace"
+                        : "Paste your xAI Grok API Key (xai-...)"
+                    }
+                    className="mt-2"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Get your key from{" "}
+                    <a
+                      href="https://console.x.ai/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      xAI Console
+                    </a>
+                    . Replaces manual Supabase Edge Function secret setup.
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <Label htmlFor="resend_api_key">Resend Email API Key (for B2B Outreach)</Label>
+                    <div className="flex items-center gap-2">
+                      {secretStatus.resendConfigured ? (
+                        <>
+                          <Badge variant="secondary" className="text-xs font-mono text-emerald-700 dark:text-emerald-300">
+                            Configured ({secretStatus.resendPreview || "saved"})
+                          </Badge>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2 text-xs text-rose-600 hover:text-rose-700"
+                            onClick={() => handleClearSecureSecret("resend")}
+                            disabled={saving}
+                          >
+                            <Trash2 className="h-3 w-3 mr-1" />
+                            Clear
+                          </Button>
+                        </>
+                      ) : (
+                        <Badge variant="outline" className="text-xs">Not set</Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Input
+                    id="resend_api_key"
+                    type="password"
+                    value={secureSecrets.resend_api_key}
+                    onChange={(e) =>
+                      setSecureSecrets({
+                        ...secureSecrets,
+                        resend_api_key: e.target.value,
+                      })
+                    }
+                    placeholder={
+                      secretStatus.resendConfigured
+                        ? "Saved on server — paste a new key only to replace"
+                        : "Paste your Resend API Key (re_...)"
+                    }
+                    className="mt-2"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Get your key from{" "}
+                    <a
+                      href="https://resend.com/api-keys"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Resend Dashboard
+                    </a>
+                    .
+                  </p>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="outreach_from_email">Outreach Sender Address (Optional)</Label>
+                    <Input
+                      id="outreach_from_email"
+                      value={secureSecrets.outreach_from_email}
+                      onChange={(e) =>
+                        setSecureSecrets({
+                          ...secureSecrets,
+                          outreach_from_email: e.target.value,
+                        })
+                      }
+                      placeholder="DripTech Sales <sales@mail.dripstech.co.ke>"
+                      className="mt-2"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Leave blank to use <code className="font-mono">info@dripstech.co.ke</code>. Using a verified subdomain is best for deliverability.
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="xai_grok_model">Grok Model</Label>
+                    <Input
+                      id="xai_grok_model"
+                      value={secureSecrets.xai_grok_model}
+                      onChange={(e) =>
+                        setSecureSecrets({
+                          ...secureSecrets,
+                          xai_grok_model: e.target.value,
+                        })
+                      }
+                      placeholder="grok-4.7"
+                      className="mt-2"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Defaults to <code className="font-mono">grok-4.7</code> (low-reasoning fast search) or enter <code className="font-mono">grok-4-fast</code> for ultra-fast prospect scans.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex justify-end">
                 <Button
                   onClick={handleSaveApiKeys}
@@ -875,7 +1182,7 @@ const SystemSettings = () => {
                   className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  {saving ? "Saving..." : "Save API Key"}
+                  {saving ? "Saving..." : "Save API Keys"}
                 </Button>
               </div>
             </CardContent>

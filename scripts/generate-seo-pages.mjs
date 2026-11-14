@@ -767,6 +767,10 @@ const routeCategoryMap = {
 };
 
 const applyRealCategoryImage = (page) => {
+  if (typeof page.image === "string" && /^https?:\/\//i.test(page.image)) {
+    page.imageIsAbsolute = true;
+    return;
+  }
   const key = page.slug || page.route;
   const category = routeCategoryMap[key];
   const realImage = category && categoryImageMap[category];

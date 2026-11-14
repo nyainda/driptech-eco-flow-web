@@ -16,11 +16,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { dataService } from "@/services/dataService";
 import QuoteModal from "@/components/Home/QuoteModal";
+import { formatPrice, getProductPath } from "@/lib/productUrl";
 
 interface HeroProduct {
   id: string;
   name: string;
   category: string;
+  price?: number | null;
+  in_stock?: boolean | null;
   images: string[] | null;
 }
 
@@ -36,8 +39,13 @@ const heroProductCategories = [
     href: "/products/sprinklers",
   },
   {
+    category: "pumps_motors",
+    label: "Pumps & solar",
+    href: "/products/pumps",
+  },
+  {
     category: "filtration_systems",
-    label: "Filters & pumps",
+    label: "Disc & screen filters",
     href: "/products/filtration",
   },
 ];
@@ -123,7 +131,7 @@ export default function HeroSectionVibe() {
   const [heroProducts, setHeroProducts] = useState<HeroProduct[]>([]);
   const [selectedAcreage, setSelectedAcreage] = useState<string>("1");
   const [selectedCropId, setSelectedCropId] = useState<string>("tomatoes");
-  const [panelTab, setPanelTab] = useState<"advisor" | "catalogue">("advisor");
+  const [panelTab, setPanelTab] = useState<"advisor" | "catalogue">("catalogue");
 
   useEffect(() => {
     let cancelled = false;
@@ -179,8 +187,8 @@ export default function HeroSectionVibe() {
       className="relative overflow-hidden border-b border-border bg-background"
       aria-labelledby="home-hero-title"
     >
-      <div className="dt-container relative py-4 sm:py-6 lg:py-8">
-        <div className="relative overflow-hidden rounded-[24px] border border-border bg-card shadow-lg">
+      <div className="dt-container relative py-3 sm:py-6 lg:py-8">
+        <div className="relative overflow-hidden rounded-[20px] sm:rounded-[24px] border border-border bg-card shadow-lg">
           <picture>
             <source
               media="(max-width: 640px)"
@@ -194,7 +202,7 @@ export default function HeroSectionVibe() {
               src="/hero-bg-new-desktop.webp"
               alt="Precision drip-irrigated crop rows on a Kenyan commercial farm"
               className="absolute inset-0 h-full w-full object-cover"
-              fetchPriority="high"
+              {...({ fetchpriority: "high" } as Record<string, string>)}
               decoding="async"
               width="1920"
               height="1080"
@@ -202,35 +210,32 @@ export default function HeroSectionVibe() {
           </picture>
 
           {/* Rich multi-stop gradient overlay for legibility in light & dark mode */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/90 via-58% to-background/35 dark:from-background/95 dark:via-background/90 dark:to-background/45" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/92 to-background/80 lg:bg-gradient-to-r lg:from-background/95 lg:via-background/90 lg:via-58% lg:to-background/35 dark:from-background/95 dark:via-background/90 dark:to-background/45" />
 
-          <div className="relative grid gap-8 px-4 py-7 sm:px-8 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:items-center lg:gap-10 lg:px-10 lg:py-12 xl:px-12">
+          <div className="relative grid gap-5 px-3.5 py-4 sm:gap-8 sm:px-8 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:items-center lg:gap-10 lg:px-10 lg:py-12 xl:px-12">
             {/* Left Column: Value Proposition & Direct CTAs */}
-            <div className="max-w-2xl">
-              <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1.5 text-xs font-extrabold text-primary backdrop-blur-sm mb-4">
-                <ShieldCheck className="h-4 w-4 shrink-0" />
-                <span>Kenya's Premier Irrigation Engineering & Supply Partner</span>
+            <div className="min-w-0 max-w-2xl">
+              <div className="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[10px] sm:px-3.5 sm:py-1.5 sm:text-xs font-extrabold text-primary backdrop-blur-sm mb-2.5 sm:mb-4">
+                <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                <span>Kenya's Factory-Direct Irrigation Store • 47 Counties</span>
               </div>
 
               <h1
                 id="home-hero-title"
-                className="font-heading text-3xl font-bold leading-[1.03] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-[54px] xl:text-6xl"
+                className="font-heading text-[26px] font-bold leading-[1.06] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-[54px] xl:text-6xl"
               >
                 Precision Irrigation{" "}
-                <span className="text-primary block mt-1">
+                <span className="text-primary block mt-0.5 sm:mt-1">
                   Built for Kenyan Farms.
                 </span>
               </h1>
 
-              <p className="mt-4 max-w-xl text-sm leading-6 text-foreground/85 sm:text-base sm:leading-7">
-                From single-roll driplines, <strong>HDPE dam liners</strong>, and solar borehole pumps to complete{" "}
-                <strong>¼-acre through 50+ acre farm installations</strong>.
-                We survey, design hydraulic layouts, supply genuine UV-stabilized
-                equipment, and install across all 47 counties.
+              <p className="mt-2.5 sm:mt-4 max-w-xl text-xs leading-5 text-foreground/85 sm:text-base sm:leading-7">
+                Factory-direct UV driplines, <strong>complete acreage kits</strong>, <strong>HDPE dam liners</strong>, and solar pumps—priced transparently with same-day BOQs across all 47 counties.
               </p>
 
-              {/* Key Trust Badges */}
-              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold text-foreground/90">
+              {/* Key Trust Badges (compact single line on mobile) */}
+              <div className="mt-3 hidden sm:flex flex-wrap gap-x-4 gap-y-1.5 text-xs font-semibold text-foreground/90">
                 {[
                   "15cm, 20cm & 30cm Driplines",
                   "HDPE Dam Liners & Welding",
@@ -244,35 +249,50 @@ export default function HeroSectionVibe() {
               </div>
 
               {/* Primary CTA Row */}
-              <div className="mt-6 flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <div className="mt-4 sm:mt-6 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
                 <Link
                   to="/products"
-                  className="dt-btn-primary inline-flex items-center gap-2 shadow-md"
+                  className="dt-btn-primary inline-flex min-h-11 items-center justify-center gap-1.5 px-3 text-xs sm:px-6 sm:text-sm shadow-md"
                 >
-                  Shop Equipment <ArrowRight className="h-4 w-4" />
+                  <span>Shop Catalogue</span>
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Link>
 
                 <QuoteModal>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-[10px] border-2 border-primary bg-primary/10 px-4 py-2.5 text-sm font-extrabold text-primary backdrop-blur-sm transition-all hover:bg-primary hover:text-primary-foreground"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border-2 border-primary bg-primary/10 px-3 py-2 text-xs sm:px-4 sm:text-sm font-extrabold text-primary backdrop-blur-sm transition-all hover:bg-primary hover:text-primary-foreground"
                   >
-                    <FileText className="h-4 w-4" />
-                    Request Official BOQ
+                    <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                    <span>Official BOQ</span>
                   </button>
                 </QuoteModal>
 
                 <Link
                   to="/irrigation-cost-calculator-kenya"
-                  className="inline-flex items-center gap-2 rounded-[10px] border border-border bg-card/90 px-4 py-2.5 text-sm font-bold text-foreground backdrop-blur-sm transition-colors hover:border-primary/50 hover:bg-card"
+                  className="hidden sm:inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border border-border bg-card/90 px-4 py-2.5 text-sm font-bold text-foreground backdrop-blur-sm transition-colors hover:border-primary/50 hover:bg-card"
                 >
-                  <Calculator className="h-4 w-4 text-primary" />
-                  Cost Calculator
+                  <Calculator className="h-4 w-4 shrink-0 text-primary" />
+                  <span>Cost Calculator</span>
                 </Link>
               </div>
 
-              {/* Quick Category Navigation Cards */}
-              <div className="mt-7 grid grid-cols-2 gap-2.5 border-t border-foreground/15 pt-5 sm:grid-cols-4 sm:gap-3">
+              {/* Mobile Quick-Shop Category Chips (keeps Hero compact); Desktop shows full 4-card grid */}
+              <div className="-mx-1 mt-3.5 flex gap-2 overflow-x-auto px-1 pb-0.5 scrollbar-hide sm:hidden">
+                {shopPaths.map(({ label, href, icon: Icon }) => (
+                  <Link
+                    key={label}
+                    to={href}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card/90 px-3 py-1.5 text-[11px] font-bold text-foreground shadow-sm"
+                  >
+                    <Icon className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                    <span>{label}</span>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Desktop Quick Category Navigation Cards */}
+              <div className="mt-7 hidden border-t border-foreground/15 pt-5 sm:grid sm:grid-cols-4 sm:gap-3">
                 {shopPaths.map(({ label, detail, href, icon: Icon }) => (
                   <Link
                     key={label}
@@ -295,48 +315,46 @@ export default function HeroSectionVibe() {
               </div>
             </div>
 
-            {/* Right Column: Interactive Farm System Advisor + Catalogue Switcher */}
+            {/* Right Column: Live Featured Equipment + Farm System Advisor Switcher */}
             <aside
-              className="w-full max-w-md mx-auto lg:max-w-none overflow-hidden rounded-[22px] border border-border/90 bg-card/95 p-4 sm:p-5 shadow-2xl backdrop-blur-md"
-              aria-label="Interactive farm irrigation system advisor and catalogue preview"
+              className="w-full min-w-0 max-w-md mx-auto lg:max-w-none overflow-hidden rounded-[18px] sm:rounded-[22px] border border-border/90 bg-card/95 p-3.5 sm:p-5 shadow-2xl backdrop-blur-md"
+              aria-label="Live top equipment and farm irrigation system advisor"
             >
               {/* Panel Switcher Tabs */}
-              <div className="flex items-center justify-between gap-2 border-b border-border pb-3 mb-4">
+              <div className="flex items-center justify-between gap-2 border-b border-border pb-2.5 mb-3 sm:pb-3 sm:mb-4">
                 <div className="inline-flex rounded-xl bg-muted p-1">
                   <button
                     type="button"
+                    onClick={() => setPanelTab("catalogue")}
+                    className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 sm:px-3 py-1.5 text-xs font-bold transition-all ${
+                      panelTab === "catalogue"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Package className="h-3.5 w-3.5 text-primary" />
+                    Top Equipment
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setPanelTab("advisor")}
-                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                    className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 sm:px-3 py-1.5 text-xs font-bold transition-all ${
                       panelTab === "advisor"
                         ? "bg-background text-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <Sparkles className="h-3.5 w-3.5 text-primary" />
-                    System Finder
+                    Size My Farm
                   </button>
-                  {heroProducts.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setPanelTab("catalogue")}
-                      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                        panelTab === "catalogue"
-                          ? "bg-background text-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <Package className="h-3.5 w-3.5 text-primary" />
-                      Catalogue ({heroProducts.length})
-                    </button>
-                  )}
                 </div>
-                <span className="rounded-full bg-[hsl(var(--dt-gold-400))] px-2.5 py-1 text-[10px] font-extrabold text-[hsl(var(--dt-green-900))]">
-                  Instant Sizing
+                <span className="hidden sm:inline-block rounded-full bg-[hsl(var(--dt-gold-400))] px-2.5 py-1 text-[10px] font-extrabold text-[hsl(var(--dt-green-900))]">
+                  {panelTab === "catalogue" ? "In Stock Now" : "Instant Sizing"}
                 </span>
               </div>
 
               {panelTab === "advisor" ? (
-                <div className="space-y-4">
+                <div className="space-y-3.5 sm:space-y-4">
                   <div>
                     <p className="text-[11px] font-extrabold uppercase tracking-wider text-muted-foreground mb-2">
                       1. Select Farm / Plot Size
@@ -347,7 +365,7 @@ export default function HeroSectionVibe() {
                           key={option.id}
                           type="button"
                           onClick={() => setSelectedAcreage(option.id)}
-                          className={`rounded-xl border px-2 py-2 text-center text-xs font-bold transition-all ${
+                          className={`rounded-xl border px-1.5 py-2 text-center text-[11px] sm:text-xs font-bold transition-all ${
                             selectedAcreage === option.id
                               ? "border-primary bg-primary text-primary-foreground shadow-sm"
                               : "border-border bg-background text-foreground hover:border-primary/40"
@@ -370,7 +388,7 @@ export default function HeroSectionVibe() {
                       id="hero-crop-select"
                       value={selectedCropId}
                       onChange={(e) => setSelectedCropId(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-xs sm:text-sm font-bold text-foreground focus:border-primary focus:outline-none"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs sm:text-sm font-bold text-foreground focus:border-primary focus:outline-none"
                     >
                       {CROP_PRESETS.map((crop) => (
                         <option key={crop.id} value={crop.id}>
@@ -381,25 +399,25 @@ export default function HeroSectionVibe() {
                   </div>
 
                   {/* Recommended Engineering Spec Box */}
-                  <div className="rounded-2xl border border-primary/25 bg-primary/5 p-3.5 space-y-2">
+                  <div className="rounded-2xl border border-primary/25 bg-primary/5 p-3 space-y-1.5">
                     <div className="flex items-center justify-between">
                       <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-primary">
                         <Sprout className="h-4 w-4" />
-                        Recommended Engineering Spec
+                        Recommended Spec
                       </span>
                       <span className="text-[11px] font-bold text-muted-foreground">
                         {activeAcreage.blocks}
                       </span>
                     </div>
-                    <div className="grid gap-1.5 text-xs">
+                    <div className="grid gap-1 text-xs">
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-muted-foreground">Emitter Spacing:</span>
+                        <span className="text-muted-foreground">Spacing:</span>
                         <span className="font-bold text-foreground text-right">
                           {activeCrop.spacing}
                         </span>
                       </div>
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-muted-foreground">Field Layout:</span>
+                        <span className="text-muted-foreground">Layout:</span>
                         <span className="font-bold text-foreground text-right">
                           {activeCrop.layout}
                         </span>
@@ -413,64 +431,97 @@ export default function HeroSectionVibe() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  <div className="grid grid-cols-2 gap-2 pt-0.5">
                     <a
                       href={advisorWhatsAppUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(var(--whatsapp))] px-3 py-2.5 text-xs font-extrabold text-white shadow-sm transition-opacity hover:opacity-95"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(var(--whatsapp))] px-2.5 py-2.5 text-[11px] sm:text-xs font-extrabold text-white shadow-sm transition-opacity hover:opacity-95"
                     >
-                      <MessageCircle className="h-4 w-4" />
-                      Get {activeAcreage.label} Quote
+                      <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                      <span>Quote {activeAcreage.label}</span>
                     </a>
                     <Link
                       to={activeCrop.guideHref}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2.5 text-xs font-extrabold text-foreground hover:border-primary/50 hover:text-primary transition-colors"
+                      className="inline-flex items-center justify-center gap-1 rounded-xl border border-border bg-background px-2.5 py-2.5 text-[11px] sm:text-xs font-extrabold text-foreground hover:border-primary/50 hover:text-primary transition-colors"
                     >
-                      Read Crop Guide <ArrowRight className="h-3.5 w-3.5" />
+                      <span>Crop Guide</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {heroProducts.map((product, index) => {
-                      const categoryInfo = heroProductCategories.find(
-                        (item) => item.category === product.category,
-                      );
-                      const image = product.images?.find(
-                        (value) => typeof value === "string" && value.trim(),
-                      );
-                      if (!image || !categoryInfo) return null;
+                  {heroProducts.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {heroProducts.slice(0, 4).map((product) => {
+                        const categoryInfo = heroProductCategories.find(
+                          (item) => item.category === product.category,
+                        );
+                        const image = product.images?.find(
+                          (value) => typeof value === "string" && value.trim(),
+                        );
+                        const productUrl = getProductPath(product) || categoryInfo?.href || "/products";
+                        const hasPrice = Number(product.price) > 0;
 
-                      return (
-                        <Link
-                          key={product.id}
-                          to={categoryInfo.href}
-                          className={`group relative h-[128px] overflow-hidden rounded-2xl bg-muted ${
-                            index === 0 ? "col-span-2 h-[145px]" : ""
-                          }`}
-                          aria-label={`Browse ${product.name}`}
-                        >
-                          <img
-                            src={image}
-                            alt={product.name}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-2.5 pt-8 text-xs font-bold text-white">
-                            {product.name}
-                          </span>
-                        </Link>
-                      );
-                    })}
-                  </div>
+                        return (
+                          <Link
+                            key={product.id}
+                            to={productUrl}
+                            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-background transition-all hover:border-primary/50 hover:shadow-sm"
+                            aria-label={`View ${product.name}`}
+                          >
+                            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted/40">
+                              {image ? (
+                                <img
+                                  src={image}
+                                  alt={product.name}
+                                  loading="eager"
+                                  decoding="async"
+                                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="flex h-full items-center justify-center">
+                                  <Package className="h-8 w-8 text-muted-foreground/40" />
+                                </div>
+                              )}
+                              {categoryInfo && (
+                                <span className="absolute left-1.5 top-1.5 rounded-full bg-background/90 px-2 py-0.5 text-[9px] font-bold text-foreground shadow-sm">
+                                  {categoryInfo.label}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-1 flex-col justify-between p-2 sm:p-2.5">
+                              <p className="line-clamp-2 text-[11px] sm:text-xs font-bold leading-snug text-foreground group-hover:text-primary">
+                                {product.name}
+                              </p>
+                              <p className="mt-1 font-mono text-[11px] sm:text-xs font-black text-primary">
+                                {hasPrice ? formatPrice(product.price) : "View Price →"}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      {Array.from({ length: 4 }).map((_, idx) => (
+                        <div key={idx} className="overflow-hidden rounded-xl border border-border bg-muted/30 animate-pulse">
+                          <div className="aspect-[4/3] bg-muted" />
+                          <div className="p-2 space-y-1.5">
+                            <div className="h-3 w-4/5 rounded bg-muted" />
+                            <div className="h-3 w-1/2 rounded bg-muted" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   <Link
                     to="/products"
-                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-extrabold text-primary-foreground transition-colors hover:bg-primary/90"
+                    className="mt-2.5 sm:mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-extrabold text-primary-foreground transition-colors hover:bg-primary/90"
                   >
-                    Explore Full Product Catalogue{" "}
+                    Browse All Products &amp; Prices
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>

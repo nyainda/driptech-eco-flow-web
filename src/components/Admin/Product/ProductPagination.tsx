@@ -21,164 +21,110 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
   onNextPage,
   onPrevPage,
 }) => {
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  if (totalItems === 0 || totalPages <= 0) return null;
 
-  const MobilePagination = () => (
-    <div className="flex flex-col items-center gap-4 mt-6">
-      <div className="text-sm text-muted-foreground text-center">
-        Showing {indexOfFirstItem + 1} to{" "}
-        {Math.min(indexOfLastItem, totalItems)} of {totalItems} products
-      </div>
+  const firstItem = (currentPage - 1) * itemsPerPage + 1;
+  const lastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-      <div className="flex items-center gap-2">
+  const visiblePages: number[] = [];
+  const maxButtons = 5;
+  let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+  const end = Math.min(totalPages, start + maxButtons - 1);
+  if (end - start + 1 < maxButtons) {
+    start = Math.max(1, end - maxButtons + 1);
+  }
+  for (let p = start; p <= end; p++) {
+    visiblePages.push(p);
+  }
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card px-4 py-3 shadow-sm">
+      <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
+        Showing <strong className="text-foreground">{firstItem}</strong>–
+        <strong className="text-foreground">{lastItem}</strong> of{" "}
+        <strong className="text-foreground">{totalItems}</strong> products
+      </p>
+
+      <div className="flex items-center gap-1.5">
         <Button
+          type="button"
           variant="outline"
           size="sm"
           onClick={onPrevPage}
-          disabled={currentPage === 1}
-          className="disabled:opacity-50 h-8"
+          disabled={currentPage <= 1}
+          className="h-8 px-2.5 text-xs"
         >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          <span className="hidden xs:inline">Previous</span>
+          <ArrowLeft className="h-3.5 w-3.5 sm:mr-1" />
+          <span className="hidden sm:inline">Previous</span>
         </Button>
 
-        <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
-          {totalPages > 1 && (
+        {start > 1 && (
+          <>
             <Button
+              type="button"
               variant={currentPage === 1 ? "default" : "outline"}
               size="sm"
               onClick={() => onPageChange(1)}
-              className="w-8 h-8 flex-shrink-0"
+              className="h-8 w-8 p-0 text-xs"
             >
               1
             </Button>
-          )}
+            {start > 2 && (
+              <span className="px-1 text-xs text-muted-foreground">…</span>
+            )}
+          </>
+        )}
 
-          {currentPage > 3 && totalPages > 5 && (
-            <span className="px-2 text-muted-foreground">...</span>
-          )}
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((page) => {
-              if (totalPages <= 5) return page > 1 && page < totalPages;
-              return (
-                page > 1 &&
-                page < totalPages &&
-                Math.abs(page - currentPage) <= 1
-              );
-            })
-            .map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
-                onClick={() => onPageChange(page)}
-                className="w-8 h-8 flex-shrink-0"
-              >
-                {page}
-              </Button>
-            ))}
-
-          {currentPage < totalPages - 2 && totalPages > 5 && (
-            <span className="px-2 text-muted-foreground">...</span>
-          )}
-
-          {totalPages > 1 && (
+        {visiblePages.map((pageNumber) => {
+          const active = pageNumber === currentPage;
+          return (
             <Button
+              key={pageNumber}
+              type="button"
+              variant={active ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(pageNumber)}
+              className={`h-8 w-8 p-0 text-xs ${
+                active
+                  ? "bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700"
+                  : ""
+              }`}
+            >
+              {pageNumber}
+            </Button>
+          );
+        })}
+
+        {end < totalPages && (
+          <>
+            {end < totalPages - 1 && (
+              <span className="px-1 text-xs text-muted-foreground">…</span>
+            )}
+            <Button
+              type="button"
               variant={currentPage === totalPages ? "default" : "outline"}
               size="sm"
               onClick={() => onPageChange(totalPages)}
-              className="w-8 h-8 flex-shrink-0"
+              className="h-8 w-8 p-0 text-xs"
             >
               {totalPages}
             </Button>
-          )}
-        </div>
+          </>
+        )}
 
         <Button
+          type="button"
           variant="outline"
           size="sm"
           onClick={onNextPage}
-          disabled={currentPage === totalPages}
-          className="disabled:opacity-50 h-8"
+          disabled={currentPage >= totalPages}
+          className="h-8 px-2.5 text-xs"
         >
-          <span className="hidden xs:inline">Next</span>
-          <ArrowRight className="h-4 w-4 ml-1" />
+          <span className="hidden sm:inline">Next</span>
+          <ArrowRight className="h-3.5 w-3.5 sm:ml-1" />
         </Button>
       </div>
     </div>
-  );
-
-  const DesktopPagination = () => (
-    <div className="flex items-center justify-between mt-6">
-      <div className="text-sm text-muted-foreground">
-        Showing {indexOfFirstItem + 1} to{" "}
-        {Math.min(indexOfLastItem, totalItems)} of {totalItems} products
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onPrevPage}
-          disabled={currentPage === 1}
-          className="disabled:opacity-50 h-9"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Previous
-        </Button>
-
-        <div className="flex items-center gap-1">
-          {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-            let pageNumber;
-            if (totalPages <= 7) {
-              pageNumber = i + 1;
-            } else if (currentPage <= 4) {
-              pageNumber = i + 1;
-            } else if (currentPage >= totalPages - 3) {
-              pageNumber = totalPages - 6 + i;
-            } else {
-              pageNumber = currentPage - 3 + i;
-            }
-
-            return (
-              <Button
-                key={pageNumber}
-                variant={currentPage === pageNumber ? "default" : "outline"}
-                size="sm"
-                onClick={() => onPageChange(pageNumber)}
-                className="w-9 h-9"
-              >
-                {pageNumber}
-              </Button>
-            );
-          })}
-        </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onNextPage}
-          disabled={currentPage === totalPages}
-          className="disabled:opacity-50 h-9"
-        >
-          Next
-          <ArrowRight className="h-4 w-4 ml-2" />
-        </Button>
-      </div>
-    </div>
-  );
-
-  return (
-    <>
-      <div className="block sm:hidden">
-        <MobilePagination />
-      </div>
-      <div className="hidden sm:block">
-        <DesktopPagination />
-      </div>
-    </>
   );
 };
 

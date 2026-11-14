@@ -1,52 +1,10 @@
 {
-  "headers": [
-    {
-      "source": "/",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "CDN-Cache-Control", "value": "no-store" },
-        { "key": "Vercel-CDN-Cache-Control", "value": "no-store" }
-      ]
-    },
-    {
-      "source": "/index.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "CDN-Cache-Control", "value": "no-store" },
-        { "key": "Vercel-CDN-Cache-Control", "value": "no-store" }
-      ]
-    },
-    {
-      "source": "/sw.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Service-Worker-Allowed", "value": "/" }
-      ]
-    },
-    {
-      "source": "/workbox-:hash.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
-      ]
-    },
-    {
-      "source": "/manifest.webmanifest",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    }
-  ],
   "routes": [
     {
       "src": "/admin(.*)",
       "headers": {
-        "X-Robots-Tag": "noindex, nofollow, noarchive"
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "Cache-Control": "no-cache, no-store, must-revalidate"
       },
       "continue": true
     },
@@ -62,10 +20,86 @@
       "continue": true
     },
     {
+      "src": "/version\\.json",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store"
+      },
+      "continue": true
+    },
+    {
+      "src": "/sw\\.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store",
+        "Service-Worker-Allowed": "/"
+      },
+      "continue": true
+    },
+    {
+      "src": "/registerSW\\.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store"
+      },
+      "continue": true
+    },
+    {
+      "src": "/workbox-.*\\.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store"
+      },
+      "continue": true
+    },
+    {
+      "src": "/manifest\\.webmanifest",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*)\\.html",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store"
+      },
+      "continue": true
+    },
+    {
+      "src": "/((?!assets/|.*\\.).*)",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store"
+      },
+      "continue": true
+    },
+    {
+      "src": "/assets/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
+    },
+    {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store"
+      },
       "dest": "/index.html"
     }
   ]

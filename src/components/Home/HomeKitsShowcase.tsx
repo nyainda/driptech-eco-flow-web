@@ -77,25 +77,25 @@ export default function HomeKitsShowcase() {
   if (!loading && kits.length === 0) return null;
 
   return (
-    <section className="overflow-hidden border-y border-border bg-muted/40 py-12 sm:py-16 lg:py-20">
+    <section className="overflow-hidden border-y border-border bg-muted/40 py-8 sm:py-16 lg:py-20">
       <div className="dt-container">
-        <div className="grid gap-8 lg:grid-cols-[0.82fr_1.78fr] lg:items-center lg:gap-10">
-          <div>
+        <div className="grid gap-5 sm:gap-8 lg:grid-cols-[0.82fr_1.78fr] lg:items-center lg:gap-10">
+          <div className="min-w-0">
             <p className="dt-section-label flex items-center gap-2">
               <Sprout className="h-4 w-4" aria-hidden="true" />
               Ready-to-Install Packages
             </p>
-            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
+            <h2 className="mt-1.5 sm:mt-2 font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               Complete{" "}
               <span className="text-primary">Acreage Irrigation Kits</span>
             </h2>
-            <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground sm:text-base">
+            <p className="mt-2 sm:mt-3 max-w-md text-xs leading-5 sm:text-base sm:leading-6 text-muted-foreground">
               Pre-engineered packages with matched driplines, mainline pipes,
               connectors, valves, and filtration—grouped by plot size so you can
               deploy without missing a single fitting.
             </p>
 
-            <ul className="mt-5 space-y-2.5 text-sm text-foreground">
+            <ul className="hidden sm:block mt-5 space-y-2.5 text-sm text-foreground">
               {[
                 "Sized for ⅛, ¼, ½, and 1+ Acre plots",
                 "Includes driplines, filtration, valves & all fittings",
@@ -111,7 +111,7 @@ export default function HomeKitsShowcase() {
               ))}
             </ul>
 
-            <div className="mt-6 flex flex-wrap gap-2.5">
+            <div className="mt-4 sm:mt-6 flex flex-wrap gap-2 sm:gap-2.5">
               <Link
                 to="/irrigation-kits"
                 className="dt-btn-primary inline-flex items-center gap-2"
@@ -142,91 +142,97 @@ export default function HomeKitsShowcase() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-4">
-            {loading
-              ? Array.from({ length: 4 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="animate-pulse overflow-hidden rounded-[16px] border border-border bg-card"
-                  >
-                    <div className="aspect-[4/3] bg-muted" />
-                    <div className="space-y-2 p-4">
-                      <div className="h-3 w-1/2 rounded bg-muted" />
-                      <div className="h-5 w-3/4 rounded bg-muted" />
-                      <div className="h-8 rounded bg-muted" />
-                    </div>
-                  </div>
-                ))
-              : kits.map((kit) => {
-                  const images = parseImages(kit.images);
-                  const components = parseComponents(kit.components);
-                  const tierPrices =
-                    components.pricing_tiers
-                      ?.map((tier) => tier.price)
-                      .filter((price) => Number.isFinite(price)) || [];
-                  const price = tierPrices.length
-                    ? Math.min(...tierPrices)
-                    : kit.price;
-                  const coverage = kit.coverage_area
-                    ? `${kit.coverage_area} Acre${
-                        kit.coverage_area === 1 ? "" : "s"
-                      } Coverage`
-                    : "Custom Coverage";
-
-                  return (
-                    <article
-                      key={kit.id}
-                      className="group flex min-w-0 flex-col overflow-hidden rounded-[16px] border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+          <div className="min-w-0">
+            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+              {loading
+                ? Array.from({ length: 4 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="w-[72vw] max-w-[260px] shrink-0 snap-start sm:w-auto sm:max-w-none animate-pulse overflow-hidden rounded-[16px] border border-border bg-card"
                     >
-                      <div className="relative aspect-[4/3] min-h-[175px] overflow-hidden bg-muted sm:min-h-[185px]">
-                        {images[0] ? (
-                          <img
-                            src={images[0]}
-                            alt={kit.name}
-                            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.04]"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center">
-                            <Package className="h-10 w-10 text-primary/50" />
-                          </div>
-                        )}
-                        {kit.featured && (
-                          <span className="absolute left-2.5 top-2.5 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-[hsl(var(--dt-green-900))] shadow-sm">
-                            Best Seller
-                          </span>
-                        )}
+                      <div className="aspect-[4/3] bg-muted" />
+                      <div className="space-y-2 p-3.5 sm:p-4">
+                        <div className="h-3 w-1/2 rounded bg-muted" />
+                        <div className="h-5 w-3/4 rounded bg-muted" />
+                        <div className="h-8 rounded bg-muted" />
                       </div>
-                      <div className="flex flex-1 flex-col p-4">
-                        <p className="text-[10px] font-extrabold uppercase tracking-[0.13em] text-primary">
-                          {coverage}
-                        </p>
-                        <h3 className="mt-1 line-clamp-2 font-heading text-sm font-bold leading-snug text-foreground">
-                          {kit.name}
-                        </h3>
-                        <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                          {kit.description ||
-                            "Complete farm-ready irrigation package with mainline, laterals, filtration, and fittings."}
-                        </p>
-                        <div className="mt-auto pt-4 border-t border-border/60">
-                          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                            Complete Kit Price
-                          </p>
-                          <p className="font-mono text-base font-black text-foreground mt-0.5">
-                            {formatCurrency(price)}
-                          </p>
-                          <Link
-                            to="/irrigation-kits"
-                            className="mt-2.5 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
-                          >
-                            View Kit Specs <ArrowRight className="h-3.5 w-3.5" />
-                          </Link>
+                    </div>
+                  ))
+                : kits.map((kit) => {
+                    const images = parseImages(kit.images);
+                    const components = parseComponents(kit.components);
+                    const tierPrices =
+                      components.pricing_tiers
+                        ?.map((tier) => tier.price)
+                        .filter((price) => Number.isFinite(price)) || [];
+                    const price = tierPrices.length
+                      ? Math.min(...tierPrices)
+                      : kit.price;
+                    const coverage = kit.coverage_area
+                      ? `${kit.coverage_area} Acre${
+                          kit.coverage_area === 1 ? "" : "s"
+                        } Coverage`
+                      : "Custom Coverage";
+
+                    return (
+                      <article
+                        key={kit.id}
+                        className="group flex w-[72vw] max-w-[260px] shrink-0 snap-start sm:w-auto sm:max-w-none min-w-0 flex-col overflow-hidden rounded-[16px] border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+                      >
+                        <div className="relative aspect-[4/3] min-h-[145px] overflow-hidden bg-muted sm:min-h-[185px]">
+                          {images[0] ? (
+                            <img
+                              src={images[0]}
+                              alt={kit.name}
+                              className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.04]"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center">
+                              <Package className="h-10 w-10 text-primary/50" />
+                            </div>
+                          )}
+                          {kit.featured && (
+                            <span className="absolute left-2.5 top-2.5 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-[hsl(var(--dt-green-900))] shadow-sm">
+                              Best Seller
+                            </span>
+                          )}
                         </div>
-                      </div>
-                    </article>
-                  );
-                })}
+                        <div className="flex flex-1 flex-col p-3.5 sm:p-4">
+                          <p className="text-[10px] font-extrabold uppercase tracking-[0.13em] text-primary">
+                            {coverage}
+                          </p>
+                          <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] font-heading text-sm font-bold leading-snug text-foreground">
+                            {kit.name}
+                          </h3>
+                          <div className="mt-1.5 hidden sm:block">
+                            <p className="line-clamp-2 min-h-[2.5rem] text-xs leading-5 text-muted-foreground">
+                              {(kit.description ||
+                                "Complete farm-ready irrigation package with mainline, laterals, filtration, and fittings.")
+                                .replace(/\s+/g, " ")
+                                .trim()}
+                            </p>
+                          </div>
+                          <div className="mt-auto border-t border-border/60 pt-3 sm:pt-4">
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              Complete Kit Price
+                            </p>
+                            <p className="mt-0.5 font-mono text-base font-black text-foreground">
+                              {formatCurrency(price)}
+                            </p>
+                            <Link
+                              to="/irrigation-kits"
+                              className="mt-2 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 sm:mt-2.5"
+                            >
+                              View Kit Specs <ArrowRight className="h-3.5 w-3.5" />
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+            </div>
           </div>
         </div>
       </div>

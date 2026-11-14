@@ -42,7 +42,7 @@ import QuoteModal from "./QuoteModal";
 import AutoRotatingGallery from "@/components/Products/AutoRotatingGallery";
 import { StructuredData } from "@/components/SEO/StructuredData";
 import { getProductPath } from "@/lib/productUrl";
-import { openInstantProductQuotePdf, openProductCataloguePdf } from "@/lib/catalogAndQuotePdf";
+import { CataloguePdfModal } from "@/components/Products/CataloguePdfModal";
 
 interface Variant {
   name: string;
@@ -89,8 +89,8 @@ const CATEGORIES = [
   { key: "accessories", label: "Accessories" },
 ];
 
-const INITIAL_SHOW = 8;
-const LOAD_MORE_COUNT = 4;
+const INITIAL_SHOW = 6;
+const LOAD_MORE_COUNT = 6;
 const SITE_ORIGIN = "https://www.dripstech.co.ke";
 
 const toAbsoluteSiteAssetUrl = (value: string | null | undefined) => {
@@ -178,10 +178,10 @@ const ProductsShowcase = ({
       try {
         const [counts, featured, ...categoryResults] = await Promise.all([
           dataService.getProductCategoryCounts(),
-          dataService.getProducts({ featured: true, limit: 4, inStock: true }),
+          dataService.getProducts({ featured: true, limit: 12 }),
           ...CATEGORIES
             .filter((cat) => cat.key !== "all")
-            .map((cat) => dataService.getProducts({ category: cat.key, limit: 4, inStock: true })),
+            .map((cat) => dataService.getProducts({ category: cat.key, limit: 20 })),
         ]);
 
         const countMap: Record<string, number> = {};
@@ -393,7 +393,7 @@ const ProductsShowcase = ({
     }));
 
   return (
-    <section className={`${compact ? "py-10 sm:py-14" : "dt-section border-t"} bg-background border-border relative overflow-hidden`}>
+    <section className={`${compact ? "py-8 sm:py-14" : "py-8 sm:py-16 lg:py-20 border-t"} bg-background border-border relative overflow-hidden`}>
       {!loading && productListSchemaItems.length > 0 && (
         <StructuredData
           type="itemlist"
@@ -408,93 +408,98 @@ const ProductsShowcase = ({
       <div className="dt-container relative z-10">
         {/* Header — aligned to site design system */}
         {!hideHeader && (
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <p className="dt-section-label mb-3">Products</p>
+          <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-12">
+            <p className="dt-section-label mb-1.5 sm:mb-3">Products</p>
             <h2 className="dt-section-title">
               Equipment for the field —{" "}
               <span className="text-primary">pick what fits</span>
             </h2>
-            <p className="dt-section-subtitle mx-auto mt-3">
-              Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes and full kits. Filter by type, check the price, or download our official PDF product catalogue.
+            <p className="dt-section-subtitle mx-auto mt-2 sm:mt-3 text-xs sm:text-sm">
+              Driplines (15cm, 20cm, 30cm), sprinklers, pumps, filters, pipes &amp; kits. Tap any item for specs or download the PDF catalogue.
             </p>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
-              <button
-                type="button"
-                onClick={() =>
-                  openProductCataloguePdf(
-                    allProducts,
-                    "Complete DripTech Irrigation & Farm Equipment Catalogue",
-                    false,
-                  )
-                }
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs sm:text-sm font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-2.5">
+              <CataloguePdfModal
+                products={allProducts}
+                categoryCounts={categoryCounts}
+                activeCategoryKey={activeCategory}
               >
-                <Download className="h-4 w-4" />
-                Download PDF Product Catalogue
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  openProductCataloguePdf(
-                    allProducts,
-                    "Complete DripTech Irrigation & Farm Equipment Catalogue",
-                    true,
-                  )
-                }
-                className="inline-flex items-center gap-2 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+                <button
+                  type="button"
+                  className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl bg-primary px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+                >
+                  <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                  <span className="sm:hidden">PDF Catalogue</span>
+                  <span className="hidden sm:inline">Download PDF Product Catalogue</span>
+                </button>
+              </CataloguePdfModal>
+              <CataloguePdfModal
+                products={allProducts}
+                categoryCounts={categoryCounts}
+                activeCategoryKey={activeCategory}
+                defaultWhatsApp
               >
-                <span>💬</span>
-                Get PDF Catalogue + WhatsApp
-              </button>
+                <button
+                  type="button"
+                  className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+                >
+                  <span>💬</span>
+                  <span className="sm:hidden">Catalogue + WA</span>
+                  <span className="hidden sm:inline">Get PDF Catalogue + WhatsApp</span>
+                </button>
+              </CataloguePdfModal>
             </div>
           </div>
         )}
 
-        {/* Featured product spotlight */}
+        {/* Featured product spotlight — compact horizontal strip on mobile */}
         {!loading && featuredProduct && !hideHeader && (
-          <section className="mb-10 overflow-hidden rounded-2xl border border-border bg-card sm:mb-14" aria-labelledby="featured-product-title">
-            <div className="grid items-stretch lg:grid-cols-[1.05fr_0.95fr]">
+          <section className="mb-7 overflow-hidden rounded-2xl border border-border bg-card sm:mb-12" aria-labelledby="featured-product-title">
+            <div className="grid grid-cols-[120px_1fr] items-stretch sm:grid-cols-1 lg:grid-cols-[1.05fr_0.95fr]">
               <Link
                 to={getProductPath(featuredProduct)}
-                className="group relative overflow-hidden border-b border-border bg-muted/60 lg:border-b-0 lg:border-r"
+                className="group relative overflow-hidden border-r sm:border-r-0 sm:border-b border-border bg-muted/60 lg:border-b-0 lg:border-r"
                 aria-label={`View featured product: ${featuredProduct.name}`}
               >
                 {featuredProduct.images?.[0] ? (
                   <img
                     src={featuredProduct.images[0]}
                     alt={featuredProduct.name}
-                    className="aspect-[4/3] w-full object-contain p-5 transition-transform duration-500 group-hover:scale-[1.025] sm:p-8 lg:aspect-auto lg:h-full lg:min-h-[360px]"
+                    className="h-full w-full object-cover sm:object-contain p-2 sm:p-8 sm:aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[340px] transition-transform duration-500 group-hover:scale-[1.025]"
                   />
                 ) : (
-                  <div className="flex min-h-[320px] items-center justify-center">
-                    <Package className="h-20 w-20 text-muted-foreground/30" />
+                  <div className="flex h-full min-h-[120px] sm:min-h-[300px] items-center justify-center">
+                    <Package className="h-10 w-10 sm:h-20 sm:w-20 text-muted-foreground/30" />
                   </div>
                 )}
-                <span className="absolute left-4 top-4 rounded-full bg-[hsl(var(--dt-gold-500))] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] text-[hsl(var(--dt-green-900))]">
-                  Featured product
+                <span className="absolute left-2 top-2 sm:left-4 sm:top-4 rounded-full bg-[hsl(var(--dt-gold-500))] px-2 py-0.5 sm:px-2.5 sm:py-1 text-[8px] sm:text-[9px] font-extrabold uppercase tracking-[0.08em] text-[hsl(var(--dt-green-900))]">
+                  Featured
                 </span>
               </Link>
-              <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-9">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Recommended starting point</p>
-                <h3 id="featured-product-title" className="mt-2 max-w-xl font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
+              <div className="flex flex-col justify-center p-3 sm:p-7 lg:p-9 min-w-0">
+                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Recommended start</p>
+                <h3 id="featured-product-title" className="mt-1 sm:mt-2 max-w-xl line-clamp-2 font-heading text-sm font-bold leading-snug tracking-tight text-foreground sm:text-3xl">
                   {featuredProduct.name}
                 </h3>
-                <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-                  {featuredProduct.description || "A dependable irrigation component selected from our current catalogue."}
-                </p>
-                <div className="mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-border pt-5">
+                <div className="hidden sm:block mt-3 max-w-xl">
+                  <p className="line-clamp-3 text-sm leading-6 text-muted-foreground sm:text-base">
+                    {(featuredProduct.description || "A dependable irrigation component selected from our current catalogue.")
+                      .replace(/\s+/g, " ")
+                      .trim()}
+                  </p>
+                </div>
+                <div className="mt-2.5 sm:mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2.5 sm:pt-5">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Starting price</p>
-                    <p className="mt-1 font-mono text-xl font-bold text-foreground">{formatHomepagePrice(featuredProduct.price)}</p>
+                    <p className="hidden sm:block text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Starting price</p>
+                    <p className="font-mono text-sm font-black text-foreground sm:mt-1 sm:text-xl">{formatHomepagePrice(featuredProduct.price)}</p>
                   </div>
                   <Link
                     to={getProductPath(featuredProduct)}
-                    className="dt-btn-primary inline-flex items-center gap-2"
+                    className="dt-btn-primary inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:px-6 sm:py-2.5 sm:text-sm"
                   >
-                    View product <ArrowRight className="h-4 w-4" />
+                    View <span className="hidden sm:inline">product</span> <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
-                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-muted-foreground">
+                <div className="hidden sm:flex mt-5 flex-wrap gap-x-5 gap-y-2 text-xs font-medium text-muted-foreground">
                   <span>✓ Product details</span>
                   <span>✓ Stock status</span>
                   <span>✓ WhatsApp support</span>
@@ -505,7 +510,7 @@ const ProductsShowcase = ({
         )}
 
         {/* Browse by equipment type */}
-        <section className="mb-10 sm:mb-14" aria-labelledby="equipment-types-title">
+        <section className="mb-7 sm:mb-12" aria-labelledby="equipment-types-title">
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>
               <p className="dt-section-label">Browse equipment</p>
@@ -517,7 +522,7 @@ const ProductsShowcase = ({
               View all categories <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
+          <div className="-mx-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-8">
             {CATEGORIES.filter((cat) => cat.key !== "all").map((cat) => {
               const count = categoryCounts[cat.key] ?? 0;
               if (count === 0) return null;
@@ -526,7 +531,7 @@ const ProductsShowcase = ({
                 <button
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className="group rounded-xl border border-border bg-card px-2 py-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm"
+                  className="group min-w-[116px] shrink-0 snap-start rounded-xl border border-border bg-card px-2.5 py-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[hsl(var(--dt-green-300))] hover:shadow-sm sm:min-w-0"
                 >
                   <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="h-4.5 w-4.5" />
@@ -563,7 +568,7 @@ const ProductsShowcase = ({
                 <button
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key)}
-                  className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-colors ${
+                  className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 sm:px-3 sm:py-1.5 text-[11px] sm:text-[10px] font-bold transition-colors ${
                     activeCategory === cat.key
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
@@ -590,17 +595,17 @@ const ProductsShowcase = ({
           )}
         </section>
 
-        {/* Products grid — one card on narrow phones, then two columns when there is room */}
-        <div className="mb-8 grid grid-cols-1 gap-3.5 min-[460px]:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        {/* Products grid — 2 columns on mobile phones, 3 balanced columns on desktop */}
+        <div className="mb-6 sm:mb-8 grid grid-cols-2 gap-2.5 sm:gap-5 lg:grid-cols-3">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
               <Card key={index} className="dt-card overflow-hidden flex flex-col">
                 <CardContent className="p-0 flex flex-col flex-1">
                   <div className="aspect-[4/3] bg-muted animate-pulse" />
-                  <div className="p-3 sm:p-4 space-y-2">
-                    <div className="h-4 bg-muted rounded w-4/5 animate-pulse" />
+                  <div className="p-2.5 sm:p-4 space-y-2">
+                    <div className="h-3 sm:h-4 bg-muted rounded w-4/5 animate-pulse" />
                     <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
-                    <div className="h-9 bg-muted rounded-lg w-full animate-pulse mt-2" />
+                    <div className="h-8 sm:h-9 bg-muted rounded-lg w-full animate-pulse mt-2" />
                   </div>
                 </CardContent>
               </Card>
@@ -679,8 +684,8 @@ const ProductsShowcase = ({
           </section>
         )}
 
-        {/* Practical buying information — avoid unverified scale or service guarantees. */}
-        <section className="mb-10 grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-4 sm:mb-14" aria-label="DripTech buying information">
+        {/* Buying assurance bar — compact single row on sm+, hidden on mobile to keep page tight */}
+        <section className="mb-6 sm:mb-12 hidden sm:grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card sm:grid-cols-4" aria-label="DripTech buying information">
           {[
             ["Equipment", "Product selection"],
             ["Crop-aware", "System guidance"],
@@ -696,24 +701,24 @@ const ProductsShowcase = ({
 
         {/* Load more + View all CTA */}
         {!loading && (
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 md:mb-24">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-4 mb-8 md:mb-16">
             {hasMore && (
               <Button
                 variant="outline"
                 size="lg"
                 onClick={() => setVisibleCount(v => v + LOAD_MORE_COUNT)}
-                className="px-7 border-border hover:border-primary/40 hover:bg-accent"
+                className="w-full sm:w-auto px-5 sm:px-7 border-border hover:border-primary/40 hover:bg-accent"
               >
                 Load {Math.min(LOAD_MORE_COUNT, filteredProducts.length - visibleCount)} more products
                 <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             )}
-            <Link to="/products">
+            <Link to="/products" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="px-7 bg-primary text-primary-foreground hover:bg-primary/90"
+                className="w-full sm:w-auto px-6 sm:px-7 bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Browse all products
+                Browse all {totalCatalogueCount || ""} products
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>

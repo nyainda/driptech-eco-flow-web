@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 
 interface VisitorSession {
@@ -38,6 +38,7 @@ interface ProductInteraction {
 }
 
 export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {}) => {
+  const trackingEnabled = enabled && isSupabaseConfigured;
   const [visitorId] = useState(() => {
     let id = localStorage.getItem("visitor_id");
     if (!id) {
@@ -66,6 +67,7 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
 
   // Helper function to end the session
   const endSession = async () => {
+    if (!trackingEnabled) return;
     const sessionEnd = new Date();
     const totalDuration = Math.floor(
       (sessionEnd.getTime() - sessionStartTime.current.getTime()) / 1000,
@@ -112,7 +114,7 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
   // Initialize session with better error handling
   useEffect(() => {
     const initSession = async () => {
-      if (!enabled || isSessionInitialized.current || sessionInitPromise.current) return;
+      if (!trackingEnabled || isSessionInitialized.current || sessionInitPromise.current) return;
 
       // Create a promise that resolves when session is ready
       sessionInitPromise.current = (async () => {
@@ -151,10 +153,12 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     // Add a small delay to ensure DOM is ready
     const timer = setTimeout(initSession, 100);
     return () => clearTimeout(timer);
-  }, [enabled, visitorId, sessionId]);
+  }, [trackingEnabled, visitorId, sessionId]);
 
   // Clean session end handling
   useEffect(() => {
+    if (!trackingEnabled) return;
+
     const handleBeforeUnload = async () => {
       if (sessionId && !hasTrackedExit.current) {
         hasTrackedExit.current = true;
@@ -171,10 +175,10 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
         window.removeEventListener("beforeunload", handleBeforeUnload);
       }
     };
-  }, [sessionId]);
+  }, [trackingEnabled, sessionId]);
 
-  const trackPageView = async (path: string, title: string) => {
-    if (!enabled) return;
+  const trackPageView = useCallback(async (path: string, title: string) => {
+    if (!trackingEnabled) return;
 
     try {
       // Wait for session to be initialized
@@ -234,14 +238,14 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     } catch (error) {
       console.error("Unexpected error while recording page view:", error);
     }
-  };
+  }, [trackingEnabled, visitorId, sessionId]);
 
-  const trackProductInteraction = async (
+  const trackProductInteraction = useCallback(async (
     productName: string,
     interactionType: string,
     additionalData?: any,
   ) => {
-    if (!enabled) return;
+    if (!trackingEnabled) return;
 
     try {
       // Wait for session to be initialized
@@ -275,7 +279,7 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     } catch (error) {
       console.error("Unexpected error while recording product interaction:", error);
     }
-  };
+  }, [trackingEnabled, visitorId, sessionId]);
 
   return {
     visitorId,

@@ -13,9 +13,9 @@ export const SITE_COMPANY = {
   /** Primary click-to-call / WhatsApp line */
   phonePrimary: "+254723407849",
   phonePrimaryDisplay: "0723 407 849",
-  /** Secondary click-to-call / WhatsApp line */
-  phoneSecondary: "+254757716018",
-  phoneSecondaryDisplay: "0757 716 018",
+  /** Engineering department click-to-call / WhatsApp line */
+  phoneSecondary: "+254141294497",
+  phoneSecondaryDisplay: "0141294497",
   areaServed: [
     "Kenya",
     "Nairobi",
@@ -67,7 +67,7 @@ export function buildOrganizationSchema() {
       {
         "@type": "ContactPoint",
         telephone: c.phoneSecondary,
-        contactType: "customer service",
+        contactType: "engineering support",
         areaServed: "KE",
         availableLanguage: ["en", "sw"],
       },
