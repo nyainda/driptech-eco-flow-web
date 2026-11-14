@@ -11,6 +11,7 @@ const DEFAULT_MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
 const DEFAULT_DAILY_EMAIL_CAP = 25;
 const MAX_DAILY_EMAIL_CAP = 50;
 const UNSUBSCRIBE_TTL_MS = 90 * 24 * 60 * 60 * 1000;
+const JOB_STALE_TIMEOUT_MS = 175_000;
 
 const ALLOWED_ORIGINS = new Set([
   "https://www.dripstech.co.ke",
@@ -398,18 +399,96 @@ function parseJsonObject(raw: string) {
   }
 }
 
+const JOB_SELECT_FIELDS =
+  "id,segment,region,product_focus,model,summary,lead_count,skipped_duplicates,skipped_suppressed,status,progress_message,error_message,created_at,started_at,completed_at";
+
+function isMissingJobColumnsError(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+  const errObj = error as { code?: unknown; message?: unknown; details?: unknown };
+  const code = String(errObj.code || "");
+  const message = `${String(errObj.message || "")} ${String(errObj.details || "")}`;
+  return (
+    code === "42703" ||
+    code === "PGRST204" ||
+    /does not exist|schema cache|skipped_duplicates|progress_message/i.test(message)
+  );
+}
+
+function isTimeoutError(error: unknown) {
+  if (!error) return false;
+  if (error instanceof Error) {
+    return (
+      error.name === "TimeoutError" ||
+      error.name === "AbortError" ||
+      /timed out|signal timed out|abort/i.test(error.message)
+    );
+  }
+  return /timed out|signal timed out|abort/i.test(String(error));
+}
+
+async function expireStaleJobIfNeeded(admin: AdminClient, job: Record<string, unknown> | null) {
+  if (!job || !job.id) return null;
+  const status = String(job.status || "");
+  if (status !== "queued" && status !== "running") return job;
+  const anchorRaw = String(job.started_at || job.created_at || "");
+  const ageMs = Date.now() - new Date(anchorRaw).getTime();
+  if (!Number.isFinite(ageMs) || ageMs <= JOB_STALE_TIMEOUT_MS) return job;
+
+  const timeoutMessage =
+    "The background Grok scan timed out before finishing. Try Batch Size: 4 prospects or a specific county, then run again.";
+  const nowIso = new Date().toISOString();
+  const { data: updated } = await admin
+    .from("b2b_outreach_campaigns")
+    .update({
+      status: "failed",
+      progress_message: "Timed out",
+      error_message: timeoutMessage,
+      summary: "Scan timed out before completion.",
+      completed_at: nowIso,
+    })
+    .eq("id", String(job.id))
+    .in("status", ["queued", "running"])
+    .select(JOB_SELECT_FIELDS)
+    .maybeSingle();
+  return updated || { ...job, status: "failed", progress_message: "Timed out", error_message: timeoutMessage };
+}
+
+async function findActiveOutreachJob(admin: AdminClient) {
+  const { data, error } = await admin
+    .from("b2b_outreach_campaigns")
+    .select(JOB_SELECT_FIELDS)
+    .in("status", ["queued", "running"])
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  if (error) {
+    if (isMissingJobColumnsError(error)) {
+      return { supported: false, job: null as Record<string, unknown> | null };
+    }
+    return { supported: true, job: null as Record<string, unknown> | null };
+  }
+
+  for (const row of Array.isArray(data) ? data : []) {
+    const checked = await expireStaleJobIfNeeded(admin, row as Record<string, unknown>);
+    if (checked && (checked.status === "queued" || checked.status === "running")) {
+      return { supported: true, job: checked };
+    }
+  }
+  return { supported: true, job: null as Record<string, unknown> | null };
+}
+
 async function loadCatalogContext(admin: AdminClient) {
   const [productsResult, kitsResult] = await Promise.all([
     admin
       .from("products")
-      .select("name,category,subcategory,description")
+      .select("name,category")
       .eq("in_stock", true)
-      .limit(50),
+      .limit(30),
     admin
       .from("irrigation_kits")
-      .select("name,kit_type,coverage_area,recommended_crops,description")
+      .select("name,kit_type,coverage_area,recommended_crops")
       .eq("active", true)
-      .limit(20),
+      .limit(15),
   ]);
 
   const products = Array.isArray(productsResult.data) ? productsResult.data : [];
@@ -417,15 +496,15 @@ async function loadCatalogContext(admin: AdminClient) {
 
   return {
     destinationPages: VERIFIED_DRIPTECH_LINKS,
-    featuredProducts: products.slice(0, 30).map((item: Record<string, unknown>) => ({
-      name: String(item.name || "").slice(0, 100),
-      category: String(item.category || "").slice(0, 60),
+    featuredProducts: products.slice(0, 18).map((item: Record<string, unknown>) => ({
+      name: String(item.name || "").slice(0, 90),
+      category: String(item.category || "").slice(0, 50),
     })),
-    featuredKits: kits.slice(0, 12).map((kit: Record<string, unknown>) => ({
-      name: String(kit.name || "").slice(0, 100),
-      type: String(kit.kit_type || "").slice(0, 60),
+    featuredKits: kits.slice(0, 10).map((kit: Record<string, unknown>) => ({
+      name: String(kit.name || "").slice(0, 90),
+      type: String(kit.kit_type || "").slice(0, 50),
       coverageArea: kit.coverage_area ?? null,
-      crops: Array.isArray(kit.recommended_crops) ? kit.recommended_crops.slice(0, 6) : [],
+      crops: Array.isArray(kit.recommended_crops) ? kit.recommended_crops.slice(0, 5) : [],
     })),
   };
 }
@@ -442,7 +521,7 @@ async function getDailyEmailsSentCount(admin: AdminClient) {
 }
 
 async function loadOutreachContext(admin: AdminClient) {
-  const [campaignsRes, leadsRes, suppressionRes, dailySentCount, runtime] = await Promise.all([
+  const [campaignsRes, leadsRes, suppressionRes, dailySentCount, runtime, activeJobState] = await Promise.all([
     admin
       .from("b2b_outreach_campaigns")
       .select("id,segment,region,product_focus,model,summary,source_links,lead_count,created_at")
@@ -458,6 +537,7 @@ async function loadOutreachContext(admin: AdminClient) {
       .select("id", { count: "exact", head: true }),
     getDailyEmailsSentCount(admin),
     getOutreachRuntimeConfig(admin),
+    findActiveOutreachJob(admin),
   ]);
 
   if (campaignsRes.error) {
@@ -479,7 +559,57 @@ async function loadOutreachContext(admin: AdminClient) {
     campaigns: campaignsRes.data || [],
     leads: leadsRes.data || [],
     suppressionCount: Number(suppressionRes.count || 0),
+    activeJob: activeJobState.job,
+    asyncJobsSupported: activeJobState.supported,
   };
+}
+
+async function callXaiResponses(params: {
+  apiKey: string;
+  model: string;
+  prompt: string;
+  maxOutputTokens: number;
+  timeoutMs: number;
+}) {
+  const { apiKey, model, prompt, maxOutputTokens, timeoutMs } = params;
+  const shouldSetLowReasoning = !model.toLowerCase().includes("non-reasoning");
+
+  const runFetch = async (includeReasoning: boolean) => {
+    const body: Record<string, unknown> = {
+      model,
+      input: [{ role: "user", content: prompt }],
+      tools: [{ type: "web_search" }],
+      max_output_tokens: maxOutputTokens,
+    };
+    if (includeReasoning) {
+      body.reasoning = { effort: "low" };
+    }
+    const response = await fetch("https://api.x.ai/v1/responses", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      signal: AbortSignal.timeout(timeoutMs),
+      body: JSON.stringify(body),
+    });
+    const payload = await response.json().catch(() => ({}));
+    return { response, payload };
+  };
+
+  let { response, payload } = await runFetch(shouldSetLowReasoning);
+  if (!response.ok && shouldSetLowReasoning) {
+    const errText = String(payload?.error?.message || payload?.message || "");
+    if (/reasoning|unsupported|unknown parameter/i.test(errText)) {
+      ({ response, payload } = await runFetch(false));
+    }
+  }
+  if (!response.ok) {
+    throw new Error(
+      "Grok API error: " + String(payload?.error?.message || payload?.message || "Lead search failed."),
+    );
+  }
+  return payload as Record<string, unknown>;
 }
 
 async function discoverProspectsWithGrok(params: {
@@ -490,89 +620,119 @@ async function discoverProspectsWithGrok(params: {
   productFocus: string;
   maxLeads: number;
   catalogContext: Record<string, unknown>;
+  allowRetry?: boolean;
 }) {
-  const { apiKey, model, segment, region, productFocus, maxLeads, catalogContext } = params;
+  const { apiKey, model, segment, region, productFocus, maxLeads, catalogContext, allowRetry = true } = params;
 
-  const prompt = [
-    "You are the B2B Agricultural & Irrigation Prospect Researcher for DripTech Eco Flow in Kenya (https://www.dripstech.co.ke).",
-    "Your job is to use web_search to find REAL commercial organizations in East Africa / Kenya that genuinely buy or resell irrigation equipment, and draft tailored, respectful B2B introductions.",
-    "",
-    `TARGET BUYER SEGMENT: ${segment}`,
-    `TARGET REGION / COUNTY: ${region}`,
-    `EQUIPMENT FOCUS: ${productFocus || "General DripTech irrigation kits, driplines, sprinklers, pumps & HDPE fittings"}`,
-    `TARGET COUNT: Up to ${maxLeads} real, distinct organizations.`,
-    "",
-    "DRIPTECH VERIFIED CATALOGUE & LANDING PAGES:",
-    JSON.stringify(catalogContext, null, 2),
-    "",
-    "STRICT ANTI-SPAM & NO-FABRICATION RULES:",
-    "1. NEVER invent a company name, website URL, public_email, public_phone, or source_url.",
-    "2. Only include organizations that actually appear in live web_search results.",
-    "3. Only fill public_email or public_phone if that exact email/phone appears publicly on the organization's own official site, public tender document, or verified public business listing from web_search. If not found, return empty string \"\". NEVER guess info@company.com or fake numbers.",
-    "4. Focus ONLY on commercial B2B entities (commercial farms, orchards, exporters, greenhouses, agrovets/hardware stockists, irrigation contractors, schools/NGOs, county water/agricultural tenders, estate landscaping). Exclude private individuals.",
-    "5. EXCLUDE direct irrigation competitors: Grekkon, Afrodrip, FineTouch Africa, Davis & Shirtliff, IrriGuru, Amiran Kenya, Netafim, DripTech.",
-    "6. For recommended_url, pick ONLY one exact URL from DRIPTECH VERIFIED CATALOGUE & LANDING PAGES above that best fits that buyer's need.",
-    "7. Draft email_body under 135 words: polite, practical, no hype, reference why DripTech fits their specific crops/business, mention nationwide delivery across Kenya and phone/WhatsApp +254 723 407 849, and link to the chosen recommended_url. Do NOT include placeholder brackets like [Your Name] — sign cleanly as 'DripTech Eco Flow Sales Team'.",
-    "8. Draft whatsapp_message under 65 words: friendly B2B WhatsApp intro mentioning DripTech Eco Flow, the exact matched gear/kit, and the recommended_url.",
-    "9. Return strict JSON only (no markdown code fences).",
-    "",
-    "Return exact JSON schema:",
-    JSON.stringify(
-      {
-        search_summary: "1-2 sentence overview of real public sources reviewed and caveats.",
+  const buildPrompt = (targetCount: number, extraRule = "") =>
+    [
+      "You are the B2B Agricultural & Irrigation Prospect Researcher for DripTech Eco Flow in Kenya (https://www.dripstech.co.ke).",
+      "Use web_search to find REAL commercial organizations in Kenya / East Africa that buy or resell irrigation equipment, and draft tailored B2B introductions.",
+      "",
+      "SPEED & SEARCH BUDGET:",
+      `- Execute 2 to 4 focused web_search queries total and inspect only the top official/directory results needed to confirm up to ${targetCount} real organizations.`,
+      "- Stop searching and output valid JSON immediately once the verified leads are ready.",
+      "",
+      "STRICT ANTI-SPAM & NO-FABRICATION RULES:",
+      "1. NEVER invent a company name, website URL, public_email, public_phone, or source_url.",
+      "2. Only include organizations that appear in live web_search results.",
+      "3. Only fill public_email or public_phone if explicitly published on the entity's official site, public tender, or verified directory listing from web_search. Otherwise return \"\".",
+      "4. Focus ONLY on commercial B2B entities (commercial farms, orchards, exporters, greenhouses, agrovets/hardware stockists, irrigation contractors, schools/NGOs, county water/agricultural tenders, estates). Exclude private individuals.",
+      "5. EXCLUDE direct irrigation competitors: Grekkon, Afrodrip, FineTouch Africa, Davis & Shirtliff, IrriGuru, Amiran Kenya, Netafim, DripTech.",
+      "6. For recommended_url, copy ONE exact URL from destinationPages below.",
+      "7. Keep email_body concise (75-115 words), polite, signed 'DripTech Eco Flow Sales Team' with +254 723 407 849 and recommended_url. No placeholder brackets.",
+      "8. Keep whatsapp_message concise (35-55 words) ending with recommended_url.",
+      "9. Return strict compact JSON only (no markdown code fences).",
+      "",
+      "Return exact JSON schema:",
+      JSON.stringify({
+        search_summary: "1-2 sentence overview of public sources reviewed.",
         leads: [
           {
             company_name: "Exact public entity name",
             organization_type: "Commercial Farm | Greenhouse Project | Agrovet / Stockist | County / NGO Tender | Estate / Landscaping | Institution",
             county_region: "County or Town",
             website_url: "Official website URL if found via web_search, else empty string",
-            source_url: "Exact web_search citation URL proving this entity and details exist",
+            source_url: "Exact web_search citation URL proving this entity exists",
             source_title: "Page title from web_search",
             public_email: "Exact publicly listed B2B email if found, else empty string",
             public_phone: "Exact publicly listed B2B phone if found, else empty string",
-            likely_needs: ["2 to 4 relevant DripTech products or kit types"],
-            recommended_url: "Exact URL from VERIFIED_DRIPTECH_LINKS",
-            why_they_need_irrigation: "Specific factual reason based on public info (crops grown, expansion, agrovet stockist, tender scope)",
+            likely_needs: ["2 to 3 relevant DripTech products"],
+            recommended_url: "Exact URL from destinationPages",
+            why_they_need_irrigation: "Specific factual reason based on public info",
             confidence_note: "Direct contact verified on site | Needs manual contact lookup on source page | Tender buyer contact",
-            email_subject: "Short specific B2B subject line (<65 chars)",
-            email_body: "Plain concise email text signed 'DripTech Eco Flow Sales Team'",
+            email_subject: "Specific B2B subject (<65 chars)",
+            email_body: "Concise email text signed 'DripTech Eco Flow Sales Team'",
             whatsapp_message: "Short WhatsApp message ending with the DripTech link",
           },
         ],
-      },
-      null,
-      2,
-    ),
-  ].join("\n");
+      }),
+      "",
+      `TARGET BUYER SEGMENT: ${segment}`,
+      `TARGET REGION / COUNTY: ${region}`,
+      `EQUIPMENT FOCUS: ${productFocus || "General DripTech irrigation kits, driplines, sprinklers, pumps & HDPE fittings"}`,
+      `TARGET COUNT: Up to ${targetCount} distinct verified organizations.`,
+      "",
+      "DRIPTECH CATALOGUE & LANDING PAGES:",
+      JSON.stringify(catalogContext),
+      extraRule,
+    ]
+      .filter(Boolean)
+      .join("\n");
 
-  const response = await fetch("https://api.x.ai/v1/responses", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    signal: AbortSignal.timeout(55_000),
-    body: JSON.stringify({
-      model,
-      input: [{ role: "user", content: prompt }],
-      tools: [{ type: "web_search" }],
-      max_output_tokens: 4500,
-    }),
-  });
+  const attempts = allowRetry
+    ? [
+        { targetCount: maxLeads, maxOutputTokens: 3800, timeoutMs: 95_000, extra: "" },
+        {
+          targetCount: Math.min(maxLeads, 3),
+          maxOutputTokens: 2200,
+          timeoutMs: 38_000,
+          extra:
+            "SPEED RECOVERY PASS: Perform only 1-2 targeted searches and return compact valid JSON for up to 3 verified organizations only.",
+        },
+      ]
+    : [{ targetCount: Math.min(maxLeads, 5), maxOutputTokens: 3000, timeoutMs: 90_000, extra: "" }];
 
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(
-      "Grok API error: " + String(payload?.error?.message || payload?.message || "Lead search failed."),
-    );
+  let payload: Record<string, unknown> | null = null;
+  let parsed: Record<string, unknown> | null = null;
+  let lastError: Error | null = null;
+
+  for (const attempt of attempts) {
+    try {
+      const responsePayload = await callXaiResponses({
+        apiKey,
+        model,
+        prompt: buildPrompt(attempt.targetCount, attempt.extra),
+        maxOutputTokens: attempt.maxOutputTokens,
+        timeoutMs: attempt.timeoutMs,
+      });
+      const rawText = extractResponseText(responsePayload);
+      if (!rawText) {
+        lastError = new Error("Grok did not return lead results. Try narrowing the segment or county.");
+        continue;
+      }
+      parsed = parseJsonObject(rawText) as Record<string, unknown>;
+      payload = responsePayload;
+      break;
+    } catch (err) {
+      if (isTimeoutError(err)) {
+        lastError = new Error(
+          "Grok live web search took too long for this query. Try Batch Size: 4 prospects, a specific county (e.g. Nakuru or Kiambu), or set Grok Model to grok-4-fast in System Settings -> API Keys.",
+        );
+      } else {
+        lastError = err instanceof Error ? err : new Error("Lead search failed.");
+        // Non-timeout API/auth errors should fail immediately rather than waiting on a second pass.
+        if (lastError.message.startsWith("Grok API error:")) {
+          throw lastError;
+        }
+      }
+    }
   }
 
-  const rawText = extractResponseText(payload);
-  if (!rawText) {
-    throw new Error("Grok did not return lead results. Try narrowing the segment or county.");
+  if (!payload || !parsed) {
+    throw lastError || new Error("Grok could not complete the prospect scan in time.");
   }
 
-  const parsed = parseJsonObject(rawText) as Record<string, unknown>;
   const citations = extractCitations(payload);
   const citationUrlSet = new Set(citations.map((item) => item.url));
 
@@ -631,6 +791,170 @@ async function discoverProspectsWithGrok(params: {
     citations: citations.slice(0, 30),
     usage: payload.usage || null,
   };
+}
+
+async function persistDiscoveryLeads(params: {
+  admin: AdminClient;
+  campaignId: string;
+  userId: string;
+  discovery: Awaited<ReturnType<typeof discoverProspectsWithGrok>>;
+  asyncColumnsAvailable: boolean;
+}) {
+  const { admin, campaignId, userId, discovery, asyncColumnsAvailable } = params;
+  const candidateKeys = discovery.leads.map((l) => l.dedupe_key).filter(Boolean);
+  const candidateEmails = discovery.leads.map((l) => l.public_email).filter(Boolean);
+  const candidatePhones = discovery.leads.map((l) => l.whatsapp_number).filter(Boolean);
+
+  const [existingRes, suppressedEmailRes, suppressedPhoneRes] = await Promise.all([
+    candidateKeys.length
+      ? admin.from("b2b_outreach_leads").select("id,dedupe_key,status").in("dedupe_key", candidateKeys)
+      : Promise.resolve({ data: [] }),
+    candidateEmails.length
+      ? admin.from("b2b_outreach_suppression").select("email").in("email", candidateEmails)
+      : Promise.resolve({ data: [] }),
+    candidatePhones.length
+      ? admin.from("b2b_outreach_suppression").select("phone").in("phone", candidatePhones)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const existingByKey = new Map<string, { id: string; status: string }>();
+  for (const row of existingRes.data || []) {
+    if (row.dedupe_key) existingByKey.set(String(row.dedupe_key), { id: String(row.id), status: String(row.status) });
+  }
+  const suppressedEmails = new Set(
+    (suppressedEmailRes.data || []).map((r: Record<string, unknown>) => String(r.email || "").toLowerCase()).filter(Boolean),
+  );
+  const suppressedPhones = new Set(
+    (suppressedPhoneRes.data || []).map((r: Record<string, unknown>) => String(r.phone || "")).filter(Boolean),
+  );
+
+  const newRows = [];
+  let skippedDuplicates = 0;
+  let skippedSuppressed = 0;
+
+  for (const lead of discovery.leads) {
+    if (
+      (lead.public_email && suppressedEmails.has(lead.public_email)) ||
+      (lead.whatsapp_number && suppressedPhones.has(lead.whatsapp_number))
+    ) {
+      skippedSuppressed++;
+      continue;
+    }
+    if (existingByKey.has(lead.dedupe_key)) {
+      skippedDuplicates++;
+      continue;
+    }
+    existingByKey.set(lead.dedupe_key, { id: "pending", status: "new" });
+    newRows.push({
+      ...lead,
+      campaign_id: campaignId,
+      status: "new",
+      created_by: userId,
+    });
+  }
+
+  if (newRows.length > 0) {
+    const { error: insertError } = await admin.from("b2b_outreach_leads").insert(newRows);
+    if (insertError) {
+      throw new Error("Could not store discovered prospects: " + insertError.message);
+    }
+  }
+
+  const campaignUpdate: Record<string, unknown> = {
+    summary: discovery.summary,
+    source_links: discovery.citations,
+    lead_count: newRows.length,
+  };
+  if (asyncColumnsAvailable) {
+    campaignUpdate.status = "succeeded";
+    campaignUpdate.progress_message = `Added ${newRows.length} verified prospect${newRows.length === 1 ? "" : "s"}`;
+    campaignUpdate.skipped_duplicates = skippedDuplicates;
+    campaignUpdate.skipped_suppressed = skippedSuppressed;
+    campaignUpdate.error_message = null;
+    campaignUpdate.completed_at = new Date().toISOString();
+  }
+
+  await admin.from("b2b_outreach_campaigns").update(campaignUpdate).eq("id", campaignId);
+  return { insertedCount: newRows.length, skippedDuplicates, skippedSuppressed };
+}
+
+async function processDiscoveryJob(params: {
+  admin: AdminClient;
+  jobId: string;
+  userId: string;
+  apiKey: string;
+  model: string;
+  segment: string;
+  region: string;
+  productFocus: string;
+  maxLeads: number;
+}) {
+  const { admin, jobId, userId, apiKey, model, segment, region, productFocus, maxLeads } = params;
+  const updateProgress = async (fields: Record<string, unknown>) => {
+    await admin
+      .from("b2b_outreach_campaigns")
+      .update(fields)
+      .eq("id", jobId)
+      .in("status", ["queued", "running"]);
+  };
+
+  try {
+    await updateProgress({
+      status: "running",
+      started_at: new Date().toISOString(),
+      progress_message: "Loading DripTech catalogue & outreach links...",
+    });
+
+    const catalogContext = await loadCatalogContext(admin);
+    await updateProgress({
+      progress_message: `Searching live Kenyan websites & tenders with Grok (${model})...`,
+    });
+
+    const discovery = await discoverProspectsWithGrok({
+      apiKey,
+      model,
+      segment,
+      region,
+      productFocus,
+      maxLeads,
+      catalogContext,
+      allowRetry: true,
+    });
+
+    const { data: currentJob } = await admin
+      .from("b2b_outreach_campaigns")
+      .select("status")
+      .eq("id", jobId)
+      .maybeSingle();
+    if (currentJob?.status === "failed") {
+      return;
+    }
+
+    await updateProgress({
+      progress_message: "Deduplicating leads & checking suppression list...",
+    });
+
+    await persistDiscoveryLeads({
+      admin,
+      campaignId: jobId,
+      userId,
+      discovery,
+      asyncColumnsAvailable: true,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Grok prospect discovery failed.";
+    await admin
+      .from("b2b_outreach_campaigns")
+      .update({
+        status: "failed",
+        progress_message: "Scan failed",
+        error_message: message.slice(0, 600),
+        summary: "Scan failed: " + message.slice(0, 200),
+        completed_at: new Date().toISOString(),
+      })
+      .eq("id", jobId)
+      .in("status", ["queued", "running"]);
+  }
 }
 
 function renderOutreachEmailHtml(params: {
@@ -815,6 +1139,42 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (action === "job") {
+      const jobId = String(body.jobId || "").trim();
+      if (!jobId) return json(req, { error: "Job ID is required." }, 400);
+      const { data: rawJob, error: jobError } = await admin
+        .from("b2b_outreach_campaigns")
+        .select(JOB_SELECT_FIELDS)
+        .eq("id", jobId)
+        .maybeSingle();
+      if (jobError) {
+        return json(req, { error: "Could not read scan status: " + jobError.message }, 500);
+      }
+      if (!rawJob) return json(req, { error: "Outreach scan job not found." }, 404);
+      const job = await expireStaleJobIfNeeded(admin, rawJob as Record<string, unknown>);
+      return json(req, { job });
+    }
+
+    if (action === "cancel_job") {
+      const jobId = String(body.jobId || "").trim();
+      if (!jobId) return json(req, { error: "Job ID is required." }, 400);
+      const { error: cancelError } = await admin
+        .from("b2b_outreach_campaigns")
+        .update({
+          status: "failed",
+          progress_message: "Cancelled",
+          error_message: "Scan cancelled by admin.",
+          summary: "Scan cancelled by admin.",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("id", jobId)
+        .in("status", ["queued", "running"]);
+      if (cancelError && !isMissingJobColumnsError(cancelError)) {
+        return json(req, { error: "Could not cancel scan: " + cancelError.message }, 500);
+      }
+      return json(req, { success: true });
+    }
+
     if (action === "discover") {
       const runtime = await getOutreachRuntimeConfig(admin);
       const apiKey = runtime.xaiApiKey;
@@ -832,8 +1192,77 @@ Deno.serve(async (req) => {
       const segment = String(body.segment || "Commercial Horticulture & Avocado Farms").trim().slice(0, 140);
       const region = String(body.region || "Kenya (Nationwide)").trim().slice(0, 100);
       const productFocus = String(body.productFocus || "").trim().slice(0, 140);
-      const maxLeads = Math.min(Math.max(Math.floor(Number(body.maxLeads) || 6), 3), 10);
+      const maxLeads = Math.min(Math.max(Math.floor(Number(body.maxLeads) || 4), 3), 10);
 
+      const activeState = await findActiveOutreachJob(admin);
+      if (activeState.job) {
+        return json(
+          req,
+          {
+            success: true,
+            queued: true,
+            alreadyRunning: true,
+            job: activeState.job,
+          },
+          202,
+        );
+      }
+
+      const edgeRuntime = (
+        globalThis as unknown as {
+          EdgeRuntime?: { waitUntil: (promise: Promise<unknown>) => void };
+        }
+      ).EdgeRuntime;
+
+      if (activeState.supported && edgeRuntime?.waitUntil) {
+        const { data: queuedJob, error: queueError } = await admin
+          .from("b2b_outreach_campaigns")
+          .insert({
+            segment,
+            region,
+            product_focus: productFocus,
+            model: runtime.model,
+            summary: `Queued Grok B2B scan for ${segment} (${region})`,
+            source_links: [],
+            lead_count: 0,
+            created_by: userData.user.id,
+            status: "queued",
+            progress_message: "Queued Grok live web search...",
+          })
+          .select(JOB_SELECT_FIELDS)
+          .single();
+
+        if (!queueError && queuedJob) {
+          edgeRuntime.waitUntil(
+            processDiscoveryJob({
+              admin,
+              jobId: String(queuedJob.id),
+              userId: userData.user.id,
+              apiKey,
+              model: runtime.model,
+              segment,
+              region,
+              productFocus,
+              maxLeads,
+            }),
+          );
+          return json(
+            req,
+            {
+              success: true,
+              queued: true,
+              job: queuedJob,
+            },
+            202,
+          );
+        }
+
+        if (queueError && !isMissingJobColumnsError(queueError)) {
+          return json(req, { error: "Could not start discovery scan: " + queueError.message }, 500);
+        }
+      }
+
+      // Synchronous fallback (runs with fast low-reasoning mode if async migration hasn't been pushed yet).
       const catalogContext = await loadCatalogContext(admin);
       const discovery = await discoverProspectsWithGrok({
         apiKey,
@@ -843,34 +1272,8 @@ Deno.serve(async (req) => {
         productFocus,
         maxLeads,
         catalogContext,
+        allowRetry: false,
       });
-
-      const candidateKeys = discovery.leads.map((l) => l.dedupe_key).filter(Boolean);
-      const candidateEmails = discovery.leads.map((l) => l.public_email).filter(Boolean);
-      const candidatePhones = discovery.leads.map((l) => l.whatsapp_number).filter(Boolean);
-
-      const [existingRes, suppressedEmailRes, suppressedPhoneRes] = await Promise.all([
-        candidateKeys.length
-          ? admin.from("b2b_outreach_leads").select("id,dedupe_key,status").in("dedupe_key", candidateKeys)
-          : Promise.resolve({ data: [] }),
-        candidateEmails.length
-          ? admin.from("b2b_outreach_suppression").select("email").in("email", candidateEmails)
-          : Promise.resolve({ data: [] }),
-        candidatePhones.length
-          ? admin.from("b2b_outreach_suppression").select("phone").in("phone", candidatePhones)
-          : Promise.resolve({ data: [] }),
-      ]);
-
-      const existingByKey = new Map<string, { id: string; status: string }>();
-      for (const row of existingRes.data || []) {
-        if (row.dedupe_key) existingByKey.set(String(row.dedupe_key), { id: String(row.id), status: String(row.status) });
-      }
-      const suppressedEmails = new Set(
-        (suppressedEmailRes.data || []).map((r: Record<string, unknown>) => String(r.email || "").toLowerCase()).filter(Boolean),
-      );
-      const suppressedPhones = new Set(
-        (suppressedPhoneRes.data || []).map((r: Record<string, unknown>) => String(r.phone || "")).filter(Boolean),
-      );
 
       const { data: campaign, error: campaignError } = await admin
         .from("b2b_outreach_campaigns")
@@ -890,50 +1293,21 @@ Deno.serve(async (req) => {
         return json(req, { error: "Could not save discovery scan: " + campaignError.message }, 500);
       }
 
-      const newRows = [];
-      let skippedDuplicates = 0;
-      let skippedSuppressed = 0;
-
-      for (const lead of discovery.leads) {
-        if (
-          (lead.public_email && suppressedEmails.has(lead.public_email)) ||
-          (lead.whatsapp_number && suppressedPhones.has(lead.whatsapp_number))
-        ) {
-          skippedSuppressed++;
-          continue;
-        }
-        if (existingByKey.has(lead.dedupe_key)) {
-          skippedDuplicates++;
-          continue;
-        }
-        existingByKey.set(lead.dedupe_key, { id: "pending", status: "new" });
-        newRows.push({
-          ...lead,
-          campaign_id: campaign.id,
-          status: "new",
-          created_by: userData.user.id,
-        });
-      }
-
-      if (newRows.length > 0) {
-        const { error: insertError } = await admin.from("b2b_outreach_leads").insert(newRows);
-        if (insertError) {
-          return json(req, { error: "Could not store discovered prospects: " + insertError.message }, 500);
-        }
-      }
-
-      await admin
-        .from("b2b_outreach_campaigns")
-        .update({ lead_count: newRows.length })
-        .eq("id", campaign.id);
+      const persisted = await persistDiscoveryLeads({
+        admin,
+        campaignId: String(campaign.id),
+        userId: userData.user.id,
+        discovery,
+        asyncColumnsAvailable: false,
+      });
 
       const context = await loadOutreachContext(admin);
       return json(req, {
         ...context,
         discoverySummary: discovery.summary,
-        insertedCount: newRows.length,
-        skippedDuplicates,
-        skippedSuppressed,
+        insertedCount: persisted.insertedCount,
+        skippedDuplicates: persisted.skippedDuplicates,
+        skippedSuppressed: persisted.skippedSuppressed,
       });
     }
 

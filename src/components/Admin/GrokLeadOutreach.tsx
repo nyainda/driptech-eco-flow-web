@@ -86,6 +86,61 @@ interface CatalogLink {
   url: string;
 }
 
+interface OutreachJob {
+  id: string;
+  segment: string;
+  region: string;
+  product_focus?: string;
+  model?: string;
+  status: "queued" | "running" | "succeeded" | "failed";
+  progress_message?: string;
+  error_message?: string | null;
+  lead_count?: number;
+  skipped_duplicates?: number;
+  skipped_suppressed?: number;
+  created_at: string;
+  started_at?: string | null;
+  completed_at?: string | null;
+}
+
+async function extractEdgeFunctionError(invokeError: unknown, data: unknown): Promise<string> {
+  if (data && typeof data === "object" && "error" in data && typeof (data as { error?: unknown }).error === "string") {
+    return String((data as { error: string }).error);
+  }
+  if (invokeError && typeof invokeError === "object") {
+    const errObj = invokeError as { message?: string; context?: Response };
+    if (errObj.context && typeof errObj.context.clone === "function") {
+      try {
+        const payload = await errObj.context.clone().json();
+        if (payload && typeof payload.error === "string" && payload.error.trim()) {
+          return payload.error.trim();
+        }
+      } catch {
+        try {
+          const text = await errObj.context.clone().text();
+          if (text.trim()) return text.trim().slice(0, 300);
+        } catch {
+          // Ignore response body fallback errors.
+        }
+      }
+    }
+    if (errObj.message) return errObj.message;
+  }
+  return "Request failed.";
+}
+
+async function invokeOutreach(body: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const { data, error } = await supabase.functions.invoke("b2b-lead-outreach", { body });
+  if (error) {
+    throw new Error(await extractEdgeFunctionError(error, data));
+  }
+  const payload = (data && typeof data === "object" ? data : {}) as Record<string, unknown>;
+  if (typeof payload.error === "string" && payload.error) {
+    throw new Error(payload.error);
+  }
+  return payload;
+}
+
 const SEGMENT_PRESETS = [
   "Commercial Avocado & Horticulture Farms",
   "Greenhouse Growers & Nursery Operators",
@@ -564,11 +619,13 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
   const [catalogLinks, setCatalogLinks] = useState<CatalogLink[]>([]);
   const [campaigns, setCampaigns] = useState<OutreachCampaign[]>([]);
   const [leads, setLeads] = useState<OutreachLead[]>([]);
+  const [activeJob, setActiveJob] = useState<OutreachJob | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const [segment, setSegment] = useState(SEGMENT_PRESETS[0]);
   const [region, setRegion] = useState(REGION_PRESETS[1]);
   const [productFocus, setProductFocus] = useState(PRODUCT_FOCUS_OPTIONS[0]);
-  const [maxLeads, setMaxLeads] = useState(6);
+  const [maxLeads, setMaxLeads] = useState(4);
 
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -585,6 +642,10 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
     setCatalogLinks(Array.isArray(data.catalogLinks) ? (data.catalogLinks as CatalogLink[]) : []);
     setCampaigns(Array.isArray(data.campaigns) ? (data.campaigns as OutreachCampaign[]) : []);
     setLeads(Array.isArray(data.leads) ? (data.leads as OutreachLead[]) : []);
+    if ("activeJob" in data) {
+      const incoming = data.activeJob && typeof data.activeJob === "object" ? (data.activeJob as OutreachJob) : null;
+      setActiveJob(incoming && ["queued", "running"].includes(incoming.status) ? incoming : null);
+    }
   }, []);
 
   const loadContext = useCallback(async () => {
@@ -598,12 +659,8 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
       return;
     }
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("b2b-lead-outreach", {
-        body: { action: "context" },
-      });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      applyServerContext((data || {}) as Record<string, unknown>);
+      const data = await invokeOutreach({ action: "context" });
+      applyServerContext(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Could not load Grok B2B Outreach Desk.";
       setError(msg);
@@ -616,26 +673,109 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
     loadContext();
   }, [loadContext]);
 
+  const scanBusy = !!activeJob && (activeJob.status === "queued" || activeJob.status === "running");
+
+  useEffect(() => {
+    if (!scanBusy || !activeJob) {
+      setElapsedSeconds(0);
+      return;
+    }
+    const anchorMs = new Date(activeJob.started_at || activeJob.created_at).getTime();
+    const updateElapsed = () => {
+      if (Number.isFinite(anchorMs)) {
+        setElapsedSeconds(Math.max(0, Math.floor((Date.now() - anchorMs) / 1000)));
+      }
+    };
+    updateElapsed();
+    const interval = setInterval(updateElapsed, 1000);
+    return () => clearInterval(interval);
+  }, [scanBusy, activeJob]);
+
+  useEffect(() => {
+    const jobId = activeJob?.id;
+    if (!jobId || !scanBusy) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const poll = async () => {
+      try {
+        const data = await invokeOutreach({ action: "job", jobId });
+        if (cancelled) return;
+        const job = data.job as OutreachJob | undefined;
+        if (!job) {
+          setActiveJob(null);
+          return;
+        }
+        setActiveJob(job);
+        if (job.status === "succeeded") {
+          setActiveJob(null);
+          const inserted = Number(job.lead_count || 0);
+          const dupes = Number(job.skipped_duplicates || 0);
+          const suppressed = Number(job.skipped_suppressed || 0);
+          setNotice(
+            `Grok added ${inserted} new verified prospect${inserted === 1 ? "" : "s"}` +
+              (dupes ? ` (${dupes} duplicate${dupes === 1 ? "" : "s"} skipped)` : "") +
+              (suppressed ? ` (${suppressed} opted-out skipped)` : "") +
+              ". Review & approve before sending.",
+          );
+          toast({
+            title: "Prospect Scan Complete",
+            description: `Found ${inserted} new B2B lead${inserted === 1 ? "" : "s"} in ${job.region}.`,
+          });
+          await loadContext();
+          return;
+        }
+        if (job.status === "failed") {
+          setActiveJob(null);
+          const msg = job.error_message || "Grok prospect discovery failed.";
+          setError(msg);
+          toast({ title: "Discovery Failed", description: msg, variant: "destructive" });
+          return;
+        }
+        timer = setTimeout(poll, 2500);
+      } catch (err: unknown) {
+        if (!cancelled) {
+          setActiveJob(null);
+          setError(err instanceof Error ? err.message : "Could not check prospect scan progress.");
+        }
+      }
+    };
+
+    timer = setTimeout(poll, 1800);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [activeJob?.id, scanBusy, loadContext, toast]);
+
   const handleDiscover = async () => {
     setDiscovering(true);
     setError("");
     setNotice("");
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("b2b-lead-outreach", {
-        body: {
-          action: "discover",
-          segment,
-          region,
-          productFocus,
-          maxLeads,
-        },
+      const data = await invokeOutreach({
+        action: "discover",
+        segment,
+        region,
+        productFocus,
+        maxLeads,
       });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      applyServerContext((data || {}) as Record<string, unknown>);
-      const inserted = Number(data?.insertedCount || 0);
-      const dupes = Number(data?.skippedDuplicates || 0);
-      const suppressed = Number(data?.skippedSuppressed || 0);
+
+      if (data.queued && data.job && typeof data.job === "object") {
+        const queuedJob = data.job as OutreachJob;
+        setActiveJob(queuedJob);
+        setNotice(
+          data.alreadyRunning
+            ? "Attached to the active background Grok scan — results will appear automatically."
+            : "Grok prospect scan running in background — results will load automatically.",
+        );
+        return;
+      }
+
+      applyServerContext(data);
+      const inserted = Number(data.insertedCount || 0);
+      const dupes = Number(data.skippedDuplicates || 0);
+      const suppressed = Number(data.skippedSuppressed || 0);
       setNotice(
         `Grok added ${inserted} new verified prospect${inserted === 1 ? "" : "s"}` +
           (dupes ? ` (${dupes} duplicate${dupes === 1 ? "" : "s"} skipped)` : "") +
@@ -655,15 +795,24 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
     }
   };
 
+  const handleCancelJob = async () => {
+    if (!activeJob?.id) return;
+    const jobId = activeJob.id;
+    setActiveJob(null);
+    setNotice("");
+    try {
+      await invokeOutreach({ action: "cancel_job", jobId });
+      toast({ title: "Scan Cancelled", description: "You can adjust your filters and start a fresh scan." });
+    } catch {
+      // Ignore cancellation cleanup failures; stale jobs auto-expire on the server.
+    }
+  };
+
   const handleUpdateLead = async (leadId: string, fields: Record<string, unknown>) => {
     setBusyAction(`${leadId}:save`);
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("b2b-lead-outreach", {
-        body: { action: "update_lead", leadId, ...fields },
-      });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      if (data?.lead) {
+      const data = await invokeOutreach({ action: "update_lead", leadId, ...fields });
+      if (data.lead) {
         setLeads((prev) => prev.map((item) => (item.id === leadId ? (data.lead as OutreachLead) : item)));
       }
       toast({ title: "Saved", description: "Prospect details updated." });
@@ -681,22 +830,18 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
   const handleSendEmail = async (lead: OutreachLead, draft: LeadDraft) => {
     setBusyAction(`${lead.id}:email`);
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("b2b-lead-outreach", {
-        body: {
-          action: "send_email",
-          leadId: lead.id,
-          public_email: draft.public_email,
-          email_subject: draft.email_subject,
-          email_body: draft.email_body,
-          recommended_url: draft.recommended_url,
-        },
+      const data = await invokeOutreach({
+        action: "send_email",
+        leadId: lead.id,
+        public_email: draft.public_email,
+        email_subject: draft.email_subject,
+        email_body: draft.email_body,
+        recommended_url: draft.recommended_url,
       });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      if (data?.lead) {
+      if (data.lead) {
         setLeads((prev) => prev.map((item) => (item.id === lead.id ? (data.lead as OutreachLead) : item)));
       }
-      if (typeof data?.dailyEmailSentCount === "number") {
+      if (typeof data.dailyEmailSentCount === "number") {
         setDailyEmailSentCount(data.dailyEmailSentCount);
       }
       toast({
@@ -741,16 +886,13 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
 
     setBusyAction(`${lead.id}:whatsapp`);
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("b2b-lead-outreach", {
-        body: {
-          action: "mark_whatsapp_sent",
-          leadId: lead.id,
-          whatsapp_number: waDigits,
-          whatsapp_message: draft.whatsapp_message,
-        },
+      const data = await invokeOutreach({
+        action: "mark_whatsapp_sent",
+        leadId: lead.id,
+        whatsapp_number: waDigits,
+        whatsapp_message: draft.whatsapp_message,
       });
-      if (invokeError) throw invokeError;
-      if (data?.lead) {
+      if (data.lead) {
         setLeads((prev) => prev.map((item) => (item.id === lead.id ? (data.lead as OutreachLead) : item)));
       }
       toast({
@@ -767,12 +909,8 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
   const handleSuppressLead = async (lead: OutreachLead) => {
     setBusyAction(`${lead.id}:suppress`);
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("b2b-lead-outreach", {
-        body: { action: "suppress", leadId: lead.id },
-      });
-      if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(data.error);
-      applyServerContext((data || {}) as Record<string, unknown>);
+      const data = await invokeOutreach({ action: "suppress", leadId: lead.id });
+      applyServerContext(data);
       toast({
         title: "Suppressed",
         description: `${lead.company_name} added to the opt-out list and will not be contacted again.`,
@@ -992,9 +1130,41 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
             {error}
           </p>
           <p className="text-xs text-rose-600/90 dark:text-rose-300/80">
-            Make sure you have signed into Admin with Supabase Auth, pushed the <code className="font-mono">202611130001_b2b_outreach_leads.sql</code> migration, deployed the <code className="font-mono">b2b-lead-outreach</code> Edge Function, and added your xAI Grok Key &amp; Resend Key in <span className="font-medium">Admin → System Settings → API Keys</span>.
+            Make sure you have pushed <code className="font-mono">202611130001_b2b_outreach_leads.sql</code> &amp;{" "}
+            <code className="font-mono">202611140001_b2b_outreach_async_jobs.sql</code>, deployed{" "}
+            <code className="font-mono">b2b-lead-outreach</code>, and saved your xAI Grok Key &amp; Resend Key in{" "}
+            <span className="font-medium">Admin → System Settings → API Keys</span>.
           </p>
         </div>
+      )}
+
+      {scanBusy && activeJob && (
+        <Card className="rounded-2xl border-emerald-500/30 bg-emerald-500/[0.04]">
+          <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+            <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-700 dark:text-emerald-300 self-start sm:self-center">
+              <Loader2 className="h-5 w-5 animate-spin" />
+            </div>
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-semibold text-sm">
+                  Searching {activeJob.segment} · {activeJob.region}
+                </p>
+                <Badge variant="outline" className="text-xs">
+                  {activeJob.status} · {elapsedSeconds}s
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {activeJob.progress_message || "Running Grok web search in background..."}
+              </p>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-emerald-500/15">
+                <div className="h-full w-1/2 animate-pulse rounded-full bg-emerald-500" />
+              </div>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={handleCancelJob} className="shrink-0 self-end sm:self-center">
+              Cancel Scan
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {notice && (
@@ -1065,7 +1235,7 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
                 onChange={(e) => setMaxLeads(Number(e.target.value))}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <option value={4}>4 prospects (Fast)</option>
+                <option value={4}>4 prospects (Fast — Recommended)</option>
                 <option value={6}>6 prospects</option>
                 <option value={8}>8 prospects</option>
                 <option value={10}>10 prospects</option>
@@ -1091,13 +1261,13 @@ const GrokLeadOutreach: React.FC<GrokLeadOutreachProps> = ({ onOpenApiSettings }
 
             <Button
               onClick={handleDiscover}
-              disabled={discovering || !segment.trim() || !grokConfigured}
+              disabled={discovering || scanBusy || !segment.trim() || !grokConfigured}
               className="bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
             >
-              {discovering ? (
+              {discovering || scanBusy ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Searching Kenyan B2B buyers...
+                  {scanBusy ? `Scanning in background (${elapsedSeconds}s)...` : "Starting Grok scan..."}
                 </>
               ) : (
                 <>

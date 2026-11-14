@@ -1168,6 +1168,9 @@ const SystemSettings = ({ initialTab = "company" }: SystemSettingsProps) => {
                       placeholder="grok-4.7"
                       className="mt-2"
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Defaults to <code className="font-mono">grok-4.7</code> (low-reasoning fast search) or enter <code className="font-mono">grok-4-fast</code> for ultra-fast prospect scans.
+                    </p>
                   </div>
                 </div>
               </div>
