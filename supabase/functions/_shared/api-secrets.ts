@@ -7,6 +7,8 @@ export const OUTREACH_SECRET_KEYS = [
   "resend_api_key",
   "outreach_from_email",
   "xai_grok_model",
+  "linkedin_client_id",
+  "linkedin_client_secret",
 ] as const;
 
 const ALLOWED_SECRET_KEY_SET = new Set<string>(OUTREACH_SECRET_KEYS);

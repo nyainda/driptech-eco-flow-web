@@ -35,6 +35,7 @@ import {
   PlusCircle,
   Command,
   Radar,
+  Linkedin,
 } from "lucide-react";
 import {
   AdminAuthProvider,
@@ -91,6 +92,7 @@ const WhatsAppManagement = lazy(() => import("@/components/Admin/WhatsAppManagem
 const TechnicianManagement = lazy(() => import("@/components/Admin/TechnicianManagement"));
 const ServiceBookingManagement = lazy(() => import("@/components/Admin/ServiceBookingManagement"));
 const GrokLeadOutreach = lazy(() => import("@/components/Admin/GrokLeadOutreach"));
+const SocialLinkedInAutopilot = lazy(() => import("@/components/Admin/SocialLinkedInAutopilot"));
 
 interface AdminSection {
   id: string;
@@ -283,6 +285,14 @@ const ADMIN_SECTIONS: AdminSection[] = [
     description: "Subscriber list and agricultural email campaigns",
     group: "content",
   },
+  {
+    id: "social-linkedin",
+    label: "LinkedIn Autopilot",
+    icon: Linkedin,
+    description: "Grok-planned LinkedIn posts paired with your curated Image Database",
+    group: "content",
+    badge: "Auto",
+  },
 
   // System & Edge Sync
   {
@@ -322,7 +332,10 @@ const AdminLoading = () => (
 );
 
 const AdminContent = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState(() => {
+    const requested = new URLSearchParams(window.location.search).get("section");
+    return requested && ADMIN_SECTIONS.some((s) => s.id === requested) ? requested : "dashboard";
+  });
   const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>("company");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -508,6 +521,8 @@ const AdminContent = () => {
         return <AIProductResearch />;
       case "grok-outreach":
         return <GrokLeadOutreach onOpenApiSettings={() => selectModule("settings", "api")} />;
+      case "social-linkedin":
+        return <SocialLinkedInAutopilot />;
       default:
         return <AdminDashboard onNavigate={selectModule} />;
     }
