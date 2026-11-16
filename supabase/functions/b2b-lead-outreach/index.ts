@@ -6,20 +6,28 @@ import {
   maskSecretValue,
   saveRuntimeSecrets,
 } from "../_shared/api-secrets.ts";
+import {
+  GrokRequestError,
+  type GrokJsonSchemaSpec,
+  type GrokUsageMetrics,
+  buildCorsHeaders,
+  callXaiResponses,
+  estimateTokensFromText,
+  parseGrokJsonObject,
+} from "../_shared/grok-client.ts";
+import {
+  checkGrokDailyBudget,
+  createGrokUsageReservation,
+  persistGrokUsageSnapshot,
+  recordGrokUsageFailure,
+  recordGrokUsageSuccess,
+} from "../_shared/market-jobs.ts";
 
 const DEFAULT_MODEL = Deno.env.get("XAI_GROK_MODEL") || "grok-4.7";
 const DEFAULT_DAILY_EMAIL_CAP = 25;
 const MAX_DAILY_EMAIL_CAP = 50;
 const UNSUBSCRIBE_TTL_MS = 90 * 24 * 60 * 60 * 1000;
-const JOB_STALE_TIMEOUT_MS = 175_000;
-
-const ALLOWED_ORIGINS = new Set([
-  "https://www.dripstech.co.ke",
-  "https://dripstech.co.ke",
-  "https://driptech-eco-flow-web.vercel.app",
-  "http://localhost:5000",
-  "http://127.0.0.1:5000",
-]);
+const JOB_STALE_TIMEOUT_MS = 160_000;
 
 const VERIFIED_DRIPTECH_LINKS = [
   { label: "Turnkey Irrigation Kits (1/8 to 1+ Acre)", url: "https://www.dripstech.co.ke/irrigation-kits" },
@@ -66,37 +74,7 @@ const PLACEHOLDER_EMAIL_RE =
 
 type AdminClient = ReturnType<typeof createClient>;
 
-const isAllowedOrigin = (origin: string) => {
-  if (!origin) return false;
-  if (ALLOWED_ORIGINS.has(origin)) return true;
-  try {
-    const hostname = new URL(origin).hostname;
-    if (
-      hostname.endsWith(".replit.dev") ||
-      hostname.endsWith(".replit.app") ||
-      (hostname.startsWith("driptech-eco-flow-web-") && hostname.endsWith(".vercel.app"))
-    ) {
-      return true;
-    }
-  } catch {
-    return false;
-  }
-  return false;
-};
-
-const corsFor = (req: Request) => {
-  const origin = req.headers.get("origin") || "";
-  const headers: Record<string, string> = {
-    Vary: "Origin",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-my-custom-header",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Max-Age": "86400",
-  };
-  if (isAllowedOrigin(origin)) {
-    headers["Access-Control-Allow-Origin"] = origin;
-  }
-  return headers;
-};
+const corsFor = (req: Request) => buildCorsHeaders(req, "GET, POST, OPTIONS");
 
 const json = (req: Request, body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -326,79 +304,6 @@ function isSubdomainSender(fromAddress: string) {
   return !!host && host !== "dripstech.co.ke" && host.endsWith(".dripstech.co.ke");
 }
 
-function extractResponseText(response: Record<string, unknown>) {
-  if (typeof response.output_text === "string" && response.output_text.trim()) {
-    return response.output_text.trim();
-  }
-  const fragments: string[] = [];
-  for (const item of Array.isArray(response.output) ? response.output : []) {
-    if (!item || typeof item !== "object") continue;
-    for (const part of Array.isArray((item as Record<string, unknown>).content)
-      ? ((item as Record<string, unknown>).content as Array<Record<string, unknown>>)
-      : []) {
-      if (typeof part.text === "string" && part.text.trim()) fragments.push(part.text.trim());
-    }
-  }
-  return fragments.join("\n");
-}
-
-function extractCitations(response: Record<string, unknown>) {
-  const citations: Array<{ title: string; url: string; domain: string }> = [];
-  const seen = new Set<string>();
-  const add = (title: unknown, url: unknown) => {
-    const cleanUrl = normalizeHttpUrl(url);
-    if (!cleanUrl || seen.has(cleanUrl)) return;
-    seen.add(cleanUrl);
-    const domain = new URL(cleanUrl).hostname;
-    citations.push({
-      title: typeof title === "string" && title.trim() ? title.trim().slice(0, 180) : domain,
-      url: cleanUrl,
-      domain,
-    });
-  };
-  for (const citation of Array.isArray(response.citations) ? response.citations : []) {
-    if (typeof citation === "string") add(undefined, citation);
-    else if (citation && typeof citation === "object") {
-      const item = citation as Record<string, unknown>;
-      add(item.title, item.url);
-    }
-  }
-  for (const item of Array.isArray(response.output) ? response.output : []) {
-    if (!item || typeof item !== "object") continue;
-    const content = (item as Record<string, unknown>).content;
-    if (!Array.isArray(content)) continue;
-    for (const part of content) {
-      if (!part || typeof part !== "object") continue;
-      const annotations = (part as Record<string, unknown>).annotations;
-      if (!Array.isArray(annotations)) continue;
-      for (const annotation of annotations) {
-        if (!annotation || typeof annotation !== "object") continue;
-        const citation = annotation as Record<string, unknown>;
-        if (citation.type === "url_citation") add(citation.title, citation.url);
-      }
-    }
-  }
-  return citations;
-}
-
-function parseJsonObject(raw: string) {
-  const clean = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
-  try {
-    return JSON.parse(clean);
-  } catch {
-    const start = clean.indexOf("{");
-    const end = clean.lastIndexOf("}");
-    if (start >= 0 && end > start) {
-      try {
-        return JSON.parse(clean.slice(start, end + 1));
-      } catch {
-        // Handled below.
-      }
-    }
-    throw new Error("Grok returned invalid JSON. Try running the prospect scan again.");
-  }
-}
-
 const JOB_SELECT_FIELDS =
   "id,segment,region,product_focus,model,summary,lead_count,skipped_duplicates,skipped_suppressed,status,progress_message,error_message,created_at,started_at,completed_at";
 
@@ -412,18 +317,6 @@ function isMissingJobColumnsError(error: unknown) {
     code === "PGRST204" ||
     /does not exist|schema cache|skipped_duplicates|progress_message/i.test(message)
   );
-}
-
-function isTimeoutError(error: unknown) {
-  if (!error) return false;
-  if (error instanceof Error) {
-    return (
-      error.name === "TimeoutError" ||
-      error.name === "AbortError" ||
-      /timed out|signal timed out|abort/i.test(error.message)
-    );
-  }
-  return /timed out|signal timed out|abort/i.test(String(error));
 }
 
 async function expireStaleJobIfNeeded(admin: AdminClient, job: Record<string, unknown> | null) {
@@ -564,55 +457,73 @@ async function loadOutreachContext(admin: AdminClient) {
   };
 }
 
-async function callXaiResponses(params: {
-  apiKey: string;
-  model: string;
-  prompt: string;
-  maxOutputTokens: number;
-  timeoutMs: number;
-}) {
-  const { apiKey, model, prompt, maxOutputTokens, timeoutMs } = params;
-  const shouldSetLowReasoning = !model.toLowerCase().includes("non-reasoning");
-
-  const runFetch = async (includeReasoning: boolean) => {
-    const body: Record<string, unknown> = {
-      model,
-      input: [{ role: "user", content: prompt }],
-      tools: [{ type: "web_search" }],
-      max_output_tokens: maxOutputTokens,
-    };
-    if (includeReasoning) {
-      body.reasoning = { effort: "low" };
-    }
-    const response = await fetch("https://api.x.ai/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+const LEAD_DISCOVERY_SCHEMA: GrokJsonSchemaSpec = {
+  name: "b2b_lead_discovery",
+  strict: true,
+  schema: {
+    type: "object",
+    properties: {
+      search_summary: { type: "string" },
+      leads: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            company_name: { type: "string" },
+            organization_type: { type: "string" },
+            county_region: { type: "string" },
+            website_url: { type: "string" },
+            source_url: { type: "string" },
+            source_title: { type: "string" },
+            public_email: { type: "string" },
+            public_phone: { type: "string" },
+            likely_needs: { type: "array", items: { type: "string" } },
+            recommended_url: { type: "string" },
+            why_they_need_irrigation: { type: "string" },
+            confidence_note: { type: "string" },
+            email_subject: { type: "string" },
+            email_body: { type: "string" },
+            whatsapp_message: { type: "string" },
+          },
+          required: [
+            "company_name",
+            "organization_type",
+            "county_region",
+            "website_url",
+            "source_url",
+            "source_title",
+            "public_email",
+            "public_phone",
+            "likely_needs",
+            "recommended_url",
+            "why_they_need_irrigation",
+            "confidence_note",
+            "email_subject",
+            "email_body",
+            "whatsapp_message",
+          ],
+          additionalProperties: false,
+        },
       },
-      signal: AbortSignal.timeout(timeoutMs),
-      body: JSON.stringify(body),
-    });
-    const payload = await response.json().catch(() => ({}));
-    return { response, payload };
-  };
+    },
+    required: ["search_summary", "leads"],
+    additionalProperties: false,
+  },
+};
 
-  let { response, payload } = await runFetch(shouldSetLowReasoning);
-  if (!response.ok && shouldSetLowReasoning) {
-    const errText = String(payload?.error?.message || payload?.message || "");
-    if (/reasoning|unsupported|unknown parameter/i.test(errText)) {
-      ({ response, payload } = await runFetch(false));
-    }
-  }
-  if (!response.ok) {
-    throw new Error(
-      "Grok API error: " + String(payload?.error?.message || payload?.message || "Lead search failed."),
-    );
-  }
-  return payload as Record<string, unknown>;
-}
+const OUTREACH_SYSTEM_PROMPT = [
+  "You are the B2B Agricultural & Irrigation Prospect Researcher for DripTech Eco Flow in Kenya (https://www.dripstech.co.ke).",
+  "Use web_search (max 2-3 focused searches) to find real Kenyan/East African commercial organizations likely to buy or resell irrigation systems.",
+  "RULES:",
+  "1. NEVER fabricate company names, URLs, emails, phones, or source_urls. Leave public_email/public_phone empty if not explicitly public.",
+  "2. Exclude private individuals and direct competitors (Grekkon, Afrodrip, FineTouch, Davis & Shirtliff, IrriGuru, Amiran Kenya, Netafim, DripTech).",
+  "3. Copy recommended_url verbatim from destinationPages.",
+  "4. Keep email_body 70-105 words signed 'DripTech Eco Flow Sales Team' (+254 723 407 849) with recommended_url, and whatsapp_message 30-50 words ending with recommended_url.",
+].join("\n");
 
 async function discoverProspectsWithGrok(params: {
+  admin: AdminClient;
+  campaignId?: string;
   apiKey: string;
   model: string;
   segment: string;
@@ -620,177 +531,142 @@ async function discoverProspectsWithGrok(params: {
   productFocus: string;
   maxLeads: number;
   catalogContext: Record<string, unknown>;
-  allowRetry?: boolean;
 }) {
-  const { apiKey, model, segment, region, productFocus, maxLeads, catalogContext, allowRetry = true } = params;
+  const { admin, campaignId, apiKey, model, segment, region, productFocus, maxLeads, catalogContext } = params;
 
-  const buildPrompt = (targetCount: number, extraRule = "") =>
-    [
-      "You are the B2B Agricultural & Irrigation Prospect Researcher for DripTech Eco Flow in Kenya (https://www.dripstech.co.ke).",
-      "Use web_search to find REAL commercial organizations in Kenya / East Africa that buy or resell irrigation equipment, and draft tailored B2B introductions.",
-      "",
-      "SPEED & SEARCH BUDGET:",
-      `- Execute 2 to 4 focused web_search queries total and inspect only the top official/directory results needed to confirm up to ${targetCount} real organizations.`,
-      "- Stop searching and output valid JSON immediately once the verified leads are ready.",
-      "",
-      "STRICT ANTI-SPAM & NO-FABRICATION RULES:",
-      "1. NEVER invent a company name, website URL, public_email, public_phone, or source_url.",
-      "2. Only include organizations that appear in live web_search results.",
-      "3. Only fill public_email or public_phone if explicitly published on the entity's official site, public tender, or verified directory listing from web_search. Otherwise return \"\".",
-      "4. Focus ONLY on commercial B2B entities (commercial farms, orchards, exporters, greenhouses, agrovets/hardware stockists, irrigation contractors, schools/NGOs, county water/agricultural tenders, estates). Exclude private individuals.",
-      "5. EXCLUDE direct irrigation competitors: Grekkon, Afrodrip, FineTouch Africa, Davis & Shirtliff, IrriGuru, Amiran Kenya, Netafim, DripTech.",
-      "6. For recommended_url, copy ONE exact URL from destinationPages below.",
-      "7. Keep email_body concise (75-115 words), polite, signed 'DripTech Eco Flow Sales Team' with +254 723 407 849 and recommended_url. No placeholder brackets.",
-      "8. Keep whatsapp_message concise (35-55 words) ending with recommended_url.",
-      "9. Return strict compact JSON only (no markdown code fences).",
-      "",
-      "Return exact JSON schema:",
-      JSON.stringify({
-        search_summary: "1-2 sentence overview of public sources reviewed.",
-        leads: [
-          {
-            company_name: "Exact public entity name",
-            organization_type: "Commercial Farm | Greenhouse Project | Agrovet / Stockist | County / NGO Tender | Estate / Landscaping | Institution",
-            county_region: "County or Town",
-            website_url: "Official website URL if found via web_search, else empty string",
-            source_url: "Exact web_search citation URL proving this entity exists",
-            source_title: "Page title from web_search",
-            public_email: "Exact publicly listed B2B email if found, else empty string",
-            public_phone: "Exact publicly listed B2B phone if found, else empty string",
-            likely_needs: ["2 to 3 relevant DripTech products"],
-            recommended_url: "Exact URL from destinationPages",
-            why_they_need_irrigation: "Specific factual reason based on public info",
-            confidence_note: "Direct contact verified on site | Needs manual contact lookup on source page | Tender buyer contact",
-            email_subject: "Specific B2B subject (<65 chars)",
-            email_body: "Concise email text signed 'DripTech Eco Flow Sales Team'",
-            whatsapp_message: "Short WhatsApp message ending with the DripTech link",
-          },
-        ],
-      }),
-      "",
-      `TARGET BUYER SEGMENT: ${segment}`,
-      `TARGET REGION / COUNTY: ${region}`,
-      `EQUIPMENT FOCUS: ${productFocus || "General DripTech irrigation kits, driplines, sprinklers, pumps & HDPE fittings"}`,
-      `TARGET COUNT: Up to ${targetCount} distinct verified organizations.`,
-      "",
-      "DRIPTECH CATALOGUE & LANDING PAGES:",
-      JSON.stringify(catalogContext),
-      extraRule,
-    ]
-      .filter(Boolean)
-      .join("\n");
+  const userPrompt = JSON.stringify({
+    segment,
+    region,
+    productFocus: productFocus || "DripTech irrigation kits, driplines, sprinklers, pumps & HDPE fittings",
+    targetLeadCount: maxLeads,
+    catalog: catalogContext,
+  });
 
-  const attempts = allowRetry
-    ? [
-        { targetCount: maxLeads, maxOutputTokens: 3800, timeoutMs: 95_000, extra: "" },
-        {
-          targetCount: Math.min(maxLeads, 3),
-          maxOutputTokens: 2200,
-          timeoutMs: 38_000,
-          extra:
-            "SPEED RECOVERY PASS: Perform only 1-2 targeted searches and return compact valid JSON for up to 3 verified organizations only.",
-        },
-      ]
-    : [{ targetCount: Math.min(maxLeads, 5), maxOutputTokens: 3000, timeoutMs: 90_000, extra: "" }];
+  const promptEstimatedTokens = estimateTokensFromText(OUTREACH_SYSTEM_PROMPT + userPrompt);
+  const requestStartedAt = Date.now();
+  let usageLogId: number | null = null;
+  let usagePersisted = false;
 
-  let payload: Record<string, unknown> | null = null;
-  let parsed: Record<string, unknown> | null = null;
-  let lastError: Error | null = null;
+  try {
+    usageLogId = await createGrokUsageReservation(admin, {
+      jobId: null,
+      functionName: "b2b-lead-outreach",
+      model,
+      estimatedPromptTokens: promptEstimatedTokens,
+      useWebSearch: true,
+      maxTurns: 3,
+      metadata: { campaign_id: campaignId || null, segment, region, max_leads: maxLeads },
+    }).catch(() => null);
 
-  for (const attempt of attempts) {
-    try {
-      const responsePayload = await callXaiResponses({
-        apiKey,
-        model,
-        prompt: buildPrompt(attempt.targetCount, attempt.extra),
-        maxOutputTokens: attempt.maxOutputTokens,
-        timeoutMs: attempt.timeoutMs,
+    // Strict single-shot call bounded to maxTurns=3 (no duplicate timeout fallback retries).
+    const grokResult = await callXaiResponses({
+      apiKey,
+      model,
+      systemPrompt: OUTREACH_SYSTEM_PROMPT,
+      prompt: userPrompt,
+      maxOutputTokens: 2800,
+      timeoutMs: 105_000,
+      useWebSearch: true,
+      maxTurns: 3,
+      reasoningEffort: "low",
+      jsonSchema: LEAD_DISCOVERY_SCHEMA,
+    });
+
+    if (usageLogId) {
+      await persistGrokUsageSnapshot(admin, usageLogId, requestStartedAt, grokResult.usage, {
+        campaign_id: campaignId || null,
+        segment,
+        region,
       });
-      const rawText = extractResponseText(responsePayload);
-      if (!rawText) {
-        lastError = new Error("Grok did not return lead results. Try narrowing the segment or county.");
-        continue;
-      }
-      parsed = parseJsonObject(rawText) as Record<string, unknown>;
-      payload = responsePayload;
-      break;
-    } catch (err) {
-      if (isTimeoutError(err)) {
-        lastError = new Error(
-          "Grok live web search took too long for this query. Try Batch Size: 4 prospects, a specific county (e.g. Nakuru or Kiambu), or set Grok Model to grok-4-fast in System Settings -> API Keys.",
-        );
-      } else {
-        lastError = err instanceof Error ? err : new Error("Lead search failed.");
-        // Non-timeout API/auth errors should fail immediately rather than waiting on a second pass.
-        if (lastError.message.startsWith("Grok API error:")) {
-          throw lastError;
-        }
-      }
+      usagePersisted = true;
     }
+
+    const parsed = parseGrokJsonObject(grokResult.text);
+    const citations = grokResult.citations
+      .map((c) => ({ ...c, url: normalizeHttpUrl(c.url) }))
+      .filter((c) => !!c.url);
+    const citationUrlSet = new Set(citations.map((item) => item.url));
+
+    const rawLeads = Array.isArray(parsed.leads) ? parsed.leads : [];
+    const normalizedLeads = rawLeads
+      .slice(0, maxLeads)
+      .map((entry) => {
+        const item = entry && typeof entry === "object" ? (entry as Record<string, unknown>) : {};
+        const companyName = String(item.company_name || "").trim().slice(0, 140);
+        if (!companyName || COMPETITOR_BLOCK_RE.test(companyName)) return null;
+
+        const websiteUrl = normalizeHttpUrl(item.website_url);
+        const rawSourceUrl = normalizeHttpUrl(item.source_url);
+        const verifiedSourceUrl =
+          rawSourceUrl && (citationUrlSet.size === 0 || citationUrlSet.has(rawSourceUrl))
+            ? rawSourceUrl
+            : websiteUrl || citations[0]?.url || "";
+
+        const publicEmail = normalizeEmail(item.public_email);
+        const publicPhone = String(item.public_phone || "").trim().slice(0, 40);
+        const whatsappNumber = normalizeKenyaWhatsapp(publicPhone);
+        const recommendedUrl = normalizeDripTechUrl(item.recommended_url);
+        const countyRegion = String(item.county_region || region).trim().slice(0, 80);
+
+        return {
+          company_name: companyName,
+          organization_type: String(item.organization_type || "Agribusiness").trim().slice(0, 80),
+          county_region: countyRegion,
+          website_url: websiteUrl,
+          source_url: verifiedSourceUrl,
+          source_title: String(item.source_title || "").trim().slice(0, 180),
+          public_email: publicEmail,
+          public_phone: publicPhone,
+          whatsapp_number: whatsappNumber,
+          likely_needs: Array.isArray(item.likely_needs)
+            ? item.likely_needs.map((need) => String(need || "").trim()).filter(Boolean).slice(0, 5)
+            : [],
+          recommended_url: recommendedUrl,
+          why_they_need_irrigation: String(item.why_they_need_irrigation || "").trim().slice(0, 600),
+          confidence_note: String(item.confidence_note || "").trim().slice(0, 200),
+          email_subject: String(
+            item.email_subject || `Irrigation Equipment & Acreage Kits for ${companyName}`,
+          )
+            .trim()
+            .slice(0, 160),
+          email_body: String(item.email_body || "").trim().slice(0, 3000),
+          whatsapp_message: String(item.whatsapp_message || "").trim().slice(0, 1000),
+          dedupe_key: buildDedupeKey(companyName, websiteUrl, countyRegion),
+        };
+      })
+      .filter((lead): lead is NonNullable<typeof lead> => !!lead);
+
+    if (usageLogId) {
+      await recordGrokUsageSuccess(admin, usageLogId, requestStartedAt, grokResult.usage, {
+        campaign_id: campaignId || null,
+        segment,
+        region,
+        leads_returned: normalizedLeads.length,
+        prompt_estimated_tokens: promptEstimatedTokens,
+      });
+    }
+
+    return {
+      summary: String(parsed.search_summary || "Grok B2B web search completed.").slice(0, 1000),
+      leads: normalizedLeads,
+      citations: citations.slice(0, 30),
+      usage: grokResult.usage,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Grok prospect scan failed.";
+    if (usageLogId) {
+      const attachedUsage: GrokUsageMetrics | null =
+        err instanceof GrokRequestError ? err.usage : null;
+      await recordGrokUsageFailure(admin, usageLogId, requestStartedAt, message, {
+        usage: usagePersisted ? undefined : attachedUsage,
+        model,
+        estimatedPromptTokens: promptEstimatedTokens,
+        useWebSearch: true,
+        extraMetadata: { campaign_id: campaignId || null, segment, region },
+      });
+    }
+    throw err;
   }
-
-  if (!payload || !parsed) {
-    throw lastError || new Error("Grok could not complete the prospect scan in time.");
-  }
-
-  const citations = extractCitations(payload);
-  const citationUrlSet = new Set(citations.map((item) => item.url));
-
-  const rawLeads = Array.isArray(parsed.leads) ? parsed.leads : [];
-  const normalizedLeads = rawLeads
-    .slice(0, maxLeads)
-    .map((entry) => {
-      const item = entry && typeof entry === "object" ? (entry as Record<string, unknown>) : {};
-      const companyName = String(item.company_name || "").trim().slice(0, 140);
-      if (!companyName || COMPETITOR_BLOCK_RE.test(companyName)) return null;
-
-      const websiteUrl = normalizeHttpUrl(item.website_url);
-      const rawSourceUrl = normalizeHttpUrl(item.source_url);
-      const verifiedSourceUrl =
-        rawSourceUrl && (citationUrlSet.size === 0 || citationUrlSet.has(rawSourceUrl))
-          ? rawSourceUrl
-          : websiteUrl || citations[0]?.url || "";
-
-      const publicEmail = normalizeEmail(item.public_email);
-      const publicPhone = String(item.public_phone || "").trim().slice(0, 40);
-      const whatsappNumber = normalizeKenyaWhatsapp(publicPhone);
-      const recommendedUrl = normalizeDripTechUrl(item.recommended_url);
-      const countyRegion = String(item.county_region || region).trim().slice(0, 80);
-
-      return {
-        company_name: companyName,
-        organization_type: String(item.organization_type || "Agribusiness").trim().slice(0, 80),
-        county_region: countyRegion,
-        website_url: websiteUrl,
-        source_url: verifiedSourceUrl,
-        source_title: String(item.source_title || "").trim().slice(0, 180),
-        public_email: publicEmail,
-        public_phone: publicPhone,
-        whatsapp_number: whatsappNumber,
-        likely_needs: Array.isArray(item.likely_needs)
-          ? item.likely_needs.map((need) => String(need || "").trim()).filter(Boolean).slice(0, 5)
-          : [],
-        recommended_url: recommendedUrl,
-        why_they_need_irrigation: String(item.why_they_need_irrigation || "").trim().slice(0, 600),
-        confidence_note: String(item.confidence_note || "").trim().slice(0, 200),
-        email_subject: String(
-          item.email_subject || `Irrigation Equipment & Acreage Kits for ${companyName}`,
-        )
-          .trim()
-          .slice(0, 160),
-        email_body: String(item.email_body || "").trim().slice(0, 3000),
-        whatsapp_message: String(item.whatsapp_message || "").trim().slice(0, 1000),
-        dedupe_key: buildDedupeKey(companyName, websiteUrl, countyRegion),
-      };
-    })
-    .filter((lead): lead is NonNullable<typeof lead> => !!lead);
-
-  return {
-    summary: String(parsed.search_summary || "Grok B2B web search completed.").slice(0, 1000),
-    leads: normalizedLeads,
-    citations: citations.slice(0, 30),
-    usage: payload.usage || null,
-  };
 }
 
 async function persistDiscoveryLeads(params: {
@@ -911,6 +787,8 @@ async function processDiscoveryJob(params: {
     });
 
     const discovery = await discoverProspectsWithGrok({
+      admin,
+      campaignId: jobId,
       apiKey,
       model,
       segment,
@@ -918,7 +796,6 @@ async function processDiscoveryJob(params: {
       productFocus,
       maxLeads,
       catalogContext,
-      allowRetry: true,
     });
 
     const { data: currentJob } = await admin
@@ -1189,6 +1066,18 @@ Deno.serve(async (req) => {
         );
       }
 
+      const budget = await checkGrokDailyBudget(admin);
+      if (!budget.ok) {
+        return json(
+          req,
+          {
+            error: `Daily Grok safety budget reached ($${budget.dailySpendUsd.toFixed(2)}/$${budget.budgetUsd.toFixed(2)} USD or ${budget.dailyTokens.toLocaleString()} tokens today).`,
+            budget,
+          },
+          429,
+        );
+      }
+
       const segment = String(body.segment || "Commercial Horticulture & Avocado Farms").trim().slice(0, 140);
       const region = String(body.region || "Kenya (Nationwide)").trim().slice(0, 100);
       const productFocus = String(body.productFocus || "").trim().slice(0, 140);
@@ -1262,9 +1151,10 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Synchronous fallback (runs with fast low-reasoning mode if async migration hasn't been pushed yet).
+      // Synchronous fallback (single-shot low-reasoning mode if async migration hasn't been pushed yet).
       const catalogContext = await loadCatalogContext(admin);
       const discovery = await discoverProspectsWithGrok({
+        admin,
         apiKey,
         model: runtime.model,
         segment,
@@ -1272,7 +1162,6 @@ Deno.serve(async (req) => {
         productFocus,
         maxLeads,
         catalogContext,
-        allowRetry: false,
       });
 
       const { data: campaign, error: campaignError } = await admin

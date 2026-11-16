@@ -79,6 +79,20 @@ const GrokSEOIntelligence: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [running, setRunning] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [refreshCompetitors, setRefreshCompetitors] = useState(false);
+  const [competitorCache, setCompetitorCache] = useState<{
+    available: boolean;
+    createdAt: string | null;
+    ageDays: number | null;
+  }>({ available: false, createdAt: null, ageDays: null });
+  const [usageTelemetry, setUsageTelemetry] = useState<{
+    todayCalls: number;
+    todayTokens: number;
+    todayWebSearchCalls: number;
+    todaySpendUsd: number;
+    dailyBudgetUsd: number;
+    dailyTokenCap: number;
+  } | null>(null);
   const [activeJob, setActiveJob] = useState<SeoJob | null>(null);
   const [anotherAdminScanning, setAnotherAdminScanning] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -99,6 +113,14 @@ const GrokSEOIntelligence: React.FC = () => {
       setReports(nextReports);
       setConfigured(!!data?.configured);
       setModel(typeof data?.model === "string" && data.model ? data.model : "grok-4.7");
+      const cacheInfo = data?.competitorCache && typeof data.competitorCache === "object"
+        ? (data.competitorCache as { available: boolean; createdAt: string | null; ageDays: number | null })
+        : { available: false, createdAt: null, ageDays: null };
+      setCompetitorCache(cacheInfo);
+      if (!cacheInfo.available) setRefreshCompetitors(true);
+      if (data?.usageTelemetry && typeof data.usageTelemetry === "object") {
+        setUsageTelemetry(data.usageTelemetry as typeof usageTelemetry);
+      }
       const job = data?.activeJob && typeof data.activeJob === "object"
         ? (data.activeJob as SeoJob & { ownedByUser?: boolean })
         : null;
@@ -240,7 +262,11 @@ const GrokSEOIntelligence: React.FC = () => {
     setError("");
     setNotice("");
     try {
-      const data = await invokeEdgeFunction("seo-intelligence", { action: "run", days: 28 });
+      const data = await invokeEdgeFunction("seo-intelligence", {
+        action: "run",
+        days: 28,
+        refreshCompetitors,
+      });
       const returnedReport = data?.report && typeof data.report === "object" ? (data.report as Report) : null;
       const queuedJob = data?.queued && data?.job && typeof data.job === "object" ? (data.job as SeoJob) : null;
       if (returnedReport?.id) {
@@ -332,7 +358,26 @@ const GrokSEOIntelligence: React.FC = () => {
               Grok searches public sources and turns the evidence into a prioritized action plan.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <label
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-slate-200"
+              title="Unchecked reuses competitor web findings from the last 7 days to avoid redundant web_search token burn."
+            >
+              <input
+                type="checkbox"
+                checked={refreshCompetitors}
+                onChange={(event) => setRefreshCompetitors(event.target.checked)}
+                disabled={scanBusy || anotherAdminScanning}
+                className="h-3.5 w-3.5 rounded accent-emerald-400"
+              />
+              <span>
+                {refreshCompetitors
+                  ? "Live competitor search (max 2 turns)"
+                  : competitorCache.available
+                    ? `Reuse ${competitorCache.ageDays ?? 0}d web cache`
+                    : "Live competitor search"}
+              </span>
+            </label>
             <Button onClick={runAnalysis} disabled={scanBusy || loading || !configured || anotherAdminScanning} className="bg-emerald-500 text-white hover:bg-emerald-600">
               {scanBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radar className="mr-2 h-4 w-4" />}
               {scanBusy ? "Researching competitors…" : "Run full intelligence scan"}
@@ -342,6 +387,22 @@ const GrokSEOIntelligence: React.FC = () => {
             </Button>
           </div>
         </div>
+        {usageTelemetry && (
+          <div className="relative mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-slate-300">
+            <span>
+              Today across Grok: <strong className="text-white">{usageTelemetry.todayCalls}</strong> call{usageTelemetry.todayCalls === 1 ? "" : "s"}
+            </span>
+            <span>
+              Tokens: <strong className="text-white">{usageTelemetry.todayTokens.toLocaleString("en-KE")}</strong> / {usageTelemetry.dailyTokenCap.toLocaleString("en-KE")}
+            </span>
+            <span>
+              Web searches: <strong className="text-white">{usageTelemetry.todayWebSearchCalls}</strong>
+            </span>
+            <span>
+              Est. spend: <strong className="text-emerald-300">${usageTelemetry.todaySpendUsd.toFixed(4)}</strong> / ${usageTelemetry.dailyBudgetUsd.toFixed(2)} USD
+            </span>
+          </div>
+        )}
       </div>
 
       {!configured && (
@@ -491,8 +552,15 @@ const GrokSEOIntelligence: React.FC = () => {
                     <CardTitle className="mt-2 text-xl">{selectedReport.title}</CardTitle>
                     <CardDescription className="mt-2 text-sm leading-6">{selectedReport.executive_summary}</CardDescription>
                   </div>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
                     <Badge variant="secondary">{selectedReport.model}</Badge>
+                    {reportData.usage_summary && typeof reportData.usage_summary === "object" && (
+                      <Badge variant="outline" className="font-mono text-[11px]">
+                        {Number((reportData.usage_summary as Record<string, unknown>).total_tokens || 0).toLocaleString("en-KE")} tok · $
+                        {Number((reportData.usage_summary as Record<string, unknown>).estimated_cost_usd || 0).toFixed(4)}
+                        {(reportData.usage_summary as Record<string, unknown>).used_cached_competitors ? " · web cached" : ""}
+                      </Badge>
+                    )}
                     <Button variant="outline" size="sm" onClick={downloadReport}>
                       <Download className="mr-2 h-4 w-4" /> Export
                     </Button>
