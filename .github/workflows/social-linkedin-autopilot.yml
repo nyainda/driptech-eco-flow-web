@@ -1,0 +1,32 @@
+name: LinkedIn Social Autopilot
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs daily at 09:00 East Africa Time (06:00 UTC)
+    - cron: "0 6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: social-linkedin-autopilot
+  cancel-in-progress: false
+
+jobs:
+  run-autopilot:
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.LINKEDIN_AUTOPILOT_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger LinkedIn autopilot cycle
+        run: |
+          if [ -z "${{ secrets.SOCIAL_CRON_SECRET }}" ]; then
+            echo "::error::SOCIAL_CRON_SECRET repository secret is not configured."
+            exit 1
+          fi
+          curl --fail-with-body --silent --show-error -X POST \
+            "https://cnvtnxesywbzwsxwpejw.supabase.co/functions/v1/social-linkedin-autopilot" \
+            -H "Content-Type: application/json" \
+            -H "x-social-cron-secret: ${{ secrets.SOCIAL_CRON_SECRET }}" \
+            -d '{"action":"run_autopilot"}'
