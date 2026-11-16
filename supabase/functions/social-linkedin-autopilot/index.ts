@@ -936,6 +936,117 @@ async function runAutopilotCycle(admin: AdminClient, options: { manualTrigger: b
   return { replenishedCount, publishedPost, note };
 }
 
+function parseOrganizationInput(raw: string): { numericId: string; vanityName: string } {
+  const trimmed = raw.trim();
+  if (!trimmed) return { numericId: "", vanityName: "" };
+  const urnMatch = trimmed.match(/urn:li:organization:(\d+)/i);
+  if (urnMatch) return { numericId: urnMatch[1], vanityName: "" };
+  if (/^\d+$/.test(trimmed)) return { numericId: trimmed, vanityName: "" };
+
+  const urlNumMatch = trimmed.match(/linkedin\.com\/company\/(\d+)/i);
+  if (urlNumMatch) return { numericId: urlNumMatch[1], vanityName: "" };
+
+  const urlSlugMatch = trimmed.match(/linkedin\.com\/company\/([a-z0-9-]+)/i);
+  if (urlSlugMatch) return { numericId: "", vanityName: urlSlugMatch[1].toLowerCase() };
+
+  if (/^[a-z0-9-]+$/i.test(trimmed)) return { numericId: "", vanityName: trimmed.toLowerCase() };
+  return { numericId: trimmed.replace(/\D/g, ""), vanityName: "" };
+}
+
+type ManagedOrg = { id: string; urn: string; name: string; vanityName: string };
+
+async function discoverManagedOrganizations(params: {
+  accessToken: string;
+  linkedinVersion: string;
+}): Promise<{ orgs: ManagedOrg[]; scopeError: string }> {
+  const { accessToken, linkedinVersion } = params;
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    "Linkedin-Version": linkedinVersion,
+    "X-Restli-Protocol-Version": "2.0.0",
+  };
+
+  try {
+    const aclsRes = await fetch(
+      "https://api.linkedin.com/rest/organizationAcls?q=roleAssignee&role=ADMINISTRATOR&state=APPROVED",
+      { headers, signal: AbortSignal.timeout(10_000) },
+    );
+    const aclsPayload = (await aclsRes.json().catch(() => ({}))) as Record<string, unknown>;
+    if (!aclsRes.ok) {
+      return {
+        orgs: [],
+        scopeError: String(aclsPayload?.message || `HTTP ${aclsRes.status} loading managed Company Pages`),
+      };
+    }
+
+    const elements = Array.isArray(aclsPayload.elements) ? aclsPayload.elements : [];
+    const orgIds = elements
+      .map((el) => {
+        const urn = String((el as Record<string, unknown>)?.organization || "");
+        const m = urn.match(/urn:li:organization:(\d+)/i);
+        return m ? m[1] : "";
+      })
+      .filter(Boolean);
+
+    const uniqueIds = Array.from(new Set(orgIds)).slice(0, 10);
+    if (uniqueIds.length === 0) return { orgs: [], scopeError: "" };
+
+    const lookupRes = await fetch(
+      `https://api.linkedin.com/rest/organizations?ids=List(${uniqueIds.join(",")})`,
+      { headers, signal: AbortSignal.timeout(10_000) },
+    );
+    const lookupPayload = (await lookupRes.json().catch(() => ({}))) as Record<string, unknown>;
+    const results = (lookupPayload.results && typeof lookupPayload.results === "object"
+      ? lookupPayload.results
+      : {}) as Record<string, Record<string, unknown>>;
+
+    const orgs: ManagedOrg[] = uniqueIds.map((id) => {
+      const info = results[id] || {};
+      const name = String(info.localizedName || info.vanityName || `Company ${id}`);
+      const vanityName = String(info.vanityName || "");
+      return { id, urn: `urn:li:organization:${id}`, name, vanityName };
+    });
+
+    return { orgs, scopeError: "" };
+  } catch (err) {
+    return { orgs: [], scopeError: err instanceof Error ? err.message : "Could not check Company Pages." };
+  }
+}
+
+async function resolveOrganizationByVanity(params: {
+  vanityName: string;
+  accessToken: string;
+  linkedinVersion: string;
+}): Promise<ManagedOrg | null> {
+  const { vanityName, accessToken, linkedinVersion } = params;
+  if (!vanityName) return null;
+  try {
+    const res = await fetch(
+      `https://api.linkedin.com/rest/organizations?q=vanityName&vanityName=${encodeURIComponent(vanityName)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Linkedin-Version": linkedinVersion,
+          "X-Restli-Protocol-Version": "2.0.0",
+        },
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+    const first = Array.isArray(data.elements) ? (data.elements[0] as Record<string, unknown> | undefined) : undefined;
+    const id = first?.id != null ? String(first.id) : "";
+    if (!/^\d+$/.test(id)) return null;
+    return {
+      id,
+      urn: `urn:li:organization:${id}`,
+      name: String(first?.localizedName || vanityName),
+      vanityName: String(first?.vanityName || vanityName),
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl: string) {
   const url = new URL(req.url);
   const oauthError = url.searchParams.get("error");
@@ -1010,8 +1121,31 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
   });
   const profile = profileRes.ok ? (await profileRes.json().catch(() => ({})) as Record<string, unknown>) : {};
   const memberSub = String(profile.sub || "").trim();
-  const postTarget = stateRow.post_target === "organization" ? "organization" : "member";
-  const orgId = stateData.connection.organization_id;
+  let postTarget: "member" | "organization" = stateRow.post_target === "organization" ? "organization" : "member";
+  let orgId = stateData.connection.organization_id;
+  let accountName = String(profile.name || "LinkedIn Account");
+  let detailNote = "";
+
+  if (postTarget === "organization") {
+    const discovered = await discoverManagedOrganizations({
+      accessToken,
+      linkedinVersion: stateData.settings.linkedin_api_version || DEFAULT_LINKEDIN_VERSION,
+    });
+    const matched = (orgId ? discovered.orgs.find((o) => o.id === orgId) : undefined) || discovered.orgs[0];
+    if (matched) {
+      orgId = matched.id;
+      accountName = matched.name;
+    } else if (!/^\d+$/.test(orgId)) {
+      if (memberSub) {
+        postTarget = "member";
+        detailNote = discovered.scopeError
+          ? "connected_personal_org_scope_missing"
+          : "connected_personal_no_admin_org_found";
+      }
+    } else {
+      accountName = `Company ${orgId}`;
+    }
+  }
 
   const authorUrn =
     postTarget === "organization" && /^\d+$/.test(orgId)
@@ -1031,7 +1165,7 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
     refresh_token: refreshToken,
     access_token_expires_at: expiresAt,
     author_urn: authorUrn,
-    account_name: String(profile.name || (postTarget === "organization" ? `Company ${orgId}` : "LinkedIn Account")),
+    account_name: accountName,
     account_avatar_url: String(profile.picture || ""),
     post_target: postTarget,
     organization_id: orgId,
@@ -1043,7 +1177,7 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
   if (saveError) {
     return Response.redirect(buildAdminRedirectUrl(null, "error", "Database save failed"), 303);
   }
-  return Response.redirect(buildAdminRedirectUrl(null, "connected"), 303);
+  return Response.redirect(buildAdminRedirectUrl(null, "connected", detailNote), 303);
 }
 
 async function buildContextResponse(admin: AdminClient, supabaseUrl: string) {
@@ -1150,11 +1284,42 @@ Deno.serve(async (req) => {
         await saveRuntimeSecrets(admin, userId, updates);
       }
 
-      // Optional manual token fallback (when testing or using a pre-generated token).
+      const currentState = await getSettingsAndConnection(admin);
+      const current = currentState.connection;
       const manualToken = typeof body.manual_access_token === "string" ? body.manual_access_token.trim() : "";
       const manualUrn = typeof body.manual_author_urn === "string" ? body.manual_author_urn.trim() : "";
-      const orgId = typeof body.organization_id === "string" ? body.organization_id.replace(/\D/g, "") : undefined;
-      const postTarget = body.post_target === "organization" ? "organization" : "member";
+      const postTarget = body.post_target === "organization" ? "organization" : body.post_target === "member" ? "member" : current.post_target;
+
+      let resolvedOrgId = current.organization_id;
+      let resolvedAccountName = current.account_name;
+      if (typeof body.organization_id === "string") {
+        const parsedOrg = parseOrganizationInput(body.organization_id);
+        if (parsedOrg.numericId) {
+          resolvedOrgId = parsedOrg.numericId;
+        } else if (parsedOrg.vanityName) {
+          const activeToken = manualToken || current.access_token;
+          if (activeToken) {
+            const foundOrg = await resolveOrganizationByVanity({
+              vanityName: parsedOrg.vanityName,
+              accessToken: activeToken,
+              linkedinVersion: currentState.settings.linkedin_api_version || DEFAULT_LINKEDIN_VERSION,
+            });
+            if (!foundOrg) {
+              return json(req, {
+                error: `Could not resolve Company Page slug "${parsedOrg.vanityName}" to a numeric ID. Paste the numeric Company ID from your LinkedIn Admin URL (e.g. linkedin.com/company/12345678/admin/) or click "Detect Company Pages" after connecting OAuth.`,
+              }, 400);
+            }
+            resolvedOrgId = foundOrg.id;
+            resolvedAccountName = foundOrg.name;
+          } else {
+            return json(req, {
+              error: `Cannot look up Company URL slug "${parsedOrg.vanityName}" before LinkedIn is connected. Either paste the numeric Company ID or connect LinkedIn first, then click "Detect Company Pages".`,
+            }, 400);
+          }
+        } else {
+          resolvedOrgId = "";
+        }
+      }
 
       if (manualToken && manualUrn) {
         await admin.from("social_linkedin_connections").upsert({
@@ -1166,26 +1331,30 @@ Deno.serve(async (req) => {
           author_urn: manualUrn,
           account_name: String(body.account_name || manualUrn).slice(0, 120),
           post_target: manualUrn.includes("organization") ? "organization" : postTarget,
-          organization_id: orgId ?? "",
+          organization_id: resolvedOrgId,
           updated_by: userId,
           updated_at: new Date().toISOString(),
         });
-      } else if (orgId !== undefined || body.post_target !== undefined) {
-        const current = (await getSettingsAndConnection(admin)).connection;
-        const nextOrgId = orgId !== undefined ? orgId : current.organization_id;
-        const nextTarget = body.post_target === "organization" || body.post_target === "member"
-          ? body.post_target
-          : current.post_target;
-        const nextUrn =
-          nextTarget === "organization" && /^\d+$/.test(nextOrgId)
-            ? `urn:li:organization:${nextOrgId}`
-            : current.author_urn.startsWith("urn:li:person:")
-              ? current.author_urn
-              : current.author_urn;
+      } else if (body.organization_id !== undefined || body.post_target !== undefined) {
+        let nextUrn = current.author_urn;
+        if (postTarget === "organization" && /^\d+$/.test(resolvedOrgId)) {
+          nextUrn = `urn:li:organization:${resolvedOrgId}`;
+        } else if (postTarget === "member" && current.connected && current.access_token) {
+          const profileRes = await fetch("https://api.linkedin.com/v2/userinfo", {
+            headers: { Authorization: `Bearer ${current.access_token}` },
+            signal: AbortSignal.timeout(8_000),
+          }).catch(() => null);
+          const profile = profileRes?.ok ? (await profileRes.json().catch(() => ({})) as Record<string, unknown>) : null;
+          if (profile?.sub) {
+            nextUrn = `urn:li:person:${String(profile.sub)}`;
+            resolvedAccountName = String(profile.name || resolvedAccountName);
+          }
+        }
         await admin.from("social_linkedin_connections").upsert({
           id: 1,
-          post_target: nextTarget,
-          organization_id: nextOrgId,
+          post_target: postTarget,
+          organization_id: resolvedOrgId,
+          account_name: resolvedAccountName,
           ...(nextUrn ? { author_urn: nextUrn } : {}),
           updated_by: userId,
           updated_at: new Date().toISOString(),
@@ -1193,6 +1362,33 @@ Deno.serve(async (req) => {
       }
 
       return json(req, { success: true, ...(await buildContextResponse(admin, supabaseUrl)) });
+    }
+
+    if (action === "test_connection") {
+      const { accessToken, authorUrn, linkedinVersion } = await ensureValidLinkedInAccessToken(admin);
+      const profileRes = await fetch("https://api.linkedin.com/v2/userinfo", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        signal: AbortSignal.timeout(10_000),
+      });
+      const profile = profileRes.ok ? (await profileRes.json().catch(() => ({})) as Record<string, unknown>) : null;
+      const orgDiscovery = await discoverManagedOrganizations({ accessToken, linkedinVersion });
+      const conn = (await getSettingsAndConnection(admin)).connection;
+      const grantedScopes = conn.scope.split(/[\s,]+/).filter(Boolean);
+      const canPostPersonal = grantedScopes.length === 0 || grantedScopes.includes("w_member_social");
+      const canPostOrganization = grantedScopes.includes("w_organization_social") || orgDiscovery.orgs.length > 0;
+
+      return json(req, {
+        success: true,
+        profileOk: !!profile?.sub,
+        profileName: profile?.name ? String(profile.name) : null,
+        profileSub: profile?.sub ? String(profile.sub) : null,
+        authorUrn,
+        canPostPersonal,
+        canPostOrganization,
+        managedOrganizations: orgDiscovery.orgs,
+        organizationCheckNote: orgDiscovery.scopeError || null,
+        ...(await buildContextResponse(admin, supabaseUrl)),
+      });
     }
 
     if (action === "oauth_start") {
@@ -1345,26 +1541,42 @@ Deno.serve(async (req) => {
     if (action === "create_manual_post") {
       const commentary = String(body.commentary || "").trim().slice(0, 2900);
       if (!commentary) return json(req, { error: "Post text cannot be empty." }, 400);
+      const publishNow = body.publish_now === true;
       const assetId = typeof body.asset_id === "string" && body.asset_id.trim() ? body.asset_id.trim() : null;
       let imageUrl = normalizeHttpUrl(body.image_url);
       if (assetId && !imageUrl) {
         const { data: asset } = await admin.from("social_media_assets").select("image_url").eq("id", assetId).maybeSingle();
         if (asset?.image_url) imageUrl = String(asset.image_url);
       }
-      const { error } = await admin.from("social_linkedin_posts").insert({
-        status: body.status === "draft" ? "draft" : "queued",
-        source_mode: "manual",
-        topic: String(body.topic || "Manual LinkedIn Post").trim().slice(0, 180),
-        content_pillar: String(body.content_pillar || "Field Insights").slice(0, 80),
-        commentary,
-        cta_url: normalizeDripTechUrl(body.cta_url),
-        asset_id: assetId,
-        image_url: imageUrl,
-        scheduled_for: typeof body.scheduled_for === "string" && body.scheduled_for ? body.scheduled_for : new Date().toISOString(),
-        created_by: userId,
-      });
-      if (error) return json(req, { error: "Could not save post: " + error.message }, 500);
-      return json(req, { success: true, ...(await buildContextResponse(admin, supabaseUrl)) });
+      const { data: insertedPost, error } = await admin
+        .from("social_linkedin_posts")
+        .insert({
+          status: !publishNow && body.status === "draft" ? "draft" : "queued",
+          source_mode: "manual",
+          topic: String(body.topic || "Manual LinkedIn Post").trim().slice(0, 180),
+          content_pillar: String(body.content_pillar || "Field Insights").slice(0, 80),
+          commentary,
+          cta_url: normalizeDripTechUrl(body.cta_url),
+          asset_id: assetId,
+          image_url: imageUrl,
+          scheduled_for: typeof body.scheduled_for === "string" && body.scheduled_for ? body.scheduled_for : new Date().toISOString(),
+          created_by: userId,
+        })
+        .select("*")
+        .single();
+      if (error || !insertedPost) return json(req, { error: "Could not save post: " + (error?.message || "insert failed") }, 500);
+
+      if (publishNow) {
+        const publishedRes = await publishPostToLinkedIn(admin, String(insertedPost.id));
+        return json(req, {
+          success: true,
+          publishedNow: true,
+          post: publishedRes.post,
+          ...(await buildContextResponse(admin, supabaseUrl)),
+        });
+      }
+
+      return json(req, { success: true, post: insertedPost, ...(await buildContextResponse(admin, supabaseUrl)) });
     }
 
     if (action === "update_post") {
