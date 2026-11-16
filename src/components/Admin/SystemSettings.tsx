@@ -1169,7 +1169,7 @@ const SystemSettings = ({ initialTab = "company" }: SystemSettingsProps) => {
                       className="mt-2"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Defaults to <code className="font-mono">grok-4.7</code> (low-reasoning fast search) or enter <code className="font-mono">grok-4-fast</code> for ultra-fast prospect scans.
+                      Defaults to <code className="font-mono">grok-4.7</code> (low-reasoning) or enter <code className="font-mono">grok-4.20-0309-non-reasoning</code> / <code className="font-mono">grok-4.3</code> for lower token cost without internal reasoning overhead.
                     </p>
                   </div>
                 </div>

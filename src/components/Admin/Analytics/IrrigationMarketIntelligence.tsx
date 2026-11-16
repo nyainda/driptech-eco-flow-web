@@ -89,6 +89,20 @@ type MarketJob = {
   created_at?: string;
   started_at?: string;
 };
+type CompetitorCacheInfo = {
+  available: boolean;
+  createdAt: string | null;
+  ageDays: number | null;
+};
+type UsageTelemetry = {
+  todayCalls: number;
+  todayTokens: number;
+  todayReasoningTokens: number;
+  todayWebSearchCalls: number;
+  todaySpendUsd: number;
+  dailyBudgetUsd: number;
+  dailyTokenCap: number;
+};
 
 const objectRows = (value: unknown): DataRow[] =>
   Array.isArray(value)
@@ -131,6 +145,13 @@ const IrrigationMarketIntelligence: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const [periodDays, setPeriodDays] = useState(28);
+  const [refreshCompetitors, setRefreshCompetitors] = useState(false);
+  const [competitorCache, setCompetitorCache] = useState<CompetitorCacheInfo>({
+    available: false,
+    createdAt: null,
+    ageDays: null,
+  });
+  const [usageTelemetry, setUsageTelemetry] = useState<UsageTelemetry | null>(null);
   const [activeJob, setActiveJob] = useState<MarketJob | null>(null);
   const [anotherAdminScanning, setAnotherAdminScanning] = useState(false);
   const [cancelling, setCancelling] = useState(false);
@@ -151,6 +172,14 @@ const IrrigationMarketIntelligence: React.FC = () => {
       setGrokConfigured(!!data?.configured);
       setKeywordProviderConfigured(!!data?.keywordProviderConfigured);
       setModel(typeof data?.model === "string" && data.model ? data.model : "grok-4.7");
+      const cacheInfo = data?.competitorCache && typeof data.competitorCache === "object"
+        ? (data.competitorCache as CompetitorCacheInfo)
+        : { available: false, createdAt: null, ageDays: null };
+      setCompetitorCache(cacheInfo);
+      if (!cacheInfo.available) setRefreshCompetitors(true);
+      if (data?.usageTelemetry && typeof data.usageTelemetry === "object") {
+        setUsageTelemetry(data.usageTelemetry as UsageTelemetry);
+      }
       const statuses: Record<string, "open" | "done"> = {};
       for (const status of Array.isArray(data?.recommendationStatuses) ? data.recommendationStatuses : []) {
         if (status?.report_id && Number.isInteger(status.recommendation_index)) {
@@ -284,6 +313,7 @@ const IrrigationMarketIntelligence: React.FC = () => {
       const data = await invokeEdgeFunction("irrigation-market-intelligence", {
         action: "run",
         days: periodDays,
+        refreshCompetitors,
       });
       const cachedReport =
         data?.cached && data?.report && typeof data.report === "object"
@@ -427,6 +457,25 @@ const IrrigationMarketIntelligence: React.FC = () => {
                 <option className="text-slate-900" value={90}>90 days</option>
               </select>
             </label>
+            <label
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs text-slate-200"
+              title="Unchecked reuses competitor web findings from the last 7 days to skip web_search fees and reduce token usage."
+            >
+              <input
+                type="checkbox"
+                checked={refreshCompetitors}
+                onChange={(event) => setRefreshCompetitors(event.target.checked)}
+                disabled={scanBusy || anotherAdminScanning}
+                className="h-3.5 w-3.5 rounded accent-emerald-400"
+              />
+              <span>
+                {refreshCompetitors
+                  ? "Live competitor search (max 2 turns)"
+                  : competitorCache.available
+                    ? `Reuse ${competitorCache.ageDays ?? 0}d web cache`
+                    : "Live competitor search"}
+              </span>
+            </label>
             <Button onClick={runScan} disabled={running || loading || !grokConfigured || scanBusy || anotherAdminScanning} className="bg-emerald-500 text-white hover:bg-emerald-600">
               {running || scanBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Radar className="mr-2 h-4 w-4" />}
               {scanBusy ? "Scan in progress…" : anotherAdminScanning ? "Another scan is running" : running ? "Starting scan…" : "Run market scan"}
@@ -436,6 +485,22 @@ const IrrigationMarketIntelligence: React.FC = () => {
             </Button>
           </div>
         </div>
+        {usageTelemetry && (
+          <div className="relative mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-slate-300">
+            <span>
+              Today across Grok: <strong className="text-white">{usageTelemetry.todayCalls}</strong> call{usageTelemetry.todayCalls === 1 ? "" : "s"}
+            </span>
+            <span>
+              Tokens: <strong className="text-white">{countFormat(usageTelemetry.todayTokens)}</strong> / {countFormat(usageTelemetry.dailyTokenCap)}
+            </span>
+            <span>
+              Web searches: <strong className="text-white">{usageTelemetry.todayWebSearchCalls}</strong>
+            </span>
+            <span>
+              Est. spend: <strong className="text-emerald-300">${decimalFormat(usageTelemetry.todaySpendUsd, 4)}</strong> / ${decimalFormat(usageTelemetry.dailyBudgetUsd, 2)} USD
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -600,6 +665,13 @@ const IrrigationMarketIntelligence: React.FC = () => {
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant="outline">Market report</Badge>
                       <Badge variant="secondary">{selectedReport.model}</Badge>
+                      {reportData.usage_summary && typeof reportData.usage_summary === "object" && (
+                        <Badge variant="outline" className="font-mono text-[11px]">
+                          {countFormat((reportData.usage_summary as DataRow).total_tokens)} tok · $
+                          {decimalFormat((reportData.usage_summary as DataRow).estimated_cost_usd, 4)}
+                          {(reportData.usage_summary as DataRow).used_cached_competitors ? " · web cached" : ""}
+                        </Badge>
+                      )}
                       <span className="text-xs text-muted-foreground">{new Date(selectedReport.created_at).toLocaleString("en-KE")}</span>
                     </div>
                     <CardTitle className="mt-2 text-xl">{selectedReport.title}</CardTitle>
