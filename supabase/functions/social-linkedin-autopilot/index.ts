@@ -144,8 +144,51 @@ function isSupportedAssetUrl(url: string): boolean {
   return /^https:\/\//i.test(url);
 }
 
+const ALLOWED_LINKEDIN_SCOPES = new Set([
+  "openid",
+  "profile",
+  "email",
+  "w_member_social",
+  "r_organization_social",
+  "w_organization_social",
+  "rw_organization_admin",
+]);
+
 function getCallbackUrl(supabaseUrl: string): string {
   return `${supabaseUrl.replace(/\/$/, "")}/functions/v1/social-linkedin-autopilot`;
+}
+
+function encodeOAuthState(origin: string | null | undefined): string {
+  const nonce = crypto.randomUUID().replace(/-/g, "");
+  const safeOrigin = origin && isAllowedOrigin(origin) ? origin : "https://www.dripstech.co.ke";
+  const encodedOrigin = btoa(safeOrigin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return `${nonce}.${encodedOrigin}`;
+}
+
+function decodeOriginFromState(stateParam: string | null | undefined): string | null {
+  if (!stateParam) return null;
+  const parts = stateParam.split(".");
+  if (parts.length < 2 || !parts[1]) return null;
+  try {
+    const padded = parts[1].replace(/-/g, "+").replace(/_/g, "/") + "===".slice((parts[1].length + 3) % 4);
+    const candidate = atob(padded);
+    return isAllowedOrigin(candidate) ? candidate : null;
+  } catch {
+    return null;
+  }
+}
+
+function decodeJwtPayload(jwt: unknown): Record<string, unknown> | null {
+  if (typeof jwt !== "string") return null;
+  const parts = jwt.split(".");
+  if (parts.length < 2) return null;
+  try {
+    const padded = parts[1].replace(/-/g, "+").replace(/_/g, "/") + "===".slice((parts[1].length + 3) % 4);
+    const parsed = JSON.parse(atob(padded));
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
 }
 
 function buildAdminRedirectUrl(origin: string | null | undefined, status: string, detail = ""): string {
@@ -153,7 +196,7 @@ function buildAdminRedirectUrl(origin: string | null | undefined, status: string
   const url = new URL("/admin", baseOrigin);
   url.searchParams.set("section", "social-linkedin");
   url.searchParams.set("linkedin", status);
-  if (detail) url.searchParams.set("detail", detail.slice(0, 140));
+  if (detail) url.searchParams.set("detail", detail.slice(0, 240));
   return url.toString();
 }
 
@@ -257,7 +300,7 @@ async function getSettingsAndConnection(admin: AdminClient) {
       last_published_at: (settings.last_published_at as string) || null,
     },
     connection: {
-      connected: !!conn.connected && !!conn.access_token && !!conn.author_urn,
+      connected: !!conn.connected && !!conn.access_token,
       access_token: String(conn.access_token || ""),
       refresh_token: String(conn.refresh_token || ""),
       access_token_expires_at: (conn.access_token_expires_at as string) || null,
@@ -607,8 +650,13 @@ async function generateLinkedInPostBatch(params: {
 async function ensureValidLinkedInAccessToken(admin: AdminClient) {
   const state = await getSettingsAndConnection(admin);
   const conn = state.connection;
-  if (!conn.connected || !conn.access_token || !conn.author_urn) {
+  if (!conn.connected || !conn.access_token) {
     throw new Error("LinkedIn is not connected yet. Connect LinkedIn in the Settings tab first.");
+  }
+  if (!conn.author_urn) {
+    throw new Error(
+      "LinkedIn token is saved, but Author URN is missing. Enter your Author URN (urn:li:person:... or urn:li:organization:...) under LinkedIn & Schedule, or enable OpenID Connect and Reconnect.",
+    );
   }
 
   const expiresMs = conn.access_token_expires_at ? new Date(conn.access_token_expires_at).getTime() : 0;
@@ -1052,15 +1100,17 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
   const oauthError = url.searchParams.get("error");
   const code = url.searchParams.get("code");
   const stateParam = url.searchParams.get("state");
+  const decodedOrigin = decodeOriginFromState(stateParam);
 
   if (oauthError) {
-    return Response.redirect(
-      buildAdminRedirectUrl(null, "error", url.searchParams.get("error_description") || oauthError),
-      303,
-    );
+    const errDesc = url.searchParams.get("error_description") || oauthError;
+    const clearMsg = oauthError === "unauthorized_scope_error"
+      ? `unauthorized_scope_error: ${errDesc}. Match your selected checkboxes under LinkedIn & Schedule to ONLY the scopes shown under Auth -> OAuth 2.0 scopes in LinkedIn Developer Portal.`
+      : errDesc;
+    return Response.redirect(buildAdminRedirectUrl(decodedOrigin, "error", clearMsg), 303);
   }
   if (!code || !stateParam) {
-    return Response.redirect(buildAdminRedirectUrl(null, "error", "Missing OAuth parameters"), 303);
+    return Response.redirect(buildAdminRedirectUrl(decodedOrigin, "error", "Missing OAuth parameters"), 303);
   }
 
   const stateHash = await sha256Hex(stateParam);
@@ -1072,7 +1122,7 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
     .maybeSingle();
 
   if (!stateRow) {
-    return Response.redirect(buildAdminRedirectUrl(null, "error", "Expired or invalid OAuth state"), 303);
+    return Response.redirect(buildAdminRedirectUrl(decodedOrigin, "error", "Expired or invalid OAuth state"), 303);
   }
   await admin.from("social_linkedin_oauth_states").delete().eq("state_hash", stateHash);
 
@@ -1080,7 +1130,7 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
   const clientId = stateData.secrets.linkedinClientId;
   const clientSecret = stateData.secrets.linkedinClientSecret;
   if (!clientId || !clientSecret) {
-    return Response.redirect(buildAdminRedirectUrl(null, "error", "LinkedIn Client ID/Secret missing"), 303);
+    return Response.redirect(buildAdminRedirectUrl(decodedOrigin, "error", "LinkedIn Client ID/Secret missing"), 303);
   }
 
   const redirectUri = getCallbackUrl(supabaseUrl);
@@ -1101,7 +1151,7 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
   if (!tokenRes.ok || typeof tokenPayload.access_token !== "string") {
     return Response.redirect(
       buildAdminRedirectUrl(
-        null,
+        decodedOrigin,
         "error",
         String(tokenPayload.error_description || tokenPayload.error || "Token exchange failed"),
       ),
@@ -1114,16 +1164,18 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
   const expiresIn = Number(tokenPayload.expires_in || 5184000);
   const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
 
-  // Fetch member sub ID & profile via OIDC userinfo.
+  // Extract identity from OIDC id_token (if returned) and/or /v2/userinfo.
+  const idClaims = decodeJwtPayload(tokenPayload.id_token);
   const profileRes = await fetch("https://api.linkedin.com/v2/userinfo", {
     headers: { Authorization: `Bearer ${accessToken}` },
     signal: AbortSignal.timeout(10_000),
-  });
-  const profile = profileRes.ok ? (await profileRes.json().catch(() => ({})) as Record<string, unknown>) : {};
-  const memberSub = String(profile.sub || "").trim();
+  }).catch(() => null);
+  const profile = profileRes?.ok ? (await profileRes.json().catch(() => ({})) as Record<string, unknown>) : {};
+
+  const memberSub = String(profile.sub || idClaims?.sub || "").trim();
   let postTarget: "member" | "organization" = stateRow.post_target === "organization" ? "organization" : "member";
   let orgId = stateData.connection.organization_id;
-  let accountName = String(profile.name || "LinkedIn Account");
+  let accountName = String(profile.name || idClaims?.name || "LinkedIn Account");
   let detailNote = "";
 
   if (postTarget === "organization") {
@@ -1152,10 +1204,11 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
       ? `urn:li:organization:${orgId}`
       : memberSub
         ? `urn:li:person:${memberSub}`
-        : "";
+        : stateData.connection.author_urn || "";
 
-  if (!authorUrn) {
-    return Response.redirect(buildAdminRedirectUrl(null, "error", "Could not resolve LinkedIn author profile URN"), 303);
+  if (!authorUrn && !detailNote) {
+    detailNote = "author_urn_needed";
+    accountName = "Token Saved (Author URN needed)";
   }
 
   const { error: saveError } = await admin.from("social_linkedin_connections").upsert({
@@ -1166,7 +1219,7 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
     access_token_expires_at: expiresAt,
     author_urn: authorUrn,
     account_name: accountName,
-    account_avatar_url: String(profile.picture || ""),
+    account_avatar_url: String(profile.picture || idClaims?.picture || ""),
     post_target: postTarget,
     organization_id: orgId,
     scope: String(tokenPayload.scope || ""),
@@ -1175,9 +1228,9 @@ async function handleOAuthCallback(req: Request, admin: AdminClient, supabaseUrl
   });
 
   if (saveError) {
-    return Response.redirect(buildAdminRedirectUrl(null, "error", "Database save failed"), 303);
+    return Response.redirect(buildAdminRedirectUrl(decodedOrigin, "error", "Database save failed"), 303);
   }
-  return Response.redirect(buildAdminRedirectUrl(null, "connected", detailNote), 303);
+  return Response.redirect(buildAdminRedirectUrl(decodedOrigin, "connected", detailNote), 303);
 }
 
 async function buildContextResponse(admin: AdminClient, supabaseUrl: string) {
@@ -1335,11 +1388,11 @@ Deno.serve(async (req) => {
           updated_by: userId,
           updated_at: new Date().toISOString(),
         });
-      } else if (body.organization_id !== undefined || body.post_target !== undefined) {
-        let nextUrn = current.author_urn;
-        if (postTarget === "organization" && /^\d+$/.test(resolvedOrgId)) {
+      } else if (manualUrn || body.organization_id !== undefined || body.post_target !== undefined) {
+        let nextUrn = manualUrn || current.author_urn;
+        if (!manualUrn && postTarget === "organization" && /^\d+$/.test(resolvedOrgId)) {
           nextUrn = `urn:li:organization:${resolvedOrgId}`;
-        } else if (postTarget === "member" && current.connected && current.access_token) {
+        } else if (!manualUrn && postTarget === "member" && current.connected && current.access_token) {
           const profileRes = await fetch("https://api.linkedin.com/v2/userinfo", {
             headers: { Authorization: `Bearer ${current.access_token}` },
             signal: AbortSignal.timeout(8_000),
@@ -1352,9 +1405,9 @@ Deno.serve(async (req) => {
         }
         await admin.from("social_linkedin_connections").upsert({
           id: 1,
-          post_target: postTarget,
+          post_target: manualUrn.includes("organization") ? "organization" : postTarget,
           organization_id: resolvedOrgId,
-          account_name: resolvedAccountName,
+          account_name: manualUrn ? manualUrn.slice(0, 120) : resolvedAccountName,
           ...(nextUrn ? { author_urn: nextUrn } : {}),
           updated_by: userId,
           updated_at: new Date().toISOString(),
@@ -1398,7 +1451,7 @@ Deno.serve(async (req) => {
         return json(req, { error: "Save your LinkedIn Client ID & Client Secret first." }, 400);
       }
 
-      const rawState = crypto.randomUUID() + crypto.randomUUID();
+      const rawState = encodeOAuthState(req.headers.get("origin"));
       const postTarget = body.post_target === "organization" ? "organization" : "member";
       const { error: stateErr } = await admin.from("social_linkedin_oauth_states").insert({
         state_hash: await sha256Hex(rawState),
@@ -1408,18 +1461,22 @@ Deno.serve(async (req) => {
       });
       if (stateErr) return json(req, { error: "Unable to start LinkedIn OAuth state: " + stateErr.message }, 500);
 
-      const scopes = postTarget === "organization"
-        ? "openid profile w_member_social r_organization_social w_organization_social rw_organization_admin"
-        : "openid profile w_member_social";
+      const requestedScopes = Array.isArray(body.scopes)
+        ? body.scopes.map((s) => String(s).trim()).filter((s) => ALLOWED_LINKEDIN_SCOPES.has(s))
+        : [];
+      const fallbackScopes = postTarget === "organization"
+        ? ["r_organization_social", "w_organization_social", "rw_organization_admin"]
+        : ["w_member_social"];
+      const finalScopes = requestedScopes.length ? Array.from(new Set(requestedScopes)) : fallbackScopes;
 
       const authUrl = new URL("https://www.linkedin.com/oauth/v2/authorization");
       authUrl.searchParams.set("response_type", "code");
       authUrl.searchParams.set("client_id", clientId);
       authUrl.searchParams.set("redirect_uri", getCallbackUrl(supabaseUrl));
       authUrl.searchParams.set("state", rawState);
-      authUrl.searchParams.set("scope", scopes);
+      authUrl.searchParams.set("scope", finalScopes.join(" "));
 
-      return json(req, { url: authUrl.toString() });
+      return json(req, { url: authUrl.toString(), scopes: finalScopes });
     }
 
     if (action === "disconnect") {
