@@ -222,6 +222,9 @@ const SocialLinkedInAutopilot: React.FC = () => {
   const [manualTokenInput, setManualTokenInput] = useState("");
   const [manualUrnInput, setManualUrnInput] = useState("");
   const [copiedUri, setCopiedUri] = useState(false);
+  const [scopeMemberSocial, setScopeMemberSocial] = useState(true);
+  const [scopeOpenId, setScopeOpenId] = useState(false);
+  const [scopeOrgSocial, setScopeOrgSocial] = useState(false);
   const [managedOrganizations, setManagedOrganizations] = useState<
     Array<{ id: string; urn: string; name: string; vanityName: string }>
   >([]);
@@ -272,7 +275,11 @@ const SocialLinkedInAutopilot: React.FC = () => {
     const liStatus = params.get("linkedin");
     const detail = params.get("detail");
     if (liStatus === "connected") {
-      if (detail === "connected_personal_org_scope_missing") {
+      if (detail === "author_urn_needed") {
+        setNotice(
+          "LinkedIn OAuth access token saved! Because OpenID Connect (openid profile) wasn't requested, paste your Author URN (urn:li:person:... or urn:li:organization:...) below — OR add 'Sign In with LinkedIn using OpenID Connect' in LinkedIn Developer Portal, check it below, and click Reconnect.",
+        );
+      } else if (detail === "connected_personal_org_scope_missing") {
         setNotice(
           "Connected your Personal LinkedIn profile! Company Page posting scopes require Community Management API approval in LinkedIn Developer Portal (enter Company numeric ID or switch to Personal to post right away).",
         );
@@ -513,12 +520,24 @@ const SocialLinkedInAutopilot: React.FC = () => {
   };
 
   const handleStartOAuth = async () => {
+    const scopes: string[] = [];
+    if (scopeOpenId) scopes.push("openid", "profile");
+    if (scopeMemberSocial) scopes.push("w_member_social");
+    if (scopeOrgSocial) {
+      scopes.push("r_organization_social", "w_organization_social", "rw_organization_admin");
+    }
+    if (scopes.length === 0) {
+      setError("Select at least one LinkedIn OAuth scope matching your app in developer.linkedin.com.");
+      return;
+    }
+
     setBusyAction("oauth_start");
     setError("");
     try {
       const data = await invokeEdgeFunction("social-linkedin-autopilot", {
         action: "oauth_start",
         post_target: postTargetInput,
+        scopes,
       });
       if (data?.url && typeof data.url === "string") {
         window.location.href = data.url;
@@ -730,7 +749,7 @@ const SocialLinkedInAutopilot: React.FC = () => {
                   <div className="flex flex-wrap items-center gap-2">
                     <Button
                       type="button"
-                      disabled={!connection.connected || !!busyAction || !manualCommentary.trim()}
+                      disabled={!connection.connected || !connection.author_urn || !!busyAction || !manualCommentary.trim()}
                       onClick={(e) => handleCreateManualPost(e, true)}
                       className="bg-sky-600 text-white hover:bg-sky-700"
                     >
@@ -742,7 +761,7 @@ const SocialLinkedInAutopilot: React.FC = () => {
                       Save to Queue (Scheduled)
                     </Button>
                     <Button type="button" variant="ghost" onClick={() => setShowManualForm(false)}>Cancel</Button>
-                    {!connection.connected && (
+                    {(!connection.connected || !connection.author_urn) && (
                       <Button
                         type="button"
                         variant="link"
@@ -750,7 +769,7 @@ const SocialLinkedInAutopilot: React.FC = () => {
                         className="text-amber-600"
                         onClick={() => setActiveTab("settings")}
                       >
-                        Connect LinkedIn first to Publish Now
+                        {!connection.connected ? "Connect LinkedIn first to Publish Now" : "Set Author URN first to Publish Now"}
                       </Button>
                     )}
                   </div>
@@ -855,8 +874,14 @@ const SocialLinkedInAutopilot: React.FC = () => {
                             <div className="flex flex-wrap items-center gap-2 pt-1">
                               <Button
                                 size="sm"
-                                disabled={!connection.connected || !!busyAction}
-                                title={!connection.connected ? "Connect LinkedIn in LinkedIn & Schedule tab first" : "Send immediately to LinkedIn"}
+                                disabled={!connection.connected || !connection.author_urn || !!busyAction}
+                                title={
+                                  !connection.connected
+                                    ? "Connect LinkedIn in LinkedIn & Schedule tab first"
+                                    : !connection.author_urn
+                                      ? "Set your Author URN in LinkedIn & Schedule tab first"
+                                      : "Send immediately to LinkedIn"
+                                }
                                 onClick={() =>
                                   runAction("publish_post", { action: "publish_post", id: post.id }, "Published live to LinkedIn!")
                                 }
@@ -864,14 +889,14 @@ const SocialLinkedInAutopilot: React.FC = () => {
                                 {busyAction === "publish_post" ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Send className="mr-1.5 h-3.5 w-3.5" />}
                                 Publish Now
                               </Button>
-                              {!connection.connected && (
+                              {(!connection.connected || !connection.author_urn) && (
                                 <Button
                                   size="sm"
                                   variant="link"
                                   className="h-7 px-1.5 text-xs text-amber-600"
                                   onClick={() => setActiveTab("settings")}
                                 >
-                                  Connect LinkedIn to send
+                                  {!connection.connected ? "Connect LinkedIn to send" : "Set Author URN to send"}
                                 </Button>
                               )}
                               <Button size="sm" variant="outline" onClick={() => startEditPost(post)}>
@@ -1179,21 +1204,67 @@ const SocialLinkedInAutopilot: React.FC = () => {
                 </div>
               </div>
 
+              <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-3 text-xs space-y-2">
+                <p className="font-semibold text-foreground">
+                  OAuth Scopes to Request (MUST match Auth → OAuth 2.0 scopes in developer.linkedin.com)
+                </p>
+                <div className="space-y-1.5">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={scopeMemberSocial}
+                      onChange={(e) => setScopeMemberSocial(e.target.checked)}
+                      className="h-3.5 w-3.5 rounded accent-sky-600"
+                    />
+                    <span><code className="font-mono">w_member_social</code> — Share on LinkedIn (Personal posting)</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={scopeOpenId}
+                      onChange={(e) => setScopeOpenId(e.target.checked)}
+                      className="h-3.5 w-3.5 rounded accent-sky-600"
+                    />
+                    <span><code className="font-mono">openid profile</code> — Add &ldquo;Sign In with LinkedIn using OpenID Connect&rdquo; under Products first</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={scopeOrgSocial}
+                      onChange={(e) => setScopeOrgSocial(e.target.checked)}
+                      className="h-3.5 w-3.5 rounded accent-sky-600"
+                    />
+                    <span><code className="font-mono">w_organization_social rw_organization_admin</code> — Needs approved &ldquo;Community Management API&rdquo;</span>
+                  </label>
+                </div>
+              </div>
+
+              {connection.connected && !connection.author_urn && (
+                <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-200 space-y-2">
+                  <p className="font-semibold">
+                    OAuth token is saved, but Author URN is not set yet.
+                  </p>
+                  <p>
+                    Either add <strong>Sign In with LinkedIn using OpenID Connect</strong> under Products in your LinkedIn App, check <code className="font-mono">openid profile</code> above and click Reconnect — OR paste your Author URN (<code className="font-mono">urn:li:person:...</code> or <code className="font-mono">urn:li:organization:...</code>) below and click Save Credentials.
+                  </p>
+                </div>
+              )}
+
               <details className="rounded-xl border p-3 text-xs">
                 <summary className="cursor-pointer font-medium">
-                  Advanced: Paste OAuth Access Token directly (60-day token override)
+                  Advanced: Paste Author URN or 60-day Access Token directly
                 </summary>
                 <div className="mt-3 space-y-2">
-                  <Input
-                    type="password"
-                    value={manualTokenInput}
-                    onChange={(e) => setManualTokenInput(e.target.value)}
-                    placeholder="Paste LinkedIn Bearer access_token"
-                  />
                   <Input
                     value={manualUrnInput}
                     onChange={(e) => setManualUrnInput(e.target.value)}
                     placeholder="Author URN (urn:li:person:... or urn:li:organization:...)"
+                  />
+                  <Input
+                    type="password"
+                    value={manualTokenInput}
+                    onChange={(e) => setManualTokenInput(e.target.value)}
+                    placeholder="Optional Bearer access_token (leave blank if OAuth already saved)"
                   />
                 </div>
               </details>
