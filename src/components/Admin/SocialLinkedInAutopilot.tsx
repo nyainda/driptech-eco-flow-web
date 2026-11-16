@@ -222,6 +222,10 @@ const SocialLinkedInAutopilot: React.FC = () => {
   const [manualTokenInput, setManualTokenInput] = useState("");
   const [manualUrnInput, setManualUrnInput] = useState("");
   const [copiedUri, setCopiedUri] = useState(false);
+  const [managedOrganizations, setManagedOrganizations] = useState<
+    Array<{ id: string; urn: string; name: string; vanityName: string }>
+  >([]);
+  const [connectionCheckNote, setConnectionCheckNote] = useState("");
 
   const applyServerPayload = useCallback((data: Record<string, unknown>) => {
     setGrokConfigured(!!data.grokConfigured);
@@ -268,7 +272,17 @@ const SocialLinkedInAutopilot: React.FC = () => {
     const liStatus = params.get("linkedin");
     const detail = params.get("detail");
     if (liStatus === "connected") {
-      setNotice("LinkedIn account connected successfully.");
+      if (detail === "connected_personal_org_scope_missing") {
+        setNotice(
+          "Connected your Personal LinkedIn profile! Company Page posting scopes require Community Management API approval in LinkedIn Developer Portal (enter Company numeric ID or switch to Personal to post right away).",
+        );
+      } else if (detail === "connected_personal_no_admin_org_found") {
+        setNotice(
+          "Connected your Personal LinkedIn profile, but no approved Company Page Admin role was returned. Paste your Company ID or URL slug below and save.",
+        );
+      } else {
+        setNotice("LinkedIn account connected successfully.");
+      }
       setActiveTab("settings");
     } else if (liStatus === "error") {
       setError(detail ? `LinkedIn authorization failed: ${detail}` : "LinkedIn authorization failed.");
@@ -432,10 +446,10 @@ const SocialLinkedInAutopilot: React.FC = () => {
     if (res) setEditingPostId(null);
   };
 
-  const handleCreateManualPost = async (e: React.FormEvent) => {
+  const handleCreateManualPost = async (e: React.FormEvent, publishNow = false) => {
     e.preventDefault();
     const res = await runAction(
-      "create_manual_post",
+      publishNow ? "create_manual_publish_now" : "create_manual_post",
       {
         action: "create_manual_post",
         topic: manualTopic || "DripTech Field Highlight",
@@ -443,8 +457,9 @@ const SocialLinkedInAutopilot: React.FC = () => {
         asset_id: manualAssetId || undefined,
         scheduled_for: manualScheduledFor ? new Date(manualScheduledFor).toISOString() : new Date().toISOString(),
         status: "queued",
+        publish_now: publishNow,
       },
-      "Added post to LinkedIn queue.",
+      publishNow ? "Published manual post live to LinkedIn!" : "Added post to LinkedIn queue.",
     );
     if (res) {
       setShowManualForm(false);
@@ -452,6 +467,26 @@ const SocialLinkedInAutopilot: React.FC = () => {
       setManualCommentary("");
       setManualAssetId("");
       setManualScheduledFor("");
+    }
+  };
+
+  const handleTestConnection = async () => {
+    const res = await runAction("test_connection", { action: "test_connection" });
+    if (res) {
+      const orgs = Array.isArray(res.managedOrganizations)
+        ? (res.managedOrganizations as Array<{ id: string; urn: string; name: string; vanityName: string }>)
+        : [];
+      setManagedOrganizations(orgs);
+      const note = res.organizationCheckNote ? String(res.organizationCheckNote) : "";
+      setConnectionCheckNote(note);
+      const summary = [
+        res.profileOk ? `Profile verified (${String(res.profileName || res.authorUrn)})` : "Token verified",
+        res.canPostPersonal ? "Personal posting ready" : "Personal scope missing",
+        res.canPostOrganization
+          ? `Company Page posting ready (${orgs.length} page${orgs.length === 1 ? "" : "s"} found)`
+          : "Company Page scope (Community Management API) not approved on app yet",
+      ].join(" · ");
+      setNotice(summary);
     }
   };
 
@@ -692,12 +727,32 @@ const SocialLinkedInAutopilot: React.FC = () => {
                       placeholder="Write your LinkedIn post copy and include https://www.dripstech.co.ke link + hashtags..."
                     />
                   </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" disabled={busyAction === "create_manual_post"}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      type="button"
+                      disabled={!connection.connected || !!busyAction || !manualCommentary.trim()}
+                      onClick={(e) => handleCreateManualPost(e, true)}
+                      className="bg-sky-600 text-white hover:bg-sky-700"
+                    >
+                      {busyAction === "create_manual_publish_now" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                      Publish Now to LinkedIn
+                    </Button>
+                    <Button type="submit" variant="outline" disabled={busyAction === "create_manual_post" || !manualCommentary.trim()}>
                       {busyAction === "create_manual_post" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
-                      Add to Queue
+                      Save to Queue (Scheduled)
                     </Button>
                     <Button type="button" variant="ghost" onClick={() => setShowManualForm(false)}>Cancel</Button>
+                    {!connection.connected && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="text-amber-600"
+                        onClick={() => setActiveTab("settings")}
+                      >
+                        Connect LinkedIn first to Publish Now
+                      </Button>
+                    )}
                   </div>
                 </form>
               </CardContent>
@@ -797,10 +852,11 @@ const SocialLinkedInAutopilot: React.FC = () => {
                                 {post.error_message}
                               </p>
                             )}
-                            <div className="flex flex-wrap gap-2 pt-1">
+                            <div className="flex flex-wrap items-center gap-2 pt-1">
                               <Button
                                 size="sm"
                                 disabled={!connection.connected || !!busyAction}
+                                title={!connection.connected ? "Connect LinkedIn in LinkedIn & Schedule tab first" : "Send immediately to LinkedIn"}
                                 onClick={() =>
                                   runAction("publish_post", { action: "publish_post", id: post.id }, "Published live to LinkedIn!")
                                 }
@@ -808,6 +864,16 @@ const SocialLinkedInAutopilot: React.FC = () => {
                                 {busyAction === "publish_post" ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Send className="mr-1.5 h-3.5 w-3.5" />}
                                 Publish Now
                               </Button>
+                              {!connection.connected && (
+                                <Button
+                                  size="sm"
+                                  variant="link"
+                                  className="h-7 px-1.5 text-xs text-amber-600"
+                                  onClick={() => setActiveTab("settings")}
+                                >
+                                  Connect LinkedIn to send
+                                </Button>
+                              )}
                               <Button size="sm" variant="outline" onClick={() => startEditPost(post)}>
                                 Edit / Swap Photo
                               </Button>
@@ -1102,11 +1168,11 @@ const SocialLinkedInAutopilot: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <Label>Company Page Numeric ID (optional)</Label>
+                  <Label>Company Page ID, URL, or slug</Label>
                   <Input
                     value={orgIdInput}
                     onChange={(e) => setOrgIdInput(e.target.value)}
-                    placeholder="e.g. 12345678"
+                    placeholder="e.g. 12345678 or linkedin.com/company/..."
                     disabled={postTargetInput !== "organization"}
                     className="mt-1.5"
                   />
@@ -1141,14 +1207,62 @@ const SocialLinkedInAutopilot: React.FC = () => {
                   {connection.connected ? "Reconnect LinkedIn OAuth" : "1-Click Connect LinkedIn"}
                 </Button>
                 {connection.connected && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!!busyAction}
+                    onClick={handleTestConnection}
+                  >
+                    {busyAction === "test_connection" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+                    Test &amp; Detect Pages
+                  </Button>
+                )}
+                {connection.connected && (
                   <Button variant="ghost" className="text-rose-600" onClick={() => runAction("disconnect", { action: "disconnect" }, "Disconnected LinkedIn.")}>
                     Disconnect
                   </Button>
                 )}
               </div>
+              {managedOrganizations.length > 0 && (
+                <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-3 text-xs space-y-2">
+                  <p className="font-semibold text-emerald-700 dark:text-emerald-300">
+                    Managed LinkedIn Company Pages detected:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {managedOrganizations.map((org) => (
+                      <Button
+                        key={org.id}
+                        type="button"
+                        size="sm"
+                        variant={connection.author_urn === org.urn ? "default" : "outline"}
+                        onClick={() => {
+                          setPostTargetInput("organization");
+                          setOrgIdInput(org.id);
+                          runAction(
+                            "save_credentials",
+                            {
+                              action: "save_credentials",
+                              post_target: "organization",
+                              organization_id: org.id,
+                            },
+                            `Switched LinkedIn destination to Company Page: ${org.name}`,
+                          );
+                        }}
+                      >
+                        {org.name} ({org.id})
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {connectionCheckNote && (
+                <p className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-2.5 text-xs text-amber-800 dark:text-amber-200">
+                  Company Page API status: {connectionCheckNote}. Note: posting to a Company Page requires LinkedIn&apos;s &ldquo;Community Management API&rdquo; product approved on your LinkedIn App; Personal Profile works immediately with &ldquo;Share on LinkedIn&rdquo;.
+                </p>
+              )}
               {connection.connected && (
                 <p className="text-xs text-muted-foreground">
-                  Author URN: <code className="font-mono">{connection.author_urn}</code> · Token expires:{" "}
+                  Author URN: <code className="font-mono">{connection.author_urn}</code> · Scopes: <code className="font-mono">{connection.scope || "custom"}</code> · Expires:{" "}
                   {connection.access_token_expires_at ? formatEatDateTime(connection.access_token_expires_at) : "unknown"}
                 </p>
               )}
