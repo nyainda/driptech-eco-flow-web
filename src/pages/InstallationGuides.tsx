@@ -1,5 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import Header from "@/components/Layout/Header";
+import Footer from "@/components/Layout/Footer";
+import Breadcrumbs from "@/components/Layout/Breadcrumbs";
+import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import QuoteModal from "@/components/Home/QuoteModal";
+import { VideoCard } from "@/components/Video/VideoCard";
+import { VideoPlayerModal } from "@/components/Video/VideoPlayerModal";
 import {
   Card,
   CardContent,
@@ -17,67 +25,199 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Search,
-  Download,
-  FileText,
-  Video,
-  Clock,
-  Droplets,
-  Gauge,
-  Filter,
-  Settings,
-  Wrench,
-  CheckCircle,
-  AlertTriangle,
-  Play,
-  Archive,
-  Image,
-  Users,
-  Calendar,
-  Star,
-  Eye,
-  X,
-  Maximize2,
-  Sprout,
-} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { dataService } from "@/services/dataService";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
-import Breadcrumbs from "@/components/Layout/Breadcrumbs";
-import SEOHead from "@/components/common/SEOHead";
-import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { useToast } from "@/hooks/use-toast";
+import { SITE_COMPANY } from "@/config/company";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import {
+  inferVideoTopic,
+  isValidHttpUrl,
+  VideoItem,
+} from "@/lib/videoUtils";
+import {
+  Archive,
+  ArrowRight,
+  BookOpen,
+  Calendar,
+  CheckCircle2,
+  Download,
+  Droplets,
+  Eye,
+  FileText,
+  Filter,
+  Gauge,
+  Image as ImageIcon,
+  MessageCircle,
+  Play,
+  Ruler,
+  Search,
+  Settings,
+  ShieldCheck,
+  Users,
+  Video as VideoIcon,
+  Wrench,
+  X,
+} from "lucide-react";
 
-const documentCategories = [
-  "Product Brochures",
-  "Technical Specifications",
-  "Installation Guides",
-  "Maintenance Manuals",
-  "Case Studies",
-  "White Papers",
-  "Certifications",
-  "Training Materials",
-  "Marketing Materials",
-  "User Manuals",
-  "Safety Guidelines",
-  "Warranty Information",
-];
+interface ManagedDocument {
+  id: string;
+  title: string;
+  description?: string | null;
+  file_url: string;
+  file_type?: string | null;
+  file_size?: number | null;
+  category?: string | null;
+  tags?: string[] | null;
+  download_count?: number | null;
+  requires_login?: boolean | null;
+  created_at?: string | null;
+}
+
+interface GuideProduct {
+  id: string;
+  name: string;
+  description?: string | null;
+  category: string;
+  model_number?: string | null;
+  installation_guide_url?: string | null;
+  maintenance_manual_url?: string | null;
+  video_url?: string | null;
+}
+
+const INSTALLATION_STEPS = [
+  {
+    step: "01",
+    icon: Ruler,
+    title: "Site & Water Audit",
+    description:
+      "Measure plot dimensions, elevation slope, crop spacing, and water yield before cutting pipes or digging trenches.",
+  },
+  {
+    step: "02",
+    icon: Filter,
+    title: "Headworks & Filtration",
+    description:
+      "Mount disc/screen filters, bypass venturi fertigation, non-return valves, and isolation gate valves on a stable manifold.",
+  },
+  {
+    step: "03",
+    icon: Droplets,
+    title: "Mainline & Lateral Layout",
+    description:
+      "Trench HDPE/PVC mainlines cleanly, punch 16mm grommets straight, unroll driplines emitter-up, and fit end caps.",
+  },
+  {
+    step: "04",
+    icon: ShieldCheck,
+    title: "Flush & Pressure Test",
+    description:
+      "Flush mainline dirt out before sealing lateral ends, then verify uniform drip or rain gun pressure across each block.",
+  },
+] as const;
+
+const SYSTEM_PLAYBOOKS = [
+  {
+    id: "drip",
+    badge: "Drip Kits & Tape",
+    title: "Drip Irrigation Field Setup Checklist",
+    summary:
+      "Follow this sequence when laying 15cm, 20cm, or 30cm driplines on raised vegetable or orchard beds.",
+    steps: [
+      "Raise compacted planting beds first so driplines sit straight along the wetted strip without sagging.",
+      "Elevate your storage tank at least 1.5m–3m for gravity kits, or size a booster pump for 1.0–1.5 bar.",
+      "Flush the HDPE mainline and sub-main before fitting 16mm end-caps so soil particles do not block emitters.",
+      "Keep mini-valves per block so you can rotate irrigation zones evenly without dropping head pressure.",
+    ],
+  },
+  {
+    id: "dam-liner",
+    badge: "HDPE Geomembranes",
+    title: "Dam Liner & Water Pan Preparation",
+    summary:
+      "Excavation smoothness and anchor trench depth determine liner lifespan on Kenyan farms.",
+    steps: [
+      "Slant walls safely (1:1 or 1.5:1 depending on soil stability) and remove sharp rocks, roots, and hard clods.",
+      "Dig a 30–50cm wide by 50cm deep perimeter anchor trench set back from the pan rim.",
+      "For multi-sheet dams (0.5mm, 0.75mm, or 1.0mm HDPE), book certified hot-wedge welding rather than cold glue.",
+      "Keep a minimum 15% water depth or cover floor with fine sand where livestock or sunlight exposure is severe.",
+    ],
+  },
+  {
+    id: "rainhose",
+    badge: "32mm / 40mm Rainhose",
+    title: "Rainhose & Mini-Sprinkler Line Setup",
+    summary:
+      "Fast overhead irrigation for nurseries, pasture, kales, and onions where uniform spray coverage is needed.",
+    steps: [
+      "Connect 32mm rainhose via a lock-type take-off connector and butterfly ball valve on a HDPE sub-main.",
+      "Use adequate pumping pressure (typically 1.5–2.5 bar) so spray arcs reach 3m–4m cleanly per line.",
+      "Keep laser-punched spray holes facing upward and anchor the tail with a folded clamp or end-plug.",
+    ],
+  },
+  {
+    id: "pumps",
+    badge: "Borehole & Solar Pumps",
+    title: "Pump & Filtration Protection Checks",
+    summary:
+      "Protect your impeller, drippers, and motors before first start-up.",
+    steps: [
+      "Install a 120-mesh disc or screen filter on the pump delivery side before entering drip sub-mains.",
+      "Fit a foot valve and primer tee on surface centrifugal pumps so the suction line never runs dry.",
+      "Install an air-release valve on high points and a pressure relief valve to protect thin-wall drip tape.",
+    ],
+  },
+] as const;
+
+const INTERACTIVE_ENGINEERING_GUIDES = [
+  {
+    title: "1-Acre Drip Irrigation Layout & BOM Guide",
+    desc: "Complete mainline, sub-main, filtration, and dripline layout for 1-acre vegetable and fruit farms.",
+    to: "/one-acre-drip-irrigation-system-kenya",
+  },
+  {
+    title: "How to Choose Dripline Emitter Spacing",
+    desc: "Selecting 15cm, 20cm, or 30cm emitter spacing and wall thickness for onions, tomatoes, and orchards.",
+    to: "/how-to-choose-dripline-spacing-kenya",
+  },
+  {
+    title: "Irrigation Pump Sizing & Total Dynamic Head",
+    desc: "Calculating flow rate (m³/hr) and total dynamic head (TDH) for boreholes, rivers, and raised tanks.",
+    to: "/irrigation-pump-sizing-kenya",
+  },
+  {
+    title: "Greenhouse Drip & Misting Setup Guide",
+    desc: "Fertigation venturi installation, manifold zoning, and micro-climate misting for Kenyan greenhouses.",
+    to: "/greenhouse-drip-irrigation-kenya",
+  },
+  {
+    title: "Solar Irrigation Pumping Systems Guide",
+    desc: "Sizing PV arrays, MPPT controllers, and submersible/surface solar pumps for off-grid farms.",
+    to: "/solar-irrigation-pumps-kenya",
+  },
+  {
+    title: "Pre-Installation Quotation & Site Checklist",
+    desc: "Water quality, slope, soil type, and source measurements to prepare before ordering equipment.",
+    to: "/irrigation-quotation-checklist-kenya",
+  },
+] as const;
 
 const InstallationGuides = () => {
-  const [products, setProducts] = useState([]);
-  const [documents, setDocuments] = useState([]);
-  const [managedDocuments, setManagedDocuments] = useState([]);
+  const { toast } = useToast();
+  const [products, setProducts] = useState<GuideProduct[]>([]);
+  const [managedDocuments, setManagedDocuments] = useState<ManagedDocument[]>([]);
+  const [videos, setVideos] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [activePlaybookId, setActivePlaybookId] = useState<string>("drip");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDocumentType, setSelectedDocumentType] = useState("all");
-  const [videoModal, setVideoModal] = useState({
-    isOpen: false,
-    url: "",
-    title: "",
-  });
+  const [selectedVideoTopic, setSelectedVideoTopic] = useState("all");
+
+  const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
   const [pdfModal, setPdfModal] = useState({
     isOpen: false,
     url: "",
@@ -88,69 +228,129 @@ const InstallationGuides = () => {
     url: "",
     title: "",
   });
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [currentManagedPage, setCurrentManagedPage] = useState(1);
-  const [currentProductPage, setCurrentProductPage] = useState(1);
-  const itemsPerPage = 9;
-  const { toast } = useToast();
 
   useEffect(() => {
-    fetchInstallationResources();
-  }, []);
+    const fetchInstallationResources = async () => {
+      try {
+        // Note: Worker /api/documents ignores multi-value ?category= arrays cleanly only when
+        // omitted, so fetch public documents (?requires_login=false) and filter categories in UI.
+        const [productsData, docsData, videosData] = await Promise.all([
+          dataService.getProducts({}).catch(() => []),
+          dataService.getDocuments({ requiresLogin: false }).catch(() => []),
+          dataService.getVideos({ sortBy: "featured" }).catch(() => []),
+        ]);
 
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 1024);
+        const productsWithGuides = (Array.isArray(productsData) ? productsData : []).filter(
+          (p: GuideProduct) =>
+            p.installation_guide_url || p.video_url || p.maintenance_manual_url,
+        );
+
+        const publicDocs = (Array.isArray(docsData) ? docsData : []).filter(
+          (doc: ManagedDocument) =>
+            doc &&
+            !doc.requires_login &&
+            isValidHttpUrl(doc.file_url),
+        );
+
+        const cleanVideos = (Array.isArray(videosData) ? videosData : []) as VideoItem[];
+
+        setProducts(productsWithGuides);
+        setManagedDocuments(publicDocs);
+        setVideos(cleanVideos);
+      } catch (error) {
+        console.error("Error fetching installation resources:", error);
+        toast({
+          title: "Error",
+          description: "Unable to load some installation guides right now.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
     };
 
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
+    void fetchInstallationResources();
+  }, [toast]);
 
-    return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
+  const activePlaybook =
+    SYSTEM_PLAYBOOKS.find((p) => p.id === activePlaybookId) || SYSTEM_PLAYBOOKS[0];
 
-  useEffect(() => {
-    setCurrentManagedPage(1);
-    setCurrentProductPage(1);
-  }, [searchTerm, selectedCategory, selectedDocumentType]);
+  const availableCategories = useMemo(
+    () =>
+      [...new Set(managedDocuments.map((doc) => doc.category).filter(Boolean))] as string[],
+    [managedDocuments],
+  );
 
-  const fetchInstallationResources = async () => {
-    try {
-      // Fetch products and filter for those with installation guides
-      const productsData = await dataService.getProducts({});
-      const productsWithGuides = (productsData || []).filter((p: any) => p.installation_guide_url);
+  const availableFileTypes = useMemo(
+    () =>
+      [...new Set(managedDocuments.map((doc) => doc.file_type).filter(Boolean))] as string[],
+    [managedDocuments],
+  );
 
-      // Fetch installation documents
-      const documentsData = await dataService.getDocuments({
-        category: "installation",
-        requiresLogin: false
-      });
+  const filteredVideos = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    return videos.filter((video) => {
+      const matchesTopic =
+        selectedVideoTopic === "all" || inferVideoTopic(video) === selectedVideoTopic;
+      if (!matchesTopic) return false;
+      if (!q) return true;
+      const hay = [
+        video.title,
+        video.description || "",
+        ...(Array.isArray(video.tags) ? video.tags : []),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(q);
+    });
+  }, [videos, searchTerm, selectedVideoTopic]);
 
-      // Fetch managed documents
-      const managedDocsData = await dataService.getDocuments({
-        category: documentCategories
-      });
+  const filteredManagedDocuments = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    return managedDocuments.filter((doc) => {
+      const matchesSearch =
+        !q ||
+        doc.title.toLowerCase().includes(q) ||
+        (doc.description || "").toLowerCase().includes(q) ||
+        (doc.tags || []).some((tag) => tag.toLowerCase().includes(q));
 
-      console.log("Products:", productsWithGuides);
-      console.log("Documents:", documentsData);
-      console.log("Managed Documents:", managedDocsData);
+      const matchesCategory =
+        selectedCategory === "all" || doc.category === selectedCategory;
+      const matchesType =
+        selectedDocumentType === "all" || doc.file_type === selectedDocumentType;
 
-      setProducts(productsWithGuides || []);
-      setDocuments(documentsData || []);
-      setManagedDocuments(managedDocsData || []);
-    } catch (error) {
-      console.error("Error fetching installation resources:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch installation guides",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+      return matchesSearch && matchesCategory && matchesType;
+    });
+  }, [managedDocuments, searchTerm, selectedCategory, selectedDocumentType]);
+
+  const filteredProducts = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return products;
+    return products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        (p.model_number || "").toLowerCase().includes(q) ||
+        (p.category || "").toLowerCase().includes(q),
+    );
+  }, [products, searchTerm]);
+
+  const filteredInteractiveGuides = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return INTERACTIVE_ENGINEERING_GUIDES;
+    return INTERACTIVE_ENGINEERING_GUIDES.filter(
+      (g) => g.title.toLowerCase().includes(q) || g.desc.toLowerCase().includes(q),
+    );
+  }, [searchTerm]);
+
+  const getDocumentIcon = (fileType?: string | null) => {
+    const type = (fileType || "").toLowerCase();
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(type)) return ImageIcon;
+    if (["mp4", "avi", "mov", "webm"].includes(type)) return VideoIcon;
+    if (["zip", "rar"].includes(type)) return Archive;
+    return FileText;
   };
 
-  const getCategoryIcon = (category) => {
+  const getCategoryIcon = (category: string) => {
     switch (category) {
       case "drip_irrigation":
         return Droplets;
@@ -160,1152 +360,754 @@ const InstallationGuides = () => {
         return Filter;
       case "control_systems":
         return Settings;
-      case "accessories":
+      default:
         return Wrench;
-      default:
-        return FileText;
     }
   };
 
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case "drip_irrigation":
-        return "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
-      case "sprinkler_systems":
-        return "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800";
-      case "filtration_systems":
-        return "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800";
-      case "control_systems":
-        return "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800";
-      case "accessories":
-        return "bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800";
-      default:
-        return "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
-    }
+  const handleWatchFieldVideo = (video: VideoItem) => {
+    setSelectedVideo(video);
+    setIsVideoModalOpen(true);
+
+    void supabase
+      .from("videos")
+      .update({ views: (video.views || 0) + 1 })
+      .eq("id", video.id);
   };
 
-  const getDocumentIcon = (fileType) => {
-    const type = fileType?.toLowerCase();
-    switch (type) {
-      case "pdf":
-      case "doc":
-      case "docx":
-        return FileText;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
-        return Image;
-      case "mp4":
-      case "avi":
-      case "mov":
-        return Video;
-      case "zip":
-      case "rar":
-        return Archive;
-      default:
-        return FileText;
-    }
-  };
-
-  const getDocumentCategoryColor = (category) => {
-    const colorMap = {
-      "Installation Guides":
-        "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800",
-      "Technical Specifications":
-        "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800",
-      "User Manuals":
-        "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800",
-      "Training Materials":
-        "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800",
-      "Safety Guidelines":
-        "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800",
-      "Maintenance Manuals":
-        "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800",
-      "Product Brochures":
-        "bg-pink-50 text-pink-700 border-pink-200 dark:bg-pink-900/20 dark:text-pink-300 dark:border-pink-800",
-      "Case Studies":
-        "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800",
-      "White Papers":
-        "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800",
-      Certifications:
-        "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800",
-      "Marketing Materials":
-        "bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800",
-      "Warranty Information":
-        "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800",
-    };
-
-    return (
-      colorMap[category] ||
-      "bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800"
-    );
-  };
-
-  const isVideoFile = (fileType) => {
-    const videoTypes = ["mp4", "avi", "mov", "wmv", "flv", "webm"];
-    return videoTypes.includes(fileType?.toLowerCase());
-  };
-
-  const isImageFile = (fileType) => {
-    const imageTypes = ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"];
-    return imageTypes.includes(fileType?.toLowerCase());
-  };
-
-  const isPdfFile = (fileType) => {
-    return fileType?.toLowerCase() === "pdf";
-  };
-
-  const handleViewDocument = (url, title, fileType) => {
-    if (isVideoFile(fileType)) {
-      setVideoModal({ isOpen: true, url, title });
-    } else if (isPdfFile(fileType)) {
-      setPdfModal({ isOpen: true, url, title });
-    } else if (isImageFile(fileType)) {
-      setImageModal({ isOpen: true, url, title });
-    } else {
-      // For other file types that can't be viewed in modal, download them
-      handleDownloadDocument(url, title, null);
-    }
-  };
-
-  const handleDownloadDocument = async (url, filename, documentId) => {
+  const handleDownloadDocument = async (
+    url: string,
+    filename: string,
+    documentId?: string | null,
+  ) => {
     try {
-      // Update download count if documentId is provided
       if (documentId) {
-        const { data, error: fetchError } = await supabase
+        const doc = managedDocuments.find((d) => d.id === documentId);
+        void supabase
           .from("documents")
-          .select("download_count")
-          .eq("id", documentId)
-          .single();
-
-        if (!fetchError && data) {
-          const currentCount = data.download_count || 0;
-          const { error: updateError } = await supabase
-            .from("documents")
-            .update({
-              download_count: currentCount + 1,
-            })
-            .eq("id", documentId);
-
-          if (updateError)
-            console.error("Error updating download count:", updateError);
-        }
+          .update({ download_count: (doc?.download_count || 0) + 1 })
+          .eq("id", documentId);
       }
 
-      // Try to download the file
-      try {
-        const response = await fetch(url, { method: "HEAD" });
-        if (!response.ok) {
-          throw new Error(`File not found: ${response.status}`);
-        }
-
-        const downloadResponse = await fetch(url);
-        if (!downloadResponse.ok)
-          throw new Error("Network response was not ok");
-
-        const blob = await downloadResponse.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        window.URL.revokeObjectURL(downloadUrl);
-
-        toast({
-          title: "Download Started",
-          description: `${filename} is being downloaded`,
-        });
-      } catch (fetchError) {
-        console.error("Fetch error:", fetchError);
-
-        if (
-          fetchError.message.includes("404") ||
-          fetchError.message.includes("File not found")
-        ) {
-          toast({
-            title: "File Not Found",
-            description: `The file "${filename}" could not be found. Please contact support.`,
-            variant: "destructive",
-          });
-          return;
-        }
-
-        // Fallback to direct link
-        try {
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = filename;
-          link.target = "_blank";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-
-          toast({
-            title: "Download Started",
-            description: `${filename} download initiated`,
-          });
-        } catch (directError) {
-          toast({
-            title: "Download Failed",
-            description:
-              "Unable to download the file. Please try again or contact support.",
-            variant: "destructive",
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error handling download:", error);
-      toast({
-        title: "Download Failed",
-        description: "Unable to download the file",
-        variant: "destructive",
-      });
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch {
+      window.open(url, "_blank", "noopener,noreferrer");
     }
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  const handleViewDocument = (url: string, title: string, fileType?: string | null) => {
+    const ext = (fileType || "").toLowerCase();
+    if (["mp4", "avi", "mov", "webm"].includes(ext)) {
+      handleWatchFieldVideo({
+        id: `doc-${title}`,
+        title,
+        video_url: url,
+      });
+      return;
+    }
+    if (ext === "pdf") {
+      setPdfModal({ isOpen: true, url, title });
+      return;
+    }
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
+      setImageModal({ isOpen: true, url, title });
+      return;
+    }
+    void handleDownloadDocument(url, title, null);
   };
 
-  const canViewInModal = (fileType) => {
-    return (
-      isVideoFile(fileType) || isImageFile(fileType) || isPdfFile(fileType)
-    );
-  };
+  const hasAnySearchOrFilter =
+    Boolean(searchTerm.trim()) ||
+    selectedCategory !== "all" ||
+    selectedDocumentType !== "all" ||
+    selectedVideoTopic !== "all";
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.model_number?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  const filteredDocuments = documents.filter(
-    (doc) =>
-      doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.description?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  const filteredManagedDocuments = managedDocuments.filter((doc) => {
-    const matchesSearch =
-      doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.tags?.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-
-    const matchesCategory =
-      selectedCategory === "all" || doc.category === selectedCategory;
-    const matchesType =
-      selectedDocumentType === "all" || doc.file_type === selectedDocumentType;
-
-    return matchesSearch && matchesCategory && matchesType;
-  });
-
-  // Get available categories and file types for filtering
-  const availableCategories = [
-    ...new Set(managedDocuments.map((doc) => doc.category)),
-  ].filter(Boolean);
-  const availableFileTypes = [
-    ...new Set(managedDocuments.map((doc) => doc.file_type)),
-  ].filter(Boolean);
-
-  const installationSteps = [
-    {
-      icon: CheckCircle,
-      title: "Pre-Installation Planning",
-      description: "Site assessment, system design, and material preparation",
-    },
-    {
-      icon: Settings,
-      title: "System Setup",
-      description: "Component assembly and initial configuration",
-    },
-    {
-      icon: AlertTriangle,
-      title: "Safety Considerations",
-      description: "Important safety guidelines and precautions",
-    },
-    {
-      icon: Play,
-      title: "Testing & Commissioning",
-      description: "System testing, calibration, and final adjustments",
-    },
-  ];
-
-  // Pagination for managed documents
-  const totalManagedPages = Math.ceil(
-    filteredManagedDocuments.length / itemsPerPage,
-  );
-  const currentManagedDocs = filteredManagedDocuments.slice(
-    (currentManagedPage - 1) * itemsPerPage,
-    currentManagedPage * itemsPerPage,
-  );
-
-  // Pagination for products
-  const totalProductPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const currentProducts = filteredProducts.slice(
-    (currentProductPage - 1) * itemsPerPage,
-    currentProductPage * itemsPerPage,
-  );
+  const hasZeroResultsAcrossAll =
+    !loading &&
+    filteredVideos.length === 0 &&
+    filteredManagedDocuments.length === 0 &&
+    filteredProducts.length === 0 &&
+    filteredInteractiveGuides.length === 0;
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEOHead
-        title="Drip Irrigation Installation Guides & Manuals | DripTech"
-        description="Step-by-step guides and technical notes for installing and maintaining DripTech Eco Flow irrigation systems, with practical support for farmers."
+        title={`Drip Irrigation Installation Guides, Videos & Manuals | ${SITE_COMPANY.name}`}
+        description="Watch real field installation videos, follow step-by-step drip and dam liner setup checklists, and download irrigation manuals for Kenyan farms."
+        url={`${SITE_COMPANY.url}/installation-guides`}
         schema={[
           {
             "@context": "https://schema.org",
             "@type": "HowTo",
-            "name": "How to Install a Drip Irrigation System",
-            "description": "Professional guide for setting up smart drip irrigation systems.",
-            "step": installationSteps.map((step, i) => ({
+            name: "How to Install a Drip Irrigation System",
+            description:
+              "Practical step-by-step workflow for planning, setting up filtration headworks, laying driplines, and pressure testing farm irrigation in Kenya.",
+            step: INSTALLATION_STEPS.map((s, i) => ({
               "@type": "HowToStep",
-              "position": i + 1,
-              "name": step.title,
-              "text": step.description
-            }))
+              position: i + 1,
+              name: s.title,
+              text: s.description,
+            })),
           },
-          {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "What are the common steps in irrigation installation?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "The installation process typically involves pre-installation planning, system setup, safety considerations, and testing & commissioning."
-                }
-              }
-            ]
-          }
         ]}
       />
       <Header />
 
-      <main className="pt-24 pb-20">
-        <div className="container mx-auto px-4">
-          <Breadcrumbs className="mb-4" />
+      <div className="dt-container">
+        <Breadcrumbs />
+      </div>
 
-          {/* AI-Ready Technical Summary / Key Insights */}
-          <Card className="mb-12 border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/20 backdrop-blur-sm overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-3 opacity-10">
-              <Sprout className="h-24 w-24 text-emerald-500" />
-            </div>
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-widest">
-                <Settings className="h-4 w-4 animate-spin-slow" />
-                Technical Quick Guide
-              </div>
-              <CardTitle className="text-xl md:text-2xl font-black">Installation Key Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
-                    Setting up a <span className="text-emerald-600 dark:text-emerald-400 font-bold">Smart Drip System</span> requires precision. Our data shows that 90% of failures occur due to Poor site assessment or incorrect filter placement.
+      <main id="main-content" tabIndex={-1} className="flex-1 pb-16">
+        {/* Editorial Hero */}
+        <section className="pb-10 pt-2 sm:pb-12">
+          <div className="dt-container">
+            <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 lg:p-10">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-2xl">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
+                    <BookOpen className="h-3.5 w-3.5" />
+                    <span>Field Setup &amp; Technical Manuals</span>
+                  </div>
+
+                  <h1 className="mt-4 font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    Irrigation{" "}
+                    <span className="text-primary">Installation Guides</span>
+                  </h1>
+
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    Watch real field setup videos, review practical pipe and dam liner
+                    checklists, and read engineering sizing guides designed for Kenyan
+                    growing conditions.
                   </p>
-                  <ul className="space-y-2">
-                    {[
-                      "Always check water pressure before laying drip lines",
-                      "Ensure filters are installed for borehole or pond water",
-                      "Test the system for 30 mins before burying any pipes"
-                    ].map((insight, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
-                        <CheckCircle className="h-3.5 w-3.5 text-emerald-500 mt-0.5" />
-                        {insight}
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    to="/videos"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    <Play className="h-4 w-4 fill-current" />
+                    Watch Field Videos ({videos.length})
+                  </Link>
+                  <Link
+                    to="/technician-services"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                  >
+                    <Wrench className="h-4 w-4 text-primary" />
+                    Book Technician
+                  </Link>
+                </div>
+              </div>
+
+              {/* 4-Step Overview Bar */}
+              <div className="mt-8 grid grid-cols-1 gap-4 border-t border-border pt-6 sm:grid-cols-2 lg:grid-cols-4">
+                {INSTALLATION_STEPS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.step}
+                      className="rounded-xl border border-border/80 bg-background/70 p-4"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="font-mono text-sm font-extrabold text-primary/45">
+                          {item.step}
+                        </span>
+                      </div>
+                      <h2 className="mt-3 font-heading text-sm font-bold text-foreground sm:text-base">
+                        {item.title}
+                      </h2>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Search & Quick Filter Bar */}
+        <section className="border-y border-border bg-muted/25 py-6">
+          <div className="dt-container">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search guides, videos, dam liners, pumps, or dripline spacing..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="bg-card pl-9 pr-9"
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    aria-label="Clear search query"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              <Select
+                value={selectedVideoTopic}
+                onValueChange={setSelectedVideoTopic}
+              >
+                <SelectTrigger className="w-full bg-card md:w-48">
+                  <SelectValue placeholder="System Video Topic" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All System Videos</SelectItem>
+                  <SelectItem value="drip-emitters">Driplines &amp; Emitters</SelectItem>
+                  <SelectItem value="rainhose">Rainhose</SelectItem>
+                  <SelectItem value="dam-liners">HDPE Dam Liners</SelectItem>
+                  <SelectItem value="sprinklers">Rain Guns &amp; Sprinklers</SelectItem>
+                  <SelectItem value="foggers-greenhouse">Foggers &amp; Misting</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {availableCategories.length > 0 && (
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-full bg-card md:w-48">
+                    <SelectValue placeholder="All Doc Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Doc Categories</SelectItem>
+                    {availableCategories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+
+              {availableFileTypes.length > 0 && (
+                <Select
+                  value={selectedDocumentType}
+                  onValueChange={setSelectedDocumentType}
+                >
+                  <SelectTrigger className="w-full bg-card md:w-36">
+                    <SelectValue placeholder="File Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Files</SelectItem>
+                    {availableFileTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type.toUpperCase()}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <div className="dt-container space-y-12 pt-10">
+          {/* 1. Real Field Installation Videos (from Video Library / CF D1) */}
+          {(loading || filteredVideos.length > 0) && (
+            <section aria-labelledby="install-videos-heading">
+              <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="dt-section-label mb-1">Video Walkthroughs</p>
+                  <h2 id="install-videos-heading" className="dt-section-title">
+                    Field Installation &amp; Demo Videos
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Watch actual Kenyan installations for driplines, dam liners, rainhose, and sprinklers.
+                  </p>
+                </div>
+                <Link
+                  to="/videos"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline sm:text-sm"
+                >
+                  Open Full Video Library ({videos.length})
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+
+              {loading ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i} className="animate-pulse border-border bg-card">
+                      <div className="aspect-video bg-muted" />
+                      <CardContent className="space-y-2.5 p-4">
+                        <div className="h-4 w-3/4 rounded bg-muted" />
+                        <div className="h-8 rounded bg-muted" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  {filteredVideos.slice(0, 8).map((video) => (
+                    <VideoCard
+                      key={video.id}
+                      video={video}
+                      compact
+                      onWatch={handleWatchFieldVideo}
+                      whatsappSource="installation guides video"
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* 2. Practical System Installation Playbooks */}
+          <section aria-labelledby="playbooks-heading">
+            <Card className="border-border bg-card">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex flex-col gap-4 border-b border-border pb-6 lg:flex-row lg:items-end lg:justify-between">
+                  <div>
+                    <p className="dt-section-label mb-1">On-Farm Reference</p>
+                    <h2 id="playbooks-heading" className="dt-section-title">
+                      Kenyan System Setup Checklists
+                    </h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Select an irrigation type below for essential site and commissioning steps.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {SYSTEM_PLAYBOOKS.map((playbook) => {
+                      const active = playbook.id === activePlaybook.id;
+                      return (
+                        <button
+                          key={playbook.id}
+                          type="button"
+                          onClick={() => setActivePlaybookId(playbook.id)}
+                          className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                            active
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-background text-foreground hover:bg-muted"
+                          }`}
+                        >
+                          {playbook.badge}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
+                  <div className="lg:col-span-5">
+                    <span className="dt-badge-primary">{activePlaybook.badge}</span>
+                    <h3 className="mt-3 font-heading text-xl font-bold text-foreground sm:text-2xl">
+                      {activePlaybook.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {activePlaybook.summary}
+                    </p>
+
+                    <div className="mt-5 flex flex-wrap gap-2.5">
+                      <QuoteModal>
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        >
+                          Request BOQ for This System
+                        </Button>
+                      </QuoteModal>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openTrackedWhatsApp(
+                            `https://wa.me/${SITE_COMPANY.phonePrimary.replace(/\D/g, "")}?text=${encodeURIComponent(
+                              `Hi DripTech! I'm reviewing the ${activePlaybook.title} guide and need assistance with my farm setup.`,
+                            )}`,
+                            "installation playbook WhatsApp",
+                          )
+                        }
+                        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[hsl(var(--dt-whatsapp)/0.45)] px-3 text-xs font-semibold text-foreground transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.08)]"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5 text-[hsl(var(--dt-whatsapp))]" />
+                        Ask Engineering on WhatsApp
+                      </button>
+                    </div>
+                  </div>
+
+                  <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-7">
+                    {activePlaybook.steps.map((step, index) => (
+                      <li
+                        key={step}
+                        className="flex items-start gap-3 rounded-xl border border-border bg-muted/25 p-4"
+                      >
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-primary">
+                            Step 0{index + 1}
+                          </span>
+                          <p className="mt-1 text-xs leading-relaxed text-foreground sm:text-sm">
+                            {step}
+                          </p>
+                        </div>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="p-4 bg-white/50 dark:bg-slate-900/50 rounded-xl border border-emerald-100 dark:border-emerald-800/30">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase mb-3">Support Coverage</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {["Design Help", "On-site Setup", "Remote Monitoring", "Maintenance"].map(s => (
-                      <Badge key={s} variant="outline" className="bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 text-[10px]">
-                        {s}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          {/* Hero Section */}
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">
-              🔧 Installation Support
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Installation <span className="text-accent">Guides</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Step-by-step installation guides, video tutorials, and technical
-              documentation to help you set up your irrigation system correctly.
-            </p>
-          </div>
+              </CardContent>
+            </Card>
+          </section>
 
-          {/* Installation Process Overview */}
-          <div className="mb-12 bg-background/80 backdrop-blur-sm border border-border/50 rounded-3xl p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-center mb-8">
-              Installation Process Overview
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {installationSteps.map((step, index) => (
-                <div key={index} className="text-center space-y-4">
-                  <div className="inline-flex p-4 bg-primary/10 rounded-2xl">
-                    <step.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-2">
-                      {step.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {step.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Interactive Kenyan Field Sizing & Installation Guides */}
-          <div className="mb-12 rounded-3xl border border-border bg-muted/20 p-6 sm:p-8">
-            <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
-              <div>
-                <Badge variant="outline" className="mb-2 border-primary/30 text-primary">
-                  Interactive Engineering Guides
-                </Badge>
-                <h2 className="text-2xl font-bold text-foreground">
-                  Kenyan Irrigation Design & Installation Manuals
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Read complete field layout, pipe sizing, emitter spacing, and pump selection guides online.
-                </p>
-              </div>
-              <Link
-                to="/technical-support"
-                className="text-xs font-bold text-primary hover:underline"
-              >
-                Need help? Contact Technical Support →
-              </Link>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[
-                {
-                  title: "1-Acre Drip Irrigation Layout & BOM Guide",
-                  desc: "Complete mainline, sub-main, filtration, and dripline layout for 1-acre vegetable and fruit farms.",
-                  to: "/one-acre-drip-irrigation-system-kenya",
-                },
-                {
-                  title: "How to Choose Dripline Emitter Spacing",
-                  desc: "Selecting 15cm, 20cm, or 30cm emitter spacing and wall thickness for onions, tomatoes, and orchards.",
-                  to: "/how-to-choose-dripline-spacing-kenya",
-                },
-                {
-                  title: "Irrigation Pump Sizing & Total Dynamic Head",
-                  desc: "Calculating flow rate (m³/hr) and total dynamic head (TDH) for boreholes, rivers, and raised tanks.",
-                  to: "/irrigation-pump-sizing-kenya",
-                },
-                {
-                  title: "Greenhouse Drip & Misting Setup Guide",
-                  desc: "Fertigation venturi installation, manifold zoning, and micro-climate misting for Kenyan greenhouses.",
-                  to: "/greenhouse-drip-irrigation-kenya",
-                },
-                {
-                  title: "Solar Irrigation Pumping Systems Guide",
-                  desc: "Sizing PV arrays, MPPT controllers, and submersible/surface solar pumps for off-grid farms.",
-                  to: "/solar-irrigation-pumps-kenya",
-                },
-                {
-                  title: "Pre-Installation Quotation & Site Checklist",
-                  desc: "Water quality, slope, soil type, and source measurements to prepare before ordering equipment.",
-                  to: "/irrigation-quotation-checklist-kenya",
-                },
-              ].map((guide) => (
-                <Link
-                  key={guide.to}
-                  to={guide.to}
-                  className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md"
-                >
-                  <div>
-                    <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">
-                      {guide.title}
-                    </h3>
-                    <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                      {guide.desc}
-                    </p>
-                  </div>
-                  <span className="mt-4 inline-flex items-center text-xs font-bold text-primary">
-                    Open installation guide →
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Search and Filters */}
-          <div className="mb-8 space-y-4">
-            <div className="relative max-w-xl mx-auto">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search installation guides by product or topic..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            {/* Filter Controls */}
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Select
-                value={selectedCategory}
-                onValueChange={setSelectedCategory}
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Filter by category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {availableCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={selectedDocumentType}
-                onValueChange={setSelectedDocumentType}
-              >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Filter by file type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All File Types</SelectItem>
-                  {availableFileTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type.toUpperCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <Card key={index} className="animate-pulse">
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                      <div className="h-32 bg-muted rounded"></div>
-                      <div className="h-4 bg-muted rounded"></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Document Management System Documents */}
-              {filteredManagedDocuments.length > 0 && (
-                <div className="mb-12">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-foreground">
-                      Installation Resources
-                    </h2>
-                    <Badge variant="outline" className="text-sm">
-                      {filteredManagedDocuments.length} Documents
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentManagedDocs.map((doc) => {
-                      const IconComponent = getDocumentIcon(doc.file_type);
-                      const categoryColor = getDocumentCategoryColor(
-                        doc.category,
-                      );
-                      const canView = canViewInModal(doc.file_type);
-
-                      return (
-                        <Card
-                          key={doc.id}
-                          className="hover:shadow-lg transition-shadow group"
-                        >
-                          <CardHeader>
-                            <div className="flex items-start justify-between mb-2">
-                              <Badge
-                                className={`${categoryColor} border text-xs`}
-                              >
-                                {doc.category}
-                              </Badge>
-                              <div className="flex gap-1">
-                                {doc.requires_login && (
-                                  <Badge variant="outline" className="text-xs">
-                                    Login Required
-                                  </Badge>
-                                )}
-                                <Badge variant="secondary" className="text-xs">
-                                  {doc.file_type?.toUpperCase() || "FILE"}
-                                </Badge>
-                              </div>
-                            </div>
-                            <CardTitle className="text-lg flex items-center gap-2">
-                              <IconComponent className="h-5 w-5 text-primary" />
-                              {doc.title}
-                            </CardTitle>
-                            {doc.description && (
-                              <CardDescription className="line-clamp-2">
-                                {doc.description}
-                              </CardDescription>
-                            )}
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-3">
-                              {/* Document Tags */}
-                              {doc.tags && doc.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1">
-                                  {doc.tags.slice(0, 3).map((tag, index) => (
-                                    <Badge
-                                      key={index}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {tag}
-                                    </Badge>
-                                  ))}
-                                  {doc.tags.length > 3 && (
-                                    <Badge
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      +{doc.tags.length - 3} more
-                                    </Badge>
-                                  )}
-                                </div>
-                              )}
-
-                              {/* Document Stats */}
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <div className="flex items-center gap-4">
-                                  <div className="flex items-center gap-1">
-                                    <Users className="h-3 w-3" />
-                                    <span>{doc.download_count || 0}</span>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" />
-                                    <span>
-                                      {new Date(
-                                        doc.created_at,
-                                      ).toLocaleDateString()}
-                                    </span>
-                                  </div>
-                                </div>
-                                {doc.file_size && doc.file_size > 0 && (
-                                  <span className="font-medium">
-                                    {formatFileSize(doc.file_size)}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Action Buttons */}
-                              <div className="flex gap-2 pt-2">
-                                {canView && !isSmallScreen && (
-                                  <Button
-                                    variant="outline"
-                                    className="flex-1"
-                                    onClick={() =>
-                                      handleViewDocument(
-                                        doc.file_url,
-                                        doc.title,
-                                        doc.file_type,
-                                      )
-                                    }
-                                  >
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    {isVideoFile(doc.file_type)
-                                      ? "Play"
-                                      : "View"}
-                                  </Button>
-                                )}
-                                <Button
-                                  className={
-                                    canView && !isSmallScreen
-                                      ? "flex-1"
-                                      : "w-full"
-                                  }
-                                  onClick={() =>
-                                    handleDownloadDocument(
-                                      doc.file_url,
-                                      doc.title,
-                                      doc.id,
-                                    )
-                                  }
-                                >
-                                  <Download className="h-4 w-4 mr-2" />
-                                  Download
-                                </Button>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                  <div className="flex justify-center items-center mt-6 gap-4">
-                    <Button
-                      variant="outline"
-                      disabled={currentManagedPage === 1}
-                      onClick={() =>
-                        setCurrentManagedPage((prev) => Math.max(prev - 1, 1))
-                      }
-                    >
-                      Previous
-                    </Button>
-                    <span className="text-muted-foreground">
-                      Page {currentManagedPage} of {totalManagedPages}
-                    </span>
-                    <Button
-                      variant="outline"
-                      disabled={currentManagedPage === totalManagedPages}
-                      onClick={() =>
-                        setCurrentManagedPage((prev) =>
-                          Math.min(prev + 1, totalManagedPages),
-                        )
-                      }
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Product Installation Guides */}
-              {filteredProducts.length > 0 && (
-                <div className="mb-12">
-                  <h2 className="text-2xl font-bold text-foreground mb-6">
-                    Product-Specific Installation Guides
+          {/* 3. Interactive Engineering Manuals */}
+          {filteredInteractiveGuides.length > 0 && (
+            <section aria-labelledby="engineering-guides-heading">
+              <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="dt-section-label mb-1">Written Sizing Manuals</p>
+                  <h2 id="engineering-guides-heading" className="dt-section-title">
+                    Kenyan Irrigation Design &amp; Installation Manuals
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentProducts.map((product) => {
-                      const IconComponent = getCategoryIcon(product.category);
-                      const categoryColor = getCategoryColor(product.category);
-                      const categoryName =
-                        product.category
-                          ?.replace("_", " ")
-                          .replace(/\b\w/g, (l) => l.toUpperCase()) ||
-                        "Product";
-
-                      return (
-                        <Card
-                          key={product.id}
-                          className="hover:shadow-lg transition-shadow"
-                        >
-                          <CardHeader>
-                            <div className="flex items-start justify-between mb-2">
-                              <Badge className={`${categoryColor} border`}>
-                                <IconComponent className="h-3 w-3 mr-1" />
-                                {categoryName}
-                              </Badge>
-                              {product.model_number && (
-                                <Badge variant="outline" className="text-xs">
-                                  {product.model_number}
-                                </Badge>
-                              )}
-                            </div>
-                            <CardTitle className="text-lg">
-                              {product.name}
-                            </CardTitle>
-                            {product.description && (
-                              <CardDescription className="line-clamp-2">
-                                {product.description}
-                              </CardDescription>
-                            )}
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-3">
-                              {product.installation_guide_url && (
-                                <div className="flex gap-2">
-                                  {!isSmallScreen ? (
-                                    <Button
-                                      variant="outline"
-                                      className="flex-1 justify-start"
-                                      onClick={() =>
-                                        handleViewDocument(
-                                          product.installation_guide_url,
-                                          `${product.name} Installation Guide`,
-                                          "pdf",
-                                        )
-                                      }
-                                    >
-                                      <Eye className="h-4 w-4 mr-2" />
-                                      View Guide
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      variant="outline"
-                                      className="flex-1 justify-start"
-                                      onClick={() =>
-                                        handleDownloadDocument(
-                                          product.installation_guide_url,
-                                          `${product.name}-installation-guide.pdf`,
-                                          null,
-                                        )
-                                      }
-                                    >
-                                      <Download className="h-4 w-4 mr-2" />
-                                      Download Guide
-                                    </Button>
-                                  )}
-                                  {!isSmallScreen && (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        handleDownloadDocument(
-                                          product.installation_guide_url,
-                                          `${product.name}-installation-guide.pdf`,
-                                          null,
-                                        )
-                                      }
-                                    >
-                                      <Download className="h-4 w-4" />
-                                    </Button>
-                                  )}
-                                </div>
-                              )}
-
-                              {product.video_url && (
-                                <div className="flex gap-2">
-                                  {!isSmallScreen ? (
-                                    <Button
-                                      variant="outline"
-                                      className="flex-1 justify-start"
-                                      onClick={() =>
-                                        handleViewDocument(
-                                          product.video_url,
-                                          `${product.name} Installation Video`,
-                                          "mp4",
-                                        )
-                                      }
-                                    >
-                                      <Play className="h-4 w-4 mr-2" />
-                                      Play Video
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      variant="outline"
-                                      className="flex-1 justify-start"
-                                      onClick={() =>
-                                        handleDownloadDocument(
-                                          product.video_url,
-                                          `${product.name}-installation-video.mp4`,
-                                          null,
-                                        )
-                                      }
-                                    >
-                                      <Download className="h-4 w-4 mr-2" />
-                                      Download Video
-                                    </Button>
-                                  )}
-                                  {!isSmallScreen && (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        handleDownloadDocument(
-                                          product.video_url,
-                                          `${product.name}-installation-video.mp4`,
-                                          null,
-                                        )
-                                      }
-                                    >
-                                      <Download className="h-4 w-4" />
-                                    </Button>
-                                  )}
-                                </div>
-                              )}
-
-                              {product.maintenance_manual_url && (
-                                <>
-                                  {!isSmallScreen ? (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="w-full justify-start text-xs"
-                                      onClick={() =>
-                                        handleViewDocument(
-                                          product.maintenance_manual_url,
-                                          `${product.name} Maintenance Manual`,
-                                          "pdf",
-                                        )
-                                      }
-                                    >
-                                      <Eye className="h-3 w-3 mr-2" />
-                                      View Maintenance Manual
-                                    </Button>
-                                  ) : (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="w-full justify-start text-xs"
-                                      onClick={() =>
-                                        handleDownloadDocument(
-                                          product.maintenance_manual_url,
-                                          `${product.name}-maintenance-manual.pdf`,
-                                          null,
-                                        )
-                                      }
-                                    >
-                                      <Download className="h-3 w-3 mr-2" />
-                                      Download Maintenance Manual
-                                    </Button>
-                                  )}
-                                </>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                  <div className="flex justify-center items-center mt-6 gap-4">
-                    <Button
-                      variant="outline"
-                      disabled={currentProductPage === 1}
-                      onClick={() =>
-                        setCurrentProductPage((prev) => Math.max(prev - 1, 1))
-                      }
-                    >
-                      Previous
-                    </Button>
-                    <span className="text-muted-foreground">
-                      Page {currentProductPage} of {totalProductPages}
-                    </span>
-                    <Button
-                      variant="outline"
-                      disabled={currentProductPage === totalProductPages}
-                      onClick={() =>
-                        setCurrentProductPage((prev) =>
-                          Math.min(prev + 1, totalProductPages),
-                        )
-                      }
-                    >
-                      Next
-                    </Button>
-                  </div>
                 </div>
-              )}
+                <Link
+                  to="/technical-support"
+                  className="text-xs font-bold text-primary hover:underline sm:text-sm"
+                >
+                  Visit Technical Support →
+                </Link>
+              </div>
 
-              {/* No Results */}
-              {filteredProducts.length === 0 &&
-                filteredDocuments.length === 0 &&
-                filteredManagedDocuments.length === 0 &&
-                !loading && (
-                  <div className="text-center py-16">
-                    <div className="mb-4">
-                      <Search className="h-16 w-16 text-muted-foreground/50 mx-auto" />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredInteractiveGuides.map((guide) => (
+                  <Link
+                    key={guide.to}
+                    to={guide.to}
+                    className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                  >
+                    <div>
+                      <h3 className="font-heading text-base font-bold text-foreground transition-colors group-hover:text-primary sm:text-lg">
+                        {guide.title}
+                      </h3>
+                      <p className="mt-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                        {guide.desc}
+                      </p>
                     </div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      No Installation Guides Found
-                    </h3>
-                    <p className="text-muted-foreground mb-6">
-                      Try adjusting your search terms or filters, or contact our
-                      support team for assistance.
-                    </p>
-                    <div className="flex gap-4 justify-center">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setSearchTerm("");
-                          setSelectedCategory("all");
-                          setSelectedDocumentType("all");
-                        }}
-                      >
-                        Clear All Filters
-                      </Button>
-                      <Button>Contact Support</Button>
-                    </div>
-                  </div>
-                )}
-            </>
+                    <span className="mt-4 inline-flex items-center text-xs font-bold text-primary">
+                      Read Full Guide
+                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* 4. Downloadable Documents & Product Manuals */}
+          {!loading && filteredManagedDocuments.length > 0 && (
+            <section aria-labelledby="docs-heading">
+              <div className="mb-6 flex items-center justify-between gap-3">
+                <div>
+                  <p className="dt-section-label mb-1">Downloads &amp; PDFs</p>
+                  <h2 id="docs-heading" className="dt-section-title">
+                    Downloadable Manuals &amp; Reference Files
+                  </h2>
+                </div>
+                <Badge variant="outline">
+                  {filteredManagedDocuments.length} Available
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {filteredManagedDocuments.map((doc) => {
+                  const IconComponent = getDocumentIcon(doc.file_type);
+                  const ext = (doc.file_type || "file").toLowerCase();
+                  const canPreview = ["pdf", "jpg", "jpeg", "png", "gif", "webp", "mp4", "webm", "mov"].includes(
+                    ext,
+                  );
+
+                  return (
+                    <Card key={doc.id} className="flex flex-col justify-between border-border bg-card">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="dt-badge-primary">
+                            {doc.category || "Resource"}
+                          </span>
+                          <Badge variant="secondary" className="text-[10px]">
+                            {ext.toUpperCase()}
+                          </Badge>
+                        </div>
+                        <CardTitle className="mt-2 flex items-start gap-2 font-heading text-base font-bold leading-snug">
+                          <IconComponent className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                          <span className="line-clamp-2">{doc.title}</span>
+                        </CardTitle>
+                        {doc.description?.trim() && (
+                          <CardDescription className="line-clamp-2 text-xs">
+                            {doc.description}
+                          </CardDescription>
+                        )}
+                      </CardHeader>
+
+                      <CardContent className="space-y-3 pt-0">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span className="inline-flex items-center gap-1">
+                            <Users className="h-3.5 w-3.5" />
+                            {doc.download_count || 0} downloads
+                          </span>
+                          {doc.created_at && (
+                            <span className="inline-flex items-center gap-1">
+                              <Calendar className="h-3.5 w-3.5" />
+                              {new Date(doc.created_at).toLocaleDateString("en-KE")}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex gap-2">
+                          {canPreview && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() =>
+                                handleViewDocument(
+                                  doc.file_url,
+                                  doc.title,
+                                  doc.file_type,
+                                )
+                              }
+                            >
+                              <Eye className="mr-1.5 h-3.5 w-3.5" />
+                              Preview
+                            </Button>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                            onClick={() =>
+                              handleDownloadDocument(
+                                doc.file_url,
+                                doc.title,
+                                doc.id,
+                              )
+                            }
+                          >
+                            <Download className="mr-1.5 h-3.5 w-3.5" />
+                            Download
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* 5. Product-Specific Manuals (when attached on products) */}
+          {!loading && filteredProducts.length > 0 && (
+            <section aria-labelledby="product-manuals-heading">
+              <h2 id="product-manuals-heading" className="dt-section-title mb-6">
+                Product-Specific Guides
+              </h2>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {filteredProducts.map((product) => {
+                  const Icon = getCategoryIcon(product.category);
+                  return (
+                    <Card key={product.id} className="border-border bg-card">
+                      <CardHeader>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
+                            <Icon className="h-3.5 w-3.5" />
+                            {product.category.replace(/_/g, " ")}
+                          </span>
+                          {product.model_number && (
+                            <Badge variant="outline" className="text-xs">
+                              {product.model_number}
+                            </Badge>
+                          )}
+                        </div>
+                        <CardTitle className="font-heading text-base font-bold">
+                          {product.name}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {product.installation_guide_url && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="w-full justify-start"
+                            onClick={() =>
+                              handleViewDocument(
+                                product.installation_guide_url!,
+                                `${product.name} Guide`,
+                                "pdf",
+                              )
+                            }
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Installation Guide
+                          </Button>
+                        )}
+                        {product.video_url && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="w-full justify-start"
+                            onClick={() =>
+                              handleWatchFieldVideo({
+                                id: product.id,
+                                title: `${product.name} Setup`,
+                                video_url: product.video_url!,
+                              })
+                            }
+                          >
+                            <Play className="mr-2 h-4 w-4" />
+                            Watch Setup Video
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* Filtered Empty Search Notice (only when user actively searched/filtered out everything) */}
+          {hasAnySearchOrFilter && hasZeroResultsAcrossAll && (
+            <Card className="border-border bg-card p-10 text-center">
+              <Search className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+              <h3 className="font-heading text-xl font-bold text-foreground">
+                No Matching Installation Guides Found
+              </h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                Clear your search or filters to view all field videos, checklists,
+                and engineering guides — or reach our engineers directly.
+              </p>
+              <div className="mt-5 flex flex-wrap justify-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("all");
+                    setSelectedDocumentType("all");
+                    setSelectedVideoTopic("all");
+                  }}
+                >
+                  Clear All Filters
+                </Button>
+                <Link
+                  to="/contact?topic=support"
+                  className="inline-flex h-11 items-center rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground hover:bg-primary/90"
+                >
+                  Contact Technical Support
+                </Link>
+              </div>
+            </Card>
           )}
 
           {/* CTA Section */}
-          <div className="mt-16 text-center bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl p-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Need Installation Support?
-            </h2>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Our certified technicians are available to provide installation
-              support, on-site assistance, and training services.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg">Request Installation Service</Button>
-              <Button variant="outline" size="lg">
-                Contact Technical Support
-              </Button>
-            </div>
-          </div>
+          <Card className="border-border bg-card">
+            <CardContent className="flex flex-col items-start justify-between gap-6 p-6 sm:p-10 lg:flex-row lg:items-center">
+              <div className="max-w-xl">
+                <p className="dt-section-label mb-1">On-Site &amp; Remote Support</p>
+                <h2 className="font-heading text-2xl font-bold text-foreground sm:text-3xl">
+                  Need Certified Technician Support on Your Farm?
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  Book our technicians for field piping, HDPE dam liner hot-wedge
+                  welding, greenhouse installations, or trouble-shooting across Kenya.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to="/technician-services"
+                  className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground hover:bg-primary/90"
+                >
+                  <Wrench className="h-4 w-4" />
+                  Request Installation Service
+                </Link>
+                <Link
+                  to="/contact?topic=support"
+                  className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-4 text-sm font-semibold text-foreground hover:bg-muted"
+                >
+                  Contact Technical Support
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
 
       <IrrigationKeywords />
-
-
       <Footer />
+
+      {/* Shared Field Video Modal */}
+      <VideoPlayerModal
+        video={selectedVideo}
+        open={isVideoModalOpen}
+        onOpenChange={(open) => {
+          setIsVideoModalOpen(open);
+          if (!open) setSelectedVideo(null);
+        }}
+        relatedVideos={
+          selectedVideo
+            ? videos.filter((v) => v.id !== selectedVideo.id).slice(0, 3)
+            : []
+        }
+        onSelectVideo={handleWatchFieldVideo}
+        whatsappSource="installation guides video modal"
+      />
 
       {/* PDF Modal */}
       {pdfModal.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-7xl h-full max-h-[95vh] overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-3 sm:p-4 border-b flex-shrink-0">
-              <h3 className="text-base sm:text-lg font-semibold text-foreground truncate pr-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-2 sm:p-4">
+          <div className="flex h-full max-h-[95vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-border bg-card">
+            <div className="flex items-center justify-between border-b border-border p-4">
+              <h3 className="truncate pr-4 font-heading text-base font-bold text-foreground sm:text-lg">
                 {pdfModal.title}
               </h3>
-              <div className="flex gap-2 flex-shrink-0">
+              <div className="flex shrink-0 gap-2">
                 <Button
+                  type="button"
                   variant="outline"
                   size="sm"
                   onClick={() =>
                     handleDownloadDocument(pdfModal.url, pdfModal.title, null)
                   }
-                  className="hidden sm:flex"
                 >
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="mr-1.5 h-4 w-4" />
                   Download
                 </Button>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    handleDownloadDocument(pdfModal.url, pdfModal.title, null)
-                  }
-                  className="sm:hidden"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-                <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() =>
-                    setPdfModal({ isOpen: false, url: "", title: "" })
-                  }
+                  onClick={() => setPdfModal({ isOpen: false, url: "", title: "" })}
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-            <div className="flex-1 min-h-0">
+            <div className="min-h-0 flex-1">
               <iframe
-                src={`${pdfModal.url}#view=FitH&toolbar=1&navpanes=1&scrollbar=1`}
-                className="w-full h-full border-0"
+                src={`${pdfModal.url}#view=FitH`}
+                className="h-full w-full border-0"
                 title={pdfModal.title}
-                loading="lazy"
-              >
-                <div className="p-4 text-center">
-                  <p className="mb-4">Your browser does not support PDFs.</p>
-                  <Button
-                    onClick={() =>
-                      handleDownloadDocument(pdfModal.url, pdfModal.title, null)
-                    }
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download the PDF
-                  </Button>
-                </div>
-              </iframe>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Video Modal */}
-      {videoModal.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-3 sm:p-4 border-b flex-shrink-0">
-              <h3 className="text-base sm:text-lg font-semibold text-foreground truncate pr-4">
-                {videoModal.title}
-              </h3>
-              <div className="flex gap-2 flex-shrink-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    handleDownloadDocument(
-                      videoModal.url,
-                      videoModal.title,
-                      null,
-                    )
-                  }
-                  className="hidden sm:flex"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    handleDownloadDocument(
-                      videoModal.url,
-                      videoModal.title,
-                      null,
-                    )
-                  }
-                  className="sm:hidden"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    setVideoModal({ isOpen: false, url: "", title: "" })
-                  }
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            <div className="p-3 sm:p-4 flex-1">
-              <video
-                className="w-full h-auto max-h-[75vh] rounded"
-                controls
-                preload="metadata"
-                src={videoModal.url}
-                controlsList="nodownload"
-              >
-                <p className="text-center p-4">
-                  Your browser does not support the video tag.
-                  <Button
-                    className="ml-4"
-                    onClick={() =>
-                      handleDownloadDocument(
-                        videoModal.url,
-                        videoModal.title,
-                        null,
-                      )
-                    }
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download Video
-                  </Button>
-                </p>
-              </video>
+              />
             </div>
           </div>
         </div>
@@ -1313,82 +1115,40 @@ const InstallationGuides = () => {
 
       {/* Image Modal */}
       {imageModal.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-3 sm:p-4 border-b flex-shrink-0">
-              <h3 className="text-base sm:text-lg font-semibold text-foreground truncate pr-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-2 sm:p-4">
+          <div className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-border bg-card">
+            <div className="flex items-center justify-between border-b border-border p-4">
+              <h3 className="truncate pr-4 font-heading text-base font-bold text-foreground sm:text-lg">
                 {imageModal.title}
               </h3>
-              <div className="flex gap-2 flex-shrink-0">
+              <div className="flex shrink-0 gap-2">
                 <Button
+                  type="button"
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    handleDownloadDocument(
-                      imageModal.url,
-                      imageModal.title,
-                      null,
-                    )
+                    handleDownloadDocument(imageModal.url, imageModal.title, null)
                   }
-                  className="hidden sm:flex"
                 >
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="mr-1.5 h-4 w-4" />
                   Download
                 </Button>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    handleDownloadDocument(
-                      imageModal.url,
-                      imageModal.title,
-                      null,
-                    )
-                  }
-                  className="sm:hidden"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-                <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() =>
-                    setImageModal({ isOpen: false, url: "", title: "" })
-                  }
+                  onClick={() => setImageModal({ isOpen: false, url: "", title: "" })}
                 >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-            <div className="p-3 sm:p-4 flex-1 flex items-center justify-center overflow-auto">
+            <div className="flex flex-1 items-center justify-center overflow-auto p-4">
               <img
                 src={imageModal.url}
                 alt={imageModal.title}
-                className="max-w-full max-h-full object-contain rounded"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = "none";
-                  const next = target.nextSibling as HTMLElement | null;
-                  if (next) {
-                    next.style.display = "block";
-                  }
-                }}
+                className="max-h-full max-w-full rounded object-contain"
               />
-              <div className="text-center p-4 hidden">
-                <p className="mb-4">Unable to load image.</p>
-                <Button
-                  onClick={() =>
-                    handleDownloadDocument(
-                      imageModal.url,
-                      imageModal.title,
-                      null,
-                    )
-                  }
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download Image
-                </Button>
-              </div>
             </div>
           </div>
         </div>
