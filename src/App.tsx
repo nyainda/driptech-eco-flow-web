@@ -45,6 +45,7 @@ const TechnicianServices = lazy(() => import("./pages/TechnicianServices"));
 const SEOContentPage = lazy(() => import("./pages/SEOContentPage"));
 const BlueDigitalSolutions = lazy(() => import("./pages/BlueDigitalSolutions"));
 const IrrigationCostCalculator = lazy(() => import("./pages/IrrigationCostCalculator"));
+const PumpSolarCalculator = lazy(() => import("./pages/PumpSolarCalculator"));
 
 const queryClient = new QueryClient();
 
@@ -90,6 +91,7 @@ const App = () => {
                   <Route path="/products/:category/:product" element={<Products />} />
                   <Route path="/catalog" element={<Products />} /> {/* Redirect to Products */}
                   <Route path="/irrigation-cost-calculator-kenya" element={<IrrigationCostCalculator />} />
+                  <Route path="/pump-solar-calculator-kenya" element={<PumpSolarCalculator />} />
                   <Route path="/drip-irrigation-kenya" element={<SEOContentPage />} />
                   <Route path="/drip-irrigation-kit-price-kenya" element={<SEOContentPage />} />
                   <Route path="/driplines-for-sale-kenya" element={<SEOContentPage />} />

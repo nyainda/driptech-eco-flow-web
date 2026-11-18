@@ -102,6 +102,7 @@ const IrrigationCostCalculator = () => {
                 <a href={`https://wa.me/254723407849?text=${quoteText}`} target="_blank" rel="noreferrer" className="dt-btn-primary mt-6 inline-flex w-full items-center justify-center gap-2">
                   <MessageCircle className="h-4 w-4" /> Verify with DripTech
                 </a>
+                <Link to="/pump-solar-calculator-kenya" className="dt-btn-secondary mt-3 inline-flex w-full items-center justify-center">Size a pump &amp; solar array</Link>
                 <Link to="/products/drip" className="dt-btn-secondary mt-3 inline-flex w-full items-center justify-center">Browse drip products</Link>
               </div>
               <div className="rounded-xl border border-border bg-muted/40 p-5">
@@ -110,7 +111,7 @@ const IrrigationCostCalculator = () => {
                   <div className="text-sm leading-6 text-muted-foreground">
                     <strong className="text-foreground">Important assumptions</strong>
                     <p className="mt-2">The line-length estimate assumes the whole plot is planted in rows and uses area ÷ row spacing. Headlands, paths, field shape, multiple lines per bed, crop spacing, pressure zones and mainlines can change the real quantity.</p>
-                    <p className="mt-2">The tool does not size a pump or guarantee a final system price. Ask for a farm-specific layout using your crop, dimensions, water source, available flow and elevation.</p>
+                    <p className="mt-2">Use our <Link to="/pump-solar-calculator-kenya" className="font-semibold text-primary underline">Pump &amp; Solar Sizing Calculator</Link> to size hydraulic head, friction losses, cable gauge, and PV arrays, or ask for a farm-specific BOQ.</p>
                   </div>
                 </div>
               </div>
