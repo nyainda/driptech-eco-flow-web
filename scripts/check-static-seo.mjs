@@ -186,6 +186,15 @@ if (fs.existsSync(calculatorPath)) {
   failures.push("/irrigation-cost-calculator-kenya: generated HTML missing");
 }
 
+const pumpCalcPath = path.join(dist, "pump-solar-calculator-kenya", "index.html");
+if (fs.existsSync(pumpCalcPath)) {
+  const html = fs.readFileSync(pumpCalcPath, "utf8");
+  if (!html.includes("Irrigation Pump")) failures.push("/pump-solar-calculator-kenya: pump calculator-specific content missing from initial HTML");
+  if (!html.includes('"@type":"WebApplication"')) failures.push("/pump-solar-calculator-kenya: expected WebApplication JSON-LD missing");
+} else {
+  failures.push("/pump-solar-calculator-kenya: generated HTML missing");
+}
+
 // Validate the generated static shell for every editorial SEO landing page:
 // contextual links must be crawlable in the initial HTML, and the intro must
 // render once (not twice) when a page has no content sections.

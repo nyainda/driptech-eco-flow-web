@@ -348,10 +348,57 @@ const irrigationCostCalculatorPage = {
   }
 };
 
+const pumpSolarCalculatorPage = {
+  route: "/pump-solar-calculator-kenya",
+  title: "Pump & Solar Sizing Calculator Kenya | DripTech Eco Flow",
+  description:
+    "Size borehole, suction, or booster pumps with Hazen-Williams pipe friction, solar PV strings, cable mm², and live DripTech pump matches in Kenya.",
+  heading: "Irrigation pump and solar PV sizing calculator",
+  intro:
+    "Size any borehole, river/dam suction, or booster irrigation pump alongside its solar PV panel array, controller Voc window, cable gauge, and buffer tank for Kenyan farms.",
+  image: "/seed-products/field_drip.jpg",
+  sections: [
+    {
+      heading: "Calculate hydraulic head, pipe friction, and water demand",
+      paragraphs: [
+        "Select crop water depth and acreage, emitter or sprinkler block counts, or a direct flow target to determine required flow rate (m³/h) and daily volume.",
+        "Model suction, borehole riser, and mainline pipe segments using true inner bore diameters and Hazen-Williams roughness to calculate Total Dynamic Head (TDH), velocity limits, and altitude-adjusted cavitation safety."
+      ]
+    },
+    {
+      heading: "Size solar PV strings, cable mm², and match pumps",
+      paragraphs: [
+        "Select Kenyan regional Peak Sun Hours, thermal/dust derating, PV module wattage, and cold-morning Voc controller limits to size optimal series/parallel solar strings and DC/AC cable gauges.",
+        "Compare live matching DripTech borehole and booster pumps or audit any existing pump datasheet against your calculated TDH."
+      ]
+    }
+  ],
+  links: [
+    { label: "Browse pumps and motors", href: "/products/pumps" },
+    { label: "Estimate drip irrigation costs", href: "/irrigation-cost-calculator-kenya" },
+    { label: "Read pump sizing guide", href: "/irrigation-pump-sizing-kenya" },
+    { label: "Request a formal design and BOQ", href: "/contact" }
+  ],
+  schema: {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Irrigation Pump & Solar PV Sizing Calculator Kenya",
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Any",
+    description:
+      "Interactive hydraulic pump and solar PV sizing calculator for Kenyan farms computing TDH, Hazen-Williams friction, PV strings, cable gauge, and pump matches.",
+    url: "https://www.dripstech.co.ke/pump-solar-calculator-kenya",
+    image: "https://www.dripstech.co.ke/seed-products/field_drip.jpg",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "KES" },
+    publisher: { "@type": "Organization", name: "DripTech Eco Flow", url: "https://www.dripstech.co.ke/" }
+  }
+};
+
 const allPages = [
   homePage,
   ...categoryPages,
   irrigationCostCalculatorPage,
+  pumpSolarCalculatorPage,
   ...landingPages.map((page) => ({ ...page, route: `/${page.slug}` })),
   ...locationPages.map((page) => ({ ...page, route: `/${page.slug}` })),
   ...irrigationPricePages.map((page) => ({ ...page, route: `/${page.slug}` })),

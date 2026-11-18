@@ -32,47 +32,27 @@ import { SITE_COMPANY } from "@/config/company";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import {
   inferVideoTopic,
-  isValidHttpUrl,
   VideoItem,
 } from "@/lib/videoUtils";
 import {
-  Archive,
   ArrowRight,
   BookOpen,
-  Calendar,
+  Calculator,
   CheckCircle2,
   Download,
   Droplets,
   Eye,
-  FileText,
   Filter,
   Gauge,
-  Image as ImageIcon,
   MessageCircle,
   Play,
   Ruler,
   Search,
   Settings,
   ShieldCheck,
-  Users,
-  Video as VideoIcon,
   Wrench,
   X,
 } from "lucide-react";
-
-interface ManagedDocument {
-  id: string;
-  title: string;
-  description?: string | null;
-  file_url: string;
-  file_type?: string | null;
-  file_size?: number | null;
-  category?: string | null;
-  tags?: string[] | null;
-  download_count?: number | null;
-  requires_login?: boolean | null;
-  created_at?: string | null;
-}
 
 interface GuideProduct {
   id: string;
@@ -181,6 +161,11 @@ const INTERACTIVE_ENGINEERING_GUIDES = [
     to: "/how-to-choose-dripline-spacing-kenya",
   },
   {
+    title: "Pump & Solar PV Sizing Calculator (Interactive)",
+    desc: "Size borehole or surface pumps, Hazen-Williams pipe friction loss, TDH, DC cable mm², and solar PV panel strings with live pump matches.",
+    to: "/pump-solar-calculator-kenya",
+  },
+  {
     title: "Irrigation Pump Sizing & Total Dynamic Head",
     desc: "Calculating flow rate (m³/hr) and total dynamic head (TDH) for boreholes, rivers, and raised tanks.",
     to: "/irrigation-pump-sizing-kenya",
@@ -205,14 +190,11 @@ const INTERACTIVE_ENGINEERING_GUIDES = [
 const InstallationGuides = () => {
   const { toast } = useToast();
   const [products, setProducts] = useState<GuideProduct[]>([]);
-  const [managedDocuments, setManagedDocuments] = useState<ManagedDocument[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [activePlaybookId, setActivePlaybookId] = useState<string>("drip");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedDocumentType, setSelectedDocumentType] = useState("all");
   const [selectedVideoTopic, setSelectedVideoTopic] = useState("all");
 
   const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
@@ -232,11 +214,8 @@ const InstallationGuides = () => {
   useEffect(() => {
     const fetchInstallationResources = async () => {
       try {
-        // Note: Worker /api/documents ignores multi-value ?category= arrays cleanly only when
-        // omitted, so fetch public documents (?requires_login=false) and filter categories in UI.
-        const [productsData, docsData, videosData] = await Promise.all([
+        const [productsData, videosData] = await Promise.all([
           dataService.getProducts({}).catch(() => []),
-          dataService.getDocuments({ requiresLogin: false }).catch(() => []),
           dataService.getVideos({ sortBy: "featured" }).catch(() => []),
         ]);
 
@@ -245,17 +224,9 @@ const InstallationGuides = () => {
             p.installation_guide_url || p.video_url || p.maintenance_manual_url,
         );
 
-        const publicDocs = (Array.isArray(docsData) ? docsData : []).filter(
-          (doc: ManagedDocument) =>
-            doc &&
-            !doc.requires_login &&
-            isValidHttpUrl(doc.file_url),
-        );
-
         const cleanVideos = (Array.isArray(videosData) ? videosData : []) as VideoItem[];
 
         setProducts(productsWithGuides);
-        setManagedDocuments(publicDocs);
         setVideos(cleanVideos);
       } catch (error) {
         console.error("Error fetching installation resources:", error);
@@ -275,18 +246,6 @@ const InstallationGuides = () => {
   const activePlaybook =
     SYSTEM_PLAYBOOKS.find((p) => p.id === activePlaybookId) || SYSTEM_PLAYBOOKS[0];
 
-  const availableCategories = useMemo(
-    () =>
-      [...new Set(managedDocuments.map((doc) => doc.category).filter(Boolean))] as string[],
-    [managedDocuments],
-  );
-
-  const availableFileTypes = useMemo(
-    () =>
-      [...new Set(managedDocuments.map((doc) => doc.file_type).filter(Boolean))] as string[],
-    [managedDocuments],
-  );
-
   const filteredVideos = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     return videos.filter((video) => {
@@ -304,24 +263,6 @@ const InstallationGuides = () => {
       return hay.includes(q);
     });
   }, [videos, searchTerm, selectedVideoTopic]);
-
-  const filteredManagedDocuments = useMemo(() => {
-    const q = searchTerm.trim().toLowerCase();
-    return managedDocuments.filter((doc) => {
-      const matchesSearch =
-        !q ||
-        doc.title.toLowerCase().includes(q) ||
-        (doc.description || "").toLowerCase().includes(q) ||
-        (doc.tags || []).some((tag) => tag.toLowerCase().includes(q));
-
-      const matchesCategory =
-        selectedCategory === "all" || doc.category === selectedCategory;
-      const matchesType =
-        selectedDocumentType === "all" || doc.file_type === selectedDocumentType;
-
-      return matchesSearch && matchesCategory && matchesType;
-    });
-  }, [managedDocuments, searchTerm, selectedCategory, selectedDocumentType]);
 
   const filteredProducts = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
@@ -341,14 +282,6 @@ const InstallationGuides = () => {
       (g) => g.title.toLowerCase().includes(q) || g.desc.toLowerCase().includes(q),
     );
   }, [searchTerm]);
-
-  const getDocumentIcon = (fileType?: string | null) => {
-    const type = (fileType || "").toLowerCase();
-    if (["jpg", "jpeg", "png", "gif", "webp"].includes(type)) return ImageIcon;
-    if (["mp4", "avi", "mov", "webm"].includes(type)) return VideoIcon;
-    if (["zip", "rar"].includes(type)) return Archive;
-    return FileText;
-  };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -378,17 +311,8 @@ const InstallationGuides = () => {
   const handleDownloadDocument = async (
     url: string,
     filename: string,
-    documentId?: string | null,
   ) => {
     try {
-      if (documentId) {
-        const doc = managedDocuments.find((d) => d.id === documentId);
-        void supabase
-          .from("documents")
-          .update({ download_count: (doc?.download_count || 0) + 1 })
-          .eq("id", documentId);
-      }
-
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const blob = await response.blob();
@@ -423,27 +347,24 @@ const InstallationGuides = () => {
       setImageModal({ isOpen: true, url, title });
       return;
     }
-    void handleDownloadDocument(url, title, null);
+    void handleDownloadDocument(url, title);
   };
 
   const hasAnySearchOrFilter =
     Boolean(searchTerm.trim()) ||
-    selectedCategory !== "all" ||
-    selectedDocumentType !== "all" ||
     selectedVideoTopic !== "all";
 
   const hasZeroResultsAcrossAll =
     !loading &&
     filteredVideos.length === 0 &&
-    filteredManagedDocuments.length === 0 &&
     filteredProducts.length === 0 &&
     filteredInteractiveGuides.length === 0;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEOHead
-        title={`Drip Irrigation Installation Guides, Videos & Manuals | ${SITE_COMPANY.name}`}
-        description="Watch real field installation videos, follow step-by-step drip and dam liner setup checklists, and download irrigation manuals for Kenyan farms."
+        title={`Drip Irrigation Installation Guides & Field Videos | ${SITE_COMPANY.name}`}
+        description="Watch real field installation videos, follow step-by-step drip and dam liner setup checklists, and explore engineering sizing guides for Kenyan farms."
         url={`${SITE_COMPANY.url}/installation-guides`}
         schema={[
           {
@@ -498,6 +419,13 @@ const InstallationGuides = () => {
                   >
                     <Play className="h-4 w-4 fill-current" />
                     Watch Field Videos ({videos.length})
+                  </Link>
+                  <Link
+                    to="/pump-solar-calculator-kenya"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+                  >
+                    <Calculator className="h-4 w-4" />
+                    Pump &amp; Solar Calculator
                   </Link>
                   <Link
                     to="/technician-services"
@@ -580,41 +508,6 @@ const InstallationGuides = () => {
                   <SelectItem value="foggers-greenhouse">Foggers &amp; Misting</SelectItem>
                 </SelectContent>
               </Select>
-
-              {availableCategories.length > 0 && (
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-full bg-card md:w-48">
-                    <SelectValue placeholder="All Doc Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Doc Categories</SelectItem>
-                    {availableCategories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-
-              {availableFileTypes.length > 0 && (
-                <Select
-                  value={selectedDocumentType}
-                  onValueChange={setSelectedDocumentType}
-                >
-                  <SelectTrigger className="w-full bg-card md:w-36">
-                    <SelectValue placeholder="File Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Files</SelectItem>
-                    {availableFileTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type.toUpperCase()}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
             </div>
           </div>
         </section>
@@ -810,109 +703,7 @@ const InstallationGuides = () => {
             </section>
           )}
 
-          {/* 4. Downloadable Documents & Product Manuals */}
-          {!loading && filteredManagedDocuments.length > 0 && (
-            <section aria-labelledby="docs-heading">
-              <div className="mb-6 flex items-center justify-between gap-3">
-                <div>
-                  <p className="dt-section-label mb-1">Downloads &amp; PDFs</p>
-                  <h2 id="docs-heading" className="dt-section-title">
-                    Downloadable Manuals &amp; Reference Files
-                  </h2>
-                </div>
-                <Badge variant="outline">
-                  {filteredManagedDocuments.length} Available
-                </Badge>
-              </div>
-
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-                {filteredManagedDocuments.map((doc) => {
-                  const IconComponent = getDocumentIcon(doc.file_type);
-                  const ext = (doc.file_type || "file").toLowerCase();
-                  const canPreview = ["pdf", "jpg", "jpeg", "png", "gif", "webp", "mp4", "webm", "mov"].includes(
-                    ext,
-                  );
-
-                  return (
-                    <Card key={doc.id} className="flex flex-col justify-between border-border bg-card">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="dt-badge-primary">
-                            {doc.category || "Resource"}
-                          </span>
-                          <Badge variant="secondary" className="text-[10px]">
-                            {ext.toUpperCase()}
-                          </Badge>
-                        </div>
-                        <CardTitle className="mt-2 flex items-start gap-2 font-heading text-base font-bold leading-snug">
-                          <IconComponent className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                          <span className="line-clamp-2">{doc.title}</span>
-                        </CardTitle>
-                        {doc.description?.trim() && (
-                          <CardDescription className="line-clamp-2 text-xs">
-                            {doc.description}
-                          </CardDescription>
-                        )}
-                      </CardHeader>
-
-                      <CardContent className="space-y-3 pt-0">
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span className="inline-flex items-center gap-1">
-                            <Users className="h-3.5 w-3.5" />
-                            {doc.download_count || 0} downloads
-                          </span>
-                          {doc.created_at && (
-                            <span className="inline-flex items-center gap-1">
-                              <Calendar className="h-3.5 w-3.5" />
-                              {new Date(doc.created_at).toLocaleDateString("en-KE")}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex gap-2">
-                          {canPreview && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              className="flex-1"
-                              onClick={() =>
-                                handleViewDocument(
-                                  doc.file_url,
-                                  doc.title,
-                                  doc.file_type,
-                                )
-                              }
-                            >
-                              <Eye className="mr-1.5 h-3.5 w-3.5" />
-                              Preview
-                            </Button>
-                          )}
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-                            onClick={() =>
-                              handleDownloadDocument(
-                                doc.file_url,
-                                doc.title,
-                                doc.id,
-                              )
-                            }
-                          >
-                            <Download className="mr-1.5 h-3.5 w-3.5" />
-                            Download
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </section>
-          )}
-
-          {/* 5. Product-Specific Manuals (when attached on products) */}
+          {/* 4. Product-Specific Manuals (when attached on products) */}
           {!loading && filteredProducts.length > 0 && (
             <section aria-labelledby="product-manuals-heading">
               <h2 id="product-manuals-heading" className="dt-section-title mb-6">
@@ -1001,8 +792,6 @@ const InstallationGuides = () => {
                   variant="outline"
                   onClick={() => {
                     setSearchTerm("");
-                    setSelectedCategory("all");
-                    setSelectedDocumentType("all");
                     setSelectedVideoTopic("all");
                   }}
                 >
@@ -1086,7 +875,7 @@ const InstallationGuides = () => {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    handleDownloadDocument(pdfModal.url, pdfModal.title, null)
+                    handleDownloadDocument(pdfModal.url, pdfModal.title)
                   }
                 >
                   <Download className="mr-1.5 h-4 w-4" />
@@ -1127,7 +916,7 @@ const InstallationGuides = () => {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    handleDownloadDocument(imageModal.url, imageModal.title, null)
+                    handleDownloadDocument(imageModal.url, imageModal.title)
                   }
                 >
                   <Download className="mr-1.5 h-4 w-4" />

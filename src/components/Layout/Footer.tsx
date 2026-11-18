@@ -10,7 +10,7 @@ const footerGroups = [
     ["Pumps & solar", "/solar-irrigation-pumps-kenya"], ["Irrigation kits & prices", "/drip-irrigation-kit-price-kenya"], ["View full catalogue", "/products"],
   ] },
   { title: "Engineering & Guides", links: [
-    ["All 100+ Kenya guides", "/irrigation-guides-kenya"], ["Irrigation cost calculator", "/irrigation-cost-calculator-kenya"], ["System design & BOQ", "/services#system-design"],
+    ["All 100+ Kenya guides", "/irrigation-guides-kenya"], ["Pump & solar calculator", "/pump-solar-calculator-kenya"], ["Irrigation cost calculator", "/irrigation-cost-calculator-kenya"], ["System design & BOQ", "/services#system-design"],
     ["Installation guides", "/installation-guides"], ["Technical support", "/technical-support"], ["Counties we serve", "/irrigation-areas-kenya"],
   ] },
   { title: "Company", links: [

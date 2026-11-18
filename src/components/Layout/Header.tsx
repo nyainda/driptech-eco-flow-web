@@ -33,6 +33,7 @@ import {
   Shield,
   Package,
   Droplet,
+  Calculator,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import SearchManager from "./SearchManager";
@@ -344,6 +345,18 @@ const Header = () => {
           href: "/installation-guides",
           description: "Step-by-step setup instructions",
           icon: FileText,
+        },
+        {
+          title: "Pump & Solar Calculator",
+          href: "/pump-solar-calculator-kenya",
+          description: "Size TDH, pipes, PV strings & pumps",
+          icon: Calculator,
+        },
+        {
+          title: "Irrigation Cost Calculator",
+          href: "/irrigation-cost-calculator-kenya",
+          description: "Estimate dripline & farm budget",
+          icon: BarChart3,
         },
         {
           title: "Video Tutorials",
