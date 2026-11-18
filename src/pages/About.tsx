@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
@@ -7,6 +8,7 @@ import SEOHead from "@/components/common/SEOHead";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { dataService } from "@/services/dataService";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { buildOrganizationSchema, SITE_COMPANY } from "@/config/company";
 import {
@@ -27,6 +29,49 @@ import {
   Truck,
   Wrench,
 } from "lucide-react";
+
+/** Verified real field and equipment photos hosted via Cloudflare D1 catalogue/media records. */
+const CF_REAL_MEDIA = {
+  heroManifold:
+    "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg",
+  dripBedsField:
+    "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/pwwmoognjqq-1760190796903.jpg",
+  damLinerField:
+    "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/thumbnails/thumbnails/1759469079096_thumbnail.jpg",
+  solarPumpProduct:
+    "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp",
+  sprinklerRainGun:
+    "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1755860407371-0vp7ashfupdg.jpg",
+} as const;
+
+const isVerifiedRealPhoto = (url: unknown): url is string => {
+  if (typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return false;
+  if (trimmed.includes("/seed-products/") || trimmed.includes("/category-images/")) {
+    return false;
+  }
+  return (
+    trimmed.includes(".supabase.co/storage/v1/object/public/") ||
+    trimmed.includes(".r2.dev/")
+  );
+};
+
+const pickFirstRealImage = (images: unknown): string | null => {
+  const list = Array.isArray(images)
+    ? images
+    : typeof images === "string"
+      ? (() => {
+          try {
+            const parsed = JSON.parse(images);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        })()
+      : [];
+  return list.find(isVerifiedRealPhoto) || null;
+};
 
 const PILLARS = [
   {
@@ -90,40 +135,56 @@ const WORKFLOW_STEPS = [
   },
 ] as const;
 
-const SPECIALTIES = [
+interface SpecialtyItem {
+  key: "dripBedsField" | "damLinerField" | "solarPumpProduct" | "sprinklerRainGun";
+  title: string;
+  detail: string;
+  alt: string;
+  href: string;
+  linkLabel: string;
+  fit: "cover" | "contain";
+  imagePosition?: string;
+}
+
+const SPECIALTIES: SpecialtyItem[] = [
   {
+    key: "dripBedsField",
     title: "Drip Kits & UV Driplines",
     detail: "15cm, 20cm & 30cm emitter spacing in ⅛, ¼, ½ and 1+ acre packages.",
-    image: "/category-images/drip-irrigation-dripline-kenya.jpg",
-    alt: "UV-stabilized agricultural drip irrigation driplines",
+    alt: "Drip irrigation lateral lines installed along Kenyan farm crop beds",
     href: "/irrigation-kits",
     linkLabel: "Explore Drip Kits",
+    fit: "cover",
   },
   {
-    title: "HDPE Pipes, Liners & Fittings",
+    key: "damLinerField",
+    title: "HDPE Dam Liners & Piping",
     detail: "0.5mm–1.0mm geomembrane dam liners with on-site welding and pressure pipes.",
-    image: "/category-images/hdpe-pipe-fittings-product.jpg",
-    alt: "HDPE irrigation pipes and compression fittings",
+    alt: "Installed black HDPE geomembrane farm water pan dam liner",
     href: "/dam-liners-kenya",
     linkLabel: "View Dam Liners",
+    fit: "cover",
   },
   {
+    key: "solarPumpProduct",
     title: "Solar & Borehole Pumping",
     detail: "Total Dynamic Head pump matching, solar arrays, and elevated tank systems.",
-    image: "/category-images/solar-water-pump-kenya.jpg",
-    alt: "Solar-powered farm water pumping system",
+    alt: "Stainless steel solar submersible borehole water pump",
     href: "/solar-irrigation-pumps-kenya",
     linkLabel: "Explore Solar Pumps",
+    fit: "contain",
   },
   {
-    title: "Greenhouses & Sprinklers",
-    detail: "Galvanized steel structures, micro-misting, rain guns, and lawn pop-ups.",
-    image: "/seed-products/greenhouse.jpg",
-    alt: "Commercial greenhouse structure equipped with drip irrigation",
+    key: "sprinklerRainGun",
+    title: "Sprinklers, Rain Guns & Greenhouses",
+    detail: "Gear-drive rain guns, pop-up lawn sprinklers, foggers, and greenhouse setups.",
+    alt: "Gear drive rain gun agricultural sprinkler spraying water in the field",
     href: "/services",
     linkLabel: "See Engineering Services",
+    fit: "cover",
+    imagePosition: "object-center",
   },
-] as const;
+];
 
 const CORE_VALUES = [
   {
@@ -193,13 +254,85 @@ const QUICK_COMPANY_LINKS = [
 ] as const;
 
 const About = () => {
+  const [mediaMap, setMediaMap] = useState<Record<keyof typeof CF_REAL_MEDIA, string>>({
+    ...CF_REAL_MEDIA,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCloudflareMedia = async () => {
+      try {
+        const [kits, videos, pumps, sprinklers] = await Promise.all([
+          dataService.getIrrigationKits().catch(() => []),
+          dataService.getVideos().catch(() => []),
+          dataService
+            .getProducts({ category: "pumps_motors", inStock: true, limit: 8 })
+            .catch(() => []),
+          dataService
+            .getProducts({ category: "sprinkler_systems", inStock: true, limit: 12 })
+            .catch(() => []),
+        ]);
+
+        if (cancelled) return;
+
+        const nextMedia: Record<keyof typeof CF_REAL_MEDIA, string> = {
+          ...CF_REAL_MEDIA,
+        };
+
+        const oneAcreKit = (kits || []).find((k: any) =>
+          String(k?.name || "").toLowerCase().includes("1 acre"),
+        );
+        const halfAcreKit = (kits || []).find((k: any) =>
+          String(k?.name || "").toLowerCase().includes("1/2 acre"),
+        );
+
+        const oneAcrePhoto = pickFirstRealImage(oneAcreKit?.images);
+        if (oneAcrePhoto) nextMedia.heroManifold = oneAcrePhoto;
+
+        const halfAcrePhoto = pickFirstRealImage(halfAcreKit?.images);
+        if (halfAcrePhoto) nextMedia.dripBedsField = halfAcrePhoto;
+
+        const damVideo = (videos || []).find((v: any) =>
+          String(v?.title || "").toLowerCase().includes("dam"),
+        );
+        if (isVerifiedRealPhoto(damVideo?.thumbnail_url)) {
+          nextMedia.damLinerField = damVideo.thumbnail_url;
+        }
+
+        const sprinklerWithPhoto = (sprinklers || []).find((p: any) =>
+          Boolean(pickFirstRealImage(p?.images)),
+        );
+        const sprinklerPhoto = pickFirstRealImage(sprinklerWithPhoto?.images);
+        if (sprinklerPhoto) {
+          nextMedia.sprinklerRainGun = sprinklerPhoto;
+        }
+
+        const pumpWithPhoto = (pumps || []).find((p: any) =>
+          Boolean(pickFirstRealImage(p?.images)),
+        );
+        const pumpPhoto = pickFirstRealImage(pumpWithPhoto?.images);
+        if (pumpPhoto) nextMedia.solarPumpProduct = pumpPhoto;
+
+        setMediaMap(nextMedia);
+      } catch (error) {
+        console.error("Unable to refresh About photos from Cloudflare D1:", error);
+      }
+    };
+
+    void loadCloudflareMedia();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <>
       <SEOHead
         title={`About ${SITE_COMPANY.name} | Irrigation Equipment & Engineering Kenya`}
         description="Learn how DripTech Eco Flow helps Kenyan farms, greenhouses, and estates plan, source, and install drip kits, driplines, HDPE dam liners, sprinklers, and solar pumps."
         url={`${SITE_COMPANY.url}/about`}
-        image={`${SITE_COMPANY.url}/seed-products/field_drip.jpg`}
+        image={mediaMap.heroManifold}
         schema={[buildOrganizationSchema()]}
       />
       <div className="min-h-screen bg-background text-foreground">
@@ -274,14 +407,14 @@ const About = () => {
                     </div>
                   </div>
 
-                  {/* Field Photography Feature Panel */}
-                  <div className="relative min-h-[260px] border-t border-border bg-muted lg:col-span-5 lg:min-h-full lg:border-l lg:border-t-0">
+                  {/* Real Field Installation Photography Panel */}
+                  <div className="relative min-h-[280px] border-t border-border bg-muted lg:col-span-5 lg:min-h-[480px] lg:border-l lg:border-t-0">
                     <img
-                      src="/seed-products/field_drip.jpg"
-                      alt="Drip irrigation lines watering row crops on a Kenyan farm"
-                      className="h-full w-full object-cover"
+                      src={mediaMap.heroManifold}
+                      alt="DripTech HDPE mainline manifold and venturi headworks installed on a Kenyan farm"
+                      className="h-full w-full object-cover object-center"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
                       <span className="inline-block rounded bg-accent px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-accent-foreground">
                         Kenya Field Execution
@@ -423,7 +556,7 @@ const About = () => {
             </div>
           </section>
 
-          {/* What We Supply & Build (Photography Grid) */}
+          {/* What We Supply & Build (Real Cloudflare Catalogue & Field Photos) */}
           <section className="border-t border-border bg-muted/25 py-12 sm:py-16">
             <div className="dt-container">
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -446,11 +579,19 @@ const About = () => {
                     key={item.title}
                     className="group flex flex-col overflow-hidden border-border bg-card transition-colors hover:border-primary/40"
                   >
-                    <div className="aspect-[16/10] overflow-hidden bg-muted">
+                    <div
+                      className={`aspect-[16/10] overflow-hidden ${
+                        item.fit === "contain" ? "bg-white p-3" : "bg-muted"
+                      }`}
+                    >
                       <img
-                        src={item.image}
+                        src={mediaMap[item.key]}
                         alt={item.alt}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className={`h-full w-full transition-transform duration-300 group-hover:scale-105 ${
+                          item.fit === "contain"
+                            ? "object-contain"
+                            : `object-cover ${item.imagePosition || "object-center"}`
+                        }`}
                         loading="lazy"
                       />
                     </div>
