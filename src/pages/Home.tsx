@@ -6,6 +6,7 @@ import HomeCropAcreageGuide from "@/components/Home/HomeCropAcreageGuide";
 import HomeEngineeringServices from "@/components/Home/HomeEngineeringServices";
 import HomeKitsShowcase from "@/components/Home/HomeKitsShowcase";
 import ProjectsSection from "@/components/Home/ProjectsSection";
+import VideoSection from "@/components/Home/VideoSection";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
 import FAQSection from "@/components/SEO/FAQSection";
 import { COMMON_FAQS } from "@/lib/seo-config";
@@ -32,6 +33,9 @@ const Home = () => {
 
       {/* Verified irrigation project records */}
       <ProjectsSection compact />
+
+      {/* Field demonstration videos */}
+      <VideoSection compact />
 
       <FAQSection
         title="Questions before you choose?"
