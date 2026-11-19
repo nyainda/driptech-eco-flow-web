@@ -31,11 +31,13 @@ import {
   ClipboardCheck,
   CloudSun,
   Copy,
+  Database,
+  Download,
   Droplets,
+  FileDown,
   Gauge,
   Info,
   MessageCircle,
-  Printer,
   RotateCcw,
   Settings2,
   Sun,
@@ -49,14 +51,33 @@ import { useToast } from "@/hooks/use-toast";
 import { formatPrice, getProductPath } from "@/lib/productUrl";
 import { SITE_COMPANY } from "@/config/company";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import PumpReportBudgetTab from "@/components/Calculators/PumpReportBudgetTab";
+import {
+  downloadPumpSolarReportFile,
+  openPumpSolarReportPdf,
+} from "@/lib/pumpReportPdf";
+import {
+  decodeDesignFromParam,
+  deleteLocalSavedReport,
+  fetchSharedReportByCode,
+  generatePumpReportCode,
+  listLocalSavedReports,
+  SavedPumpReportRecord,
+  savePumpSolarReport,
+} from "@/services/pumpReportService";
 import {
   applyKenyaSolarRegionPreset,
   AreaUnit,
+  barFromPressureUnit,
   BatteryChemistry,
   BOREHOLE_CASING_LABELS,
   BoreholeCasingInch,
   calculatePumpSolarSystem,
   CatalogPumpProduct,
+  CustomCostFigures,
+  CustomProjectMetadata,
+  DEFAULT_CUSTOM_COST_FIGURES,
+  DEFAULT_CUSTOM_PROJECT_META,
   DEFAULT_PUMP_SOLAR_INPUTS,
   DemandMode,
   DUST_SOILING_META,
@@ -75,6 +96,8 @@ import {
   PipeSegmentInput,
   PipeSegmentResult,
   PowerSupplyMode,
+  pressureFromBar,
+  PressureUnit,
   PumpSolarInputs,
   PumpSolarResult,
   SKY_CONDITION_PRESETS,
@@ -360,6 +383,27 @@ const PipeSegmentEditor = ({
                 className="h-9 bg-card text-xs"
               />
             </div>
+
+            {segment.material === "custom" && (
+              <div className="space-y-1 sm:col-span-4">
+                <Label className="text-xs text-muted-foreground">
+                  Custom Hazen-Williams C Factor (70–160)
+                </Label>
+                <Input
+                  type="number"
+                  min={70}
+                  max={160}
+                  value={segment.customC ?? 135}
+                  onChange={(e) =>
+                    onChange({
+                      ...segment,
+                      customC: Math.max(70, Math.min(160, Number(e.target.value) || 135)),
+                    })
+                  }
+                  className="h-9 max-w-[200px] bg-card text-xs"
+                />
+              </div>
+            )}
           </div>
 
           <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
@@ -395,11 +439,20 @@ const PipeSegmentEditor = ({
 export const PumpSolarSizingEngine = () => {
   const { toast } = useToast();
   const [inputs, setInputs] = useState<PumpSolarInputs>(DEFAULT_PUMP_SOLAR_INPUTS);
+  const [projectMeta, setProjectMeta] = useState<CustomProjectMetadata>(DEFAULT_CUSTOM_PROJECT_META);
+  const [customCosts, setCustomCosts] = useState<CustomCostFigures>(DEFAULT_CUSTOM_COST_FIGURES);
+  const [pressureUnit, setPressureUnit] = useState<PressureUnit>("bar");
   const [activeTab, setActiveTab] = useState<string>("demand");
   const [activePresetId, setActivePresetId] = useState<string>("borehole_drip_2acre");
   const [catalogPumps, setCatalogPumps] = useState<CatalogPumpProduct[]>([]);
   const [loadingPumps, setLoadingPumps] = useState<boolean>(true);
   const [copiedSpec, setCopiedSpec] = useState<boolean>(false);
+  const [savingDb, setSavingDb] = useState<boolean>(false);
+  const [lastSavedCode, setLastSavedCode] = useState<string | null>(null);
+  const [lastShareUrl, setLastShareUrl] = useState<string | null>(null);
+  const [savedReports, setSavedReports] = useState<SavedPumpReportRecord[]>(() =>
+    listLocalSavedReports(),
+  );
 
   useEffect(() => {
     let active = true;
@@ -416,10 +469,45 @@ export const PumpSolarSizingEngine = () => {
       }
     };
     void loadPumps();
+
+    // Hydrate from shared permalink (?design= or ?report=)
+    const search = typeof window !== "undefined" ? window.location.search : "";
+    if (search) {
+      const qs = new URLSearchParams(search);
+      const encoded = qs.get("design");
+      const code = qs.get("report");
+      if (encoded) {
+        const decoded = decodeDesignFromParam(encoded);
+        if (decoded && active) {
+          setInputs(decoded.inputs);
+          setProjectMeta(decoded.projectMeta);
+          setCustomCosts(decoded.customCosts);
+          if (decoded.reportCode) setLastSavedCode(decoded.reportCode);
+          toast({
+            title: "Shared design loaded",
+            description: "All farm, pipe, solar, and budget inputs have been restored.",
+          });
+        }
+      } else if (code) {
+        void fetchSharedReportByCode(code).then((found) => {
+          if (found && active) {
+            setInputs(found.inputs);
+            setProjectMeta(found.projectMeta);
+            setCustomCosts(found.customCosts);
+            setLastSavedCode(found.reportCode);
+            toast({
+              title: `Loaded report ${found.reportCode}`,
+              description: "Restored sizing design from database.",
+            });
+          }
+        });
+      }
+    }
+
     return () => {
       active = false;
     };
-  }, []);
+  }, [toast]);
 
   const result: PumpSolarResult = useMemo(() => calculatePumpSolarSystem(inputs), [inputs]);
   const matchedPumps = useMemo(
@@ -497,6 +585,70 @@ export const PumpSolarSizingEngine = () => {
     openTrackedWhatsApp(url, "pump solar calculator whatsapp export");
   };
 
+  const getReportPayload = (reportCode?: string) => ({
+    reportCode: reportCode || lastSavedCode || generatePumpReportCode(),
+    inputs,
+    result,
+    projectMeta,
+    customCosts,
+    matchedPumps,
+    shareUrl: lastShareUrl || undefined,
+  });
+
+  const handleOpenPdfReport = () => {
+    openPumpSolarReportPdf(getReportPayload());
+  };
+
+  const handleDownloadHtmlReport = () => {
+    const payload = getReportPayload();
+    downloadPumpSolarReportFile(payload);
+    toast({
+      title: "Engineering report downloaded",
+      description: `Saved DripTech-Pump-Solar-Report-${payload.reportCode}.html`,
+    });
+  };
+
+  const handleSaveReport = async (requestReview: boolean) => {
+    setSavingDb(true);
+    try {
+      const outcome = await savePumpSolarReport({
+        inputs,
+        result,
+        projectMeta,
+        customCosts,
+        matchedPumps,
+        requestEngineerReview: requestReview,
+      });
+      setLastSavedCode(outcome.reportCode);
+      setLastShareUrl(outcome.shareUrl);
+      setSavedReports(listLocalSavedReports());
+
+      if (navigator?.clipboard?.writeText) {
+        void navigator.clipboard.writeText(outcome.shareUrl).catch(() => {});
+      }
+
+      toast({
+        title: `Saved: ${outcome.reportCode}`,
+        description: `${outcome.message} Share link copied to clipboard.`,
+      });
+    } finally {
+      setSavingDb(false);
+    }
+  };
+
+  const handleCopyShareLink = async () => {
+    if (!lastShareUrl) return;
+    try {
+      await navigator.clipboard.writeText(lastShareUrl);
+      toast({
+        title: "Share link copied",
+        description: "Anyone opening this URL loads your exact sizing inputs.",
+      });
+    } catch {
+      // ignore
+    }
+  };
+
   // Visual proportions for the hydraulic TDH stacked bar
   const tdhStaticBlock = Math.max(0, result.staticWaterLiftM + result.drawdownM);
   const tdhElevBlock = Math.max(0, result.elevationGainM + result.dischargeHeightM);
@@ -568,18 +720,24 @@ export const PumpSolarSizingEngine = () => {
         {/* Left: Complex Inputs Workbench */}
         <div className="space-y-6 lg:col-span-7">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-border bg-muted/40 p-1.5 sm:grid-cols-4">
-              <TabsTrigger value="demand" className="py-2 text-xs font-semibold sm:text-sm">
+            <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl border border-border bg-muted/40 p-1.5 sm:grid-cols-5">
+              <TabsTrigger value="demand" className="py-2 text-xs font-semibold sm:text-xs">
                 1. Flow Demand
               </TabsTrigger>
-              <TabsTrigger value="hydraulics" className="py-2 text-xs font-semibold sm:text-sm">
+              <TabsTrigger value="hydraulics" className="py-2 text-xs font-semibold sm:text-xs">
                 2. Pipes &amp; TDH
               </TabsTrigger>
-              <TabsTrigger value="solar" className="py-2 text-xs font-semibold sm:text-sm">
+              <TabsTrigger value="solar" className="py-2 text-xs font-semibold sm:text-xs">
                 3. Solar &amp; Cable
               </TabsTrigger>
-              <TabsTrigger value="expert" className="py-2 text-xs font-semibold sm:text-sm">
+              <TabsTrigger value="expert" className="py-2 text-xs font-semibold sm:text-xs">
                 4. Any Pump / Pro
+              </TabsTrigger>
+              <TabsTrigger
+                value="report"
+                className="col-span-2 py-2 text-xs font-semibold sm:col-span-1 sm:text-xs"
+              >
+                5. Report &amp; Costs
               </TabsTrigger>
             </TabsList>
 
@@ -1031,6 +1189,26 @@ export const PumpSolarSizingEngine = () => {
                             className="bg-card"
                           />
                         </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="bh-yield">Tested Safe Yield (m³/h, optional)</Label>
+                          <Input
+                            id="bh-yield"
+                            type="number"
+                            min={0.1}
+                            max={200}
+                            step={0.5}
+                            placeholder="e.g. 5.0"
+                            value={inputs.boreholeSafeYieldM3h ?? ""}
+                            onChange={(e) => {
+                              const val = e.target.value.trim();
+                              setInputs((p) => ({
+                                ...p,
+                                boreholeSafeYieldM3h: val ? Math.max(0.1, Number(val) || 0.1) : null,
+                              }));
+                            }}
+                            className="bg-card"
+                          />
+                        </div>
                       </>
                     )}
 
@@ -1046,6 +1224,25 @@ export const PumpSolarSizingEngine = () => {
                           setInputs((p) => ({
                             ...p,
                             groundElevationGainM: Number(e.target.value) || 0,
+                          }))
+                        }
+                        className="bg-card"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="site-altitude">Site Altitude (m ASL)</Label>
+                      <Input
+                        id="site-altitude"
+                        type="number"
+                        min={0}
+                        max={4000}
+                        step={50}
+                        value={inputs.siteAltitudeM}
+                        onChange={(e) =>
+                          setInputs((p) => ({
+                            ...p,
+                            siteAltitudeM: Math.max(0, Number(e.target.value) || 0),
                           }))
                         }
                         className="bg-card"
@@ -1072,22 +1269,49 @@ export const PumpSolarSizingEngine = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="working-bar">Required Emitter / Sprinkler Pressure (bar)</Label>
-                      <Input
-                        id="working-bar"
-                        type="number"
-                        min={0}
-                        max={10}
-                        step={0.1}
-                        value={inputs.workingPressureBar}
-                        onChange={(e) =>
-                          setInputs((p) => ({
-                            ...p,
-                            workingPressureBar: Math.max(0, Number(e.target.value) || 0),
-                          }))
-                        }
-                        className="bg-card"
-                      />
+                      <div className="flex items-center justify-between gap-2">
+                        <Label htmlFor="working-bar">Working Field Pressure</Label>
+                        <button
+                          type="button"
+                          onClick={() => setInputs((p) => ({ ...p, workingPressureBar: 0.2 }))}
+                          className="text-[11px] font-semibold text-primary hover:underline"
+                        >
+                          Fill Tank (0.2 bar)
+                        </button>
+                      </div>
+                      <div className="flex gap-1.5">
+                        <Input
+                          id="working-bar"
+                          type="number"
+                          min={0}
+                          max={200}
+                          step={pressureUnit === "bar" ? 0.1 : 1}
+                          value={pressureFromBar(inputs.workingPressureBar, pressureUnit)}
+                          onChange={(e) =>
+                            setInputs((p) => ({
+                              ...p,
+                              workingPressureBar: barFromPressureUnit(
+                                Math.max(0, Number(e.target.value) || 0),
+                                pressureUnit,
+                              ),
+                            }))
+                          }
+                          className="bg-card"
+                        />
+                        <Select
+                          value={pressureUnit}
+                          onValueChange={(val: PressureUnit) => setPressureUnit(val)}
+                        >
+                          <SelectTrigger className="w-20 shrink-0 bg-card text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="bar">bar</SelectItem>
+                            <SelectItem value="psi">psi</SelectItem>
+                            <SelectItem value="m">m</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
                     <div className="space-y-1.5">
@@ -1911,6 +2135,41 @@ export const PumpSolarSizingEngine = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* TAB 5: CUSTOM PROJECT, BUDGET FIGURES, DB SAVE & DOWNLOADABLE REPORT */}
+            <TabsContent value="report" className="mt-4">
+              <PumpReportBudgetTab
+                inputs={inputs}
+                result={result}
+                projectMeta={projectMeta}
+                onChangeProjectMeta={setProjectMeta}
+                customCosts={customCosts}
+                onChangeCustomCosts={setCustomCosts}
+                matchedPumps={matchedPumps}
+                savedReports={savedReports}
+                savingDb={savingDb}
+                lastSavedCode={lastSavedCode}
+                lastShareUrl={lastShareUrl}
+                onSaveReport={handleSaveReport}
+                onCopyShareLink={handleCopyShareLink}
+                onDownloadPdfReport={handleOpenPdfReport}
+                onDownloadHtmlReport={handleDownloadHtmlReport}
+                onLoadSavedReport={(rec) => {
+                  setInputs(rec.inputs);
+                  setProjectMeta(rec.projectMeta);
+                  setCustomCosts(rec.customCosts);
+                  setLastSavedCode(rec.reportCode);
+                  setLastShareUrl(rec.shareUrl);
+                  toast({
+                    title: `Loaded ${rec.reportCode}`,
+                    description: rec.projectMeta.projectName,
+                  });
+                }}
+                onDeleteSavedReport={(code) => {
+                  setSavedReports(deleteLocalSavedReport(code));
+                }}
+              />
+            </TabsContent>
           </Tabs>
         </div>
 
@@ -2194,11 +2453,39 @@ export const PumpSolarSizingEngine = () => {
               <div className="grid grid-cols-2 gap-2 pt-1 print:hidden">
                 <Button
                   type="button"
-                  onClick={handleWhatsAppExport}
-                  className="col-span-2 bg-[hsl(var(--dt-whatsapp))] text-white hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
+                  onClick={handleOpenPdfReport}
+                  className="col-span-2 bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Send Sizing Brief on WhatsApp
+                  <FileDown className="mr-2 h-4 w-4" />
+                  Save / Download PDF Report
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadHtmlReport}
+                >
+                  <Download className="mr-1.5 h-3.5 w-3.5" />
+                  Download File
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={savingDb}
+                  onClick={() => handleSaveReport(false)}
+                >
+                  <Database className="mr-1.5 h-3.5 w-3.5 text-primary" />
+                  {savingDb ? "Saving..." : "Save to DB"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleWhatsAppExport}
+                  className="bg-[hsl(var(--dt-whatsapp))] text-white hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
+                  size="sm"
+                >
+                  <MessageCircle className="mr-1.5 h-3.5 w-3.5" />
+                  WhatsApp Brief
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={handleCopySpec}>
                   {copiedSpec ? (
@@ -2212,15 +2499,6 @@ export const PumpSolarSizingEngine = () => {
                       Copy Spec
                     </>
                   )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.print()}
-                >
-                  <Printer className="mr-1.5 h-3.5 w-3.5" />
-                  Print Sheet
                 </Button>
                 <Link
                   to={`/contact?topic=design-boq&flow=${result.designFlowM3h.toFixed(
@@ -2346,13 +2624,35 @@ export const PumpSolarSizingEngine = () => {
                     </CardContent>
                   </div>
 
-                  <div className="flex gap-2 border-t border-border/70 p-3">
+                  <div className="flex flex-wrap gap-2 border-t border-border/70 p-3">
                     <Link
                       to={getProductPath(product)}
                       className="inline-flex h-9 flex-1 items-center justify-center rounded-lg border border-border bg-background px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
                     >
                       View Specs
                     </Link>
+                    {typeof product.price === "number" && product.price > 0 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-2.5 text-xs font-semibold"
+                        onClick={() => {
+                          setCustomCosts((prev) => ({
+                            ...prev,
+                            includeInReport: true,
+                            pumpUnitKes: product.price ?? prev.pumpUnitKes,
+                          }));
+                          setActiveTab("report");
+                          toast({
+                            title: "Pump price added to budget",
+                            description: `${product.name} (${formatPrice(product.price)}) set in Report & Costs tab.`,
+                          });
+                        }}
+                      >
+                        Use Price
+                      </Button>
+                    )}
                     <Button
                       type="button"
                       size="sm"

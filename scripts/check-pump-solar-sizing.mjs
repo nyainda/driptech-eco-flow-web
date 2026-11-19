@@ -1,11 +1,16 @@
 import assert from "node:assert/strict";
 import {
   applyKenyaSolarRegionPreset,
+  barFromPressureUnit,
   calculatePumpSolarSystem,
+  computeCustomFinancialSummary,
+  computePipeSegmentLoss,
+  DEFAULT_CUSTOM_COST_FIGURES,
   DEFAULT_PUMP_SOLAR_INPUTS,
   getInnerDiameterForPreset,
   matchCatalogPumps,
   parseCatalogPumpSpecs,
+  pressureFromBar,
 } from "../src/lib/pumpSolarSizing.ts";
 
 // 1. Default 2-acre borehole solar drip calculation check
@@ -248,5 +253,71 @@ const slim3Matches = matchCatalogPumps(
 );
 assert.equal(slim3Matches.length, 1, "3-inch casing must exclude 4-inch pump and retain 3SDS4");
 assert.equal(slim3Matches[0].product.id, "slim3");
+
+// 10. Borehole driller yield ceiling alert
+const yieldExceeded = calculatePumpSolarSystem({
+  ...DEFAULT_PUMP_SOLAR_INPUTS,
+  boreholeSafeYieldM3h: 4.0,
+});
+assert.ok(
+  yieldExceeded.boreholeYieldUtilisationPct && yieldExceeded.boreholeYieldUtilisationPct > 100,
+  "Flow > driller yield must report >100% utilisation",
+);
+assert.ok(
+  yieldExceeded.alerts.some((a) => /Safe Yield/i.test(a.title)),
+  "Expected borehole safe yield exceeded critical alert",
+);
+
+// 11. Custom Hazen-Williams roughness C & pressure conversion helpers
+const roughPipe = computePipeSegmentLoss(
+  {
+    label: "Custom Rough",
+    enabled: true,
+    material: "custom",
+    customC: 90,
+    nominalOdMm: 63,
+    innerDiameterMm: 53.6,
+    lengthM: 100,
+  },
+  6,
+  false,
+);
+const smoothPipe = computePipeSegmentLoss(
+  {
+    label: "Custom Smooth",
+    enabled: true,
+    material: "custom",
+    customC: 150,
+    nominalOdMm: 63,
+    innerDiameterMm: 53.6,
+    lengthM: 100,
+  },
+  6,
+  false,
+);
+assert.ok(roughPipe.frictionLossM > smoothPipe.frictionLossM * 2, "Lower C factor must raise friction sharply");
+assert.ok(Math.abs(pressureFromBar(1, "psi") - 14.5) <= 0.1);
+assert.ok(Math.abs(barFromPressureUnit(14.50377, "psi") - 1.0) <= 0.01);
+
+// 12. Custom user equipment cost & payback calculations
+const financial = computeCustomFinancialSummary(
+  {
+    ...DEFAULT_CUSTOM_COST_FIGURES,
+    includeInReport: true,
+    pumpUnitKes: 85000,
+    solarArrayCtrlKes: 120000,
+    pipesFittingsKes: 65000,
+    cableProtectionKes: 30000,
+    tankCivilKes: 80000,
+    installationTestKes: 40000,
+    dailyBaselineFuelCostKes: 1500,
+    irrigationDaysPerYear: 200,
+  },
+  base,
+  28,
+);
+assert.equal(financial.totalCustomCapexKes, 420000);
+assert.equal(financial.annualSavingsKes, 300000);
+assert.equal(financial.paybackYears, 1.4);
 
 console.log("check-pump-solar-sizing passed all assertions.");

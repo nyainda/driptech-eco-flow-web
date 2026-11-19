@@ -10,15 +10,17 @@
 export type DemandMode = "crop_area" | "emitter_block" | "direct_flow";
 export type IrrigationMethod =
   | "drip"
+  | "rainhose"
   | "micro_sprinkler"
   | "overhead_sprinkler"
   | "rain_gun"
   | "tank_transfer";
 export type AreaUnit = "acres" | "hectares" | "sqm";
 export type FlowUnit = "m3h" | "lph" | "lpm";
+export type PressureUnit = "bar" | "psi" | "m";
 
 export type WaterSourceType = "borehole" | "surface_suction" | "tank_booster";
-export type PipeMaterial = "hdpe" | "upvc" | "gi_new" | "gi_old";
+export type PipeMaterial = "hdpe" | "upvc" | "gi_new" | "gi_old" | "custom";
 export type PowerSupplyMode = "solar_dc" | "solar_hybrid" | "ac_grid_generator";
 export type BatteryChemistry = "lifepo4" | "tubular_lead_acid";
 export type SolarSeasonMode = "worst_cloudy" | "annual_avg" | "dry_peak";
@@ -30,6 +32,7 @@ export interface PipeSegmentInput {
   label: string;
   enabled: boolean;
   material: PipeMaterial;
+  customC?: number;
   nominalOdMm: number;
   /** True internal diameter in mm (PN10/PN12.5 wall subtracted by default, editable for custom pipes). */
   innerDiameterMm: number;
@@ -72,6 +75,8 @@ export interface PumpSolarInputs {
   sourceType: WaterSourceType;
   boreholeCasingInch: BoreholeCasingInch;
   boreholeTotalDepthM: number;
+  /** Tested safe driller yield in m3/h (null when unknown). */
+  boreholeSafeYieldM3h: number | null;
   siteAltitudeM: number;
   /** Borehole depth from ground to static water table (m), or river/dam suction lift (m). */
   staticWaterDepthM: number;
@@ -426,15 +431,15 @@ export interface PipePreset {
 
 /** Standard Kenyan OD sizes paired with realistic PN10/BS inner bores (mm). */
 export const KENYA_PIPE_PRESETS: PipePreset[] = [
-  { nominalOdMm: 25, label: "25 mm (3/4\")", defaultIdByMaterial: { hdpe: 21.0, upvc: 21.6, gi_new: 21.0, gi_old: 20.5 } },
-  { nominalOdMm: 32, label: "32 mm (1\")", defaultIdByMaterial: { hdpe: 27.2, upvc: 28.0, gi_new: 27.2, gi_old: 26.5 } },
-  { nominalOdMm: 40, label: "40 mm (1.25\")", defaultIdByMaterial: { hdpe: 34.0, upvc: 35.2, gi_new: 35.9, gi_old: 34.8 } },
-  { nominalOdMm: 50, label: "50 mm (1.5\")", defaultIdByMaterial: { hdpe: 42.6, upvc: 44.2, gi_new: 41.8, gi_old: 40.5 } },
-  { nominalOdMm: 63, label: "63 mm (2\")", defaultIdByMaterial: { hdpe: 53.6, upvc: 55.8, gi_new: 53.0, gi_old: 51.5 } },
-  { nominalOdMm: 75, label: "75 mm (2.5\")", defaultIdByMaterial: { hdpe: 63.8, upvc: 66.4, gi_new: 68.8, gi_old: 67.0 } },
-  { nominalOdMm: 90, label: "90 mm (3\")", defaultIdByMaterial: { hdpe: 76.6, upvc: 79.8, gi_new: 80.8, gi_old: 79.0 } },
-  { nominalOdMm: 110, label: "110 mm (4\")", defaultIdByMaterial: { hdpe: 93.8, upvc: 97.6, gi_new: 105.0, gi_old: 102.0 } },
-  { nominalOdMm: 160, label: "160 mm (6\")", defaultIdByMaterial: { hdpe: 136.2, upvc: 141.8, gi_new: 155.0, gi_old: 150.0 } },
+  { nominalOdMm: 25, label: "25 mm (3/4\")", defaultIdByMaterial: { hdpe: 21.0, upvc: 21.6, gi_new: 21.0, gi_old: 20.5, custom: 21.0 } },
+  { nominalOdMm: 32, label: "32 mm (1\")", defaultIdByMaterial: { hdpe: 27.2, upvc: 28.0, gi_new: 27.2, gi_old: 26.5, custom: 27.2 } },
+  { nominalOdMm: 40, label: "40 mm (1.25\")", defaultIdByMaterial: { hdpe: 34.0, upvc: 35.2, gi_new: 35.9, gi_old: 34.8, custom: 34.0 } },
+  { nominalOdMm: 50, label: "50 mm (1.5\")", defaultIdByMaterial: { hdpe: 42.6, upvc: 44.2, gi_new: 41.8, gi_old: 40.5, custom: 42.6 } },
+  { nominalOdMm: 63, label: "63 mm (2\")", defaultIdByMaterial: { hdpe: 53.6, upvc: 55.8, gi_new: 53.0, gi_old: 51.5, custom: 53.6 } },
+  { nominalOdMm: 75, label: "75 mm (2.5\")", defaultIdByMaterial: { hdpe: 63.8, upvc: 66.4, gi_new: 68.8, gi_old: 67.0, custom: 63.8 } },
+  { nominalOdMm: 90, label: "90 mm (3\")", defaultIdByMaterial: { hdpe: 76.6, upvc: 79.8, gi_new: 80.8, gi_old: 79.0, custom: 76.6 } },
+  { nominalOdMm: 110, label: "110 mm (4\")", defaultIdByMaterial: { hdpe: 93.8, upvc: 97.6, gi_new: 105.0, gi_old: 102.0, custom: 93.8 } },
+  { nominalOdMm: 160, label: "160 mm (6\")", defaultIdByMaterial: { hdpe: 136.2, upvc: 141.8, gi_new: 155.0, gi_old: 150.0, custom: 136.2 } },
 ];
 
 export const PIPE_MATERIAL_META: Record<
@@ -445,6 +450,7 @@ export const PIPE_MATERIAL_META: Record<
   upvc: { label: "uPVC Pressure Pipe", hazenC: 145, note: "Smooth-bore rigid buried mainline pipe (C = 145)." },
   gi_new: { label: "New GI Galvanized Steel", hazenC: 120, note: "Rigid threaded borehole riser pipe (C = 120)." },
   gi_old: { label: "Aged / Scaled Steel Pipe", hazenC: 100, note: "Roughness penalty for older mineralized GI risers (C = 100)." },
+  custom: { label: "Custom Pipe Roughness (C)", hazenC: 135, note: "Enter your exact Hazen-Williams C factor (80–155)." },
 };
 
 export interface SolarModulePreset {
@@ -470,6 +476,7 @@ export const METHOD_DEFAULTS: Record<
   { label: string; efficiencyPct: number; defaultPressureBar: number }
 > = {
   drip: { label: "Drip Lines / Button Drippers", efficiencyPct: 90, defaultPressureBar: 1.0 },
+  rainhose: { label: "Rain Hose (32mm / 40mm Spray Pipe)", efficiencyPct: 78, defaultPressureBar: 1.5 },
   micro_sprinkler: { label: "Micro-Sprinklers / Orchard Jets", efficiencyPct: 82, defaultPressureBar: 2.0 },
   overhead_sprinkler: { label: "Impact Sprinklers", efficiencyPct: 75, defaultPressureBar: 3.0 },
   rain_gun: { label: "Rain Gun Traveler / Stand", efficiencyPct: 70, defaultPressureBar: 4.5 },
@@ -497,6 +504,7 @@ export const DEFAULT_PUMP_SOLAR_INPUTS: PumpSolarInputs = {
   sourceType: "borehole",
   boreholeCasingInch: "4",
   boreholeTotalDepthM: 100,
+  boreholeSafeYieldM3h: null,
   siteAltitudeM: 1650,
   staticWaterDepthM: 55,
   drawdownM: 10,
@@ -700,9 +708,119 @@ export interface PumpSolarResult {
 
   // Custom pump curve check
   customPumpEval: CustomPumpEvaluation;
+  boreholeYieldUtilisationPct: number | null;
 
   // Engineering alerts & recommendations
   alerts: Array<{ severity: "info" | "warning" | "critical"; title: string; detail: string }>;
+}
+
+export interface CustomProjectMetadata {
+  projectName: string;
+  clientName: string;
+  clientPhone: string;
+  clientEmail: string;
+  countyTown: string;
+  notes: string;
+}
+
+export interface CustomCostFigures {
+  includeInReport: boolean;
+  pumpUnitKes: number | null;
+  solarArrayCtrlKes: number | null;
+  pipesFittingsKes: number | null;
+  cableProtectionKes: number | null;
+  tankCivilKes: number | null;
+  installationTestKes: number | null;
+  compareBaselineFuel: "petrol_diesel" | "kplc_grid";
+  dailyBaselineFuelCostKes: number | null;
+  irrigationDaysPerYear: number;
+}
+
+export interface CustomFinancialSummary {
+  totalCustomCapexKes: number;
+  hasAnyCost: boolean;
+  annualBaselineOperatingKes: number;
+  annualSavingsKes: number;
+  paybackYears: number | null;
+  tenYearNetSavingsKes: number;
+}
+
+export const DEFAULT_CUSTOM_PROJECT_META: CustomProjectMetadata = {
+  projectName: "Farm Pump & Solar Sizing Design",
+  clientName: "",
+  clientPhone: "",
+  clientEmail: "",
+  countyTown: "Kiambu / Nairobi Corridor",
+  notes: "",
+};
+
+export const DEFAULT_CUSTOM_COST_FIGURES: CustomCostFigures = {
+  includeInReport: false,
+  pumpUnitKes: null,
+  solarArrayCtrlKes: null,
+  pipesFittingsKes: null,
+  cableProtectionKes: null,
+  tankCivilKes: null,
+  installationTestKes: null,
+  compareBaselineFuel: "petrol_diesel",
+  dailyBaselineFuelCostKes: null,
+  irrigationDaysPerYear: 240,
+};
+
+export function pressureFromBar(bar: number, unit: PressureUnit): number {
+  if (unit === "psi") return Number((bar * 14.50377).toFixed(1));
+  if (unit === "m") return Number((bar * 10.19716).toFixed(1));
+  return Number(bar.toFixed(2));
+}
+
+export function barFromPressureUnit(value: number, unit: PressureUnit): number {
+  if (unit === "psi") return Math.max(0, value / 14.50377);
+  if (unit === "m") return Math.max(0, value / 10.19716);
+  return Math.max(0, value);
+}
+
+/** Computes user-entered project budget totals and baseline fuel/grid payback comparison. */
+export function computeCustomFinancialSummary(
+  costs: CustomCostFigures,
+  result: PumpSolarResult,
+  tariffKesKwh: number,
+): CustomFinancialSummary {
+  const parts = [
+    costs.pumpUnitKes,
+    costs.solarArrayCtrlKes,
+    costs.pipesFittingsKes,
+    costs.cableProtectionKes,
+    costs.tankCivilKes,
+    costs.installationTestKes,
+  ].filter((v): v is number => typeof v === "number" && Number.isFinite(v) && v > 0);
+
+  const hasAnyCost = parts.length > 0;
+  const totalCustomCapexKes = parts.reduce((sum, v) => sum + v, 0);
+  const daysYr = clamp(costs.irrigationDaysPerYear || 240, 30, 365);
+
+  const estimatedDailyFuelKes =
+    typeof costs.dailyBaselineFuelCostKes === "number" && costs.dailyBaselineFuelCostKes > 0
+      ? costs.dailyBaselineFuelCostKes
+      : costs.compareBaselineFuel === "kplc_grid"
+        ? result.dailyEnergyKwh * Math.max(10, tariffKesKwh || 28)
+        : result.dailyEnergyKwh * 72; // approx KES/kWh mechanical diesel/petrol pump equivalent when fuel figure not entered
+
+  const annualBaselineOperatingKes = Math.round(estimatedDailyFuelKes * daysYr);
+  const annualSavingsKes = annualBaselineOperatingKes;
+  const paybackYears =
+    totalCustomCapexKes > 0 && annualSavingsKes > 0
+      ? Number((totalCustomCapexKes / annualSavingsKes).toFixed(2))
+      : null;
+  const tenYearNetSavingsKes = annualSavingsKes * 10 - totalCustomCapexKes;
+
+  return {
+    totalCustomCapexKes,
+    hasAnyCost,
+    annualBaselineOperatingKes,
+    annualSavingsKes,
+    paybackYears,
+    tenYearNetSavingsKes,
+  };
 }
 
 const STANDARD_KENYA_HP_RATINGS = [0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 5.5, 7.5, 10, 12.5, 15, 20, 25, 30];
@@ -737,7 +855,10 @@ export function computePipeSegmentLoss(
   flowM3h: number,
   isSuction: boolean,
 ): PipeSegmentResult {
-  const hazenC = PIPE_MATERIAL_META[segment.material].hazenC;
+  const hazenC =
+    segment.material === "custom"
+      ? clamp(segment.customC ?? 135, 70, 160)
+      : PIPE_MATERIAL_META[segment.material].hazenC;
   const safeIdMm = Math.max(8, segment.innerDiameterMm);
   const safeLenM = Math.max(0, segment.lengthM);
 
@@ -1023,6 +1144,22 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
         severity: "critical",
         title: "Insufficient Borehole Submergence Clearance",
         detail: boreholeDepthAlert,
+      });
+    }
+    if (
+      typeof inputs.boreholeSafeYieldM3h === "number" &&
+      inputs.boreholeSafeYieldM3h > 0 &&
+      designFlowM3h > inputs.boreholeSafeYieldM3h
+    ) {
+      const safeHrs = (dailyGrossVolumeM3 / inputs.boreholeSafeYieldM3h).toFixed(1);
+      alerts.push({
+        severity: "critical",
+        title: "Required Flow Exceeds Driller Borehole Safe Yield",
+        detail: `Peak design flow (${designFlowM3h.toFixed(
+          1,
+        )} m³/h) exceeds tested borehole yield (${inputs.boreholeSafeYieldM3h.toFixed(
+          1,
+        )} m³/h). Reduce pump flow into a storage buffer tank (~${safeHrs}h slower draw) or split field into smaller rotational zones.`,
       });
     }
     if (inputs.boreholeCasingInch === "6" || inputs.boreholeCasingInch === "8" || inputs.boreholeCasingInch === "open_well") {
@@ -1352,6 +1489,13 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     summary: cloudSummary,
   };
 
+  const boreholeYieldUtilisationPct =
+    inputs.sourceType === "borehole" &&
+    typeof inputs.boreholeSafeYieldM3h === "number" &&
+    inputs.boreholeSafeYieldM3h > 0
+      ? Number(((designFlowM3h / inputs.boreholeSafeYieldM3h) * 100).toFixed(0))
+      : null;
+
   return {
     areaSqm,
     dailyNetVolumeM3,
@@ -1421,6 +1565,7 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     recommendedTankM3,
     recommendedTankLiters,
     customPumpEval,
+    boreholeYieldUtilisationPct,
     alerts,
   };
 }
