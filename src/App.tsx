@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/Layout/ThemeProvider";
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
@@ -92,6 +92,7 @@ const App = () => {
                   <Route path="/catalog" element={<Products />} /> {/* Redirect to Products */}
                   <Route path="/irrigation-cost-calculator-kenya" element={<IrrigationCostCalculator />} />
                   <Route path="/pump-solar-calculator-kenya" element={<PumpSolarCalculator />} />
+                  <Route path="/pump-solar-sizing" element={<Navigate to="/pump-solar-calculator-kenya" replace />} />
                   <Route path="/drip-irrigation-kenya" element={<SEOContentPage />} />
                   <Route path="/drip-irrigation-kit-price-kenya" element={<SEOContentPage />} />
                   <Route path="/driplines-for-sale-kenya" element={<SEOContentPage />} />
