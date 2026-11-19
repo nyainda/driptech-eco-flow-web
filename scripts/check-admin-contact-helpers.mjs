@@ -8,6 +8,11 @@ import {
   parseAcreageFromText,
   parseImpactHighlights,
 } from "../src/lib/adminContactHelpers.ts";
+import {
+  computeProjectPortfolioStats,
+  formatAreaCoveredValue,
+  formatWaterSavedValue,
+} from "../src/lib/projectMetrics.ts";
 
 // Kenya phone normalization
 assert.equal(normalizeKenyaWhatsAppDigits("0712 345 678"), "254712345678");
@@ -50,4 +55,18 @@ assert.deepEqual(
 const csv = buildCsvContent(["Name", "Notes"], [['Farm "A"', "Ready"]]);
 assert.equal(csv, '"Name","Notes"\n"Farm ""A""","Ready"');
 
-console.log("All admin contact, team, story & engineering handoff helper checks passed.");
+// Project metric formatting & portfolio summary (outlier-safe)
+assert.equal(formatWaterSavedValue(60), "60%");
+assert.equal(formatWaterSavedValue(4000), "4,000 L");
+assert.equal(formatWaterSavedValue(0), null);
+assert.equal(formatAreaCoveredValue(30000), "30,000 ac");
+const portfolio = computeProjectPortfolioStats([
+  { status: "completed", area_covered: 120, water_saved: 20, location: "Kitui", project_type: "Commercial Farm" },
+  { status: "on_hold", area_covered: 30000, water_saved: 4000, location: "Murang'a", project_type: "Orchard" },
+  { status: "in_progress", area_covered: 3000, water_saved: 60, location: "Kilifi", project_type: "Urban Landscaping" },
+]);
+assert.equal(portfolio.total, 3);
+assert.equal(portfolio.completed, 1);
+assert.equal(portfolio.avgWaterSavedPct, 40);
+
+console.log("All admin contact, team, story & project helper checks passed.");
