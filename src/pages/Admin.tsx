@@ -528,7 +528,7 @@ const AdminContent = () => {
       case "team":
         return <TeamManagement />;
       case "success-stories":
-        return <SuccessStoriesManagement />;
+        return <SuccessStoriesManagement onStartEngineeringReport={handleStartEngineeringReport} />;
       case "documents":
         return <DocumentManagement />;
       case "discounts":

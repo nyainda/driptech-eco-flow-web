@@ -76,3 +76,71 @@ export function inferIrrigationSystemType(
   }
   return undefined;
 }
+
+export type TeamDepartment = "leadership" | "engineering" | "sales" | "operations";
+
+/** Categorizes a staff member's job title into a directory department badge. */
+export function inferTeamDepartment(position?: string | null): TeamDepartment {
+  const pos = (position || "").toLowerCase();
+  if (!pos) return "operations";
+
+  if (
+    pos.includes("ceo") ||
+    pos.includes("director") ||
+    pos.includes("founder") ||
+    pos.includes("head of") ||
+    pos.includes("lead") ||
+    pos.includes("manager") ||
+    pos.includes("chief")
+  ) {
+    return "leadership";
+  }
+  if (
+    pos.includes("engineer") ||
+    pos.includes("agronom") ||
+    pos.includes("technician") ||
+    pos.includes("hydraulic") ||
+    pos.includes("solar") ||
+    pos.includes("installer") ||
+    pos.includes("surveyor")
+  ) {
+    return "engineering";
+  }
+  if (
+    pos.includes("sales") ||
+    pos.includes("business development") ||
+    pos.includes("account") ||
+    pos.includes("advisor") ||
+    pos.includes("marketing") ||
+    pos.includes("client")
+  ) {
+    return "sales";
+  }
+  return "operations";
+}
+
+/** Splits free-form case study results into crisp pill strings. */
+export function parseImpactHighlights(results?: string | null): string[] {
+  if (!results) return [];
+  return results
+    .split(/\r?\n|;|•/)
+    .map((item) => item.replace(/^[-*\s]+/, "").trim())
+    .filter(Boolean)
+    .slice(0, 6);
+}
+
+/** Escapes a single CSV value safely. */
+export function csvEscapeCell(val?: string | null): string {
+  return `"${(val || "").replace(/"/g, '""')}"`;
+}
+
+/** Builds a downloadable CSV string from header and cell matrices. */
+export function buildCsvContent(
+  headers: string[],
+  rows: Array<Array<string | null | undefined>>,
+): string {
+  return [
+    headers.map((h) => csvEscapeCell(h)).join(","),
+    ...rows.map((r) => r.map((cell) => csvEscapeCell(cell)).join(",")),
+  ].join("\n");
+}
