@@ -67,6 +67,7 @@ import {
   DEFAULT_CLIENT_REPORT_META,
   DEFAULT_DAM_CONFIG,
   DEFAULT_FIELD_CONFIG,
+  EngineeringReportSeed,
   FieldIrrigationConfig,
   FieldSystemType,
   generateAdminEngReportCode,
@@ -188,7 +189,15 @@ const ADMIN_PRESET_TEMPLATES: Array<{
 const formatKes = (val?: number | null) =>
   val && val > 0 ? `KES ${Math.round(val).toLocaleString("en-KE")}` : "Pending Quote";
 
-export default function EngineeringReportsManagement() {
+interface EngineeringReportsManagementProps {
+  initialSeed?: EngineeringReportSeed | null;
+  onSeedConsumed?: () => void;
+}
+
+export default function EngineeringReportsManagement({
+  initialSeed,
+  onSeedConsumed,
+}: EngineeringReportsManagementProps = {}) {
   const { toast } = useToast();
 
   const [studioTab, setStudioTab] = useState<string>("inbox");
@@ -287,7 +296,7 @@ export default function EngineeringReportsManagement() {
   // Seed default BOQ automatically on initial render once catalogue loads
   const seededInitialBoqRef = useRef(false);
   useEffect(() => {
-    if (!loadingCatalog && !seededInitialBoqRef.current) {
+    if (!loadingCatalog && !seededInitialBoqRef.current && !initialSeed) {
       seededInitialBoqRef.current = true;
       const generated = generateAutoEngineeringBoq({
         design,
@@ -299,7 +308,69 @@ export default function EngineeringReportsManagement() {
       setBoqSections(generated.sections);
       setBoqItems(generated.items);
     }
-  }, [loadingCatalog, catalogProducts, design, field, dam]);
+  }, [loadingCatalog, catalogProducts, design, field, dam, initialSeed]);
+
+  // Apply incoming cross-module seed (from CRM Customer, Contact Message, or Irrigation Kit)
+  useEffect(() => {
+    if (!initialSeed || loadingCatalog) return;
+    seededInitialBoqRef.current = true;
+    const freshCode = generateAdminEngReportCode();
+    const nextField: FieldIrrigationConfig = {
+      ...DEFAULT_FIELD_CONFIG,
+      ...(initialSeed.systemType ? { systemType: initialSeed.systemType } : {}),
+      ...(initialSeed.acres && initialSeed.acres > 0 ? { acres: initialSeed.acres } : {}),
+      ...(initialSeed.cropName ? { cropName: initialSeed.cropName } : {}),
+    };
+    const nextDam: DamStorageConfig = { ...DEFAULT_DAM_CONFIG };
+    const nextPump: PumpSolarInputs = { ...DEFAULT_PUMP_SOLAR_INPUTS };
+    const nextCoupling: HydraulicCouplingMode = "direct_pressurized";
+
+    setSelectedCustomerId(initialSeed.customerId || "");
+    setField(nextField);
+    setDam(nextDam);
+    setCouplingMode(nextCoupling);
+    setPumpInputs(nextPump);
+    setMeta({
+      ...DEFAULT_CLIENT_REPORT_META,
+      reportCode: freshCode,
+      reportEdition: initialSeed.reportEdition || "client_proposal",
+      clientName: initialSeed.clientName || DEFAULT_CLIENT_REPORT_META.clientName,
+      companyFarmName: initialSeed.companyFarmName || "",
+      clientPhone: initialSeed.clientPhone || "",
+      clientEmail: initialSeed.clientEmail || "",
+      countyLocation: initialSeed.countyLocation || DEFAULT_CLIENT_REPORT_META.countyLocation,
+      projectTitle:
+        initialSeed.projectTitle ||
+        `${nextField.acres}-Acre ${nextField.cropName} Irrigation & Solar Engineering Proposal`,
+      siteNotes: initialSeed.siteNotes || DEFAULT_CLIENT_REPORT_META.siteNotes,
+    });
+
+    const nextDesign = computeCompleteEngineeringDesign({
+      field: nextField,
+      dam: nextDam,
+      pumpInputs: nextPump,
+      couplingMode: nextCoupling,
+      catalogPumps,
+    });
+    const generated = generateAutoEngineeringBoq({
+      design: nextDesign,
+      field: nextField,
+      dam: nextDam,
+      pumpInputs: nextDesign.syncedPumpInputs,
+      catalogProducts,
+    });
+    setBoqSections(generated.sections);
+    setBoqItems(generated.items);
+    setStudioTab("field");
+    toast({
+      title: `Prefilled Studio (${freshCode})`,
+      description:
+        initialSeed.sourceModule
+          ? `Loaded context from ${initialSeed.sourceModule} into Engineering Studio.`
+          : "Client details and initial hydraulic BOQ are ready.",
+    });
+    onSeedConsumed?.();
+  }, [initialSeed, loadingCatalog, catalogPumps, catalogProducts, onSeedConsumed, toast]);
 
   const handleRegenerateBoq = () => {
     const generated = generateAutoEngineeringBoq({

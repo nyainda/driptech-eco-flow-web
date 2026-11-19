@@ -95,6 +95,22 @@ export interface ClientReportMetadata {
   paymentTerms: string;
 }
 
+export interface EngineeringReportSeed {
+  clientName?: string;
+  companyFarmName?: string;
+  clientPhone?: string;
+  clientEmail?: string;
+  countyLocation?: string;
+  projectTitle?: string;
+  acres?: number;
+  cropName?: string;
+  systemType?: FieldSystemType;
+  siteNotes?: string;
+  customerId?: string;
+  reportEdition?: ReportEdition;
+  sourceModule?: string;
+}
+
 export interface FieldHydraulicsSummary {
   systemType: FieldSystemType;
   areaSqm: number;
