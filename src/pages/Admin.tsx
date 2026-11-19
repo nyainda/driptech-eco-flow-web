@@ -172,7 +172,7 @@ const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     id: "engineering-reports",
-    label: "Engineering Reports",
+    label: "Client Engineering Report",
     icon: Compass,
     description: "1-click Pump, Solar PV, Drip, Sprinkler & Dam Liner client reports + BOQ",
     group: "sales",
@@ -715,6 +715,17 @@ const AdminContent = () => {
                 </kbd>
               </button>
 
+              {/* Always-Accessible Client Engineering Report Shortcut (md+) */}
+              <Button
+                variant={activeTab === "engineering-reports" ? "default" : "outline"}
+                size="sm"
+                onClick={() => selectModule("engineering-reports")}
+                className="hidden md:inline-flex xl:hidden h-8 rounded-xl text-xs gap-1.5 border-primary/40 text-primary hover:bg-primary/10"
+              >
+                <Compass className="h-3.5 w-3.5" />
+                Client Engineering Report
+              </Button>
+
               {/* Quick Action Pills on Large Screens */}
               <div className="hidden xl:flex items-center gap-1.5">
                 <Button
@@ -742,7 +753,7 @@ const AdminContent = () => {
                   className="h-8 rounded-xl text-xs gap-1.5"
                 >
                   <Compass className="h-3.5 w-3.5 text-primary" />
-                  Eng Reports
+                  Client Engineering Report
                 </Button>
                 <Button
                   variant={activeTab === "sync" ? "default" : "outline"}
