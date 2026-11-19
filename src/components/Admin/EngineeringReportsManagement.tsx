@@ -43,6 +43,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import { SITE_COMPANY } from "@/config/company";
 import PumpCurveVisualizer from "@/components/Calculators/PumpCurveVisualizer";
+import SolarPumpBatteryAdvisor from "@/components/Calculators/SolarPumpBatteryAdvisor";
 import BOQSectionBuilder, {
   type BOQItem,
   type BOQSection,
@@ -1520,10 +1521,9 @@ export default function EngineeringReportsManagement() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="solar_hybrid">Solar VFD + AC Hybrid</SelectItem>
-                    <SelectItem value="solar_dc">Pure Solar DC Pump</SelectItem>
-                    <SelectItem value="grid_ac">3-Phase / 1-Phase Grid AC</SelectItem>
-                    <SelectItem value="generator">Diesel Generator</SelectItem>
+                    <SelectItem value="solar_hybrid">Solar + Battery / AC Hybrid</SelectItem>
+                    <SelectItem value="solar_dc">Direct Solar DC / MPPT</SelectItem>
+                    <SelectItem value="ac_grid_generator">KPLC Grid / Diesel Generator</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1635,6 +1635,37 @@ export default function EngineeringReportsManagement() {
           <PumpCurveVisualizer
             result={design.pumpResult}
             matchedPumps={design.matchedPumps}
+          />
+
+          {/* Solar Panel Min vs Required, Battery Bank & Pump Hardware Dataset */}
+          <SolarPumpBatteryAdvisor
+            compactAdminMode
+            inputs={design.syncedPumpInputs}
+            result={design.pumpResult}
+            onApplySolarPanel={(panel) => {
+              setPumpInputs((prev) => ({
+                ...prev,
+                powerMode: prev.powerMode === "ac_grid_generator" ? "solar_dc" : prev.powerMode,
+                panelWatts: panel.pmaxW,
+                panelVmp: panel.vmpV,
+                panelVoc: panel.vocV,
+                panelGammaPmaxPct: Math.abs(panel.tempCoeffPmaxPct),
+                panelBetaVocPct: Math.abs(panel.tempCoeffVocPct),
+              }));
+              toast({
+                title: `Applied ${panel.name}`,
+                description: `Click "Auto-Build BOQ" to update Section B solar modules cleanly.`,
+              });
+            }}
+            onApplyBatteryChoice={(chemistry, hours) => {
+              setPumpInputs((prev) => ({
+                ...prev,
+                powerMode: "solar_hybrid",
+                batteryChemistry: chemistry,
+                batteryBackupHours: hours ?? 4,
+              }));
+              toast({ title: "Updated to Solar + Battery Hybrid topology" });
+            }}
           />
         </TabsContent>
 
