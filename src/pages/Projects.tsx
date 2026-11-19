@@ -770,7 +770,7 @@ const Projects: React.FC = () => {
                     variant="outline"
                     className="h-11 rounded-xl border-white/25 bg-white/10 px-5 text-sm font-bold text-white hover:bg-white/20 hover:text-white"
                   >
-                    <Link to="/pump-solar-sizing">
+                    <Link to="/pump-solar-calculator-kenya">
                       <Compass className="mr-2 h-4 w-4 text-[hsl(var(--dt-gold-400))]" />
                       Pump & Solar Sizer
                     </Link>
@@ -1275,7 +1275,7 @@ const Projects: React.FC = () => {
 
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
                   <Button asChild variant="ghost" size="sm" className="text-xs">
-                    <Link to="/pump-solar-sizing">
+                    <Link to="/pump-solar-calculator-kenya">
                       <Compass className="mr-1.5 h-3.5 w-3.5 text-primary" />
                       Estimate Pump & Solar Size
                     </Link>
