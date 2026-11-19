@@ -21,6 +21,7 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import SEOHead from "@/components/common/SEOHead";
 import KitPriceTable from "@/components/SEO/KitPriceTable";
+import PumpCurveVisualizer from "@/components/Calculators/PumpCurveVisualizer";
 import { dataService } from "@/services/dataService";
 import pages from "@/data/publicSeoPages.json";
 import locationPages from "@/data/locationSeoPages.json";
@@ -432,6 +433,15 @@ const SEOContentPage = () => {
           </div>
         </section>
 
+        {/* Full-Width Interactive Pump Curve Workbench (when viewing Pump Curve Guide) */}
+        {slug === "how-to-read-pump-curves-kenya" && (
+          <section className="dt-section pb-0">
+            <div className="dt-container max-w-6xl">
+              <PumpCurveVisualizer standaloneGuideMode />
+            </div>
+          </section>
+        )}
+
         {/* Main Content + Sticky Engineering Sidebar */}
         <section className="dt-section">
           <div className="dt-container max-w-6xl grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -461,17 +471,17 @@ const SEOContentPage = () => {
                     </p>
                   ))}
                   {section.table && section.table.headers?.length > 0 && section.table.rows?.length > 0 && (
-                    <div className="mt-6">
+                    <figure className="mt-6">
+                      {section.table.caption && (
+                        <figcaption className="mb-2 text-xs font-semibold text-muted-foreground">
+                          {section.table.caption}
+                        </figcaption>
+                      )}
                       <p className="mb-1.5 text-[11px] font-semibold text-muted-foreground sm:hidden">
                         Swipe table horizontally to compare specs →
                       </p>
                       <div className="overflow-x-auto rounded-xl border border-border">
                         <table className="w-full min-w-[480px] border-collapse text-left text-xs sm:text-sm">
-                        {section.table.caption && (
-                          <caption className="border-b border-border bg-muted/20 px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground">
-                            {section.table.caption}
-                          </caption>
-                        )}
                         <thead>
                           <tr className="border-b border-border bg-muted/50">
                             {section.table.headers.map((header) => (
@@ -500,7 +510,7 @@ const SEOContentPage = () => {
                         </tbody>
                         </table>
                       </div>
-                    </div>
+                    </figure>
                   )}
                   {section.bullets && (
                     <ul className="mt-5 grid gap-3 sm:grid-cols-1">

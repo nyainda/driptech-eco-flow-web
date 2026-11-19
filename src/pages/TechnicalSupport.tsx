@@ -793,6 +793,16 @@ ${supportForm.steps_taken}`,
                         to: "/irrigation-filter-pump-problems-kenya",
                       },
                       {
+                        title: "How to Read Pump Curves & BEP",
+                        desc: "Interactive Q-H curve vs system resistance reader covering 70–120% BEP POR, shutoff & runout.",
+                        to: "/how-to-read-pump-curves-kenya",
+                      },
+                      {
+                        title: "Pump & Motor Installation & Megger Audit",
+                        desc: "Franklin check-valve placement, 500V DC Megger MΩ tables, NEMA balance & solar faults.",
+                        to: "/pump-motor-installation-maintenance-kenya",
+                      },
+                      {
                         title: "Preventive System Maintenance Schedule",
                         desc: "Weekly, monthly, and seasonal maintenance routines to double dripline lifespan.",
                         to: "/irrigation-system-maintenance-kenya",

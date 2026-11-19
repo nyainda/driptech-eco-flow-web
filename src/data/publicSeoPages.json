@@ -1454,6 +1454,14 @@
         "href": "/pump-solar-calculator-kenya"
       },
       {
+        "label": "How to Read Pump Q-H Curves & BEP (Interactive Guide)",
+        "href": "/how-to-read-pump-curves-kenya"
+      },
+      {
+        "label": "Pump & Motor Installation, Maintenance & Troubleshooting",
+        "href": "/pump-motor-installation-maintenance-kenya"
+      },
+      {
         "label": "Browse irrigation pumps",
         "href": "/products/pumps"
       },
@@ -3746,6 +3754,221 @@
       {
         "q": "Can I download the complete DripTech product catalogue as a PDF?",
         "a": "Yes. Click the Download Official PDF Catalogue button on the homepage, products page or any guide to generate a print-ready A4 PDF catalogue with photos, specs and KES prices."
+      }
+    ]
+  },
+  {
+    "slug": "how-to-read-pump-curves-kenya",
+    "title": "How to Read Irrigation Pump Curves Kenya | DripTech",
+    "description": "Learn how to read Q-H pump curves, BEP (70-120% POR), shutoff head, runout and system resistance curves to stop pump burnouts on Kenyan farms.",
+    "h1": "How to Read Irrigation Pump Performance Curves Accurately",
+    "intro": "Two 2 HP irrigation pumps can perform completely differently on the same borehole or river. Reading the Q-H performance curve against your farm's Total Dynamic Head (TDH) system resistance curve prevents dead-heading, impeller recirculation, suction cavitation, and premature motor burnout.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp",
+    "sections": [
+      {
+        "heading": "Why Accurate Pump Curve Reading Matters for Staff and Farmers",
+        "paragraphs": [
+          "Selecting an irrigation pump by horsepower or catalog maximum head/flow alone is the single most common sizing mistake on Kenyan farms. A datasheet headline such as 100 m max head and 8 m3/h max flow represents two opposite corners of the chart that never happen simultaneously: at 100 m head the flow is zero, and at 8 m3/h the head is zero.",
+          "Your real operating delivery happens exclusively at one point: where the pump's falling Q-H curve crosses your farm's rising System Resistance Curve. Verifying this intersection keeps electrical efficiency high, motor windings cool, and emitter or sprinkler pressure uniform across every zone."
+        ]
+      },
+      {
+        "heading": "The 5 Core Elements on Every Pump Performance Chart",
+        "paragraphs": [
+          "Manufacturer curves from Grundfos, Franklin Electric, Pedrollo, Dayliff, and Lorentz share the same layout: Flow Q (m3/h or L/min) runs along the horizontal X-axis and Total Dynamic Head H (meters) runs up the vertical Y-axis."
+        ],
+        "table": {
+          "caption": "Essential Q-H Pump Curve Coordinates and Engineering Meaning",
+          "headers": ["Curve Feature", "Where on Graph", "Engineering Meaning & Field Impact"],
+          "rows": [
+            ["Shutoff Head (Q = 0)", "Top-left Y-axis intercept", "Maximum vertical pressure when discharge valve is closed. Never run continuously here: hydraulic energy turns into heat inside the casing within minutes."],
+            ["Pump Q-H Curve", "Blue/primary downward slope", "Shows how flow increases as Total Dynamic Head drops. Multistage borehole pumps have steep curves; surface centrifugal transfer pumps have flatter curves."],
+            ["System Resistance Curve", "Amber/upward parabola from static head", "Starts on Y-axis at fixed Static Lift + Working Pressure, then curves up with Hazen-Williams pipe friction proportional to Q^1.852."],
+            ["Duty / Operating Point", "Exact intersection of Pump & System curves", "True field flow and head delivered when you open irrigation valves—often different from brochure headline ratings."],
+            ["BEP (Best Efficiency Point)", "Peak of efficiency contour on curve", "Flow where hydraulic efficiency peaks, radial shaft loads balance near zero, and thrust bearings last longest."]
+          ]
+        }
+      },
+      {
+        "heading": "70% to 120% BEP Preferred Operating Range (POR) vs Danger Zones",
+        "paragraphs": [
+          "Hydraulic engineering standards (ANSI/HI 9.6.3 and major submersible OEM manuals) define the Preferred Operating Range (POR) between 70% and 120% of Best Efficiency Point (BEP) flow. Operating far outside this window rapidly degrades seals, bearings, and windings even if the motor thermal overload never trips immediately."
+        ],
+        "table": {
+          "caption": "Diagnostic Impact of Operating Left or Right of Best Efficiency Point (BEP)",
+          "headers": ["Operating Zone", "Flow vs BEP", "Physical Symptoms & Component Risk"],
+          "rows": [
+            ["Recirculation Zone (Too Throttled / Oversized Pump)", "Below 70% of BEP", "Discharge and suction recirculation inside impeller eye causes heavy shaft deflection, mechanical seal weeping, bearing wear, and overheating."],
+            ["Preferred Operating Range (POR)", "70% to 120% of BEP", "Optimal Zone: Smooth laminar impeller exit, minimal vibration, lowest specific energy (kWh/m3), and longest motor/wet-end service life."],
+            ["Runout Zone (Low-Head Open Discharge)", "Above 120% of BEP", "Extreme velocity drops NPSH margin causing suction cavitation, heavy down-thrust bearing wear, and motor amp draw exceeding nameplate."]
+          ]
+        }
+      },
+      {
+        "heading": "How Solar VFD Speed (Hz) Shifts the Pump Curve",
+        "paragraphs": [
+          "Solar pumps driven by an MPPT variable-frequency drive slow down during clouds, early morning, and late afternoon. Under pump Affinity Laws, flow scales linearly with speed (Q2 = Q1 * N2/N1) while head scales with speed squared (H2 = H1 * (N2/N1)^2).",
+          "Dropping from 50 Hz to 40 Hz cuts maximum flow to 80%, but slashes shutoff head down to 64% (0.8 squared). If morning shutoff head falls below the farm's fixed Static Lift + Pressure threshold, the motor spins without lifting a single drop of water—making minimum cut-off frequency tuning critical for solar borehole longevity."
+        ],
+        "bullets": [
+          "Test full-sun 50 Hz AND cloudy 40–42 Hz intersections before buying a solar borehole pump",
+          "Program the VFD minimum frequency limit (typically 28–35 Hz depending on static lift) to prevent stagnant zero-flow water churning",
+          "Use an elevated storage tank with gravity-fed drip blocks whenever solar afternoon irradiance surges past direct block demand"
+        ]
+      },
+      {
+        "heading": "4-Step Staff Checklist Using the 3-Point Datasheet Mode",
+        "bullets": [
+          "Step 1: Read 3 points from the manufacturer curve — Shutoff Head at 0 m3/h, BEP flow/head, and far-right Runout point",
+          "Step 2: Calculate true farm TDH (Static + Drawdown + Elevation + Working Drip/Sprinkler Pressure + Hazen-Williams Pipe Loss)",
+          "Step 3: Plot both curves using DripTech's 3-Point Datasheet Calibration tool above and check that Duty Flow sits between 70% and 120% BEP",
+          "Step 4: Verify suction lift stays below Kenya's highland altitude cavitation ceiling (~5.5–6.0 m) on all surface centrifugal pumps"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Open Interactive Pump & Solar Sizing Engine",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
+        "label": "Pump & Motor Installation, Maintenance & Troubleshooting Guide",
+        "href": "/pump-motor-installation-maintenance-kenya"
+      },
+      {
+        "label": "How to size a pump for farm irrigation",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps in Kenya",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Browse DripTech pumps & motors",
+        "href": "/products/pumps"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why does my pump deliver much less water than the maximum m3/h printed on the nameplate?",
+        "a": "The nameplate Qmax applies only at zero vertical lift and zero pipe resistance. Actual flow on the farm is determined where the falling pump curve intersects your rising System Resistance Curve (static lift + drawdown + emitter pressure + pipe friction)."
+      },
+      {
+        "q": "What happens if I partially close a gate valve to reduce pump flow below 70% BEP?",
+        "a": "Throttling increases system resistance and slides the operating point left toward shutoff. Below 70% BEP, turbulent fluid recirculates inside the impeller vanes, increasing radial shaft deflection, vibration, and winding heat. Instead, match a smaller pump stage count or trim VFD speed."
+      },
+      {
+        "q": "How accurate is a 3-point curve fit compared to a 2-point Qmax/Hmax fit?",
+        "a": "A 2-point parabolic fit estimates typical submersible curvature when only Qmax and Hmax are available. Entering 3 coordinates from the manufacturer's curve (Shutoff Head, BEP Flow/Head, and Runout Point) reproduces the OEM curve shape accurately across the full working band."
+      }
+    ]
+  },
+  {
+    "slug": "pump-motor-installation-maintenance-kenya",
+    "title": "Pump & Motor Installation, Maintenance Kenya | DripTech",
+    "description": "Field guide for borehole pump installation, Megger insulation tests, NEMA voltage balance, check valves, grounding & solar pump troubleshooting in Kenya.",
+    "h1": "Pump & Motor Installation, Maintenance & Troubleshooting Guide",
+    "intro": "Proper mechanical installation, electrical insulation verification, and surge grounding double the service life of borehole submersible motors, solar VFDs, and surface centrifugal pumps across Kenyan farms. Use this engineering reference during commissioning and field fault diagnostics.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp",
+    "sections": [
+      {
+        "heading": "Mechanical Installation Standards (Check Valves, Depth & Cooling Shrouds)",
+        "paragraphs": [
+          "Most mechanical submersible failures trace back to backspin upthrust on shutdown, sand pumping near the borehole base, or inadequate water velocity past the motor shell. Following OEM installation clearances from Franklin Electric and Grundfos prevents immediate stage seizure and thrust bearing failure."
+        ],
+        "bullets": [
+          "First Check Valve Within 25 ft (7.6 m): If not built into the pump discharge, fit the first spring-loaded non-return valve within 25 ft above the pump and below the dynamic drawdown water level. Add extra inline check valves every 200 ft (~60 m) on deep borehole columns to stop water-hammer shock and backspin upthrust",
+          "Pump Setting Depth: Position the intake 5–10 m below dynamic pumping water level (PWL) so seasonal drawdown never uncovers the suction screen, and keep 3–5 m minimum clearance above the borehole bottom to prevent silt and sand ingestion",
+          "Mandatory Cooling Sleeve / Flow Inducer: Whenever borehole casing ID is wide enough that annular water velocity over the motor drops below OEM minimum cooling velocity, or in top-feeding aquifers, open dams, and storage tanks, fit a stainless or uPVC cooling shroud over the motor",
+          "Surface Suction Limits in Kenya Highlands: At 1,500–2,000 m elevation (Nairobi, Nakuru, Eldoret, Nanyuki), atmospheric pressure drops to ~80–84 kPa—meaning total suction lift plus strainer/elbow friction must stay below 5.5–6.0 m to prevent cavitation",
+          "Never Run Dry or Dead-Head: Fit low-water electrodes or dry-run protection relays and confirm at least one mainline/bypass relief path stays open before energizing"
+        ]
+      },
+      {
+        "heading": "Electrical Commissioning: 500V DC Megger Tests & NEMA Power Limits",
+        "paragraphs": [
+          "Before lowering any borehole pump—and after pulling a tripped unit—never rely on a simple continuity buzzer. Always disconnect the drop cable from the VFD/starter and perform a 500V DC Megohmmeter (Megger) insulation resistance test from each motor lead to earth/frame, plus phase balance diagnostics."
+        ],
+        "table": {
+          "caption": "500V DC Megger Insulation Resistance & 3-Phase Balance Acceptance Standards",
+          "headers": ["Diagnostic Measurement", "Standard Threshold", "Field Verdict & Required Action"],
+          "rows": [
+            ["New Motor Uninstalled (no drop cable)", ">= 200 MΩ", "Factory-mint stator winding insulation; clear for waterproof cable splice."],
+            ["Used Motor Out of Well", ">= 10 MΩ", "Good winding insulation; fit to re-install with clean resin/heat-shrink splice."],
+            ["New Motor + Drop Cable Submerged in Well", ">= 2.0 MΩ", "Acceptable commissioning reading; log baseline value in maintenance book."],
+            ["In-Well Operating Motor + Cable", "0.5 – 2.0 MΩ", "Aging insulation; monitor trend every 3 months and schedule proactive splice check."],
+            ["Faulted Submersible Winding / Wet Splice", "< 0.5 MΩ", "CRITICAL FAULT — Do not energize. Pull column to inspect pinched drop cable or submerged resin joint."],
+            ["3-Phase Supply Voltage Unbalance (NEMA MG-1)", "<= 1.0% ideal (never > 5%)", "Note: Just 5% voltage unbalance triggers 30%–50% phase current unbalance (6–10x multiplier), burning one stator phase rapidly."],
+            ["Earth Grounding Electrode Resistance", "< 25 Ω NEC (< 5–10 Ω lightning zones)", "Single-point bond control panel, steel casing, PV rack & surge MOV arresters to stop Ground Potential Rise flashover."]
+          ]
+        }
+      },
+      {
+        "heading": "Solar PV Pump & Motor Troubleshooting Matrix",
+        "paragraphs": [
+          "Modern MPPT solar pump controllers flash fault codes for electrical protection before destroying the motor. Isolate AC/DC breakers completely before opening junction boxes or hoisting drop cables."
+        ],
+        "table": {
+          "caption": "Common Solar & Electric Irrigation Pump Faults, Root Causes & Corrective Fixes",
+          "headers": ["Fault Symptom / Alert", "Primary Root Cause", "Systematic Diagnostic & Corrective Fix"],
+          "rows": [
+            ["Dry Run / Low-Water Trip", "Dynamic water level dropped below intake, clogged strainer, or faulty probe wiring", "Inspect borehole yield vs pump rate, check electrode continuity, lower pump only if casing clearance allows, or throttle valve slightly within 70–120% BEP."],
+            ["DC Overvoltage Shutdown (Cold Dawn)", "PV open-circuit Voc spikes in crisp cold mornings above controller Vdc max", "Re-calculate series panel count using Voc(cold) thermal factor (~+0.35%/degC below 25 degC) and re-string parallel strings."],
+            ["Low Irradiance / Frequent Cycling", "Cloud cover, panel dust/bird droppings, tree shade, or undersized PV Wp vs static lift", "Clean solar glass with plain water early morning, prune shade, confirm VFD minimum Hz setting, or add PV panels / buffer storage tank."],
+            ["Motor Blocked / Locked Rotor Overcurrent", "Borehole sand locking, iron-bacteria crust, jammed impeller stage, or frozen bearing", "Lock out all breakers, inspect phase-to-phase ohms, lift pump, flush jammed sand/scale safely, and check well gravel pack."],
+            ["Gravel/Popping Sound + Surging Flow", "Suction cavitation on surface pumps or air sucked through loose suction flange", "Reduce vertical suction lift below highland limit (<5.5 m), tighten foot-valve/union gaskets, upsize suction pipe diameter."],
+            ["Supply Balanced (<1% V) but Current >5% Off", "High-resistance waterproof splice, pinched drop cable, or winding turn fault", "Swap supply phase rotation to test whether unbalance stays on same cable leg (motor/cable fault) or moves with utility phase."]
+          ]
+        }
+      },
+      {
+        "heading": "Preventative Pump & Motor Maintenance Schedule for Kenyan Farms",
+        "bullets": [
+          "Weekly Checks: Listen for cavitation popping or bearing rumble, verify clean disc/screen filter differential pressure, inspect suction unions for weeping/air entry, and verify gland seal packing drips slightly (surface split-case units)",
+          "Monthly Checks: Wash solar PV arrays in cool morning light to recover 5–15% dust losses, verify lightning surge arrester status flags, check pressure tank pre-charge, and inspect valve chamber leaks",
+          "Seasonal / Quarterly Checks: Measure and log running amps per phase, check float/electrode dry-run response, confirm VFD cooling fan vents are clear of chaff/insects, and flush drip mainlines & sand separators",
+          "Annual Technical Audit: Log 500V DC Megger MΩ trend alongside static/dynamic water levels to catch cable insulation aging or aquifer drawdown months before harvest-season failure"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "How to Read Pump Q-H Curves & BEP (Interactive Guide)",
+        "href": "/how-to-read-pump-curves-kenya"
+      },
+      {
+        "label": "Open Interactive Pump & Solar Sizing Engine",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
+        "label": "Book a DripTech Technician for Installation or Megger Audit",
+        "href": "/technician-services"
+      },
+      {
+        "label": "Filter & pump diagnostics guide",
+        "href": "/irrigation-filter-pump-problems-kenya"
+      },
+      {
+        "label": "Borehole water pumps in Kenya",
+        "href": "/borehole-water-pumps-kenya"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What is the minimum safe Megger insulation reading for a submersible borehole pump?",
+        "a": "Per Franklin Electric AIM standards, an uninstalled new motor should read >= 200 MΩ at 500V DC, and a brand-new motor plus drop cable suspended in the well should read >= 2.0 MΩ. Anything below 0.5 MΩ indicates water ingress or damaged insulation—do not run until pulled and repaired."
+      },
+      {
+        "q": "Why do I need a check valve within 25 ft of a submersible pump discharge?",
+        "a": "Without a nearby non-return valve, standing riser water drains backward when the pump stops, spinning impellers in reverse. If the pump restarts while backspinning or with zero backpressure, severe thrust-bearing upthrust can shear the shaft coupling."
+      },
+      {
+        "q": "When is a cooling shroud sleeve mandatory on a borehole or tank pump?",
+        "a": "Whenever the pump is set inside a large-diameter casing, open water pan/tank, or below the aquifer inflow perforations where upward water velocity past the motor housing is too slow to carry away stator heat."
+      },
+      {
+        "q": "Why does a 5% voltage imbalance trip or burn out a 3-phase irrigation motor?",
+        "a": "Under NEMA MG-1 motor physics, small phase voltage imbalances multiply 6x to 10x into phase current imbalance—a 5% voltage unbalance causes 30%–50% current unbalance and extreme winding temperature rise in the overloaded phase."
       }
     ]
   }
