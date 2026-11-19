@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from "react";
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from "react";
+import type { EngineeringReportSeed } from "@/lib/engineeringReportEngine";
 import useWebVitals from "@/hooks/useWebVitals";
 import {
   Loader2,
@@ -352,6 +353,20 @@ const AdminContent = () => {
   const [sidebarFilter, setSidebarFilter] = useState("");
   const [commandOpen, setCommandOpen] = useState(false);
   const [commandQuery, setCommandQuery] = useState("");
+  const [pendingEngSeed, setPendingEngSeed] = useState<EngineeringReportSeed | null>(null);
+
+  const handleStartEngineeringReport = useCallback((seed: EngineeringReportSeed) => {
+    setPendingEngSeed(seed);
+    setActiveTab("engineering-reports");
+    setMobileDrawerOpen(false);
+    setCommandOpen(false);
+    setCommandQuery("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const handleSeedConsumed = useCallback(() => {
+    setPendingEngSeed(null);
+  }, []);
 
   // Monitor Web Vitals in Admin
   useWebVitals((metric) => {
@@ -484,7 +499,7 @@ const AdminContent = () => {
       case "products":
         return <ProductManagement />;
       case "kits":
-        return <IrrigationKitsManagement />;
+        return <IrrigationKitsManagement onStartEngineeringReport={handleStartEngineeringReport} />;
       case "blog":
         return <BlogManagement />;
       case "news":
@@ -494,15 +509,20 @@ const AdminContent = () => {
       case "quotes":
         return <QuoteManagement />;
       case "engineering-reports":
-        return <EngineeringReportsManagement />;
+        return (
+          <EngineeringReportsManagement
+            initialSeed={pendingEngSeed}
+            onSeedConsumed={handleSeedConsumed}
+          />
+        );
       case "invoices":
         return <InvoiceManagementSystem />;
       case "analytics":
         return <VisitorTrackingDashboard />;
       case "customers":
-        return <CustomerManagement />;
+        return <CustomerManagement onStartEngineeringReport={handleStartEngineeringReport} />;
       case "contact-notifications":
-        return <ContactNotifications />;
+        return <ContactNotifications onStartEngineeringReport={handleStartEngineeringReport} />;
       case "projects":
         return <ProjectManagement />;
       case "team":
