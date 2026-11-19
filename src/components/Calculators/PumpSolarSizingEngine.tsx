@@ -53,6 +53,7 @@ import { SITE_COMPANY } from "@/config/company";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import PumpReportBudgetTab from "@/components/Calculators/PumpReportBudgetTab";
 import PumpCurveVisualizer from "@/components/Calculators/PumpCurveVisualizer";
+import SolarPumpBatteryAdvisor from "@/components/Calculators/SolarPumpBatteryAdvisor";
 import {
   downloadPumpSolarReportFile,
   openPumpSolarReportPdf,
@@ -2533,6 +2534,74 @@ export const PumpSolarSizingEngine = () => {
               : undefined
           }
           selectedPumpId={selectedCurvePumpId}
+        />
+      </div>
+
+      {/* 2.8 Solar Panel (Min vs Required), Battery Storage & Reference Pump Dataset */}
+      <div id="solar-panel-battery-advisor" className="scroll-mt-24 pt-2">
+        <SolarPumpBatteryAdvisor
+          inputs={inputs}
+          result={result}
+          onApplySolarPanel={(panel) => {
+            setInputs((prev) => ({
+              ...prev,
+              powerMode: prev.powerMode === "ac_grid_generator" ? "solar_dc" : prev.powerMode,
+              panelWatts: panel.pmaxW,
+              panelVmp: panel.vmpV,
+              panelVoc: panel.vocV,
+              panelGammaPmaxPct: Math.abs(panel.tempCoeffPmaxPct),
+              panelBetaVocPct: Math.abs(panel.tempCoeffVocPct),
+            }));
+            toast({
+              title: `Applied ${panel.name}`,
+              description: `Updated PV array sizing & voltage checks for ${panel.pmaxW}W (Vmp ${panel.vmpV}V / Voc ${panel.vocV}V).`,
+            });
+          }}
+          onApplyBatteryChoice={(chemistry, hours) => {
+            setInputs((prev) => ({
+              ...prev,
+              powerMode: "solar_hybrid",
+              batteryChemistry: chemistry,
+              batteryBackupHours: hours ?? Math.max(3, prev.batteryBackupHours),
+            }));
+            toast({
+              title: "Solar Hybrid Battery Mode Enabled",
+              description: `Configured ${chemistry === "lifepo4" ? "LiFePO4" : "Tubular / Gel"} backup sizing.`,
+            });
+          }}
+          onApplyReferencePump={(pump) => {
+            setInputs((prev) => ({
+              ...prev,
+              controllerMinVmpV: pump.recommendedCtrlMinVmpV || prev.controllerMinVmpV,
+              controllerMaxVocV: pump.recommendedCtrlMaxVocV || prev.controllerMaxVocV,
+              customPump: {
+                ...prev.customPump,
+                enabled: true,
+                name: pump.name,
+                powerType:
+                  pump.powerSupply === "engine"
+                    ? "engine"
+                    : pump.powerSupply === "ac_3phase"
+                      ? "ac_3phase"
+                      : "solar_dc",
+                maxFlowM3h: pump.maxFlowM3h,
+                maxHeadM: pump.maxHeadM,
+                ratedPowerW: Math.round(pump.ratedKw * 1000),
+                ratedOperatingVoltageV: Math.round(
+                  (pump.recommendedCtrlMinVmpV + pump.recommendedCtrlMaxVocV) / 2,
+                ),
+                controllerMaxVocV: pump.recommendedCtrlMaxVocV || prev.controllerMaxVocV,
+              },
+            }));
+            setSelectedCurvePumpId("custom");
+            document
+              .getElementById("pump-curve-section")
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            toast({
+              title: `Loaded ${pump.name} on Q–H Curve`,
+              description: `Evaluating ${pump.maxFlowM3h} m³/h max flow @ ${pump.maxHeadM} m shutoff against your TDH.`,
+            });
+          }}
         />
       </div>
 
