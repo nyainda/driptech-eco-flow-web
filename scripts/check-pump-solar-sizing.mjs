@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  applyKenyaSolarRegionPreset,
   calculatePumpSolarSystem,
   DEFAULT_PUMP_SOLAR_INPUTS,
   getInnerDiameterForPreset,
@@ -158,5 +159,94 @@ const matches = matchCatalogPumps(
 );
 assert.equal(matches.length, 1, "Expected 3 HP solar submersible pump to match ~4 m3/h @ ~84m TDH");
 assert.equal(matches[0].fitStatus, "optimal");
+
+// 7. Weather Physics: Turkana heat vs Nyeri highlands NOCT cell temp & seasonal worst-month PV array
+const turkanaWorst = calculatePumpSolarSystem(
+  applyKenyaSolarRegionPreset(DEFAULT_PUMP_SOLAR_INPUTS, "northern_turkana_garissa", "worst_cloudy"),
+);
+const nyeriWorst = calculatePumpSolarSystem(
+  applyKenyaSolarRegionPreset(DEFAULT_PUMP_SOLAR_INPUTS, "mt_kenya_nyeri_nanyuki", "worst_cloudy"),
+);
+const nyeriDry = calculatePumpSolarSystem(
+  applyKenyaSolarRegionPreset(DEFAULT_PUMP_SOLAR_INPUTS, "mt_kenya_nyeri_nanyuki", "dry_peak"),
+);
+assert.ok(turkanaWorst.estimatedDayCellTempC > 55, `Expected Turkana cell temp > 55C, got ${turkanaWorst.estimatedDayCellTempC}`);
+assert.ok(
+  turkanaWorst.computedThermalLossPct > nyeriWorst.computedThermalLossPct,
+  "Arid Turkana ambient heat must produce higher thermal PV loss than cool Nyeri",
+);
+assert.ok(
+  nyeriWorst.recommendedArrayWp >= nyeriDry.recommendedArrayWp,
+  "Worst cloudy season (Jun-Jul) must size >= dry peak season array",
+);
+
+// 8. Overcast cloud cover simulation cuts Hz & flow below clear-sky baseline
+const clearSky = calculatePumpSolarSystem({
+  ...DEFAULT_PUMP_SOLAR_INPUTS,
+  skyCondition: "clear_sun",
+  skyIrradianceWm2: 950,
+});
+const heavyOvercast = calculatePumpSolarSystem({
+  ...DEFAULT_PUMP_SOLAR_INPUTS,
+  skyCondition: "overcast_gathano",
+  skyIrradianceWm2: 380,
+});
+assert.ok(
+  heavyOvercast.cloudSimulation.estimatedHz < clearSky.cloudSimulation.estimatedHz,
+  "Overcast 380 W/m2 must reduce pump VFD frequency below clear-sun baseline",
+);
+
+// 9. Shallow borehole submergence silt alert + 3-inch casing filter
+const shallowHole = calculatePumpSolarSystem({
+  ...DEFAULT_PUMP_SOLAR_INPUTS,
+  boreholeTotalDepthM: 68, // static 55 + drawdown 10 + 6m = 71m > 68-3=65m
+});
+assert.ok(shallowHole.boreholeDepthAlert !== null, "Expected borehole bottom silt/submergence alert");
+
+const slim3Matches = matchCatalogPumps(
+  [
+    {
+      id: "slim3",
+      name: "0.5 HP Solar Submersible Borehole Pump",
+      category: "pumps_motors",
+      specifications: {
+        Model: "3SDS4-400W",
+        "Maximum Head": "55 m",
+        "Maximum Flow Rate": "4 m3/h",
+      },
+    },
+    {
+      id: "std4",
+      name: "2 HP Electric Submersible Borehole Pump",
+      category: "pumps_motors",
+      specifications: {
+        Model: "4SDM3/22",
+        "Pump Diameter": "4 inch",
+        "Maximum Head": "158 m",
+        "Maximum Flow Rate": "4.8 m3/h",
+      },
+    },
+  ],
+  {
+    ...DEFAULT_PUMP_SOLAR_INPUTS,
+    powerMode: "solar_hybrid",
+    boreholeCasingInch: "3",
+  },
+  calculatePumpSolarSystem({
+    ...DEFAULT_PUMP_SOLAR_INPUTS,
+    demandMode: "direct_flow",
+    directFlowValue: 2.0,
+    directFlowUnit: "m3h",
+    staticWaterDepthM: 25,
+    drawdownM: 5,
+    groundElevationGainM: 0,
+    dischargeHeightM: 0,
+    workingPressureBar: 0.5,
+    filtrationValveLossM: 1,
+    boreholeCasingInch: "3",
+  }),
+);
+assert.equal(slim3Matches.length, 1, "3-inch casing must exclude 4-inch pump and retain 3SDS4");
+assert.equal(slim3Matches[0].product.id, "slim3");
 
 console.log("check-pump-solar-sizing passed all assertions.");

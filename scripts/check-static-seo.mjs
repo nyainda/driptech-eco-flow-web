@@ -191,6 +191,7 @@ if (fs.existsSync(pumpCalcPath)) {
   const html = fs.readFileSync(pumpCalcPath, "utf8");
   if (!html.includes("Irrigation Pump")) failures.push("/pump-solar-calculator-kenya: pump calculator-specific content missing from initial HTML");
   if (!html.includes('"@type":"WebApplication"')) failures.push("/pump-solar-calculator-kenya: expected WebApplication JSON-LD missing");
+  if (!html.includes('"@type":"FAQPage"')) failures.push("/pump-solar-calculator-kenya: expected FAQPage JSON-LD missing");
 } else {
   failures.push("/pump-solar-calculator-kenya: generated HTML missing");
 }

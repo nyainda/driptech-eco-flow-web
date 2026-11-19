@@ -9,6 +9,7 @@ export interface FAQItem {
 
 export interface FAQSectionProps {
     title?: string;
+    subtitle?: string;
     faqs: FAQItem[];
     className?: string;
 }
@@ -20,6 +21,7 @@ export interface FAQSectionProps {
  */
 export const FAQSection: React.FC<FAQSectionProps> = ({
     title = "Frequently Asked Questions",
+    subtitle = "Straight answers on kits, driplines, install and delivery in Kenya.",
     faqs,
     className = ""
 }) => {
@@ -67,7 +69,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                             )}
                         </h2>
                         <p className="dt-section-subtitle mx-auto mt-2 sm:mt-3">
-                            Straight answers on kits, driplines, install and delivery in Kenya.
+                            {subtitle}
                         </p>
                     </div>
 

@@ -21,6 +21,10 @@ export type WaterSourceType = "borehole" | "surface_suction" | "tank_booster";
 export type PipeMaterial = "hdpe" | "upvc" | "gi_new" | "gi_old";
 export type PowerSupplyMode = "solar_dc" | "solar_hybrid" | "ac_grid_generator";
 export type BatteryChemistry = "lifepo4" | "tubular_lead_acid";
+export type SolarSeasonMode = "worst_cloudy" | "annual_avg" | "dry_peak";
+export type DustSoilingEnv = "clean_washed" | "standard_farm" | "arid_dusty";
+export type SkyConditionPreset = "clear_sun" | "light_cloud" | "overcast_gathano";
+export type BoreholeCasingInch = "3" | "4" | "6" | "8" | "open_well";
 
 export interface PipeSegmentInput {
   label: string;
@@ -66,6 +70,8 @@ export interface PumpSolarInputs {
 
   // 2. Water Source & Hydraulic Head Inputs
   sourceType: WaterSourceType;
+  boreholeCasingInch: BoreholeCasingInch;
+  boreholeTotalDepthM: number;
   siteAltitudeM: number;
   /** Borehole depth from ground to static water table (m), or river/dam suction lift (m). */
   staticWaterDepthM: number;
@@ -92,14 +98,23 @@ export interface PumpSolarInputs {
   motorEfficiencyPct: number;
   hydraulicSafetyFactor: number;
 
-  // 4. Solar PV, Cable & Storage Inputs
+  // 4. Solar PV, Weather Physics, Cable & Storage Inputs
   powerMode: PowerSupplyMode;
   solarRegionId: string;
+  solarSeasonMode: SolarSeasonMode;
   peakSunHours: number;
+  ambientDayTempC: number;
+  windSpeedMs: number;
   minMorningTempC: number;
+  panelNoctC: number;
+  panelGammaPmaxPct: number;
+  panelBetaVocPct: number;
+  dustSoilingEnv: DustSoilingEnv;
   pvTempDeratePct: number;
   dustMismatchLossPct: number;
   controllerEfficiencyPct: number;
+  skyCondition: SkyConditionPreset;
+  skyIrradianceWm2: number;
   panelWatts: number;
   panelVmp: number;
   panelVoc: number;
@@ -124,70 +139,231 @@ export interface PumpSolarInputs {
 export interface KenyaSolarRegionPreset {
   id: string;
   label: string;
+  /** Annual average PSH (kWh/m2/day) from PVGIS / NASA POWER. */
   psh: number;
+  /** Worst cloudy-season PSH (e.g. June-July overcast or coastal monsoon). */
+  worstMonthPsh: number;
+  /** Peak dry-season PSH (Jan-Mar clear sky). */
+  drySeasonPsh: number;
+  worstMonthName: string;
+  ambientDayTempC: number;
   minMorningTempC: number;
+  windSpeedMs: number;
   altitudeM: number;
+  defaultDustEnv: DustSoilingEnv;
   note: string;
 }
 
 export const KENYA_SOLAR_REGIONS: KenyaSolarRegionPreset[] = [
   {
     id: "nairobi_central",
-    label: "Nairobi, Kiambu, Thika & Murang'a",
-    psh: 5.2,
+    label: "Nairobi & Upper Kiambu",
+    psh: 5.3,
+    worstMonthPsh: 4.2,
+    drySeasonPsh: 5.9,
+    worstMonthName: "Jun–Jul",
+    ambientDayTempC: 26,
     minMorningTempC: 9,
+    windSpeedMs: 1.8,
     altitudeM: 1650,
-    note: "Moderate highland irradiation; morning chill increases open-circuit Voc.",
+    defaultDustEnv: "standard_farm",
+    note: "Jun–Jul highland overcast drops PSH to ~4.2 h/day; morning chill spikes cold Voc.",
   },
   {
-    id: "rift_nakuru_naivasha",
-    label: "Nakuru, Naivasha & Narok",
-    psh: 5.7,
-    minMorningTempC: 8,
-    altitudeM: 1850,
-    note: "High altitude cuts surface suction limit to ~5.7 m practical lift.",
+    id: "juja_thika_muranga",
+    label: "Juja, Thika, Ruiru & Murang'a",
+    psh: 5.5,
+    worstMonthPsh: 4.5,
+    drySeasonPsh: 6.1,
+    worstMonthName: "Jun–Jul",
+    ambientDayTempC: 27,
+    minMorningTempC: 10,
+    windSpeedMs: 1.9,
+    altitudeM: 1480,
+    defaultDustEnv: "standard_farm",
+    note: "Strong irradiance most months, dipping to ~4.5 PSH during cool misty July mornings.",
   },
   {
     id: "mt_kenya_nyeri_nanyuki",
-    label: "Nanyuki, Nyeri & Meru Highlands",
-    psh: 5.5,
+    label: "Nanyuki, Nyeri, Embu & Meru",
+    psh: 5.6,
+    worstMonthPsh: 4.4,
+    drySeasonPsh: 6.2,
+    worstMonthName: "Jun–Jul",
+    ambientDayTempC: 25,
     minMorningTempC: 5,
+    windSpeedMs: 2.2,
     altitudeM: 1950,
-    note: "Cold 5°C mornings create +6% PV Voc spike; size controller headroom carefully.",
+    defaultDustEnv: "standard_farm",
+    note: "Cold 5°C mornings cause +5.5–6.5% Voc rise; high altitude lowers surface suction lift.",
+  },
+  {
+    id: "rift_nakuru_naivasha",
+    label: "Nakuru, Naivasha, Gilgil & Narok",
+    psh: 5.7,
+    worstMonthPsh: 4.6,
+    drySeasonPsh: 6.3,
+    worstMonthName: "Jun–Jul",
+    ambientDayTempC: 26,
+    minMorningTempC: 7,
+    windSpeedMs: 2.3,
+    altitudeM: 1850,
+    defaultDustEnv: "standard_farm",
+    note: "Rift breezes cool cells well, while 1,850 m elevation trims surface suction to ~5.7 m.",
+  },
+  {
+    id: "north_rift_eldoret_kitale",
+    label: "Eldoret, Kitale & Kericho Highlands",
+    psh: 5.6,
+    worstMonthPsh: 4.7,
+    drySeasonPsh: 6.5,
+    worstMonthName: "Jul–Aug",
+    ambientDayTempC: 25,
+    minMorningTempC: 8,
+    windSpeedMs: 2.1,
+    altitudeM: 2100,
+    defaultDustEnv: "standard_farm",
+    note: "Peaks >6.5 PSH in Feb–Mar; Jul cloud/rain drops yield to ~4.7 PSH.",
+  },
+  {
+    id: "kisumu_western_basin",
+    label: "Kisumu, Bungoma, Kakamega & Migori",
+    psh: 5.8,
+    worstMonthPsh: 5.2,
+    drySeasonPsh: 6.2,
+    worstMonthName: "Jul",
+    ambientDayTempC: 30,
+    minMorningTempC: 14,
+    windSpeedMs: 1.8,
+    altitudeM: 1150,
+    defaultDustEnv: "standard_farm",
+    note: "Steady equatorial basin solar yield all year (~5.2 PSH even in cloudiest month).",
   },
   {
     id: "eastern_machakos_kitui",
     label: "Machakos, Makueni, Kitui & Kibwezi",
     psh: 5.9,
-    minMorningTempC: 14,
+    worstMonthPsh: 4.9,
+    drySeasonPsh: 6.4,
+    worstMonthName: "Jun–Jul",
+    ambientDayTempC: 32,
+    minMorningTempC: 13,
+    windSpeedMs: 2.0,
+    altitudeM: 1050,
+    defaultDustEnv: "arid_dusty",
+    note: "Dry-season soil dust builds fast on shallow arrays; keep panels tilted 12–15°.",
+  },
+  {
+    id: "isiolo_samburu_laikipia",
+    label: "Isiolo, Marsabit & Samburu",
+    psh: 6.1,
+    worstMonthPsh: 5.3,
+    drySeasonPsh: 6.6,
+    worstMonthName: "Jul",
+    ambientDayTempC: 34,
+    minMorningTempC: 15,
+    windSpeedMs: 2.5,
     altitudeM: 1100,
-    note: "Strong semi-arid solar yield ideal for direct-drive borehole pumping.",
+    defaultDustEnv: "arid_dusty",
+    note: "Reliable year-round irradiance; size with 12–14% dust & thermal margin.",
   },
   {
     id: "northern_turkana_garissa",
-    label: "Garissa, Isiolo, Turkana & Samburu",
+    label: "Turkana, Garissa, Wajir & Mandera",
     psh: 6.4,
-    minMorningTempC: 18,
+    worstMonthPsh: 5.6,
+    drySeasonPsh: 6.9,
+    worstMonthName: "Jun–Jul",
+    ambientDayTempC: 38,
+    minMorningTempC: 19,
+    windSpeedMs: 2.4,
     altitudeM: 450,
-    note: "High daytime heat (38°C+); include 13–15% PV thermal + dust derating.",
-  },
-  {
-    id: "western_kisumu_eldoret",
-    label: "Kisumu, Bungoma, Kakamega & Eldoret",
-    psh: 5.4,
-    minMorningTempC: 12,
-    altitudeM: 1400,
-    note: "Afternoon cloud buildup favors slight PV oversizing or tank buffer.",
+    defaultDustEnv: "arid_dusty",
+    note: "38°C ambient pushes PV cells past 65°C (14%+ heat loss) even under high sun.",
   },
   {
     id: "coast_mombasa_kilifi",
-    label: "Mombasa, Kilifi, Kwale & Tana River",
-    psh: 5.6,
-    minMorningTempC: 20,
+    label: "Mombasa, Kilifi, Malindi & Kwale",
+    psh: 5.7,
+    worstMonthPsh: 4.8,
+    drySeasonPsh: 6.3,
+    worstMonthName: "May–Jun",
+    ambientDayTempC: 33,
+    minMorningTempC: 21,
+    windSpeedMs: 2.6,
     altitudeM: 30,
-    note: "Sea-level air allows full atmospheric suction; prioritize salt-resistant stainless.",
+    defaultDustEnv: "clean_washed",
+    note: "Sea-level air permits full ~7.5 m suction; worst solar window hits in May–Jun rains.",
   },
 ];
+
+export const getRegionPshForSeason = (
+  region: KenyaSolarRegionPreset,
+  season: SolarSeasonMode,
+): number => {
+  if (season === "worst_cloudy") return region.worstMonthPsh;
+  if (season === "dry_peak") return region.drySeasonPsh;
+  return region.psh;
+};
+
+export const applyKenyaSolarRegionPreset = (
+  prev: PumpSolarInputs,
+  regionId: string,
+  season: SolarSeasonMode = prev.solarSeasonMode,
+): PumpSolarInputs => {
+  const region = KENYA_SOLAR_REGIONS.find((r) => r.id === regionId);
+  if (!region) return prev;
+  return {
+    ...prev,
+    solarRegionId: region.id,
+    solarSeasonMode: season,
+    peakSunHours: getRegionPshForSeason(region, season),
+    ambientDayTempC: region.ambientDayTempC,
+    minMorningTempC: region.minMorningTempC,
+    windSpeedMs: region.windSpeedMs,
+    siteAltitudeM: region.altitudeM,
+    dustSoilingEnv: region.defaultDustEnv,
+    dustMismatchLossPct: DUST_SOILING_META[region.defaultDustEnv].dustMismatchPct,
+  };
+};
+
+export const DUST_SOILING_META: Record<
+  DustSoilingEnv,
+  { label: string; dustMismatchPct: number; note: string }
+> = {
+  clean_washed: {
+    label: "Clean / Regularly Washed (6% total dust + wire)",
+    dustMismatchPct: 6,
+    note: "Panels cleaned bi-weekly or regular coastal rainfall runoff.",
+  },
+  standard_farm: {
+    label: "Standard Kenyan Farm (9% dust + wire)",
+    dustMismatchPct: 9,
+    note: "Typical agricultural pollen/soil dust between rains.",
+  },
+  arid_dusty: {
+    label: "Arid / Unpaved Roadside (14% heavy dust + wire)",
+    dustMismatchPct: 14,
+    note: "ASAL / livestock dust zone unless panels are rinsed weekly.",
+  },
+};
+
+export const SKY_CONDITION_PRESETS: Record<
+  SkyConditionPreset,
+  { label: string; wm2: number; note: string }
+> = {
+  clear_sun: { label: "Clear Midday Sun (950 W/m²)", wm2: 950, note: "Peak solar pumping window." },
+  light_cloud: { label: "Hazy / Scattered Cloud (650 W/m²)", wm2: 650, note: "Diffuse afternoon light." },
+  overcast_gathano: { label: "Heavy Overcast Cloud (380 W/m²)", wm2: 380, note: "Jul–Jun overcast test." },
+};
+
+export const BOREHOLE_CASING_LABELS: Record<BoreholeCasingInch, string> = {
+  "3": '3" Narrow Casing (~76 mm ID)',
+  "4": '4" Standard Borehole (~102 mm ID)',
+  "6": '6" Commercial Borehole (~152 mm ID)',
+  "8": '8"+ High-Yield Borehole (~200 mm ID)',
+  open_well: "Open Hand-Dug Well / Sump",
+};
 
 export interface CropPreset {
   id: string;
@@ -277,13 +453,16 @@ export interface SolarModulePreset {
   watts: number;
   vmp: number;
   voc: number;
+  noctC: number;
+  gammaPmaxPct: number;
+  betaVocPct: number;
 }
 
 export const SOLAR_PANEL_PRESETS: SolarModulePreset[] = [
-  { id: "330w", label: "330 W Mono/Poly (72-cell)", watts: 330, vmp: 37.2, voc: 45.2 },
-  { id: "450w", label: "450 W Mono PERC", watts: 450, vmp: 41.2, voc: 49.5 },
-  { id: "550w", label: "550 W Mono Half-Cut", watts: 550, vmp: 41.8, voc: 49.8 },
-  { id: "600w", label: "600 W N-Type TOPCon", watts: 600, vmp: 44.5, voc: 53.0 },
+  { id: "330w", label: "330 W Poly/Mono (72-cell)", watts: 330, vmp: 37.2, voc: 45.2, noctC: 46, gammaPmaxPct: -0.40, betaVocPct: -0.30 },
+  { id: "450w", label: "450 W Mono PERC", watts: 450, vmp: 41.2, voc: 49.5, noctC: 45, gammaPmaxPct: -0.36, betaVocPct: -0.28 },
+  { id: "550w", label: "550 W Mono Half-Cut", watts: 550, vmp: 41.8, voc: 49.8, noctC: 45, gammaPmaxPct: -0.35, betaVocPct: -0.27 },
+  { id: "600w", label: "600 W N-Type TOPCon", watts: 600, vmp: 44.5, voc: 53.0, noctC: 44, gammaPmaxPct: -0.30, betaVocPct: -0.25 },
 ];
 
 export const METHOD_DEFAULTS: Record<
@@ -316,6 +495,8 @@ export const DEFAULT_PUMP_SOLAR_INPUTS: PumpSolarInputs = {
   directFlowUnit: "m3h",
 
   sourceType: "borehole",
+  boreholeCasingInch: "4",
+  boreholeTotalDepthM: 100,
   siteAltitudeM: 1650,
   staticWaterDepthM: 55,
   drawdownM: 10,
@@ -356,11 +537,20 @@ export const DEFAULT_PUMP_SOLAR_INPUTS: PumpSolarInputs = {
 
   powerMode: "solar_dc",
   solarRegionId: "nairobi_central",
-  peakSunHours: 5.2,
+  solarSeasonMode: "worst_cloudy",
+  peakSunHours: 4.2,
+  ambientDayTempC: 26,
+  windSpeedMs: 1.8,
   minMorningTempC: 9,
-  pvTempDeratePct: 10,
-  dustMismatchLossPct: 8,
+  panelNoctC: 45,
+  panelGammaPmaxPct: -0.35,
+  panelBetaVocPct: -0.27,
+  dustSoilingEnv: "standard_farm",
+  pvTempDeratePct: 9,
+  dustMismatchLossPct: 9,
   controllerEfficiencyPct: 95,
+  skyCondition: "clear_sun",
+  skyIrradianceWm2: 950,
   panelWatts: 550,
   panelVmp: 41.8,
   panelVoc: 49.8,
@@ -443,12 +633,14 @@ export interface PumpSolarResult {
   totalDynamicHeadM: number;
   gravityAssistWarning: boolean;
 
-  // Altitude & Cavitation / Suction Check
+  // Altitude, Cavitation & Borehole Depth/Casing Checks
   maxPracticalSuctionLiftM: number;
   totalSuctionDutyM: number;
   suctionCavitationAlert: string | null;
+  boreholeRecommendedDepthM: number;
+  boreholeDepthAlert: string | null;
 
-  // Pump & Motor Power
+  // Pump, Motor & Solar VFD Power
   hydraulicPowerW: number;
   hydraulicPowerKw: number;
   shaftPowerKw: number;
@@ -458,10 +650,14 @@ export interface PumpSolarResult {
   recommendedMotorKw: number;
   recommendedMotorHp: number;
   nearestStandardHp: number;
+  recommendedVfdKw: number;
   dailyEnergyKwh: number;
   specificEnergyKwhPerM3: number;
 
-  // Solar PV, String Layout & Electrical Cable Sizing
+  // Solar PV, Weather Physics, String Layout & Electrical Cable Sizing
+  estimatedDayCellTempC: number;
+  computedThermalLossPct: number;
+  recommendedPanelTiltDeg: number;
   overallSolarDeratingFactor: number;
   recommendedArrayWp: number;
   peakSolarDemandWp: number;
@@ -479,6 +675,18 @@ export interface PumpSolarResult {
   recommendedCableMm2: number;
   actualVoltageDropV: number;
   actualVoltageDropPct: number;
+
+  // Real-time Weather / Cloud-Cover Pump Simulator
+  cloudSimulation: {
+    skyWm2: number;
+    cloudCellTempC: number;
+    arrayOutputW: number;
+    estimatedHz: number;
+    minCutoffHz: number;
+    canLiftWater: boolean;
+    estimatedCloudFlowM3h: number;
+    summary: string;
+  };
 
   // Hybrid / Battery / Grid / Generator
   batteryRequiredKwh: number;
@@ -798,6 +1006,40 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     });
   }
 
+  // Borehole Submergence & Casing Shroud Checks
+  const boreholeRecommendedDepthM =
+    inputs.sourceType === "borehole"
+      ? staticWaterLiftM + drawdownM + 6
+      : 0;
+  let boreholeDepthAlert: string | null = null;
+
+  if (inputs.sourceType === "borehole") {
+    const totalDepth = clamp(inputs.boreholeTotalDepthM, 10, 600);
+    if (boreholeRecommendedDepthM > totalDepth - 3) {
+      boreholeDepthAlert = `Dynamic pumping level + 6m submergence (${boreholeRecommendedDepthM.toFixed(
+        0,
+      )}m) leaves less than 3m above the ${totalDepth}m borehole bottom — risk of silt ingestion or dry-run.`;
+      alerts.push({
+        severity: "critical",
+        title: "Insufficient Borehole Submergence Clearance",
+        detail: boreholeDepthAlert,
+      });
+    }
+    if (inputs.boreholeCasingInch === "6" || inputs.boreholeCasingInch === "8" || inputs.boreholeCasingInch === "open_well") {
+      alerts.push({
+        severity: "info",
+        title: "Motor Cooling Sleeve Required in Wide Well",
+        detail: `Inside a ${BOREHOLE_CASING_LABELS[inputs.boreholeCasingInch]}, install a PVC/stainless flow-inducer sleeve around a submersible motor so rising water cools the stator properly.`,
+      });
+    } else if (inputs.boreholeCasingInch === "3") {
+      alerts.push({
+        severity: "warning",
+        title: '3" Narrow Casing Restriction',
+        detail: 'A 3-inch (~76mm ID) casing fits slim 3-inch pumps only; standard 4-inch (98mm OD) submersible pumps will jam. Verify outside diameter before lowering.',
+      });
+    }
+  }
+
   for (const pipeRes of [suctionPipeResult, primaryPipeResult, secondaryPipeResult]) {
     if (pipeRes.enabled && pipeRes.status !== "optimal") {
       const savingsNote =
@@ -843,13 +1085,34 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     STANDARD_KENYA_HP_RATINGS.find((hp) => hp >= recommendedMotorHp) ??
     Math.ceil(recommendedMotorHp);
 
+  // VFD sizing rule: 1.25x headroom plus +1% altitude derate per 100m above 1000m
+  const altitudeVfdDerate =
+    inputs.siteAltitudeM > 1000 ? 1 + ((inputs.siteAltitudeM - 1000) / 100) * 0.01 : 1;
+  const recommendedVfdKw = Math.max(recommendedMotorKw, electricalInputPowerKw * 1.25) * altitudeVfdDerate;
+
   const dailyEnergyKwh = electricalInputPowerKw * operatingHours;
   const specificEnergyKwhPerM3 =
     dailyGrossVolumeM3 > 0 ? dailyEnergyKwh / dailyGrossVolumeM3 : 0;
 
-  // 4. Solar PV, String Configuration & Cable Sizing
+  // 4. Sandia / NOCT Weather Physics + Solar PV + String Optimizer
   const psh = clamp(inputs.peakSunHours, 2.5, 8.5);
-  const tempDerate = 1 - clamp(inputs.pvTempDeratePct, 0, 30) / 100;
+  const ambientC = clamp(inputs.ambientDayTempC, 5, 50);
+  const windMs = clamp(inputs.windSpeedMs, 0.2, 12);
+  const noctC = clamp(inputs.panelNoctC, 38, 52);
+  const gammaPct = clamp(inputs.panelGammaPmaxPct, -0.6, -0.15);
+  const betaVocPct = clamp(inputs.panelBetaVocPct, -0.45, -0.15);
+
+  const computeCellTemp = (irradianceWm2: number) =>
+    ambientC + (irradianceWm2 / 800) * (noctC - 20) * (9.5 / (5.7 + 3.8 * windMs));
+
+  const estimatedDayCellTempC = computeCellTemp(950);
+  const computedThermalLossPct = Math.max(
+    0,
+    Math.min(30, -gammaPct * Math.max(0, estimatedDayCellTempC - 25)),
+  );
+  const recommendedPanelTiltDeg = 12; // Self-cleaning rain runoff near Kenyan equator
+
+  const tempDerate = 1 - computedThermalLossPct / 100;
   const dustMismatch = 1 - clamp(inputs.dustMismatchLossPct, 0, 25) / 100;
   const overallSolarDeratingFactor = tempDerate * dustMismatch * ctrlEff;
 
@@ -874,17 +1137,18 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
         1,
       )} hrs/day directly from PV in a ${psh.toFixed(
         1,
-      )} PSH zone requires oversize array/flow or pumping faster into an elevated buffer tank (5–6 hrs solar window) to protect the MPPT current ceiling.`,
+      )} PSH window requires array oversizing or faster pumping into a storage buffer tank to avoid current clipping.`,
     });
   }
 
-  // PV String Optimizer
+  // PV String Optimizer (with datasheet beta_Voc cold check & Sandia hot Vmp check)
   const panelW = clamp(inputs.panelWatts, 100, 800);
   const panelVmp = clamp(inputs.panelVmp, 15, 70);
   const panelVoc = clamp(inputs.panelVoc, 18, 90);
   const coldDeltaC = Math.max(0, 25 - clamp(inputs.minMorningTempC, -5, 30));
-  const coldVocFactor = 1 + 0.003 * coldDeltaC;
-  const hotVmpFactor = 0.88; // ~60C module cell temperature on Kenyan farms
+  const coldVocFactor = 1 + (Math.abs(betaVocPct) / 100) * coldDeltaC;
+  const hotDeltaC = Math.max(0, estimatedDayCellTempC - 25);
+  const hotVmpFactor = Math.max(0.75, 1 - (Math.abs(betaVocPct) / 100) * hotDeltaC);
 
   const ctrlMinV = clamp(inputs.controllerMinVmpV, 24, 600);
   const ctrlMaxVoc = clamp(inputs.controllerMaxVocV, 45, 1000);
@@ -1034,6 +1298,60 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     };
   }
 
+  // Weather / Cloud-Cover Output Simulation (Centrifugal affinity P ~ n^3, H ~ n^2)
+  const simWm2 = clamp(inputs.skyIrradianceWm2, 100, 1200);
+  const cloudCellTempC = computeCellTemp(simWm2);
+  const cloudThermalFactor = Math.max(0.68, 1 + (gammaPct / 100) * Math.max(0, cloudCellTempC - 25));
+  const arrayOutputW =
+    inputs.powerMode === "ac_grid_generator"
+      ? electricalInputPowerW
+      : installedArrayWp * (simWm2 / 1000) * cloudThermalFactor * dustMismatch * ctrlEff;
+  const powerRatio = Math.max(0, arrayOutputW / Math.max(1, electricalInputPowerW));
+  const speedRatio = Math.min(1.04, Math.pow(powerRatio, 1 / 3));
+  const estimatedHz = Math.round(speedRatio * 50);
+  // Centrifugal shutoff frequency needed to crack check valve past static + elevation head
+  const staticOnlyHeadM = effectiveStaticM + Math.max(0, elevationGainM + dischargeHeightM);
+  const nominalShutoffRefM = Math.max(totalDynamicHeadM * 1.45, staticOnlyHeadM * 1.15, 10);
+  const minCutoffHz = Math.min(
+    46,
+    Math.max(25, Math.round(50 * Math.sqrt(Math.max(0.15, staticOnlyHeadM / nominalShutoffRefM)))),
+  );
+  const canLiftWater =
+    inputs.powerMode === "ac_grid_generator" ||
+    inputs.powerMode === "solar_hybrid" ||
+    estimatedHz >= minCutoffHz;
+  const estimatedCloudFlowM3h = canLiftWater
+    ? Number(
+        Math.min(
+          designFlowM3h * 1.05,
+          designFlowM3h * Math.max(0, (estimatedHz - minCutoffHz * 0.4) / (50 - minCutoffHz * 0.4)),
+        ).toFixed(2),
+      )
+    : 0;
+  const cloudSummary =
+    inputs.powerMode === "ac_grid_generator"
+      ? `Continuous grid/generator power delivers full ${designFlowM3h.toFixed(1)} m³/h at 50 Hz.`
+      : inputs.powerMode === "solar_hybrid"
+        ? `At ${simWm2} W/m², PV delivers ~${Math.round(arrayOutputW)} W; battery/inverter sustains 50 Hz delivery.`
+        : canLiftWater
+          ? `At ${simWm2} W/m² (${cloudCellTempC.toFixed(0)}°C cell), PV outputs ~${Math.round(
+              arrayOutputW,
+            )} W -> ~${estimatedHz} Hz (~${estimatedCloudFlowM3h.toFixed(1)} m³/h).`
+          : `Under ${simWm2} W/m², array (~${Math.round(
+              arrayOutputW,
+            )} W) slows to ~${estimatedHz} Hz, below ~${minCutoffHz} Hz check-valve cutoff — rely on buffer tank.`;
+
+  const cloudSimulation = {
+    skyWm2: simWm2,
+    cloudCellTempC,
+    arrayOutputW,
+    estimatedHz,
+    minCutoffHz,
+    canLiftWater,
+    estimatedCloudFlowM3h,
+    summary: cloudSummary,
+  };
+
   return {
     areaSqm,
     dailyNetVolumeM3,
@@ -1061,6 +1379,8 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     maxPracticalSuctionLiftM,
     totalSuctionDutyM,
     suctionCavitationAlert,
+    boreholeRecommendedDepthM,
+    boreholeDepthAlert,
     hydraulicPowerW,
     hydraulicPowerKw,
     shaftPowerKw,
@@ -1070,8 +1390,12 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     recommendedMotorKw,
     recommendedMotorHp,
     nearestStandardHp,
+    recommendedVfdKw,
     dailyEnergyKwh,
     specificEnergyKwhPerM3,
+    estimatedDayCellTempC,
+    computedThermalLossPct,
+    recommendedPanelTiltDeg,
     overallSolarDeratingFactor,
     recommendedArrayWp,
     peakSolarDemandWp,
@@ -1089,6 +1413,7 @@ export function calculatePumpSolarSystem(inputs: PumpSolarInputs): PumpSolarResu
     recommendedCableMm2: cableSpec.cableMm2,
     actualVoltageDropV: cableSpec.dropV,
     actualVoltageDropPct: cableSpec.dropPct,
+    cloudSimulation,
     batteryRequiredKwh,
     recommendedGeneratorKva,
     estimatedGridDailyCostKes,
@@ -1308,6 +1633,29 @@ export function matchCatalogPumps(
       continue;
     }
     if (inputs.sourceType !== "borehole" && specs.isSubmersible) {
+      continue;
+    }
+
+    // Physical 3" borehole casing clearance guard for 4" nominal pumps
+    const diameterSignals = cleanSpecText(
+      [
+        product.specifications?.["Pump Diameter"],
+        product.specifications?.Model,
+        product.model_number,
+        product.name,
+      ]
+        .filter(Boolean)
+        .join(" "),
+    );
+    const isThreeInchPump = /\b3\s*(inch|")/i.test(diameterSignals) || /\b3sds/i.test(diameterSignals);
+    const isFourInchPump =
+      !isThreeInchPump &&
+      (/\b4\s*(inch|")/i.test(diameterSignals) || /submersible/i.test(product.name));
+    if (
+      inputs.sourceType === "borehole" &&
+      inputs.boreholeCasingInch === "3" &&
+      isFourInchPump
+    ) {
       continue;
     }
 

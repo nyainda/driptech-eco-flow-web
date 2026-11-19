@@ -53,6 +53,7 @@ import {
   ChevronRight,
   Grid3x3,
   Scale,
+  Calculator,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
@@ -1252,6 +1253,15 @@ const Products = () => {
                       Get PDF Catalogue + WhatsApp
                     </Button>
                   </CataloguePdfModal>
+                  {(category === "pumps" || category === "borehole" || category === "solar" || !category) && (
+                    <Link
+                      to="/pump-solar-calculator-kenya"
+                      className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-primary/35 bg-primary/5 px-3.5 text-xs font-bold text-primary transition-colors hover:bg-primary/10"
+                    >
+                      <Calculator className="h-3.5 w-3.5" />
+                      Pump &amp; Solar Calculator
+                    </Link>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm backdrop-blur">
@@ -1534,10 +1544,10 @@ const Products = () => {
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">See which crop, spacing, filtration and installation details affect a quote.</p>
                 <span className="mt-4 inline-flex text-sm font-semibold text-primary">Read price guide <span aria-hidden="true" className="ml-1">→</span></span>
               </Link>
-              <Link to="/irrigation-pump-sizing-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
-                <h3 className="font-semibold text-foreground group-hover:text-primary">Size the pump</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">Match flow and total head to the water source and field layout.</p>
-                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Read pump guide <span aria-hidden="true" className="ml-1">→</span></span>
+              <Link to="/pump-solar-calculator-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
+                <h3 className="font-semibold text-foreground group-hover:text-primary">Size the pump &amp; solar PV</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Calculate flow, TDH pipe friction, cable gauge, and cloudy-month solar strings.</p>
+                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Open calculator <span aria-hidden="true" className="ml-1">→</span></span>
               </Link>
               <Link to="/drip-vs-sprinkler-irrigation-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
                 <h3 className="font-semibold text-foreground group-hover:text-primary">Drip vs sprinkler</h3>
