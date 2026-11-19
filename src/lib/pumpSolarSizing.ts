@@ -1873,3 +1873,396 @@ export function matchCatalogPumps(
 
   return candidates.sort((a, b) => b.fitScore - a.fitScore).slice(0, 6);
 }
+
+// ---------------------------------------------------------------------------
+// 7. Interactive Pump Q-H Curve, System Resistance Curve & BEP (70-120% POR)
+// ---------------------------------------------------------------------------
+
+export type PumpCurveModelMode = "parabolic_endpoints" | "datasheet_3point";
+
+export type PumpOperatingZoneVerdict =
+  | "optimal_por"
+  | "recirculation_left"
+  | "runout_right"
+  | "dead_head_blocked";
+
+export interface PumpCurveConfig {
+  mode: PumpCurveModelMode;
+  label: string;
+  maxFlowM3h: number;
+  maxHeadM: number;
+  /** Optional 3-point datasheet BEP flow (m3/h) & head (m) */
+  bepFlowM3h?: number | null;
+  bepHeadM?: number | null;
+  /** Optional 3-point datasheet far-right point (m3/h & m) */
+  runoutFlowM3h?: number | null;
+  runoutHeadM?: number | null;
+  /** Optional solar VFD speed preview (e.g. 38 Hz morning vs 50 Hz rated) */
+  vfdFreqHz?: number | null;
+  ratedFreqHz?: number;
+}
+
+export interface PumpCurvePlotPoint {
+  flowM3h: number;
+  pumpHeadM: number | null;
+  systemHeadM: number;
+  reducedSpeedHeadM: number | null;
+}
+
+export interface PumpCurveAnalysis {
+  modeUsed: PumpCurveModelMode;
+  pumpLabel: string;
+  points: PumpCurvePlotPoint[];
+  chartMaxFlowM3h: number;
+  chartMaxHeadM: number;
+  fixedStaticHeadM: number;
+  dynamicLossAtDesignM: number;
+  shutoffHeadM: number;
+  zeroHeadFlowM3h: number;
+  bepPoint: { flowM3h: number; headM: number };
+  porMinFlowM3h: number;
+  porMaxFlowM3h: number;
+  operatingPoint: {
+    flowM3h: number;
+    headM: number;
+    canOperate: boolean;
+  };
+  reducedSpeedOperatingPoint: {
+    freqHz: number;
+    flowM3h: number;
+    headM: number;
+    canOperate: boolean;
+  } | null;
+  designDemandPoint: {
+    flowM3h: number;
+    headM: number;
+  };
+  operatingPctOfBep: number;
+  headMarginAtDesignM: number;
+  porVerdict: PumpOperatingZoneVerdict;
+  porVerdictLabel: string;
+  staffExplanation: string;
+  modelNote: string;
+}
+
+/**
+ * Builds an interpolator H_pump(Q) for either:
+ * 1) Parabolic Qmax/Hmax fit: H(Q) = Hmax * (1 - (Q / Qmax)^1.85), BEP ~ 0.62 * Qmax
+ * 2) Exact 3-point datasheet calibration passing strictly through:
+ *    (0, H_shutoff), (Q_bep, H_bep), and (Q_runout, H_runout).
+ */
+function createPumpHeadEvaluator(config: PumpCurveConfig): {
+  modeUsed: PumpCurveModelMode;
+  shutoffHeadM: number;
+  zeroHeadFlowM3h: number;
+  bepFlowM3h: number;
+  bepHeadM: number;
+  evalHeadAtFlow: (flowM3h: number) => number;
+  modelNote: string;
+} {
+  const h0 = Math.max(5, config.maxHeadM);
+  const qMaxFallback = Math.max(0.5, config.maxFlowM3h);
+
+  const hasValid3Point =
+    config.mode === "datasheet_3point" &&
+    typeof config.bepFlowM3h === "number" &&
+    config.bepFlowM3h > 0 &&
+    typeof config.bepHeadM === "number" &&
+    config.bepHeadM > 0 &&
+    config.bepHeadM < h0 &&
+    typeof config.runoutFlowM3h === "number" &&
+    config.runoutFlowM3h > config.bepFlowM3h;
+
+  if (!hasValid3Point) {
+    const qMax = qMaxFallback;
+    const evalHead = (q: number): number => {
+      if (q <= 0) return h0;
+      if (q >= qMax) return 0;
+      return Math.max(0, h0 * (1 - Math.pow(q / qMax, 1.85)));
+    };
+    const estBepQ = Number((qMax * 0.62).toFixed(2));
+    return {
+      modeUsed: "parabolic_endpoints",
+      shutoffHeadM: h0,
+      zeroHeadFlowM3h: qMax,
+      bepFlowM3h: estBepQ,
+      bepHeadM: evalHead(estBepQ),
+      evalHeadAtFlow: evalHead,
+      modelNote:
+        "Parabolic affinity fit from datasheet Qmax & Hmax endpoints (BEP approximated at ~62% Qmax). Switch to 3-Point Datasheet Calibration when reading exact OEM pump curve coordinates.",
+    };
+  }
+
+  const q1 = config.bepFlowM3h as number;
+  const h1 = config.bepHeadM as number;
+  const q2 = config.runoutFlowM3h as number;
+  const h2Raw =
+    typeof config.runoutHeadM === "number" && config.runoutHeadM >= 0
+      ? Math.min(config.runoutHeadM, h1 - 0.5)
+      : 0;
+  const h2 = Math.max(0, h2Raw);
+
+  const dH1 = h0 - h1;
+  const dH2 = h0 - h2;
+
+  // Attempt physically monotone power law H(Q) = H0 - dH1 * (Q / Q1)^p
+  let exponent = 0;
+  if (dH1 > 0 && dH2 > dH1 && q2 > q1) {
+    exponent = Math.log(dH2 / dH1) / Math.log(q2 / q1);
+  }
+
+  if (Number.isFinite(exponent) && exponent >= 1.1 && exponent <= 4.2) {
+    const qZero = q1 * Math.pow(h0 / dH1, 1 / exponent);
+    const evalHead = (q: number): number => {
+      if (q <= 0) return h0;
+      if (q >= qZero) return 0;
+      return Math.max(0, h0 - dH1 * Math.pow(q / q1, exponent));
+    };
+    return {
+      modeUsed: "datasheet_3point",
+      shutoffHeadM: h0,
+      zeroHeadFlowM3h: qZero,
+      bepFlowM3h: q1,
+      bepHeadM: h1,
+      evalHeadAtFlow: evalHead,
+      modelNote: `Calibrated 3-point OEM datasheet curve passing exactly through Shutoff (${h0.toFixed(
+        0,
+      )} m), BEP (${q1.toFixed(1)} m³/h @ ${h1.toFixed(0)} m), and Runout (${q2.toFixed(
+        1,
+      )} m³/h @ ${h2.toFixed(0)} m) with exponent p=${exponent.toFixed(2)}.`,
+    };
+  }
+
+  // Safe piecewise monotone linear-quadratic blend passing strictly through all 3 points
+  const qZero =
+    h2 <= 0
+      ? q2
+      : q2 + (h2 * (q2 - q1)) / Math.max(0.5, h1 - h2);
+  const evalHead = (q: number): number => {
+    if (q <= 0) return h0;
+    if (q <= q1) {
+      const t = q / q1;
+      return h0 - (h0 - h1) * Math.pow(t, 1.35);
+    }
+    if (q <= q2) {
+      const t = (q - q1) / (q2 - q1);
+      return h1 - (h1 - h2) * Math.pow(t, 1.15);
+    }
+    if (q >= qZero) return 0;
+    const t = (q - q2) / Math.max(0.1, qZero - q2);
+    return Math.max(0, h2 * (1 - t));
+  };
+
+  return {
+    modeUsed: "datasheet_3point",
+    shutoffHeadM: h0,
+    zeroHeadFlowM3h: qZero,
+    bepFlowM3h: q1,
+    bepHeadM: h1,
+    evalHeadAtFlow: evalHead,
+    modelNote: `Calibrated 3-point piecewise datasheet fit through Shutoff (${h0.toFixed(
+      0,
+    )} m), BEP (${q1.toFixed(1)} m³/h @ ${h1.toFixed(0)} m), and Runout (${q2.toFixed(
+      1,
+    )} m³/h @ ${h2.toFixed(0)} m).`,
+  };
+}
+
+function solveCurveIntersection(
+  pumpHeadFn: (q: number) => number,
+  sysHeadFn: (q: number) => number,
+  maxFlowM3h: number,
+): { flowM3h: number; headM: number; canOperate: boolean } {
+  if (pumpHeadFn(0) <= sysHeadFn(0) + 0.05) {
+    return { flowM3h: 0, headM: pumpHeadFn(0), canOperate: false };
+  }
+  let lo = 0;
+  let hi = Math.max(0.5, maxFlowM3h);
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (pumpHeadFn(mid) > sysHeadFn(mid)) {
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  const q = Number(((lo + hi) / 2).toFixed(2));
+  const h = Number(sysHeadFn(q).toFixed(1));
+  return { flowM3h: q, headM: h, canOperate: q > 0.05 };
+}
+
+/**
+ * Generates synchronized Pump Q-H curve, Farm System Resistance curve (Hazen-Williams Q^1.852),
+ * 70%-120% BEP Preferred Operating Range (POR) diagnostics, and optional VFD reduced-Hz curve.
+ */
+export function analyzePumpSystemCurves(
+  result: PumpSolarResult,
+  config: PumpCurveConfig,
+): PumpCurveAnalysis {
+  const evaluator = createPumpHeadEvaluator(config);
+  const designFlowM3h = Math.max(0.2, result.designFlowM3h);
+  const dynamicLossAtDesignM = Math.max(
+    0,
+    result.totalPipeFrictionM + result.fittingsMinorLossM,
+  );
+  const fixedStaticHeadM = Math.max(
+    0,
+    result.totalDynamicHeadM - dynamicLossAtDesignM,
+  );
+
+  const evalSystemHead = (q: number): number => {
+    if (q <= 0) return fixedStaticHeadM;
+    return fixedStaticHeadM + dynamicLossAtDesignM * Math.pow(q / designFlowM3h, 1.852);
+  };
+
+  const operatingPoint = solveCurveIntersection(
+    evaluator.evalHeadAtFlow,
+    evalSystemHead,
+    evaluator.zeroHeadFlowM3h,
+  );
+
+  const ratedHz = config.ratedFreqHz && config.ratedFreqHz > 0 ? config.ratedFreqHz : 50;
+  const activeVfdHz =
+    typeof config.vfdFreqHz === "number" && config.vfdFreqHz > 10 && config.vfdFreqHz < ratedHz
+      ? config.vfdFreqHz
+      : null;
+
+  const evalReducedSpeedHead = (q: number): number => {
+    if (!activeVfdHz) return 0;
+    const ratio = activeVfdHz / ratedHz;
+    if (ratio <= 0) return 0;
+    return ratio * ratio * evaluator.evalHeadAtFlow(q / ratio);
+  };
+
+  const reducedSpeedOperatingPoint = activeVfdHz
+    ? {
+        freqHz: activeVfdHz,
+        ...solveCurveIntersection(
+          evalReducedSpeedHead,
+          evalSystemHead,
+          evaluator.zeroHeadFlowM3h * (activeVfdHz / ratedHz),
+        ),
+      }
+    : null;
+
+  const porMinFlowM3h = Number((evaluator.bepFlowM3h * 0.7).toFixed(2));
+  const porMaxFlowM3h = Number((evaluator.bepFlowM3h * 1.2).toFixed(2));
+
+  const chartMaxFlowM3h = Number(
+    Math.max(
+      evaluator.zeroHeadFlowM3h * 1.06,
+      designFlowM3h * 1.2,
+      porMaxFlowM3h * 1.08,
+    ).toFixed(2),
+  );
+
+  const sysHeadAtDesign = evalSystemHead(designFlowM3h);
+  const pumpHeadAtDesign = evaluator.evalHeadAtFlow(designFlowM3h);
+  const headMarginAtDesignM = Number((pumpHeadAtDesign - sysHeadAtDesign).toFixed(1));
+
+  const chartMaxHeadM = Math.max(
+    evaluator.shutoffHeadM * 1.08,
+    result.totalDynamicHeadM * 1.15,
+    evalSystemHead(Math.min(chartMaxFlowM3h, evaluator.zeroHeadFlowM3h)) * 1.05,
+    20,
+  );
+
+  const steps = 40;
+  const points: PumpCurvePlotPoint[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const q = Number(((chartMaxFlowM3h * i) / steps).toFixed(2));
+    const pHead = q <= evaluator.zeroHeadFlowM3h + 0.01 ? evaluator.evalHeadAtFlow(q) : null;
+    const sHead = evalSystemHead(q);
+    const rHead =
+      activeVfdHz && q <= evaluator.zeroHeadFlowM3h * (activeVfdHz / ratedHz) + 0.01
+        ? evalReducedSpeedHead(q)
+        : null;
+    points.push({
+      flowM3h: q,
+      pumpHeadM: pHead !== null ? Number(pHead.toFixed(1)) : null,
+      systemHeadM: Number(sHead.toFixed(1)),
+      reducedSpeedHeadM: rHead !== null ? Number(rHead.toFixed(1)) : null,
+    });
+  }
+
+  const operatingPctOfBep =
+    evaluator.bepFlowM3h > 0
+      ? Math.round((operatingPoint.flowM3h / evaluator.bepFlowM3h) * 100)
+      : 0;
+
+  let porVerdict: PumpOperatingZoneVerdict;
+  let porVerdictLabel: string;
+  let staffExplanation: string;
+
+  if (!operatingPoint.canOperate) {
+    porVerdict = "dead_head_blocked";
+    porVerdictLabel = "Dead-Head / Zero Flow Risk";
+    staffExplanation = `Shutoff head (${evaluator.shutoffHeadM.toFixed(
+      0,
+    )} m) cannot exceed your fixed static lift + required working pressure (${fixedStaticHeadM.toFixed(
+      0,
+    )} m). Water will spin inside the casing, overheat, and burn seals — select a higher-head multistage pump.`;
+  } else if (operatingPctOfBep < 70) {
+    porVerdict = "recirculation_left";
+    porVerdictLabel = "Left of BEP — Recirculation Zone (<70% BEP)";
+    staffExplanation = `Duty intersection (${operatingPoint.flowM3h.toFixed(
+      1,
+    )} m³/h @ ${operatingPoint.headM.toFixed(
+      0,
+    )} m) sits left of the 70% BEP floor (${porMinFlowM3h.toFixed(
+      1,
+    )} m³/h). Running below 70% BEP causes internal fluid recirculation, shaft vibration, and excess motor heating. Pick a lower-flow pump or open another irrigation block.`;
+  } else if (operatingPctOfBep > 120) {
+    porVerdict = "runout_right";
+    porVerdictLabel = "Right of BEP — Runout / Cavitation Risk (>120% BEP)";
+    staffExplanation = `Duty intersection (${operatingPoint.flowM3h.toFixed(
+      1,
+    )} m³/h @ ${operatingPoint.headM.toFixed(
+      0,
+    )} m) pushes past 120% BEP (${porMaxFlowM3h.toFixed(
+      1,
+    )} m³/h) into runout. Expect higher motor amps, down-thrust bearing wear, and suction cavitation risk. Slightly throttle discharge or pick a higher-capacity pump.`;
+  } else {
+    porVerdict = "optimal_por";
+    porVerdictLabel = `Optimal POR (${operatingPctOfBep}% of BEP)`;
+    staffExplanation = `Duty point (${operatingPoint.flowM3h.toFixed(
+      1,
+    )} m³/h @ ${operatingPoint.headM.toFixed(
+      0,
+    )} m) lands squarely inside the 70%–120% Preferred Operating Range (${porMinFlowM3h.toFixed(
+      1,
+    )}–${porMaxFlowM3h.toFixed(
+      1,
+    )} m³/h). Minimum radial thrust, peak hydraulic efficiency, and longest bearing life.`;
+  }
+
+  return {
+    modeUsed: evaluator.modeUsed,
+    pumpLabel: config.label,
+    points,
+    chartMaxFlowM3h,
+    chartMaxHeadM: Math.ceil(chartMaxHeadM / 10) * 10,
+    fixedStaticHeadM: Number(fixedStaticHeadM.toFixed(1)),
+    dynamicLossAtDesignM: Number(dynamicLossAtDesignM.toFixed(1)),
+    shutoffHeadM: Number(evaluator.shutoffHeadM.toFixed(1)),
+    zeroHeadFlowM3h: Number(evaluator.zeroHeadFlowM3h.toFixed(2)),
+    bepPoint: {
+      flowM3h: Number(evaluator.bepFlowM3h.toFixed(2)),
+      headM: Number(evaluator.bepHeadM.toFixed(1)),
+    },
+    porMinFlowM3h,
+    porMaxFlowM3h,
+    operatingPoint,
+    reducedSpeedOperatingPoint,
+    designDemandPoint: {
+      flowM3h: Number(designFlowM3h.toFixed(2)),
+      headM: Number(sysHeadAtDesign.toFixed(1)),
+    },
+    operatingPctOfBep,
+    headMarginAtDesignM,
+    porVerdict,
+    porVerdictLabel,
+    staffExplanation,
+    modelNote: evaluator.modelNote,
+  };
+}

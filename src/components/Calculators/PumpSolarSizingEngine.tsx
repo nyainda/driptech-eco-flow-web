@@ -52,6 +52,7 @@ import { formatPrice, getProductPath } from "@/lib/productUrl";
 import { SITE_COMPANY } from "@/config/company";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import PumpReportBudgetTab from "@/components/Calculators/PumpReportBudgetTab";
+import PumpCurveVisualizer from "@/components/Calculators/PumpCurveVisualizer";
 import {
   downloadPumpSolarReportFile,
   openPumpSolarReportPdf,
@@ -446,6 +447,7 @@ export const PumpSolarSizingEngine = () => {
   const [activePresetId, setActivePresetId] = useState<string>("borehole_drip_2acre");
   const [catalogPumps, setCatalogPumps] = useState<CatalogPumpProduct[]>([]);
   const [loadingPumps, setLoadingPumps] = useState<boolean>(true);
+  const [selectedCurvePumpId, setSelectedCurvePumpId] = useState<string | null>(null);
   const [copiedSpec, setCopiedSpec] = useState<boolean>(false);
   const [savingDb, setSavingDb] = useState<boolean>(false);
   const [lastSavedCode, setLastSavedCode] = useState<string | null>(null);
@@ -2516,6 +2518,24 @@ export const PumpSolarSizingEngine = () => {
         </div>
       </div>
 
+      {/* 2.5 Interactive Pump Q-H Curve & BEP Visualizer */}
+      <div id="pump-curve-section" className="scroll-mt-24 pt-2">
+        <PumpCurveVisualizer
+          result={result}
+          matchedPumps={matchedPumps}
+          customPumpSpecs={
+            inputs.customPump.enabled
+              ? {
+                  label: inputs.customPump.name,
+                  maxFlowM3h: inputs.customPump.maxFlowM3h,
+                  maxHeadM: inputs.customPump.maxHeadM,
+                }
+              : undefined
+          }
+          selectedPumpId={selectedCurvePumpId}
+        />
+      </div>
+
       {/* 3. Live DripTech Pump Equipment Recommendations */}
       <section aria-labelledby="matched-pumps-heading" className="pt-2">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
@@ -2625,6 +2645,23 @@ export const PumpSolarSizingEngine = () => {
                   </div>
 
                   <div className="flex flex-wrap gap-2 border-t border-border/70 p-3">
+                    {specs.maxFlowM3h && specs.maxHeadM && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-2.5 text-xs font-semibold"
+                        onClick={() => {
+                          setSelectedCurvePumpId(product.id);
+                          document
+                            .getElementById("pump-curve-section")
+                            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }}
+                      >
+                        <Activity className="mr-1 h-3.5 w-3.5 text-primary" />
+                        Plot Curve
+                      </Button>
+                    )}
                     <Link
                       to={getProductPath(product)}
                       className="inline-flex h-9 flex-1 items-center justify-center rounded-lg border border-border bg-background px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted"

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  analyzePumpSystemCurves,
   applyKenyaSolarRegionPreset,
   barFromPressureUnit,
   calculatePumpSolarSystem,
@@ -319,5 +320,72 @@ const financial = computeCustomFinancialSummary(
 assert.equal(financial.totalCustomCapexKes, 420000);
 assert.equal(financial.annualSavingsKes, 300000);
 assert.equal(financial.paybackYears, 1.4);
+
+// 13. Pump Q-H Curve, System Resistance Intersection, 3-Point Calibration & BEP POR
+const curvePorOptimal = analyzePumpSystemCurves(
+  {
+    ...base,
+    designFlowM3h: 5.5,
+    totalPipeFrictionM: 8,
+    fittingsMinorLossM: 2,
+    totalDynamicHeadM: 72,
+  },
+  {
+    mode: "datasheet_3point",
+    label: "4ST 1.5kW Calibrated",
+    maxFlowM3h: 8.6,
+    maxHeadM: 112,
+    bepFlowM3h: 5.5,
+    bepHeadM: 72,
+    runoutFlowM3h: 8.2,
+    runoutHeadM: 18,
+    vfdFreqHz: 40,
+    ratedFreqHz: 50,
+  },
+);
+assert.equal(curvePorOptimal.modeUsed, "datasheet_3point");
+assert.equal(curvePorOptimal.porVerdict, "optimal_por");
+assert.ok(
+  Math.abs(curvePorOptimal.operatingPoint.flowM3h - 5.5) <= 0.15,
+  `Exact 3-pt BEP match should land near 5.5 m3/h, got ${curvePorOptimal.operatingPoint.flowM3h}`,
+);
+assert.ok(
+  curvePorOptimal.reducedSpeedOperatingPoint &&
+    curvePorOptimal.reducedSpeedOperatingPoint.flowM3h < curvePorOptimal.operatingPoint.flowM3h,
+  "40 Hz solar speed drop must shift duty point lower than 50 Hz rated curve",
+);
+
+const curveDeadHead = analyzePumpSystemCurves(base, {
+  mode: "parabolic_endpoints",
+  label: "Undersized Pump",
+  maxFlowM3h: 6.0,
+  maxHeadM: 50,
+});
+assert.equal(curveDeadHead.porVerdict, "dead_head_blocked", "Shutoff < static+pressure must block flow");
+
+const curveRecirculation = analyzePumpSystemCurves(
+  {
+    ...base,
+    designFlowM3h: 3.0,
+    totalPipeFrictionM: 4,
+    fittingsMinorLossM: 1,
+    totalDynamicHeadM: 88,
+  },
+  {
+    mode: "datasheet_3point",
+    label: "Oversized Flow Pump",
+    maxFlowM3h: 14,
+    maxHeadM: 105,
+    bepFlowM3h: 9.0,
+    bepHeadM: 68,
+    runoutFlowM3h: 13.5,
+    runoutHeadM: 16,
+  },
+);
+assert.equal(
+  curveRecirculation.porVerdict,
+  "recirculation_left",
+  "Flow < 70% BEP must flag left-of-BEP recirculation risk",
+);
 
 console.log("check-pump-solar-sizing passed all assertions.");

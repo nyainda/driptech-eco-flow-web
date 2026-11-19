@@ -166,6 +166,16 @@ const INTERACTIVE_ENGINEERING_GUIDES = [
     to: "/pump-solar-calculator-kenya",
   },
   {
+    title: "How to Read Pump Curves & 70–120% BEP (Interactive)",
+    desc: "Plot Shutoff Head, BEP Preferred Operating Range, System Resistance intersections, and 3-point OEM curves to stop burnout.",
+    to: "/how-to-read-pump-curves-kenya",
+  },
+  {
+    title: "Pump & Motor Installation, Megger & Fault Guide",
+    desc: "25 ft check-valve rules, cooling shrouds, 500V DC Megger MΩ thresholds, NEMA phase balance, grounding & solar controller faults.",
+    to: "/pump-motor-installation-maintenance-kenya",
+  },
+  {
     title: "Irrigation Pump Sizing & Total Dynamic Head",
     desc: "Calculating flow rate (m³/hr) and total dynamic head (TDH) for boreholes, rivers, and raised tanks.",
     to: "/irrigation-pump-sizing-kenya",
