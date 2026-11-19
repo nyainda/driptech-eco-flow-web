@@ -13,6 +13,7 @@ import {
   FolderOpen,
   Gauge,
   MessageCircle,
+  Plus,
   Printer,
   RefreshCw,
   Search,
@@ -71,6 +72,8 @@ import {
   generateAdminEngReportCode,
   generateAutoEngineeringBoq,
   HydraulicCouplingMode,
+  LateralTakeoffStyle,
+  ReportEdition,
 } from "@/lib/engineeringReportEngine";
 import {
   downloadFullClientEngineeringReportHtml,
@@ -162,7 +165,7 @@ const ADMIN_PRESET_TEMPLATES: Array<{
       staticWaterDepthM: 3,
       drawdownM: 0.5,
       groundElevationGainM: 5,
-      powerMode: "ac_grid_backup",
+      powerMode: "ac_grid_generator",
     },
   },
   {
@@ -311,6 +314,41 @@ export default function EngineeringReportsManagement() {
     toast({
       title: "Engineering BOQ Rebuilt",
       description: `Populated ${generated.items.length} line items across ${generated.sections.length} sections from current hydraulic & field design.`,
+    });
+  };
+
+  const handleStartNewClientReport = (edition: ReportEdition = "client_proposal") => {
+    const freshCode = generateAdminEngReportCode();
+    setSelectedCustomerId("");
+    setField(DEFAULT_FIELD_CONFIG);
+    setDam(DEFAULT_DAM_CONFIG);
+    setCouplingMode("direct_pressurized");
+    setPumpInputs(DEFAULT_PUMP_SOLAR_INPUTS);
+    setMeta({
+      ...DEFAULT_CLIENT_REPORT_META,
+      reportCode: freshCode,
+      reportEdition: edition,
+    });
+    const freshDesign = computeCompleteEngineeringDesign({
+      field: DEFAULT_FIELD_CONFIG,
+      dam: DEFAULT_DAM_CONFIG,
+      pumpInputs: DEFAULT_PUMP_SOLAR_INPUTS,
+      couplingMode: "direct_pressurized",
+      catalogPumps,
+    });
+    const generated = generateAutoEngineeringBoq({
+      design: freshDesign,
+      field: DEFAULT_FIELD_CONFIG,
+      dam: DEFAULT_DAM_CONFIG,
+      pumpInputs: freshDesign.syncedPumpInputs,
+      catalogProducts,
+    });
+    setBoqSections(generated.sections);
+    setBoqItems(generated.items);
+    setStudioTab("field");
+    toast({
+      title: `Started New ${edition === "client_proposal" ? "Client Proposal" : "Engineering Report"} (${freshCode})`,
+      description: "Enter client details, drip/sprinkler/dam layout, or pick a CRM customer.",
     });
   };
 
@@ -629,6 +667,16 @@ export default function EngineeringReportsManagement() {
                 type="button"
                 variant="outline"
                 size="sm"
+                onClick={() => handleStartNewClientReport("client_proposal")}
+                className="gap-1.5 border-primary/40 text-primary hover:bg-primary/10"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                New Client Report
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleRegenerateBoq}
                 className="gap-1.5"
               >
@@ -652,7 +700,7 @@ export default function EngineeringReportsManagement() {
                 className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Printer className="h-4 w-4" />
-                1-Click Full Client PDF
+                1-Click {meta.reportEdition === "client_proposal" ? "Client Proposal PDF" : "Full Engineering PDF"}
               </Button>
             </div>
           </div>
@@ -778,10 +826,21 @@ export default function EngineeringReportsManagement() {
                     Click any submission below to pull client site figures straight into the Irrigation + Pump + BOQ Studio.
                   </CardDescription>
                 </div>
-                <Button type="button" variant="outline" size="sm" onClick={loadInboxAndData} className="gap-1.5 self-start">
-                  <RefreshCw className={`h-3.5 w-3.5 ${loadingReports ? "animate-spin" : ""}`} />
-                  Refresh DB Queue
-                </Button>
+                <div className="flex flex-wrap gap-2 self-start">
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => handleStartNewClientReport("client_proposal")}
+                    className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    New Client Report
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={loadInboxAndData} className="gap-1.5">
+                    <RefreshCw className={`h-3.5 w-3.5 ${loadingReports ? "animate-spin" : ""}`} />
+                    Refresh DB Queue
+                  </Button>
+                </div>
               </div>
               <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                 <div className="relative flex-1">
@@ -1328,12 +1387,74 @@ export default function EngineeringReportsManagement() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="col-span-2 flex items-center justify-between sm:col-span-3 pt-1">
-                        <Label className="text-xs font-semibold">Include Venturi Fertilizer Bypass Kit</Label>
-                        <Switch
-                          checked={field.includeVenturiFertigation}
-                          onCheckedChange={(checked) => setField({ ...field, includeVenturiFertigation: checked })}
-                        />
+                      <div className="col-span-2 grid grid-cols-2 gap-3 sm:col-span-3 pt-1">
+                        <div>
+                          <Label className="text-[11px]">Mainline Length (m, 0=Auto)</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            step={10}
+                            value={field.mainlineLengthM}
+                            onChange={(e) => setField({ ...field, mainlineLengthM: Math.max(0, Number(e.target.value) || 0) })}
+                            className="mt-1 h-8 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-[11px]">Sub-Main Length (m, 0=Auto)</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            step={10}
+                            value={field.submainLengthM}
+                            onChange={(e) => setField({ ...field, submainLengthM: Math.max(0, Number(e.target.value) || 0) })}
+                            className="mt-1 h-8 text-xs"
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <Label className="text-[11px]">Lateral Take-Off Fitting Type</Label>
+                          <Select
+                            value={field.lateralTakeoffStyle}
+                            onValueChange={(v) => setField({ ...field, lateralTakeoffStyle: v as LateralTakeoffStyle })}
+                          >
+                            <SelectTrigger className="mt-1 h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="takeoff_grommet">16mm Start Connectors + Rubber Grommets (Standard)</SelectItem>
+                              <SelectItem value="mini_valves">Individual 16mm Mini Control Valves per Lateral</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="col-span-2 grid grid-cols-1 gap-2 sm:col-span-3 sm:grid-cols-2 pt-1">
+                        <div className="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-background px-2.5 py-1.5">
+                          <Label className="text-[11px] font-semibold">Venturi Fertilizer Bypass</Label>
+                          <Switch
+                            checked={field.includeVenturiFertigation}
+                            onCheckedChange={(checked) => setField({ ...field, includeVenturiFertigation: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-background px-2.5 py-1.5">
+                          <Label className="text-[11px] font-semibold">15 PSI Pressure Regulator</Label>
+                          <Switch
+                            checked={field.includePressureRegulator}
+                            onCheckedChange={(checked) => setField({ ...field, includePressureRegulator: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-background px-2.5 py-1.5">
+                          <Label className="text-[11px] font-semibold">Air Release &amp; Vacuum Valve</Label>
+                          <Switch
+                            checked={field.includeAirReleaseValve}
+                            onCheckedChange={(checked) => setField({ ...field, includeAirReleaseValve: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-background px-2.5 py-1.5">
+                          <Label className="text-[11px] font-semibold">Sub-Main End Flush Valves</Label>
+                          <Switch
+                            checked={field.includeFlushManifold}
+                            onCheckedChange={(checked) => setField({ ...field, includeFlushManifold: checked })}
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1448,10 +1569,22 @@ export default function EngineeringReportsManagement() {
                       Filter: <strong>{design.fieldSummary.filtrationRecommendation}</strong>
                     </p>
                     {field.systemType === "drip" && (
-                      <p className="text-muted-foreground">
-                        Qty Needed: <strong>{design.fieldSummary.bomQuantities.driplineRolls} rolls ({design.fieldSummary.bomQuantities.totalDriplineM.toLocaleString()} m)</strong>,{" "}
-                        {design.fieldSummary.bomQuantities.startConnectors} connectors + end caps
-                      </p>
+                      <div className="space-y-1 text-muted-foreground">
+                        <p>
+                          Pipe &amp; Fittings: <strong>{design.fieldSummary.derivedMainlineLengthM}m</strong> Mainline +{" "}
+                          <strong>{design.fieldSummary.derivedSubmainLengthM}m</strong> Submain,{" "}
+                          {design.fieldSummary.bomQuantities.mainlineElbows} elbows, {design.fieldSummary.bomQuantities.submainTees} tees,{" "}
+                          {design.fieldSummary.bomQuantities.reducingCouplers + design.fieldSummary.bomQuantities.straightCouplers} couplers,{" "}
+                          {design.fieldSummary.bomQuantities.threadedAdaptersMtaFta} MTA/FTA adapters,{" "}
+                          {design.fieldSummary.bomQuantities.flushAssemblies} flush ends
+                        </p>
+                        <p>
+                          Laterals &amp; Headworks: <strong>{design.fieldSummary.bomQuantities.driplineRolls} rolls ({design.fieldSummary.bomQuantities.totalDriplineM.toLocaleString()} m)</strong>,{" "}
+                          {design.fieldSummary.bomQuantities.startConnectors} connectors, {design.fieldSummary.bomQuantities.grommets} grommets,{" "}
+                          {design.fieldSummary.bomQuantities.peRepairJoiners} PE joiners, {design.fieldSummary.bomQuantities.endCaps} end caps,{" "}
+                          {design.fieldSummary.bomQuantities.pressureGauges} gauges
+                        </p>
+                      </div>
                     )}
                     {field.systemType === "sprinkler" && (
                       <p className="text-muted-foreground">
@@ -1696,7 +1829,22 @@ export default function EngineeringReportsManagement() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2 lg:grid-cols-5">
+                <div>
+                  <Label className="text-[11px] font-semibold">Report Format Style</Label>
+                  <Select
+                    value={meta.reportEdition}
+                    onValueChange={(val) => setMeta({ ...meta, reportEdition: val as ReportEdition })}
+                  >
+                    <SelectTrigger className="mt-1 h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="client_proposal">Client Proposal Edition</SelectItem>
+                      <SelectItem value="full_engineering">Full Engineering Audit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="flex items-center justify-between gap-2">
                   <Label className="text-xs font-semibold">Apply 16% VAT</Label>
                   <Switch

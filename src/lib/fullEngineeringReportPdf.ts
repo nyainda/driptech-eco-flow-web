@@ -262,11 +262,15 @@ export function buildFullClientEngineeringReportHtml(
         <img src="${esc(logoUrl)}" alt="${esc(COMPANY.shortName)}" />
         <div>
           <h1>${esc(COMPANY.name)}</h1>
-          <p>Integrated Pump, Solar PV &amp; Precision Irrigation Engineering Report</p>
+          <p>${
+            meta.reportEdition === "client_proposal"
+              ? "Client Farm Engineering Proposal, Layout &amp; Commercial Quotation"
+              : "Integrated Pump, Solar PV &amp; Precision Irrigation Engineering Dossier"
+          }</p>
         </div>
       </div>
       <div class="meta">
-        <div class="code">${esc(meta.reportCode)}</div>
+        <div class="code">${esc(meta.reportCode)}${meta.reportEdition === "client_proposal" ? " • CLIENT COPY" : ""}</div>
         <div><strong>Issued:</strong> ${esc(meta.preparedDate)}</div>
         <div><strong>Valid Until:</strong> ${esc(validUntilDate)}</div>
         <div><strong>Engineer:</strong> ${esc(meta.engineerName)}</div>
@@ -330,12 +334,13 @@ export function buildFullClientEngineeringReportHtml(
           <tbody>
             <tr><td>Area &amp; Crop Block Schedule</td><td>${field.acres} Acre(s) (${Math.round(fieldSummary.areaSqm).toLocaleString()} m²)</td><td>${field.cropName} rotated across ${field.zones} zone(s) (${fieldSummary.runtimeHoursPerDay} hrs/day)</td></tr>
             <tr><td>Block Flow &amp; Working Pressure</td><td>${fieldSummary.activeBlockFlowM3h.toFixed(2)} m³/h @ ${fieldSummary.requiredWorkingBar.toFixed(1)} bar</td><td>Filtration sizing: ${esc(fieldSummary.filtrationRecommendation)}</td></tr>
-            <tr><td>Pipework Sizing</td><td>${fieldSummary.recommendedMainlineOdMm} mm Main / ${fieldSummary.recommendedSubmainOdMm} mm Submain</td><td>${
+            <tr><td>Pipework &amp; Compression Fittings</td><td>${fieldSummary.recommendedMainlineOdMm}mm Mainline (${fieldSummary.derivedMainlineLengthM}m) / ${fieldSummary.recommendedSubmainOdMm}mm Submain (${fieldSummary.derivedSubmainLengthM}m)</td><td>${fieldSummary.bomQuantities.mainlineElbows} Elbows, ${fieldSummary.bomQuantities.submainTees} Tees, ${fieldSummary.bomQuantities.reducingCouplers + fieldSummary.bomQuantities.straightCouplers} Couplers, ${fieldSummary.bomQuantities.threadedAdaptersMtaFta} MTA/FTA, ${fieldSummary.bomQuantities.zoneIsolationValves} Zone Valves, ${fieldSummary.bomQuantities.flushAssemblies} Flush Ends</td></tr>
+            <tr><td>Field Emitters &amp; Headworks</td><td>${fieldSummary.bomQuantities.pressureGauges} Gauges, ${fieldSummary.bomQuantities.airReleaseValves} Air Valve(s), ${fieldSummary.bomQuantities.pressureRegulators} Reg(s)</td><td>${
               field.systemType === "drip"
-                ? `${fieldSummary.bomQuantities.driplineRolls} × ${field.rollLengthM}m rolls 16mm dripline (${fieldSummary.bomQuantities.totalDriplineM.toLocaleString()} m), ${fieldSummary.bomQuantities.startConnectors} connectors/grommets`
+                ? `${fieldSummary.bomQuantities.driplineRolls} × ${field.rollLengthM}m rolls (${fieldSummary.bomQuantities.totalDriplineM.toLocaleString()} m), ${fieldSummary.bomQuantities.startConnectors} start connectors, ${fieldSummary.bomQuantities.grommets} grommets, ${fieldSummary.bomQuantities.peRepairJoiners} repair joiners, ${fieldSummary.bomQuantities.endCaps} end caps`
                 : field.systemType === "sprinkler"
-                  ? `${fieldSummary.bomQuantities.sprinklerHeads} impact sprinklers @ ${field.sprinklerSpacingM}m × ${field.sprinklerSpacingM}m grid (${fieldSummary.bomQuantities.precipitationRateMmHr} mm/hr rate)`
-                  : `${fieldSummary.bomQuantities.raingunUnits} rain gun unit(s) across ${fieldSummary.bomQuantities.hydrantOutlets} field hydrants (${field.raingunWettingRadiusM}m throw radius)`
+                  ? `${fieldSummary.bomQuantities.sprinklerHeads} impact sprinklers + risers + saddle clamps @ ${field.sprinklerSpacingM}m × ${field.sprinklerSpacingM}m grid (${fieldSummary.bomQuantities.precipitationRateMmHr} mm/hr rate)`
+                  : `${fieldSummary.bomQuantities.raingunUnits} rain gun unit(s) + tripod across ${fieldSummary.bomQuantities.hydrantOutlets} field hydrants (${field.raingunWettingRadiusM}m throw radius)`
             }</td></tr>
           </tbody>
         </table>
