@@ -125,20 +125,30 @@ const boq = generateAutoEngineeringBoq({
   pumpInputs: completeDesign.syncedPumpInputs,
   catalogProducts: [
     { id: "p-demo", name: "3 HP Solar Submersible Borehole Pump", category: "pumps_motors", price: 125000 },
-    { id: "pv-1", name: "550W Mono Solar Panel", category: "solar", price: 16500 },
-    { id: "dl-1", name: "16mm Dripline 1000m Roll", category: "drip_irrigation", price: 7800 },
-    { id: "liner-1", name: "0.75mm HDPE Dam Liner per sqm", category: "water_storage", price: 360 },
+    { id: "pipe-50", name: "HDPE Pipe PN10 50mm (100m Roll)", category: "pipes_fittings", price: 18500 },
+    { id: "dl-1", name: "Drip Tech DripLines", category: "drip_irrigation", price: 8000 },
+    { id: "liner-1", name: "DripTech Quality Damliners", category: "water_storage", price: 310 },
   ],
 });
 
-assert.equal(boq.sections.length, 5, "Expected 5 structured BOQ sections (Pump, Solar, Field, Dam, Install)");
-assert.ok(boq.items.length >= 10, `Expected >=10 auto BOQ items, got ${boq.items.length}`);
+assert.equal(boq.sections.length, 7, "Expected 7 structured BOQ sections (Pump, Solar, Headworks, Main/Submain, Field Drip, Dam, Install)");
+assert.ok(boq.items.length >= 22, `Expected >=22 detailed engineering & fitting BOQ items, got ${boq.items.length}`);
 assert.ok(boq.items.some((i) => i.product_id === "p-demo"), "Matched pump must map directly from catalogue");
+const rollPipeItem = boq.items.find((i) => i.product_id === "pipe-50");
+assert.ok(rollPipeItem && rollPipeItem.unit.includes("Rolls"), "100m roll pipe SKU must bill in Rolls rather than individual meters");
+assert.ok(boq.items.some((i) => /Elbow/i.test(i.name)), "BOQ must include compression elbows");
+assert.ok(boq.items.some((i) => /Tee/i.test(i.name)), "BOQ must include equal/reducing tees");
+assert.ok(boq.items.some((i) => /Grommet/i.test(i.name)), "BOQ must include rubber grommets");
+assert.ok(boq.items.some((i) => /Take-Off|Start/i.test(i.name)), "BOQ must include start/take-off connectors");
+assert.ok(boq.items.some((i) => /End Cap/i.test(i.name)), "BOQ must include 16mm end caps");
+assert.ok(boq.items.some((i) => /Air Release/i.test(i.name)), "BOQ must include air release valve");
+assert.ok(boq.items.some((i) => /Pressure Gauge/i.test(i.name)), "BOQ must include pressure gauges");
 
 const html = buildFullClientEngineeringReportHtml({
   meta: {
     ...DEFAULT_CLIENT_REPORT_META,
     reportCode: "DT-ENG-261119-TEST",
+    reportEdition: "client_proposal",
     clientName: "Rift Valley Agribusiness Ltd",
     countyLocation: "Nakuru",
     includeVat: true,
@@ -161,6 +171,7 @@ const html = buildFullClientEngineeringReportHtml({
 });
 
 assert.ok(html.includes("DT-ENG-261119-TEST"), "Report must stamp unique code");
+assert.ok(html.includes("CLIENT COPY"), "Client proposal edition must stamp CLIENT COPY badge");
 assert.ok(html.includes("<svg viewBox=\"0 0 680 310\""), "Full report must embed vector Q-H SVG curve plot");
 assert.ok(html.includes("500V DC Megger Insulation Resistance"), "Full report must include commissioning checklist");
 assert.ok(html.includes("Rift Valley Agribusiness Ltd"), "Report must stamp client name");

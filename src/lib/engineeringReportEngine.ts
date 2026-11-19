@@ -19,6 +19,8 @@ import {
 export type FieldSystemType = "none" | "drip" | "sprinkler" | "raingun";
 export type DamStorageMode = "none" | "hdpe_dam_liner" | "elevated_tank";
 export type HydraulicCouplingMode = "direct_pressurized" | "fill_storage_tank";
+export type ReportEdition = "full_engineering" | "client_proposal";
+export type LateralTakeoffStyle = "takeoff_grommet" | "mini_valves";
 
 export interface FieldIrrigationConfig {
   systemType: FieldSystemType;
@@ -28,7 +30,11 @@ export interface FieldIrrigationConfig {
   simultaneousZones: number;
   cropWaterMmDay: number;
 
-  // Drip layout
+  // Mainline & Submain Piping Runs (0 = auto-derive from plot geometry)
+  mainlineLengthM: number;
+  submainLengthM: number;
+
+  // Drip layout & headworks accessories
   rowSpacingM: number;
   lateralsPerBed: number;
   emitterSpacingCm: number;
@@ -38,6 +44,10 @@ export interface FieldIrrigationConfig {
   wastePct: number;
   dripWorkingBar: number;
   includeVenturiFertigation: boolean;
+  includePressureRegulator: boolean;
+  includeAirReleaseValve: boolean;
+  includeFlushManifold: boolean;
+  lateralTakeoffStyle: LateralTakeoffStyle;
   filtrationType: "disc" | "screen" | "sand_media";
 
   // Sprinkler layout
@@ -67,6 +77,7 @@ export interface DamStorageConfig {
 
 export interface ClientReportMetadata {
   reportCode: string;
+  reportEdition: ReportEdition;
   preparedDate: string;
   engineerName: string;
   engineerPhone: string;
@@ -94,6 +105,8 @@ export interface FieldHydraulicsSummary {
   runtimeHoursPerDay: number;
   recommendedMainlineOdMm: number;
   recommendedSubmainOdMm: number;
+  derivedMainlineLengthM: number;
+  derivedSubmainLengthM: number;
   filtrationCapacityM3h: number;
   filtrationRecommendation: string;
   bomQuantities: {
@@ -101,12 +114,25 @@ export interface FieldHydraulicsSummary {
     totalDriplineM: number;
     startConnectors: number;
     grommets: number;
+    peRepairJoiners: number;
     endCaps: number;
+    holePunchTools: number;
     sprinklerHeads: number;
     sprinklerRisers: number;
     raingunUnits: number;
     hydrantOutlets: number;
     zoneIsolationValves: number;
+    airReleaseValves: number;
+    pressureGauges: number;
+    pressureRegulators: number;
+    flushAssemblies: number;
+    mainlineElbows: number;
+    submainTees: number;
+    reducingCouplers: number;
+    straightCouplers: number;
+    threadedAdaptersMtaFta: number;
+    saddleClamps: number;
+    teflonTapeRolls: number;
     venturiSets: number;
     precipitationRateMmHr: number | null;
   };
@@ -142,6 +168,9 @@ export const DEFAULT_FIELD_CONFIG: FieldIrrigationConfig = {
   simultaneousZones: 1,
   cropWaterMmDay: 5.5,
 
+  mainlineLengthM: 0, // 0 = Auto-derived from farm geometry
+  submainLengthM: 0, // 0 = Auto-derived from zones & plot dimensions
+
   rowSpacingM: 1.0,
   lateralsPerBed: 1,
   emitterSpacingCm: 20,
@@ -151,6 +180,10 @@ export const DEFAULT_FIELD_CONFIG: FieldIrrigationConfig = {
   wastePct: 8,
   dripWorkingBar: 1.2,
   includeVenturiFertigation: true,
+  includePressureRegulator: true,
+  includeAirReleaseValve: true,
+  includeFlushManifold: true,
+  lateralTakeoffStyle: "takeoff_grommet",
   filtrationType: "disc",
 
   sprinklerSpacingM: 12,
@@ -178,6 +211,7 @@ export const DEFAULT_DAM_CONFIG: DamStorageConfig = {
 
 export const DEFAULT_CLIENT_REPORT_META: ClientReportMetadata = {
   reportCode: "",
+  reportEdition: "full_engineering",
   preparedDate: new Date().toISOString().slice(0, 10),
   engineerName: "DripTech Hydraulic Engineering Team",
   engineerPhone: "0723 407 849",
@@ -221,6 +255,16 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
   const zones = Math.max(1, Math.round(field.zones || 1));
   const simZones = Math.min(zones, Math.max(1, Math.round(field.simultaneousZones || 1)));
 
+  const derivedMainlineLengthM =
+    field.mainlineLengthM && field.mainlineLengthM > 0
+      ? Math.round(field.mainlineLengthM)
+      : Math.max(40, Math.round(Math.sqrt(areaSqm) * 1.15));
+
+  const derivedSubmainLengthM =
+    field.submainLengthM && field.submainLengthM > 0
+      ? Math.round(field.submainLengthM)
+      : Math.max(30, Math.round(Math.sqrt(areaSqm) * 0.9 * Math.min(zones, 4)));
+
   if (field.systemType === "none") {
     return {
       systemType: "none",
@@ -232,6 +276,8 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
       runtimeHoursPerDay: 6,
       recommendedMainlineOdMm: 50,
       recommendedSubmainOdMm: 40,
+      derivedMainlineLengthM,
+      derivedSubmainLengthM: 0,
       filtrationCapacityM3h: 0,
       filtrationRecommendation: "Pump suction strainer only (water transfer / tank filling).",
       bomQuantities: {
@@ -239,12 +285,25 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
         totalDriplineM: 0,
         startConnectors: 0,
         grommets: 0,
+        peRepairJoiners: 0,
         endCaps: 0,
+        holePunchTools: 0,
         sprinklerHeads: 0,
         sprinklerRisers: 0,
         raingunUnits: 0,
         hydrantOutlets: 0,
         zoneIsolationValves: 0,
+        airReleaseValves: 0,
+        pressureGauges: 0,
+        pressureRegulators: 0,
+        flushAssemblies: 0,
+        mainlineElbows: 0,
+        submainTees: 0,
+        reducingCouplers: 0,
+        straightCouplers: 0,
+        threadedAdaptersMtaFta: 0,
+        saddleClamps: 0,
+        teflonTapeRolls: 0,
         venturiSets: 0,
         precipitationRateMmHr: null,
       },
@@ -279,6 +338,8 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
       runtimeHoursPerDay,
       recommendedMainlineOdMm: mainlineOd,
       recommendedSubmainOdMm: submainOd,
+      derivedMainlineLengthM,
+      derivedSubmainLengthM,
       filtrationCapacityM3h: filtCap,
       filtrationRecommendation:
         field.filtrationType === "sand_media"
@@ -291,12 +352,25 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
         totalDriplineM,
         startConnectors: Math.ceil(approxLaterals * 1.05),
         grommets: Math.ceil(approxLaterals * 1.05),
+        peRepairJoiners: Math.max(10, Math.ceil(approxLaterals * 0.12)),
         endCaps: Math.ceil(approxLaterals * 1.05),
+        holePunchTools: Math.max(1, Math.min(3, Math.ceil(acres / 2))),
         sprinklerHeads: 0,
         sprinklerRisers: 0,
         raingunUnits: 0,
         hydrantOutlets: 0,
         zoneIsolationValves: zones,
+        airReleaseValves: field.includeAirReleaseValve !== false ? Math.max(1, Math.ceil(zones / 2)) : 0,
+        pressureGauges: 2,
+        pressureRegulators: field.includePressureRegulator !== false ? Math.max(1, zones) : 0,
+        flushAssemblies: field.includeFlushManifold !== false ? zones : 0,
+        mainlineElbows: Math.max(4, Math.round(zones * 1.5) + 2),
+        submainTees: zones,
+        reducingCouplers: mainlineOd !== submainOd ? zones : 0,
+        straightCouplers: Math.max(2, Math.floor((derivedMainlineLengthM + derivedSubmainLengthM) / 100) + 1),
+        threadedAdaptersMtaFta: zones * 3 + 6,
+        saddleClamps: 0,
+        teflonTapeRolls: Math.max(5, zones * 3),
         venturiSets: field.includeVenturiFertigation ? 1 : 0,
         precipitationRateMmHr: null,
       },
@@ -330,6 +404,8 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
       runtimeHoursPerDay,
       recommendedMainlineOdMm: mainlineOd,
       recommendedSubmainOdMm: submainOd,
+      derivedMainlineLengthM,
+      derivedSubmainLengthM,
       filtrationCapacityM3h: filtCap,
       filtrationRecommendation: `${filtCap} m³/h Inline 80–100 Mesh Screen Strainer for sprinkler nozzle protection`,
       bomQuantities: {
@@ -337,12 +413,25 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
         totalDriplineM: 0,
         startConnectors: 0,
         grommets: 0,
+        peRepairJoiners: 0,
         endCaps: 0,
+        holePunchTools: 0,
         sprinklerHeads: totalHeads,
         sprinklerRisers: totalHeads,
         raingunUnits: 0,
         hydrantOutlets: 0,
         zoneIsolationValves: zones,
+        airReleaseValves: field.includeAirReleaseValve !== false ? Math.max(1, Math.ceil(zones / 2)) : 0,
+        pressureGauges: 2,
+        pressureRegulators: 0,
+        flushAssemblies: zones,
+        mainlineElbows: Math.max(4, Math.round(zones * 1.5) + 2),
+        submainTees: zones,
+        reducingCouplers: mainlineOd !== submainOd ? zones : 0,
+        straightCouplers: Math.max(2, Math.floor((derivedMainlineLengthM + derivedSubmainLengthM) / 100) + 2),
+        threadedAdaptersMtaFta: zones * 2 + 4,
+        saddleClamps: totalHeads,
+        teflonTapeRolls: Math.max(6, Math.ceil(totalHeads / 4)),
         venturiSets: 0,
         precipitationRateMmHr,
       },
@@ -358,6 +447,7 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
   const runtimeHoursPerDay = Number((dailyGrossWaterM3 / Math.max(1, activeBlockFlowM3h)).toFixed(2));
   const filtCap = Math.ceil((activeBlockFlowM3h * 1.15) / 10) * 10 || 20;
   const mainlineOd = selectRecommendedHdpeOdMm(activeBlockFlowM3h);
+  const submainOd = Math.max(50, mainlineOd >= 90 ? 75 : mainlineOd);
   const hydrants = Math.max(simGuns, Math.round(field.raingunHydrants || 6));
 
   return {
@@ -369,7 +459,9 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
     filtrationLossM: 4,
     runtimeHoursPerDay,
     recommendedMainlineOdMm: mainlineOd,
-    recommendedSubmainOdMm: Math.max(50, mainlineOd >= 90 ? 75 : mainlineOd),
+    recommendedSubmainOdMm: submainOd,
+    derivedMainlineLengthM,
+    derivedSubmainLengthM,
     filtrationCapacityM3h: filtCap,
     filtrationRecommendation: `${filtCap} m³/h Heavy Screen Suction / Flanged Hydrocyclone Filter`,
     bomQuantities: {
@@ -377,12 +469,25 @@ export function calculateFieldHydraulics(field: FieldIrrigationConfig): FieldHyd
       totalDriplineM: 0,
       startConnectors: 0,
       grommets: 0,
+      peRepairJoiners: 0,
       endCaps: 0,
+      holePunchTools: 0,
       sprinklerHeads: 0,
       sprinklerRisers: 0,
       raingunUnits: simGuns,
       hydrantOutlets: hydrants,
       zoneIsolationValves: hydrants,
+      airReleaseValves: Math.max(1, Math.ceil(hydrants / 4)),
+      pressureGauges: 2,
+      pressureRegulators: 0,
+      flushAssemblies: 2,
+      mainlineElbows: Math.max(4, hydrants),
+      submainTees: Math.max(2, Math.floor(hydrants / 2)),
+      reducingCouplers: mainlineOd !== submainOd ? 2 : 0,
+      straightCouplers: Math.max(2, Math.floor(derivedMainlineLengthM / 100) + 2),
+      threadedAdaptersMtaFta: hydrants * 2 + 4,
+      saddleClamps: hydrants,
+      teflonTapeRolls: Math.max(6, hydrants * 2),
       venturiSets: 0,
       precipitationRateMmHr: Number(
         ((activeBlockFlowM3h * 1000) / (Math.PI * Math.pow(Math.max(15, field.raingunWettingRadiusM), 2))).toFixed(1),
@@ -604,14 +709,16 @@ function findBestCatalogProduct(
   let bestScore = 0;
 
   for (const prod of products) {
-    if (categoryHint && prod.category && prod.category !== categoryHint && !prod.name.toLowerCase().includes(keywords[0])) {
+    if (/\(copy\)/i.test(prod.name)) continue;
+    if (categoryHint && prod.category && prod.category !== categoryHint && !prod.name.toLowerCase().includes(keywords[0].toLowerCase())) {
       continue;
     }
     const text = `${prod.name} ${prod.model_number || ""} ${prod.description || ""}`.toLowerCase();
     let score = 0;
-    for (const kw of keywords) {
-      if (text.includes(kw.toLowerCase())) {
-        score += 10;
+    for (let idx = 0; idx < keywords.length; idx++) {
+      const kw = keywords[idx].toLowerCase();
+      if (text.includes(kw)) {
+        score += idx === 0 ? 15 : 10;
       }
     }
     if (score > bestScore && typeof prod.price === "number" && prod.price > 0) {
@@ -624,6 +731,16 @@ function findBestCatalogProduct(
   }
 
   return best;
+}
+
+function detectPipeRollMeters(productName?: string | null): number | null {
+  if (!productName) return null;
+  const match = productName.match(/\((\d+)\s*m(?:\s*roll)?\)/i);
+  if (match) {
+    const val = Number(match[1]);
+    if (val >= 25 && val <= 200) return val;
+  }
+  return null;
 }
 
 const mkId = () =>
@@ -643,14 +760,16 @@ export function generateAutoEngineeringBoq(params: {
 
   const secPumpId = mkId();
   const secSolarId = mkId();
-  const secFieldId = mkId();
+  const secHeadworksId = mkId();
+  const secMainSubId = mkId();
+  const secFieldLatId = mkId();
   const secStorageId = mkId();
   const secInstallId = mkId();
 
   const sections: BOQSection[] = [
     {
       id: secPumpId,
-      name: "Section A: Pumping Unit, Riser Column & Protection",
+      name: "Section A: Pumping Unit, Borehole/Suction Riser & Cable",
       description: `Sized for ${pumpResult.designFlowM3h.toFixed(1)} m³/h @ ${pumpResult.totalDynamicHeadM.toFixed(
         0,
       )} m TDH (${pumpResult.nearestStandardHp} HP / ${pumpResult.recommendedMotorKw.toFixed(2)} kW)`,
@@ -658,28 +777,42 @@ export function generateAutoEngineeringBoq(params: {
     },
   ];
 
-  if (pumpInputs.powerMode !== "grid_ac" && pumpInputs.powerMode !== "generator") {
+  if (pumpInputs.powerMode !== "ac_grid_generator") {
     sections.push({
       id: secSolarId,
-      name: "Section B: Solar PV Array, Controller & Lightning Surge Protection",
+      name: "Section B: Solar PV Array, MPPT/VFD Drive & Lightning Protection",
       description: `${pumpResult.solarPanelCount} × ${pumpInputs.panelWatts}Wp panels (${pumpResult.panelsInSeries}S × ${pumpResult.parallelStrings}P = ${pumpResult.installedArrayWp} Wp)`,
       sort_order: 1,
     });
   }
 
   if (field.systemType !== "none") {
-    sections.push({
-      id: secFieldId,
-      name: `Section C: ${
-        field.systemType === "drip"
-          ? "Drip Irrigation Field Network & Filtration"
-          : field.systemType === "sprinkler"
-            ? "Sprinkler Grid System & Filtration"
-            : "Rain Gun Overhead System & Hydrants"
-      }`,
-      description: `${field.acres} acre(s) across ${field.zones} zone(s) for ${field.cropName}`,
-      sort_order: 2,
-    });
+    sections.push(
+      {
+        id: secHeadworksId,
+        name: "Section C: Filtration Headworks, Fertigation, Gauges & Safety Valves",
+        description: `${fieldSummary.filtrationRecommendation} + pressure & air-release control`,
+        sort_order: 2,
+      },
+      {
+        id: secMainSubId,
+        name: `Section D: Mainline (${fieldSummary.recommendedMainlineOdMm}mm), Sub-Main (${fieldSummary.recommendedSubmainOdMm}mm) & Compression Fittings`,
+        description: "HDPE PN10/PN8 pipes, elbows, equal/reducing tees, couplers, threaded adapters (MTA/FTA), zone valves & end flush",
+        sort_order: 3,
+      },
+      {
+        id: secFieldLatId,
+        name: `Section E: ${
+          field.systemType === "drip"
+            ? "Drip Laterals, Start Connectors, Grommets & End Caps"
+            : field.systemType === "sprinkler"
+              ? "Sprinkler Heads, Risers & Saddle Take-Offs"
+              : "Rain Gun Units, Tripod & Field Hydrants"
+        }`,
+        description: `${field.acres} acre(s) across ${field.zones} zone(s) for ${field.cropName}`,
+        sort_order: 4,
+      },
+    );
   }
 
   if (dam.mode !== "none") {
@@ -687,18 +820,18 @@ export function generateAutoEngineeringBoq(params: {
       id: secStorageId,
       name:
         dam.mode === "hdpe_dam_liner"
-          ? "Section D: Water Pan HDPE Geomembrane Dam Liner"
-          : "Section D: Elevated Water Storage Tank & Tower",
+          ? "Section F: Water Pan HDPE Geomembrane Dam Liner"
+          : "Section F: Elevated Water Storage Tank & Tower",
       description: damSummary.verdict,
-      sort_order: 3,
+      sort_order: 5,
     });
   }
 
   sections.push({
     id: secInstallId,
-    name: "Section E: Installation, 500V DC Megger Audit & Commissioning",
-    description: "Mechanical installation, electrical testing, pressure flushing & farmer training",
-    sort_order: 4,
+    name: "Section G: Trenching, Mechanical Installation, 500V DC Megger Audit & Commissioning",
+    description: "Pump lowering, mainline/submain jointing, hydrostatic pressure flushing & operator training",
+    sort_order: 6,
   });
 
   const items: BOQItem[] = [];
@@ -745,6 +878,11 @@ export function generateAutoEngineeringBoq(params: {
     topMatch?.product.id || null,
   );
 
+  const checkValveProd = findBestCatalogProduct(
+    catalogProducts,
+    ["brass check valve", fieldSummary.recommendedMainlineOdMm >= 63 ? "2 inch" : "1.5 inch"],
+    "valves_regulators",
+  );
   const checkValveQty =
     pumpInputs.sourceType === "borehole"
       ? Math.max(1, 1 + Math.floor(Math.max(0, pumpInputs.staticWaterDepthM - 10) / 60))
@@ -752,30 +890,36 @@ export function generateAutoEngineeringBoq(params: {
   pushItem(
     secPumpId,
     secAName,
-    "Heavy-Duty Brass Spring Non-Return Check Valve",
-    "Installed <=7.6 m above discharge (+ every 60 m on deep column) to stop backspin upthrust",
+    checkValveProd?.name || "Heavy-Duty Brass Spring Non-Return Check Valve",
+    "Installed <=7.6 m (25 ft) above pump discharge (+ every 60 m on deep column) to stop backspin upthrust",
     checkValveQty,
     "Pcs",
-    3500,
+    checkValveProd?.price || 2800,
+    checkValveProd?.id || null,
   );
 
-  const riserLengthM = Math.max(
-    15,
-    Math.ceil((pumpInputs.primaryPipe.enabled ? pumpInputs.primaryPipe.lengthM : 100) / 10) * 10,
-  );
+  const boreRiserM =
+    pumpInputs.sourceType === "borehole"
+      ? Math.max(15, Math.ceil((pumpInputs.staticWaterDepthM + 10) / 10) * 10)
+      : Math.max(10, Math.ceil((pumpInputs.suctionPipe.lengthM || 15) / 5) * 5);
   const riserPipeProd = findBestCatalogProduct(
     catalogProducts,
-    ["hdpe pipe", `${fieldSummary.recommendedMainlineOdMm}mm`],
+    ["hdpe pipe pn10", `${fieldSummary.recommendedMainlineOdMm}mm`],
     "pipes_fittings",
   );
+  const riserRollLen = detectPipeRollMeters(riserPipeProd?.name);
   pushItem(
     secPumpId,
     secAName,
-    riserPipeProd?.name || `HDPE PN10/PN12.5 Mainline & Riser Pipe (${fieldSummary.recommendedMainlineOdMm} mm OD)`,
-    `Velocity ${pumpResult.primaryPipeResult.velocityMs.toFixed(2)} m/s • ${pumpResult.totalPipeFrictionM.toFixed(1)} m friction loss`,
-    riserLengthM,
-    "Meters",
-    riserPipeProd?.price && riserPipeProd.price < 1500 ? riserPipeProd.price : fieldSummary.recommendedMainlineOdMm * 4.5,
+    riserPipeProd?.name || `HDPE PN12.5/PN10 Borehole/Suction Riser Pipe (${fieldSummary.recommendedMainlineOdMm} mm OD)`,
+    `${boreRiserM} m vertical column / suction run (${pumpInputs.sourceType === "borehole" ? "high-head PN10+" : "heavy duty suction"})`,
+    riserRollLen ? Math.max(1, Math.ceil(boreRiserM / riserRollLen)) : boreRiserM,
+    riserRollLen ? `Rolls (${riserRollLen}m)` : "Meters",
+    riserRollLen
+      ? riserPipeProd?.price || fieldSummary.recommendedMainlineOdMm * 280
+      : riserPipeProd?.price && riserPipeProd.price < 1500
+        ? riserPipeProd.price
+        : fieldSummary.recommendedMainlineOdMm * 5,
     riserPipeProd?.id || null,
   );
 
@@ -784,163 +928,479 @@ export function generateAutoEngineeringBoq(params: {
     secAName,
     `Submersible / Heavy Copper Drop Cable (${pumpResult.recommendedCableMm2} mm²)`,
     `${pumpInputs.cableLengthM} m run capped at <=${pumpResult.actualVoltageDropPct.toFixed(1)}% voltage drop + resin waterproof splice kit`,
-    Math.max(10, Math.round(pumpInputs.cableLengthM + (pumpInputs.sourceType === "borehole" ? pumpInputs.staticWaterDepthM + 10 : 0))),
+    Math.max(15, Math.round(pumpInputs.cableLengthM + (pumpInputs.sourceType === "borehole" ? pumpInputs.staticWaterDepthM + 10 : 0))),
     "Meters",
     pumpResult.recommendedCableMm2 <= 4 ? 380 : pumpResult.recommendedCableMm2 <= 10 ? 680 : 1200,
   );
 
   // --- Section B: Solar PV & Controller ---
-  if (pumpInputs.powerMode !== "grid_ac" && pumpInputs.powerMode !== "generator") {
+  if (pumpInputs.powerMode !== "ac_grid_generator") {
     const secBName = sections.find((s) => s.id === secSolarId)?.name || "Section B: Solar PV Array";
-    const solarPanelProd = findBestCatalogProduct(catalogProducts, ["solar panel", "550w"], "solar");
     pushItem(
       secSolarId,
       secBName,
-      solarPanelProd?.name || `Mono PERC Tier-1 Solar PV Module (${pumpInputs.panelWatts} Wp)`,
+      `Mono PERC / TOPCon Tier-1 Solar PV Module (${pumpInputs.panelWatts} Wp)`,
       `${pumpResult.panelsInSeries} in series × ${pumpResult.parallelStrings} parallel string(s) • Cold Voc ${pumpResult.stringColdVocV.toFixed(0)} V`,
       pumpResult.solarPanelCount,
       "Panels",
-      solarPanelProd?.price || Math.round(pumpInputs.panelWatts * 32),
-      solarPanelProd?.id || null,
+      Math.round(pumpInputs.panelWatts * 32),
     );
 
-    const invProd = findBestCatalogProduct(catalogProducts, ["solar pump", "inverter", "controller"], "solar");
     pushItem(
       secSolarId,
       secBName,
-      invProd?.name || `MPPT Solar Pump Drive / Controller (${pumpResult.recommendedVfdKw.toFixed(1)} kW)`,
+      `MPPT Solar Pump Drive / Controller (${pumpResult.recommendedVfdKw.toFixed(1)} kW)`,
       `Dry-run level probe input, soft start, MPPT tracking, ${pumpInputs.controllerMinVmpV}–${pumpInputs.controllerMaxVocV} V window`,
       1,
       "Unit",
-      invProd?.price || Math.round(28000 + pumpResult.recommendedVfdKw * 11500),
-      invProd?.id || null,
+      Math.round(28000 + pumpResult.recommendedVfdKw * 11500),
     );
 
+    const spdProd = findBestCatalogProduct(catalogProducts, ["lightning", "surge"], "control_systems");
     pushItem(
       secSolarId,
       secBName,
-      "Galvanized Solar Ground/Roof Mounting Structure + DC SPD & Earthing Kit",
-      "Fixed tilt array rack + DC Isolator, Type-2 MOV Lightning Arrester & <10 Ohm copper earth rod",
+      spdProd?.name || "Galvanized Solar Mounting Rack + DC SPD & Copper Earthing Kit",
+      "Fixed tilt mounting structure + DC Isolator, Type-2 MOV Lightning Arrester & <10 Ohm copper earth rod",
       1,
       "Lot",
       Math.round(18000 + pumpResult.solarPanelCount * 3500),
+      spdProd?.id || null,
     );
   }
 
-  // --- Section C: Drip / Sprinkler / Rain Gun Network ---
+  // --- Section C, D, E: Headworks, Main/Submain & Field Components ---
   if (field.systemType !== "none") {
-    const secCName = sections.find((s) => s.id === secFieldId)?.name || "Section C: Field Network";
+    const secHName = sections.find((s) => s.id === secHeadworksId)?.name || "Section C: Headworks";
+    const secMName = sections.find((s) => s.id === secMainSubId)?.name || "Section D: Mainline & Fittings";
+    const secFName = sections.find((s) => s.id === secFieldLatId)?.name || "Section E: Field Network";
+    const q = fieldSummary.bomQuantities;
+    const mainOd = fieldSummary.recommendedMainlineOdMm;
+    const subOd = fieldSummary.recommendedSubmainOdMm;
+
+    // -- Section C: Headworks --
     const filterProd = findBestCatalogProduct(
       catalogProducts,
-      [field.filtrationType === "sand_media" ? "sand" : "disc filter"],
+      [
+        field.filtrationType === "sand_media"
+          ? "sand"
+          : fieldSummary.filtrationCapacityM3h >= 20
+            ? "screen filter 3"
+            : "disc filter",
+        "120 mesh",
+      ],
       "filtration_systems",
     );
     pushItem(
-      secFieldId,
-      secCName,
+      secHeadworksId,
+      secHName,
       filterProd?.name || fieldSummary.filtrationRecommendation,
-      `Sized for ${fieldSummary.filtrationCapacityM3h} m³/h continuous flow with pressure ports`,
+      `Sized for ${fieldSummary.filtrationCapacityM3h} m³/h continuous flow with pressure differential ports`,
       1,
       "Unit",
-      filterProd?.price || (field.filtrationType === "sand_media" ? 42000 : 8500),
+      filterProd?.price || (field.filtrationType === "sand_media" ? 42000 : fieldSummary.filtrationCapacityM3h >= 20 ? 15000 : 2640),
       filterProd?.id || null,
     );
 
-    if (field.systemType === "drip") {
-      const dripProd = findBestCatalogProduct(catalogProducts, ["dripline", "16mm"], "drip_irrigation");
+    const gaugeProd = findBestCatalogProduct(
+      catalogProducts,
+      ["pressure gauge", "glycerine"],
+      "accessories",
+    );
+    pushItem(
+      secHeadworksId,
+      secHName,
+      gaugeProd?.name || "Glycerine Filled Pressure Gauge (Upstream & Downstream Filter Check)",
+      "Monitors filter clogging pressure drop and field emitter operating pressure",
+      q.pressureGauges,
+      "Pcs",
+      gaugeProd?.price || 850,
+      gaugeProd?.id || null,
+    );
+
+    if (q.airReleaseValves > 0) {
+      const airProd = findBestCatalogProduct(
+        catalogProducts,
+        ["air release valve", mainOd >= 63 ? "double" : "1"],
+        "valves_regulators",
+      );
       pushItem(
-        secFieldId,
-        secCName,
+        secHeadworksId,
+        secHName,
+        airProd?.name || "Air Release & Vacuum Breaker Valve (1\")",
+        "Prevents trapped air pockets and pipe collapse on pump shutoff & sloped hills",
+        q.airReleaseValves,
+        "Pcs",
+        airProd?.price || 2270,
+        airProd?.id || null,
+      );
+    }
+
+    if (q.pressureRegulators > 0) {
+      const regProd = findBestCatalogProduct(
+        catalogProducts,
+        ["pressure regulator", "drip"],
+        "valves_regulators",
+      );
+      pushItem(
+        secHeadworksId,
+        secHName,
+        regProd?.name || "Drip Pressure Regulator Valve (1\" / 15 PSI)",
+        "Caps lateral pressure cleanly at ~1.0–1.5 bar to protect dripline emitters from bursting",
+        q.pressureRegulators,
+        "Pcs",
+        regProd?.price || 1745,
+        regProd?.id || null,
+      );
+    }
+
+    if (q.venturiSets > 0) {
+      const venturiProd = findBestCatalogProduct(catalogProducts, ["venturi"], "fertigation_systems");
+      pushItem(
+        secHeadworksId,
+        secHName,
+        venturiProd?.name || "Venturi Fertilizer Injector + Bypass Manifold Kit",
+        "Complete suction hose, foot strainer & chemical bypass regulating valves",
+        q.venturiSets,
+        "Kit",
+        venturiProd?.price || 1250,
+        venturiProd?.id || null,
+      );
+    }
+
+    const teflonProd = findBestCatalogProduct(catalogProducts, ["teflon"], "accessories");
+    pushItem(
+      secHeadworksId,
+      secHName,
+      teflonProd?.name || "PTFE Thread Sealing Teflon Tape",
+      "For watertight sealing of threaded valves, gauges, MTA/FTA adapters & air vents",
+      q.teflonTapeRolls,
+      "Rolls",
+      teflonProd?.price && teflonProd.price < 200 ? teflonProd.price : 70,
+      teflonProd?.id || null,
+    );
+
+    // -- Section D: Mainline, Submain & HDPE Compression Fittings --
+    const mainPipeProd = findBestCatalogProduct(
+      catalogProducts,
+      ["hdpe pipe pn10", `${mainOd}mm`],
+      "pipes_fittings",
+    );
+    const mainRollLen = detectPipeRollMeters(mainPipeProd?.name);
+    pushItem(
+      secMainSubId,
+      secMName,
+      mainPipeProd?.name || `HDPE Mainline Pipe PN10 (${mainOd} mm OD)`,
+      `${fieldSummary.derivedMainlineLengthM} m main distribution trench conveying ${fieldSummary.activeBlockFlowM3h.toFixed(1)} m³/h`,
+      mainRollLen ? Math.max(1, Math.ceil(fieldSummary.derivedMainlineLengthM / mainRollLen)) : fieldSummary.derivedMainlineLengthM,
+      mainRollLen ? `Rolls (${mainRollLen}m)` : "Meters",
+      mainRollLen ? mainPipeProd?.price || mainOd * 290 : 250,
+      mainPipeProd?.id || null,
+    );
+
+    if (fieldSummary.derivedSubmainLengthM > 0) {
+      const subPipeProd = findBestCatalogProduct(
+        catalogProducts,
+        ["hdpe pipe", `${subOd}mm`],
+        "pipes_fittings",
+      );
+      const subRollLen = detectPipeRollMeters(subPipeProd?.name);
+      pushItem(
+        secMainSubId,
+        secMName,
+        subPipeProd?.name || `HDPE Sub-Main Manifold Pipe (${subOd} mm OD)`,
+        `${fieldSummary.derivedSubmainLengthM} m zone feeder header supplying ${field.zones} crop block(s)`,
+        subRollLen ? Math.max(1, Math.ceil(fieldSummary.derivedSubmainLengthM / subRollLen)) : fieldSummary.derivedSubmainLengthM,
+        subRollLen ? `Rolls (${subRollLen}m)` : "Meters",
+        subRollLen ? subPipeProd?.price || subOd * 230 : 180,
+        subPipeProd?.id || null,
+      );
+    }
+
+    const elbowProd = findBestCatalogProduct(
+      catalogProducts,
+      ["hdpe compression elbow", `${mainOd}mm`],
+      "pipes_fittings",
+    );
+    pushItem(
+      secMainSubId,
+      secMName,
+      elbowProd?.name || `HDPE Compression 90° Elbow (${mainOd} mm)`,
+      "For 90-degree mainline trench bends & riser connections",
+      q.mainlineElbows,
+      "Pcs",
+      elbowProd?.price || mainOd * 15,
+      elbowProd?.id || null,
+    );
+
+    if (q.submainTees > 0) {
+      const teeProd = findBestCatalogProduct(
+        catalogProducts,
+        mainOd !== subOd
+          ? ["hdpe compression reducing tee", `${mainOd}mm x ${subOd}mm`]
+          : ["hdpe compression equal tee", `${subOd}mm`],
+        "pipes_fittings",
+      );
+      pushItem(
+        secMainSubId,
+        secMName,
+        teeProd?.name || `HDPE Compression ${mainOd !== subOd ? `Reducing Tee (${mainOd}mm × ${subOd}mm)` : `Equal Tee (${subOd}mm)`}`,
+        `Mainline-to-submain branch tees for all ${field.zones} zone manifold(s)`,
+        q.submainTees,
+        "Pcs",
+        teeProd?.price || mainOd * 30,
+        teeProd?.id || null,
+      );
+    }
+
+    if (q.reducingCouplers > 0) {
+      const redCoupProd = findBestCatalogProduct(
+        catalogProducts,
+        ["hdpe compression reducing coupler", `${mainOd}mm x ${subOd}mm`],
+        "pipes_fittings",
+      );
+      pushItem(
+        secMainSubId,
+        secMName,
+        redCoupProd?.name || `HDPE Compression Reducing Coupler (${mainOd}mm × ${subOd}mm)`,
+        "Stepping mainline OD cleanly down to zone sub-main header size",
+        q.reducingCouplers,
+        "Pcs",
+        redCoupProd?.price || mainOd * 24,
+        redCoupProd?.id || null,
+      );
+    }
+
+    const straightCoupProd = findBestCatalogProduct(
+      catalogProducts,
+      ["hdpe compression coupler", `${mainOd}mm`],
+      "pipes_fittings",
+    );
+    pushItem(
+      secMainSubId,
+      secMName,
+      straightCoupProd?.name || `HDPE Compression Straight Coupler (${mainOd}mm / ${subOd}mm)`,
+      "Roll-to-roll straight HDPE pipe joiners",
+      q.straightCouplers,
+      "Pcs",
+      straightCoupProd?.price || mainOd * 18,
+      straightCoupProd?.id || null,
+    );
+
+    const mtaProd = findBestCatalogProduct(
+      catalogProducts,
+      ["male threaded adapter (mta)", `${subOd}mm`],
+      "pipes_fittings",
+    );
+    pushItem(
+      secMainSubId,
+      secMName,
+      mtaProd?.name || `HDPE Male / Female Threaded Adapters (MTA & FTA ${subOd}mm/${mainOd}mm)`,
+      "Connects HDPE manifolds cleanly to threaded ball valves, filters & headworks fittings",
+      q.threadedAdaptersMtaFta,
+      "Pcs",
+      mtaProd?.price || subOd * 12,
+      mtaProd?.id || null,
+    );
+
+    const zoneValveProd = findBestCatalogProduct(
+      catalogProducts,
+      ["pvc ball valve with union", subOd >= 50 ? "1 1/2 inch" : "1 inch"],
+      "valves_regulators",
+    );
+    pushItem(
+      secMainSubId,
+      secMName,
+      zoneValveProd?.name || `Zone Isolation Ball Valve with Union (${subOd >= 50 ? "1.5\"" : "1\""})`,
+      `Independent open/close zone control for each of the ${field.zones} field blocks`,
+      q.zoneIsolationValves,
+      "Pcs",
+      zoneValveProd?.price || 1570,
+      zoneValveProd?.id || null,
+    );
+
+    if (q.flushAssemblies > 0) {
+      const endCapProd = findBestCatalogProduct(
+        catalogProducts,
+        ["hdpe compression end cap", `${subOd}mm`],
+        "pipes_fittings",
+      );
+      pushItem(
+        secMainSubId,
+        secMName,
+        endCapProd ? `${endCapProd.name} + Sub-Main Flush Ball Valve` : `Sub-Main Tail Flush Ball Valve + HDPE End Cap (${subOd}mm)`,
+        "Manual tail-end flushing assemblies to purge silt from submains monthly",
+        q.flushAssemblies,
+        "Sets",
+        (endCapProd?.price || 490) + 400,
+        endCapProd?.id || null,
+      );
+    }
+
+    // -- Section E: Field Drip / Sprinkler / Rain Gun Laterals --
+    if (field.systemType === "drip") {
+      const dripProd = findBestCatalogProduct(catalogProducts, ["driplines", "dl-16"], "drip_irrigation");
+      pushItem(
+        secFieldLatId,
+        secFName,
         dripProd?.name || `16mm UV-Stabilized Dripline (${field.emitterSpacingCm} cm spacing, ${field.emitterFlowLph} L/h)`,
-        `${fieldSummary.bomQuantities.totalDriplineM.toLocaleString()} m total (${field.lateralsPerBed} line/bed @ ${field.rowSpacingM} m beds + ${field.wastePct}% allowance)`,
-        fieldSummary.bomQuantities.driplineRolls,
+        `${q.totalDriplineM.toLocaleString()} m total (${field.lateralsPerBed} line/bed @ ${field.rowSpacingM} m beds + ${field.wastePct}% layout allowance)`,
+        q.driplineRolls,
         `Rolls (${field.rollLengthM}m)`,
-        dripProd?.price || (field.rollLengthM >= 1000 ? 7800 : 4200),
+        dripProd?.price || (field.rollLengthM >= 1000 ? 8000 : 4200),
         dripProd?.id || null,
       );
 
-      pushItem(
-        secFieldId,
-        secCName,
-        "16mm Drip Start Connectors + Rubber Grommets + End Caps",
-        "Sub-main takeoff fittings and flushing end plugs per lateral run",
-        fieldSummary.bomQuantities.startConnectors,
-        "Sets",
-        55,
-      );
-
-      if (field.includeVenturiFertigation) {
-        const venturiProd = findBestCatalogProduct(catalogProducts, ["venturi"], "fertigation_systems");
+      if (field.lateralTakeoffStyle === "mini_valves") {
+        const miniValveProd = findBestCatalogProduct(catalogProducts, ["mini valve", "16mm"], "drip_irrigation");
         pushItem(
-          secFieldId,
-          secCName,
-          venturiProd?.name || "3/4\" Venturi Fertilizer Injector + Bypass Manifold Kit",
-          "Complete suction hose, strainer & chemical regulating bypass valve",
-          1,
-          "Kit",
-          venturiProd?.price || 5500,
-          venturiProd?.id || null,
+          secFieldLatId,
+          secFName,
+          miniValveProd?.name || "16mm Individual Lateral Mini Control Valve",
+          "Enables individual crop row shut-off along submain manifold",
+          q.startConnectors,
+          "Pcs",
+          miniValveProd?.price || 65,
+          miniValveProd?.id || null,
+        );
+      } else {
+        const takeoffProd = findBestCatalogProduct(catalogProducts, ["take-off connector"], "drip_irrigation");
+        pushItem(
+          secFieldLatId,
+          secFName,
+          takeoffProd?.name || "Drip Tech 16mm Start / Take-Off Connector",
+          "Barbed submain-to-lateral start fitting per crop row (+5% spare)",
+          q.startConnectors,
+          "Pcs",
+          takeoffProd?.price || 12,
+          takeoffProd?.id || null,
         );
       }
-    } else if (field.systemType === "sprinkler") {
-      const spProd = findBestCatalogProduct(catalogProducts, ["impact sprinkler", "brass"], "sprinkler_systems");
+
+      const grommetProd = findBestCatalogProduct(catalogProducts, ["grommet rubber"], "drip_irrigation");
       pushItem(
-        secFieldId,
-        secCName,
-        spProd?.name || `Heavy-Duty Impact Sprinkler (${field.sprinklerSpacingM}m × ${field.sprinklerSpacingM}m Grid)`,
-        `${field.sprinklerNozzleFlowM3h} m³/h @ ${field.sprinklerWorkingBar} bar • ${fieldSummary.bomQuantities.precipitationRateMmHr} mm/hr rate`,
-        fieldSummary.bomQuantities.sprinklerHeads,
+        secFieldLatId,
+        secFName,
+        grommetProd?.name || "Drip Tech 16mm Rubber Grommet Seal",
+        "Leak-proof elastomer ring punched cleanly into HDPE sub-main wall",
+        q.grommets,
         "Pcs",
-        spProd?.price || 1850,
+        grommetProd?.price || 12,
+        grommetProd?.id || null,
+      );
+
+      const joinerProd = findBestCatalogProduct(catalogProducts, ["p.e to drip connector", "joiner"], "drip_irrigation");
+      pushItem(
+        secFieldLatId,
+        secFName,
+        joinerProd?.name || "Drip Tech 16mm P.E-to-Drip Straight Joiner / Coupler",
+        "For joining lateral tail ends & field line repair splicing (~12% lateral allowance)",
+        q.peRepairJoiners,
+        "Pcs",
+        joinerProd?.price || 15,
+        joinerProd?.id || null,
+      );
+
+      const cap16Prod = findBestCatalogProduct(catalogProducts, ["end cap 16mm", "drip tape end cap"], "drip_irrigation");
+      pushItem(
+        secFieldLatId,
+        secFName,
+        cap16Prod?.name || "Drip Tech 16mm Figure-8 / Folding End Cap",
+        "Removable lateral end closure for fast row-by-row sediment flushing",
+        q.endCaps,
+        "Pcs",
+        cap16Prod?.price || 12,
+        cap16Prod?.id || null,
+      );
+
+      const punchProd = findBestCatalogProduct(catalogProducts, ["puncher", "hole punch"], "drip_irrigation");
+      pushItem(
+        secFieldLatId,
+        secFName,
+        punchProd?.name || "Drip Tech DN 16mm Sub-Main Hole Punch Tool",
+        "Calibrated drill/punch bit for clean zero-leak grommet seating in HDPE submains",
+        q.holePunchTools,
+        "Pcs",
+        punchProd?.price || 600,
+        punchProd?.id || null,
+      );
+    } else if (field.systemType === "sprinkler") {
+      const spProd = findBestCatalogProduct(catalogProducts, ["brass impact sprinkler", "impact sprinkler"], "sprinkler_systems");
+      pushItem(
+        secFieldLatId,
+        secFName,
+        spProd?.name || `Heavy-Duty Impact Sprinkler (${field.sprinklerSpacingM}m × ${field.sprinklerSpacingM}m Grid)`,
+        `${field.sprinklerNozzleFlowM3h} m³/h @ ${field.sprinklerWorkingBar} bar • ${q.precipitationRateMmHr} mm/hr rate`,
+        q.sprinklerHeads,
+        "Pcs",
+        spProd?.price || 2800,
         spProd?.id || null,
       );
+
+      const saddleProd = findBestCatalogProduct(
+        catalogProducts,
+        ["tapping saddle clamp", `${subOd}mm`],
+        "pipes_fittings",
+      );
       pushItem(
-        secFieldId,
-        secCName,
-        `Galvanized/PE Sprinkler Risers (${field.riserHeightM} m) + Saddles & Stakes`,
-        "Complete vertical riser standpipes and lateral saddle tees",
-        fieldSummary.bomQuantities.sprinklerRisers,
+        secFieldLatId,
+        secFName,
+        saddleProd?.name || `HDPE Tapping Saddle Clamp (${subOd}mm × 3/4" Female)`,
+        "Structural saddle takeoff anchoring vertical riser pipes onto lateral HDPE lines",
+        q.saddleClamps,
+        "Pcs",
+        saddleProd?.price || 480,
+        saddleProd?.id || null,
+      );
+
+      pushItem(
+        secFieldLatId,
+        secFName,
+        `Galvanized/PE Sprinkler Riser Pipes (${field.riserHeightM} m) + Support Stakes`,
+        "Threaded vertical standpipes elevating sprinklers cleanly above crop canopy",
+        q.sprinklerRisers,
         "Sets",
-        1100,
+        950,
       );
     } else if (field.systemType === "raingun") {
-      const rgProd = findBestCatalogProduct(catalogProducts, ["rain gun", "raingun"], "sprinkler_systems");
+      const rgProd = findBestCatalogProduct(catalogProducts, ["rain gun", "gear drive rain gun"], "sprinkler_systems");
+      const tripodProd = findBestCatalogProduct(catalogProducts, ["tripod stand for rain guns"], "sprinkler_systems");
       pushItem(
-        secFieldId,
-        secCName,
-        rgProd?.name || `Gear-Drive Big Rain Gun (${field.raingunWettingRadiusM} m radius) + Tripod Sled`,
+        secFieldLatId,
+        secFName,
+        rgProd?.name || `Gear-Drive Big Rain Gun (${field.raingunWettingRadiusM} m radius)`,
         `${field.raingunFlowM3h} m³/h @ ${field.raingunWorkingBar} bar continuous throw`,
-        fieldSummary.bomQuantities.raingunUnits,
-        "Sets",
+        q.raingunUnits,
+        "Units",
         rgProd?.price || 38000,
         rgProd?.id || null,
       );
       pushItem(
-        secFieldId,
-        secCName,
-        "Quick-Release Hydrant Risers & Flanged Takeoff Saddles",
+        secFieldLatId,
+        secFName,
+        tripodProd?.name || "Heavy-Duty Adjustable Tripod Stand for Rain Gun",
+        "Anchored steel sled tripod for stable high-pressure throw",
+        q.raingunUnits,
+        "Pcs",
+        tripodProd?.price || 7000,
+        tripodProd?.id || null,
+      );
+      pushItem(
+        secFieldLatId,
+        secFName,
+        "Quick-Release Field Hydrant Risers & Flanged Takeoff Saddles",
         `${field.raingunHydrants} field station hydrants with isolation control valves`,
-        fieldSummary.bomQuantities.hydrantOutlets,
+        q.hydrantOutlets,
         "Sets",
         4800,
       );
     }
-
-    pushItem(
-      secFieldId,
-      secCName,
-      `Zone Control Gate/Ball Valves + Glycerin Pressure Gauges (${fieldSummary.recommendedSubmainOdMm} mm)`,
-      `Separate block isolation valves + upstream/downstream filter pressure monitoring`,
-      fieldSummary.bomQuantities.zoneIsolationValves,
-      "Sets",
-      3200,
-    );
   }
 
-  // --- Section D: Storage / Dam Liner ---
+  // --- Section F: Storage / Dam Liner ---
   if (dam.mode === "hdpe_dam_liner") {
-    const secDName = sections.find((s) => s.id === secStorageId)?.name || "Section D: Dam Liner";
-    const linerProd = findBestCatalogProduct(catalogProducts, ["dam liner", `${dam.linerThicknessMm}`]);
+    const secDName = sections.find((s) => s.id === secStorageId)?.name || "Section F: Dam Liner";
+    const linerProd = findBestCatalogProduct(catalogProducts, ["damliners", "dam liner"]);
     const ratePerSqm = dam.linerThicknessMm === 1.0 ? 480 : dam.linerThicknessMm === 0.75 ? 360 : 250;
     pushItem(
       secStorageId,
@@ -956,13 +1416,13 @@ export function generateAutoEngineeringBoq(params: {
       secStorageId,
       secDName,
       "Hot-Wedge Extrusion Liner Seaming & Anchor Trench Works",
-      "On-site pressure-tested double weld seaming and edge anchoring",
+      "On-site pressure-tested double weld seaming and perimeter trench anchoring",
       1,
       "Lot",
       Math.max(15000, Math.round(damSummary.linerAreaSqm * 45)),
     );
   } else if (dam.mode === "elevated_tank") {
-    const secDName = sections.find((s) => s.id === secStorageId)?.name || "Section D: Water Storage Tank";
+    const secDName = sections.find((s) => s.id === secStorageId)?.name || "Section F: Water Storage Tank";
     pushItem(
       secStorageId,
       secDName,
@@ -976,20 +1436,20 @@ export function generateAutoEngineeringBoq(params: {
       secStorageId,
       secDName,
       "Structural Steel Tank Tower / Concrete Masonry Plinth & Manifold",
-      "Engineered elevation support for gravity drip head pressure",
+      "Engineered elevation support for uniform gravity head pressure",
       1,
       "Lot",
       65000,
     );
   }
 
-  // --- Section E: Installation & Commissioning ---
-  const secEName = sections.find((s) => s.id === secInstallId)?.name || "Section E: Installation";
+  // --- Section G: Installation & Commissioning ---
+  const secEName = sections.find((s) => s.id === secInstallId)?.name || "Section G: Installation";
   pushItem(
     secInstallId,
     secEName,
-    "Mechanical Installation, Hydrostatic Testing & 500V DC Megger Audit",
-    "Pump lowering, pipe trenching/jointing, check-valve checks, earthing verification, BEP flow test & operator training",
+    "Trenching, Pipe Laying, Mechanical Installation & 500V DC Megger Audit",
+    "Pump lowering, mainline/submain compression jointing, check-valve checks, earthing verification, BEP flow test & operator training",
     1,
     "Lot",
     Math.round(25000 + field.acres * 12000 + (pumpInputs.sourceType === "borehole" ? 18000 : 0)),
