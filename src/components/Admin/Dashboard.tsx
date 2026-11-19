@@ -53,6 +53,7 @@ import {
   Receipt,
   Sparkles,
   CloudUpload,
+  Compass,
   ChevronRight,
   Layers,
   Mail,
@@ -171,6 +172,13 @@ interface DashboardStats {
 }
 
 const QUICK_ACTIONS = [
+  {
+    id: "engineering-reports",
+    label: "Client Engineering Report",
+    sublabel: "Pump, Solar, Drip & BOQ",
+    icon: Compass,
+    accent: "text-primary bg-primary/15",
+  },
   {
     id: "products",
     label: "Product Catalog",
@@ -997,14 +1005,25 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               {refreshing ? "Syncing..." : "Refresh Data"}
             </Button>
             {onNavigate && (
-              <Button
-                size="sm"
-                onClick={() => onNavigate("products")}
-                className="h-9 rounded-xl gap-1.5 text-xs font-medium shadow-sm"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add Product
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  onClick={() => onNavigate("engineering-reports")}
+                  className="h-9 rounded-xl gap-1.5 text-xs font-semibold shadow-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  <Compass className="h-3.5 w-3.5" />
+                  Client Engineering Report
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onNavigate("products")}
+                  className="h-9 rounded-xl gap-1.5 text-xs font-medium"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Product
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -1020,7 +1039,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 Click any module to jump directly
               </span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2.5">
               {QUICK_ACTIONS.map((action) => {
                 const Icon = action.icon;
                 return (

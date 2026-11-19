@@ -34,6 +34,7 @@ import {
   ChevronRight,
   PlusCircle,
   Command,
+  Compass,
   Radar,
   Linkedin,
 } from "lucide-react";
@@ -93,6 +94,7 @@ const TechnicianManagement = lazy(() => import("@/components/Admin/TechnicianMan
 const ServiceBookingManagement = lazy(() => import("@/components/Admin/ServiceBookingManagement"));
 const GrokLeadOutreach = lazy(() => import("@/components/Admin/GrokLeadOutreach"));
 const SocialLinkedInAutopilot = lazy(() => import("@/components/Admin/SocialLinkedInAutopilot"));
+const EngineeringReportsManagement = lazy(() => import("@/components/Admin/EngineeringReportsManagement"));
 
 interface AdminSection {
   id: string;
@@ -167,6 +169,14 @@ const ADMIN_SECTIONS: AdminSection[] = [
     icon: Quote,
     description: "Farm quotations, bills of quantities, and PDF generation",
     group: "sales",
+  },
+  {
+    id: "engineering-reports",
+    label: "Client Engineering Report",
+    icon: Compass,
+    description: "1-click Pump, Solar PV, Drip, Sprinkler & Dam Liner client reports + BOQ",
+    group: "sales",
+    badge: "1-Click",
   },
   {
     id: "invoices",
@@ -483,6 +493,8 @@ const AdminContent = () => {
         return <VideoManagement />;
       case "quotes":
         return <QuoteManagement />;
+      case "engineering-reports":
+        return <EngineeringReportsManagement />;
       case "invoices":
         return <InvoiceManagementSystem />;
       case "analytics":
@@ -703,6 +715,17 @@ const AdminContent = () => {
                 </kbd>
               </button>
 
+              {/* Always-Accessible Client Engineering Report Shortcut (md+) */}
+              <Button
+                variant={activeTab === "engineering-reports" ? "default" : "outline"}
+                size="sm"
+                onClick={() => selectModule("engineering-reports")}
+                className="hidden md:inline-flex xl:hidden h-8 rounded-xl text-xs gap-1.5 border-primary/40 text-primary hover:bg-primary/10"
+              >
+                <Compass className="h-3.5 w-3.5" />
+                Client Engineering Report
+              </Button>
+
               {/* Quick Action Pills on Large Screens */}
               <div className="hidden xl:flex items-center gap-1.5">
                 <Button
@@ -722,6 +745,15 @@ const AdminContent = () => {
                 >
                   <Quote className="h-3.5 w-3.5" />
                   Quotes & BOQ
+                </Button>
+                <Button
+                  variant={activeTab === "engineering-reports" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => selectModule("engineering-reports")}
+                  className="h-8 rounded-xl text-xs gap-1.5"
+                >
+                  <Compass className="h-3.5 w-3.5 text-primary" />
+                  Client Engineering Report
                 </Button>
                 <Button
                   variant={activeTab === "sync" ? "default" : "outline"}
