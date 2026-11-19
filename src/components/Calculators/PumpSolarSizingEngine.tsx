@@ -29,6 +29,7 @@ import {
   Cable,
   CheckCircle2,
   ClipboardCheck,
+  CloudSun,
   Copy,
   Droplets,
   Gauge,
@@ -38,6 +39,7 @@ import {
   RotateCcw,
   Settings2,
   Sun,
+  Thermometer,
   Waves,
   Wrench,
   Zap,
@@ -48,14 +50,20 @@ import { formatPrice, getProductPath } from "@/lib/productUrl";
 import { SITE_COMPANY } from "@/config/company";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
 import {
+  applyKenyaSolarRegionPreset,
   AreaUnit,
   BatteryChemistry,
+  BOREHOLE_CASING_LABELS,
+  BoreholeCasingInch,
   calculatePumpSolarSystem,
   CatalogPumpProduct,
   DEFAULT_PUMP_SOLAR_INPUTS,
   DemandMode,
+  DUST_SOILING_META,
+  DustSoilingEnv,
   FlowUnit,
   getInnerDiameterForPreset,
+  getRegionPshForSeason,
   IrrigationMethod,
   KENYA_CROP_PRESETS,
   KENYA_PIPE_PRESETS,
@@ -69,7 +77,10 @@ import {
   PowerSupplyMode,
   PumpSolarInputs,
   PumpSolarResult,
+  SKY_CONDITION_PRESETS,
+  SkyConditionPreset,
   SOLAR_PANEL_PRESETS,
+  SolarSeasonMode,
   WaterSourceType,
 } from "@/lib/pumpSolarSizing";
 
@@ -93,94 +104,98 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
     id: "commercial_10acre",
     label: "10-Acre Commercial Farm",
     badge: "High Flow",
-    patch: () => ({
-      ...DEFAULT_PUMP_SOLAR_INPUTS,
-      areaValue: 10,
-      areaUnit: "acres",
-      cropWaterDepthMm: 5.5,
-      zonesCount: 8,
-      simultaneousZones: 2,
-      operatingHoursPerDay: 6,
-      staticWaterDepthM: 75,
-      drawdownM: 15,
-      groundElevationGainM: 12,
-      dischargeHeightM: 3,
-      workingPressureBar: 1.2,
-      primaryPipe: {
-        ...DEFAULT_PUMP_SOLAR_INPUTS.primaryPipe,
-        nominalOdMm: 63,
-        innerDiameterMm: getInnerDiameterForPreset(63, "hdpe"),
-        lengthM: 100,
-      },
-      secondaryPipe: {
-        ...DEFAULT_PUMP_SOLAR_INPUTS.secondaryPipe,
-        nominalOdMm: 75,
-        innerDiameterMm: getInnerDiameterForPreset(75, "hdpe"),
-        lengthM: 400,
-      },
-      solarRegionId: "eastern_machakos_kitui",
-      peakSunHours: 5.9,
-      minMorningTempC: 14,
-      siteAltitudeM: 1100,
-      powerMode: "solar_hybrid",
-      controllerMinVmpV: 110,
-      controllerMaxVocV: 450,
-      cableLengthM: 115,
-    }),
+    patch: () =>
+      applyKenyaSolarRegionPreset(
+        {
+          ...DEFAULT_PUMP_SOLAR_INPUTS,
+          areaValue: 10,
+          areaUnit: "acres",
+          cropWaterDepthMm: 5.5,
+          zonesCount: 8,
+          simultaneousZones: 2,
+          operatingHoursPerDay: 6,
+          boreholeCasingInch: "6",
+          boreholeTotalDepthM: 140,
+          staticWaterDepthM: 75,
+          drawdownM: 15,
+          groundElevationGainM: 12,
+          dischargeHeightM: 3,
+          workingPressureBar: 1.2,
+          primaryPipe: {
+            ...DEFAULT_PUMP_SOLAR_INPUTS.primaryPipe,
+            nominalOdMm: 63,
+            innerDiameterMm: getInnerDiameterForPreset(63, "hdpe"),
+            lengthM: 100,
+          },
+          secondaryPipe: {
+            ...DEFAULT_PUMP_SOLAR_INPUTS.secondaryPipe,
+            nominalOdMm: 75,
+            innerDiameterMm: getInnerDiameterForPreset(75, "hdpe"),
+            lengthM: 400,
+          },
+          powerMode: "solar_hybrid",
+          controllerMinVmpV: 110,
+          controllerMaxVocV: 450,
+          cableLengthM: 115,
+        },
+        "eastern_machakos_kitui",
+        "worst_cloudy",
+      ),
   },
   {
     id: "river_sprinkler_5acre",
     label: "5-Acre River Sprinkler Setup",
     badge: "Surface Suction",
-    patch: () => ({
-      ...DEFAULT_PUMP_SOLAR_INPUTS,
-      areaValue: 5,
-      areaUnit: "acres",
-      cropWaterDepthMm: 6.0,
-      irrigationMethod: "overhead_sprinkler",
-      applicationEfficiencyPct: 75,
-      zonesCount: 5,
-      simultaneousZones: 1,
-      operatingHoursPerDay: 6.5,
-      sourceType: "surface_suction",
-      siteAltitudeM: 1850,
-      solarRegionId: "rift_nakuru_naivasha",
-      peakSunHours: 5.7,
-      minMorningTempC: 8,
-      staticWaterDepthM: 4.5,
-      drawdownM: 0,
-      groundElevationGainM: 18,
-      dischargeHeightM: 1.5,
-      workingPressureBar: 3.0,
-      suctionPipe: {
-        label: "Suction Line (River / Dam to Pump)",
-        enabled: true,
-        material: "hdpe",
-        nominalOdMm: 75,
-        innerDiameterMm: getInnerDiameterForPreset(75, "hdpe"),
-        lengthM: 18,
-      },
-      primaryPipe: {
-        label: "Pump Discharge Header",
-        enabled: true,
-        material: "gi_new",
-        nominalOdMm: 63,
-        innerDiameterMm: getInnerDiameterForPreset(63, "gi_new"),
-        lengthM: 15,
-      },
-      secondaryPipe: {
-        label: "Mainline Delivery Pipe (River to Field)",
-        enabled: true,
-        material: "hdpe",
-        nominalOdMm: 75,
-        innerDiameterMm: getInnerDiameterForPreset(75, "hdpe"),
-        lengthM: 320,
-      },
-      powerMode: "solar_dc",
-      controllerMinVmpV: 90,
-      controllerMaxVocV: 250,
-      cableLengthM: 45,
-    }),
+    patch: () =>
+      applyKenyaSolarRegionPreset(
+        {
+          ...DEFAULT_PUMP_SOLAR_INPUTS,
+          areaValue: 5,
+          areaUnit: "acres",
+          cropWaterDepthMm: 6.0,
+          irrigationMethod: "overhead_sprinkler",
+          applicationEfficiencyPct: 75,
+          zonesCount: 5,
+          simultaneousZones: 1,
+          operatingHoursPerDay: 6.5,
+          sourceType: "surface_suction",
+          staticWaterDepthM: 4.5,
+          drawdownM: 0,
+          groundElevationGainM: 18,
+          dischargeHeightM: 1.5,
+          workingPressureBar: 3.0,
+          suctionPipe: {
+            label: "Suction Line (River / Dam to Pump)",
+            enabled: true,
+            material: "hdpe",
+            nominalOdMm: 75,
+            innerDiameterMm: getInnerDiameterForPreset(75, "hdpe"),
+            lengthM: 18,
+          },
+          primaryPipe: {
+            label: "Pump Discharge Header",
+            enabled: true,
+            material: "gi_new",
+            nominalOdMm: 63,
+            innerDiameterMm: getInnerDiameterForPreset(63, "gi_new"),
+            lengthM: 15,
+          },
+          secondaryPipe: {
+            label: "Mainline Delivery Pipe (River to Field)",
+            enabled: true,
+            material: "hdpe",
+            nominalOdMm: 75,
+            innerDiameterMm: getInnerDiameterForPreset(75, "hdpe"),
+            lengthM: 320,
+          },
+          powerMode: "solar_dc",
+          controllerMinVmpV: 90,
+          controllerMaxVocV: 250,
+          cableLengthM: 45,
+        },
+        "rift_nakuru_naivasha",
+        "worst_cloudy",
+      ),
   },
   {
     id: "custom_pump_audit",
@@ -421,15 +436,18 @@ export const PumpSolarSizingEngine = () => {
   };
 
   const applySolarRegion = (regionId: string) => {
-    const region = KENYA_SOLAR_REGIONS.find((r) => r.id === regionId);
-    if (!region) return;
-    setInputs((prev) => ({
-      ...prev,
-      solarRegionId: region.id,
-      peakSunHours: region.psh,
-      minMorningTempC: region.minMorningTempC,
-      siteAltitudeM: region.altitudeM,
-    }));
+    setInputs((prev) => applyKenyaSolarRegionPreset(prev, regionId));
+  };
+
+  const applySeasonMode = (season: SolarSeasonMode) => {
+    setInputs((prev) => {
+      const region = KENYA_SOLAR_REGIONS.find((r) => r.id === prev.solarRegionId);
+      return {
+        ...prev,
+        solarSeasonMode: season,
+        peakSunHours: region ? getRegionPshForSeason(region, season) : prev.peakSunHours,
+      };
+    });
   };
 
   const buildSpecSummaryText = () => {
@@ -956,23 +974,64 @@ export const PumpSolarSizingEngine = () => {
                     )}
 
                     {inputs.sourceType === "borehole" && (
-                      <div className="space-y-1.5">
-                        <Label htmlFor="drawdown-m">Pumping Drawdown Allowance (m)</Label>
-                        <Input
-                          id="drawdown-m"
-                          type="number"
-                          min={0}
-                          max={120}
-                          value={inputs.drawdownM}
-                          onChange={(e) =>
-                            setInputs((p) => ({
-                              ...p,
-                              drawdownM: Math.max(0, Number(e.target.value) || 0),
-                            }))
-                          }
-                          className="bg-card"
-                        />
-                      </div>
+                      <>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="drawdown-m">Pumping Drawdown Allowance (m)</Label>
+                          <Input
+                            id="drawdown-m"
+                            type="number"
+                            min={0}
+                            max={120}
+                            value={inputs.drawdownM}
+                            onChange={(e) =>
+                              setInputs((p) => ({
+                                ...p,
+                                drawdownM: Math.max(0, Number(e.target.value) || 0),
+                              }))
+                            }
+                            className="bg-card"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Borehole Casing Size</Label>
+                          <Select
+                            value={inputs.boreholeCasingInch}
+                            onValueChange={(val: BoreholeCasingInch) =>
+                              setInputs((p) => ({ ...p, boreholeCasingInch: val }))
+                            }
+                          >
+                            <SelectTrigger className="bg-card">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(Object.keys(BOREHOLE_CASING_LABELS) as BoreholeCasingInch[]).map(
+                                (key) => (
+                                  <SelectItem key={key} value={key}>
+                                    {BOREHOLE_CASING_LABELS[key]}
+                                  </SelectItem>
+                                ),
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="bh-depth">Total Borehole Depth (m)</Label>
+                          <Input
+                            id="bh-depth"
+                            type="number"
+                            min={10}
+                            max={500}
+                            value={inputs.boreholeTotalDepthM}
+                            onChange={(e) =>
+                              setInputs((p) => ({
+                                ...p,
+                                boreholeTotalDepthM: Math.max(10, Number(e.target.value) || 80),
+                              }))
+                            }
+                            className="bg-card"
+                          />
+                        </div>
+                      </>
                     )}
 
                     <div className="space-y-1.5">
@@ -1173,10 +1232,10 @@ export const PumpSolarSizingEngine = () => {
                     ))}
                   </div>
 
-                  {/* Kenyan Region & Site Meteorology */}
+                  {/* Kenyan Region, Seasonal Design & Weather Physics */}
                   <div className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/20 p-4 sm:grid-cols-2">
                     <div className="space-y-1.5 sm:col-span-2">
-                      <Label>Kenya Region Irradiation &amp; Altitude Preset</Label>
+                      <Label>Kenya Corridor (PVGIS / NASA POWER Solar &amp; Weather Profile)</Label>
                       <Select value={inputs.solarRegionId} onValueChange={applySolarRegion}>
                         <SelectTrigger className="bg-card">
                           <SelectValue />
@@ -1184,7 +1243,7 @@ export const PumpSolarSizingEngine = () => {
                         <SelectContent>
                           {KENYA_SOLAR_REGIONS.map((region) => (
                             <SelectItem key={region.id} value={region.id}>
-                              {region.label} ({region.psh} PSH • {region.altitudeM}m alt)
+                              {region.label} ({region.worstMonthPsh} worst / {region.psh} avg PSH)
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -1194,8 +1253,49 @@ export const PumpSolarSizingEngine = () => {
                       )}
                     </div>
 
+                    <div className="space-y-1.5 sm:col-span-2">
+                      <Label className="text-xs font-semibold text-muted-foreground">
+                        Solar Design Weather Season
+                      </Label>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                        {(
+                          [
+                            {
+                              id: "worst_cloudy",
+                              title: `Worst Cloudy (${selectedRegion?.worstMonthName || "Jun–Jul"})`,
+                              desc: `${selectedRegion?.worstMonthPsh ?? inputs.peakSunHours} PSH • Year-round safe`,
+                            },
+                            {
+                              id: "annual_avg",
+                              title: "Annual Average PSH",
+                              desc: `${selectedRegion?.psh ?? inputs.peakSunHours} PSH • Standard balanced`,
+                            },
+                            {
+                              id: "dry_peak",
+                              title: "Dry Season Clear (Jan–Mar)",
+                              desc: `${selectedRegion?.drySeasonPsh ?? inputs.peakSunHours} PSH • Rain-supplemented`,
+                            },
+                          ] as Array<{ id: SolarSeasonMode; title: string; desc: string }>
+                        ).map((s) => (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => applySeasonMode(s.id)}
+                            className={`rounded-lg border p-2.5 text-left transition-all ${
+                              inputs.solarSeasonMode === s.id
+                                ? "border-primary bg-primary/10"
+                                : "border-border bg-card hover:border-primary/40"
+                            }`}
+                          >
+                            <div className="text-xs font-bold text-foreground">{s.title}</div>
+                            <div className="text-[11px] text-muted-foreground">{s.desc}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="space-y-1.5">
-                      <Label htmlFor="psh-input">Peak Sun Hours (PSH h/day)</Label>
+                      <Label htmlFor="psh-input">Design Peak Sun Hours (PSH h/day)</Label>
                       <Input
                         id="psh-input"
                         type="number"
@@ -1206,7 +1306,7 @@ export const PumpSolarSizingEngine = () => {
                         onChange={(e) =>
                           setInputs((p) => ({
                             ...p,
-                            peakSunHours: Math.max(3, Number(e.target.value) || 5.2),
+                            peakSunHours: Math.max(3, Number(e.target.value) || 4.2),
                           }))
                         }
                         className="bg-card"
@@ -1214,7 +1314,44 @@ export const PumpSolarSizingEngine = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="min-temp">Coldest Morning Temp (°C for Voc check)</Label>
+                      <Label htmlFor="ambient-day">Peak Daytime Ambient Air (°C)</Label>
+                      <Input
+                        id="ambient-day"
+                        type="number"
+                        min={12}
+                        max={48}
+                        value={inputs.ambientDayTempC}
+                        onChange={(e) =>
+                          setInputs((p) => ({
+                            ...p,
+                            ambientDayTempC: Number(e.target.value) || 26,
+                          }))
+                        }
+                        className="bg-card"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="wind-speed">Site Wind Speed (m/s cooling)</Label>
+                      <Input
+                        id="wind-speed"
+                        type="number"
+                        min={0.3}
+                        max={10}
+                        step={0.2}
+                        value={inputs.windSpeedMs}
+                        onChange={(e) =>
+                          setInputs((p) => ({
+                            ...p,
+                            windSpeedMs: Math.max(0.3, Number(e.target.value) || 1.5),
+                          }))
+                        }
+                        className="bg-card"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="min-temp">Coldest Dawn Air Temp (°C for Voc)</Label>
                       <Input
                         id="min-temp"
                         type="number"
@@ -1224,7 +1361,7 @@ export const PumpSolarSizingEngine = () => {
                         onChange={(e) =>
                           setInputs((p) => ({
                             ...p,
-                            minMorningTempC: Number(e.target.value) || 10,
+                            minMorningTempC: Number(e.target.value) || 9,
                           }))
                         }
                         className="bg-card"
@@ -1250,6 +1387,9 @@ export const PumpSolarSizingEngine = () => {
                                 panelWatts: mod.watts,
                                 panelVmp: mod.vmp,
                                 panelVoc: mod.voc,
+                                panelNoctC: mod.noctC,
+                                panelGammaPmaxPct: mod.gammaPmaxPct,
+                                panelBetaVocPct: mod.betaVocPct,
                               }));
                             }}
                           >
@@ -1267,25 +1407,43 @@ export const PumpSolarSizingEngine = () => {
                         </div>
 
                         <div className="space-y-1.5">
-                          <Label htmlFor="ctrl-voc">Controller Max Input Voc (V)</Label>
-                          <Input
-                            id="ctrl-voc"
-                            type="number"
-                            min={50}
-                            max={1000}
-                            value={inputs.controllerMaxVocV}
-                            onChange={(e) =>
+                          <Label>Site Dust / Panel Soiling Level</Label>
+                          <Select
+                            value={inputs.dustSoilingEnv}
+                            onValueChange={(val: DustSoilingEnv) =>
                               setInputs((p) => ({
                                 ...p,
-                                controllerMaxVocV: Math.max(50, Number(e.target.value) || 200),
+                                dustSoilingEnv: val,
+                                dustMismatchLossPct: DUST_SOILING_META[val].dustMismatchPct,
                               }))
                             }
-                            className="bg-card"
-                          />
+                          >
+                            <SelectTrigger className="bg-card">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(Object.keys(DUST_SOILING_META) as DustSoilingEnv[]).map((key) => (
+                                <SelectItem key={key} value={key}>
+                                  {DUST_SOILING_META[key].label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-muted/25 px-3 py-2 text-xs">
+                        <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                          <Thermometer className="h-3.5 w-3.5 text-primary" />
+                          NOCT Cell Temp: <strong className="text-foreground">{result.estimatedDayCellTempC.toFixed(1)}°C</strong>{" "}
+                          (Thermal Loss: <strong className="text-foreground">{result.computedThermalLossPct.toFixed(1)}%</strong>)
+                        </span>
+                        <span className="text-muted-foreground">
+                          Recommended Equator Tilt: <strong className="text-foreground">{result.recommendedPanelTiltDeg}°–15°</strong>
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">Panel Wp</Label>
                           <Input
@@ -1343,20 +1501,37 @@ export const PumpSolarSizingEngine = () => {
                             className="h-9 bg-card text-xs"
                           />
                         </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Max Ctrl Voc</Label>
+                          <Input
+                            type="number"
+                            min={50}
+                            max={1000}
+                            value={inputs.controllerMaxVocV}
+                            onChange={(e) =>
+                              setInputs((p) => ({
+                                ...p,
+                                controllerMaxVocV: Math.max(50, Number(e.target.value) || 200),
+                              }))
+                            }
+                            className="h-9 bg-card text-xs"
+                          />
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                         <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">Thermal Derate (%)</Label>
+                          <Label className="text-xs text-muted-foreground">Pmax Coeff (%/°C)</Label>
                           <Input
                             type="number"
-                            min={0}
-                            max={25}
-                            value={inputs.pvTempDeratePct}
+                            min={-0.6}
+                            max={-0.15}
+                            step={0.01}
+                            value={inputs.panelGammaPmaxPct}
                             onChange={(e) =>
                               setInputs((p) => ({
                                 ...p,
-                                pvTempDeratePct: Number(e.target.value) || 0,
+                                panelGammaPmaxPct: Number(e.target.value) || -0.35,
                               }))
                             }
                             className="h-9 bg-card text-xs"
@@ -1871,13 +2046,13 @@ export const PumpSolarSizingEngine = () => {
 
                 {inputs.powerMode !== "ac_grid_generator" ? (
                   <div className="space-y-2 text-xs">
-                    <div className="flex items-baseline justify-between">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <span className="text-muted-foreground">Installed PV Array:</span>
-                      <span className="font-heading text-base font-extrabold text-foreground">
+                      <span className="whitespace-nowrap font-heading text-base font-extrabold text-foreground">
                         {result.installedArrayWp.toLocaleString()} Wp ({result.solarPanelCount} × {inputs.panelWatts}W)
                       </span>
                     </div>
-                    <div className="flex justify-between text-muted-foreground">
+                    <div className="flex flex-wrap justify-between gap-2 text-muted-foreground">
                       <span>String Topology:</span>
                       <strong className="text-foreground">
                         {result.parallelStrings}P × {result.panelsInSeries}S ({result.stringVmpV.toFixed(0)}V Vmp / {result.stringColdVocV.toFixed(0)}V cold Voc)
@@ -1900,6 +2075,54 @@ export const PumpSolarSizingEngine = () => {
                       }`}
                     >
                       {result.vocSafetyMessage}
+                    </div>
+
+                    {/* Weather & Cloud Cover Pump Performance Simulator */}
+                    <div className="rounded-lg border border-border bg-card p-2.5 space-y-2">
+                      <div className="flex flex-wrap items-center justify-between gap-1.5">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-foreground">
+                          <CloudSun className="h-3.5 w-3.5 text-primary" />
+                          Sunlight &amp; Cloud Pumping Simulator
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          VFD/Ctrl ≥ {result.recommendedVfdKw.toFixed(1)} kW
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1">
+                        {(Object.keys(SKY_CONDITION_PRESETS) as SkyConditionPreset[]).map((sky) => (
+                          <button
+                            key={sky}
+                            type="button"
+                            onClick={() =>
+                              setInputs((p) => ({
+                                ...p,
+                                skyCondition: sky,
+                                skyIrradianceWm2: SKY_CONDITION_PRESETS[sky].wm2,
+                              }))
+                            }
+                            className={`rounded border px-1.5 py-1 text-[10px] font-semibold transition-colors ${
+                              inputs.skyCondition === sky
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-background text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {sky === "clear_sun"
+                              ? "Clear 950W"
+                              : sky === "light_cloud"
+                                ? "Cloud 650W"
+                                : "Heavy 380W"}
+                          </button>
+                        ))}
+                      </div>
+                      <p
+                        className={`text-[11px] leading-snug ${
+                          result.cloudSimulation.canLiftWater
+                            ? "text-muted-foreground"
+                            : "font-medium text-destructive"
+                        }`}
+                      >
+                        {result.cloudSimulation.summary}
+                      </p>
                     </div>
                   </div>
                 ) : (

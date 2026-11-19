@@ -363,11 +363,17 @@ const SEOContentPage = () => {
                     <span className="hidden sm:inline">WhatsApp Engineer</span>
                   </button>
                   <Link
-                    to="/irrigation-cost-calculator-kenya"
+                    to={
+                      /pump|borehole|solar|sprinkler|rain-gun|tank|boq/.test(page.slug)
+                        ? "/pump-solar-calculator-kenya"
+                        : "/irrigation-cost-calculator-kenya"
+                    }
                     className="dt-btn-secondary col-span-2 inline-flex min-h-11 items-center justify-center gap-2 sm:col-span-1"
                   >
                     <Calculator className="h-4 w-4 shrink-0" />
-                    Cost Calculator
+                    {/pump|borehole|solar|sprinkler|rain-gun|tank|boq/.test(page.slug)
+                      ? "Pump & Solar Calculator"
+                      : "Cost Calculator"}
                   </Link>
                 </div>
 
@@ -621,6 +627,13 @@ const SEOContentPage = () => {
                       <span>{link.label}</span>
                     </Link>
                   ))}
+                  <Link
+                    to="/pump-solar-calculator-kenya"
+                    className="flex items-start gap-2 rounded-lg p-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 hover:underline"
+                  >
+                    <ArrowRight className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>Pump &amp; Solar Sizing Calculator</span>
+                  </Link>
                   <Link
                     to="/irrigation-guides-kenya"
                     className="mt-2 flex items-center justify-between rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs font-bold text-primary hover:bg-primary/10"

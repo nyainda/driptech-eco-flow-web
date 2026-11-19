@@ -253,6 +253,12 @@ export default function HomeEngineeringServices() {
                 Book On-Farm Site Survey →
               </Link>
               <Link
+                to="/pump-solar-calculator-kenya"
+                className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
+              >
+                Pump &amp; Solar Calculator →
+              </Link>
+              <Link
                 to="/services"
                 className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
               >

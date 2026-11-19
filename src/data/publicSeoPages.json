@@ -392,6 +392,10 @@
     ],
     "links": [
       {
+        "label": "Launch Interactive Pump & Solar Calculator",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
         "label": "Browse solar irrigation products",
         "href": "/products/solar"
       },
@@ -438,6 +442,10 @@
     ],
     "links": [
       {
+        "label": "Size borehole pump & solar array",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
         "label": "Browse irrigation pumps",
         "href": "/products/pumps"
       },
@@ -483,6 +491,10 @@
       }
     ],
     "links": [
+      {
+        "label": "Size tank buffer & pump capacity",
+        "href": "/pump-solar-calculator-kenya"
+      },
       {
         "label": "Compare complete irrigation kits",
         "href": "/irrigation-kits"
@@ -1437,6 +1449,10 @@
       }
     ],
     "links": [
+      {
+        "label": "Launch Interactive Pump & Solar Calculator",
+        "href": "/pump-solar-calculator-kenya"
+      },
       {
         "label": "Browse irrigation pumps",
         "href": "/products/pumps"

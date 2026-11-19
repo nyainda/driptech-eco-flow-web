@@ -4,6 +4,7 @@ import Footer from "@/components/Layout/Footer";
 import Breadcrumbs from "@/components/Layout/Breadcrumbs";
 import SEOHead from "@/components/common/SEOHead";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import FAQSection from "@/components/SEO/FAQSection";
 import PumpSolarSizingEngine from "@/components/Calculators/PumpSolarSizingEngine";
 import { Card, CardContent } from "@/components/ui/card";
 import { SITE_COMPANY } from "@/config/company";
@@ -19,15 +20,48 @@ import {
 const ENGINEERING_STANDARDS = [
   {
     title: "True PN10 Pipe Friction (Hazen-Williams)",
-    desc: "Computes friction head loss across multi-section suction, borehole riser, and field mainline runs using real inner bore diameters rather than nominal OD.",
+    desc: "Computes friction losses across suction, borehole riser, and mainline segments using real inner bore diameters rather than nominal OD.",
   },
   {
-    title: "Altitude Suction & Cold-Voc Solar Safety",
-    desc: "Adjusts barometric suction lift limits for Kenyan highland farms and checks morning cold-weather Voc spikes before matching solar controllers.",
+    title: "Kenya Weather, NOCT Heat & Worst-Month PSH",
+    desc: "Models PVGIS/NASA POWER worst cloudy-season PSH (Jun–Jul / May–Jun), NOCT cell temp with wind speed, cold-dawn Voc, and cloud-cover VFD Hz cutoff.",
   },
   {
-    title: "Parabolic Q–H Headroom Matching",
-    desc: "Never sizes a pump by dead-head shutoff rating alone — estimates operating delivery at your exact TDH and checks standard DC/AC cable mm² drop.",
+    title: "Casing, Submergence & Parabolic Duty Matching",
+    desc: "Checks 3\" vs 4\"–8\" borehole casing clearance, submergence depth, altitude suction cavitation, DC/AC cable mm², and live DripTech Q–H pump fit.",
+  },
+];
+
+const PUMP_SOLAR_FAQS = [
+  {
+    question: "How many solar panels do I need for a 1 HP, 2 HP, or 3 HP borehole pump in Kenya?",
+    answer:
+      "Because PV modules lose 10–15% efficiency at high daytime cell temperatures (50–65°C) plus 8–14% dust and controller losses, solar arrays should typically be oversized by 1.3× to 1.5× the motor wattage: roughly 1,100–1,400 Wp for 1 HP (750 W), 2,100–2,500 Wp for 1.5–2 HP, and 3,200–3,800 Wp for 3 HP (2.2 kW). Our calculator computes your exact panel string configuration using your region's Peak Sun Hours and controller voltage window.",
+  },
+  {
+    question: "Why should solar irrigation systems in Kenya be sized for June–July cloudy weather?",
+    answer:
+      "Annual average sunlight hides steep mid-year drops: Central Highlands and Nairobi drop from ~5.9 PSH in February to ~4.2 PSH in June–July overcast skies, while coastal farms dip to ~4.7 PSH in May–June monsoon rains. Sizing your pump flow and array for the worst cloudy month—and buffering with a storage tank—ensures irrigation schedules keep running even during overcast weeks.",
+  },
+  {
+    question: "How do I calculate Total Dynamic Head (TDH) for drip vs sprinkler irrigation?",
+    answer:
+      "TDH equals Static Water Depth + Borehole Drawdown + Ground Elevation Gain + Tank/Discharge Height + Working Pressure Head (1 bar = 10.2 m; drip uses ~1.0 bar while impact sprinklers require 2.5–3.5 bar and rain guns 4.5+ bar) + Filter/Valve Losses + Hazen-Williams Pipe Friction Losses across every suction, riser, and mainline section.",
+  },
+  {
+    question: "Can a surface river or dam pump lift water more than 6 meters vertically in Nairobi or Nakuru?",
+    answer:
+      "Rarely. At Kenyan highland altitudes (1,500–2,000 m), lower barometric pressure reduces maximum practical suction lift—including suction pipe friction—to about 5.5–6.0 meters. Exceeding this causes cavitation that pits the impeller and stops priming; place surface pumps close to the water level or switch to a submersible pump.",
+  },
+  {
+    question: "What borehole casing size and submergence depth does a submersible pump require?",
+    answer:
+      "Standard 4-inch submersible borehole pumps require at least a 4-inch (~100–102 mm ID) casing; narrow 3-inch (~76 mm ID) casings require slim 3-inch pumps. Submersible pumps should hang at least 5–10 meters below the dynamic pumping water level while staying 3–5 meters above borehole bottom silt, and wide 6\"–8\" wells need a motor cooling sleeve.",
+  },
+  {
+    question: "Should I buy solar batteries or a raised water tank for irrigation?",
+    answer:
+      "For pure daytime irrigation, a raised masonry tank, PVC tank, or HDPE-lined reservoir sized for 1–2 days of crop water demand is usually far more economical than deep-cycle or LiFePO4 batteries. Use solar hybrid battery backup mainly when dawn/dusk pressurized sprinkler or booster pumping without gravity pressure is essential.",
   },
 ];
 
@@ -36,7 +70,7 @@ const PumpSolarCalculator = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEOHead
         title={`Pump & Solar Sizing Calculator Kenya | ${SITE_COMPANY.name}`}
-        description="Size borehole, suction, or booster pumps with Hazen-Williams pipe friction, solar PV strings, cable mm², and live DripTech pump matches in Kenya."
+        description="Size borehole, suction, or booster pumps with Hazen-Williams pipe friction, cloudy-season PSH, solar PV strings, cable mm², and live DripTech pump matches."
         url={`${SITE_COMPANY.url}/pump-solar-calculator-kenya`}
         schema={{
           "@context": "https://schema.org",
@@ -45,7 +79,7 @@ const PumpSolarCalculator = () => {
           applicationCategory: "UtilitiesApplication",
           operatingSystem: "Any",
           description:
-            "Interactive hydraulic pump and solar PV sizing calculator for Kenyan farms: computes water demand, Hazen-Williams pipeline friction, Total Dynamic Head (TDH), solar string topology, DC/AC cable gauge, and pump recommendations.",
+            "Interactive hydraulic pump and solar PV sizing calculator for Kenyan farms: computes water demand, Hazen-Williams pipeline friction, Total Dynamic Head (TDH), worst-month weather derating, solar string topology, DC/AC cable gauge, and pump recommendations.",
           url: `${SITE_COMPANY.url}/pump-solar-calculator-kenya`,
           offers: {
             "@type": "Offer",
@@ -140,14 +174,14 @@ const PumpSolarCalculator = () => {
               <div className="space-y-2 lg:col-span-8">
                 <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                   <ShieldCheck className="h-4 w-4" />
-                  Engineering Disclaimer &amp; Borehole Verification
+                  Engineering Verification &amp; Borehole Audit Checklist
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
-                  This tool provides a transparent preliminary hydraulic and PV array sizing model using
-                  Hazen-Williams friction (C=140 HDPE, C=145 uPVC, C=120/100 GI) and a parabolic Q–H curve
-                  approximation when only Qmax/Hmax datasheet endpoints are available. Before purchasing or
-                  lowering a pump, always verify actual borehole yield test (m³/h), dynamic pumping water level
-                  (PWL), casing diameter (3&quot; vs 4&quot;+), and exact manufacturer duty curves with our field team.
+                  This workbench models Hazen-Williams pipe losses (C=140 HDPE, C=145 uPVC, C=120/100 GI),
+                  Sandia/NOCT module cell temperatures from ambient temperature and wind speed, seasonal Kenyan
+                  Peak Sun Hours, centrifugal VFD affinity behavior under cloud cover, and parabolic Q–H curve
+                  headroom. Before purchasing or lowering a pump, always verify actual borehole driller yield test
+                  (m³/h), dynamic pumping water level (PWL), casing diameter, and manufacturer Q–H duty curves.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 lg:col-span-4 lg:justify-end">
@@ -169,6 +203,13 @@ const PumpSolarCalculator = () => {
             </CardContent>
           </Card>
         </section>
+
+        <FAQSection
+          title="Pump & Solar Sizing Questions Answered"
+          subtitle="Engineering answers on boreholes, surface suction pumps, cloudy-season PSH, solar panel strings, and storage across Kenya."
+          faqs={PUMP_SOLAR_FAQS}
+          className="mt-8"
+        />
       </main>
 
       <IrrigationKeywords />

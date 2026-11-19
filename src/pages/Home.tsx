@@ -57,6 +57,18 @@ const Home = () => {
             className="flex flex-wrap items-center gap-x-4 gap-y-1.5 sm:gap-x-5 sm:gap-y-2 text-xs sm:text-sm font-medium"
           >
             <Link
+              to="/pump-solar-calculator-kenya"
+              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+            >
+              Pump &amp; solar calculator
+            </Link>
+            <Link
+              to="/irrigation-cost-calculator-kenya"
+              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+            >
+              Cost calculator
+            </Link>
+            <Link
               to="/irrigation-areas-kenya"
               className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >

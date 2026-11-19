@@ -298,6 +298,8 @@ const homePage = {
     { label: "Drip irrigation kit prices in Kenya", href: "/drip-irrigation-kit-price-kenya" },
     { label: "Irrigation companies in Kenya", href: "/irrigation-companies-kenya" },
     { label: "Drip irrigation pumps", href: "/products/pumps" },
+    { label: "Pump and solar sizing calculator", href: "/pump-solar-calculator-kenya" },
+    { label: "Irrigation cost calculator", href: "/irrigation-cost-calculator-kenya" },
     { label: "Driplines and emitters", href: "/products/drip" },
     { label: "Sprinklers and rain guns", href: "/products/sprinklers" },
   ],
@@ -375,9 +377,34 @@ const pumpSolarCalculatorPage = {
   ],
   links: [
     { label: "Browse pumps and motors", href: "/products/pumps" },
+    { label: "Browse solar irrigation products", href: "/products/solar" },
     { label: "Estimate drip irrigation costs", href: "/irrigation-cost-calculator-kenya" },
     { label: "Read pump sizing guide", href: "/irrigation-pump-sizing-kenya" },
+    { label: "Solar irrigation pumps Kenya", href: "/solar-irrigation-pumps-kenya" },
+    { label: "Borehole water pumps Kenya", href: "/borehole-water-pumps-kenya" },
     { label: "Request a formal design and BOQ", href: "/contact" }
+  ],
+  faqs: [
+    {
+      q: "How many solar panels do I need for a 1 HP, 2 HP, or 3 HP borehole pump in Kenya?",
+      a: "Allowing for 10–15% module heat losses plus dust and controller losses, size solar arrays at roughly 1.3× to 1.5× motor power: ~1,100–1,400 Wp for 1 HP, ~2,100–2,500 Wp for 1.5–2 HP, and ~3,200–3,800 Wp for 3 HP. Check string Voc at coldest dawn temperatures against your controller limit.",
+    },
+    {
+      q: "Why should solar irrigation pumps in Kenya be sized for June–July cloudy weather?",
+      a: "Central Highlands and Nairobi drop from ~5.9 PSH in February to ~4.2 PSH in June–July overcast skies (and coastal farms dip in May–June rains). Sizing arrays and tank storage for the worst cloudy month keeps watering reliable year-round.",
+    },
+    {
+      q: "How do I calculate Total Dynamic Head (TDH) for drip vs sprinkler irrigation?",
+      a: "TDH adds Static Water Depth, Drawdown, Ground Elevation Gain, Tank Height, Working Pressure Head (1 bar = 10.2 m; drip uses ~1 bar while sprinklers need 2.5–3.5 bar), Filter/Valve losses, and Hazen-Williams pipe friction across suction, riser, and mainline segments.",
+    },
+    {
+      q: "Can a surface pump pull water over 6 meters vertically in Nairobi or Nakuru?",
+      a: "At 1,500–2,000 m altitude, lower barometric pressure caps safe surface suction lift plus friction around 5.5–6.0 m. Exceeding this causes cavitation; move the pump near water level or choose a submersible pump.",
+    },
+    {
+      q: "What borehole casing size and submergence depth is safe?",
+      a: "Standard 4-inch submersible pumps require >= 4-inch (100+ mm ID) casings, while 3-inch boreholes fit slim 3-inch pumps only. Hang the pump 5–10 m below dynamic pumping water level and 3–5 m above bottom silt.",
+    },
   ],
   schema: {
     "@context": "https://schema.org",
@@ -1343,7 +1370,7 @@ const pageBody = (page) => {
     : "";
   const siteNavGroups = [
     ["Products", ["/products", "/products/drip", "/products/sprinklers", "/products/pumps", "/products/pipes", "/products/filtration", "/products/filters-strainers", "/products/valves", "/products/controls", "/products/controllers", "/products/fertigation", "/products/solar", "/products/storage", "/products/borehole", "/products/greenhouse", "/irrigation-kits"]],
-    ["Company and resources", ["/about", "/contact", "/projects", "/case-studies", "/success-stories", "/blog", "/news", "/videos", "/installation-guides", "/certifications", "/team", "/careers"]],
+    ["Company and resources", ["/about", "/contact", "/projects", "/case-studies", "/success-stories", "/blog", "/news", "/videos", "/installation-guides", "/pump-solar-calculator-kenya", "/irrigation-cost-calculator-kenya", "/certifications", "/team", "/careers"]],
     ["Legal", ["/privacy", "/terms", "/cookies"]],
   ];
   const routeLabels = new Map(allPages.map((candidate) => [candidate.route, candidate.nav || candidate.heading || candidate.h1 || candidate.title]));
