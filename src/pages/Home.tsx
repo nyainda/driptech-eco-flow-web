@@ -1,15 +1,17 @@
+import { lazy } from "react";
 import { Link } from "react-router-dom";
 import HeroSectionVibe from "@/components/Home/HeroSectionVibe";
 import TrustStrip from "@/components/Home/TrustStrip";
-import HomeOfferings from "@/components/Home/HomeOfferings";
-import HomeCropAcreageGuide from "@/components/Home/HomeCropAcreageGuide";
-import HomeEngineeringServices from "@/components/Home/HomeEngineeringServices";
-import HomeKitsShowcase from "@/components/Home/HomeKitsShowcase";
-import ProjectsSection from "@/components/Home/ProjectsSection";
-import VideoSection from "@/components/Home/VideoSection";
+import DeferredSection from "@/components/common/DeferredSection";
 import WhatsAppContact from "@/components/common/WhatsAppContact";
-import FAQSection from "@/components/SEO/FAQSection";
-import { COMMON_FAQS } from "@/lib/seo-config";
+
+const HomeOfferings = lazy(() => import("@/components/Home/HomeOfferings"));
+const HomeKitsShowcase = lazy(() => import("@/components/Home/HomeKitsShowcase"));
+const HomeCropAcreageGuide = lazy(() => import("@/components/Home/HomeCropAcreageGuide"));
+const HomeEngineeringServices = lazy(() => import("@/components/Home/HomeEngineeringServices"));
+const ProjectsSection = lazy(() => import("@/components/Home/ProjectsSection"));
+const VideoSection = lazy(() => import("@/components/Home/VideoSection"));
+const HomeFaqSection = lazy(() => import("@/components/Home/HomeFaqSection"));
 
 const Home = () => {
   return (
@@ -19,29 +21,39 @@ const Home = () => {
       {/* Executive credibility & capabilities band right below the hero */}
       <TrustStrip />
 
-      {/* Product discovery renders immediately with no scroll-hiding wrapper */}
-      <HomeOfferings />
+      {/* Product discovery mounts right after hero paint to keep mobile LCP clear */}
+      <DeferredSection minHeight="560px" fallbackDelayMs={900}>
+        <HomeOfferings />
+      </DeferredSection>
 
       {/* Complete acreage kits comparison */}
-      <HomeKitsShowcase />
+      <DeferredSection minHeight="420px" fallbackDelayMs={1600}>
+        <HomeKitsShowcase />
+      </DeferredSection>
 
       {/* Shop by Farm Acreage (1/4, 1/2, 1, 5+ Acres) & Kenyan Crop Solutions */}
-      <HomeCropAcreageGuide />
+      <DeferredSection minHeight="460px" fallbackDelayMs={1900}>
+        <HomeCropAcreageGuide />
+      </DeferredSection>
 
       {/* Turnkey engineering design, consultation & 4-step execution pipeline */}
-      <HomeEngineeringServices />
+      <DeferredSection minHeight="440px" fallbackDelayMs={2100}>
+        <HomeEngineeringServices />
+      </DeferredSection>
 
       {/* Verified irrigation project records */}
-      <ProjectsSection compact />
+      <DeferredSection minHeight="380px" fallbackDelayMs={2300}>
+        <ProjectsSection compact />
+      </DeferredSection>
 
       {/* Field demonstration videos */}
-      <VideoSection compact />
+      <DeferredSection minHeight="340px" fallbackDelayMs={2500}>
+        <VideoSection compact />
+      </DeferredSection>
 
-      <FAQSection
-        title="Questions before you choose?"
-        faqs={COMMON_FAQS.homepage}
-        className="py-7 sm:py-14"
-      />
+      <DeferredSection minHeight="280px" fallbackDelayMs={2700}>
+        <HomeFaqSection />
+      </DeferredSection>
 
       {/* Keep these resources discoverable without making them compete with products */}
       <section
@@ -54,47 +66,47 @@ const Home = () => {
           </p>
           <nav
             aria-label="Irrigation resources"
-            className="flex flex-wrap items-center gap-x-4 gap-y-1.5 sm:gap-x-5 sm:gap-y-2 text-xs sm:text-sm font-medium"
+            className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-5 text-xs sm:text-sm font-medium"
           >
             <Link
               to="/pump-solar-calculator-kenya"
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              className="inline-flex min-h-[28px] items-center text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >
               Pump &amp; solar calculator
             </Link>
             <Link
               to="/irrigation-cost-calculator-kenya"
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              className="inline-flex min-h-[28px] items-center text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >
               Cost calculator
             </Link>
             <Link
               to="/irrigation-areas-kenya"
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              className="inline-flex min-h-[28px] items-center text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >
               Counties we serve
             </Link>
             <Link
               to="/blog"
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              className="inline-flex min-h-[28px] items-center text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >
               Irrigation guides
             </Link>
             <Link
               to="/videos"
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              className="inline-flex min-h-[28px] items-center text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >
               Video tutorials
             </Link>
             <Link
               to="/projects"
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              className="inline-flex min-h-[28px] items-center text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >
               Project examples
             </Link>
             <Link
               to="/success-stories"
-              className="text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              className="inline-flex min-h-[28px] items-center text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
             >
               Case studies
             </Link>

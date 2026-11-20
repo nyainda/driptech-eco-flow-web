@@ -75,8 +75,10 @@ const App = () => {
               }}
             >
               <GlobalStaffShortcutListener />
-              <VisitorTracker />
-              <WhatsAppClickTracker />
+              <Suspense fallback={null}>
+                <VisitorTracker />
+                <WhatsAppClickTracker />
+              </Suspense>
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>
                   {/* Main pages */}

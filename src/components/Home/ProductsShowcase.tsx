@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { dataService } from "@/services/dataService";
 import { ProductCard } from "@/components/Products/ProductCard";
 import { Button } from "@/components/ui/button";
@@ -172,16 +172,15 @@ const ProductsShowcase = ({
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
   const [visibleCount, setVisibleCount] = useState(INITIAL_SHOW);
+  const loadedCategoriesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchInitialProducts = async () => {
       try {
-        const [counts, featured, ...categoryResults] = await Promise.all([
+        const [counts, featured, catalogSample] = await Promise.all([
           dataService.getProductCategoryCounts(),
           dataService.getProducts({ featured: true, limit: 12 }),
-          ...CATEGORIES
-            .filter((cat) => cat.key !== "all")
-            .map((cat) => dataService.getProducts({ category: cat.key, limit: 20 })),
+          dataService.getProducts({ inStock: true, limit: 24 }),
         ]);
 
         const countMap: Record<string, number> = {};
@@ -190,8 +189,10 @@ const ProductsShowcase = ({
         });
         setCategoryCounts(countMap);
 
-        const merged = [...(featured || []), ...categoryResults.flat()];
-        const unique = Array.from(new Map(merged.map((product: Product) => [product.id, product])).values());
+        const merged = [...(featured || []), ...(catalogSample || [])];
+        const unique = Array.from(
+          new Map(merged.map((product: Product) => [product.id, product])).values(),
+        );
         setAllProducts(unique);
       } catch (error) {
         console.error("Error fetching homepage products:", error);
@@ -199,8 +200,35 @@ const ProductsShowcase = ({
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchInitialProducts();
   }, []);
+
+  // Lazily fetch category slice when visitor clicks a specific category tab
+  useEffect(() => {
+    if (activeCategory === "all" || loadedCategoriesRef.current.has(activeCategory)) {
+      return;
+    }
+    loadedCategoriesRef.current.add(activeCategory);
+
+    let cancelled = false;
+    dataService
+      .getProducts({ category: activeCategory, limit: 24 })
+      .then((rows) => {
+        if (cancelled || !Array.isArray(rows) || rows.length === 0) return;
+        setAllProducts((prev) =>
+          Array.from(
+            new Map([...prev, ...(rows as Product[])].map((p) => [p.id, p])).values(),
+          ),
+        );
+      })
+      .catch((error) => {
+        console.error(`Failed loading category ${activeCategory}:`, error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCategory]);
 
   // Reset visible count when switching category
   useEffect(() => {
@@ -576,7 +604,9 @@ const ProductsShowcase = ({
                 >
                   {cat.label}
                   <span className={`rounded-full px-1.5 py-0.5 text-[9px] ${
-                    activeCategory === cat.key ? "bg-white/20" : "bg-muted"
+                    activeCategory === cat.key
+                      ? "bg-black/25 text-white"
+                      : "bg-muted text-foreground"
                   }`}>{count}</span>
                 </button>
               );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import QuoteForm from "./QuoteForm";
+
+const QuoteForm = lazy(() => import("./QuoteForm"));
 
 interface QuoteModalProps {
   children: React.ReactNode;
@@ -33,7 +33,17 @@ const QuoteModal = ({ children }: QuoteModalProps) => {
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">
-          <QuoteForm onSuccess={handleSuccess} />
+          {open ? (
+            <Suspense
+              fallback={
+                <div className="py-8 text-center text-sm text-muted-foreground">
+                  Loading quote form...
+                </div>
+              }
+            >
+              <QuoteForm onSuccess={handleSuccess} />
+            </Suspense>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>
