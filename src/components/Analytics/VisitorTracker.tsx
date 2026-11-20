@@ -16,10 +16,23 @@ const VisitorTracker = () => {
       const path = location.pathname + location.search;
       const title = document.title || path;
 
-      // Small delay to ensure page has loaded
+      // Defer analytics tracking until after critical initial paint / LCP
+      const ric = (window as unknown as {
+        requestIdleCallback?: (fn: () => void, opts?: { timeout: number }) => number;
+        cancelIdleCallback?: (id: number) => void;
+      }).requestIdleCallback;
+      const cic = (window as unknown as {
+        cancelIdleCallback?: (id: number) => void;
+      }).cancelIdleCallback;
+
+      if (typeof ric === "function") {
+        const id = ric(() => trackPageView(path, title), { timeout: 1800 });
+        return () => cic?.(id);
+      }
+
       const timer = window.setTimeout(() => {
         trackPageView(path, title);
-      }, 100);
+      }, 1500);
 
       return () => window.clearTimeout(timer);
     };

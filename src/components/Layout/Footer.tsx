@@ -7,7 +7,7 @@ import { unlockStaffPortal } from "@/components/Admin/StealthAdminGate";
 const footerGroups = [
   { title: "Products & Pricing", links: [
     ["Drip irrigation", "/products/drip"], ["HDPE dam liners", "/dam-liners-kenya"], ["Sprinkler systems", "/products/sprinklers"],
-    ["Pumps & solar", "/solar-irrigation-pumps-kenya"], ["Irrigation kits & prices", "/drip-irrigation-kit-price-kenya"], ["View full catalogue", "/products"],
+    ["Solar irrigation pumps", "/solar-irrigation-pumps-kenya"], ["Irrigation kits & prices", "/drip-irrigation-kit-price-kenya"], ["View full catalogue", "/products"],
   ] },
   { title: "Engineering & Guides", links: [
     ["All 100+ Kenya guides", "/irrigation-guides-kenya"], ["Pump & solar calculator", "/pump-solar-calculator-kenya"], ["Irrigation cost calculator", "/irrigation-cost-calculator-kenya"], ["System design & BOQ", "/services#system-design"],
@@ -109,9 +109,13 @@ const Footer = () => {
               Browse All 100+ Guides →
             </Link>
           </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+          <div className="flex flex-wrap gap-x-2.5 gap-y-2 text-xs text-muted-foreground">
             {seoQuickLinks.map(([label, href]) => (
-              <Link key={href} to={href} className="transition-colors hover:text-primary hover:underline">
+              <Link
+                key={href}
+                to={href}
+                className="inline-flex min-h-[28px] items-center rounded px-1.5 py-1 transition-colors hover:text-primary hover:underline"
+              >
                 {label}
               </Link>
             ))}
@@ -127,12 +131,12 @@ const Footer = () => {
           >
             © {currentYear} DripTech Eco Flow. All rights reserved.
           </span>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            <Link className="hover:text-primary" to="/privacy">Privacy</Link>
-            <Link className="hover:text-primary" to="/terms">Terms</Link>
-            <Link className="hover:text-primary" to="/cookies">Cookies</Link>
-            <Link className="hover:text-primary" to="/certifications">Certifications</Link>
-            <Link className="hover:text-primary" to="/careers">Careers</Link>
+          <div className="flex flex-wrap gap-x-3 gap-y-2">
+            <Link className="inline-flex min-h-[28px] items-center px-1 py-1 hover:text-primary" to="/privacy">Privacy</Link>
+            <Link className="inline-flex min-h-[28px] items-center px-1 py-1 hover:text-primary" to="/terms">Terms</Link>
+            <Link className="inline-flex min-h-[28px] items-center px-1 py-1 hover:text-primary" to="/cookies">Cookies</Link>
+            <Link className="inline-flex min-h-[28px] items-center px-1 py-1 hover:text-primary" to="/certifications">Certifications</Link>
+            <Link className="inline-flex min-h-[28px] items-center px-1 py-1 hover:text-primary" to="/careers">Careers</Link>
           </div>
           <Link
             to="/blue-digital-solutions"

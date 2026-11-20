@@ -98,6 +98,8 @@ const Header = () => {
       return activeBanners as DiscountBannerData[];
     },
     refetchInterval: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   // Load 

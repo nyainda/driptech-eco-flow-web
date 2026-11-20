@@ -151,10 +151,10 @@ export function initAutoUpdate(): void {
     void checkForNewBuild(true);
   });
 
-  // Initial post-paint check and gentle background polling every 3 minutes
+  // Initial post-LCP idle check and gentle background polling every 3 minutes
   window.setTimeout(() => {
     void checkForNewBuild(true);
-  }, 2000);
+  }, 5000);
 
   window.setInterval(() => {
     void requestSwUpdate();
