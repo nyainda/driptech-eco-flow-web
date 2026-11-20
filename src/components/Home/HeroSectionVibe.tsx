@@ -165,9 +165,13 @@ export default function HeroSectionVibe() {
       }
     };
 
-    loadHeroProducts();
+    const timer = window.setTimeout(
+      loadHeroProducts,
+      typeof window !== "undefined" && window.innerWidth < 1024 ? 650 : 120,
+    );
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
   }, []);
 
@@ -476,7 +480,13 @@ export default function HeroSectionVibe() {
                                 <img
                                   src={image}
                                   alt={product.name}
-                                  loading="eager"
+                                  width={320}
+                                  height={240}
+                                  loading={
+                                    typeof window !== "undefined" && window.innerWidth < 1024
+                                      ? "lazy"
+                                      : "eager"
+                                  }
                                   decoding="async"
                                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />

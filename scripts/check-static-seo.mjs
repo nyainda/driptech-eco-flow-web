@@ -256,6 +256,20 @@ if (fs.existsSync(adminPath)) {
   if (routes.includes("/admin")) failures.push("/admin must not be included in the public sitemap");
 }
 
+const ardPath = path.join(dist, ".well-known", "ard.json");
+if (!fs.existsSync(ardPath)) {
+  failures.push("/.well-known/ard.json: generated manifest missing from dist");
+} else {
+  try {
+    const ardManifest = JSON.parse(fs.readFileSync(ardPath, "utf8"));
+    if (!Array.isArray(ardManifest?.resources) || ardManifest.resources.length === 0) {
+      failures.push("/.well-known/ard.json: manifest must include at least one resource entry");
+    }
+  } catch (err) {
+    failures.push(`/.well-known/ard.json: invalid JSON (${err?.message || err})`);
+  }
+}
+
 if (failures.length) {
   console.error("Static SEO validation failed:");
   for (const failure of failures) console.error(` - ${failure}`);

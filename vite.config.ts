@@ -39,7 +39,8 @@ export default defineConfig(({ mode }) => {
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'robots.txt', 'sitemap.xml'],
+      injectRegister: 'script-defer',
+      includeAssets: ['favicon.svg', 'robots.txt', 'sitemap.xml', '.well-known/ard.json'],
       manifest: {
         name: 'DripTech EcoFlow',
         short_name: 'DripTech',

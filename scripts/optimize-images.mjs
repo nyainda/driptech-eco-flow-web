@@ -15,10 +15,15 @@ const heroImages = [
     'hero-bg-new.jpg'
 ];
 
+const filterArg = process.argv[2]?.trim();
+const targetImages = filterArg
+    ? heroImages.filter((name) => name === filterArg)
+    : heroImages;
+
 async function optimizeImages() {
     console.log('🖼️  Starting image optimization...\n');
 
-    for (const imageName of heroImages) {
+    for (const imageName of targetImages) {
         const inputPath = path.join(publicDir, imageName);
         const baseName = path.basename(imageName, '.jpg');
 
@@ -36,9 +41,9 @@ async function optimizeImages() {
 
             // Generate WebP versions at different sizes for responsive images
             const sizes = [
-                { width: 640, suffix: '-mobile' },   // Mobile
-                { width: 1024, suffix: '-tablet' },  // Tablet
-                { width: 1920, suffix: '-desktop' }, // Desktop
+                { width: 520, quality: 65, suffix: '-mobile' },   // Mobile
+                { width: 960, quality: 72, suffix: '-tablet' },   // Tablet
+                { width: 1440, quality: 75, suffix: '-desktop' }, // Desktop
             ];
 
             for (const size of sizes) {
@@ -49,7 +54,7 @@ async function optimizeImages() {
                         fit: 'inside',
                         withoutEnlargement: true
                     })
-                    .webp({ quality: 80, effort: 6 })
+                    .webp({ quality: size.quality, effort: 6 })
                     .toFile(outputPath);
 
                 const stats = fs.statSync(outputPath);
@@ -62,7 +67,11 @@ async function optimizeImages() {
             // Also create a highly optimized WebP version to replace the original
             const optimizedPath = path.join(publicDir, `${baseName}.webp`);
             await sharp(inputPath)
-                .webp({ quality: 82, effort: 6 })
+                .resize(1440, null, {
+                    fit: 'inside',
+                    withoutEnlargement: true
+                })
+                .webp({ quality: 75, effort: 6 })
                 .toFile(optimizedPath);
 
             const optimizedStats = fs.statSync(optimizedPath);
