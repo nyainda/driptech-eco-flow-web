@@ -268,6 +268,36 @@ if (fs.existsSync(adminPath)) {
   if (routes.includes("/admin")) failures.push("/admin must not be included in the public sitemap");
 }
 
+// Guard against duplicate "(Copy)" draft products entering the public sitemap.
+for (const route of routes) {
+  if (/^\/products\/[^/]+\/.+-copy-[0-9a-f]{8}$/i.test(route)) {
+    failures.push(`${route}: duplicate (Copy) draft product must not appear in sitemap.xml`);
+  }
+}
+
+// Every route listed in sitemap.xml must receive at least one static HTML
+// internal link so blog posts, news items, and guides are never orphan URLs.
+const inlinkCounts = new Map();
+for (const route of routes) {
+  const file = route === "/" ? path.join(dist, "index.html") : path.join(dist, route.replace(/^\/+/, ""), "index.html");
+  if (!fs.existsSync(file)) continue;
+  const html = fs.readFileSync(file, "utf8");
+  const body = html.match(/<body[\s\S]*$/i)?.[0] || html;
+  const seenTargets = new Set();
+  for (const match of body.matchAll(/href="(\/[^"#?]*)"/g)) {
+    const href = match[1];
+    if (href === route || seenTargets.has(href)) continue;
+    seenTargets.add(href);
+    inlinkCounts.set(href, (inlinkCounts.get(href) || 0) + 1);
+  }
+}
+const orphanRoutes = routes.filter((route) => route !== "/" && (inlinkCounts.get(route) || 0) === 0);
+if (orphanRoutes.length) {
+  failures.push(
+    `${orphanRoutes.length} sitemap URL(s) have zero HTML internal links (orphan pages): ${orphanRoutes.slice(0, 10).join(", ")}`,
+  );
+}
+
 const ardPath = path.join(dist, ".well-known", "ard.json");
 if (!fs.existsSync(ardPath)) {
   failures.push("/.well-known/ard.json: generated manifest missing from dist");
