@@ -236,6 +236,11 @@ const IrrigationKits = () => {
         // DripTech charges and what visitors see on the page.
         const price = kit.price && kit.price > 0 ? kit.price : undefined;
 
+        const image =
+          (Array.isArray(kit.images) && kit.images[0]) ||
+          (kit as { image_url?: string | null }).image_url ||
+          undefined;
+
         return {
           "@type": "Product",
           position: index + 1,
@@ -243,6 +248,7 @@ const IrrigationKits = () => {
           description:
             kit.description ||
             `Drip irrigation kit covering ${acreLabel || "custom"} acre(s), suited for Kenyan farms.`,
+          ...(image ? { image } : {}),
           brand: { "@type": "Brand", name: SITE_COMPANY.name },
           ...(price
             ? {
@@ -250,7 +256,11 @@ const IrrigationKits = () => {
                   "@type": "Offer",
                   price: String(price),
                   priceCurrency: "KES",
-                  availability: "https://schema.org/InStock",
+                  availability:
+                    kit.in_stock !== false
+                      ? "https://schema.org/InStock"
+                      : "https://schema.org/OutOfStock",
+                  itemCondition: "https://schema.org/NewCondition",
                   url: "https://www.dripstech.co.ke/irrigation-kits",
                 },
               }

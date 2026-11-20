@@ -144,8 +144,14 @@ for (const route of routes) {
   )) {
     failures.push(route + ": product detail page must have Product or WebPage JSON-LD");
   }
-  for (const schema of productSchemas) {
-    if (schema.url !== siteUrl + route) {
+  const listProductSchemas = parsedSchemas
+    .filter((schema) => (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("ItemList"))
+    .flatMap((schema) => (Array.isArray(schema?.itemListElement) ? schema.itemListElement : []))
+    .map((entry) => entry?.item)
+    .filter((item) => (Array.isArray(item?.["@type"]) ? item["@type"] : [item?.["@type"]]).includes("Product"));
+  const allOfferProducts = [...productSchemas, ...listProductSchemas];
+  for (const schema of allOfferProducts) {
+    if (schema.url && productSchemas.includes(schema) && schema.url !== siteUrl + route) {
       failures.push(route + ": Product JSON-LD URL does not match its canonical route");
     }
     // Product rich-result markup must include an offer, review, or rating.
@@ -158,6 +164,12 @@ for (const route of routes) {
       for (const offer of offers) {
         if (offer?.["@type"] !== "Offer" || !(Number(offer.price) > 0) || !offer.priceCurrency) {
           failures.push(route + ": Product Offer must have a positive price and currency");
+        }
+        if (
+          typeof offer?.availability !== "string" ||
+          !/^https:\/\/schema\.org\/(?:InStock|OutOfStock|PreOrder|BackOrder)$/i.test(offer.availability)
+        ) {
+          failures.push(route + `: Product Offer (${schema.name || "item"}) is missing valid schema.org availability`);
         }
       }
     }
