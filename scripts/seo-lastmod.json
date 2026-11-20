@@ -1,702 +1,662 @@
 {
   "/": {
-    "hash": "4e964ee7d47a",
-    "date": "2026-11-13"
+    "hash": "47911b7a5db0",
+    "date": "2026-11-20"
   },
   "/products": {
-    "hash": "b771ca0bfd34",
-    "date": "2026-11-13"
+    "hash": "50580b08de02",
+    "date": "2026-11-20"
   },
   "/products/drip": {
-    "hash": "62b56b1572d0",
-    "date": "2026-11-13"
+    "hash": "a2914c663223",
+    "date": "2026-11-20"
   },
   "/products/sprinklers": {
-    "hash": "aa5db595d2d5",
-    "date": "2026-11-12"
+    "hash": "3912b036c4e6",
+    "date": "2026-11-20"
   },
   "/products/pumps": {
-    "hash": "c16d7fc94828",
-    "date": "2026-11-12"
+    "hash": "183e16e2f6c6",
+    "date": "2026-11-20"
   },
   "/products/pipes": {
-    "hash": "39c1fbe69da8",
-    "date": "2026-11-12"
+    "hash": "7ca5a0cdce53",
+    "date": "2026-11-20"
   },
   "/products/filtration": {
-    "hash": "076726f96542",
-    "date": "2026-11-12"
+    "hash": "8cd4dafd2ee0",
+    "date": "2026-11-20"
   },
   "/products/solar": {
-    "hash": "8aa47b694470",
-    "date": "2026-11-09"
+    "hash": "a6a1b5113541",
+    "date": "2026-11-20"
   },
   "/products/greenhouse": {
-    "hash": "f0449049dbf3",
-    "date": "2026-11-09"
+    "hash": "d1cb1810cafd",
+    "date": "2026-11-20"
   },
   "/irrigation-kits": {
-    "hash": "ec24306fb9ec",
-    "date": "2026-11-13"
+    "hash": "a65972dd5457",
+    "date": "2026-11-20"
   },
   "/services": {
-    "hash": "ec4fed23d799",
-    "date": "2026-11-13"
+    "hash": "ea21c8303ed2",
+    "date": "2026-11-20"
   },
   "/technician-services": {
-    "hash": "6ba39962bab1",
-    "date": "2026-11-13"
+    "hash": "8305ac2a345b",
+    "date": "2026-11-20"
   },
   "/installation-guides": {
-    "hash": "cadd756438eb",
-    "date": "2026-11-09"
+    "hash": "8e544baacc47",
+    "date": "2026-11-20"
   },
   "/case-studies": {
-    "hash": "411aad9462e7",
-    "date": "2026-11-09"
+    "hash": "8af4897013a2",
+    "date": "2026-11-20"
   },
   "/projects": {
-    "hash": "685512ebbfb1",
-    "date": "2026-11-09"
+    "hash": "133145354175",
+    "date": "2026-11-20"
   },
   "/success-stories": {
-    "hash": "98744d5f1b9c",
-    "date": "2026-11-09"
+    "hash": "408ed340bd08",
+    "date": "2026-11-20"
   },
   "/blog": {
-    "hash": "57748eb67fcc",
-    "date": "2026-11-09"
+    "hash": "c44e625d9536",
+    "date": "2026-11-20"
   },
   "/news": {
-    "hash": "78a5a096a63c",
-    "date": "2026-11-09"
+    "hash": "f81461c5cb29",
+    "date": "2026-11-20"
   },
   "/videos": {
-    "hash": "340231dd0122",
-    "date": "2026-11-09"
+    "hash": "b119bf516d8f",
+    "date": "2026-11-20"
   },
   "/about": {
-    "hash": "db2837741a65",
-    "date": "2026-11-13"
+    "hash": "cf9d8e43571e",
+    "date": "2026-11-20"
   },
   "/contact": {
-    "hash": "f559b59af062",
-    "date": "2026-11-13"
+    "hash": "eda642f1c469",
+    "date": "2026-11-20"
   },
   "/irrigation-cost-calculator-kenya": {
-    "hash": "9839d8065bdd",
-    "date": "2026-11-09"
+    "hash": "eade9bb62783",
+    "date": "2026-11-20"
+  },
+  "/pump-solar-calculator-kenya": {
+    "hash": "8b35f839416e",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-kenya": {
-    "hash": "eb56c93315d3",
-    "date": "2026-11-13"
+    "hash": "4d87a2db9721",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-kit-price-kenya": {
-    "hash": "9fecde8bb9fe",
-    "date": "2026-11-13"
+    "hash": "6763f01f14b7",
+    "date": "2026-11-20"
   },
   "/driplines-for-sale-kenya": {
-    "hash": "df20364c627a",
-    "date": "2026-11-13"
+    "hash": "ed2c7f99d298",
+    "date": "2026-11-20"
   },
   "/sprinkler-systems-kenya": {
-    "hash": "92c3bb042907",
-    "date": "2026-11-12"
+    "hash": "e2d53dbd8d1b",
+    "date": "2026-11-20"
   },
   "/irrigation-companies-kenya": {
-    "hash": "4df872d483b0",
-    "date": "2026-11-13"
+    "hash": "ce19fb7ea3d9",
+    "date": "2026-11-20"
   },
   "/solar-irrigation-pumps-kenya": {
-    "hash": "cb6231d473dc",
-    "date": "2026-11-13"
+    "hash": "0e5b8e189796",
+    "date": "2026-11-20"
   },
   "/borehole-water-pumps-kenya": {
-    "hash": "b9b88baf9df8",
-    "date": "2026-11-13"
+    "hash": "b16a49a10994",
+    "date": "2026-11-20"
   },
   "/water-storage-tanks-kenya": {
-    "hash": "4063f8907664",
-    "date": "2026-11-13"
+    "hash": "b38b2219179e",
+    "date": "2026-11-20"
   },
   "/greenhouse-drip-irrigation-kenya": {
-    "hash": "b8deddfe2097",
-    "date": "2026-11-13"
+    "hash": "8226b106e15d",
+    "date": "2026-11-20"
   },
   "/fertigation-systems-kenya": {
-    "hash": "1bb91b6bb7c8",
-    "date": "2026-11-13"
+    "hash": "90df73beafe7",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-tomatoes-kenya": {
-    "hash": "ea42f4c891d2",
-    "date": "2026-11-13"
+    "hash": "6cb2a8c2e9b0",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-onions-kenya": {
-    "hash": "865cda2fb28c",
-    "date": "2026-11-13"
+    "hash": "669a73979361",
+    "date": "2026-11-20"
   },
   "/irrigation-water-filters-kenya": {
-    "hash": "b5d789e12b91",
-    "date": "2026-11-13"
+    "hash": "917d9c81e8f9",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-potatoes-kenya": {
-    "hash": "ea9898774171",
-    "date": "2026-11-13"
+    "hash": "94496c494016",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-capsicum-kenya": {
-    "hash": "a1b58dc30d15",
-    "date": "2026-11-13"
+    "hash": "aed59a3b0c1a",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-cabbage-kenya": {
-    "hash": "9a8b71d3d2df",
-    "date": "2026-11-13"
+    "hash": "942fe72ee60e",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-watermelon-kenya": {
-    "hash": "5d1409a49a7f",
-    "date": "2026-11-13"
+    "hash": "242deed7c212",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-avocado-kenya": {
-    "hash": "f417f0cdbc54",
-    "date": "2026-11-13"
+    "hash": "e38ce3f06d57",
+    "date": "2026-11-20"
   },
   "/drip-vs-sprinkler-irrigation-kenya": {
-    "hash": "15695f4bba4b",
-    "date": "2026-11-13"
+    "hash": "5471bd047b22",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-coffee-kenya": {
-    "hash": "3049415d3dc2",
-    "date": "2026-11-13"
+    "hash": "ba2962127216",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-maize-kenya": {
-    "hash": "93e8b442469e",
-    "date": "2026-11-13"
+    "hash": "275f140902e1",
+    "date": "2026-11-20"
   },
   "/greenhouse-irrigation-systems-kenya": {
-    "hash": "082765c5c411",
-    "date": "2026-11-13"
+    "hash": "2845bc5a7324",
+    "date": "2026-11-20"
   },
   "/irrigation-system-cost-kenya": {
-    "hash": "671d3a25d541",
-    "date": "2026-11-13"
+    "hash": "a9644a36489d",
+    "date": "2026-11-20"
   },
   "/one-acre-drip-irrigation-system-kenya": {
-    "hash": "751c7111f069",
-    "date": "2026-11-13"
+    "hash": "2e17a5de8f92",
+    "date": "2026-11-20"
   },
   "/how-to-choose-dripline-spacing-kenya": {
-    "hash": "441baff349b3",
-    "date": "2026-11-13"
+    "hash": "6e44140b6300",
+    "date": "2026-11-20"
   },
   "/irrigation-pump-sizing-kenya": {
-    "hash": "dcdb66034ead",
-    "date": "2026-11-13"
+    "hash": "b44ceef95bfd",
+    "date": "2026-11-20"
   },
   "/irrigation-system-maintenance-kenya": {
-    "hash": "c14040a759c2",
-    "date": "2026-11-13"
+    "hash": "8abd54062255",
+    "date": "2026-11-20"
   },
   "/irrigation-troubleshooting-kenya": {
-    "hash": "8c38a39caaae",
-    "date": "2026-11-13"
+    "hash": "0abd5133879c",
+    "date": "2026-11-20"
   },
   "/blocked-drippers-uneven-watering-kenya": {
-    "hash": "1f5336d9a45c",
-    "date": "2026-11-13"
+    "hash": "19a2ff5088cf",
+    "date": "2026-11-20"
   },
   "/low-irrigation-pressure-sprinklers-kenya": {
-    "hash": "ca86dafde772",
-    "date": "2026-11-13"
+    "hash": "9985d536b5c1",
+    "date": "2026-11-20"
   },
   "/irrigation-pipe-leaks-fittings-kenya": {
-    "hash": "924ce469c9d3",
-    "date": "2026-11-13"
+    "hash": "d8e916c2e467",
+    "date": "2026-11-20"
   },
   "/drip-tape-vs-dripline-kenya": {
-    "hash": "0726eefd0f4c",
-    "date": "2026-11-13"
+    "hash": "b3f90d56e69f",
+    "date": "2026-11-20"
   },
   "/irrigation-filter-pump-problems-kenya": {
-    "hash": "a36080064261",
-    "date": "2026-11-13"
+    "hash": "7568e35293eb",
+    "date": "2026-11-20"
   },
   "/irrigation-design-consultation-kenya": {
-    "hash": "d90877f5e7b1",
-    "date": "2026-11-13"
+    "hash": "013b511f761c",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-filter-clogging-kenya": {
-    "hash": "5efbbf0e2184",
-    "date": "2026-11-13"
+    "hash": "1767040a1323",
+    "date": "2026-11-20"
   },
   "/irrigation-pump-low-pressure-kenya": {
-    "hash": "74fe85da5d21",
-    "date": "2026-11-13"
+    "hash": "41467f811f56",
+    "date": "2026-11-20"
   },
   "/irrigation-design-process-kenya": {
-    "hash": "cadb5ea62e6e",
-    "date": "2026-11-13"
+    "hash": "22c80b8d3f23",
+    "date": "2026-11-20"
   },
   "/pump-selection-for-irrigation-kenya": {
-    "hash": "3323fb06c343",
-    "date": "2026-11-13"
+    "hash": "bad71b685056",
+    "date": "2026-11-20"
   },
   "/irrigation-dos-and-donts-kenya": {
-    "hash": "e8e809fee2e6",
-    "date": "2026-11-13"
+    "hash": "f3346e5f449d",
+    "date": "2026-11-20"
   },
   "/irrigation-consultation-checklist-kenya": {
-    "hash": "690e572c92a9",
-    "date": "2026-11-13"
+    "hash": "198c9bd66654",
+    "date": "2026-11-20"
   },
   "/solar-vs-electric-irrigation-pump-kenya": {
-    "hash": "a224bcd52054",
-    "date": "2026-11-13"
+    "hash": "9ebba5796f4b",
+    "date": "2026-11-20"
   },
   "/irrigation-system-startup-checklist-kenya": {
-    "hash": "e58cde2d1c68",
-    "date": "2026-11-13"
+    "hash": "d1e65a9cc2ae",
+    "date": "2026-11-20"
   },
   "/irrigation-site-assessment-kenya": {
-    "hash": "75f1f009835b",
-    "date": "2026-11-13"
+    "hash": "1fbf67148187",
+    "date": "2026-11-20"
   },
   "/irrigation-bill-of-quantities-kenya": {
-    "hash": "68afe9078964",
-    "date": "2026-11-13"
+    "hash": "4186b73afd98",
+    "date": "2026-11-20"
   },
   "/irrigation-zone-design-kenya": {
-    "hash": "d32d699e534d",
-    "date": "2026-11-13"
+    "hash": "0e9e88641215",
+    "date": "2026-11-20"
   },
   "/irrigation-filtration-by-water-source-kenya": {
-    "hash": "55f35b95fb3b",
-    "date": "2026-11-13"
+    "hash": "0a484bc390eb",
+    "date": "2026-11-20"
   },
   "/gravity-fed-irrigation-vs-pumped-kenya": {
-    "hash": "36bedbb8cd52",
-    "date": "2026-11-13"
+    "hash": "f3655fc581d4",
+    "date": "2026-11-20"
   },
   "/irrigation-boq-kenya": {
-    "hash": "311cc8a37f0b",
-    "date": "2026-11-13"
+    "hash": "a3839c673610",
+    "date": "2026-11-20"
   },
   "/irrigation-pump-selection-service-kenya": {
-    "hash": "65d20007775b",
-    "date": "2026-11-13"
+    "hash": "420648933599",
+    "date": "2026-11-20"
   },
   "/irrigation-filtration-service-kenya": {
-    "hash": "5a1d96c3e18c",
-    "date": "2026-11-13"
+    "hash": "d6031737387d",
+    "date": "2026-11-20"
   },
   "/irrigation-installation-kenya": {
-    "hash": "cf356e101d53",
-    "date": "2026-11-13"
+    "hash": "91db58437742",
+    "date": "2026-11-20"
   },
   "/irrigation-maintenance-repair-kenya": {
-    "hash": "df51a977dac3",
-    "date": "2026-11-13"
+    "hash": "bce76cde205d",
+    "date": "2026-11-20"
   },
   "/irrigation-boq-preparation-checklist-kenya": {
-    "hash": "448376395dfc",
-    "date": "2026-11-13"
+    "hash": "28962ebee45a",
+    "date": "2026-11-20"
   },
   "/irrigation-commissioning-checklist-kenya": {
-    "hash": "5c0bf5cee95a",
-    "date": "2026-11-13"
+    "hash": "56a64b2351a3",
+    "date": "2026-11-20"
   },
   "/dam-liners-kenya": {
-    "hash": "4daa7c797b8f",
-    "date": "2026-11-13"
+    "hash": "1277888a4ea1",
+    "date": "2026-11-20"
   },
   "/dam-liner-prices-kenya": {
-    "hash": "e7041abb51de",
-    "date": "2026-11-13"
+    "hash": "08729852444b",
+    "date": "2026-11-20"
   },
   "/water-pan-construction-lining-kenya": {
-    "hash": "529f82bb83ab",
-    "date": "2026-11-13"
+    "hash": "9649f8a98a42",
+    "date": "2026-11-20"
   },
   "/fish-pond-liners-kenya": {
-    "hash": "9b49d0df9040",
-    "date": "2026-11-13"
+    "hash": "d742c0305aa1",
+    "date": "2026-11-20"
   },
   "/irrigation-guides-kenya": {
-    "hash": "bd84b3461d57",
-    "date": "2026-11-13"
+    "hash": "d8460b12efcc",
+    "date": "2026-11-20"
+  },
+  "/how-to-read-pump-curves-kenya": {
+    "hash": "33be85686d88",
+    "date": "2026-11-20"
+  },
+  "/pump-motor-installation-maintenance-kenya": {
+    "hash": "5bed2d51ce2a",
+    "date": "2026-11-20"
+  },
+  "/solar-panel-pump-battery-sizing-kenya": {
+    "hash": "c433bcf7705e",
+    "date": "2026-11-20"
   },
   "/irrigation-areas-kenya": {
-    "hash": "05524f007d3e",
-    "date": "2026-11-13"
+    "hash": "5a4f05081c0c",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-nairobi": {
-    "hash": "33ca62e2b02c",
-    "date": "2026-11-13"
+    "hash": "597c8e438565",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-kisumu": {
-    "hash": "fb6b6aedcca1",
-    "date": "2026-11-13"
+    "hash": "0379a42b3090",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-nakuru": {
-    "hash": "bd93bdd859ad",
-    "date": "2026-11-13"
+    "hash": "c5ce1b80695e",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-nanyuki-laikipia": {
-    "hash": "45d638ec74ed",
-    "date": "2026-11-13"
+    "hash": "93f546b18144",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-eldoret-uasin-gishu": {
-    "hash": "b240b62a0020",
-    "date": "2026-11-13"
+    "hash": "401dfff90042",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-meru": {
-    "hash": "8ddb4bb9f415",
-    "date": "2026-11-13"
+    "hash": "073f1112a37d",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-nyeri": {
-    "hash": "419c8efcacde",
-    "date": "2026-11-13"
+    "hash": "146e0883a0ba",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-mwea-kirinyaga": {
-    "hash": "96064c241ca6",
-    "date": "2026-11-13"
+    "hash": "3cc69bcb66e3",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-machakos": {
-    "hash": "1184ef9b2fb9",
-    "date": "2026-11-13"
+    "hash": "7b2678cd71df",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-kajiado": {
-    "hash": "6464506c6157",
-    "date": "2026-11-13"
+    "hash": "7efab749020c",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-kilifi": {
-    "hash": "1f3cc3745b5c",
-    "date": "2026-11-13"
+    "hash": "880e958566b4",
+    "date": "2026-11-20"
   },
   "/irrigation-quotation-checklist-kenya": {
-    "hash": "fdb95dfe25d0",
-    "date": "2026-11-13"
+    "hash": "edf27e6ed8bb",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-mombasa-kwale": {
-    "hash": "2824fa42fd39",
-    "date": "2026-11-13"
+    "hash": "9d5d43f169da",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-thika-kiambu": {
-    "hash": "c2525bda605f",
-    "date": "2026-11-13"
+    "hash": "6ce1d0643012",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-muranga-kenol": {
-    "hash": "520ae8e682d6",
-    "date": "2026-11-13"
+    "hash": "d2607430b864",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-embu-tharaka-nithi": {
-    "hash": "60203e2ad047",
-    "date": "2026-11-13"
+    "hash": "3a8177867707",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-kitui-makueni-kibwezi": {
-    "hash": "359f2e8c296c",
-    "date": "2026-11-13"
+    "hash": "be3a639d2735",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-naivasha-gilgil": {
-    "hash": "5b838042f5a0",
-    "date": "2026-11-13"
+    "hash": "a654ab5c2322",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-narok-bomet-kericho": {
-    "hash": "df3d1e85ca6c",
-    "date": "2026-11-13"
+    "hash": "eebd3de0c248",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-kitale-trans-nzoia-bungoma": {
-    "hash": "6a1788a2b857",
-    "date": "2026-11-13"
+    "hash": "7294b6ad151a",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-kakamega-vihiga-busia": {
-    "hash": "778c8a40cbb0",
-    "date": "2026-11-13"
+    "hash": "ceaa4ea85857",
+    "date": "2026-11-20"
   },
   "/irrigation-systems-kisii-nyamira-homabay-migori": {
-    "hash": "72c9d046b116",
-    "date": "2026-11-13"
+    "hash": "be1799fa6d29",
+    "date": "2026-11-20"
   },
   "/irrigation-pipe-prices-kenya": {
-    "hash": "d600cb0be563",
-    "date": "2026-11-13"
+    "hash": "7b8e8a04773d",
+    "date": "2026-11-20"
   },
   "/hdpe-pipe-prices-kenya": {
-    "hash": "ac43c8a7d736",
-    "date": "2026-11-13"
+    "hash": "df4d8e36728a",
+    "date": "2026-11-20"
   },
   "/rain-hose-prices-kenya": {
-    "hash": "a0da211af7eb",
-    "date": "2026-11-13"
+    "hash": "9531ff7e2ee9",
+    "date": "2026-11-20"
   },
   "/dripline-prices-kenya": {
-    "hash": "0412d49cba0e",
-    "date": "2026-11-13"
+    "hash": "35bdb23a32de",
+    "date": "2026-11-20"
   },
   "/button-dripper-orchard-irrigation-kenya": {
-    "hash": "ea5a95a9ef51",
-    "date": "2026-11-13"
+    "hash": "db2a10a80f4f",
+    "date": "2026-11-20"
   },
   "/pop-up-lawn-sprinklers-kenya": {
-    "hash": "eb672170485c",
-    "date": "2026-11-13"
+    "hash": "1a35f8019a48",
+    "date": "2026-11-20"
   },
   "/rain-gun-sprinkler-prices-kenya": {
-    "hash": "141dd264ed46",
-    "date": "2026-11-13"
+    "hash": "352044308dc9",
+    "date": "2026-11-20"
   },
   "/shade-net-greenhouse-prices-kenya": {
-    "hash": "03c6ba10ea78",
-    "date": "2026-11-13"
+    "hash": "8632a9786993",
+    "date": "2026-11-20"
   },
   "/venturi-fertilizer-injector-kenya": {
-    "hash": "38d87ea21f70",
-    "date": "2026-11-13"
+    "hash": "227db0a0d414",
+    "date": "2026-11-20"
   },
   "/solenoid-valves-irrigation-controllers-kenya": {
-    "hash": "9496ddd7445e",
-    "date": "2026-11-13"
+    "hash": "2f533cd89451",
+    "date": "2026-11-20"
   },
   "/upvc-pipes-fittings-prices-kenya": {
-    "hash": "96f55fec3ce7",
-    "date": "2026-11-13"
+    "hash": "a73594bf54d7",
+    "date": "2026-11-20"
   },
   "/eighth-quarter-half-acre-drip-kit-kenya": {
-    "hash": "ff1d8b6e88b7",
-    "date": "2026-11-13"
+    "hash": "ab7b8bef5125",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-garlic-kenya": {
-    "hash": "445d072edaa2",
-    "date": "2026-11-13"
+    "hash": "199dad9d72c2",
+    "date": "2026-11-20"
   },
   "/passion-fruit-irrigation-kenya": {
-    "hash": "6b315f03ffd7",
-    "date": "2026-11-13"
+    "hash": "f3dcdedfa28e",
+    "date": "2026-11-20"
   },
   "/macadamia-irrigation-kenya": {
-    "hash": "56baf773d6f1",
-    "date": "2026-11-13"
+    "hash": "67a826349474",
+    "date": "2026-11-20"
   },
   "/strawberry-irrigation-kenya": {
-    "hash": "6bdddf0c226e",
-    "date": "2026-11-13"
+    "hash": "08be0ac762d7",
+    "date": "2026-11-20"
   },
   "/french-beans-irrigation-kenya": {
-    "hash": "dba70b75cd52",
-    "date": "2026-11-13"
+    "hash": "b361c413be8f",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-sukuma-wiki-spinach-kenya": {
-    "hash": "8835be0a56e3",
-    "date": "2026-11-13"
+    "hash": "b3b8d304503b",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-chilli-peppers-kenya": {
-    "hash": "aa576cdf04e4",
-    "date": "2026-11-13"
+    "hash": "abdfe49cbee5",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-bananas-plantains-kenya": {
-    "hash": "65fd5a00dc5d",
-    "date": "2026-11-13"
+    "hash": "a274dc4010ba",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-citrus-pixie-oranges-kenya": {
-    "hash": "650e583347d7",
-    "date": "2026-11-13"
+    "hash": "5d437f4dfcd5",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-mango-orchards-kenya": {
-    "hash": "0e661fc23b07",
-    "date": "2026-11-13"
+    "hash": "b3c5c054a319",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-papaya-pawpaw-kenya": {
-    "hash": "e4f66cf3ff4c",
-    "date": "2026-11-13"
+    "hash": "fbbcd20e7bdd",
+    "date": "2026-11-20"
   },
   "/drip-irrigation-for-courgette-cucumber-kenya": {
-    "hash": "c963389bf9fe",
-    "date": "2026-11-13"
+    "hash": "17374f6277a8",
+    "date": "2026-11-20"
   },
   "/fodder-napier-lucerne-rhodes-grass-irrigation-kenya": {
-    "hash": "50d02bace824",
-    "date": "2026-11-13"
+    "hash": "755f1c2bb42d",
+    "date": "2026-11-20"
   },
   "/flower-rose-greenhouse-irrigation-kenya": {
-    "hash": "841de8920f45",
-    "date": "2026-11-13"
+    "hash": "936af6aaffa9",
+    "date": "2026-11-20"
   },
   "/herbs-coriander-mint-basil-irrigation-kenya": {
-    "hash": "127a6cbc12b2",
-    "date": "2026-11-13"
+    "hash": "820859c4060c",
+    "date": "2026-11-20"
   },
   "/products/controls": {
-    "hash": "3e2fe0a47875",
-    "date": "2026-11-12"
+    "hash": "a5a25e0cc57f",
+    "date": "2026-11-20"
   },
   "/products/filters-strainers": {
-    "hash": "ed222799e7d9",
-    "date": "2026-11-09"
+    "hash": "9d3f09e87163",
+    "date": "2026-11-20"
   },
   "/products/controllers": {
-    "hash": "0c3ec6344814",
-    "date": "2026-11-09"
+    "hash": "c5bdde814907",
+    "date": "2026-11-20"
   },
   "/products/emitters": {
-    "hash": "2508d5d33df3",
-    "date": "2026-11-12"
+    "hash": "ba3e0646cf04",
+    "date": "2026-11-20"
   },
   "/products/valves": {
-    "hash": "3ef7b90f7b4e",
-    "date": "2026-11-12"
+    "hash": "834db3d6a0f7",
+    "date": "2026-11-20"
   },
   "/products/accessories": {
-    "hash": "9cdc0842369b",
-    "date": "2026-11-12"
+    "hash": "367391199e19",
+    "date": "2026-11-20"
   },
   "/products/fertigation": {
-    "hash": "601ebc44733e",
-    "date": "2026-11-12"
+    "hash": "9a7f12d79e12",
+    "date": "2026-11-20"
   },
   "/products/storage": {
-    "hash": "a69f3c2520ec",
-    "date": "2026-11-09"
+    "hash": "90c2e8660882",
+    "date": "2026-11-20"
   },
   "/products/rain-guns": {
-    "hash": "16780453ac2d",
-    "date": "2026-11-09"
+    "hash": "dbc524b561d8",
+    "date": "2026-11-20"
   },
   "/products/borehole": {
-    "hash": "bc511a005803",
-    "date": "2026-11-09"
+    "hash": "82bec6686a99",
+    "date": "2026-11-20"
   },
   "/technical-support": {
-    "hash": "987369ba619f",
-    "date": "2026-11-09"
+    "hash": "f845935308a6",
+    "date": "2026-11-20"
   },
   "/certifications": {
-    "hash": "0002ec639a99",
-    "date": "2026-11-09"
+    "hash": "ded87aaf08fd",
+    "date": "2026-11-20"
   },
   "/team": {
-    "hash": "0135a57956ef",
-    "date": "2026-11-09"
+    "hash": "53aebedb571c",
+    "date": "2026-11-20"
   },
   "/careers": {
-    "hash": "80a5d3e694d1",
-    "date": "2026-11-09"
+    "hash": "65c5ddd49435",
+    "date": "2026-11-20"
   },
   "/privacy": {
-    "hash": "8cd4471bd817",
-    "date": "2026-11-09"
+    "hash": "7b9512be12bd",
+    "date": "2026-11-20"
   },
   "/terms": {
-    "hash": "f78256029dc8",
-    "date": "2026-11-09"
+    "hash": "434f930658c3",
+    "date": "2026-11-20"
   },
   "/cookies": {
-    "hash": "3b38a0e69414",
-    "date": "2026-11-09"
+    "hash": "6ac468da8097",
+    "date": "2026-11-20"
   },
   "/blog/smart-irrigation-automation-kenya-farmers": {
-    "hash": "ee6cd259f9ea",
-    "date": "2026-11-12"
+    "hash": "ac0cee3929fd",
+    "date": "2026-11-20"
   },
   "/blog/greenhouse-farming-in-kenya-setup-costs-and-returns": {
-    "hash": "e9b0b6832da0",
-    "date": "2026-11-12"
+    "hash": "da80b9ed1f79",
+    "date": "2026-11-20"
   },
   "/blog/how-to-choose-the-right-water-pump-for-your-farm": {
-    "hash": "f17628fc071e",
-    "date": "2026-11-12"
+    "hash": "64037dec80c0",
+    "date": "2026-11-20"
   },
   "/blog/top-5-benefits-of-drip-irrigation-systems-for-kenyan-farmers": {
-    "hash": "07835f1a4c79",
-    "date": "2026-11-12"
+    "hash": "ce55cc4e58d1",
+    "date": "2026-11-20"
   },
   "/blog/how-to-maintain-your-drip-irrigation-system-for-long-term-performance": {
-    "hash": "ddc3b57fff5d",
-    "date": "2026-11-12"
+    "hash": "d5197a590462",
+    "date": "2026-11-20"
   },
   "/blog/water-management-for-agriculture": {
-    "hash": "04fa35bd66a8",
-    "date": "2026-11-12"
+    "hash": "25bbbcece541",
+    "date": "2026-11-20"
   },
   "/blog/pop-up-sprinkler-systems-for-efficient-irrigation": {
-    "hash": "eb52b19d5334",
-    "date": "2026-11-12"
-  },
-  "/blog/the-role-of-water-management-in-sustainable-agriculture": {
-    "hash": "b5b62a8049be",
-    "date": "2026-11-12"
+    "hash": "ce4ab733f1bd",
+    "date": "2026-11-20"
   },
   "/blog/5-ways-smart-farming-technology-is-empowering-smallholder-farmers": {
-    "hash": "f8919affc1bc",
-    "date": "2026-11-12"
-  },
-  "/blog/how-smart-irrigation-is-transforming-african-agriculture": {
-    "hash": "1a0b0a56e9a0",
-    "date": "2026-11-12"
+    "hash": "bf9a77da902d",
+    "date": "2026-11-20"
   },
   "/blog/pop-head-sprinkler": {
-    "hash": "3a34e48d9b7b",
-    "date": "2026-11-12"
+    "hash": "30eb5616008a",
+    "date": "2026-11-20"
   },
   "/blog/greenhouse-irrigation-solutions-kenyan-farmers": {
-    "hash": "c5566121c172",
-    "date": "2026-11-12"
+    "hash": "b6ae47c05895",
+    "date": "2026-11-20"
   },
   "/blog/irrigation-costs-kenya-farm-investment": {
-    "hash": "865c3c710485",
-    "date": "2026-11-12"
-  },
-  "/blog/solar-irrigation-kenya-farms-sunshine": {
-    "hash": "a050f138e4b5",
-    "date": "2026-11-12"
+    "hash": "0111afb96343",
+    "date": "2026-11-20"
   },
   "/blog/smart-water-management-kenyan-farms": {
-    "hash": "055d37320e19",
-    "date": "2026-11-12"
+    "hash": "23c7fecb2c70",
+    "date": "2026-11-20"
   },
   "/news/driptech-eco-flow-unveils-revolutionary-water-saving-technology": {
-    "hash": "044b78e7c0a6",
-    "date": "2026-11-12"
-  },
-  "/news/smart-greenhouses-farming-beyond-seasons": {
-    "hash": "d35fb677e250",
-    "date": "2026-11-12"
-  },
-  "/news/the-growing-role-of-renewable-energy-in-farming": {
-    "hash": "61e7346769f0",
-    "date": "2026-11-12"
-  },
-  "/news/blockchain-in-agriculture-ensuring-food-traceability-and-transparency": {
-    "hash": "25e39e595c1d",
-    "date": "2026-11-12"
-  },
-  "/news/how-regenerative-agriculture-is-restoring-soil-health": {
-    "hash": "06be8d9beea4",
-    "date": "2026-11-12"
-  },
-  "/news/drone-technology-transforming-crop-monitoring-and-management": {
-    "hash": "38217cec05f5",
-    "date": "2026-11-12"
-  },
-  "/news/the-role-of-artificial-intelligence-in-modern-agriculture": {
-    "hash": "66cb7fb2a22d",
-    "date": "2026-11-12"
-  },
-  "/news/aquaponics-the-future-of-sustainable-farming": {
-    "hash": "8947146cb6ca",
-    "date": "2026-11-12"
-  },
-  "/news/climate-change-and-its-impact-on-global-food-security": {
-    "hash": "09be6c7e8a5f",
-    "date": "2026-11-12"
-  },
-  "/news/the-rise-of-vertical-farming-in-urban-cities": {
-    "hash": "4c6a92a6db17",
-    "date": "2026-11-12"
-  },
-  "/news/precision-farming-how-data-is-revolutionizing-agriculture": {
-    "hash": "1ec5d60a4a82",
-    "date": "2026-11-12"
-  },
-  "/news/smart-irrigation-transforming-agriculture-with-technology": {
-    "hash": "b65b9519bd0f",
-    "date": "2026-11-12"
+    "hash": "4fb4406e8f3a",
+    "date": "2026-11-20"
   }
 }

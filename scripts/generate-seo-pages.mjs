@@ -301,7 +301,14 @@ const homePage = {
     { label: "Pump and solar sizing calculator", href: "/pump-solar-calculator-kenya" },
     { label: "Irrigation cost calculator", href: "/irrigation-cost-calculator-kenya" },
     { label: "Driplines and emitters", href: "/products/drip" },
+    { label: "Drip emitters and drippers", href: "/products/emitters" },
     { label: "Sprinklers and rain guns", href: "/products/sprinklers" },
+    { label: "Agricultural rain guns", href: "/products/rain-guns" },
+    { label: "Irrigation accessories and hoses", href: "/products/accessories" },
+    { label: "Browse all Kenya irrigation guides", href: "/irrigation-guides-kenya" },
+    { label: "Irrigation areas served in Kenya", href: "/irrigation-areas-kenya" },
+    { label: "Kenyan farming and irrigation blog", href: "/blog" },
+    { label: "Irrigation news and updates", href: "/news" },
   ],
 };
 
@@ -482,7 +489,7 @@ const sitemapFallbackPages = {
   ],
   "/products/filters-strainers": [
     "Irrigation Filters & Strainers Kenya | DripTech",
-    "Irrigation filters and strainers",
+    "Filters, mesh and disc strainers",
     "Find irrigation filters and strainers in Kenya to protect drip emitters, sprinklers and farm water equipment from blockage.",
   ],
   "/products/controllers": [
@@ -591,6 +598,20 @@ const stripHtml = (value = "") =>
     .replace(/<[^>]*>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+
+const countWords = (value = "") => {
+  const clean = stripHtml(value);
+  return clean ? clean.split(/\s+/).length : 0;
+};
+
+const trimAtWordBoundary = (value = "", maxLength = 158) => {
+  const clean = stripHtml(value);
+  if (clean.length <= maxLength) return clean;
+  const sliced = clean.slice(0, maxLength - 1);
+  const lastSpace = sliced.lastIndexOf(" ");
+  const base = lastSpace > Math.floor(maxLength * 0.6) ? sliced.slice(0, lastSpace) : sliced;
+  return `${base.replace(/[,:;.\s-]+$/, "")}.`;
+};
 
 // Convert stored rich text into safe plain-text blocks for initial HTML. We do
 // not inject CMS HTML into the page; all blocks are escaped at render time.
@@ -856,13 +877,19 @@ const applyRealCategoryImage = (page) => {
 
 for (const page of allPages) applyRealCategoryImage(page);
 
+const MIN_ARTICLE_WORDS = 180;
+
 const dynamicPages = [
   ...dynamicContent.products
     .filter((product) => product?.id && product?.name)
     .map((product) => {
       const category = categoryPaths[product.category] || "all";
       const route = `/products/${category}/${slugify(product.name)}-${String(product.id).slice(0, 8)}`;
-      const description = stripHtml(product.description) || `${product.name} irrigation equipment from DripTech in Kenya.`;
+      const isDuplicateCopy = /\(\s*copy\s*\)/i.test(product.name);
+      const rawDescription = stripHtml(product.description);
+      const description = rawDescription.length >= 40
+        ? rawDescription
+        : `${product.name}${rawDescription ? ` — ${rawDescription}` : ""} irrigation equipment supplied by DripTech Eco-Flow in Kenya.`;
       const price = Number(product.price);
       const images = (Array.isArray(product.images) ? product.images : [])
         .map((image) => toAbsoluteSiteAssetUrl(image, siteUrl))
@@ -907,14 +934,15 @@ const dynamicPages = [
         .join(", ");
       const modelSuffix = product.model_number ? ` (${stripHtml(product.model_number)})` : "";
       const seoTitle = `${product.name}${modelSuffix} Kenya${price > 0 ? ` | KSh ${price.toLocaleString("en-KE")}` : " | Specs & Quote"} | DripTech`;
-      const seoDescription = (description.length >= 140 || !specSummary
-        ? description
-        : `${description} ${specSummary}.`
-      ).slice(0, 300);
-      // A page is "thin" when it has no photo and almost no distinguishing
-      // detail. These stay crawlable and linked, but are kept out of the
-      // index and sitemap so Google spends its crawl budget on real pages.
-      const isThin = images.length === 0 && specifications.length < 3 && description.length < 120;
+      const expandedDescription = specSummary && description.length < 110
+        ? `${description} ${specSummary}.`
+        : description;
+      const seoDescription = trimAtWordBoundary(expandedDescription, 158);
+      // Keep duplicate "(Copy)" drafts and truly empty/bare items out of the
+      // sitemap so crawl budget stays focused on real canonical listings.
+      const isThin =
+        isDuplicateCopy ||
+        (images.length === 0 && specifications.length < 3 && description.length < 120);
       return {
         route,
         thin: isThin,
@@ -944,7 +972,7 @@ const dynamicPages = [
               "@context": "https://schema.org",
               "@type": "Product",
               name: product.name,
-              description,
+              description: seoDescription,
               ...(images.length ? { image: images } : {}),
               sku: product.model_number || product.id,
               brand: { "@type": "Brand", name: "DripTech Eco Flow" },
@@ -963,7 +991,7 @@ const dynamicPages = [
               "@context": "https://schema.org",
               "@type": "WebPage",
               name: product.name,
-              description,
+              description: seoDescription,
               ...(images.length ? { image: images } : {}),
               url: `${siteUrl}${route}`,
               isPartOf: { "@id": `${siteUrl}/#website` },
@@ -973,20 +1001,23 @@ const dynamicPages = [
   ...dynamicContent.posts
     .filter((post) => post?.slug && post?.title)
     .map((post) => {
-      const description = stripHtml(post.excerpt || post.content).slice(0, 300);
+      const description = trimAtWordBoundary(stripHtml(post.excerpt || post.content), 158) || stripHtml(post.title);
       const articleBlocks = extractTextBlocks(post.content || post.body || post.article_body);
+      const wordCount = countWords(articleBlocks.join(" ") || description);
       const articleImage = toAbsoluteSiteAssetUrl(post.featured_image || post.image || post.cover_image, siteUrl);
       return {
         route: `/blog/${post.slug}`,
+        articleType: "blog",
+        thin: wordCount < MIN_ARTICLE_WORDS,
         title: `${post.title} | DripTech Blog`,
         description,
         heading: post.title,
-        intro: description,
+        intro: stripHtml(post.excerpt || "") || description,
         articleContent: articleBlocks.length ? articleBlocks : extractTextBlocks(description),
         image: articleImage || undefined,
         imageIsAbsolute: Boolean(articleImage),
         articleImage: articleImage || null,
-        articleDate: post.published_at || post.created_at || null,
+        articleDate: post.updated_at || post.published_at || post.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "BlogPosting",
@@ -1003,20 +1034,23 @@ const dynamicPages = [
   ...dynamicContent.news
     .filter((article) => article?.slug && article?.title)
     .map((article) => {
-      const description = stripHtml(article.excerpt || article.content).slice(0, 300);
+      const description = trimAtWordBoundary(stripHtml(article.excerpt || article.content), 158) || stripHtml(article.title);
       const articleBlocks = extractTextBlocks(article.content || article.body || article.article_body);
+      const wordCount = countWords(articleBlocks.join(" ") || description);
       const articleImage = toAbsoluteSiteAssetUrl(article.featured_image || article.image || article.cover_image, siteUrl);
       return {
         route: `/news/${article.slug}`,
+        articleType: "news",
+        thin: wordCount < MIN_ARTICLE_WORDS,
         title: `${article.title} | DripTech News`,
         description,
         heading: article.title,
-        intro: description,
+        intro: stripHtml(article.excerpt || "") || description,
         articleContent: articleBlocks.length ? articleBlocks : extractTextBlocks(description),
         image: articleImage || undefined,
         imageIsAbsolute: Boolean(articleImage),
         articleImage: articleImage || null,
-        articleDate: article.published_at || article.created_at || null,
+        articleDate: article.updated_at || article.published_at || article.created_at || null,
         schema: {
           "@context": "https://schema.org",
           "@type": "NewsArticle",
@@ -1100,10 +1134,90 @@ for (const [cluster, members] of clusterMembers) {
   });
 }
 
+// Connect master hub pages (/irrigation-guides-kenya and /irrigation-areas-kenya)
+// to every static guide in static HTML so no regional, crop, or price guide
+// is stranded deep inside a sub-cluster ring.
+const guideLabelOf = (page) =>
+  String(page.heading || page.h1 || page.title || page.route).replace(/\s*\|.*$/, "");
+const sortByLabel = (pages) =>
+  [...pages].sort((a, b) => guideLabelOf(a).localeCompare(guideLabelOf(b)));
+const guidesHubPage = allPages.find((page) => page.route === "/irrigation-guides-kenya");
+if (guidesHubPage) {
+  const toLinks = (pages) =>
+    sortByLabel(pages)
+      .filter((candidate) => candidate.route !== "/irrigation-guides-kenya")
+      .map((candidate) => ({ label: guideLabelOf(candidate), href: candidate.route }));
+  guidesHubPage.directoryGroups = [
+    { heading: "Crop irrigation guides across Kenya", links: toLinks(clusterMembers.get("crop") || []) },
+    { heading: "County & regional irrigation guides", links: toLinks(clusterMembers.get("location") || []) },
+    { heading: "Equipment prices, kits & BOQ guides", links: toLinks(clusterMembers.get("price") || []) },
+    {
+      heading: "System sizing, troubleshooting & technical guides",
+      links: toLinks([
+        irrigationCostCalculatorPage,
+        pumpSolarCalculatorPage,
+        ...(clusterMembers.get("troubleshoot") || []),
+        ...(clusterMembers.get("planning") || []),
+      ]),
+    },
+  ].filter((group) => group.links.length > 0);
+}
+const areasHubPage = allPages.find((page) => page.route === "/irrigation-areas-kenya");
+if (areasHubPage) {
+  const areaTargets = sortByLabel(clusterMembers.get("location") || [])
+    .filter((candidate) => candidate.route !== "/irrigation-areas-kenya")
+    .map((candidate) => ({ label: guideLabelOf(candidate), href: candidate.route }));
+  if (areaTargets.length) {
+    areasHubPage.directoryGroups = [
+      { heading: "All Kenyan counties & agricultural hubs served", links: areaTargets },
+    ];
+  }
+}
+
+// Connect every indexable /blog/* and /news/* article in static HTML so no
+// post is an orphan in sitemap.xml.
+const indexableBlogPages = allPages
+  .filter((page) => page.articleType === "blog" && !page.thin)
+  .sort((a, b) => String(b.articleDate || "").localeCompare(String(a.articleDate || "")));
+const indexableNewsPages = allPages
+  .filter((page) => page.articleType === "news" && !page.thin)
+  .sort((a, b) => String(b.articleDate || "").localeCompare(String(a.articleDate || "")));
+const blogIndexPage = allPages.find((page) => page.route === "/blog");
+if (blogIndexPage && indexableBlogPages.length) {
+  blogIndexPage.articleLinksHeading = "Irrigation blog articles";
+  blogIndexPage.articleLinks = indexableBlogPages.map((post) => ({
+    label: post.heading,
+    href: post.route,
+  }));
+}
+const newsIndexPage = allPages.find((page) => page.route === "/news");
+if (newsIndexPage && indexableNewsPages.length) {
+  newsIndexPage.articleLinksHeading = "Published irrigation news";
+  newsIndexPage.articleLinks = indexableNewsPages.map((article) => ({
+    label: article.heading,
+    href: article.route,
+  }));
+}
+const attachRelatedArticles = (group) => {
+  group.forEach((article, index) => {
+    const related = [];
+    for (let step = 1; step < group.length && related.length < 5; step += 1) {
+      const candidate = group[(index + step) % group.length];
+      if (candidate.route !== article.route) {
+        related.push({ label: candidate.heading, href: candidate.route });
+      }
+    }
+    article.relatedArticleLinks = related;
+  });
+};
+attachRelatedArticles(indexableBlogPages);
+attachRelatedArticles(indexableNewsPages);
+
 // Connect the existing catalogue URLs with crawlable HTML links. Category pages
-// list a manageable set of real products, and product pages link to related
-// products from the same category instead of relying on JavaScript navigation.
+// list real products cleanly, sparse category aliases resolve keyword matches,
+// and product pages link to similar siblings from the same family.
 const productPages = allPages.filter((page) => page.productDetails);
+const indexableProductPages = productPages.filter((page) => !page.thin);
 const productPagesByCategory = new Map();
 for (const product of productPages) {
   const category = product.route.split("/")[2];
@@ -1111,32 +1225,119 @@ for (const product of productPages) {
   group.push(product);
   productPagesByCategory.set(category, group);
 }
+const sparseCategoryMatchers = {
+  "rain-guns": (p) => /rain[\s-]?gun|tripod\s*stand/i.test(p.heading),
+  solar: (p) => /\bsolar\b/i.test(p.heading),
+  borehole: (p) => /borehole|submersible/i.test(p.heading),
+  greenhouse: (p) => /greenhouse|drip\s*tape|dripline|sprayer|emitter/i.test(p.heading),
+  storage: (p) => /tank|dam|liner|storage|pump/i.test(p.heading),
+  controllers: (p) => p.route.startsWith("/products/controls/"),
+  "filters-strainers": (p) => p.route.startsWith("/products/filtration/"),
+};
+const groupCategoryLinks = (category, links) => {
+  if (links.length <= 24) return null;
+  const rulesByCategory = {
+    pipes: [
+      ["HDPE Pipes & Rolls", /^hdpe\s+pipe/i],
+      ["HDPE Compression Fittings", /^hdpe\s+compression/i],
+      ["PVC Pipes & Fittings", /\bpvc\b/i],
+      ["PPR Pipes & Fittings", /\bppr\b/i],
+    ],
+    valves: [
+      ["Pressure Regulators & Control Valves", /pressure\s*regulator|anti-siphon/i],
+      ["Air Release, Vacuum & Check Valves", /air\s*release|vacuum|foot\s*valve|check/i],
+      ["PVC Ball Valves", /ball\s*valve/i],
+    ],
+    controls: [
+      ["Smart Wi-Fi, ET & Multi-Station Controllers", /controller/i],
+      ["Soil Moisture, Rain & Flow Sensors", /sensor|meter|probe|weather/i],
+      ["Decoders, Modules & Relays", /decoder|module|relay|surge|wire|enclosure|remote/i],
+    ],
+  };
+  const rules = rulesByCategory[category];
+  if (!rules) return null;
+  const buckets = rules.map(([heading]) => ({ heading, links: [] }));
+  const remainder = [];
+  for (const link of links) {
+    const matchedIdx = rules.findIndex(([, regex]) => regex.test(link.label));
+    if (matchedIdx >= 0) buckets[matchedIdx].links.push(link);
+    else remainder.push(link);
+  }
+  if (remainder.length) {
+    buckets.push({ heading: "Other fittings & accessories", links: remainder });
+  }
+  return buckets.filter((bucket) => bucket.links.length > 0);
+};
+const tokenSetOf = (value = "") =>
+  new Set(
+    String(value)
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((t) => t.length >= 2 && !/^(mm|pn|in|inch|for|the|and|with)$/.test(t)),
+  );
 for (const page of allPages) {
-  if (page.route === "/products") {
-    page.catalogLinks = productPages.filter((product) => !product.thin).slice(0, 12).map((product) => ({
-      label: product.heading,
-      href: product.route,
-    }));
+  if (page.route === "/") {
+    const picked = [];
+    for (const group of productPagesByCategory.values()) {
+      const top = group.find((p) => !p.thin && p.productDetails.inStock && p.productDetails.price);
+      if (top) picked.push({ label: top.heading, href: top.route });
+      if (picked.length >= 6) break;
+    }
+    if (picked.length) {
+      page.catalogHeading = "Featured irrigation equipment";
+      page.catalogLinks = picked;
+    }
+    const homeArticles = [...indexableBlogPages.slice(0, 4), ...indexableNewsPages.slice(0, 1)];
+    if (homeArticles.length) {
+      page.articleLinksHeading = "Latest irrigation guides and articles";
+      page.articleLinks = homeArticles.map((post) => ({ label: post.heading, href: post.route }));
+    }
+  } else if (page.route === "/products") {
+    const featured = [];
+    const seenHrefs = new Set();
+    for (const group of productPagesByCategory.values()) {
+      const picks = group
+        .filter((p) => !p.thin)
+        .sort((a, b) => Number(b.productDetails.inStock) - Number(a.productDetails.inStock) || a.route.localeCompare(b.route))
+        .slice(0, 4);
+      for (const item of picks) {
+        if (seenHrefs.has(item.route)) continue;
+        seenHrefs.add(item.route);
+        featured.push({ label: item.heading, href: item.route });
+      }
+    }
+    page.catalogLinks = featured;
   } else if (/^\/products\/[^/]+$/.test(page.route)) {
     const category = page.route.split("/")[2];
-    // List every indexable product so none sit deep in a prev/next chain.
-    page.catalogLinks = (productPagesByCategory.get(category) || [])
-      .filter((product) => !product.thin)
-      .map((product) => ({ label: product.heading, href: product.route }));
+    const direct = (productPagesByCategory.get(category) || []).filter((product) => !product.thin);
+    const matcher = sparseCategoryMatchers[category];
+    const items = direct.length
+      ? direct
+      : matcher
+        ? indexableProductPages.filter(matcher).slice(0, 18)
+        : [];
+    page.catalogLinks = items.map((product) => ({ label: product.heading, href: product.route }));
+    const grouped = groupCategoryLinks(category, page.catalogLinks);
+    if (grouped) page.catalogGroups = grouped;
   }
-  if (page.productDetails) {
+  if (page.productDetails && !page.thin) {
     const category = page.route.split("/")[2];
-    const group = productPagesByCategory.get(category) || [];
+    const group = (productPagesByCategory.get(category) || []).filter((p) => !p.thin);
     const index = group.findIndex((product) => product.route === page.route);
-    // Always link to adjacent products so the whole category is crawlable as a
-    // chain, even when the category contains hundreds of products.
+    // Always link adjacent non-thin products so every category stays connected
+    // as a crawlable chain, topped up by same-family siblings.
     const adjacent = [
       ...(index > 0 ? [group[index - 1]] : []),
       ...(index >= 0 && index + 1 < group.length ? [group[index + 1]] : []),
     ];
-    const related = group.filter((product) =>
-      product.route !== page.route && !adjacent.some((item) => item.route === product.route),
-    ).slice(0, 4);
+    const myTokens = tokenSetOf(page.heading);
+    const related = group
+      .filter((product) => product.route !== page.route && !adjacent.some((item) => item.route === product.route))
+      .sort((a, b) => {
+        const score = (cand) => [...tokenSetOf(cand.heading)].filter((t) => myTokens.has(t)).length;
+        return score(b) - score(a);
+      })
+      .slice(0, 4);
     page.relatedProductLinks = [...adjacent, ...related].map((product) => ({
       label: product.heading,
       href: product.route,
@@ -1293,10 +1494,39 @@ const pageBody = (page) => {
         <a href="/contact">Contact DripTech</a>
       </nav>`;
 
-  const catalogNav = (Array.isArray(page.catalogLinks) && page.catalogLinks.length)
-    ? `<nav aria-label="Products in this catalogue"><h2>Browse available products</h2><ul>${page.catalogLinks
+  const catalogNav = (Array.isArray(page.catalogGroups) && page.catalogGroups.length)
+    ? `<nav aria-label="Products in this catalogue"><h2>${escapeHtml(page.catalogHeading || "Browse available products")}</h2>${page.catalogGroups
+        .map(
+          (group) =>
+            `<h3>${escapeHtml(group.heading)}</h3><ul>${group.links
+              .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+              .join("")}</ul>`,
+        )
+        .join("")}</nav>`
+    : (Array.isArray(page.catalogLinks) && page.catalogLinks.length)
+      ? `<nav aria-label="Products in this catalogue"><h2>${escapeHtml(page.catalogHeading || "Browse available products")}</h2><ul>${page.catalogLinks
+          .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+          .join("")}</ul></nav>`
+      : "";
+  const articleIndexNav = (Array.isArray(page.articleLinks) && page.articleLinks.length)
+    ? `<nav aria-label="Published irrigation articles"><h2>${escapeHtml(page.articleLinksHeading || "Irrigation articles")}</h2><ul>${page.articleLinks
         .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
         .join("")}</ul></nav>`
+    : "";
+  const relatedArticlesNav = (Array.isArray(page.relatedArticleLinks) && page.relatedArticleLinks.length)
+    ? `<nav aria-label="More irrigation articles"><h2>More articles from DripTech</h2><ul>${page.relatedArticleLinks
+        .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
+  const directoryNav = (Array.isArray(page.directoryGroups) && page.directoryGroups.length)
+    ? `<nav aria-label="Kenya irrigation guide directory"><h2>All Kenya irrigation guides</h2>${page.directoryGroups
+        .map(
+          (group) =>
+            `<h3>${escapeHtml(group.heading)}</h3><ul>${group.links
+              .map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+              .join("")}</ul>`,
+        )
+        .join("")}</nav>`
     : "";
   const relatedProductsNav = (Array.isArray(page.relatedProductLinks) && page.relatedProductLinks.length)
     ? `<nav aria-label="Related products"><h2>Related products</h2><ul>${page.relatedProductLinks
@@ -1369,8 +1599,8 @@ const pageBody = (page) => {
         .join("")}</ul></nav>`
     : "";
   const siteNavGroups = [
-    ["Products", ["/products", "/products/drip", "/products/sprinklers", "/products/pumps", "/products/pipes", "/products/filtration", "/products/filters-strainers", "/products/valves", "/products/controls", "/products/controllers", "/products/fertigation", "/products/solar", "/products/storage", "/products/borehole", "/products/greenhouse", "/irrigation-kits"]],
-    ["Company and resources", ["/about", "/contact", "/projects", "/case-studies", "/success-stories", "/blog", "/news", "/videos", "/installation-guides", "/pump-solar-calculator-kenya", "/irrigation-cost-calculator-kenya", "/certifications", "/team", "/careers"]],
+    ["Products", ["/products", "/products/drip", "/products/emitters", "/products/sprinklers", "/products/rain-guns", "/products/pumps", "/products/pipes", "/products/filtration", "/products/filters-strainers", "/products/valves", "/products/controls", "/products/controllers", "/products/fertigation", "/products/accessories", "/products/solar", "/products/storage", "/products/borehole", "/products/greenhouse", "/irrigation-kits"]],
+    ["Company and resources", ["/about", "/contact", "/projects", "/case-studies", "/success-stories", "/irrigation-guides-kenya", "/irrigation-areas-kenya", "/blog", "/news", "/videos", "/installation-guides", "/pump-solar-calculator-kenya", "/irrigation-cost-calculator-kenya", "/certifications", "/team", "/careers"]],
     ["Legal", ["/privacy", "/terms", "/cookies"]],
   ];
   const routeLabels = new Map(allPages.map((candidate) => [candidate.route, candidate.nav || candidate.heading || candidate.h1 || candidate.title]));
@@ -1425,8 +1655,11 @@ const pageBody = (page) => {
       ${sections}
       ${faqSection}
       ${guideProductsNav}
+      ${directoryNav}
       ${catalogNav}
+      ${articleIndexNav}
       ${relatedProductsNav}
+      ${relatedArticlesNav}
       ${sourceNav}
       ${relatedNav}
       ${clusterNav}
@@ -1686,13 +1919,16 @@ fs.mkdirSync(path.join(dist, "admin"), { recursive: true });
 fs.writeFileSync(path.join(dist, "admin", "index.html"), adminHtml);
 
 {
-  const total = dynamicPages.filter((p) => p.productDetails).length;
-  const thin = dynamicPages.filter((p) => p.thin).length;
-  if (total > 0 && thin / total > 0.5) {
-    console.warn(`WARNING: ${thin} of ${total} product pages are thin and set to noindex. Add images, specs or longer descriptions in the admin to get them indexed.`);
+  const products = dynamicPages.filter((p) => p.productDetails);
+  const thinProducts = products.filter((p) => p.thin);
+  if (products.length > 0 && thinProducts.length / products.length > 0.5) {
+    console.warn(`WARNING: ${thinProducts.length} of ${products.length} product pages are thin and set to noindex. Add images, specs or longer descriptions in the admin to get them indexed.`);
   }
+  const articles = dynamicPages.filter((p) => p.articleType);
+  const thinArticles = articles.filter((p) => p.thin);
+  console.log(`Thin product pages kept out of index and sitemap: ${thinProducts.length} of ${products.length}`);
+  console.log(`Thin blog/news stubs (<${MIN_ARTICLE_WORDS} words) kept out of sitemap: ${thinArticles.length} of ${articles.length}`);
 }
-console.log(`Thin product pages kept out of index and sitemap: ${dynamicPages.filter((p) => p.thin).length} of ${dynamicPages.filter((p) => p.productDetails).length}`);
 console.log(
   `Generated ${allPages.length} crawlable SEO pages (${dynamicPages.length} dynamic) and one noindex admin page in dist/`,
 );
