@@ -6,7 +6,6 @@ import {
   getCategoryTitleFromCategory,
   getProductPath,
 } from "@/lib/productUrl";
-import { openInstantProductQuotePdf } from "@/lib/catalogAndQuotePdf";
 
 export interface ProductCardData {
   id: string;
@@ -224,15 +223,17 @@ export const ProductCard = ({
           <div className="mt-1.5 sm:mt-2.5 grid grid-cols-2 gap-1 sm:gap-1.5">
             <button
               type="button"
-              onClick={() =>
-                openInstantProductQuotePdf({
-                  product,
-                  quantity: 1,
-                  autoPrint: true,
-                  alsoOpenWhatsApp: true,
-                })
-              }
-              className="inline-flex min-h-8 sm:min-h-10 items-center justify-center gap-1 rounded-lg border border-[hsl(var(--dt-whatsapp)/0.3)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-1 sm:px-2 py-1 text-[9px] sm:text-[10px] font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+              onClick={() => {
+                void import("@/lib/catalogAndQuotePdf").then(({ openInstantProductQuotePdf }) =>
+                  openInstantProductQuotePdf({
+                    product,
+                    quantity: 1,
+                    autoPrint: true,
+                    alsoOpenWhatsApp: true,
+                  })
+                );
+              }}
+              className="inline-flex min-h-8 sm:min-h-10 items-center justify-center gap-1 rounded-lg border border-[hsl(var(--dt-whatsapp)/0.3)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-1 sm:px-2 py-1 text-[9px] sm:text-[10px] font-extrabold text-emerald-800 dark:text-emerald-300 transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
               title="Generates an automatic PDF quote and opens WhatsApp with the quote reference"
             >
               <MessageCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
@@ -241,14 +242,16 @@ export const ProductCard = ({
             </button>
             <button
               type="button"
-              onClick={() =>
-                openInstantProductQuotePdf({
-                  product,
-                  quantity: 1,
-                  autoPrint: true,
-                  alsoOpenWhatsApp: false,
-                })
-              }
+              onClick={() => {
+                void import("@/lib/catalogAndQuotePdf").then(({ openInstantProductQuotePdf }) =>
+                  openInstantProductQuotePdf({
+                    product,
+                    quantity: 1,
+                    autoPrint: true,
+                    alsoOpenWhatsApp: false,
+                  })
+                );
+              }}
               className="inline-flex min-h-8 sm:min-h-10 items-center justify-center gap-1 rounded-lg border border-primary/25 bg-primary/5 px-1 sm:px-2 py-1 text-[9px] sm:text-[10px] font-extrabold text-primary transition-colors hover:bg-primary/15"
               title="Download an instant official PDF quotation for this product"
             >

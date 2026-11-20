@@ -1568,7 +1568,7 @@ const pageBody = (page) => {
     ? (page.imageIsAbsolute ? heroSource : toAbsoluteSiteAssetUrl(heroSource, siteUrl))
     : null;
   const heroImage = heroUrl
-    ? `<figure data-seo-hero="true"><img src="${escapeHtml(heroUrl)}" alt="${escapeHtml(`${page.heading || page.h1 || "Irrigation"} - irrigation equipment and farm setup in Kenya`)}" width="1200" height="675" fetchpriority="high" decoding="async" /></figure>`
+    ? `<figure data-seo-hero="true"><img src="${escapeHtml(heroUrl)}" alt="${escapeHtml(`${page.heading || page.h1 || "Irrigation"} - irrigation equipment and farm setup in Kenya`)}" width="1200" height="675" ${page.route === "/" ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async" /></figure>`
     : "";
   const productImage = product?.images?.[0]
     ? `<figure data-seo-product-image="true"><img src="${escapeHtml(product.images[0])}" alt="${escapeHtml(product.name)}" width="900" height="900" fetchpriority="high" decoding="async" /><figcaption>${escapeHtml(product.name)} — irrigation equipment from DripTech Eco-Flow, Kenya.</figcaption></figure>`

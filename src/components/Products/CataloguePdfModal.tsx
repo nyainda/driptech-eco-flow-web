@@ -17,13 +17,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  openProductCataloguePdf,
-  type CataloguePdfMode,
-  type PdfProductItem,
+import type {
+  CataloguePdfMode,
+  PdfProductItem,
 } from "@/lib/catalogAndQuotePdf";
 import { getCategoryTitleFromCategory } from "@/lib/productUrl";
-import { dataService } from "@/services/dataService";
 
 const MODAL_CATEGORIES = [
   { key: "drip_irrigation", label: "Drip Irrigation" },
@@ -83,8 +81,8 @@ export const CataloguePdfModal = ({
     if (categoryCounts && Object.keys(categoryCounts).length > 0) return;
     if (Object.keys(fetchedCounts).length > 0) return;
 
-    dataService
-      .getProductCategoryCounts()
+    void import("@/services/dataService")
+      .then(({ dataService }) => dataService.getProductCategoryCounts())
       .then((rows: { category: string; count: number }[]) => {
         const next: Record<string, number> = {};
         (rows || []).forEach((r) => {
@@ -122,6 +120,9 @@ export const CataloguePdfModal = ({
   const handleGenerate = async () => {
     setGenerating(true);
     try {
+      const [{ openProductCataloguePdf }] = await Promise.all([
+        import("@/lib/catalogAndQuotePdf"),
+      ]);
       const catLabel = getCategoryTitleFromCategory(selectedCategory);
       // Fire synchronously inside click handler so popup blockers permit window.open()
       const pendingPdf = openProductCataloguePdf({

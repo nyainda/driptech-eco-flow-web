@@ -420,7 +420,7 @@
     --dt-stone-50:    42 35% 96%;
 
     /* WhatsApp green — isolated, only for WhatsApp elements */
-    --dt-whatsapp:    142 70% 37%;
+    --dt-whatsapp:    142 74% 27%;
 
     /* Storefront aliases: use these semantic values for the editorial public UI. */
     --ink:                     var(--dt-green-900);
@@ -467,8 +467,8 @@
     --ring:                     var(--dt-gold-500);
 
     /* ── Typography ─────────────────────────────── */
-    --font-heading: "Libre Baskerville", Georgia, serif;
-    --font-body:    "IBM Plex Sans", system-ui, sans-serif;
+    --font-heading: "Libre Baskerville", "Libre Baskerville Fallback", Georgia, serif;
+    --font-body:    "IBM Plex Sans", "IBM Plex Sans Fallback", system-ui, sans-serif;
     --font-mono:    "JetBrains Mono", "Fira Code", monospace;
 
     /* ── Radius ─────────────────────────────────── */

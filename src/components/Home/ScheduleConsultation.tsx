@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/config";
 import { useToast } from "@/hooks/use-toast";
 
 interface ScheduleConsultationProps {
@@ -136,6 +136,7 @@ Location: ${formData.location}`,
         read: false,
       };
 
+      const supabase = await getSupabase();
       const { error } = await supabase
         .from("contact_submissions")
         .insert([consultationData]);

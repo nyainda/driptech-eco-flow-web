@@ -36,10 +36,10 @@ import {
   Calculator,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
-import SearchManager from "./SearchManager";
+import LazySearchManager from "./LazySearchManager";
 import { Link } from "react-router-dom";
 import QuoteModal from "@/components/Home/QuoteModal";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchSupabaseRest } from "@/integrations/supabase/config";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -76,16 +76,21 @@ const Header = () => {
   const [showBanner, setShowBanner] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [bannersReady, setBannersReady] = useState(false);
 
-  // Fetch active banners
+  useEffect(() => {
+    const timer = window.setTimeout(() => setBannersReady(true), 1400);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  // Fetch active banners after initial paint to keep critical path clear
   const { data: banners = [] } = useQuery({
     queryKey: ["header-discount-banners"],
+    enabled: bannersReady,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("discount_banners" as any)
-        .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
+      const { data, error } = await fetchSupabaseRest<DiscountBannerData[]>(
+        "discount_banners?select=*&is_active=eq.true&order=created_at.desc",
+      );
 
       if (error) throw error;
 
@@ -571,7 +576,7 @@ const Header = () => {
       </div>
 
       {/* Main Navigation Bar */}
-      <div className="sticky top-0 z-50 border-b border-border bg-background/95 shadow-none backdrop-blur-md dark:shadow-none">
+      <div className="sticky top-0 z-50 border-b border-border bg-background shadow-none dark:shadow-none">
         <div className="container mx-auto px-3 sm:px-4 flex h-16 sm:h-[72px] lg:h-20 items-center justify-between gap-3 sm:gap-4">
           {/* Logo */}
           <Link
@@ -667,7 +672,7 @@ const Header = () => {
           {/* CTA Buttons */}
           <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
             <div className="flex items-center gap-0.5 sm:gap-1.5 pr-1.5 sm:pr-2 border-r border-border/50 mr-0.5">
-              <span className="flex md:hidden 2xl:flex"><SearchManager /></span>
+              <span className="flex md:hidden 2xl:flex"><LazySearchManager /></span>
               <ThemeToggle />
             </div>
 
@@ -715,6 +720,8 @@ const Header = () => {
                 side="right"
                 className="w-[min(100vw,420px)] p-0 bg-background border-l shadow-2xl flex flex-col"
               >
+                {isMobileMenuOpen ? (
+                  <>
                 {/* Mobile Header */}
                 <SheetHeader className="p-5 border-b border-border/80 text-left sm:text-left space-y-0 bg-card">
                   <div className="flex items-center justify-between">
@@ -870,6 +877,8 @@ const Header = () => {
                     </button>
                   </div>
                 </div>
+                  </>
+                ) : null}
               </SheetContent>
             </Sheet>
           </div>

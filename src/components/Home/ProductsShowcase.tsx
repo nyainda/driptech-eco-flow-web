@@ -468,7 +468,7 @@ const ProductsShowcase = ({
               >
                 <button
                   type="button"
-                  className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-[hsl(var(--dt-whatsapp))] transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
+                  className="inline-flex min-h-10 sm:min-h-11 w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-[hsl(var(--dt-whatsapp)/0.35)] bg-[hsl(var(--dt-whatsapp)/0.08)] px-3 sm:px-4 py-2 text-[11px] sm:text-sm font-extrabold text-emerald-800 dark:text-emerald-300 transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.16)]"
                 >
                   <span>💬</span>
                   <span className="sm:hidden">Catalogue + WA</span>
