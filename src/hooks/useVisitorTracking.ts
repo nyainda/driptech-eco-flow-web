@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
-import { v4 as uuidv4 } from "uuid";
+import { fetchSupabaseRest, isSupabaseConfigured } from "@/integrations/supabase/config";
+
+const generateTrackingId = (): string => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+};
 
 interface VisitorSession {
   id: string;
@@ -63,7 +69,7 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
   const [visitorId] = useState(() => {
     let id = localStorage.getItem("visitor_id");
     if (!id) {
-      id = uuidv4();
+      id = generateTrackingId();
       localStorage.setItem("visitor_id", id);
     }
     return id;
@@ -72,7 +78,7 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
   const [sessionId] = useState(() => {
     let id = sessionStorage.getItem("session_id");
     if (!id) {
-      id = uuidv4();
+      id = generateTrackingId();
       sessionStorage.setItem("session_id", id);
     }
     return id;
@@ -100,10 +106,14 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
 
     if (currentPageViewId.current && currentPageDuration >= 0 && currentPageDuration < 3600) {
       try {
-        const { error } = await supabase
-          .from("page_views")
-          .update({ time_spent: currentPageDuration, exit_page: true })
-          .eq("id", currentPageViewId.current);
+        const { error } = await fetchSupabaseRest(
+          `page_views?id=eq.${encodeURIComponent(currentPageViewId.current)}`,
+          {
+            method: "PATCH",
+            headers: { Prefer: "return=minimal" },
+            body: JSON.stringify({ time_spent: currentPageDuration, exit_page: true }),
+          },
+        );
         if (error) {
           console.error("Error updating final page view:", error);
         }
@@ -115,13 +125,17 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     if (totalDuration > 0) {
       try {
         // Update the session in the database with end time and duration
-        const { error } = await supabase
-          .from("visitor_sessions")
-          .update({
-            session_end: sessionEnd.toISOString(),
-            total_duration: totalDuration,
-          })
-          .eq("id", sessionId);
+        const { error } = await fetchSupabaseRest(
+          `visitor_sessions?id=eq.${encodeURIComponent(sessionId)}`,
+          {
+            method: "PATCH",
+            headers: { Prefer: "return=minimal" },
+            body: JSON.stringify({
+              session_end: sessionEnd.toISOString(),
+              total_duration: totalDuration,
+            }),
+          },
+        );
 
         if (error) {
           console.error("Error updating session end:", error);
@@ -156,9 +170,11 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
           created_at: new Date().toISOString(),
         };
 
-        const { error } = await supabase
-          .from("visitor_sessions")
-          .upsert(sessionData, { onConflict: "id", ignoreDuplicates: true });
+        const { error } = await fetchSupabaseRest("visitor_sessions?on_conflict=id", {
+          method: "POST",
+          headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
+          body: JSON.stringify(sessionData),
+        });
 
         if (error) {
           throw error;
@@ -224,10 +240,14 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
 
         if (timeSpent > 0 && timeSpent < 3600) {
           try {
-            const { error } = await supabase
-              .from("page_views")
-              .update({ time_spent: timeSpent })
-              .eq("id", currentPageViewId.current);
+            const { error } = await fetchSupabaseRest(
+              `page_views?id=eq.${encodeURIComponent(currentPageViewId.current || "")}`,
+              {
+                method: "PATCH",
+                headers: { Prefer: "return=minimal" },
+                body: JSON.stringify({ time_spent: timeSpent }),
+              },
+            );
             if (error) {
               console.error("Unable to update page duration:", error);
             }
@@ -238,7 +258,7 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
       }
 
       // Create new page view record
-      const pageViewId = uuidv4();
+      const pageViewId = generateTrackingId();
       const pageViewData = {
         id: pageViewId,
         visitor_id: visitorId,
@@ -252,7 +272,11 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
         created_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase.from("page_views").insert(pageViewData);
+      const { error } = await fetchSupabaseRest("page_views", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify(pageViewData),
+      });
 
       if (error) {
         console.error("Unable to record page view:", error);
@@ -281,7 +305,7 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
       await ensureSessionInitialized();
 
       const interactionData = {
-        id: uuidv4(),
+        id: generateTrackingId(),
         visitor_id: visitorId,
         session_id: sessionId,
         page_path: window.location.pathname,
@@ -296,9 +320,11 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
         created_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
-        .from("product_interactions")
-        .insert(interactionData);
+      const { error } = await fetchSupabaseRest("product_interactions", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify(interactionData),
+      });
 
       if (error) {
         console.error("Unable to record product interaction:", error);

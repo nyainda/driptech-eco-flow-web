@@ -1,18 +1,17 @@
 import { HelmetProvider } from 'react-helmet-async'; // Add this import
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/Layout/ThemeProvider";
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
-import useWebVitals from "./hooks/useWebVitals";
 import { GlobalStaffShortcutListener } from "./components/Admin/StealthAdminGate";
-import MobileActionBar from "./components/Layout/MobileActionBar";
 
 // Homepage is eager-loaded for faster LCP; other routes stay lazy
 import Index from "./pages/Index";
+
+const AppFeedback = lazy(() => import("./components/common/AppFeedback"));
+const MobileActionBar = lazy(() => import("./components/Layout/MobileActionBar"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -66,8 +65,9 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
+            <Suspense fallback={null}>
+              <AppFeedback />
+            </Suspense>
             <BrowserRouter
               future={{
                 v7_startTransition: true,
@@ -194,8 +194,10 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
-              <ScrollToTop />
-              <MobileActionBar />
+              <Suspense fallback={null}>
+                <ScrollToTop />
+                <MobileActionBar />
+              </Suspense>
             </BrowserRouter>
           </TooltipProvider>
         </ThemeProvider>

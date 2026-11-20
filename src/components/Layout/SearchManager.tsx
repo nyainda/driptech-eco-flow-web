@@ -36,8 +36,8 @@ interface SearchResult {
     category?: string;
 }
 
-const SearchManager = () => {
-    const [open, setOpen] = useState(false);
+const SearchManager = ({ initialOpen = false }: { initialOpen?: boolean }) => {
+    const [open, setOpen] = useState(initialOpen);
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);

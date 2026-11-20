@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { dataService } from "@/services/dataService";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/config";
 import { Button } from "@/components/ui/button";
 import { VideoCard } from "@/components/Video/VideoCard";
 import { VideoPlayerModal } from "@/components/Video/VideoPlayerModal";
@@ -40,15 +40,17 @@ const VideoSection = ({ compact = false }: VideoSectionProps) => {
     setSelectedVideo(video);
     setIsModalOpen(true);
 
-    void supabase
-      .from("videos")
-      .update({ views: (video.views || 0) + 1 })
-      .eq("id", video.id)
-      .then(({ error: updateErr }) => {
-        if (updateErr) {
-          console.error("Failed to increment views:", updateErr);
-        }
-      });
+    void getSupabase().then((supabase) =>
+      supabase
+        .from("videos")
+        .update({ views: (video.views || 0) + 1 })
+        .eq("id", video.id)
+        .then(({ error: updateErr }) => {
+          if (updateErr) {
+            console.error("Failed to increment views:", updateErr);
+          }
+        })
+    );
   };
 
   if (!isLoading && !isError && videos.length === 0) {

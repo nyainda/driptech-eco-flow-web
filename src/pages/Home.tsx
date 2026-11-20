@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import HeroSectionVibe from "@/components/Home/HeroSectionVibe";
 import TrustStrip from "@/components/Home/TrustStrip";
 import DeferredSection from "@/components/common/DeferredSection";
-import WhatsAppContact from "@/components/common/WhatsAppContact";
+import LazyWhatsAppContact from "@/components/common/LazyWhatsAppContact";
 
 const HomeOfferings = lazy(() => import("@/components/Home/HomeOfferings"));
 const HomeKitsShowcase = lazy(() => import("@/components/Home/HomeKitsShowcase"));
@@ -21,37 +21,37 @@ const Home = () => {
       {/* Executive credibility & capabilities band right below the hero */}
       <TrustStrip />
 
-      {/* Product discovery mounts right after hero paint to keep mobile LCP clear */}
-      <DeferredSection minHeight="560px" fallbackDelayMs={900}>
+      {/* Product discovery mounts after hero paint so Desktop TBT & Mobile LCP stay clear */}
+      <DeferredSection minHeight="560px" rootMargin="120px 0px" minMountDelayMs={400} fallbackDelayMs={3600}>
         <HomeOfferings />
       </DeferredSection>
 
       {/* Complete acreage kits comparison */}
-      <DeferredSection minHeight="420px" fallbackDelayMs={1600}>
+      <DeferredSection minHeight="420px" rootMargin="320px 0px" fallbackDelayMs={5200}>
         <HomeKitsShowcase />
       </DeferredSection>
 
       {/* Shop by Farm Acreage (1/4, 1/2, 1, 5+ Acres) & Kenyan Crop Solutions */}
-      <DeferredSection minHeight="460px" fallbackDelayMs={1900}>
+      <DeferredSection minHeight="460px" rootMargin="320px 0px" fallbackDelayMs={5800}>
         <HomeCropAcreageGuide />
       </DeferredSection>
 
       {/* Turnkey engineering design, consultation & 4-step execution pipeline */}
-      <DeferredSection minHeight="440px" fallbackDelayMs={2100}>
+      <DeferredSection minHeight="440px" rootMargin="320px 0px" fallbackDelayMs={6400}>
         <HomeEngineeringServices />
       </DeferredSection>
 
       {/* Verified irrigation project records */}
-      <DeferredSection minHeight="380px" fallbackDelayMs={2300}>
+      <DeferredSection minHeight="380px" rootMargin="320px 0px" fallbackDelayMs={7000}>
         <ProjectsSection compact />
       </DeferredSection>
 
       {/* Field demonstration videos */}
-      <DeferredSection minHeight="340px" fallbackDelayMs={2500}>
+      <DeferredSection minHeight="340px" rootMargin="320px 0px" fallbackDelayMs={7600}>
         <VideoSection compact />
       </DeferredSection>
 
-      <DeferredSection minHeight="280px" fallbackDelayMs={2700}>
+      <DeferredSection minHeight="280px" rootMargin="320px 0px" fallbackDelayMs={8200}>
         <HomeFaqSection />
       </DeferredSection>
 
@@ -114,7 +114,7 @@ const Home = () => {
         </div>
       </section>
 
-      <WhatsAppContact variant="floating" />
+      <LazyWhatsAppContact />
     </>
   );
 };

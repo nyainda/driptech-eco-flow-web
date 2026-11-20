@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/config";
 import { dataService } from "@/services/dataService";
 import { Loader2, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -64,6 +64,7 @@ const ServiceBookingModal = ({ isOpen, onClose, preselectedService }: ServiceBoo
                 });
             } else {
                 // General inquiry / technician request
+                const supabase = await getSupabase();
                 const { error } = await supabase
                     .from("contact_submissions")
                     .insert([

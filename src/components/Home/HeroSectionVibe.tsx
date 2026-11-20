@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { dataService } from "@/services/dataService";
 import QuoteModal from "@/components/Home/QuoteModal";
 import { formatPrice, getProductPath } from "@/lib/productUrl";
 
@@ -137,6 +136,7 @@ export default function HeroSectionVibe() {
     let cancelled = false;
 
     const loadHeroProducts = async () => {
+      const { dataService } = await import("@/services/dataService");
       try {
         const results = await Promise.all(
           heroProductCategories.map(({ category }) =>
@@ -165,10 +165,19 @@ export default function HeroSectionVibe() {
       }
     };
 
-    const timer = window.setTimeout(
-      loadHeroProducts,
-      typeof window !== "undefined" && window.innerWidth < 1024 ? 650 : 120,
-    );
+    const delay = 950;
+    const timer = window.setTimeout(() => {
+      const ric = (window as unknown as {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      }).requestIdleCallback;
+      if (typeof ric === "function") {
+        ric(() => {
+          if (!cancelled) void loadHeroProducts();
+        }, { timeout: 600 });
+      } else {
+        void loadHeroProducts();
+      }
+    }, delay);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
@@ -216,10 +225,10 @@ export default function HeroSectionVibe() {
           {/* Rich multi-stop gradient overlay for legibility in light & dark mode */}
           <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/92 to-background/80 lg:bg-gradient-to-r lg:from-background/95 lg:via-background/90 lg:via-58% lg:to-background/35 dark:from-background/95 dark:via-background/90 dark:to-background/45" />
 
-          <div className="relative grid gap-5 px-3.5 py-4 sm:gap-8 sm:px-8 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:items-center lg:gap-10 lg:px-10 lg:py-12 xl:px-12">
+          <div className="relative grid gap-5 px-3.5 py-4 sm:gap-8 sm:px-8 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:items-start lg:gap-10 lg:px-10 lg:py-12 xl:px-12">
             {/* Left Column: Value Proposition & Direct CTAs */}
             <div className="min-w-0 max-w-2xl">
-              <div className="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[10px] sm:px-3.5 sm:py-1.5 sm:text-xs font-extrabold text-primary backdrop-blur-sm mb-2.5 sm:mb-4">
+              <div className="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[10px] sm:px-3.5 sm:py-1.5 sm:text-xs font-extrabold text-primary mb-2.5 sm:mb-4">
                 <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                 <span>Kenya's Factory-Direct Irrigation Store • 47 Counties</span>
               </div>
@@ -265,7 +274,7 @@ export default function HeroSectionVibe() {
                 <QuoteModal>
                   <button
                     type="button"
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border-2 border-primary bg-primary/10 px-3 py-2 text-xs sm:px-4 sm:text-sm font-extrabold text-primary backdrop-blur-sm transition-all hover:bg-primary hover:text-primary-foreground"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border-2 border-primary bg-card/95 px-3 py-2 text-xs sm:px-4 sm:text-sm font-extrabold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                   >
                     <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
                     <span>Official BOQ</span>
@@ -274,7 +283,7 @@ export default function HeroSectionVibe() {
 
                 <Link
                   to="/irrigation-cost-calculator-kenya"
-                  className="hidden sm:inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border border-border bg-card/90 px-4 py-2.5 text-sm font-bold text-foreground backdrop-blur-sm transition-colors hover:border-primary/50 hover:bg-card"
+                  className="hidden sm:inline-flex min-h-11 items-center justify-center gap-1.5 rounded-[10px] border border-border bg-card/95 px-4 py-2.5 text-sm font-bold text-foreground transition-colors hover:border-primary/50 hover:bg-card"
                 >
                   <Calculator className="h-4 w-4 shrink-0 text-primary" />
                   <span>Cost Calculator</span>
@@ -301,7 +310,7 @@ export default function HeroSectionVibe() {
                   <Link
                     key={label}
                     to={href}
-                    className="group flex min-w-0 items-start gap-2.5 rounded-xl border border-border/90 bg-card/85 p-3 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/45 hover:bg-card"
+                    className="group flex min-w-0 items-start gap-2.5 rounded-xl border border-border/90 bg-card/95 p-3 shadow-sm transition-colors hover:border-primary/45 hover:bg-card"
                   >
                     <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                       <Icon className="h-4 w-4" aria-hidden="true" />
@@ -321,7 +330,7 @@ export default function HeroSectionVibe() {
 
             {/* Right Column: Live Featured Equipment + Farm System Advisor Switcher */}
             <aside
-              className="w-full min-w-0 max-w-md mx-auto lg:max-w-none overflow-hidden rounded-[18px] sm:rounded-[22px] border border-border/90 bg-card/95 p-3.5 sm:p-5 shadow-2xl backdrop-blur-md"
+              className="w-full min-w-0 min-h-[340px] max-w-md mx-auto lg:max-w-none overflow-hidden rounded-[18px] sm:rounded-[22px] border border-border/90 bg-card/95 p-3.5 sm:p-5 shadow-2xl"
               aria-label="Live top equipment and farm irrigation system advisor"
             >
               {/* Panel Switcher Tabs */}
@@ -482,11 +491,7 @@ export default function HeroSectionVibe() {
                                   alt={product.name}
                                   width={320}
                                   height={240}
-                                  loading={
-                                    typeof window !== "undefined" && window.innerWidth < 1024
-                                      ? "lazy"
-                                      : "eager"
-                                  }
+                                  loading="lazy"
                                   decoding="async"
                                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />

@@ -41,7 +41,7 @@ const capabilities = [
 /** Executive confidence band highlighting DripTech's engineering & supply capabilities. */
 const TrustStrip = () => (
   <section
-    className="border-b border-border bg-card/90 backdrop-blur-sm"
+    className="border-b border-border bg-card"
     aria-label="Why farms and commercial estates choose DripTech EcoFlow"
   >
     {/* Compact 1-row horizontal pill ticker on mobile so shoppers reach Products immediately */}
