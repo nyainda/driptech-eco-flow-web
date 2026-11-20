@@ -851,51 +851,15 @@ const Products = () => {
             : `Irrigation products — ${SITE_COMPANY.name}`,
           description: productPageDescription,
           numberOfItems: Math.min(products.length, 50),
-          itemListElement: products.slice(0, 50).map((product, index) => {
-            const item: Record<string, unknown> = {
-              "@type": "Product",
-              name: product.name,
-              sku: product.id,
-              description:
-                product.description ||
-                `${product.name} — irrigation equipment for Kenyan farms from ${SITE_COMPANY.name}.`,
-              category: (product.category || "").replaceAll("_", " "),
-              brand: { "@type": "Brand", name: SITE_COMPANY.name },
-              url: `https://www.dripstech.co.ke${getProductPath(product)}`,
-            };
-
-            if (product.images?.[0]) item.image = product.images[0];
-            if (typeof product.price === "number" && product.price > 0) {
-              item.offers = {
-                "@type": "Offer",
-                price: product.price,
-                priceCurrency: "KES",
-                availability: product.in_stock
-                  ? "https://schema.org/InStock"
-                  : "https://schema.org/OutOfStock",
-                 url: `https://www.dripstech.co.ke${getProductPath(product)}`,
-                seller: {
-                  "@type": "Organization",
-                  name: SITE_COMPANY.name,
-                  telephone: SITE_COMPANY.phonePrimary,
-                },
-              };
-            }
-            if (product.video_url) {
-              item.subjectOf = {
-                "@type": "VideoObject",
-                name: product.name,
-                contentUrl: product.video_url,
-                thumbnailUrl: product.images?.[0],
-              };
-            }
-
-            return {
-              "@type": "ListItem",
-              position: index + 1,
-              item,
-            };
-          }),
+          // Reference each individual canonical Product URL via ListItem rather
+          // than embedding dozens of standalone Product + Offer blocks on
+          // category archives (matching build-time CollectionPage JSON-LD).
+          itemListElement: products.slice(0, 50).map((product, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            url: `https://www.dripstech.co.ke${getProductPath(product)}`,
+            name: product.name,
+          })),
         }
       : undefined;
 
@@ -972,6 +936,8 @@ const Products = () => {
                       availability: detailProduct.in_stock
                         ? "https://schema.org/InStock"
                         : "https://schema.org/OutOfStock",
+                      itemCondition: "https://schema.org/NewCondition",
+                      url: detailUrl,
                       seller: { "@type": "Organization", name: SITE_COMPANY.name },
                     },
                   }
