@@ -37,6 +37,27 @@ interface ProductInteraction {
   additional_data?: any;
 }
 
+const initializedSessionIds = new Set<string>();
+const sessionInitPromises = new Map<string, Promise<void>>();
+
+const runAfterIdle = (cb: () => void, timeoutMs = 1600): (() => void) => {
+  if (typeof window === "undefined") return () => {};
+  const ric = (window as unknown as {
+    requestIdleCallback?: (fn: () => void, opts?: { timeout: number }) => number;
+    cancelIdleCallback?: (id: number) => void;
+  }).requestIdleCallback;
+  const cic = (window as unknown as {
+    cancelIdleCallback?: (id: number) => void;
+  }).cancelIdleCallback;
+
+  if (typeof ric === "function") {
+    const id = ric(cb, { timeout: timeoutMs });
+    return () => cic?.(id);
+  }
+  const timer = window.setTimeout(cb, timeoutMs);
+  return () => window.clearTimeout(timer);
+};
+
 export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {}) => {
   const trackingEnabled = enabled && isSupabaseConfigured;
   const [visitorId] = useState(() => {
@@ -111,49 +132,59 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     }
   };
 
-  // Initialize session with better error handling
-  useEffect(() => {
-    const initSession = async () => {
-      if (!trackingEnabled || isSessionInitialized.current || sessionInitPromise.current) return;
+  // Initialize session once per browser session (module-level deduplication)
+  const ensureSessionInitialized = useCallback(async () => {
+    if (!trackingEnabled || initializedSessionIds.has(sessionId)) return;
 
-      // Create a promise that resolves when session is ready
-      sessionInitPromise.current = (async () => {
-        try {
-          const sessionData = {
-            id: sessionId,
-            visitor_id: visitorId,
-            session_start: sessionStartTime.current.toISOString(),
-            browser: getBrowserInfo(),
-            device_type: getDeviceType(), // This now returns lowercase
-            user_agent: navigator.userAgent?.substring(0, 500) || null,
-            referrer: document.referrer?.substring(0, 500) || null,
-            location: getLocationFromTimezone(),
-            created_at: new Date().toISOString(),
-          };
+    const existingPromise = sessionInitPromises.get(sessionId);
+    if (existingPromise) {
+      await existingPromise;
+      return;
+    }
 
-          // Direct insert with conflict handling using upsert
-          const { error } = await supabase
-            .from("visitor_sessions")
-            .upsert(sessionData, { onConflict: "id", ignoreDuplicates: true });
+    const promise = (async () => {
+      try {
+        const sessionData = {
+          id: sessionId,
+          visitor_id: visitorId,
+          session_start: sessionStartTime.current.toISOString(),
+          browser: getBrowserInfo(),
+          device_type: getDeviceType(),
+          user_agent: navigator.userAgent?.substring(0, 500) || null,
+          referrer: document.referrer?.substring(0, 500) || null,
+          location: getLocationFromTimezone(),
+          created_at: new Date().toISOString(),
+        };
 
-          if (error) {
-            throw error;
-          }
+        const { error } = await supabase
+          .from("visitor_sessions")
+          .upsert(sessionData, { onConflict: "id", ignoreDuplicates: true });
 
-          isSessionInitialized.current = true;
-        } catch (error) {
-          console.error("Unable to start visitor session:", error);
-          isSessionInitialized.current = true;
+        if (error) {
+          throw error;
         }
-      })();
+        initializedSessionIds.add(sessionId);
+        isSessionInitialized.current = true;
+      } catch (error) {
+        console.error("Unable to start visitor session:", error);
+        initializedSessionIds.add(sessionId);
+        isSessionInitialized.current = true;
+      } finally {
+        sessionInitPromises.delete(sessionId);
+      }
+    })();
 
-      await sessionInitPromise.current;
-    };
-
-    // Add a small delay to ensure DOM is ready
-    const timer = setTimeout(initSession, 100);
-    return () => clearTimeout(timer);
+    sessionInitPromises.set(sessionId, promise);
+    sessionInitPromise.current = promise;
+    await promise;
   }, [trackingEnabled, visitorId, sessionId]);
+
+  useEffect(() => {
+    if (!trackingEnabled || initializedSessionIds.has(sessionId)) return;
+    return runAfterIdle(() => {
+      void ensureSessionInitialized();
+    }, 1600);
+  }, [trackingEnabled, sessionId, ensureSessionInitialized]);
 
   // Clean session end handling
   useEffect(() => {
@@ -181,10 +212,8 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     if (!trackingEnabled) return;
 
     try {
-      // Wait for session to be initialized
-      if (sessionInitPromise.current) {
-        await sessionInitPromise.current;
-      }
+      // Wait for session to be initialized (single deduplicated call)
+      await ensureSessionInitialized();
 
       // Update time spent on previous page
       if (currentPagePath.current && currentPagePath.current !== path) {
@@ -248,10 +277,8 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     if (!trackingEnabled) return;
 
     try {
-      // Wait for session to be initialized
-      if (sessionInitPromise.current) {
-        await sessionInitPromise.current;
-      }
+      // Wait for session to be initialized (single deduplicated call)
+      await ensureSessionInitialized();
 
       const interactionData = {
         id: uuidv4(),

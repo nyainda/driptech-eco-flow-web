@@ -1,0 +1,61 @@
+{
+  "schema": "https://agenticresourcediscovery.org/spec/v1",
+  "version": "1.0",
+  "name": "DripTech Eco Flow",
+  "description": "Kenyan factory-direct drip irrigation, sprinkler systems, solar borehole pumps, filtration, HDPE dam liners, and engineering calculators.",
+  "url": "https://www.dripstech.co.ke",
+  "contact": {
+    "email": "info@dripstech.co.ke",
+    "telephone": "+254723407849",
+    "areaServed": "KE"
+  },
+  "discovery": {
+    "llmsTxt": "https://www.dripstech.co.ke/llms.txt",
+    "sitemap": "https://www.dripstech.co.ke/sitemap.xml",
+    "robots": "https://www.dripstech.co.ke/robots.txt"
+  },
+  "resources": [
+    {
+      "id": "products-catalog",
+      "name": "Irrigation Equipment Catalogue",
+      "url": "https://www.dripstech.co.ke/products",
+      "type": "catalog",
+      "description": "Browse driplines, emitters, sprinklers, solar pumps, disc filters, HDPE pipes, and fittings with Kenyan pricing."
+    },
+    {
+      "id": "irrigation-kits",
+      "name": "Complete Acreage Irrigation Kits",
+      "url": "https://www.dripstech.co.ke/irrigation-kits",
+      "type": "catalog",
+      "description": "Turnkey 1/8 acre, 1/4 acre, 1/2 acre, and commercial 1+ acre drip & greenhouse packages."
+    },
+    {
+      "id": "pump-solar-calculator",
+      "name": "Irrigation Pump & Solar Sizing Calculator",
+      "url": "https://www.dripstech.co.ke/pump-solar-calculator-kenya",
+      "type": "tool",
+      "description": "Interactive hydraulic TDH, pump curve visualizer, solar PV array, and battery sizing calculator for Kenyan conditions."
+    },
+    {
+      "id": "irrigation-cost-calculator",
+      "name": "Irrigation System Cost & Material Calculator",
+      "url": "https://www.dripstech.co.ke/irrigation-cost-calculator-kenya",
+      "type": "tool",
+      "description": "Estimate drip kit cost, dripline rolls, and installation materials by acreage and crop spacing."
+    },
+    {
+      "id": "engineering-guides",
+      "name": "Kenya Irrigation & Engineering Guides",
+      "url": "https://www.dripstech.co.ke/irrigation-guides-kenya",
+      "type": "documentation",
+      "description": "Technical guides for Kenyan crops, counties, pump curves, maintenance, dam liners, and fertigation."
+    },
+    {
+      "id": "verified-projects",
+      "name": "Completed Irrigation Projects",
+      "url": "https://www.dripstech.co.ke/projects",
+      "type": "portfolio",
+      "description": "Verified farm installations across Kenya with acreage, water savings, and site imagery."
+    }
+  ]
+}
