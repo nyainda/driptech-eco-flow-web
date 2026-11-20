@@ -144,8 +144,14 @@ for (const route of routes) {
   )) {
     failures.push(route + ": product detail page must have Product or WebPage JSON-LD");
   }
-  for (const schema of productSchemas) {
-    if (schema.url !== siteUrl + route) {
+  const listProductSchemas = parsedSchemas
+    .filter((schema) => (Array.isArray(schema?.["@type"]) ? schema["@type"] : [schema?.["@type"]]).includes("ItemList"))
+    .flatMap((schema) => (Array.isArray(schema?.itemListElement) ? schema.itemListElement : []))
+    .map((entry) => entry?.item)
+    .filter((item) => (Array.isArray(item?.["@type"]) ? item["@type"] : [item?.["@type"]]).includes("Product"));
+  const allOfferProducts = [...productSchemas, ...listProductSchemas];
+  for (const schema of allOfferProducts) {
+    if (schema.url && productSchemas.includes(schema) && schema.url !== siteUrl + route) {
       failures.push(route + ": Product JSON-LD URL does not match its canonical route");
     }
     // Product rich-result markup must include an offer, review, or rating.
@@ -158,6 +164,12 @@ for (const route of routes) {
       for (const offer of offers) {
         if (offer?.["@type"] !== "Offer" || !(Number(offer.price) > 0) || !offer.priceCurrency) {
           failures.push(route + ": Product Offer must have a positive price and currency");
+        }
+        if (
+          typeof offer?.availability !== "string" ||
+          !/^https:\/\/schema\.org\/(?:InStock|OutOfStock|PreOrder|BackOrder)$/i.test(offer.availability)
+        ) {
+          failures.push(route + `: Product Offer (${schema.name || "item"}) is missing valid schema.org availability`);
         }
       }
     }
@@ -254,6 +266,36 @@ if (fs.existsSync(adminPath)) {
   const adminHtml = fs.readFileSync(adminPath, "utf8");
   if (!/noindex, nofollow, noarchive/.test(adminHtml)) failures.push("/admin: expected noindex directive missing");
   if (routes.includes("/admin")) failures.push("/admin must not be included in the public sitemap");
+}
+
+// Guard against duplicate "(Copy)" draft products entering the public sitemap.
+for (const route of routes) {
+  if (/^\/products\/[^/]+\/.+-copy-[0-9a-f]{8}$/i.test(route)) {
+    failures.push(`${route}: duplicate (Copy) draft product must not appear in sitemap.xml`);
+  }
+}
+
+// Every route listed in sitemap.xml must receive at least one static HTML
+// internal link so blog posts, news items, and guides are never orphan URLs.
+const inlinkCounts = new Map();
+for (const route of routes) {
+  const file = route === "/" ? path.join(dist, "index.html") : path.join(dist, route.replace(/^\/+/, ""), "index.html");
+  if (!fs.existsSync(file)) continue;
+  const html = fs.readFileSync(file, "utf8");
+  const body = html.match(/<body[\s\S]*$/i)?.[0] || html;
+  const seenTargets = new Set();
+  for (const match of body.matchAll(/href="(\/[^"#?]*)"/g)) {
+    const href = match[1];
+    if (href === route || seenTargets.has(href)) continue;
+    seenTargets.add(href);
+    inlinkCounts.set(href, (inlinkCounts.get(href) || 0) + 1);
+  }
+}
+const orphanRoutes = routes.filter((route) => route !== "/" && (inlinkCounts.get(route) || 0) === 0);
+if (orphanRoutes.length) {
+  failures.push(
+    `${orphanRoutes.length} sitemap URL(s) have zero HTML internal links (orphan pages): ${orphanRoutes.slice(0, 10).join(", ")}`,
+  );
 }
 
 const ardPath = path.join(dist, ".well-known", "ard.json");
