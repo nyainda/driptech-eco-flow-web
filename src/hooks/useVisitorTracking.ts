@@ -84,8 +84,6 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     return id;
   });
 
-  const sessionStartTime = useRef<Date>(new Date());
-  const currentPageStartTime = useRef<Date>(new Date());
   const currentPagePath = useRef<string>("");
   const currentPageViewId = useRef<string | null>(null);
   const isSessionInitialized = useRef<boolean>(false);
@@ -196,47 +194,30 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
   }, [trackingEnabled, visitorId, sessionId]);
 
   useEffect(() => {
-    if (!trackingEnabled || initializedSessionIds.has(sessionId)) return;
+    if (!trackingEnabled) return;
     return runAfterIdle(() => {
-      void ensureSessionInitialized();
+      void ensureTrackingSession(identityRef.current);
     }, 1600);
-  }, [trackingEnabled, sessionId, ensureSessionInitialized]);
+  }, [trackingEnabled]);
 
-  // Clean session end handling
+  // Reliable visibility & pagehide engagement persistence (replaces cancelled beforeunload PATCH)
   useEffect(() => {
     if (!trackingEnabled) return;
 
-    const handleBeforeUnload = async () => {
-      if (sessionId && !hasTrackedExit.current) {
-        hasTrackedExit.current = true;
-        await endSession();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        flushSession(false);
+      } else {
+        resumeVisibleTimer();
       }
     };
 
-    // Only add beforeunload in production
-    if (import.meta.env.PROD) {
-      window.addEventListener("beforeunload", handleBeforeUnload);
-    }
-    return () => {
-      if (import.meta.env.PROD) {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      }
+    const handlePageHide = () => {
+      flushSession(true);
     };
-  }, [trackingEnabled, sessionId]);
 
-  const trackPageView = useCallback(async (path: string, title: string) => {
-    if (!trackingEnabled) return;
-
-    try {
-      // Wait for session to be initialized (single deduplicated call)
-      await ensureSessionInitialized();
-
-      // Update time spent on previous page
-      if (currentPagePath.current && currentPagePath.current !== path) {
-        const timeSpent = Math.floor(
-          (new Date().getTime() - currentPageStartTime.current.getTime()) /
-          1000,
-        );
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pagehide", handlePageHide);
 
         if (timeSpent > 0 && timeSpent < 3600) {
           try {
@@ -278,31 +259,33 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
         body: JSON.stringify(pageViewData),
       });
 
-      if (error) {
-        console.error("Unable to record page view:", error);
+      const cleanPath = sanitizePathForAnalytics(path);
+      if (currentPagePath.current === cleanPath && currentPageViewId.current) {
         return;
       }
 
-      // Update current page tracking
-      currentPagePath.current = path;
-      currentPageViewId.current = pageViewId;
-      currentPageStartTime.current = new Date();
+      // Refresh sliding 30-min session window
+      identityRef.current = getTrackingIdentity();
+      hasTrackedExit.current = false;
 
-    } catch (error) {
-      console.error("Unexpected error while recording page view:", error);
-    }
-  }, [trackingEnabled, visitorId, sessionId]);
-
-  const trackProductInteraction = useCallback(async (
-    productName: string,
-    interactionType: string,
-    additionalData?: any,
-  ) => {
-    if (!trackingEnabled) return;
-
-    try {
-      // Wait for session to be initialized (single deduplicated call)
-      await ensureSessionInitialized();
+      // Flush engagement duration for the previous SPA route before recording next view
+      if (currentPagePath.current && currentPageViewId.current) {
+        pauseVisibleTimer();
+        const prevDurationSec = getActivePageSeconds();
+        const prevViewId = currentPageViewId.current;
+        const identity = identityRef.current;
+        if (prevDurationSec > 0) {
+          void flushEngagementDuration({
+            visitorId: identity.visitorId,
+            sessionId: identity.sessionId,
+            pageViewId: prevViewId,
+            pageDurationSeconds: prevDurationSec,
+            sessionDurationSeconds: Math.round((Date.now() - identity.sessionStartedAtMs) / 1000),
+            markExit: false,
+            keepalive: true,
+          });
+        }
+      }
 
       const interactionData = {
         id: generateTrackingId(),
@@ -326,53 +309,52 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
         body: JSON.stringify(interactionData),
       });
 
-      if (error) {
-        console.error("Unable to record product interaction:", error);
+      try {
+        const identity = getTrackingIdentity();
+        identityRef.current = identity;
+        await ensureTrackingSession(identity);
+
+        const rawProductId =
+          typeof additionalData?.productId === "string" ? additionalData.productId.trim() : "";
+        const validProductId = UUID_REGEX.test(rawProductId) ? rawProductId : null;
+
+        await telemetryFetch("product_interactions", {
+          method: "POST",
+          prefer: "return=minimal",
+          body: {
+            id: generateTrackingId(),
+            visitor_id: identity.visitorId,
+            session_id: identity.sessionId,
+            page_path: sanitizePathForAnalytics(
+              `${window.location.pathname}${window.location.search}`,
+            ),
+            product_name: (productName || "Unknown").slice(0, 100),
+            product_id: validProductId,
+            product_category:
+              typeof additionalData?.category === "string"
+                ? additionalData.category.slice(0, 50)
+                : null,
+            interaction_type: interactionType,
+            timestamp: new Date().toISOString(),
+            element_selector:
+              typeof additionalData?.elementSelector === "string"
+                ? additionalData.elementSelector.slice(0, 200)
+                : null,
+            additional_data: additionalData || null,
+            created_at: new Date().toISOString(),
+          },
+        });
+      } catch (error) {
+        console.error("Unexpected error while recording product interaction:", error);
       }
-    } catch (error) {
-      console.error("Unexpected error while recording product interaction:", error);
-    }
-  }, [trackingEnabled, visitorId, sessionId]);
+    },
+    [trackingEnabled],
+  );
 
   return {
-    visitorId,
-    sessionId,
+    visitorId: identityRef.current.visitorId,
+    sessionId: identityRef.current.sessionId,
     trackPageView,
     trackProductInteraction,
   };
-};
-
-// Helper functions
-const getBrowserInfo = (): string => {
-  const userAgent = navigator.userAgent;
-  if (userAgent.includes("Chrome") && !userAgent.includes("Edg"))
-    return "Chrome";
-  if (userAgent.includes("Firefox")) return "Firefox";
-  if (userAgent.includes("Safari") && !userAgent.includes("Chrome"))
-    return "Safari";
-  if (userAgent.includes("Edg")) return "Edge";
-  if (userAgent.includes("Opera") || userAgent.includes("OPR")) return "Opera";
-  return "Other";
-};
-
-// FIXED: Now returns lowercase values to match database constraint
-const getDeviceType = (): string => {
-  const userAgent = navigator.userAgent.toLowerCase();
-  if (/tablet|ipad|playbook|silk/i.test(userAgent)) return "tablet"; // lowercase
-  if (
-    /mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(
-      userAgent,
-    )
-  )
-    return "mobile"; // lowercase
-  return "desktop"; // lowercase
-};
-
-const getLocationFromTimezone = (): string => {
-  try {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return timezone || "Unknown";
-  } catch (error) {
-    return "Unknown";
-  }
 };

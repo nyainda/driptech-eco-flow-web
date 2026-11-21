@@ -9,7 +9,10 @@ initAutoUpdate();
 const root = document.getElementById("root");
 
 if (root?.hasAttribute("data-seo-static-page")) {
-  // Keep build-generated SEO guide HTML intact; createRoot would clear it.
+  // Keep build-generated SEO guide HTML intact; track visits & WhatsApp clicks without mounting React.
+  void import("./lib/analyticsTelemetry").then(({ initStaticSeoTracking }) => {
+    initStaticSeoTracking();
+  });
 } else if (root) {
   createRoot(root).render(<App />);
 }

@@ -21,6 +21,17 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  aggregateWebsiteAnalyticsReport,
+  type LifetimeStats,
+  type PeriodStats,
+  type RawPageView,
+  type RawProductInteraction,
+  type RawVisitorSession,
+  type RawWhatsAppClick,
+  type WebsiteAnalyticsReport,
+} from "@/lib/analyticsAggregation";
+import { getPeriodStartDate } from "@/lib/analyticsHelpers";
+import {
   Users,
   Eye,
   Clock,
@@ -55,66 +66,16 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// --- Types ---
+// --- Helpers ---
 
-interface LifetimeStats {
-  totalVisitors: number;
-  totalSessions: number;
-  totalPageViews: number;
-}
+const POSTGREST_PAGE_SIZE = 1000;
 
-interface PeriodStats {
-  visitors: number;
-  lifetimeVisitors: number;
-  visitorsOutsidePeriod: number;
-  whatsappClicks: number;
-  uniqueWhatsappVisitors: number;
-  pageViews: number;
-  sessions: number;
-  avgDuration: number;
-  bounceRate: number;
-  pagesPerSession: number;
-  engagementRate: number;
-  newVisitors: number;
-  returningVisitors: number;
-  peakHour: number;
-  peakDay: string;
-  avgTimeOnSite: number;
-  topPages: Array<{
-    page_path: string;
-    page_title: string;
-    total_views: number;
-    unique_visitors: number;
-    avg_time_spent: number;
-  }>;
-  topProducts: Array<{
-    product_name: string;
-    interaction_count: number;
-    interaction_type: string;
-    unique_visitors: number;
-  }>;
-  deviceBreakdown: Array<{
-    device_type: string;
-    total_sessions: number;
-    unique_visitors: number;
-  }>;
-  hourlyActivity: Array<{
-    hour: number;
-    page_views: number;
-    sessions: number;
-  }>;
-  dailyActivity: Array<{
-    date: string;
-    visitors: number;
-    page_views: number;
-    sessions: number;
-  }>;
-  browserStats: Array<{
-    browser: string;
-    sessions: number;
-    percentage: number;
-  }>;
-}
+const formatShortDuration = (seconds: number): string => {
+  const safe = Math.max(0, Math.round(seconds || 0));
+  const mins = Math.floor(safe / 60);
+  const secs = safe % 60;
+  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+};
 
 const AnalyticsDashboard: React.FC = () => {
   const [lifetimeData, setLifetimeData] =
@@ -122,6 +83,8 @@ const AnalyticsDashboard: React.FC = () => {
   const [periodData, setPeriodData] = useState<PeriodStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState("30d");
+  const [includeBots, setIncludeBots] = useState(false);
+  const [dataSourceMode, setDataSourceMode] = useState<"sql_rpc" | "paginated_fallback">("sql_rpc");
   const [refreshing, setRefreshing] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -153,100 +116,123 @@ const AnalyticsDashboard: React.FC = () => {
 
   // --- Fetch Logic ---
 
+  const fetchAllPaginatedRows = async <T,>(
+    table: "visitor_sessions" | "page_views" | "product_interactions" | "whatsapp_click_events",
+    orderCol: string,
+    selectCols: string,
+    startDate?: Date | null,
+    endDate?: Date,
+  ): Promise<T[]> => {
+    const results: T[] = [];
+    let offset = 0;
+    let more = true;
+
+    while (more) {
+      let q = (supabase.from(table) as any)
+        .select(selectCols)
+        .order(orderCol, { ascending: true })
+        .order("id", { ascending: true })
+        .range(offset, offset + POSTGREST_PAGE_SIZE - 1);
+
+      if (startDate && endDate) {
+        q = q.gte(orderCol, startDate.toISOString()).lte(orderCol, endDate.toISOString());
+      }
+
+      const { data, error } = await q;
+      if (error) {
+        throw new Error(`Unable to read ${table}: ${error.message}`);
+      }
+
+      const rows = Array.isArray(data) ? (data as T[]) : [];
+      results.push(...rows);
+
+      // PostgREST defaults to max 1000 rows per request; using 1000 here guarantees we never stop early.
+      if (rows.length < POSTGREST_PAGE_SIZE) {
+        more = false;
+      } else {
+        offset += rows.length;
+      }
+    }
+
+    return results;
+  };
+
+  const fetchViaPaginatedFallback = async (): Promise<WebsiteAnalyticsReport> => {
+    const now = new Date();
+    const periodStart = getPeriodStartDate(dateRange, now);
+
+    const [allSessions, allPageViews, periodInteractions, periodWhatsappClicks] =
+      await Promise.all([
+        fetchAllPaginatedRows<RawVisitorSession>(
+          "visitor_sessions",
+          "session_start",
+          "id, visitor_id, session_start, total_duration, browser, device_type, user_agent, referrer",
+        ),
+        fetchAllPaginatedRows<RawPageView>(
+          "page_views",
+          "timestamp",
+          "id, visitor_id, session_id, page_path, page_title, timestamp, time_spent",
+        ),
+        fetchAllPaginatedRows<RawProductInteraction>(
+          "product_interactions",
+          "timestamp",
+          "id, visitor_id, session_id, product_name, interaction_type, timestamp",
+          periodStart,
+          now,
+        ),
+        fetchAllPaginatedRows<RawWhatsAppClick>(
+          "whatsapp_click_events",
+          "clicked_at",
+          "id, visitor_id, session_id, clicked_at",
+          periodStart,
+          now,
+        ),
+      ]);
+
+    return aggregateWebsiteAnalyticsReport({
+      allSessions,
+      allPageViews,
+      periodInteractions,
+      periodWhatsappClicks,
+      range: dateRange,
+      includeBots,
+      now,
+    });
+  };
+
   const fetchAnalytics = async () => {
     try {
       setRefreshing(true);
       setFetchError(null);
 
-      // 1. Lifetime Stats — use exact COUNT queries (bypasses row limits)
-      const [sessionCountRes, pageViewCountRes] = await Promise.all([
-        supabase
-          .from("visitor_sessions")
-          .select("*", { count: "exact", head: true }),
-
-        supabase
-          .from("page_views")
-          .select("*", { count: "exact", head: true }),
-      ]);
-
-      // Fetch visitor_ids in pages to correctly count unique visitors
-      // Supabase REST default is 1000 rows — we page through to get all
-      let allSessions: Array<{
-        visitor_id: string;
-        session_start: string;
-      }> = [];
-
-      let pageOffset = 0;
-      const PAGE_SIZE = 5000;
-      let hasMore = true;
-
-      while (hasMore) {
-        const { data: page, error: pageError } = await supabase
-          .from("visitor_sessions")
-          .select("visitor_id, session_start")
-          .order("session_start", { ascending: true })
-          .range(pageOffset, pageOffset + PAGE_SIZE - 1);
-
-        if (pageError) {
-          throw new Error(
-            `Unable to read visitor sessions: ${pageError.message}`
-          );
-        }
-
-        if (!page || page.length === 0) {
-          hasMore = false;
-        } else {
-          allSessions = allSessions.concat(page);
-          pageOffset += PAGE_SIZE;
-
-          if (page.length < PAGE_SIZE) {
-            hasMore = false;
-          }
-        }
-      }
-
-      if (sessionCountRes.error) {
-        throw new Error(
-          `Unable to count sessions: ${sessionCountRes.error.message}`
-        );
-      }
-
-      if (pageViewCountRes.error) {
-        throw new Error(
-          `Unable to count page views: ${pageViewCountRes.error.message}`
-        );
-      }
-
-      const realTotalVisitors = new Set(
-        allSessions.map((session) => session.visitor_id)
-      ).size;
-
-      const lifetimeStats: LifetimeStats = {
-        totalVisitors: realTotalVisitors,
-        totalSessions: sessionCountRes.count || 0,
-        totalPageViews: pageViewCountRes.count || 0,
-      };
-
-      setLifetimeData(lifetimeStats);
-
-      // 2. Period Stats
-      const visitorFirstSeen = new Map<string, string>();
-
-      allSessions.forEach((session) => {
-        if (!visitorFirstSeen.has(session.visitor_id)) {
-          visitorFirstSeen.set(
-            session.visitor_id,
-            session.session_start
-          );
-        }
+      let report: WebsiteAnalyticsReport | null = null;
+      const rpcRes = await supabase.rpc("get_website_analytics_report", {
+        p_range: dateRange,
+        p_include_bots: includeBots,
       });
 
-      const stats = await fetchPeriodStats(
-        dateRange,
-        visitorFirstSeen
-      );
+      if (!rpcRes.error && rpcRes.data && typeof rpcRes.data === "object") {
+        report = rpcRes.data as unknown as WebsiteAnalyticsReport;
+        setDataSourceMode("sql_rpc");
+      } else {
+        const msg = rpcRes.error?.message || "";
+        const isMissingRpc =
+          rpcRes.error?.code === "PGRST202" ||
+          rpcRes.error?.code === "42883" ||
+          /could not find the function|does not exist/i.test(msg);
 
-      setPeriodData(stats);
+        if (!isMissingRpc && rpcRes.error) {
+          console.warn("Analytics RPC fallback due to:", rpcRes.error.message);
+        }
+
+        report = await fetchViaPaginatedFallback();
+        setDataSourceMode("paginated_fallback");
+      }
+
+      if (report) {
+        setLifetimeData(report.lifetime);
+        setPeriodData(report.period);
+      }
 
       setLastUpdated(new Date());
       setSecondsAgo(0);
@@ -260,531 +246,9 @@ const AnalyticsDashboard: React.FC = () => {
     }
   };
 
-  const fetchPeriodStats = async (
-    range: string,
-    visitorFirstSeen: Map<string, string>
-  ): Promise<PeriodStats> => {
-    const endDate = new Date();
-    const startDate = new Date();
-    let isAllTime = false;
-
-    switch (range) {
-      case "1d":
-        startDate.setDate(endDate.getDate() - 1);
-        break;
-
-      case "7d":
-        startDate.setDate(endDate.getDate() - 7);
-        break;
-
-      case "30d":
-        startDate.setDate(endDate.getDate() - 30);
-        break;
-
-      case "90d":
-        startDate.setDate(endDate.getDate() - 90);
-        break;
-
-      case "year":
-        startDate.setFullYear(endDate.getFullYear(), 0, 1);
-        break;
-
-      case "all":
-        isAllTime = true;
-        break;
-    }
-
-    const startDateStr = startDate.toISOString();
-    const endDateStr = endDate.toISOString();
-
-    // Use paginated fetches — Supabase REST API caps at 1000 rows by default.
-    // Without explicit pagination, queries silently truncate and stats look "frozen".
-    const fetchAllPages = async (
-      table: string,
-      dateColumn: string,
-      selectCols: string = "*"
-    ): Promise<any[]> => {
-      const CHUNK = 5000;
-
-      let results: any[] = [];
-      let offset = 0;
-      let more = true;
-
-      while (more) {
-        // A stable order is required when paging.
-        // Without it, new inserts can shift rows between offsets
-        // and make a refresh miss or double-count data.
-        let q = supabase
-          .from(table)
-          .select(selectCols)
-          .order(dateColumn, { ascending: true })
-          .order("id", { ascending: true })
-          .range(offset, offset + CHUNK - 1);
-
-        if (!isAllTime) {
-          q = q
-            .gte(dateColumn, startDateStr)
-            .lte(dateColumn, endDateStr);
-        }
-
-        const { data, error } = await q;
-
-        if (error) {
-          throw new Error(
-            `Unable to read ${table}: ${error.message}`
-          );
-        }
-
-        if (!data || data.length === 0) {
-          more = false;
-        } else {
-          results = results.concat(data);
-          offset += CHUNK;
-
-          if (data.length < CHUNK) {
-            more = false;
-          }
-        }
-      }
-
-      return results;
-    };
-
-    const [
-      sessions,
-      pageViews,
-      interactions,
-      whatsappClicks,
-    ] = await Promise.all([
-      fetchAllPages("visitor_sessions", "session_start"),
-      fetchAllPages("page_views", "timestamp"),
-      fetchAllPages("product_interactions", "timestamp"),
-      fetchAllPages("whatsapp_click_events", "clicked_at"),
-    ]);
-
-    return processPeriodData(
-      sessions,
-      pageViews,
-      interactions,
-      whatsappClicks,
-      range,
-      visitorFirstSeen
-    );
-  };
-
-  const processPeriodData = (
-    sessions: any[],
-    pageViews: any[],
-    interactions: any[],
-    whatsappClicks: any[],
-    range: string,
-    visitorFirstSeen: Map<string, string>
-  ): PeriodStats => {
-    const uniqueVisitors = new Set(
-      sessions.map((s) => s.visitor_id)
-    ).size;
-
-    const periodVisitorIds = new Set(
-      sessions.map((s) => s.visitor_id)
-    );
-
-    const lifetimeVisitors = visitorFirstSeen.size;
-
-    const visitorsOutsidePeriod = Array.from(
-      visitorFirstSeen.keys()
-    ).filter(
-      (visitorId) => !periodVisitorIds.has(visitorId)
-    ).length;
-
-    const totalSessions = sessions.length;
-    const totalPageViews = pageViews.length;
-
-    // Avg Duration
-    const validSessions = sessions.filter(
-      (s) => s.total_duration > 0
-    );
-
-    const avgDuration =
-      validSessions.length > 0
-        ? validSessions.reduce(
-            (acc, s) => acc + s.total_duration,
-            0
-          ) / validSessions.length
-        : 0;
-
-    // Bounce Rate
-    const sessionPageCounts: Record<string, number> =
-      Object.fromEntries(
-        sessions.map((session) => [session.id, 0])
-      );
-
-    pageViews.forEach((pv) => {
-      sessionPageCounts[pv.session_id] =
-        (sessionPageCounts[pv.session_id] || 0) + 1;
-    });
-
-    const bounces = Object.values(sessionPageCounts).filter(
-      (count) => count <= 1
-    ).length;
-
-    const bounceRate =
-      totalSessions > 0
-        ? (bounces / totalSessions) * 100
-        : 0;
-
-    // Pages
-    const pageGroups: Record<string, any> = {};
-
-    pageViews.forEach((pv) => {
-      if (!pageGroups[pv.page_path]) {
-        pageGroups[pv.page_path] = {
-          path: pv.page_path,
-          title: pv.page_title || pv.page_path,
-          views: 0,
-          visitors: new Set(),
-          timeForAvg: [],
-        };
-      }
-
-      pageGroups[pv.page_path].views++;
-
-      pageGroups[pv.page_path].visitors.add(
-        pv.visitor_id
-      );
-
-      if (pv.time_spent) {
-        pageGroups[pv.page_path].timeForAvg.push(
-          pv.time_spent
-        );
-      }
-    });
-
-    const topPages = Object.values(pageGroups)
-      .map((group: any) => ({
-        page_path: group.path,
-        page_title: group.title,
-        total_views: group.views,
-        unique_visitors: group.visitors.size,
-        avg_time_spent:
-          group.timeForAvg.length > 0
-            ? group.timeForAvg.reduce(
-                (a: number, b: number) => a + b,
-                0
-              ) / group.timeForAvg.length
-            : 0,
-      }))
-      .sort(
-        (a, b) => b.total_views - a.total_views
-      )
-      .slice(0, 10);
-
-    // Products
-    const prodGroups: Record<string, any> = {};
-
-    interactions.forEach((int) => {
-      if (!prodGroups[int.product_name]) {
-        prodGroups[int.product_name] = {
-          name: int.product_name,
-          count: 0,
-          visitors: new Set(),
-          type: int.interaction_type,
-        };
-      }
-
-      prodGroups[int.product_name].count++;
-
-      prodGroups[int.product_name].visitors.add(
-        int.visitor_id
-      );
-    });
-
-    const topProducts = Object.values(prodGroups)
-      .map((group: any) => ({
-        product_name: group.name,
-        interaction_count: group.count,
-        interaction_type: group.type,
-        unique_visitors: group.visitors.size,
-      }))
-      .sort(
-        (a, b) =>
-          b.interaction_count - a.interaction_count
-      )
-      .slice(0, 10);
-
-    // Daily Activity
-    const dailyMap: Record<
-      string,
-      {
-        date: string;
-        visitors: Set<string>;
-        page_views: number;
-        sessions: number;
-      }
-    > = {};
-
-    // Initialize last N days to 0
-    const daysToMap =
-      range === "1d"
-        ? 1
-        : range === "7d"
-        ? 7
-        : range === "30d"
-        ? 30
-        : range === "90d"
-        ? 90
-        : 12;
-
-    // Only fill zeros for fixed ranges
-    if (
-      ["1d", "7d", "30d", "90d"].includes(range)
-    ) {
-      for (let i = 0; i < daysToMap; i++) {
-        const d = new Date();
-
-        d.setDate(d.getDate() - i);
-
-        const dStr = d
-          .toISOString()
-          .split("T")[0];
-
-        dailyMap[dStr] = {
-          date: dStr,
-          visitors: new Set(),
-          page_views: 0,
-          sessions: 0,
-        };
-      }
-    }
-
-    sessions.forEach((s) => {
-      const dStr = s.session_start.split("T")[0];
-
-      if (!dailyMap[dStr]) {
-        dailyMap[dStr] = {
-          date: dStr,
-          visitors: new Set(),
-          page_views: 0,
-          sessions: 0,
-        };
-      }
-
-      dailyMap[dStr].sessions++;
-      dailyMap[dStr].visitors.add(s.visitor_id);
-    });
-
-    pageViews.forEach((pv) => {
-      const dStr = pv.timestamp.split("T")[0];
-
-      if (!dailyMap[dStr]) {
-        dailyMap[dStr] = {
-          date: dStr,
-          visitors: new Set(),
-          page_views: 0,
-          sessions: 0,
-        };
-      }
-
-      dailyMap[dStr].page_views++;
-    });
-
-    const dailyActivity = Object.values(dailyMap)
-      .map((d) => ({
-        ...d,
-        visitors: d.visitors.size,
-      }))
-      .sort(
-        (a, b) =>
-          new Date(a.date).getTime() -
-          new Date(b.date).getTime()
-      );
-
-    // Hourly
-    const hourlyGroups = Array.from(
-      { length: 24 },
-      (_, hour) => ({
-        hour,
-        page_views: 0,
-        sessions: 0,
-      })
-    );
-
-    sessions.forEach((session) => {
-      const hour = new Date(
-        session.session_start
-      ).getHours();
-
-      hourlyGroups[hour].sessions++;
-    });
-
-    pageViews.forEach((pageView) => {
-      const hour = new Date(
-        pageView.timestamp
-      ).getHours();
-
-      hourlyGroups[hour].page_views++;
-    });
-
-    // Devices
-    const devMap: Record<
-      string,
-      {
-        sessions: Set<string>;
-        visitors: Set<string>;
-      }
-    > = {};
-
-    sessions.forEach((s) => {
-      const type = s.device_type || "Unknown";
-
-      if (!devMap[type]) {
-        devMap[type] = {
-          sessions: new Set(),
-          visitors: new Set(),
-        };
-      }
-
-      devMap[type].sessions.add(s.id);
-      devMap[type].visitors.add(s.visitor_id);
-    });
-
-    const deviceBreakdown = Object.entries(
-      devMap
-    ).map(([type, values]) => ({
-      device_type: type,
-      total_sessions: values.sessions.size,
-      unique_visitors: values.visitors.size,
-    }));
-
-    // Browsers
-    const browserMap: Record<string, number> = {};
-
-    sessions.forEach((s) => {
-      const browser = s.browser || "Unknown";
-
-      browserMap[browser] =
-        (browserMap[browser] || 0) + 1;
-    });
-
-    const browserStats = Object.entries(
-      browserMap
-    ).map(([browser, count]) => ({
-      browser,
-      sessions: count,
-      percentage:
-        totalSessions > 0
-          ? Math.round(
-              (count / totalSessions) * 100
-            )
-          : 0,
-    }));
-
-    // === ENHANCED METRICS ===
-
-    // Pages Per Session
-    const pagesPerSession =
-      totalSessions > 0
-        ? totalPageViews / totalSessions
-        : 0;
-
-    // Engagement Rate
-    // Sessions with more than 1 page view
-    const engagedSessions = Object.values(
-      sessionPageCounts
-    ).filter((count) => count > 1).length;
-
-    const engagementRate =
-      Object.keys(sessionPageCounts).length > 0
-        ? (engagedSessions /
-            Object.keys(sessionPageCounts).length) *
-          100
-        : 0;
-
-    // New vs Returning Visitors
-    const newVisitorSessions = sessions.filter(
-      (session) =>
-        session.session_start ===
-        visitorFirstSeen.get(session.visitor_id)
-    );
-
-    const newVisitors = new Set(
-      newVisitorSessions.map(
-        (s) => s.visitor_id
-      )
-    ).size;
-
-    const returningVisitors =
-      uniqueVisitors - newVisitors;
-
-    // Peak Activity Hour
-    const hourCounts = new Array(24).fill(0);
-
-    sessions.forEach((s) => {
-      const hour = new Date(
-        s.session_start
-      ).getHours();
-
-      hourCounts[hour]++;
-    });
-
-    const peakHour = hourCounts.indexOf(
-      Math.max(...hourCounts)
-    );
-
-    // Peak Day
-    const dayMap: Record<string, number> = {};
-
-    sessions.forEach((s) => {
-      const dayStr =
-        s.session_start.split("T")[0];
-
-      dayMap[dayStr] =
-        (dayMap[dayStr] || 0) + 1;
-    });
-
-    const peakDay =
-      Object.entries(dayMap).sort(
-        ([, a], [, b]) => b - a
-      )[0]?.[0] || "N/A";
-
-    // Average Time on Site
-    const avgTimeOnSite = avgDuration;
-
-    return {
-      visitors: uniqueVisitors,
-      lifetimeVisitors,
-      visitorsOutsidePeriod,
-
-      // WhatsApp metrics
-      whatsappClicks: whatsappClicks.length,
-      uniqueWhatsappVisitors: new Set(
-        whatsappClicks.map(
-          (click) => click.visitor_id
-        )
-      ).size,
-
-      pageViews: totalPageViews,
-      sessions: totalSessions,
-      avgDuration,
-      bounceRate,
-      pagesPerSession,
-      engagementRate,
-      newVisitors,
-      returningVisitors,
-      peakHour,
-      peakDay,
-      avgTimeOnSite,
-      topPages,
-      topProducts,
-      deviceBreakdown,
-      hourlyActivity: hourlyGroups,
-      dailyActivity,
-      browserStats,
-    };
-  };
-
   useEffect(() => {
     fetchAnalytics();
-  }, [dateRange, refreshTrigger]);
+  }, [dateRange, includeBots, refreshTrigger]);
 
   // --- Render ---
 
@@ -975,10 +439,12 @@ const AnalyticsDashboard: React.FC = () => {
                   </div>
                   <div className="rounded-xl bg-violet-500/5 p-4">
                     <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Clock className="h-4 w-4" /><p className="text-sm font-semibold">Average session duration</p></div>
-                    <p className="mt-2 text-2xl font-bold">{Math.round((periodData?.avgDuration || 0) / 60)} min</p>
-                    <p className="text-xs text-muted-foreground">Based on recorded session duration</p>
+                    <p className="mt-2 text-2xl font-bold">{formatShortDuration(periodData?.avgDuration || 0)}</p>
+                    <p className="text-xs text-muted-foreground">Active engagement duration (EAT)</p>
                   </div>
-                  <div className="text-xs text-muted-foreground">Visitor analytics and Search Console use separate reporting sources and date windows.</div>
+                  <div className="text-xs text-muted-foreground">
+                    {includeBots ? "Showing all traffic including crawlers/bots." : `${(lifetimeData?.filteredBotSessions || 0).toLocaleString()} bot/crawler sessions filtered out.`}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -989,8 +455,8 @@ const AnalyticsDashboard: React.FC = () => {
                 <CardContent className="space-y-3">
                   {(periodData?.topProducts || []).slice(0, 6).length ? (periodData?.topProducts || []).slice(0, 6).map((product, index) => (
                     <div key={product.product_name + index} className="flex items-center justify-between gap-3 rounded-xl border border-border/60 p-3">
-                      <div className="flex min-w-0 items-center gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold">{index + 1}</span><div className="min-w-0"><p className="truncate text-sm font-semibold">{product.product_name}</p><p className="truncate text-xs text-muted-foreground">{product.interaction_type} · {product.unique_visitors} unique visitors</p></div></div>
-                      <Badge variant="secondary">{product.interaction_count.toLocaleString()} events</Badge>
+                      <div className="flex min-w-0 items-center gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold">{index + 1}</span><div className="min-w-0"><p className="truncate text-sm font-semibold">{product.product_name}</p><p className="truncate text-xs text-muted-foreground">{product.click_count.toLocaleString()} clicks · {product.view_count.toLocaleString()} views · {product.unique_visitors} unique visitors</p></div></div>
+                      <Badge variant="secondary">{product.click_count > 0 ? `${product.click_count.toLocaleString()} clicks` : `${product.interaction_count.toLocaleString()} views`}</Badge>
                     </div>
                   )) : <p className="py-8 text-center text-sm text-muted-foreground">No product interactions recorded for this period.</p>}
                   <p className="text-xs text-muted-foreground">Interactions are interest signals; they do not confirm enquiries, orders or revenue.</p>
@@ -1034,29 +500,77 @@ const AnalyticsDashboard: React.FC = () => {
 
       {lifetimeData && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Database className="h-5 w-5 text-primary" />
-
-              <h2 className="text-xl font-semibold">
-                Lifetime Performance
-              </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <Database className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-semibold">
+                  Lifetime Performance
+                </h2>
+                <Badge variant="outline" className="text-[11px] font-medium">
+                  {dataSourceMode === "sql_rpc"
+                    ? "Exact SQL Aggregation"
+                    : "Full Paginated Sync (1k/page)"}
+                </Badge>
+                {!includeBots && lifetimeData.filteredBotSessions > 0 && (
+                  <Badge variant="secondary" className="text-[11px] font-medium">
+                    {lifetimeData.filteredBotSessions.toLocaleString()} bot sessions excluded
+                  </Badge>
+                )}
+              </div>
+              {lifetimeData.latestSessionAt && (
+                <p className="text-xs text-muted-foreground">
+                  Coverage:{" "}
+                  {lifetimeData.earliestSessionAt
+                    ? new Date(lifetimeData.earliestSessionAt).toLocaleDateString("en-KE", {
+                        timeZone: "Africa/Nairobi",
+                        dateStyle: "medium",
+                      })
+                    : "Start"}{" "}
+                  → Latest activity:{" "}
+                  {new Date(lifetimeData.latestSessionAt).toLocaleString("en-KE", {
+                    timeZone: "Africa/Nairobi",
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}{" "}
+                  EAT
+                </p>
+              )}
             </div>
 
-            {lastUpdated && (
-              <p className="text-xs text-muted-foreground hidden sm:block">
-                Data as of{" "}
-                {lastUpdated.toLocaleTimeString(
-                  "en-KE",
-                  {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  }
-                )}
-              </p>
-            )}
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                variant={includeBots ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIncludeBots((prev) => !prev)}
+                className="text-xs"
+              >
+                <Bot className="mr-1.5 h-3.5 w-3.5" />
+                {includeBots ? "Including Bots & Crawlers" : "Human Traffic Only"}
+              </Button>
+              {lastUpdated && (
+                <p className="text-xs text-muted-foreground hidden sm:block">
+                  Synced{" "}
+                  {lastUpdated.toLocaleTimeString(
+                    "en-KE",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    }
+                  )}
+                </p>
+              )}
+            </div>
           </div>
+
+          {dataSourceMode === "paginated_fallback" && (
+            <div className="rounded-lg border border-amber-300/70 bg-amber-50/70 dark:bg-amber-950/30 dark:border-amber-800/60 px-3 py-2 text-xs text-amber-900 dark:text-amber-200">
+              All historical pages are currently aggregated in browser fallback mode without the 1,000-row truncation bug. Apply migration{" "}
+              <code className="font-mono">202611210001_accurate_website_analytics.sql</code> in Supabase to enable instant Postgres aggregation and reliable exit-duration capture.
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 
@@ -1156,11 +670,13 @@ const AnalyticsDashboard: React.FC = () => {
 
               <CardContent className="space-y-1">
                 <div className="text-xs text-blue-100 bg-white/10 inline-block px-2 py-1 rounded-full">
-                  Browser sessions · all-time
+                  Browser sessions · {includeBots ? "all traffic" : "verified humans"}
                 </div>
 
                 <p className="text-xs text-blue-200">
-                  Exact count · not sampling
+                  {dataSourceMode === "sql_rpc"
+                    ? "Exact server-side SQL count · static SEO + SPA"
+                    : "Exact paginated count · static SEO + SPA"}
                 </p>
               </CardContent>
             </Card>
@@ -1709,18 +1225,29 @@ const AnalyticsDashboard: React.FC = () => {
                                 {i + 1}
                               </div>
 
-                              <div className="font-semibold">
-                                {prod.product_name}
+                              <div>
+                                <div className="font-semibold">
+                                  {prod.product_name}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {prod.unique_visitors.toLocaleString()} unique visitors ·{" "}
+                                  {prod.click_count.toLocaleString()} clicks ·{" "}
+                                  {prod.view_count.toLocaleString()} views
+                                </div>
                               </div>
                             </div>
 
-                            <div className="mt-2 sm:mt-0">
+                            <div className="mt-2 sm:mt-0 flex items-center gap-2">
+                              {prod.click_count > 0 && (
+                                <Badge variant="default" className="text-xs py-1 px-2.5">
+                                  {prod.click_count.toLocaleString()} Clicks
+                                </Badge>
+                              )}
                               <Badge
                                 variant="secondary"
-                                className="text-sm py-1 px-3"
+                                className="text-xs py-1 px-2.5"
                               >
-                                {prod.interaction_count}{" "}
-                                Interactions
+                                {prod.interaction_count.toLocaleString()} Total Events
                               </Badge>
                             </div>
                           </div>
@@ -1906,6 +1433,42 @@ const AnalyticsDashboard: React.FC = () => {
                         )
                       )}
                     </div>
+                  </CardContent>
+                </Card>
+
+                {/* Traffic Sources */}
+
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <ArrowUpRight className="h-5 w-5 text-primary" />
+                      Acquisition &amp; Traffic Sources
+                    </CardTitle>
+                    <CardDescription>
+                      Referrer attribution across {periodData.sessions.toLocaleString()} sessions (Africa/Nairobi EAT)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {periodData.trafficSources.length === 0 ? (
+                      <div className="text-center py-6 text-muted-foreground">
+                        No referrer data available in this period
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        {periodData.trafficSources.map((src) => (
+                          <div key={src.source} className="rounded-xl border border-border/70 bg-muted/30 p-3.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-semibold">{src.source}</span>
+                              <Badge variant="secondary">{src.percentage}%</Badge>
+                            </div>
+                            <p className="mt-2 text-2xl font-bold">{src.sessions.toLocaleString()}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {src.visitors.toLocaleString()} unique visitors
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
