@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { useVisitorTracking } from "@/hooks/useVisitorTracking";
+import { shouldSkipClientTracking } from "@/lib/analyticsHelpers";
 
 interface ProductTrackerProps {
   productName: string;
@@ -8,6 +9,8 @@ interface ProductTrackerProps {
   children: React.ReactNode;
   className?: string;
 }
+
+const sessionViewedProducts = new Set<string>();
 
 const ProductTracker: React.FC<ProductTrackerProps> = ({
   productName,
@@ -19,24 +22,32 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
   const elementRef = useRef<HTMLDivElement>(null);
   const { trackProductInteraction } = useVisitorTracking();
   const hasTrackedView = useRef(false);
-  const interactionCooldown = useRef<{ [key: string]: number }>({});
+  const lastClickAt = useRef<number>(0);
 
   useEffect(() => {
+    if (shouldSkipClientTracking()) return;
     const element = elementRef.current;
     if (!element) return;
+
+    const dedupeKey = productId || productName;
+    if (sessionViewedProducts.has(dedupeKey)) {
+      hasTrackedView.current = true;
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasTrackedView.current) {
-            setTimeout(() => {
+          if (entry.isIntersecting && !hasTrackedView.current && !sessionViewedProducts.has(dedupeKey)) {
+            hasTrackedView.current = true;
+            sessionViewedProducts.add(dedupeKey);
+            window.setTimeout(() => {
               trackProductInteraction(productName, "view", {
                 productId,
                 category,
                 elementSelector: `.product-${productId || productName.replace(/\s+/g, "-")}`,
               });
-              hasTrackedView.current = true;
-            }, 200);
+            }, 350);
           }
         });
       },
@@ -53,37 +64,18 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
     };
   }, [productName, productId, category, trackProductInteraction]);
 
-  const shouldTrackInteraction = (interactionType: string): boolean => {
-    const now = Date.now();
-    const lastInteraction = interactionCooldown.current[interactionType] || 0;
-    const cooldownPeriod = interactionType === "click" ? 1000 : 5000;
-
-    if (now - lastInteraction > cooldownPeriod) {
-      interactionCooldown.current[interactionType] = now;
-      return true;
-    }
-    return false;
-  };
-
   const handleClick = (event: React.MouseEvent) => {
-    if (shouldTrackInteraction("click")) {
-      trackProductInteraction(productName, "click", {
-        productId,
-        category,
-        elementSelector: `.product-${productId || productName.replace(/\s+/g, "-")}`,
-        clickTarget: (event.target as HTMLElement).tagName,
-      });
-    }
-  };
+    if (shouldSkipClientTracking()) return;
+    const now = Date.now();
+    if (now - lastClickAt.current < 1500) return;
+    lastClickAt.current = now;
 
-  const handleHover = () => {
-    if (shouldTrackInteraction("hover")) {
-      trackProductInteraction(productName, "hover", {
-        productId,
-        category,
-        elementSelector: `.product-${productId || productName.replace(/\s+/g, "-")}`,
-      });
-    }
+    trackProductInteraction(productName, "click", {
+      productId,
+      category,
+      elementSelector: `.product-${productId || productName.replace(/\s+/g, "-")}`,
+      clickTarget: (event.target as HTMLElement).tagName,
+    });
   };
 
   return (
@@ -91,7 +83,6 @@ const ProductTracker: React.FC<ProductTrackerProps> = ({
       ref={elementRef}
       className={`product-${productId || productName.replace(/\s+/g, "-")} ${className || ""}`}
       onClick={handleClick}
-      onMouseEnter={handleHover}
     >
       {children}
     </div>

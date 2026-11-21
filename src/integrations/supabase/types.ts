@@ -110,6 +110,21 @@ export type Database = {
         Args: { p_report_code: string };
         Returns: Json | null;
       };
+      get_website_analytics_report: {
+        Args: { p_range?: string; p_include_bots?: boolean };
+        Returns: Json;
+      };
+      record_visitor_engagement: {
+        Args: {
+          p_session_id: string;
+          p_visitor_id: string;
+          p_page_view_id?: string | null;
+          p_page_duration?: number | null;
+          p_session_duration?: number | null;
+          p_mark_exit?: boolean;
+        };
+        Returns: undefined;
+      };
       get_top_pages: {
         Args: { end_date?: string; limit_count?: number; start_date?: string };
         Returns: {
