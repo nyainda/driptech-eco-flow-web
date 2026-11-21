@@ -1,5 +1,42 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertTriangle,
+  ArrowUpRight,
+  Award,
+  CheckCircle2,
+  CheckSquare,
+  Download,
+  ExternalLink,
+  FileSearch,
+  Globe,
+  Layers,
+  Lightbulb,
+  Link2,
+  MapPin,
+  Monitor,
+  RefreshCw,
+  Search,
+  ShieldAlert,
+  Smartphone,
+  Sparkles,
+  Square,
+  Tablet,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,1165 +44,1909 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { extractEdgeFunctionError } from "@/lib/edge-functions";
 import {
-  Activity,
-  ArrowDownRight,
-  ArrowUpRight,
-  BarChart3,
-  BookOpen,
-  Check,
-  ChevronRight,
-  ClipboardList,
-  Download,
-  ExternalLink,
-  Eye,
-  Filter,
-  Gauge,
-  Globe2,
-  Lightbulb,
-  Link2,
-  MousePointerClick,
-  RefreshCw,
-  Search,
-  SearchCheck,
-  SearchX,
-  Target,
-  TrendingUp,
-} from "lucide-react";
+  buildGscCsv,
+  buildWeightedIntentSummary,
+  classifyIntent,
+  classifyPageSection,
+  computeLowCtrPages,
+  computeQuickWins,
+  findCannibalizedQueries,
+  formatCountryName,
+  formatSearchAppearanceLabel,
+  INTENT_COLORS,
+  isBrandedQuery,
+  mapQueryToTopPages,
+  readablePage,
+  summarizeBrandSplit,
+  summarizePageSections,
+  summarizeSitemaps,
+  type GscPayload,
+  type IntentName,
+  type IntentWeightMode,
+  type MetricRow,
+  type PageSectionName,
+  type UrlInspectionResult,
+} from "@/lib/gscHelpers";
 
-type MetricRow = {
-  keys?: string[];
-  clicks?: number;
-  impressions?: number;
-  ctr?: number;
-  position?: number;
+type SubTab =
+  | "overview"
+  | "keywords"
+  | "pages"
+  | "intent"
+  | "indexing"
+  | "ideas"
+  | "actions";
+
+const CHECKLIST_STORAGE_KEY = "driptech-gsc-completed-actions";
+
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  denied: "Google Search Console authorization was cancelled or denied.",
+  missing_parameters: "Google OAuth callback was missing required authorization parameters.",
+  invalid_state: "Google OAuth session expired or did not match. Please try connecting again.",
+  token_exchange_failed:
+    "Google did not issue a refresh token. Try reconnecting and ensure offline access consent is granted.",
+  save_failed: "Authorized with Google, but failed to save credentials in Supabase.",
 };
 
-type TrendRow = MetricRow & { keys: string[] };
-type GscTotals = {
-  clicks?: number;
-  impressions?: number;
-  ctr?: number;
-  position?: number;
-};
+const QUICK_INSPECT_PATHS = [
+  "/",
+  "/products",
+  "/irrigation-kits",
+  "/irrigation-guides-kenya",
+  "/pump-solar-sizing",
+  "/greenhouse-irrigation-kenya",
+];
 
-type GscPayload = {
-  connected: boolean;
-  email?: string;
-  property?: string;
-  startDate?: string;
-  endDate?: string;
-  previousStartDate?: string;
-  previousEndDate?: string;
-  totals?: GscTotals;
-  previousTotals?: GscTotals;
-  trend?: TrendRow[];
-  queries?: MetricRow[];
-  pages?: MetricRow[];
-  devices?: MetricRow[];
-  error?: string;
-};
+function formatNumber(value: number): string {
+  return Math.round(value || 0).toLocaleString();
+}
 
-type IntentName =
-  | "Transactional"
-  | "Commercial research"
-  | "Informational"
-  | "Technical"
-  | "Branded"
-  | "Other";
+function formatPct(ctr: number): string {
+  return `${((ctr || 0) * 100).toFixed(2)}%`;
+}
 
-type ActionItem = {
-  id: string;
+function formatPos(pos: number): string {
+  return (pos || 0) > 0 ? pos.toFixed(1) : "—";
+}
+
+function computeDelta(current: number, previous: number, inverse = false) {
+  if (!previous) return null;
+  const pct = ((current - previous) / previous) * 100;
+  const positive = inverse ? pct < 0 : pct > 0;
+  return {
+    label: `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`,
+    positive,
+  };
+}
+
+function verdictBadgeVariant(verdict: string): "default" | "secondary" | "destructive" | "outline" {
+  if (verdict === "PASS") return "default";
+  if (verdict === "FAIL") return "destructive";
+  if (verdict === "PARTIAL") return "secondary";
+  return "outline";
+}
+
+interface MetricCardProps {
   title: string;
-  detail: string;
-  kind: "snippet" | "ranking" | "content";
-  impact: string;
-};
-
-const INTENT_COLORS: Record<IntentName, string> = {
-  Transactional: "#16a34a",
-  "Commercial research": "#0d9488",
-  Informational: "#3b82f6",
-  Technical: "#8b5cf6",
-  Branded: "#f59e0b",
-  Other: "#94a3b8",
-};
-
-const numberFormat = (value?: number, digits = 0) =>
-  Number(value || 0).toLocaleString("en-US", {
-    maximumFractionDigits: digits,
-    minimumFractionDigits: digits,
-  });
-
-const percentageFormat = (value?: number) =>
-  ((Number(value) || 0) * 100).toFixed(1) + "%";
-
-const shortDate = (value: string) => {
-  const date = new Date(value + "T00:00:00");
-  return date.toLocaleDateString("en-KE", { month: "short", day: "numeric" });
-};
-
-const readablePage = (value?: string) => {
-  if (!value) return "Unknown page";
-  try {
-    return new URL(value).pathname || "/";
-  } catch {
-    return value;
-  }
-};
-
-const classifyIntent = (rawQuery: string): IntentName => {
-  const query = rawQuery.toLowerCase();
-  if (/drip\s?tech|dripstech/.test(query)) return "Branded";
-  if (/price|prices|cost|buy|purchase|supplier|shop|quote|for sale|near me/.test(query)) {
-    return "Transactional";
-  }
-  if (/best|top|compare|comparison|review|vs\b|company|companies/.test(query)) {
-    return "Commercial research";
-  }
-  if (/design|sizing|calculation|pressure|flow rate|spacing|filter|filtration|clog|repair|installation|install|maintenance|troubleshoot|pump|boq|emitter/.test(query)) {
-    return "Technical";
-  }
-  if (/how|what|why|guide|benefit|difference|meaning|types|which|when/.test(query)) {
-    return "Informational";
-  }
-  return "Other";
-};
-
-const exportCsv = (filename: string, rows: MetricRow[]) => {
-  const headers = ["Search term / page", "Clicks", "Impressions", "CTR", "Average position"];
-  const escapeCell = (value: unknown) =>
-    '"' + String(value ?? "").replace(/"/g, '""') + '"';
-  const csv = [
-    headers.map(escapeCell).join(","),
-    ...rows.map((row) =>
-      [
-        row.keys?.[0] || "",
-        row.clicks || 0,
-        row.impressions || 0,
-        Number(row.ctr || 0),
-        Number(row.position || 0).toFixed(2),
-      ]
-        .map(escapeCell)
-        .join(","),
-    ),
-  ].join("\r\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
-};
-
-const MetricCard = ({
-  label,
-  value,
-  helper,
-  icon: Icon,
-  delta,
-  deltaLabel,
-  inverse = false,
-}: {
-  label: string;
   value: string;
-  helper: string;
-  icon: React.ElementType;
-  delta?: number | null;
-  deltaLabel?: string;
-  inverse?: boolean;
-}) => {
-  const hasDelta = typeof delta === "number" && Number.isFinite(delta);
-  const improved = hasDelta && (inverse ? delta < 0 : delta > 0);
-  return (
-    <Card className="rounded-2xl border-border/70 shadow-sm">
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-muted-foreground">{label}</p>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {value}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">{helper}</p>
-          </div>
-          <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-600 dark:text-emerald-400">
-            <Icon className="h-5 w-5" />
-          </div>
-        </div>
-        {hasDelta ? (
-          <div className="mt-4 flex items-center gap-1.5 text-xs">
-            {improved ? (
-              <ArrowUpRight className="h-3.5 w-3.5 text-emerald-600" />
-            ) : (
-              <ArrowDownRight className="h-3.5 w-3.5 text-rose-500" />
-            )}
-            <span className={improved ? "font-semibold text-emerald-600" : "font-semibold text-rose-500"}>
-              {delta > 0 ? "+" : ""}
-              {delta.toFixed(1)}{deltaLabel || "%"}
-            </span>
-            <span className="text-muted-foreground">vs previous period</span>
-          </div>
-        ) : (
-          <div className="mt-4 text-xs text-muted-foreground">Previous-period comparison unavailable</div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
+  subtitle?: string;
+  delta?: { label: string; positive: boolean } | null;
+}
 
-const GSCAnalytics: React.FC = () => {
+const MetricCard: React.FC<MetricCardProps> = ({ title, value, subtitle, delta }) => (
+  <Card>
+    <CardHeader className="pb-2">
+      <CardDescription className="text-xs font-medium uppercase tracking-wide text-slate-500">
+        {title}
+      </CardDescription>
+      <div className="flex items-baseline justify-between gap-2">
+        <CardTitle className="text-2xl font-bold text-slate-900">{value}</CardTitle>
+        {delta && (
+          <span
+            className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold ${
+              delta.positive
+                ? "bg-emerald-50 text-emerald-700"
+                : "bg-rose-50 text-rose-700"
+            }`}
+          >
+            {delta.positive ? (
+              <TrendingUp className="h-3 w-3" />
+            ) : (
+              <TrendingDown className="h-3 w-3" />
+            )}
+            {delta.label}
+          </span>
+        )}
+      </div>
+    </CardHeader>
+    {subtitle && (
+      <CardContent className="pt-0 text-xs text-slate-500">{subtitle}</CardContent>
+    )}
+  </Card>
+);
+
+async function parseErrorContextJson(
+  invokeError: unknown,
+): Promise<{ reconnectRequired?: boolean; connected?: boolean; error?: string } | null> {
+  if (!invokeError || typeof invokeError !== "object" || !("context" in invokeError)) {
+    return null;
+  }
+  const ctx = (invokeError as { context?: Response }).context;
+  if (!ctx || typeof ctx.clone !== "function") return null;
+  try {
+    return (await ctx.clone().json()) as {
+      reconnectRequired?: boolean;
+      connected?: boolean;
+      error?: string;
+    };
+  } catch {
+    return null;
+  }
+}
+
+export const GSCAnalytics: React.FC = () => {
+  const [days, setDays] = useState<7 | 28 | 90>(28);
+  const [countryFilter, setCountryFilter] = useState<"all" | "ken">("all");
+  const [activeTab, setActiveTab] = useState<SubTab>("overview");
   const [payload, setPayload] = useState<GscPayload | null>(null);
-  const [days, setDays] = useState(28);
-  const [loading, setLoading] = useState(false);
-  const [connecting, setConnecting] = useState(false);
-  const [error, setError] = useState("");
-  const [activeView, setActiveView] = useState("overview");
-  const [querySearch, setQuerySearch] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [connecting, setConnecting] = useState<boolean>(false);
+  const [switchingProperty, setSwitchingProperty] = useState<boolean>(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [reconnectRequired, setReconnectRequired] = useState<boolean>(false);
+
+  // Keyword filters
+  const [kwSearch, setKwSearch] = useState("");
+  const [kwIntent, setKwIntent] = useState<"ALL" | IntentName>("ALL");
+  const [kwSegment, setKwSegment] = useState<"all" | "non_branded" | "branded">("all");
+  const [kwSort, setKwSort] = useState<"clicks" | "impressions" | "position" | "ctr">("clicks");
+  const [showAllKeywords, setShowAllKeywords] = useState(false);
+
+  // Page filters
   const [pageSearch, setPageSearch] = useState("");
+  const [pageSection, setPageSection] = useState<"ALL" | PageSectionName>("ALL");
+  const [pageSort, setPageSort] = useState<"clicks" | "impressions" | "low_ctr">("clicks");
+
+  // Intent weighting
+  const [intentWeight, setIntentWeight] = useState<IntentWeightMode>("clicks");
+
+  // Live URL Index Inspector
+  const [inspectInput, setInspectInput] = useState("/pump-solar-sizing");
+  const [inspecting, setInspecting] = useState(false);
+  const [inspectionResult, setInspectionResult] = useState<UrlInspectionResult | null>(null);
+  const [inspectionError, setInspectionError] = useState<string | null>(null);
+
+  // Action plan checklist
   const [completedActions, setCompletedActions] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
     try {
-      return JSON.parse(window.localStorage.getItem("driptech-gsc-completed-actions") || "[]");
+      const saved = localStorage.getItem(CHECKLIST_STORAGE_KEY);
+      return saved ? (JSON.parse(saved) as string[]) : [];
     } catch {
       return [];
     }
   });
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const { data, error: invokeError } = await supabase.functions.invoke("gsc-analytics", {
-        body: { days },
-      });
-      if (invokeError) throw invokeError;
-      if (!data) throw new Error("Search Console returned an empty response.");
-      if (data.error) throw new Error(data.error);
-      setPayload(data as GscPayload);
-    } catch (loadError: unknown) {
-      const message =
-        loadError instanceof Error ? loadError.message : "Could not load Search Console data.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [days]);
+  const loadReport = useCallback(
+    async (targetDays: 7 | 28 | 90, targetCountry: "all" | "ken") => {
+      setLoading(true);
+      setError(null);
+      setReconnectRequired(false);
 
-  const connect = async () => {
+      try {
+        const { data: rawData, error: invokeError } = await supabase.functions.invoke(
+          "gsc-analytics",
+          {
+            body: { action: "report", days: targetDays, country: targetCountry },
+          },
+        );
+        const data = rawData as GscPayload | null;
+
+        if (invokeError) {
+          const parsedContext = await parseErrorContextJson(invokeError);
+          const msg = await extractEdgeFunctionError(invokeError, data);
+          if (parsedContext?.reconnectRequired) {
+            setReconnectRequired(true);
+            setPayload((prev) =>
+              prev ? { ...prev, connected: true } : {
+                connected: true,
+                reconnectRequired: true,
+                trend: [],
+                queries: [],
+                pages: [],
+                devices: [],
+              },
+            );
+          }
+          setError(msg || "Could not load Google Search Console report.");
+          return;
+        }
+
+        if (data?.error) {
+          if (data.reconnectRequired) setReconnectRequired(true);
+          setError(data.error);
+          if (data.connected) setPayload(data);
+          return;
+        }
+
+        setPayload(data || null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to reach Search Console service.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
+  // Detect Google OAuth callback status on first mount
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const gscParam = url.searchParams.get("gsc");
+    if (gscParam) {
+      if (gscParam === "connected") {
+        setNotice(
+          "Google Search Console connected successfully. Loading verified DripTech organic metrics...",
+        );
+      } else {
+        setError(
+          OAUTH_ERROR_MESSAGES[gscParam] ||
+            `Google Search Console connection returned status: ${gscParam}.`,
+        );
+      }
+      url.searchParams.delete("gsc");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadReport(days, countryFilter);
+  }, [days, countryFilter, loadReport]);
+
+  const handleConnect = async () => {
     setConnecting(true);
-    setError("");
+    setError(null);
+    setNotice(null);
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke("gsc-oauth-start");
-      if (invokeError) throw invokeError;
-      if (!data?.url) throw new Error(data?.error || "Could not start Google connection.");
-      window.location.assign(data.url);
-    } catch (connectError: unknown) {
-      setError(connectError instanceof Error ? connectError.message : "Could not connect Google Search Console.");
+      const { data: rawData, error: invokeError } = await supabase.functions.invoke(
+        "gsc-oauth-start",
+        { body: {} },
+      );
+      const data = rawData as { url?: string; error?: string } | null;
+      if (invokeError) {
+        const msg = await extractEdgeFunctionError(invokeError, data);
+        setError(msg || "Unable to initiate Google Search Console login.");
+        return;
+      }
+      if (!data?.url) {
+        setError(data?.error || "Did not receive a Google authorization URL.");
+        return;
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not start Google OAuth.");
+    } finally {
       setConnecting(false);
     }
   };
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => {
+  const handlePropertySwitch = async (propertyUrl: string) => {
+    if (!propertyUrl || propertyUrl === payload?.property) return;
+    setSwitchingProperty(true);
+    setError(null);
+    setNotice(null);
     try {
-      window.localStorage.setItem(
-        "driptech-gsc-completed-actions",
-        JSON.stringify(completedActions),
+      const { data: rawData, error: invokeError } = await supabase.functions.invoke(
+        "gsc-analytics",
+        {
+          body: { action: "set_property", propertyUrl },
+        },
       );
-    } catch {
-      // The dashboard remains usable when browser storage is unavailable.
+      const data = rawData as {
+        connected?: boolean;
+        property?: string;
+        error?: string;
+      } | null;
+      if (invokeError) {
+        const msg = await extractEdgeFunctionError(invokeError, data);
+        setError(msg || "Could not switch Search Console property.");
+        return;
+      }
+      setNotice(`Switched active Search Console property to ${propertyUrl}.`);
+      await loadReport(days, countryFilter);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to switch property.");
+    } finally {
+      setSwitchingProperty(false);
     }
-  }, [completedActions]);
+  };
 
-  useEffect(() => {
-    const status = new URLSearchParams(window.location.search).get("gsc");
-    if (!status) return;
-    setError(
-      status === "connected"
-        ? "Google Search Console connected. Refreshing the latest data now."
-        : "Google connection status: " + status,
-    );
-    const url = new URL(window.location.href);
-    url.searchParams.delete("gsc");
-    window.history.replaceState({}, "", url.toString());
-    if (status === "connected") load();
-  }, [load]);
+  const handleInspectUrl = async (targetUrl?: string) => {
+    const queryUrl = (targetUrl ?? inspectInput).trim();
+    if (!queryUrl) {
+      setInspectionError("Enter a DripTech page URL or path (e.g. /pump-solar-sizing).");
+      return;
+    }
+    if (targetUrl) {
+      setInspectInput(readablePage(targetUrl));
+      setActiveTab("indexing");
+    }
+    setInspecting(true);
+    setInspectionError(null);
+    try {
+      const { data: rawData, error: invokeError } = await supabase.functions.invoke(
+        "gsc-analytics",
+        {
+          body: { action: "inspect_url", url: queryUrl },
+        },
+      );
+      const data = rawData as {
+        connected?: boolean;
+        inspection?: UrlInspectionResult;
+        error?: string;
+      } | null;
+      if (invokeError) {
+        const msg = await extractEdgeFunctionError(invokeError, data);
+        setInspectionError(msg || "URL inspection failed.");
+        return;
+      }
+      if (data?.error || !data?.inspection) {
+        setInspectionError(data?.error || "No inspection data returned by Google.");
+        return;
+      }
+      setInspectionResult(data.inspection);
+    } catch (err) {
+      setInspectionError(
+        err instanceof Error ? err.message : "Could not inspect URL via Search Console API.",
+      );
+    } finally {
+      setInspecting(false);
+    }
+  };
 
-  const connected = !!payload?.connected;
-  const queries = payload?.queries || [];
-  const pages = payload?.pages || [];
-  const devices = payload?.devices || [];
-  const totals = payload?.totals || {};
-  const previousTotals = payload?.previousTotals || {};
+  const toggleActionItem = (id: string) => {
+    setCompletedActions((prev) => {
+      const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
+      try {
+        localStorage.setItem(CHECKLIST_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // Ignore storage errors in private mode
+      }
+      return next;
+    });
+  };
 
-  const trendData = useMemo(
-    () =>
-      (payload?.trend || []).map((row) => ({
-        ...row,
-        date: row.keys?.[0] || "",
-      })),
-    [payload?.trend],
+  // Memoized SEO Intelligence derivations
+  const queryPageMap = useMemo(
+    () => mapQueryToTopPages(payload?.queryPages || []),
+    [payload?.queryPages],
   );
 
-  const queryRows = useMemo(
-    () =>
-      queries.filter((row) =>
-        (row.keys?.[0] || "").toLowerCase().includes(querySearch.toLowerCase()),
-      ),
-    [queries, querySearch],
+  const brandSplit = useMemo(
+    () => summarizeBrandSplit(payload?.queries || []),
+    [payload?.queries],
   );
 
-  const pageRows = useMemo(
-    () =>
-      pages.filter((row) =>
-        (row.keys?.[0] || "").toLowerCase().includes(pageSearch.toLowerCase()),
-      ),
-    [pages, pageSearch],
+  const intentSummary = useMemo(
+    () => buildWeightedIntentSummary(payload?.queries || [], intentWeight),
+    [payload?.queries, intentWeight],
+  );
+
+  const cannibalizedQueries = useMemo(
+    () => findCannibalizedQueries(payload?.queryPages || [], 20),
+    [payload?.queryPages],
   );
 
   const quickWins = useMemo(
-    () =>
-      queries
-        .filter(
-          (row) =>
-            Number(row.impressions || 0) >= 10 &&
-            Number(row.position || 0) >= 5 &&
-            Number(row.position || 0) <= 20,
-        )
-        .sort((a, b) => Number(b.impressions || 0) - Number(a.impressions || 0))
-        .slice(0, 8),
-    [queries],
+    () => computeQuickWins(payload?.queries || [], queryPageMap, 15),
+    [payload?.queries, queryPageMap],
   );
 
   const lowCtrPages = useMemo(
-    () =>
-      pages
-        .filter(
-          (row) =>
-            Number(row.impressions || 0) >= 20 &&
-            Number(row.ctr || 0) < 0.02,
-        )
-        .sort((a, b) => Number(b.impressions || 0) - Number(a.impressions || 0))
-        .slice(0, 6),
-    [pages],
+    () => computeLowCtrPages(payload?.pages || [], 50),
+    [payload?.pages],
   );
 
-  const intentData = useMemo(() => {
-    const counts = new Map<IntentName, number>();
-    queries.forEach((row) => {
-      const intent = classifyIntent(row.keys?.[0] || "");
-      counts.set(intent, (counts.get(intent) || 0) + 1);
-    });
-    return Array.from(counts.entries())
-      .map(([name, value]) => ({
-        name,
-        value,
-        fill: INTENT_COLORS[name],
-      }))
-      .sort((a, b) => b.value - a.value);
-  }, [queries]);
+  const sectionSummary = useMemo(
+    () => summarizePageSections(payload?.pages || []),
+    [payload?.pages],
+  );
 
-  const contentIdeas = useMemo(() => {
-    const ideas: Array<{ title: string; reason: string; source: string; type: string }> = [];
-    quickWins.slice(0, 4).forEach((row) => {
-      const term = row.keys?.[0] || "this search topic";
-      ideas.push({
-        title: "Strengthen the page targeting “" + term + "”",
-        reason:
-          numberFormat(row.impressions) +
-          " impressions with an average position of " +
-          numberFormat(row.position, 1) +
-          ". Improve topical depth, headings and related internal links.",
-        source: term,
-        type: "Ranking opportunity",
-      });
-    });
-    lowCtrPages.slice(0, 3).forEach((row) => {
-      const page = readablePage(row.keys?.[0]);
-      ideas.push({
-        title: "Rewrite the search snippet for " + page,
-        reason:
-          numberFormat(row.impressions) +
-          " impressions but " +
-          percentageFormat(row.ctr) +
-          " CTR. Test a clearer title and a more specific meta description.",
-        source: row.keys?.[0] || page,
-        type: "CTR improvement",
-      });
-    });
-    queries
-      .filter((row) => {
-        const intent = classifyIntent(row.keys?.[0] || "");
-        return (
-          (intent === "Informational" || intent === "Technical") &&
-          Number(row.impressions || 0) >= 5
-        );
-      })
-      .slice(0, 3)
-      .forEach((row) => {
-        const term = row.keys?.[0] || "this question";
-        ideas.push({
-          title: "Answer the question “" + term + "”",
-          reason:
-            "This wording appears in the Search Console query sample. Add a useful guide section or FAQ answer and link it to the most relevant product or service page.",
-          source: term,
-          type: "Content demand",
-        });
-      });
-    return ideas.slice(0, 8);
-  }, [quickWins, lowCtrPages, queries]);
+  const sitemapSummary = useMemo(
+    () => summarizeSitemaps(payload?.sitemaps || []),
+    [payload?.sitemaps],
+  );
 
-  const actionItems = useMemo<ActionItem[]>(() => {
-    const items: ActionItem[] = [];
-    lowCtrPages.slice(0, 4).forEach((row) => {
-      const page = readablePage(row.keys?.[0]);
+  const filteredQueries = useMemo(() => {
+    const searchLower = kwSearch.trim().toLowerCase();
+    const list = (payload?.queries || []).filter((row) => {
+      const q = row.keys[0] || "";
+      if (searchLower && !q.toLowerCase().includes(searchLower)) return false;
+      if (kwIntent !== "ALL" && classifyIntent(q) !== kwIntent) return false;
+      if (kwSegment === "branded" && !isBrandedQuery(q)) return false;
+      if (kwSegment === "non_branded" && isBrandedQuery(q)) return false;
+      return true;
+    });
+
+    return [...list].sort((a, b) => {
+      if (kwSort === "impressions") return b.impressions - a.impressions;
+      if (kwSort === "ctr") return b.ctr - a.ctr;
+      if (kwSort === "position") return a.position - b.position;
+      return b.clicks - a.clicks || b.impressions - a.impressions;
+    });
+  }, [payload?.queries, kwSearch, kwIntent, kwSegment, kwSort]);
+
+  const filteredPages = useMemo(() => {
+    const searchLower = pageSearch.trim().toLowerCase();
+    const list = (payload?.pages || []).filter((row) => {
+      const url = row.keys[0] || "";
+      const path = readablePage(url).toLowerCase();
+      if (searchLower && !path.includes(searchLower)) return false;
+      if (pageSection !== "ALL" && classifyPageSection(url) !== pageSection) return false;
+      return true;
+    });
+
+    return [...list].sort((a, b) => {
+      if (pageSort === "impressions") return b.impressions - a.impressions;
+      if (pageSort === "low_ctr") {
+        const bGap = Math.max(0, b.impressions * 0.05 - b.clicks);
+        const aGap = Math.max(0, a.impressions * 0.05 - a.clicks);
+        return bGap - aGap;
+      }
+      return b.clicks - a.clicks || b.impressions - a.impressions;
+    });
+  }, [payload?.pages, pageSearch, pageSection, pageSort]);
+
+  const actionPlanItems = useMemo(() => {
+    const items: Array<{
+      id: string;
+      priority: "High" | "Medium" | "Monitor";
+      title: string;
+      detail: string;
+      targetUrl?: string;
+    }> = [];
+
+    if (cannibalizedQueries.length > 0) {
+      const topCannibal = cannibalizedQueries[0];
       items.push({
-        id: "snippet:" + (row.keys?.[0] || page),
-        title: "Improve title and meta description — " + page,
-        detail:
-          numberFormat(row.impressions) +
-          " impressions · " +
-          percentageFormat(row.ctr) +
-          " CTR",
-        kind: "snippet",
-        impact: "CTR",
+        id: "resolve-cannibalization",
+        priority: "High",
+        title: `Consolidate ${cannibalizedQueries.length} keyword cannibalization conflict(s)`,
+        detail: `"${topCannibal.query}" splits ${formatNumber(topCannibal.totalImpressions)} impressions across ${topCannibal.pages.length} URLs (primary: ${readablePage(topCannibal.primaryPage)}). Reinforce one canonical target and link secondary pages to it.`,
+        targetUrl: topCannibal.primaryPage,
       });
-    });
-    quickWins.slice(0, 5).forEach((row) => {
-      const term = row.keys?.[0] || "Search term";
+    }
+
+    if (quickWins.length > 0) {
+      const topWin = quickWins[0];
       items.push({
-        id: "ranking:" + term,
-        title: "Improve relevance for “" + term + "”",
+        id: "push-quick-wins",
+        priority: "High",
+        title: `Boost ${quickWins.length} striking-distance keywords (Pos 4–20)`,
+        detail: `Top upside: "${topWin.keys[0]}" ranks #${formatPos(topWin.position)} with ${formatNumber(topWin.impressions)} impressions (+~${formatNumber(topWin.upsideClicks)} estimated clicks/period)${topWin.topPage ? ` on ${readablePage(topWin.topPage)}` : ""}.`,
+        targetUrl: topWin.topPage || undefined,
+      });
+    }
+
+    if (lowCtrPages.length > 0) {
+      const topLowCtr = lowCtrPages[0];
+      items.push({
+        id: "improve-low-ctr-titles",
+        priority: "High",
+        title: `Rewrite titles & meta descriptions on ${lowCtrPages.length} low-CTR pages`,
+        detail: `${readablePage(topLowCtr.keys[0])} has ${formatNumber(topLowCtr.impressions)} impressions at ${formatPct(topLowCtr.ctr)} CTR. Add clear KES pricing / Kenya delivery cues to lift clicks.`,
+        targetUrl: topLowCtr.keys[0],
+      });
+    }
+
+    if (sitemapSummary.sitemapCount > 0) {
+      const ratio =
+        sitemapSummary.totalSubmitted > 0
+          ? Math.round((sitemapSummary.totalIndexed / sitemapSummary.totalSubmitted) * 100)
+          : 0;
+      items.push({
+        id: "monitor-sitemap-coverage",
+        priority: sitemapSummary.totalErrors > 0 || ratio < 70 ? "High" : "Monitor",
+        title: `Sitemap indexing coverage: ${sitemapSummary.totalIndexed}/${sitemapSummary.totalSubmitted} URLs (${ratio}%)`,
         detail:
-          numberFormat(row.impressions) +
-          " impressions · position " +
-          numberFormat(row.position, 1),
-        kind: "ranking",
-        impact: "Ranking",
+          sitemapSummary.totalErrors > 0 || sitemapSummary.totalWarnings > 0
+            ? `${sitemapSummary.totalErrors} sitemap error(s) and ${sitemapSummary.totalWarnings} warning(s) reported by Search Console.`
+            : "Inspect unindexed calculators, product pages, or county landing pages in the Indexing & Cannibalization tab.",
       });
-    });
-    queries
-      .filter((row) => {
-        const intent = classifyIntent(row.keys?.[0] || "");
-        return (
-          (intent === "Informational" || intent === "Technical") &&
-          Number(row.impressions || 0) >= 5
-        );
-      })
-      .slice(0, 3)
-      .forEach((row) => {
-        const term = row.keys?.[0] || "Question";
-        items.push({
-          id: "content:" + term,
-          title: "Publish or expand content for “" + term + "”",
-          detail: "Observed in the returned query sample · " + numberFormat(row.impressions) + " impressions",
-          kind: "content",
-          impact: "Content",
-        });
-      });
-    return items.slice(0, 12);
-  }, [lowCtrPages, quickWins, queries]);
+    }
 
-  const comparePercent = (current?: number, previous?: number) => {
-    if (typeof current !== "number" || typeof previous !== "number" || previous === 0) return null;
-    return ((current - previous) / Math.abs(previous)) * 100;
-  };
-
-  const comparePoints = (current?: number, previous?: number) => {
-    if (typeof current !== "number" || typeof previous !== "number") return null;
-    return (current - previous) * 100;
-  };
-
-  const comparePosition = (current?: number, previous?: number) => {
-    if (typeof current !== "number" || typeof previous !== "number") return null;
-    return current - previous;
-  };
-
-  const toggleAction = (id: string) => {
-    setCompletedActions((current) =>
-      current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+    const productSnippet = (payload?.searchAppearances || []).find((s) =>
+      (s.keys[0] || "").includes("PRODUCT"),
     );
+    items.push({
+      id: "verify-product-snippets",
+      priority: productSnippet ? "Monitor" : "Medium",
+      title: productSnippet
+        ? `Product Snippets active (${formatNumber(productSnippet.impressions)} impressions)`
+        : "Validate Product JSON-LD snippets & availability in Search Console",
+      detail:
+        "Ensure all DripTech products & irrigation kits include schema availability, review ratings, and accurate KES prices for Google Merchant / Product rich results.",
+      targetUrl: "/products",
+    });
+
+    return items;
+  }, [
+    cannibalizedQueries,
+    quickWins,
+    lowCtrPages,
+    sitemapSummary,
+    payload?.searchAppearances,
+  ]);
+
+  const handleExportCsv = () => {
+    const csv = buildGscCsv(filteredQueries, queryPageMap);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `driptech-gsc-${countryFilter}-${days}d.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
-  const navItems = [
-    { id: "overview", label: "Overview", icon: BarChart3 },
-    { id: "keywords", label: "Keyword insights", icon: Search },
-    { id: "pages", label: "Pages & content", icon: Globe2 },
-    { id: "intent", label: "Search intent", icon: Target },
-    { id: "ideas", label: "Content ideas", icon: Lightbulb },
-    { id: "actions", label: "SEO action plan", icon: ClipboardList },
-  ];
+  const totals = payload?.totals;
+  const prevTotals = payload?.previousTotals;
+  const isConnected = Boolean(payload?.connected);
 
-  const periodLabel =
-    payload?.startDate && payload?.endDate
-      ? shortDate(payload.startDate) + " – " + shortDate(payload.endDate)
-      : "Selected period";
-  const previousLabel =
-    payload?.previousStartDate && payload?.previousEndDate
-      ? shortDate(payload.previousStartDate) + " – " + shortDate(payload.previousEndDate)
-      : "Previous period";
+  if (loading && !payload) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Search className="h-5 w-5 text-emerald-600" />
+            Google Search Console · DripTech Organic Search
+          </CardTitle>
+          <CardDescription>
+            Loading verified queries, landing pages, indexation status, and Kenya search demand...
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[1, 2, 3, 4].map((idx) => (
+              <div key={idx} className="h-24 animate-pulse rounded-lg bg-slate-100" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6 lg:flex-row lg:items-center lg:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-              <SearchCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold tracking-tight sm:text-2xl">SEO performance</h2>
-              <p className="text-sm text-muted-foreground">Google Search Console · DripTech organic search</p>
-            </div>
-            <Badge variant={connected ? "default" : "secondary"} className="ml-1">
-              {connected ? "Connected" : "Not connected"}
-            </Badge>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-            {payload?.email && <span>{payload.email}</span>}
-            {payload?.property && <span>Property: {payload.property}</span>}
-            {connected && <span>Reporting period: {periodLabel}</span>}
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            aria-label="Search Console date range"
-            className="h-10 rounded-lg border border-input bg-background px-3 text-sm"
-            value={days}
-            onChange={(event) => setDays(Number(event.target.value))}
-          >
-            <option value={7}>Last 7 days</option>
-            <option value={28}>Last 28 days</option>
-            <option value={90}>Last 90 days</option>
-          </select>
-          <Button variant="outline" onClick={load} disabled={loading || connecting}>
-            <RefreshCw className={"mr-2 h-4 w-4 " + (loading ? "animate-spin" : "")} />
-            Refresh
-          </Button>
-          <Button onClick={connect} disabled={loading || connecting}>
-            <Link2 className="mr-2 h-4 w-4" />
-            {connecting ? "Connecting…" : connected ? "Reconnect Google" : "Connect Google"}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Open Google Search Console"
-            onClick={() => window.open("https://search.google.com/search-console", "_blank", "noopener,noreferrer")}
-          >
-            <ExternalLink className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {error && (
-        <div className="flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/5 p-4 text-sm">
-          <SearchX className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" />
-          <div className="min-w-0">
-            <p className="font-medium text-foreground">Search Console notice</p>
-            <p className="mt-1 text-muted-foreground">{error}</p>
-          </div>
-        </div>
+    <div className="space-y-5">
+      {notice && (
+        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          <AlertTitle>Search Console Updated</AlertTitle>
+          <AlertDescription className="flex flex-wrap items-center justify-between gap-2">
+            <span>{notice}</span>
+            <Button variant="ghost" size="sm" onClick={() => setNotice(null)}>
+              Dismiss
+            </Button>
+          </AlertDescription>
+        </Alert>
       )}
 
-      {loading && !payload ? (
-        <Card className="rounded-2xl">
-          <CardContent className="flex min-h-64 flex-col items-center justify-center gap-3">
-            <RefreshCw className="h-8 w-8 animate-spin text-emerald-600" />
-            <p className="text-sm text-muted-foreground">Loading Google Search Console data…</p>
-          </CardContent>
-        </Card>
-      ) : !connected ? (
-        <Card className="rounded-2xl border-dashed">
-          <CardContent className="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
-            <div className="rounded-2xl bg-emerald-500/10 p-4 text-emerald-600">
-              <Search className="h-8 w-8" />
-            </div>
-            <h3 className="mt-5 text-lg font-semibold">Connect Google Search Console</h3>
-            <p className="mt-2 max-w-lg text-sm text-muted-foreground">
-              Link the verified DripTech property to load organic clicks, impressions, rankings,
-              search terms, landing pages and search-intent insights.
-            </p>
-            <Button className="mt-5" onClick={connect} disabled={connecting}>
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>
+            {reconnectRequired
+              ? "Google Search Console Re-Authorization Required"
+              : "Search Console Error"}
+          </AlertTitle>
+          <AlertDescription className="flex flex-wrap items-center justify-between gap-3">
+            <span>{error}</span>
+            {reconnectRequired && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="bg-white text-slate-900 hover:bg-slate-100"
+                onClick={handleConnect}
+                disabled={connecting}
+              >
+                <Link2 className="mr-1.5 h-3.5 w-3.5" />
+                {connecting ? "Redirecting..." : "Reconnect Google"}
+              </Button>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {!isConnected ? (
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Search className="h-5 w-5 text-emerald-600" />
+              Connect Google Search Console
+            </CardTitle>
+            <CardDescription>
+              Link your verified Search Console property (e.g.{" "}
+              <code>sc-domain:dripstech.co.ke</code> or <code>https://www.dripstech.co.ke/</code>)
+              to track Kenya buyer keywords, ranking landing pages, cannibalization, sitemaps, and
+              live URL indexation directly inside DripTech Admin.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={handleConnect} disabled={connecting}>
               <Link2 className="mr-2 h-4 w-4" />
-              {connecting ? "Connecting…" : "Connect Google"}
+              {connecting ? "Connecting to Google..." : "Connect Google Search Console"}
             </Button>
           </CardContent>
         </Card>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-sky-500/20 bg-sky-500/5 px-4 py-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4 text-sky-600" />
-              <span>Google data is delayed. This report intentionally ends three days behind today.</span>
-            </div>
-            <span>Comparison: {previousLabel}</span>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <MetricCard
-              label="Organic clicks"
-              value={numberFormat(totals.clicks)}
-              helper="Visits from Google search results"
-              icon={MousePointerClick}
-              delta={comparePercent(totals.clicks, previousTotals.clicks)}
-            />
-            <MetricCard
-              label="Search impressions"
-              value={numberFormat(totals.impressions)}
-              helper="Appearances in Google search"
-              icon={Eye}
-              delta={comparePercent(totals.impressions, previousTotals.impressions)}
-            />
-            <MetricCard
-              label="Average CTR"
-              value={percentageFormat(totals.ctr)}
-              helper="Clicks ÷ impressions"
-              icon={TrendingUp}
-              delta={comparePoints(totals.ctr, previousTotals.ctr)}
-              deltaLabel=" pp"
-            />
-            <MetricCard
-              label="Average position"
-              value={numberFormat(totals.position, 1)}
-              helper="Lower position number is better"
-              icon={Gauge}
-              delta={comparePosition(totals.position, previousTotals.position)}
-              deltaLabel=" positions"
-              inverse
-            />
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-[224px_minmax(0,1fr)]">
-            <aside className="rounded-2xl border border-border/70 bg-card p-3 shadow-sm">
-              <p className="px-3 pb-3 pt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                SEO workspace
-              </p>
-              <nav aria-label="SEO dashboard sections" className="flex gap-1 overflow-x-auto lg:flex-col">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const active = activeView === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setActiveView(item.id)}
-                      aria-current={active ? "page" : undefined}
-                      className={
-                        "inline-flex shrink-0 items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium transition-colors " +
-                        (active
-                          ? "bg-emerald-500/10 text-emerald-700 shadow-sm dark:text-emerald-300"
-                          : "text-muted-foreground hover:bg-muted/70 hover:text-foreground")
-                      }
+          {/* Header Controls */}
+          <Card className="border-slate-200">
+            <CardHeader className="pb-4">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div className="space-y-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-lg font-bold text-slate-900">
+                      <Search className="h-5 w-5 text-emerald-600" />
+                      SEO Performance · Google Search Console
+                    </CardTitle>
+                    <Badge
+                      variant="outline"
+                      className="border-emerald-200 bg-emerald-50 text-emerald-700"
                     >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <span>{item.label}</span>
-                      {active && <span className="ml-auto hidden h-1.5 w-1.5 rounded-full bg-emerald-500 lg:block" />}
-                    </button>
-                  );
-                })}
-              </nav>
-              <div className="mt-4 hidden rounded-xl bg-muted/50 p-3 text-xs leading-5 text-muted-foreground lg:block">
-                Use live Search Console data to decide which pages and search topics to improve next.
-              </div>
-            </aside>
-            <div className="min-w-0 space-y-5">
-
-          {activeView === "overview" && (
-            <div className="space-y-5">
-              <div className="grid gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.85fr)]">
-                <Card className="rounded-2xl">
-                  <CardHeader className="flex flex-row items-start justify-between space-y-0">
-                    <div>
-                      <CardTitle>Search visibility trend</CardTitle>
-                      <CardDescription>{periodLabel} · Daily clicks and impressions</CardDescription>
-                    </div>
-                    <Badge variant="outline">Organic search</Badge>
-                  </CardHeader>
-                  <CardContent>
-                    {payload?.trend?.length ? (
-                      <div className="h-[300px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={trendData} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
-                            <defs>
-                              <linearGradient id="gscClicksFill" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#059669" stopOpacity={0.28} />
-                                <stop offset="95%" stopColor="#059669" stopOpacity={0.02} />
-                              </linearGradient>
-                              <linearGradient id="gscImpressionsFill" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.2} />
-                                <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.01} />
-                              </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
-                            <XAxis
-                              dataKey="date"
-                              tickFormatter={(value) => shortDate(String(value))}
-                              minTickGap={24}
-                              tick={{ fontSize: 11 }}
-                              stroke="#94a3b8"
-                            />
-                            <YAxis yAxisId="clicks" tick={{ fontSize: 11 }} stroke="#059669" />
-                            <YAxis yAxisId="impressions" orientation="right" tick={{ fontSize: 11 }} stroke="#0ea5e9" />
-                            <Tooltip
-                              labelFormatter={(value) => shortDate(String(value))}
-                              formatter={(value, name) => [numberFormat(Number(value)), String(name)]}
-                              contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }}
-                            />
-                            <Legend />
-                            <Area yAxisId="clicks" type="monotone" dataKey="clicks" name="Clicks" stroke="#059669" fill="url(#gscClicksFill)" strokeWidth={2.5} />
-                            <Area yAxisId="impressions" type="monotone" dataKey="impressions" name="Impressions" stroke="#0ea5e9" fill="url(#gscImpressionsFill)" strokeWidth={2} />
-                          </AreaChart>
-                        </ResponsiveContainer>
-                      </div>
-                    ) : (
-                      <div className="flex h-[260px] items-center justify-center text-sm text-muted-foreground">
-                        No daily Search Console trend rows were returned for this period.
-                      </div>
+                      Connected{payload?.email ? ` · ${payload.email}` : ""}
+                    </Badge>
+                    {countryFilter === "ken" && (
+                      <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+                        <MapPin className="mr-1 h-3 w-3" /> Kenya Traffic Only
+                      </Badge>
                     )}
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-2xl">
-                  <CardHeader>
-                    <CardTitle>Search intent mix</CardTitle>
-                    <CardDescription>Heuristic labels applied to the returned query sample</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {intentData.length ? (
-                      <>
-                        <div className="h-[210px]">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                              <Pie data={intentData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={82} paddingAngle={3}>
-                                {intentData.map((entry) => (
-                                  <Cell key={entry.name} fill={entry.fill} />
-                                ))}
-                              </Pie>
-                              <Tooltip formatter={(value) => [String(value) + " queries", "Sample count"]} />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <div className="space-y-2">
-                          {intentData.slice(0, 5).map((item) => (
-                            <div key={item.name} className="flex items-center justify-between text-sm">
-                              <span className="flex items-center gap-2 text-muted-foreground">
-                                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.fill }} />
-                                {item.name}
-                              </span>
-                              <span className="font-semibold tabular-nums">{item.value}</span>
-                            </div>
+                  </div>
+                  <CardDescription className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                    {payload?.startDate && payload?.endDate && (
+                      <span>
+                        Window: <strong>{payload.startDate}</strong> to{" "}
+                        <strong>{payload.endDate}</strong> (vs{" "}
+                        {payload.previousStartDate} → {payload.previousEndDate})
+                      </span>
+                    )}
+                    {(payload?.verifiedProperties?.length || 0) > 1 ? (
+                      <label className="inline-flex items-center gap-1.5">
+                        <span>Property:</span>
+                        <select
+                          aria-label="Active Search Console property"
+                          className="rounded border border-slate-300 bg-white px-2 py-0.5 text-xs font-medium text-slate-800"
+                          value={payload?.property || ""}
+                          disabled={switchingProperty}
+                          onChange={(e) => void handlePropertySwitch(e.target.value)}
+                        >
+                          {payload?.verifiedProperties?.map((prop) => (
+                            <option key={prop.siteUrl} value={prop.siteUrl}>
+                              {prop.siteUrl}
+                            </option>
                           ))}
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex h-[260px] items-center justify-center text-sm text-muted-foreground">
-                        Query data is not available yet.
+                        </select>
+                      </label>
+                    ) : payload?.property ? (
+                      <span>
+                        Property: <code>{payload.property}</code>
+                      </span>
+                    ) : null}
+                  </CardDescription>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Market filter */}
+                  <div className="inline-flex rounded-md border border-slate-200 bg-slate-50 p-0.5">
+                    <Button
+                      size="sm"
+                      variant={countryFilter === "all" ? "default" : "ghost"}
+                      className="h-7 px-2.5 text-xs"
+                      onClick={() => setCountryFilter("all")}
+                    >
+                      <Globe className="mr-1 h-3.5 w-3.5" />
+                      All Countries
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={countryFilter === "ken" ? "default" : "ghost"}
+                      className="h-7 px-2.5 text-xs"
+                      onClick={() => setCountryFilter("ken")}
+                    >
+                      <MapPin className="mr-1 h-3.5 w-3.5" />
+                      Kenya (KE)
+                    </Button>
+                  </div>
+
+                  {/* Period toggle */}
+                  <div className="inline-flex rounded-md border border-slate-200 bg-slate-50 p-0.5">
+                    {([7, 28, 90] as const).map((periodDays) => (
+                      <Button
+                        key={periodDays}
+                        size="sm"
+                        variant={days === periodDays ? "default" : "ghost"}
+                        className="h-7 px-2.5 text-xs"
+                        onClick={() => setDays(periodDays)}
+                      >
+                        {periodDays}d
+                      </Button>
+                    ))}
+                  </div>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void loadReport(days, countryFilter)}
+                    disabled={loading}
+                  >
+                    <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+                    Refresh
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleConnect}
+                    disabled={connecting}
+                    title="Re-authorize Google Search Console"
+                  >
+                    <Link2 className="mr-1 h-3.5 w-3.5" />
+                    Reconnect
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+
+          {/* Main Sub-Navigation Tabs */}
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as SubTab)}>
+            <TabsList className="flex h-auto flex-wrap justify-start gap-1 bg-slate-100 p-1">
+              <TabsTrigger value="overview" className="text-xs sm:text-sm">
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="keywords" className="text-xs sm:text-sm">
+                Keywords ({payload?.queries?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger value="pages" className="text-xs sm:text-sm">
+                Pages ({payload?.pages?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger value="intent" className="text-xs sm:text-sm">
+                Search Intent
+              </TabsTrigger>
+              <TabsTrigger value="indexing" className="text-xs sm:text-sm">
+                Indexing & Cannibalization
+                {cannibalizedQueries.length > 0 && (
+                  <Badge variant="secondary" className="ml-1.5 px-1.5 py-0 text-[10px]">
+                    {cannibalizedQueries.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="ideas" className="text-xs sm:text-sm">
+                Opportunities ({quickWins.length + lowCtrPages.length})
+              </TabsTrigger>
+              <TabsTrigger value="actions" className="text-xs sm:text-sm">
+                Action Plan ({completedActions.length}/{actionPlanItems.length})
+              </TabsTrigger>
+            </TabsList>
+
+            {/* OVERVIEW TAB */}
+            <TabsContent value="overview" className="space-y-4">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <MetricCard
+                  title="Organic Clicks"
+                  value={formatNumber(totals?.clicks || 0)}
+                  subtitle={`Prev period: ${formatNumber(prevTotals?.clicks || 0)}`}
+                  delta={
+                    totals && prevTotals
+                      ? computeDelta(totals.clicks, prevTotals.clicks)
+                      : null
+                  }
+                />
+                <MetricCard
+                  title="Search Impressions"
+                  value={formatNumber(totals?.impressions || 0)}
+                  subtitle={`Prev period: ${formatNumber(prevTotals?.impressions || 0)}`}
+                  delta={
+                    totals && prevTotals
+                      ? computeDelta(totals.impressions, prevTotals.impressions)
+                      : null
+                  }
+                />
+                <MetricCard
+                  title="Average CTR"
+                  value={formatPct(totals?.ctr || 0)}
+                  subtitle={`Prev period: ${formatPct(prevTotals?.ctr || 0)}`}
+                  delta={
+                    totals && prevTotals ? computeDelta(totals.ctr, prevTotals.ctr) : null
+                  }
+                />
+                <MetricCard
+                  title="Average Position"
+                  value={formatPos(totals?.position || 0)}
+                  subtitle={`Prev period: ${formatPos(prevTotals?.position || 0)} (lower is better)`}
+                  delta={
+                    totals && prevTotals
+                      ? computeDelta(totals.position, prevTotals.position, true)
+                      : null
+                  }
+                />
+              </div>
+
+              {/* Branded vs Non-Branded Organic Demand Split */}
+              <div className="grid gap-3 md:grid-cols-2">
+                <Card className="border-emerald-200 bg-emerald-50/40">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2 text-sm font-semibold text-emerald-900">
+                        <Target className="h-4 w-4 text-emerald-600" />
+                        Non-Branded Buyer Searches (New Customer Discovery)
+                      </CardTitle>
+                      <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
+                        {brandSplit.nonBranded.queries} queries
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-4 gap-2 text-xs">
+                    <div>
+                      <div className="text-slate-500">Clicks</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatNumber(brandSplit.nonBranded.clicks)}
                       </div>
-                    )}
+                    </div>
+                    <div>
+                      <div className="text-slate-500">Impressions</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatNumber(brandSplit.nonBranded.impressions)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-500">CTR</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatPct(brandSplit.nonBranded.ctr)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-500">Avg Pos</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatPos(brandSplit.nonBranded.avgPosition)}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                        <Award className="h-4 w-4 text-teal-600" />
+                        Branded Searches (DripTech Name Recall)
+                      </CardTitle>
+                      <Badge variant="outline">{brandSplit.branded.queries} queries</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-4 gap-2 text-xs">
+                    <div>
+                      <div className="text-slate-500">Clicks</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatNumber(brandSplit.branded.clicks)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-500">Impressions</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatNumber(brandSplit.branded.impressions)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-500">CTR</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatPct(brandSplit.branded.ctr)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-500">Avg Pos</div>
+                      <div className="text-base font-bold text-slate-900">
+                        {formatPos(brandSplit.branded.avgPosition)}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
 
-              <div className="grid gap-5 xl:grid-cols-3">
-                <Card className="rounded-2xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between gap-2">
-                      <div>
-                        <CardTitle>Keyword opportunities</CardTitle>
-                        <CardDescription>Queries ranking between positions 5 and 20</CardDescription>
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => setActiveView("keywords")}>
-                        View all <ChevronRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {quickWins.length ? (
-                      <div className="space-y-3">
-                        {quickWins.slice(0, 5).map((row, index) => (
-                          <div key={(row.keys?.[0] || "query") + index} className="flex items-center justify-between gap-3 border-b border-border/60 pb-3 last:border-0 last:pb-0">
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-medium">{row.keys?.[0]}</p>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {numberFormat(row.impressions)} impressions · {numberFormat(row.clicks)} clicks
-                              </p>
-                            </div>
-                            <Badge variant="secondary">Pos. {numberFormat(row.position, 1)}</Badge>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="py-8 text-center text-sm text-muted-foreground">No query currently meets the opportunity filter for this period.</p>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-2xl">
-                  <CardHeader>
-                    <div className="flex items-center justify-between gap-2">
-                      <div>
-                        <CardTitle>Pages with CTR opportunity</CardTitle>
-                        <CardDescription>At least 20 impressions and CTR below 2%</CardDescription>
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => setActiveView("pages")}>
-                        View pages <ChevronRight className="ml-1 h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {lowCtrPages.length ? (
-                      <div className="space-y-3">
-                        {lowCtrPages.slice(0, 5).map((row, index) => (
-                          <div key={(row.keys?.[0] || "page") + index} className="flex items-center justify-between gap-3 border-b border-border/60 pb-3 last:border-0 last:pb-0">
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-medium">{readablePage(row.keys?.[0])}</p>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {numberFormat(row.impressions)} impressions
-                              </p>
-                            </div>
-                            <Badge variant="outline" className="shrink-0">{percentageFormat(row.ctr)} CTR</Badge>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="py-8 text-center text-sm text-muted-foreground">No page currently meets the CTR filter for this period.</p>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-2xl">
-                  <CardHeader>
-                    <CardTitle>Device visibility</CardTitle>
-                    <CardDescription>Impressions split by search device</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {devices.length ? (
-                      <div className="h-[230px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={devices.map((row) => ({
-                              device: (row.keys?.[0] || "Unknown").toLowerCase(),
-                              impressions: Number(row.impressions || 0),
-                            }))}
-                            margin={{ top: 8, right: 8, left: -18, bottom: 0 }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
-                            <XAxis dataKey="device" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                            <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                            <Tooltip formatter={(value) => [numberFormat(Number(value)), "Impressions"]} />
-                            <Bar dataKey="impressions" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    ) : (
-                      <div className="flex h-[230px] items-center justify-center text-sm text-muted-foreground">
-                        No device breakdown returned for this period.
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          )}
-
-          {activeView === "keywords" && (
-            <Card className="rounded-2xl">
-              <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <CardTitle>Search queries</CardTitle>
-                  <CardDescription>Actual queries returned by Google Search Console (up to the API row limit)</CardDescription>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <div className="relative min-w-[220px] flex-1">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input value={querySearch} onChange={(event) => setQuerySearch(event.target.value)} placeholder="Filter search queries…" className="pl-9" />
-                  </div>
-                  <Button variant="outline" onClick={() => exportCsv("driptech-search-queries.csv", queryRows)}>
-                    <Download className="mr-2 h-4 w-4" /> Export
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto rounded-xl border">
-                  <table className="w-full min-w-[720px] text-sm">
-                    <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 text-left">Search query</th>
-                        <th className="px-4 py-3 text-right">Clicks</th>
-                        <th className="px-4 py-3 text-right">Impressions</th>
-                        <th className="px-4 py-3 text-right">CTR</th>
-                        <th className="px-4 py-3 text-right">Position</th>
-                        <th className="px-4 py-3 text-left">Intent</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {queryRows.length ? queryRows.map((row, index) => {
-                        const intent = classifyIntent(row.keys?.[0] || "");
-                        return (
-                          <tr key={(row.keys?.[0] || "query") + index} className="border-t border-border/60 hover:bg-muted/30">
-                            <td className="max-w-[420px] px-4 py-3 font-medium">{row.keys?.[0]}</td>
-                            <td className="px-4 py-3 text-right tabular-nums">{numberFormat(row.clicks)}</td>
-                            <td className="px-4 py-3 text-right tabular-nums">{numberFormat(row.impressions)}</td>
-                            <td className="px-4 py-3 text-right tabular-nums">{percentageFormat(row.ctr)}</td>
-                            <td className="px-4 py-3 text-right tabular-nums">{numberFormat(row.position, 1)}</td>
-                            <td className="px-4 py-3"><Badge variant="secondary">{intent}</Badge></td>
-                          </tr>
-                        );
-                      }) : (
-                        <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">No query rows match this filter.</td></tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Search intent is classified from query wording using simple rules. It is an analytical hint, not a label supplied by Google.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {activeView === "pages" && (
-            <Card className="rounded-2xl">
-              <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <CardTitle>Landing page performance</CardTitle>
-                  <CardDescription>Pages receiving organic search visibility for the selected date range</CardDescription>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <div className="relative min-w-[220px] flex-1">
-                    <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input value={pageSearch} onChange={(event) => setPageSearch(event.target.value)} placeholder="Filter landing pages…" className="pl-9" />
-                  </div>
-                  <Button variant="outline" onClick={() => exportCsv("driptech-landing-pages.csv", pageRows)}>
-                    <Download className="mr-2 h-4 w-4" /> Export
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto rounded-xl border">
-                  <table className="w-full min-w-[680px] text-sm">
-                    <thead className="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
-                      <tr>
-                        <th className="px-4 py-3 text-left">Landing page</th>
-                        <th className="px-4 py-3 text-right">Clicks</th>
-                        <th className="px-4 py-3 text-right">Impressions</th>
-                        <th className="px-4 py-3 text-right">CTR</th>
-                        <th className="px-4 py-3 text-right">Position</th>
-                        <th className="px-4 py-3 text-right">Open</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pageRows.length ? pageRows.map((row, index) => {
-                        const pageUrl = row.keys?.[0] || "";
-                        return (
-                          <tr key={pageUrl + index} className="border-t border-border/60 hover:bg-muted/30">
-                            <td className="max-w-[430px] px-4 py-3">
-                              <p className="font-medium">{readablePage(pageUrl)}</p>
-                              <p className="mt-0.5 truncate text-xs text-muted-foreground">{pageUrl}</p>
-                            </td>
-                            <td className="px-4 py-3 text-right tabular-nums">{numberFormat(row.clicks)}</td>
-                            <td className="px-4 py-3 text-right tabular-nums">{numberFormat(row.impressions)}</td>
-                            <td className="px-4 py-3 text-right tabular-nums">{percentageFormat(row.ctr)}</td>
-                            <td className="px-4 py-3 text-right tabular-nums">{numberFormat(row.position, 1)}</td>
-                            <td className="px-4 py-3 text-right">
-                              {pageUrl.startsWith("http") && (
-                                <a href={pageUrl} target="_blank" rel="noreferrer" className="inline-flex items-center text-emerald-600 hover:underline">
-                                  <ExternalLink className="h-4 w-4" />
-                                  <span className="sr-only">Open landing page</span>
-                                </a>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      }) : (
-                        <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">No page rows match this filter.</td></tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {activeView === "intent" && (
-            <div className="grid gap-5 xl:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)]">
-              <Card className="rounded-2xl">
+              {/* Daily Clicks & Impressions Trend */}
+              <Card>
                 <CardHeader>
-                  <CardTitle>Search intent distribution</CardTitle>
-                  <CardDescription>Classification of the query sample returned by Google</CardDescription>
+                  <CardTitle className="text-base">Daily Organic Clicks & Impressions</CardTitle>
+                  <CardDescription>
+                    Up to 1,000 queries & pages retrieved per report window
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {intentData.length ? (
-                    <>
-                      <div className="h-[280px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie data={intentData} dataKey="value" nameKey="name" innerRadius={66} outerRadius={105} paddingAngle={3}>
-                              {intentData.map((entry) => <Cell key={entry.name} fill={entry.fill} />)}
-                            </Pie>
-                            <Tooltip formatter={(value: number) => [value + " queries", "Sample count"]} />
-                            <Legend />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-                      <p className="text-xs text-muted-foreground">This reflects the returned top-query sample, not every search made by every visitor.</p>
-                    </>
+                  {(payload?.trend?.length || 0) === 0 ? (
+                    <div className="py-10 text-center text-sm text-slate-500">
+                      No daily trend rows available for this date range and country filter yet.
+                    </div>
                   ) : (
-                    <p className="py-14 text-center text-sm text-muted-foreground">No query sample is available.</p>
+                    <div className="h-64 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={(payload?.trend || []).map((row) => ({
+                            date: row.keys[0],
+                            clicks: row.clicks,
+                            impressions: row.impressions,
+                          }))}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                          <XAxis dataKey="date" tick={{ fontSize: 11 }} minTickGap={24} />
+                          <YAxis yAxisId="left" tick={{ fontSize: 11 }} />
+                          <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
+                          <Tooltip />
+                          <Area
+                            yAxisId="right"
+                            type="monotone"
+                            dataKey="impressions"
+                            name="Impressions"
+                            stroke="#94a3b8"
+                            fill="#e2e8f0"
+                            fillOpacity={0.5}
+                          />
+                          <Area
+                            yAxisId="left"
+                            type="monotone"
+                            dataKey="clicks"
+                            name="Clicks"
+                            stroke="#059669"
+                            fill="#10b981"
+                            fillOpacity={0.25}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
                   )}
                 </CardContent>
               </Card>
-              <Card className="rounded-2xl">
-                <CardHeader>
-                  <CardTitle>What the intent labels mean</CardTitle>
-                  <CardDescription>Rules used to group query wording into practical SEO themes</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    ["Transactional", "Queries containing price, cost, buy, supplier, quote or purchase language.", INTENT_COLORS.Transactional],
-                    ["Commercial research", "Queries comparing options, providers, reviews or the best solution.", INTENT_COLORS["Commercial research"]],
-                    ["Informational", "Questions and learning searches such as how, what, why, guides and benefits.", INTENT_COLORS.Informational],
-                    ["Technical", "Engineering and implementation searches such as design, sizing, pressure, filtration and BOQ.", INTENT_COLORS.Technical],
-                    ["Branded", "Queries that explicitly mention DripTech or Dripstech.", INTENT_COLORS.Branded],
-                    ["Other", "Queries where the wording does not clearly match the rules above.", INTENT_COLORS.Other],
-                  ].map(([name, description, color]) => (
-                    <div key={String(name)} className="flex gap-3">
-                      <span className="mt-1.5 h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: String(color) }} />
-                      <div>
-                        <p className="text-sm font-semibold">{String(name)}</p>
-                        <p className="mt-0.5 text-sm text-muted-foreground">{String(description)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-          )}
 
-          {activeView === "ideas" && (
-            <div className="space-y-4">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">Content opportunities from real search demand</h3>
-                  <p className="text-sm text-muted-foreground">Suggestions are generated from the returned query and page metrics, not sample keywords.</p>
-                </div>
-                <Badge variant="outline">{contentIdeas.length} suggestions</Badge>
-              </div>
-              {contentIdeas.length ? (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {contentIdeas.map((idea, index) => (
-                    <Card key={idea.type + idea.source + index} className="rounded-2xl">
-                      <CardContent className="flex h-full gap-3 p-5">
-                        <div className="mt-0.5 rounded-xl bg-amber-500/10 p-2.5 text-amber-600">
-                          <Lightbulb className="h-5 w-5" />
-                        </div>
-                        <div className="min-w-0">
-                          <Badge variant="secondary">{idea.type}</Badge>
-                          <h4 className="mt-2 font-semibold">{idea.title}</h4>
-                          <p className="mt-2 text-sm leading-6 text-muted-foreground">{idea.reason}</p>
-                          <p className="mt-3 truncate text-xs text-muted-foreground">Source: {idea.source}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card className="rounded-2xl">
-                  <CardContent className="flex min-h-52 flex-col items-center justify-center text-center">
-                    <BookOpen className="h-8 w-8 text-muted-foreground" />
-                    <p className="mt-3 font-medium">No content suggestions yet</p>
-                    <p className="mt-1 max-w-md text-sm text-muted-foreground">More query data is needed before the dashboard can identify useful topics and page improvements.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-
-          {activeView === "actions" && (
-            <Card className="rounded-2xl">
-              <CardHeader>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <CardTitle>SEO action tracker</CardTitle>
-                    <CardDescription>Prioritized tasks generated from this Search Console reporting period</CardDescription>
-                  </div>
-                  <Badge variant="secondary">{completedActions.filter((id) => actionItems.some((item) => item.id === id)).length} / {actionItems.length} completed</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {actionItems.length ? (
-                  <div className="space-y-3">
-                    {actionItems.map((item) => {
-                      const complete = completedActions.includes(item.id);
-                      const ItemIcon = item.kind === "snippet" ? Search : item.kind === "ranking" ? TrendingUp : BookOpen;
+              {/* Geography, Devices, Search Appearance & Sitemaps */}
+              <div className="grid gap-4 lg:grid-cols-3">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+                      <Globe className="h-4 w-4 text-emerald-600" />
+                      Top Countries
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Click Kenya to focus reports on local buyers
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {(payload?.countries || []).slice(0, 6).map((c) => {
+                      const code = (c.keys[0] || "").toLowerCase();
+                      const isKenya = code === "ken";
                       return (
-                        <div key={item.id} className={"flex items-start gap-3 rounded-xl border p-4 transition-colors " + (complete ? "border-emerald-500/30 bg-emerald-500/5" : "border-border/70")}>
-                          <button
-                            type="button"
-                            aria-label={complete ? "Mark task as not completed" : "Mark task as completed"}
-                            onClick={() => toggleAction(item.id)}
-                            className={"mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border " + (complete ? "border-emerald-600 bg-emerald-600 text-white" : "border-muted-foreground/40 text-transparent hover:border-emerald-600")}
-                          >
-                            <Check className="h-3.5 w-3.5" />
-                          </button>
-                          <div className="min-w-0 flex-1">
-                            <p className={"text-sm font-semibold " + (complete ? "text-muted-foreground line-through" : "text-foreground")}>{item.title}</p>
-                            <p className="mt-1 text-xs text-muted-foreground">{item.detail}</p>
+                        <div
+                          key={c.keys[0]}
+                          className="flex items-center justify-between rounded border border-slate-100 px-2.5 py-1.5 text-xs"
+                        >
+                          <div className="flex items-center gap-2 font-medium text-slate-800">
+                            <span>{formatCountryName(code)}</span>
+                            {isKenya && countryFilter !== "ken" && (
+                              <button
+                                type="button"
+                                className="text-[11px] text-emerald-700 underline hover:text-emerald-900"
+                                onClick={() => setCountryFilter("ken")}
+                              >
+                                Filter KE
+                              </button>
+                            )}
                           </div>
-                          <div className="flex shrink-0 items-center gap-2">
-                            <Badge variant="outline" className="hidden sm:inline-flex">{item.impact}</Badge>
-                            <ItemIcon className="h-4 w-4 text-muted-foreground" />
+                          <div className="text-right text-slate-600">
+                            <strong className="text-slate-900">{formatNumber(c.clicks)}</strong> clicks ·{" "}
+                            {formatNumber(c.impressions)} impr
                           </div>
                         </div>
                       );
                     })}
-                  </div>
-                ) : (
-                  <div className="flex min-h-48 flex-col items-center justify-center text-center">
-                    <ClipboardList className="h-8 w-8 text-muted-foreground" />
-                    <p className="mt-3 font-medium">No actions identified yet</p>
-                    <p className="mt-1 text-sm text-muted-foreground">The tracker will populate when the query and landing-page data show actionable opportunities.</p>
-                  </div>
-                )}
-                <p className="mt-4 text-xs text-muted-foreground">
-                  Completion checkmarks are saved in this browser only. The rules prioritize pages with at least 20 impressions and CTR below 2%, and queries with at least 10 impressions ranking between positions 5 and 20.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+                    {(payload?.countries?.length || 0) === 0 && (
+                      <p className="text-xs text-slate-500">No country breakdown available.</p>
+                    )}
+                  </CardContent>
+                </Card>
 
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
-            <span>Property: {payload?.property || "Google Search Console"}</span>
-            <span>Sitewide totals come from an ungrouped GSC request; query and page tables are ranked samples returned by Google.</span>
-          </div>
-            </div>
-          </div>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+                      <Smartphone className="h-4 w-4 text-blue-600" />
+                      Device Breakdown
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Mobile dominates Kenyan farm & agritech searches
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {(payload?.devices || []).map((dev) => {
+                      const label = (dev.keys[0] || "UNKNOWN").toUpperCase();
+                      const Icon =
+                        label === "MOBILE"
+                          ? Smartphone
+                          : label === "TABLET"
+                          ? Tablet
+                          : Monitor;
+                      return (
+                        <div
+                          key={label}
+                          className="flex items-center justify-between rounded border border-slate-100 px-2.5 py-2 text-xs"
+                        >
+                          <div className="flex items-center gap-2 font-medium text-slate-800">
+                            <Icon className="h-3.5 w-3.5 text-slate-500" />
+                            <span>{label}</span>
+                          </div>
+                          <div className="text-right text-slate-600">
+                            <strong className="text-slate-900">{formatNumber(dev.clicks)}</strong> clicks ·{" "}
+                            {formatPct(dev.ctr)} CTR · Pos {formatPos(dev.position)}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+                      <Sparkles className="h-4 w-4 text-amber-600" />
+                      Rich Results & Sitemap Health
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Structured data snippets + Google sitemap indexation
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2.5 text-xs">
+                    <div className="flex items-center justify-between rounded bg-slate-50 px-2.5 py-2">
+                      <span className="font-medium text-slate-700">Sitemaps Indexed</span>
+                      <span className="font-semibold text-slate-900">
+                        {formatNumber(sitemapSummary.totalIndexed)} /{" "}
+                        {formatNumber(sitemapSummary.totalSubmitted)} URLs
+                      </span>
+                    </div>
+                    {(payload?.searchAppearances || []).slice(0, 4).map((sa) => (
+                      <div
+                        key={sa.keys[0]}
+                        className="flex items-center justify-between rounded border border-slate-100 px-2.5 py-1.5"
+                      >
+                        <span className="font-medium text-slate-800">
+                          {formatSearchAppearanceLabel(sa.keys[0])}
+                        </span>
+                        <span className="text-slate-600">
+                          <strong>{formatNumber(sa.clicks)}</strong> clicks ·{" "}
+                          {formatNumber(sa.impressions)} impr
+                        </span>
+                      </div>
+                    ))}
+                    {(payload?.searchAppearances?.length || 0) === 0 && (
+                      <p className="text-slate-500">
+                        No special Search Appearance snippets recorded in this window yet.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* KEYWORDS TAB */}
+            <TabsContent value="keywords" className="space-y-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <CardTitle className="text-base">
+                        Search Queries ({filteredQueries.length} matched / {payload?.queries?.length || 0} loaded)
+                      </CardTitle>
+                      <CardDescription>
+                        Includes matched landing page and cannibalization indicators from query-page pairs
+                      </CardDescription>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={handleExportCsv}>
+                      <Download className="mr-1.5 h-3.5 w-3.5" />
+                      Export CSV
+                    </Button>
+                  </div>
+
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                    <Input
+                      placeholder="Filter keywords..."
+                      value={kwSearch}
+                      onChange={(e) => setKwSearch(e.target.value)}
+                    />
+                    <select
+                      aria-label="Filter by search intent"
+                      className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs"
+                      value={kwIntent}
+                      onChange={(e) => setKwIntent(e.target.value as "ALL" | IntentName)}
+                    >
+                      <option value="ALL">All Intents</option>
+                      {Object.keys(INTENT_COLORS).map((intentName) => (
+                        <option key={intentName} value={intentName}>
+                          {intentName}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      aria-label="Filter by brand segment"
+                      className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs"
+                      value={kwSegment}
+                      onChange={(e) =>
+                        setKwSegment(e.target.value as "all" | "non_branded" | "branded")
+                      }
+                    >
+                      <option value="all">All Segments (Branded + Non-Branded)</option>
+                      <option value="non_branded">Non-Branded Only</option>
+                      <option value="branded">Branded Only (DripTech)</option>
+                    </select>
+                    <select
+                      aria-label="Sort keywords"
+                      className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs"
+                      value={kwSort}
+                      onChange={(e) =>
+                        setKwSort(
+                          e.target.value as "clicks" | "impressions" | "position" | "ctr",
+                        )
+                      }
+                    >
+                      <option value="clicks">Sort: Most Clicks</option>
+                      <option value="impressions">Sort: Most Impressions</option>
+                      <option value="position">Sort: Best Position</option>
+                      <option value="ctr">Sort: Highest CTR</option>
+                    </select>
+                  </div>
+                </CardHeader>
+
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Query</TableHead>
+                          <TableHead>Intent</TableHead>
+                          <TableHead>Top Landing Page</TableHead>
+                          <TableHead className="text-right">Clicks</TableHead>
+                          <TableHead className="text-right">Impressions</TableHead>
+                          <TableHead className="text-right">CTR</TableHead>
+                          <TableHead className="text-right">Pos</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {(showAllKeywords
+                          ? filteredQueries
+                          : filteredQueries.slice(0, 100)
+                        ).map((row) => {
+                          const query = row.keys[0] || "";
+                          const intent = classifyIntent(query);
+                          const matchedPages = queryPageMap.get(query.trim().toLowerCase()) || [];
+                          const topUrl = matchedPages[0]?.keys[1];
+                          return (
+                            <TableRow key={query}>
+                              <TableCell className="font-medium text-slate-900">
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  <span>{query}</span>
+                                  {isBrandedQuery(query) && (
+                                    <Badge variant="outline" className="text-[10px]">
+                                      Brand
+                                    </Badge>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant="outline"
+                                  className={`whitespace-nowrap text-[11px] ${INTENT_COLORS[intent]}`}
+                                >
+                                  {intent.split(" (")[0]}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="max-w-[240px]">
+                                {topUrl ? (
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => void handleInspectUrl(topUrl)}
+                                      className="truncate text-left text-xs text-emerald-700 hover:underline"
+                                      title={`Inspect ${topUrl}`}
+                                    >
+                                      {readablePage(topUrl)}
+                                    </button>
+                                    {matchedPages.length > 1 && (
+                                      <Badge
+                                        variant="secondary"
+                                        className="shrink-0 px-1 py-0 text-[10px]"
+                                        title={`${matchedPages.length} URLs rank for this query`}
+                                      >
+                                        {matchedPages.length} URLs
+                                      </Badge>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-slate-400">—</span>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-right font-semibold">
+                                {formatNumber(row.clicks)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {formatNumber(row.impressions)}
+                              </TableCell>
+                              <TableCell className="text-right">{formatPct(row.ctr)}</TableCell>
+                              <TableCell className="text-right">{formatPos(row.position)}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                        {filteredQueries.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={7} className="py-8 text-center text-sm text-slate-500">
+                              No keywords match the current filter criteria.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {filteredQueries.length > 100 && (
+                    <div className="mt-3 flex justify-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowAllKeywords((prev) => !prev)}
+                      >
+                        {showAllKeywords
+                          ? "Show Top 100 Only"
+                          : `Show All ${filteredQueries.length} Keywords`}
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* PAGES & SECTIONS TAB */}
+            <TabsContent value="pages" className="space-y-4">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {sectionSummary.map((sec) => (
+                  <Card
+                    key={sec.section}
+                    className={`cursor-pointer transition-colors ${
+                      pageSection === sec.section
+                        ? "border-emerald-500 bg-emerald-50/40"
+                        : "hover:border-slate-300"
+                    }`}
+                    onClick={() =>
+                      setPageSection((prev) => (prev === sec.section ? "ALL" : sec.section))
+                    }
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-1.5 text-sm font-semibold">
+                          <Layers className="h-4 w-4 text-emerald-600" />
+                          {sec.section}
+                        </CardTitle>
+                        <Badge variant="outline">{sec.pages} URLs</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-between text-xs text-slate-600">
+                      <span>
+                        <strong className="text-slate-900">{formatNumber(sec.clicks)}</strong> clicks ·{" "}
+                        {formatNumber(sec.impressions)} impr
+                      </span>
+                      <span>Pos {formatPos(sec.avgPosition)}</span>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <CardTitle className="text-base">
+                        Landing Pages ({filteredPages.length})
+                      </CardTitle>
+                      <CardDescription>
+                        Click any site section card above to slice traffic by section, or inspect live indexing
+                      </CardDescription>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Input
+                        className="w-56"
+                        placeholder="Filter URL path..."
+                        value={pageSearch}
+                        onChange={(e) => setPageSearch(e.target.value)}
+                      />
+                      <select
+                        aria-label="Sort pages"
+                        className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs"
+                        value={pageSort}
+                        onChange={(e) =>
+                          setPageSort(e.target.value as "clicks" | "impressions" | "low_ctr")
+                        }
+                      >
+                        <option value="clicks">Most Clicks</option>
+                        <option value="impressions">Most Impressions</option>
+                        <option value="low_ctr">Biggest CTR Gap</option>
+                      </select>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Page Path</TableHead>
+                          <TableHead>Section</TableHead>
+                          <TableHead className="text-right">Clicks</TableHead>
+                          <TableHead className="text-right">Impressions</TableHead>
+                          <TableHead className="text-right">CTR</TableHead>
+                          <TableHead className="text-right">Pos</TableHead>
+                          <TableHead className="text-right">Inspect</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredPages.slice(0, 100).map((row) => {
+                          const url = row.keys[0] || "";
+                          return (
+                            <TableRow key={url}>
+                              <TableCell className="max-w-xs">
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 font-medium text-emerald-700 hover:underline"
+                                >
+                                  <span className="truncate">{readablePage(url)}</span>
+                                  <ExternalLink className="h-3 w-3 shrink-0" />
+                                </a>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="text-[11px]">
+                                  {classifyPageSection(url)}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right font-semibold">
+                                {formatNumber(row.clicks)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {formatNumber(row.impressions)}
+                              </TableCell>
+                              <TableCell className="text-right">{formatPct(row.ctr)}</TableCell>
+                              <TableCell className="text-right">{formatPos(row.position)}</TableCell>
+                              <TableCell className="text-right">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7 px-2 text-xs"
+                                  onClick={() => void handleInspectUrl(url)}
+                                >
+                                  <FileSearch className="mr-1 h-3.5 w-3.5" />
+                                  Inspect
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* WEIGHTED SEARCH INTENT TAB */}
+            <TabsContent value="intent" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <CardTitle className="text-base">
+                        Search Intent Distribution
+                      </CardTitle>
+                      <CardDescription>
+                        Compare how much real traffic vs visibility each buyer intent drives
+                      </CardDescription>
+                    </div>
+                    <div className="inline-flex rounded-md border border-slate-200 bg-slate-50 p-0.5">
+                      {(
+                        [
+                          { id: "clicks", label: "By Clicks" },
+                          { id: "impressions", label: "By Impressions" },
+                          { id: "queries", label: "By Query Count" },
+                        ] as const
+                      ).map((mode) => (
+                        <Button
+                          key={mode.id}
+                          size="sm"
+                          variant={intentWeight === mode.id ? "default" : "ghost"}
+                          className="h-7 px-2.5 text-xs"
+                          onClick={() => setIntentWeight(mode.id)}
+                        >
+                          {mode.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {intentSummary.map((item) => (
+                    <div key={item.intent} className="space-y-1.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className={INTENT_COLORS[item.intent]}>
+                            {item.intent}
+                          </Badge>
+                          <span className="text-slate-500">{item.queries} queries</span>
+                        </div>
+                        <div className="text-slate-700">
+                          <strong>{formatNumber(item.clicks)}</strong> clicks ·{" "}
+                          {formatNumber(item.impressions)} impr · CTR {formatPct(item.avgCtr)} · Pos{" "}
+                          {formatPos(item.avgPosition)} ({(item.share * 100).toFixed(1)}%)
+                        </div>
+                      </div>
+                      <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className="h-full rounded-full bg-emerald-600 transition-all"
+                          style={{ width: `${Math.max(2, item.share * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* INDEXING, URL INSPECTOR, SITEMAPS & CANNIBALIZATION TAB */}
+            <TabsContent value="indexing" className="space-y-4">
+              {/* Live Google URL Index Inspector */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <FileSearch className="h-4 w-4 text-emerald-600" />
+                    Live Google URL Index Inspector
+                  </CardTitle>
+                  <CardDescription>
+                    Query Google Search Console directly for index coverage, canonical URL chosen by
+                    Google, crawl timestamp, and rich result eligibility
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Input
+                      placeholder="/pump-solar-sizing or https://www.dripstech.co.ke/products/..."
+                      value={inspectInput}
+                      onChange={(e) => setInspectInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") void handleInspectUrl();
+                      }}
+                    />
+                    <Button
+                      onClick={() => void handleInspectUrl()}
+                      disabled={inspecting}
+                      className="shrink-0"
+                    >
+                      <FileSearch className="mr-1.5 h-4 w-4" />
+                      {inspecting ? "Inspecting..." : "Inspect URL"}
+                    </Button>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                    <span>Quick check:</span>
+                    {QUICK_INSPECT_PATHS.map((path) => (
+                      <button
+                        key={path}
+                        type="button"
+                        onClick={() => void handleInspectUrl(path)}
+                        className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-slate-700 hover:bg-slate-100"
+                      >
+                        {path}
+                      </button>
+                    ))}
+                  </div>
+
+                  {inspectionError && (
+                    <Alert variant="destructive">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>{inspectionError}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  {inspectionResult && (
+                    <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50/70 p-4 text-xs">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="space-y-1">
+                          <div className="font-semibold text-slate-900">
+                            {inspectionResult.inspectionUrl}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant={verdictBadgeVariant(inspectionResult.verdict)}>
+                              {inspectionResult.verdict}
+                            </Badge>
+                            <span className="font-medium text-slate-700">
+                              {inspectionResult.coverageState}
+                            </span>
+                          </div>
+                        </div>
+                        {inspectionResult.inspectionResultLink && (
+                          <a
+                            href={inspectionResult.inspectionResultLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-medium text-emerald-700 hover:underline"
+                          >
+                            Open in Search Console
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                        <div className="rounded bg-white p-2.5">
+                          <div className="text-slate-500">Indexing State</div>
+                          <div className="font-medium text-slate-900">
+                            {inspectionResult.indexingState}
+                          </div>
+                        </div>
+                        <div className="rounded bg-white p-2.5">
+                          <div className="text-slate-500">Page Fetch & Robots</div>
+                          <div className="font-medium text-slate-900">
+                            {inspectionResult.pageFetchState} · {inspectionResult.robotsTxtState}
+                          </div>
+                        </div>
+                        <div className="rounded bg-white p-2.5">
+                          <div className="text-slate-500">Last Crawl ({inspectionResult.crawledAs})</div>
+                          <div className="font-medium text-slate-900">
+                            {inspectionResult.lastCrawlTime
+                              ? new Date(inspectionResult.lastCrawlTime).toLocaleString()
+                              : "Not yet crawled"}
+                          </div>
+                        </div>
+                        <div className="rounded bg-white p-2.5">
+                          <div className="text-slate-500">Mobile & Rich Results</div>
+                          <div className="font-medium text-slate-900">
+                            {inspectionResult.mobileVerdict} · {inspectionResult.richResultsVerdict}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-slate-600">
+                        <span>
+                          User Canonical:{" "}
+                          <code>{inspectionResult.userCanonical || "None"}</code>
+                        </span>
+                        <span>
+                          Google Canonical:{" "}
+                          <code>{inspectionResult.googleCanonical || "None"}</code>
+                        </span>
+                        {inspectionResult.richResultTypes.length > 0 && (
+                          <span className="flex flex-wrap items-center gap-1">
+                            Detected Schema:
+                            {inspectionResult.richResultTypes.map((typeName) => (
+                              <Badge key={typeName} variant="outline">
+                                {typeName}
+                              </Badge>
+                            ))}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Keyword Cannibalization Detection */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <ShieldAlert className="h-4 w-4 text-amber-600" />
+                    Keyword Cannibalization Alerts ({cannibalizedQueries.length})
+                  </CardTitle>
+                  <CardDescription>
+                    Queries where two or more DripTech URLs split meaningful impressions (20+
+                    total impressions). Consolidating signals helps one page break into top 3.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {cannibalizedQueries.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      No significant keyword cannibalization conflicts detected in this window.
+                    </p>
+                  ) : (
+                    cannibalizedQueries.slice(0, 20).map((conflict) => (
+                      <div
+                        key={conflict.query}
+                        className="rounded-lg border border-slate-200 p-3 text-xs"
+                      >
+                        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                          <div className="font-semibold text-slate-900">
+                            "{conflict.query}"
+                          </div>
+                          <div className="text-slate-600">
+                            {formatNumber(conflict.totalClicks)} clicks ·{" "}
+                            {formatNumber(conflict.totalImpressions)} impr across{" "}
+                            {conflict.pages.length} URLs
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          {conflict.pages.slice(0, 4).map((p, idx) => (
+                            <div
+                              key={p.page}
+                              className="flex flex-wrap items-center justify-between gap-2 rounded bg-slate-50 px-2.5 py-1.5"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Badge variant={idx === 0 ? "default" : "outline"} className="text-[10px]">
+                                  {idx === 0 ? "Primary" : `#${idx + 1}`}
+                                </Badge>
+                                <button
+                                  type="button"
+                                  onClick={() => void handleInspectUrl(p.page)}
+                                  className="text-emerald-700 hover:underline"
+                                >
+                                  {readablePage(p.page)}
+                                </button>
+                              </div>
+                              <span className="text-slate-600">
+                                {(p.share * 100).toFixed(0)}% share · {formatNumber(p.clicks)} clicks ·{" "}
+                                {formatNumber(p.impressions)} impr · Pos {formatPos(p.position)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Submitted Sitemaps Table */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    Submitted Sitemaps ({payload?.sitemaps?.length || 0})
+                  </CardTitle>
+                  <CardDescription>
+                    Live status from Google Webmasters Sitemaps API
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Sitemap URL</TableHead>
+                        <TableHead>Last Downloaded</TableHead>
+                        <TableHead className="text-right">Submitted</TableHead>
+                        <TableHead className="text-right">Indexed</TableHead>
+                        <TableHead className="text-right">Errors / Warnings</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(payload?.sitemaps || []).map((sm) => {
+                        const submitted = (sm.contents || []).reduce(
+                          (acc, c) => acc + Number(c.submitted || 0),
+                          0,
+                        );
+                        const indexed = (sm.contents || []).reduce(
+                          (acc, c) => acc + Number(c.indexed || 0),
+                          0,
+                        );
+                        return (
+                          <TableRow key={sm.path}>
+                            <TableCell className="font-mono text-xs">{sm.path}</TableCell>
+                            <TableCell className="text-xs text-slate-600">
+                              {sm.lastDownloaded
+                                ? new Date(sm.lastDownloaded).toLocaleDateString()
+                                : "Pending"}
+                            </TableCell>
+                            <TableCell className="text-right">{formatNumber(submitted)}</TableCell>
+                            <TableCell className="text-right font-semibold text-emerald-700">
+                              {formatNumber(indexed)}
+                            </TableCell>
+                            <TableCell className="text-right text-xs">
+                              {Number(sm.errors || 0)} err / {Number(sm.warnings || 0)} warn
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      {(payload?.sitemaps?.length || 0) === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="py-6 text-center text-sm text-slate-500">
+                            No sitemaps returned by Google Search Console for this property.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* OPPORTUNITIES TAB */}
+            <TabsContent value="ideas" className="space-y-4">
+              <div className="grid gap-4 lg:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Lightbulb className="h-4 w-4 text-amber-500" />
+                      Striking-Distance Quick Wins (Positions 4–20)
+                    </CardTitle>
+                    <CardDescription>
+                      Queries with 15+ impressions sitting just below the top 3 results
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2.5">
+                    {quickWins.slice(0, 12).map((kw) => (
+                      <div
+                        key={kw.keys[0]}
+                        className="flex items-center justify-between gap-2 rounded border border-slate-100 p-2.5 text-xs"
+                      >
+                        <div className="min-w-0">
+                          <div className="truncate font-semibold text-slate-900">
+                            {kw.keys[0]}
+                          </div>
+                          <div className="mt-0.5 text-slate-500">
+                            Pos {formatPos(kw.position)} · {formatNumber(kw.impressions)} impr ·{" "}
+                            {formatPct(kw.ctr)} CTR
+                            {kw.topPage && (
+                              <button
+                                type="button"
+                                onClick={() => void handleInspectUrl(kw.topPage!)}
+                                className="ml-2 text-emerald-700 hover:underline"
+                              >
+                                {readablePage(kw.topPage)}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <Badge className="shrink-0 bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
+                          +{formatNumber(kw.upsideClicks)} est clicks
+                        </Badge>
+                      </div>
+                    ))}
+                    {quickWins.length === 0 && (
+                      <p className="text-sm text-slate-500">
+                        No qualifying position 4–20 opportunities in this window.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Target className="h-4 w-4 text-blue-600" />
+                      Low-CTR Pages (&lt; 2.5% CTR on 50+ Impr)
+                    </CardTitle>
+                    <CardDescription>
+                      High-visibility URLs losing clicks due to generic titles or missing meta cues
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2.5">
+                    {lowCtrPages.slice(0, 12).map((page) => (
+                      <div
+                        key={page.keys[0]}
+                        className="flex items-center justify-between gap-2 rounded border border-slate-100 p-2.5 text-xs"
+                      >
+                        <div className="min-w-0">
+                          <button
+                            type="button"
+                            onClick={() => void handleInspectUrl(page.keys[0])}
+                            className="block truncate font-medium text-emerald-700 hover:underline"
+                          >
+                            {readablePage(page.keys[0])}
+                          </button>
+                          <div className="mt-0.5 text-slate-500">
+                            {formatNumber(page.impressions)} impr · {formatNumber(page.clicks)}{" "}
+                            clicks · Pos {formatPos(page.position)}
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="shrink-0 text-rose-700">
+                          {formatPct(page.ctr)} CTR
+                        </Badge>
+                      </div>
+                    ))}
+                    {lowCtrPages.length === 0 && (
+                      <p className="text-sm text-slate-500">
+                        All high-impression pages exceed 2.5% CTR.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* SEO ACTION PLAN TAB */}
+            <TabsContent value="actions" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    Prioritized DripTech SEO Action Checklist
+                  </CardTitle>
+                  <CardDescription>
+                    Generated dynamically from your Search Console queries, cannibalization, sitemaps,
+                    and rich result telemetry
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {actionPlanItems.map((item) => {
+                    const done = completedActions.includes(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`flex items-start justify-between gap-3 rounded-lg border p-3.5 transition-colors ${
+                          done
+                            ? "border-emerald-200 bg-emerald-50/40"
+                            : "border-slate-200 bg-white"
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleActionItem(item.id)}
+                          className="mt-0.5 shrink-0 text-emerald-600"
+                          aria-label={`Toggle ${item.title}`}
+                        >
+                          {done ? (
+                            <CheckSquare className="h-5 w-5" />
+                          ) : (
+                            <Square className="h-5 w-5 text-slate-400" />
+                          )}
+                        </button>
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span
+                              className={`text-sm font-semibold ${
+                                done ? "text-slate-500 line-through" : "text-slate-900"
+                              }`}
+                            >
+                              {item.title}
+                            </span>
+                            <Badge
+                              variant={
+                                item.priority === "High" ? "destructive" : "secondary"
+                              }
+                              className="text-[10px]"
+                            >
+                              {item.priority}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-slate-600">{item.detail}</p>
+                        </div>
+                        {item.targetUrl && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="shrink-0 text-xs"
+                            onClick={() => void handleInspectUrl(item.targetUrl!)}
+                          >
+                            Inspect
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </>
       )}
-    </section>
+    </div>
   );
 };
 
