@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { getSupabase } from '@/integrations/supabase/config';
 
 const USE_D1 = import.meta.env.VITE_USE_D1 === 'true';
 const WORKER_URL = import.meta.env.VITE_WORKER_URL;
@@ -48,7 +48,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            const { data, error } = await supabase
+            const { data, error } = await (await getSupabase())
                 .from('products')
                 .select('category')
                 .eq('in_stock', true);
@@ -99,7 +99,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            let query = supabase.from('products').select('*');
+            let query = (await getSupabase()).from('products').select('*');
             if (filters?.category) {
                 const categoryMap: Record<string, string> = {
                     drip: "drip_irrigation",
@@ -159,7 +159,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Product not found in D1');
             return await response.json();
         } else {
-            const { data, error } = await supabase
+            const { data, error } = await (await getSupabase())
                 .from('products')
                 .select('*')
                 .eq('id', id)
@@ -204,7 +204,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Blog post not found in D1');
             return await response.json();
         } else {
-            const { data, error } = await supabase
+            const { data, error } = await (await getSupabase())
                 .from('blog_posts')
                 .select('*, blog_categories(name, slug)')
                 .eq('slug', slug)
@@ -223,7 +223,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch categories from D1');
             return await response.json();
         } else {
-            const { data, error } = await supabase
+            const { data, error } = await (await getSupabase())
                 .from('blog_categories')
                 .select('*')
                 .order('name');
@@ -239,7 +239,7 @@ export const dataService = {
             const data = await response.json();
             return data.count;
         } else {
-            const { count, error } = await supabase
+            const { count, error } = await (await getSupabase())
                 .from('blog_posts')
                 .select('*', { count: 'exact', head: true })
                 .eq('published', true);
@@ -271,7 +271,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch videos from D1');
             return await response.json();
         } else {
-            let query = supabase.from('videos').select('*').eq('published', true);
+            let query = (await getSupabase()).from('videos').select('*').eq('published', true);
 
             if (filters?.category && filters.category !== 'all') {
                 query = query.eq('category', filters.category);
@@ -324,7 +324,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch projects from D1');
             return await response.json();
         } else {
-            let query = supabase.from('projects').select('*');
+            let query = (await getSupabase()).from('projects').select('*');
             if (filters?.featured) query = query.eq('featured', true);
 
             const { data, error } = await query.order('completion_date', { ascending: false });
@@ -343,7 +343,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch success stories from D1');
             return await response.json();
         } else {
-            const { data, error } = await supabase
+            const { data, error } = await (await getSupabase())
                 .from('success_stories')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -499,7 +499,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch irrigation kits from D1');
             return await response.json();
         } else {
-            let query = supabase.from('irrigation_kits').select('*').eq('active', true);
+            let query = (await getSupabase()).from('irrigation_kits').select('*').eq('active', true);
             if (filters?.category) query = query.eq('category', filters.category);
             if (filters?.featured) query = query.eq('featured', true);
 
@@ -561,7 +561,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch documents from D1');
             return await response.json();
         } else {
-            let query = supabase.from('documents').select('*');
+            let query = (await getSupabase()).from('documents').select('*');
 
             if (filters?.category) {
                 if (Array.isArray(filters.category)) {
@@ -591,7 +591,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch kit documents from D1');
             return await response.json();
         } else {
-            const { data, error } = await supabase
+            const { data, error } = await (await getSupabase())
                 .from('kit_documents')
                 .select('*')
                 .eq('kit_id', kitId)
@@ -610,7 +610,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch team members from D1');
             return await response.json();
         } else {
-            let query = supabase.from('team').select('*');
+            let query = (await getSupabase()).from('team').select('*');
             if (filters?.featured) query = query.eq('featured', true);
 
             const { data, error } = await query.order('created_at', { ascending: false });
@@ -634,7 +634,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            let query = supabase.from('service_categories').select('*').order('display_order');
+            let query = (await getSupabase()).from('service_categories').select('*').order('display_order');
             if (filters?.active) query = query.eq('is_active', true);
 
             const { data, error } = await query;
@@ -657,7 +657,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            let query = supabase.from('service_packages').select('*, service_categories(name, slug)');
+            let query = (await getSupabase()).from('service_packages').select('*, service_categories(name, slug)');
             if (filters?.categoryId) query = query.eq('service_category_id', filters.categoryId);
             if (filters?.active) query = query.eq('is_active', true);
 
@@ -681,7 +681,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            let query = supabase.from('technicians').select('*').order('rating', { ascending: false });
+            let query = (await getSupabase()).from('technicians').select('*').order('rating', { ascending: false });
             if (filters?.active) query = query.eq('is_active', true);
             if (filters?.specialization) {
                 query = query.contains('specializations', [filters.specialization]);
@@ -711,7 +711,7 @@ export const dataService = {
         priority?: string;
     }) {
         // Always use Supabase for creating bookings (write operations)
-        const { data, error } = await supabase
+        const { data, error } = await (await getSupabase())
             .from('service_bookings')
             .insert([bookingData])
             .select()
@@ -738,7 +738,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            let query = supabase
+            let query = (await getSupabase())
                 .from('service_bookings')
                 .select(`
                     *,
@@ -771,7 +771,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            let query = supabase
+            let query = (await getSupabase())
                 .from('service_reviews')
                 .select('*, technicians(full_name)')
                 .order('created_at', { ascending: false });

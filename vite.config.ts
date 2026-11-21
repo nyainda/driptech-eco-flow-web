@@ -104,6 +104,10 @@ export default defineConfig(({ mode }) => {
     build: {
       // Target modern browsers for smaller bundles
       target: 'es2020',
+      modulePreload: {
+        resolveDependencies: (_filename, deps) =>
+          deps.filter((dep) => !dep.includes('supabase-vendor')),
+      },
       // Optimize chunk size
       chunkSizeWarningLimit: 500,
       // Enable CSS code splitting
@@ -119,6 +123,28 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         output: {
+          manualChunks(id) {
+            const normalizedId = id.replace(/\\/g, "/");
+            if (
+              normalizedId.includes("node_modules/react/") ||
+              normalizedId.includes("node_modules/react-dom/") ||
+              normalizedId.includes("node_modules/react-router-dom/") ||
+              normalizedId.includes("node_modules/scheduler/") ||
+              normalizedId.includes("node_modules/tslib/") ||
+              normalizedId.includes("node_modules/@swc/helpers/")
+            ) {
+              return "react-vendor";
+            }
+            if (normalizedId.includes("node_modules/@tanstack/react-query")) {
+              return "query-vendor";
+            }
+            if (
+              normalizedId.includes("node_modules/@supabase/") ||
+              normalizedId.includes("src/integrations/supabase/client.ts")
+            ) {
+              return "supabase-vendor";
+            }
+          },
           // Optimize chunk file names for better caching
           chunkFileNames: (chunkInfo) => {
             const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';

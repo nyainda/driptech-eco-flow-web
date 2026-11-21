@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, Gift, Clock, ChevronLeft, ChevronRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchSupabaseRest } from "@/integrations/supabase/config";
 import { useQuery } from "@tanstack/react-query";
 
 interface DiscountBannerData {
@@ -28,11 +28,9 @@ const DiscountBanner = () => {
   } = useQuery({
     queryKey: ["active-discount-banners"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("discount_banners" as any)
-        .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
+      const { data, error } = await fetchSupabaseRest<DiscountBannerData[]>(
+        "discount_banners?select=*&is_active=eq.true&order=created_at.desc",
+      );
 
       if (error) throw error;
 

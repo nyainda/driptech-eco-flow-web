@@ -781,6 +781,12 @@ const getKitRows = async () => {
           name: kit.name.trim(),
           acres: Number(kit.coverage_area) > 0 ? Number(kit.coverage_area) : null,
           price: Number(kit.price) > 0 ? Number(kit.price) : null,
+          inStock: kit.in_stock !== false,
+          description: stripHtml(kit.description || ""),
+          image: toAbsoluteSiteAssetUrl(
+            (Array.isArray(kit.images) && kit.images[0]) || kit.image_url,
+            siteUrl,
+          ),
           crops: toStringList(kit.recommended_crops).slice(0, 4),
           warrantyMonths: Number(kit.warranty_months) > 0 ? Number(kit.warranty_months) : null,
         }))
@@ -984,6 +990,7 @@ const dynamicPages = [
                 availability: product.in_stock
                   ? "https://schema.org/InStock"
                   : "https://schema.org/OutOfStock",
+                itemCondition: "https://schema.org/NewCondition",
                 url: `${siteUrl}${route}`,
               },
             }
@@ -1568,7 +1575,7 @@ const pageBody = (page) => {
     ? (page.imageIsAbsolute ? heroSource : toAbsoluteSiteAssetUrl(heroSource, siteUrl))
     : null;
   const heroImage = heroUrl
-    ? `<figure data-seo-hero="true"><img src="${escapeHtml(heroUrl)}" alt="${escapeHtml(`${page.heading || page.h1 || "Irrigation"} - irrigation equipment and farm setup in Kenya`)}" width="1200" height="675" fetchpriority="high" decoding="async" /></figure>`
+    ? `<figure data-seo-hero="true"><img src="${escapeHtml(heroUrl)}" alt="${escapeHtml(`${page.heading || page.h1 || "Irrigation"} - irrigation equipment and farm setup in Kenya`)}" width="1200" height="675" ${page.route === "/" ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async" /></figure>`
     : "";
   const productImage = product?.images?.[0]
     ? `<figure data-seo-product-image="true"><img src="${escapeHtml(product.images[0])}" alt="${escapeHtml(product.name)}" width="900" height="900" fetchpriority="high" decoding="async" /><figcaption>${escapeHtml(product.name)} — irrigation equipment from DripTech Eco-Flow, Kenya.</figcaption></figure>`
@@ -1763,11 +1770,17 @@ const renderPage = (rawPage) => {
         item: {
           "@type": "Product",
           name: kit.name,
+          ...(kit.description ? { description: trimAtWordBoundary(kit.description, 300) } : {}),
+          ...(kit.image ? { image: kit.image } : {}),
           brand: { "@type": "Brand", name: "DripTech Eco Flow" },
           offers: {
             "@type": "Offer",
             price: String(Math.round(kit.price)),
             priceCurrency: "KES",
+            availability: kit.inStock
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+            itemCondition: "https://schema.org/NewCondition",
             url: `${siteUrl}/irrigation-kits`,
           },
         },

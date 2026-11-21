@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import NotFound from "@/pages/NotFound";
 import { useToast } from "@/hooks/use-toast";
+
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 export const STAFF_PORTAL_STORAGE_KEY = "dt_staff_portal_unlocked";
 const STAFF_CLOAK_EVENT = "dt-staff-cloak-changed";
@@ -113,7 +114,11 @@ export const StealthAdminGate: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   if (!unlocked) {
-    return <NotFound />;
+    return (
+      <Suspense fallback={null}>
+        <NotFound />
+      </Suspense>
+    );
   }
 
   return <>{children}</>;

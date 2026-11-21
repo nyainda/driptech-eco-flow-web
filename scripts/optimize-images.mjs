@@ -41,9 +41,9 @@ async function optimizeImages() {
 
             // Generate WebP versions at different sizes for responsive images
             const sizes = [
-                { width: 520, quality: 65, suffix: '-mobile' },   // Mobile
-                { width: 960, quality: 72, suffix: '-tablet' },   // Tablet
-                { width: 1440, quality: 75, suffix: '-desktop' }, // Desktop
+                { width: 480, quality: 52, suffix: '-mobile' },   // Mobile
+                { width: 820, quality: 58, suffix: '-tablet' },   // Tablet
+                { width: 1280, quality: 58, suffix: '-desktop' }, // Desktop
             ];
 
             for (const size of sizes) {
@@ -67,11 +67,11 @@ async function optimizeImages() {
             // Also create a highly optimized WebP version to replace the original
             const optimizedPath = path.join(publicDir, `${baseName}.webp`);
             await sharp(inputPath)
-                .resize(1440, null, {
+                .resize(1280, null, {
                     fit: 'inside',
                     withoutEnlargement: true
                 })
-                .webp({ quality: 75, effort: 6 })
+                .webp({ quality: 60, effort: 6 })
                 .toFile(optimizedPath);
 
             const optimizedStats = fs.statSync(optimizedPath);

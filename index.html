@@ -17,8 +17,28 @@
        refresh). It stops matching as soon as React renders. The 6s animation is a safety net
        that reveals the content if the JS bundle never loads. Static guide pages (marked
        data-seo-static-page) are intentionally shown as-is. */
-    html.js #root:not([data-seo-static-page]) > main[data-seo-shell] { visibility: hidden; animation: seo-shell-reveal 0s 6s forwards; }
-    @keyframes seo-shell-reveal { to { visibility: visible; } }
+    html.js #root:not([data-seo-static-page]) > main[data-seo-shell] {
+      display: none;
+    }
+    html.js.seo-shell-fallback #root:not([data-seo-static-page]) > main[data-seo-shell] {
+      display: block;
+    }
+    @font-face {
+      font-family: "IBM Plex Sans Fallback";
+      src: local("Arial"), local("Helvetica Neue"), local("Liberation Sans");
+      size-adjust: 100%;
+      ascent-override: 102%;
+      descent-override: 27%;
+      line-gap-override: 0%;
+    }
+    @font-face {
+      font-family: "Libre Baskerville Fallback";
+      src: local("Georgia"), local("Times New Roman");
+      size-adjust: 109%;
+      ascent-override: 88%;
+      descent-override: 24%;
+      line-gap-override: 0%;
+    }
     #root[data-seo-static-page] { min-height: 100vh; }
     #root[data-seo-static-page] > main[data-seo-shell] {
       box-sizing: border-box; width: min(100% - 2rem,  min(72rem, 100% - 2rem));
@@ -127,6 +147,11 @@
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : theme);
       } catch (_) { root.classList.add('light'); }
+      window.setTimeout(function () {
+        if (document.querySelector('#root:not([data-seo-static-page]) > main[data-seo-shell]')) {
+          root.classList.add('seo-shell-fallback');
+        }
+      }, 6000);
     })();
   </script>
 </head>
