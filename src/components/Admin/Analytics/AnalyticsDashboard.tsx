@@ -77,6 +77,22 @@ const formatShortDuration = (seconds: number): string => {
   return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
 };
 
+const VALID_ANALYTICS_SECTIONS = ["overview", "website", "seo", "grok", "market"] as const;
+
+const getInitialAnalyticsSection = (): string => {
+  if (typeof window === "undefined") return "overview";
+  const params = new URLSearchParams(window.location.search);
+  const requestedTab = params.get("tab");
+  if (
+    requestedTab &&
+    (VALID_ANALYTICS_SECTIONS as readonly string[]).includes(requestedTab)
+  ) {
+    return requestedTab;
+  }
+  if (params.has("gsc")) return "seo";
+  return "overview";
+};
+
 const AnalyticsDashboard: React.FC = () => {
   const [lifetimeData, setLifetimeData] =
     useState<LifetimeStats | null>(null);
@@ -90,7 +106,7 @@ const AnalyticsDashboard: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [secondsAgo, setSecondsAgo] = useState(0);
-  const [activeSection, setActiveSection] = useState("overview");
+  const [activeSection, setActiveSection] = useState(getInitialAnalyticsSection);
 
   // Auto-update the "seconds ago" counter every second
   useEffect(() => {
