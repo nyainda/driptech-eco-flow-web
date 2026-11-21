@@ -183,7 +183,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch blog posts from D1');
             return await response.json();
         } else {
-            let query = supabase
+            let query = (await getSupabase())
                 .from('blog_posts')
                 .select('*, blog_categories(name, slug)')
                 .eq('published', true)
@@ -365,7 +365,7 @@ export const dataService = {
             if (!response.ok) throw new Error('Failed to fetch news from D1');
             return await response.json();
         } else {
-            let query = supabase
+            let query = (await getSupabase())
                 .from('news_articles')
                 .select('*')
                 .eq('published', true)
@@ -408,7 +408,7 @@ export const dataService = {
         };
 
         const fetchFromSupabase = async () => {
-            let query = supabase
+            let query = (await getSupabase())
                 .from('blog_posts')
                 .select(
                     `

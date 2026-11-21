@@ -1,50 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchSupabaseRest, isSupabaseConfigured } from "@/integrations/supabase/config";
+import { useCallback, useEffect, useRef } from "react";
+import {
+  generateTrackingId,
+  sanitizePathForAnalytics,
+  shouldSkipClientTracking,
+} from "@/lib/analyticsHelpers";
+import {
+  ensureTrackingSession,
+  flushEngagementDuration,
+  getTrackingIdentity,
+  isTelemetryConfigured,
+  recordPageViewEvent,
+  telemetryFetch,
+} from "@/lib/analyticsTelemetry";
 
-const generateTrackingId = (): string => {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID();
-  }
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-};
-
-interface VisitorSession {
-  id: string;
-  visitor_id: string;
-  session_start: string;
-  browser?: string;
-  device_type?: string;
-  ip_address?: string;
-  user_agent?: string;
-  referrer?: string;
-  location?: string;
-}
-
-interface PageView {
-  visitor_id: string;
-  session_id: string;
-  page_path: string;
-  page_title: string;
-  timestamp: string;
-  referrer?: string;
-  time_spent?: number;
-}
-
-interface ProductInteraction {
-  visitor_id: string;
-  session_id: string;
-  page_path: string;
-  product_name: string;
-  product_id?: string;
-  product_category?: string;
-  interaction_type: string;
-  timestamp: string;
-  element_selector?: string;
-  additional_data?: any;
-}
-
-const initializedSessionIds = new Set<string>();
-const sessionInitPromises = new Map<string, Promise<void>>();
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const runAfterIdle = (cb: () => void, timeoutMs = 1600): (() => void) => {
   if (typeof window === "undefined") return () => {};
@@ -65,134 +34,65 @@ const runAfterIdle = (cb: () => void, timeoutMs = 1600): (() => void) => {
 };
 
 export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {}) => {
-  const trackingEnabled = enabled && isSupabaseConfigured;
-  const [visitorId] = useState(() => {
-    let id = localStorage.getItem("visitor_id");
-    if (!id) {
-      id = generateTrackingId();
-      localStorage.setItem("visitor_id", id);
-    }
-    return id;
-  });
-
-  const [sessionId] = useState(() => {
-    let id = sessionStorage.getItem("session_id");
-    if (!id) {
-      id = generateTrackingId();
-      sessionStorage.setItem("session_id", id);
-    }
-    return id;
-  });
+  const identityRef = useRef(getTrackingIdentity());
+  const trackingEnabled = enabled && isTelemetryConfigured && !shouldSkipClientTracking();
 
   const currentPagePath = useRef<string>("");
   const currentPageViewId = useRef<string | null>(null);
-  const isSessionInitialized = useRef<boolean>(false);
-  const sessionInitPromise = useRef<Promise<void> | null>(null);
-  const hasTrackedExit = useRef<boolean>(false); // Added for session end tracking
+  const accumulatedVisibleMs = useRef<number>(0);
+  const visibleSinceMs = useRef<number | null>(
+    typeof document !== "undefined" && document.visibilityState === "visible" ? Date.now() : null,
+  );
+  const hasTrackedExit = useRef<boolean>(false);
 
-  // Helper function to end the session
-  const endSession = async () => {
-    if (!trackingEnabled) return;
-    const sessionEnd = new Date();
-    const totalDuration = Math.floor(
-      (sessionEnd.getTime() - sessionStartTime.current.getTime()) / 1000,
-    );
-
-    const currentPageDuration = Math.floor(
-      (sessionEnd.getTime() - currentPageStartTime.current.getTime()) / 1000,
-    );
-
-    if (currentPageViewId.current && currentPageDuration >= 0 && currentPageDuration < 3600) {
-      try {
-        const { error } = await fetchSupabaseRest(
-          `page_views?id=eq.${encodeURIComponent(currentPageViewId.current)}`,
-          {
-            method: "PATCH",
-            headers: { Prefer: "return=minimal" },
-            body: JSON.stringify({ time_spent: currentPageDuration, exit_page: true }),
-          },
-        );
-        if (error) {
-          console.error("Error updating final page view:", error);
-        }
-      } catch (updateError) {
-        console.error("Error updating final page view:", updateError);
-      }
+  const pauseVisibleTimer = useCallback(() => {
+    if (visibleSinceMs.current !== null) {
+      accumulatedVisibleMs.current += Math.max(0, Date.now() - visibleSinceMs.current);
+      visibleSinceMs.current = null;
     }
+  }, []);
 
-    if (totalDuration > 0) {
-      try {
-        // Update the session in the database with end time and duration
-        const { error } = await fetchSupabaseRest(
-          `visitor_sessions?id=eq.${encodeURIComponent(sessionId)}`,
-          {
-            method: "PATCH",
-            headers: { Prefer: "return=minimal" },
-            body: JSON.stringify({
-              session_end: sessionEnd.toISOString(),
-              total_duration: totalDuration,
-            }),
-          },
-        );
-
-        if (error) {
-          console.error("Error updating session end:", error);
-        }
-      } catch (updateError) {
-        console.error("Error during session update:", updateError);
-      }
+  const resumeVisibleTimer = useCallback(() => {
+    if (
+      typeof document !== "undefined" &&
+      document.visibilityState === "visible" &&
+      visibleSinceMs.current === null
+    ) {
+      visibleSinceMs.current = Date.now();
     }
-  };
+  }, []);
 
-  // Initialize session once per browser session (module-level deduplication)
-  const ensureSessionInitialized = useCallback(async () => {
-    if (!trackingEnabled || initializedSessionIds.has(sessionId)) return;
+  const getActivePageSeconds = useCallback((): number => {
+    const activeSlice =
+      visibleSinceMs.current !== null ? Math.max(0, Date.now() - visibleSinceMs.current) : 0;
+    return Math.round((accumulatedVisibleMs.current + activeSlice) / 1000);
+  }, []);
 
-    const existingPromise = sessionInitPromises.get(sessionId);
-    if (existingPromise) {
-      await existingPromise;
-      return;
-    }
+  const flushSession = useCallback(
+    (markExit: boolean) => {
+      if (!trackingEnabled) return;
+      if (markExit && hasTrackedExit.current) return;
+      if (markExit) hasTrackedExit.current = true;
 
-    const promise = (async () => {
-      try {
-        const sessionData = {
-          id: sessionId,
-          visitor_id: visitorId,
-          session_start: sessionStartTime.current.toISOString(),
-          browser: getBrowserInfo(),
-          device_type: getDeviceType(),
-          user_agent: navigator.userAgent?.substring(0, 500) || null,
-          referrer: document.referrer?.substring(0, 500) || null,
-          location: getLocationFromTimezone(),
-          created_at: new Date().toISOString(),
-        };
+      pauseVisibleTimer();
+      const identity = identityRef.current;
+      const pageSec = getActivePageSeconds();
+      const sessionSec = Math.round((Date.now() - identity.sessionStartedAtMs) / 1000);
 
-        const { error } = await fetchSupabaseRest("visitor_sessions?on_conflict=id", {
-          method: "POST",
-          headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
-          body: JSON.stringify(sessionData),
-        });
+      void flushEngagementDuration({
+        visitorId: identity.visitorId,
+        sessionId: identity.sessionId,
+        pageViewId: currentPageViewId.current,
+        pageDurationSeconds: pageSec,
+        sessionDurationSeconds: sessionSec,
+        markExit,
+        keepalive: true,
+      });
+    },
+    [trackingEnabled, pauseVisibleTimer, getActivePageSeconds],
+  );
 
-        if (error) {
-          throw error;
-        }
-        initializedSessionIds.add(sessionId);
-        isSessionInitialized.current = true;
-      } catch (error) {
-        console.error("Unable to start visitor session:", error);
-        initializedSessionIds.add(sessionId);
-        isSessionInitialized.current = true;
-      } finally {
-        sessionInitPromises.delete(sessionId);
-      }
-    })();
-
-    sessionInitPromises.set(sessionId, promise);
-    sessionInitPromise.current = promise;
-    await promise;
-  }, [trackingEnabled, visitorId, sessionId]);
-
+  // Initialize visitor session lazily after paint
   useEffect(() => {
     if (!trackingEnabled) return;
     return runAfterIdle(() => {
@@ -219,45 +119,15 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("pagehide", handlePageHide);
 
-        if (timeSpent > 0 && timeSpent < 3600) {
-          try {
-            const { error } = await fetchSupabaseRest(
-              `page_views?id=eq.${encodeURIComponent(currentPageViewId.current || "")}`,
-              {
-                method: "PATCH",
-                headers: { Prefer: "return=minimal" },
-                body: JSON.stringify({ time_spent: timeSpent }),
-              },
-            );
-            if (error) {
-              console.error("Unable to update page duration:", error);
-            }
-          } catch (updateError) {
-            console.error("Unexpected error updating page duration:", updateError);
-          }
-        }
-      }
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, [trackingEnabled, flushSession, resumeVisibleTimer]);
 
-      // Create new page view record
-      const pageViewId = generateTrackingId();
-      const pageViewData = {
-        id: pageViewId,
-        visitor_id: visitorId,
-        session_id: sessionId,
-        page_path: path,
-        page_title: title?.substring(0, 200) || path,
-        timestamp: new Date().toISOString(),
-        referrer:
-          (currentPagePath.current || document.referrer)?.substring(0, 500) ||
-          null,
-        created_at: new Date().toISOString(),
-      };
-
-      const { error } = await fetchSupabaseRest("page_views", {
-        method: "POST",
-        headers: { Prefer: "return=minimal" },
-        body: JSON.stringify(pageViewData),
-      });
+  const trackPageView = useCallback(
+    async (path: string, title: string) => {
+      if (!trackingEnabled || shouldSkipClientTracking()) return;
 
       const cleanPath = sanitizePathForAnalytics(path);
       if (currentPagePath.current === cleanPath && currentPageViewId.current) {
@@ -287,27 +157,29 @@ export const useVisitorTracking = ({ enabled = true }: { enabled?: boolean } = {
         }
       }
 
-      const interactionData = {
-        id: generateTrackingId(),
-        visitor_id: visitorId,
-        session_id: sessionId,
-        page_path: window.location.pathname,
-        product_name: productName?.substring(0, 100) || "Unknown",
-        product_id: additionalData?.productId?.substring(0, 50) || null,
-        product_category: additionalData?.category?.substring(0, 50) || null,
-        interaction_type: interactionType,
-        timestamp: new Date().toISOString(),
-        element_selector:
-          additionalData?.elementSelector?.substring(0, 200) || null,
-        additional_data: additionalData || null,
-        created_at: new Date().toISOString(),
-      };
+      const recorded = await recordPageViewEvent(
+        cleanPath,
+        title || cleanPath,
+        currentPagePath.current || undefined,
+      );
 
-      const { error } = await fetchSupabaseRest("product_interactions", {
-        method: "POST",
-        headers: { Prefer: "return=minimal" },
-        body: JSON.stringify(interactionData),
-      });
+      if (recorded) {
+        identityRef.current = recorded.identity;
+        currentPagePath.current = cleanPath;
+        currentPageViewId.current = recorded.pageViewId;
+        accumulatedVisibleMs.current = 0;
+        visibleSinceMs.current =
+          typeof document !== "undefined" && document.visibilityState === "visible"
+            ? Date.now()
+            : null;
+      }
+    },
+    [trackingEnabled, pauseVisibleTimer, getActivePageSeconds],
+  );
+
+  const trackProductInteraction = useCallback(
+    async (productName: string, interactionType: string, additionalData?: Record<string, any>) => {
+      if (!trackingEnabled || shouldSkipClientTracking()) return;
 
       try {
         const identity = getTrackingIdentity();

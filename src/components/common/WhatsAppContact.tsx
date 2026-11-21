@@ -470,6 +470,7 @@ const WhatsAppContact = ({
                         setSelectedServiceCategory(category.id);
                         setLoading(true);
                         try {
+                          const { dataService } = await import('@/services/dataService');
                           // Fetch packages specifically for this category to ensure data is loaded
                           const packages = await dataService.getServicePackages({
                             categoryId: category.id,
