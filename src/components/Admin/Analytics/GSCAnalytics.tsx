@@ -5,6 +5,7 @@ import {
   Award,
   CheckCircle2,
   CheckSquare,
+  Copy,
   Download,
   ExternalLink,
   FileSearch,
@@ -58,6 +59,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { extractEdgeFunctionError } from "@/lib/edge-functions";
 import {
   buildGscCsv,
+  buildGscDiagnosticBrief,
   buildWeightedIntentSummary,
   classifyIntent,
   classifyPageSection,
@@ -68,6 +70,7 @@ import {
   formatSearchAppearanceLabel,
   INTENT_COLORS,
   isBrandedQuery,
+  isXmlSitemapUrl,
   mapQueryToTopPages,
   readablePage,
   summarizeBrandSplit,
@@ -602,6 +605,16 @@ export const GSCAnalytics: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleCopyBrief = async () => {
+    if (!payload) return;
+    try {
+      await navigator.clipboard.writeText(buildGscDiagnosticBrief(payload));
+      setNotice("Copied full Google Search Console diagnostic brief to clipboard.");
+    } catch {
+      setError("Could not access clipboard. Use Export CSV on the Keywords tab instead.");
+    }
+  };
+
   const totals = payload?.totals;
   const prevTotals = payload?.previousTotals;
   const isConnected = Boolean(payload?.connected);
@@ -794,6 +807,17 @@ export const GSCAnalytics: React.FC = () => {
                   >
                     <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
                     Refresh
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void handleCopyBrief()}
+                    disabled={!payload}
+                    title="Copy Markdown SEO diagnostic brief for review"
+                  >
+                    <Copy className="mr-1.5 h-3.5 w-3.5" />
+                    Copy Brief
                   </Button>
 
                   <Button
@@ -1547,14 +1571,14 @@ export const GSCAnalytics: React.FC = () => {
                     </Button>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
-                    <span>Quick check:</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    <span className="mr-1 font-medium text-slate-600">Quick check: </span>
                     {QUICK_INSPECT_PATHS.map((path) => (
                       <button
                         key={path}
                         type="button"
                         onClick={() => void handleInspectUrl(path)}
-                        className="rounded border border-slate-200 bg-slate-50 px-2 py-0.5 text-slate-700 hover:bg-slate-100"
+                        className="rounded border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-700 hover:bg-slate-100"
                       >
                         {path}
                       </button>
@@ -1626,26 +1650,30 @@ export const GSCAnalytics: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-slate-600">
-                        <span>
-                          User Canonical:{" "}
-                          <code>{inspectionResult.userCanonical || "None"}</code>
-                        </span>
-                        <span>
-                          Google Canonical:{" "}
-                          <code>{inspectionResult.googleCanonical || "None"}</code>
-                        </span>
-                        {inspectionResult.richResultTypes.length > 0 && (
-                          <span className="flex flex-wrap items-center gap-1">
-                            Detected Schema:
-                            {inspectionResult.richResultTypes.map((typeName) => (
-                              <Badge key={typeName} variant="outline">
-                                {typeName}
-                              </Badge>
-                            ))}
-                          </span>
-                        )}
+                      <div className="grid gap-2 text-slate-600 sm:grid-cols-2">
+                        <div className="rounded bg-white px-2.5 py-1.5">
+                          <span className="text-slate-500">User Canonical: </span>
+                          <code className="break-all text-slate-900">
+                            {inspectionResult.userCanonical || "None"}
+                          </code>
+                        </div>
+                        <div className="rounded bg-white px-2.5 py-1.5">
+                          <span className="text-slate-500">Google Canonical: </span>
+                          <code className="break-all text-slate-900">
+                            {inspectionResult.googleCanonical || "None"}
+                          </code>
+                        </div>
                       </div>
+                      {inspectionResult.richResultTypes.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5 text-slate-600">
+                          <span>Detected Schema:</span>
+                          {inspectionResult.richResultTypes.map((typeName) => (
+                            <Badge key={typeName} variant="outline">
+                              {typeName}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </CardContent>
@@ -1746,9 +1774,21 @@ export const GSCAnalytics: React.FC = () => {
                           (acc, c) => acc + Number(c.indexed || 0),
                           0,
                         );
+                        const invalidNonXml = !isXmlSitemapUrl(sm.path);
                         return (
-                          <TableRow key={sm.path}>
-                            <TableCell className="font-mono text-xs">{sm.path}</TableCell>
+                          <TableRow
+                            key={sm.path}
+                            className={invalidNonXml ? "bg-rose-50/50" : undefined}
+                          >
+                            <TableCell className="space-y-1">
+                              <div className="font-mono text-xs">{sm.path}</div>
+                              {invalidNonXml && (
+                                <div className="text-[11px] font-medium text-rose-700">
+                                  Not an XML sitemap — delete this entry in Search Console → Sitemaps and keep only{" "}
+                                  <code>/sitemap.xml</code>.
+                                </div>
+                              )}
+                            </TableCell>
                             <TableCell className="text-xs text-slate-600">
                               {sm.lastDownloaded
                                 ? new Date(sm.lastDownloaded).toLocaleDateString()

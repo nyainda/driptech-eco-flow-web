@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   buildGscCsv,
+  buildGscDiagnosticBrief,
   buildWeightedIntentSummary,
   classifyIntent,
   classifyPageSection,
@@ -11,6 +12,7 @@ import {
   formatCountryName,
   formatSearchAppearanceLabel,
   isBrandedQuery,
+  isXmlSitemapUrl,
   mapQueryToTopPages,
   readablePage,
   summarizeBrandSplit,
@@ -193,5 +195,28 @@ assert.ok(gscUi.includes("setNotice"), "GSCAnalytics must separate success notic
 const dashboardUi = fs.readFileSync("src/components/Admin/Analytics/AnalyticsDashboard.tsx", "utf8");
 assert.ok(dashboardUi.includes("getInitialAnalyticsSection"), "AnalyticsDashboard must initialize tab from URL params");
 assert.ok(dashboardUi.includes('params.has("gsc")'), "AnalyticsDashboard must auto-open seo tab when ?gsc= is present");
+
+// 10. Non-XML sitemap detection and diagnostic brief generation
+assert.equal(isXmlSitemapUrl("https://www.dripstech.co.ke/sitemap.xml"), true);
+assert.equal(isXmlSitemapUrl("https://www.dripstech.co.ke/sitemap-index.xml.gz"), true);
+assert.equal(isXmlSitemapUrl("https://www.dripstech.co.ke/drip-irrigation-kit-price-kenya"), false);
+
+const brief = buildGscDiagnosticBrief({
+  connected: true,
+  property: "sc-domain:dripstech.co.ke",
+  countryFilter: "ken",
+  startDate: "2026-10-21",
+  endDate: "2026-11-18",
+  totals: { clicks: 175, impressions: 2650, ctr: 175 / 2650, position: 7.4 },
+  trend: [],
+  queries: sampleQueries,
+  pages: samplePages,
+  queryPages,
+  devices: [],
+  sitemaps: [{ path: "https://www.dripstech.co.ke/drip-irrigation-kit-price-kenya", errors: 1, warnings: 0, contents: [] }],
+});
+assert.ok(brief.includes("Kenya Only"));
+assert.ok(brief.includes("## Cannibalization Conflicts"));
+assert.ok(brief.includes("errors=1"));
 
 console.log("GSC analytics tests passed cleanly.");

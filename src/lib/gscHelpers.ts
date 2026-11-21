@@ -580,3 +580,93 @@ export function buildGscCsv(
 
   return [header, ...body].join("\n");
 }
+
+export function isXmlSitemapUrl(path: string): boolean {
+  try {
+    const pathname = new URL(path, "https://www.dripstech.co.ke").pathname.toLowerCase();
+    return /\.xml(?:\.gz)?$/.test(pathname);
+  } catch {
+    return /\.xml(?:\.gz)?(?:$|\?)/i.test(path);
+  }
+}
+
+export function buildGscDiagnosticBrief(payload: GscPayload): string {
+  const queryPageMap = mapQueryToTopPages(payload.queryPages || []);
+  const split = summarizeBrandSplit(payload.queries || []);
+  const conflicts = findCannibalizedQueries(payload.queryPages || [], 20).slice(0, 15);
+  const wins = computeQuickWins(payload.queries || [], queryPageMap, 15).slice(0, 15);
+  const lowCtr = computeLowCtrPages(payload.pages || [], 50).slice(0, 15);
+  const totals = payload.totals;
+
+  const lines: string[] = [
+    `# DripTech Google Search Console Brief (${payload.countryFilter === "ken" ? "Kenya Only" : "All Countries"})`,
+    `Property: ${payload.property || "Unknown"} | Window: ${payload.startDate || "?"} -> ${payload.endDate || "?"}`,
+  ];
+
+  if (totals) {
+    lines.push(
+      `Totals: ${totals.clicks} clicks | ${totals.impressions} impressions | ${(totals.ctr * 100).toFixed(2)}% CTR | Pos ${totals.position.toFixed(1)}`,
+    );
+  }
+  lines.push(
+    `Non-Branded: ${split.nonBranded.clicks} clicks / ${split.nonBranded.impressions} impr (${split.nonBranded.queries} queries) | Branded: ${split.branded.clicks} clicks / ${split.branded.impressions} impr`,
+  );
+
+  lines.push("", "## Top 25 Queries");
+  for (const row of (payload.queries || []).slice(0, 25)) {
+    const q = row.keys[0] || "";
+    const topUrl = queryPageMap.get(q.trim().toLowerCase())?.[0]?.keys[1];
+    lines.push(
+      `- "${q}": ${row.clicks} clicks | ${row.impressions} impr | ${(row.ctr * 100).toFixed(2)}% | Pos ${row.position.toFixed(1)}${topUrl ? ` -> ${readablePage(topUrl)}` : ""}`,
+    );
+  }
+
+  lines.push("", "## Top 20 Pages");
+  for (const p of (payload.pages || []).slice(0, 20)) {
+    lines.push(
+      `- ${readablePage(p.keys[0] || "")}: ${p.clicks} clicks | ${p.impressions} impr | ${(p.ctr * 100).toFixed(2)}% | Pos ${p.position.toFixed(1)}`,
+    );
+  }
+
+  if (conflicts.length > 0) {
+    lines.push("", "## Cannibalization Conflicts");
+    for (const c of conflicts) {
+      const urls = c.pages
+        .slice(0, 4)
+        .map((p) => `${readablePage(p.page)} (${Math.round(p.share * 100)}%, Pos ${p.position.toFixed(1)})`)
+        .join(", ");
+      lines.push(`- "${c.query}" (${c.totalImpressions} impr across ${c.pages.length} URLs): ${urls}`);
+    }
+  }
+
+  if (wins.length > 0) {
+    lines.push("", "## Striking-Distance Quick Wins (Pos 4-20)");
+    for (const w of wins) {
+      lines.push(
+        `- "${w.keys[0]}" (+${w.upsideClicks} est clicks): Pos ${w.position.toFixed(1)}, ${w.impressions} impr${w.topPage ? ` -> ${readablePage(w.topPage)}` : ""}`,
+      );
+    }
+  }
+
+  if (lowCtr.length > 0) {
+    lines.push("", "## Low-CTR Pages (<2.5% CTR, 50+ Impr)");
+    for (const p of lowCtr) {
+      lines.push(
+        `- ${readablePage(p.keys[0] || "")}: ${(p.ctr * 100).toFixed(2)}% CTR (${p.impressions} impr, Pos ${p.position.toFixed(1)})`,
+      );
+    }
+  }
+
+  if ((payload.sitemaps?.length || 0) > 0) {
+    lines.push("", "## Submitted Sitemaps");
+    for (const sm of payload.sitemaps || []) {
+      const submitted = (sm.contents || []).reduce((acc, c) => acc + Number(c.submitted || 0), 0);
+      const indexed = (sm.contents || []).reduce((acc, c) => acc + Number(c.indexed || 0), 0);
+      lines.push(
+        `- ${sm.path}: submitted=${submitted}, indexed=${indexed}, errors=${Number(sm.errors || 0)}, warnings=${Number(sm.warnings || 0)}`,
+      );
+    }
+  }
+
+  return lines.join("\n");
+}
