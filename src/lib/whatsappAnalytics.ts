@@ -1,16 +1,6 @@
-import { v4 as uuidv4 } from "uuid";
-import { supabase } from "@/integrations/supabase/client";
+import { recordWhatsAppOutboundClick } from "@/lib/analyticsTelemetry";
 
-const BUSINESS_WHATSAPP_NUMBERS = new Set(["254723407849", "254757716018"]);
-
-const getOrCreateId = (storage: Storage, key: string) => {
-  let id = storage.getItem(key);
-  if (!id) {
-    id = uuidv4();
-    storage.setItem(key, id);
-  }
-  return id;
-};
+const BUSINESS_WHATSAPP_NUMBERS = new Set(["254723407849", "254141294497"]);
 
 const getWhatsAppDetails = (url: string) => {
   try {
@@ -35,19 +25,7 @@ export const trackWhatsAppClick = (url: string, source = "website") => {
   const details = getWhatsAppDetails(url);
   if (!details.isBusinessLink) return;
 
-  const visitorId = getOrCreateId(localStorage, "visitor_id");
-  const sessionId = getOrCreateId(sessionStorage, "session_id");
-  void supabase.from("whatsapp_click_events").insert({
-    visitor_id: visitorId,
-    session_id: sessionId,
-    page_path: `${window.location.pathname}${window.location.search}`.slice(0, 500),
-    source: source.trim().slice(0, 200) || "website",
-    target_number: details.phone,
-    has_prefilled_message: details.hasPrefilledMessage,
-    clicked_at: new Date().toISOString(),
-  }).then(({ error }) => {
-    if (error) console.error("Unable to record WhatsApp click:", error);
-  });
+  recordWhatsAppOutboundClick(details.phone, details.hasPrefilledMessage, source);
 };
 
 /** Opens WhatsApp and records the outbound customer-contact intent first. */

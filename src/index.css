@@ -20,9 +20,11 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
 
   body {
+    overflow-x: clip;
     font-family: var(--font-body);
     font-feature-settings:
       "rlig" 1,
@@ -88,7 +90,7 @@
   .dt-section-label,
   .dt-group-header {
     @apply text-[10px] font-extrabold uppercase tracking-widest;
-    color: hsl(var(--dt-gold-500));
+    color: hsl(var(--gold));
   }
   /* Page/section headings (h2): 24px bold per spec */
   .dt-section-title {
@@ -133,6 +135,12 @@
   .dt-btn-primary {
     @apply bg-primary hover:bg-primary/90 text-primary-foreground
            font-semibold px-6 py-2.5
+           transition-colors duration-150;
+    border-radius: 10px;
+  }
+  .dt-btn-secondary {
+    @apply border border-border bg-card hover:bg-muted text-foreground
+           font-semibold px-5 py-2.5
            transition-colors duration-150;
     border-radius: 10px;
   }
@@ -395,7 +403,8 @@
     --dt-green-50:    138 35% 97%;
 
     /* Gold: harvest warmth, CTA contrast, premium feel */
-    --dt-gold-600:    38 90% 38%;
+    --dt-gold-700:    35 90% 26%;
+    --dt-gold-600:    38 90% 34%;
     --dt-gold-500:    40 92% 46%;
     --dt-gold-400:    42 90% 55%;
     --dt-gold-100:    44 80% 92%;
@@ -411,13 +420,13 @@
     --dt-stone-50:    42 35% 96%;
 
     /* WhatsApp green — isolated, only for WhatsApp elements */
-    --dt-whatsapp:    142 70% 37%;
+    --dt-whatsapp:    142 74% 27%;
 
     /* Storefront aliases: use these semantic values for the editorial public UI. */
     --ink:                     var(--dt-green-900);
     --paper:                   var(--dt-stone-50);
     --teal:                    var(--dt-green-600);
-    --gold:                    var(--dt-gold-500);
+    --gold:                    var(--dt-gold-700);
     --surface:                 42 28% 93%;
     --brand-dark:              var(--dt-green-900);
     --brand-light:             var(--dt-green-100);
@@ -433,10 +442,10 @@
     --popover:                  0 0% 100%;
     --popover-foreground:       var(--dt-stone-900);
 
-    /* Primary = DripsTech forest green */
-    --primary:                  var(--dt-green-500);
+    /* Primary = DripsTech forest green (WCAG AA >= 4.5:1 against white & stone-50) */
+    --primary:                  152 58% 26%;
     --primary-foreground:       0 0% 100%;
-    --primary-hover:            var(--dt-green-600);
+    --primary-hover:            152 60% 21%;
 
     /* Secondary = warm off-white / light stone */
     --secondary:                var(--dt-stone-100);
@@ -458,8 +467,8 @@
     --ring:                     var(--dt-gold-500);
 
     /* ── Typography ─────────────────────────────── */
-    --font-heading: "Libre Baskerville", Georgia, serif;
-    --font-body:    "IBM Plex Sans", system-ui, sans-serif;
+    --font-heading: "Libre Baskerville", "Libre Baskerville Fallback", Georgia, serif;
+    --font-body:    "IBM Plex Sans", "IBM Plex Sans Fallback", system-ui, sans-serif;
     --font-mono:    "JetBrains Mono", "Fira Code", monospace;
 
     /* ── Radius ─────────────────────────────────── */

@@ -4,12 +4,22 @@ import { hasAdminRole } from "../_shared/admin-auth.ts";
 const allowedOrigins = new Set([
   "https://www.dripstech.co.ke",
   "https://dripstech.co.ke",
+  "http://localhost:5000",
+  "http://localhost:5173",
+  "http://127.0.0.1:4173",
 ]);
+
+const isAllowedOrigin = (origin: string): boolean => {
+  if (!origin) return false;
+  if (allowedOrigins.has(origin)) return true;
+  return /^https:\/\/[a-z0-9-]*driptech[a-z0-9-]*\.vercel\.app$/i.test(origin) ||
+    /^https:\/\/[a-z0-9-]+\.driptech-eco-flow-web\.pages\.dev$/i.test(origin);
+};
 
 const corsFor = (req: Request) => {
   const origin = req.headers.get("origin") || "";
   return {
-    "Access-Control-Allow-Origin": allowedOrigins.has(origin)
+    "Access-Control-Allow-Origin": isAllowedOrigin(origin)
       ? origin
       : "https://www.dripstech.co.ke",
     "Vary": "Origin",
@@ -83,7 +93,10 @@ Deno.serve(async (req) => {
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("response_type", "code");
-  url.searchParams.set("scope", "https://www.googleapis.com/auth/webmasters.readonly");
+  url.searchParams.set(
+    "scope",
+    "https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/userinfo.email",
+  );
   url.searchParams.set("access_type", "offline");
   url.searchParams.set("prompt", "consent");
   url.searchParams.set("state", state);

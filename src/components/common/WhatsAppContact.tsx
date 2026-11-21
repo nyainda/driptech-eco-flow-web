@@ -12,7 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageCircle, Check, Package, Droplets, Filter, Gauge, Settings, X, ChevronRight, Wrench } from 'lucide-react';
-import { dataService } from '@/services/dataService';
 import { openTrackedWhatsApp } from '@/lib/whatsappAnalytics';
 
 interface Variant {
@@ -56,6 +55,7 @@ interface WhatsAppContactProps {
   phoneNumber?: string;
   variant?: 'button' | 'icon' | 'floating';
   className?: string;
+  defaultOpen?: boolean;
 }
 
 const WhatsAppContact = ({
@@ -64,6 +64,7 @@ const WhatsAppContact = ({
   phoneNumber = '+254723407849',
   variant = 'button',
   className = '',
+  defaultOpen = false,
 }: WhatsAppContactProps) => {
   // Product State
   const [products, setProducts] = useState<Product[]>([]);
@@ -78,7 +79,7 @@ const WhatsAppContact = ({
 
   // General State
   const [loading, setLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(defaultOpen);
   const [activeTab, setActiveTab] = useState("products");
 
   useEffect(() => {
@@ -90,6 +91,7 @@ const WhatsAppContact = ({
   const loadData = async () => {
     setLoading(true);
     try {
+      const { dataService } = await import('@/services/dataService');
       // Fetch Products
       const productsData = await dataService.getProducts(
         filterCategory && filterCategory !== 'all'
@@ -230,15 +232,15 @@ const WhatsAppContact = ({
         return (
           <button
             onClick={currentProduct ? openWhatsApp : () => setIsDialogOpen(true)}
-            className="fixed bottom-5 right-4 z-50 inline-flex min-h-14 items-center gap-3 rounded-full bg-[hsl(var(--dt-whatsapp))] px-4 text-white shadow-[0_10px_30px_hsl(var(--dt-whatsapp)/0.28)] transition-all duration-200 hover:-translate-y-1 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-[0_14px_34px_hsl(var(--dt-whatsapp)/0.35)] sm:bottom-8 sm:right-8 sm:px-5"
+            className="hidden md:inline-flex fixed bottom-8 right-8 z-50 h-14 min-w-[210px] items-center gap-3 rounded-full bg-[hsl(var(--dt-whatsapp))] px-5 text-white shadow-[0_10px_30px_hsl(var(--dt-whatsapp)/0.28)] transition-all duration-200 hover:-translate-y-1 hover:bg-[hsl(var(--dt-whatsapp)/0.92)] hover:shadow-[0_14px_34px_hsl(var(--dt-whatsapp)/0.35)]"
             aria-label="Contact us on WhatsApp"
             title="Open WhatsApp and choose what you need"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15">
               <MessageCircle className="h-5 w-5" />
             </span>
-            <span className="hidden text-left sm:block">
-              <span className="block text-xs font-medium text-white/75">Need a hand?</span>
+            <span className="hidden text-left sm:block whitespace-nowrap">
+              <span className="block text-xs font-medium text-white/95">Need a hand?</span>
               <span className="block text-sm font-bold leading-tight">Chat on WhatsApp</span>
             </span>
           </button>
@@ -468,6 +470,7 @@ const WhatsAppContact = ({
                         setSelectedServiceCategory(category.id);
                         setLoading(true);
                         try {
+                          const { dataService } = await import('@/services/dataService');
                           // Fetch packages specifically for this category to ensure data is loaded
                           const packages = await dataService.getServicePackages({
                             categoryId: category.id,

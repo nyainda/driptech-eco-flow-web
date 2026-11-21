@@ -1,323 +1,548 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
-import SEOHead from "@/components/common/SEOHead";
+import Breadcrumbs from "@/components/Layout/Breadcrumbs";
 import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
+import SEOHead from "@/components/common/SEOHead";
+import { VideoCard } from "@/components/Video/VideoCard";
+import { VideoPlayerModal } from "@/components/Video/VideoPlayerModal";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import { dataService } from "@/services/dataService";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import { buildOrganizationSchema, SITE_COMPANY } from "@/config/company";
+import { isValidHttpUrl, VideoItem } from "@/lib/videoUtils";
 import {
+  ArrowRight,
+  Compass,
+  Crown,
   Linkedin,
   Mail,
+  MessageCircle,
   Phone,
+  Play,
   Users,
-  Star,
-  Sparkles,
-  Crown,
+  Wrench,
 } from "lucide-react";
 
+interface TeamMember {
+  id: string;
+  name: string;
+  position: string;
+  bio?: string | null;
+  image_url?: string | null;
+  linkedin_url?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  featured?: boolean | null;
+}
+
+const OPERATIONAL_DESKS = [
+  {
+    icon: Phone,
+    badge: "Sales & Dispatch",
+    title: "Irrigation Supply Specialists",
+    description:
+      "Helps you pick matched drip kits, 15/20/30cm driplines, sprinklers, and pumps, and arranges county courier delivery nationwide.",
+    contactLabel: SITE_COMPANY.phonePrimaryDisplay,
+    href: `tel:${SITE_COMPANY.phonePrimary}`,
+    ctaLabel: "Call Sales Desk",
+    secondaryTo: "/products",
+    secondaryLabel: "Browse Equipment",
+  },
+  {
+    icon: Compass,
+    badge: "Hydraulic Design",
+    title: "Engineering & BOQ Desk",
+    description:
+      "Prepares zoned block layouts, pipe diameter calculations, Total Dynamic Head pump specs, and itemized bank/NGO Bills of Quantities.",
+    contactLabel: SITE_COMPANY.phoneSecondaryDisplay,
+    href: `tel:${SITE_COMPANY.phoneSecondary}`,
+    ctaLabel: "Call Engineering",
+    secondaryTo: "/contact?topic=design-boq",
+    secondaryLabel: "Request Official BOQ",
+  },
+  {
+    icon: Wrench,
+    badge: "Field Execution",
+    title: "Certified Field Technicians",
+    description:
+      "Handles on-farm mainline trenching, filtration headworks, greenhouse drip installs, hot-wedge HDPE dam liner welding, and servicing.",
+    contactLabel: "All 47 Kenyan Counties",
+    to: "/technician-services",
+    ctaLabel: "Book a Field Technician",
+    secondaryTo: "/projects",
+    secondaryLabel: "See Completed Work",
+  },
+] as const;
 
 const Team = () => {
-  const [team, setTeam] = useState<any[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const truncateText = (text: string, maxLength: number = 100) => {
-    if (text.length <= maxLength) return text;
-    return text.substr(0, maxLength).trim() + "...";
-  };
+  const [videos, setVideos] = useState<VideoItem[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchTeam = async () => {
+    let cancelled = false;
+
+    const fetchTeamAndVideos = async () => {
       try {
         setLoading(true);
-        const data = await dataService.getTeamMembers();
-        setTeam(data || []);
+        const [teamData, videoData] = await Promise.all([
+          dataService.getTeamMembers().catch(() => []),
+          dataService.getVideos({ sortBy: "featured", limit: 3 }).catch(() => []),
+        ]);
+
+        if (!cancelled) {
+          setTeam(Array.isArray(teamData) ? (teamData as TeamMember[]) : []);
+          setVideos(Array.isArray(videoData) ? (videoData as VideoItem[]) : []);
+        }
       } catch (error) {
-        console.error("Error fetching team:", error);
+        console.error("Error fetching team page data:", error);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    fetchTeam();
+    void fetchTeamAndVideos();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
+  const handleWatchVideo = (video: VideoItem) => {
+    setSelectedVideo(video);
+    setIsVideoModalOpen(true);
+
+    void supabase
+      .from("videos")
+      .update({ views: (video.views || 0) + 1 })
+      .eq("id", video.id);
+  };
+
+  const isSingleLeadershipProfile = team.length === 1;
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SEOHead
-        title="Our Irrigation Team & Specialists Kenya | DripTech Eco Flow"
-        description="Meet the irrigation team at DripTech Eco Flow. We provide system design, installation, and technical support across Kenya."
+        title={`Our Irrigation Team & Field Specialists Kenya | ${SITE_COMPANY.name}`}
+        description={`Meet the leadership, irrigation sales specialists, hydraulic engineers, and field technicians behind ${SITE_COMPANY.name} in Kenya.`}
+        url={`${SITE_COMPANY.url}/team`}
+        schema={[buildOrganizationSchema()]}
       />
       <Header />
-      <main className="relative">
-        {/* Hero Section */}
-        <section className="relative py-32 bg-gradient-to-br from-primary/10 via-background to-accent/5 overflow-hidden">
-          {/* Background Elements */}
-          <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent rounded-full blur-3xl transform translate-x-1/2 translate-y-1/2"></div>
-          </div>
 
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <div className="inline-flex items-center gap-3 mb-8">
-              <Badge
-                variant="secondary"
-                className="px-6 py-3 text-base font-semibold bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 transition-colors"
-              >
-                <Users className="w-5 h-5 mr-2" />
-                Our Team
-              </Badge>
-              <div className="flex gap-1">
-                <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 animate-pulse" />
-                <Star
-                  className="w-4 h-4 text-yellow-400 fill-yellow-400 animate-pulse"
-                  style={{ animationDelay: "0.2s" }}
-                />
-                <Star
-                  className="w-3 h-3 text-yellow-400 fill-yellow-400 animate-pulse"
-                  style={{ animationDelay: "0.4s" }}
-                />
-              </div>
-            </div>
+      <div className="dt-container">
+        <Breadcrumbs />
+      </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
-              Meet Our
-              <br />
-              <span className="relative inline-block">
-                <span className="text-primary">Expert Team</span>
-                <div className="absolute -bottom-3 left-0 right-0 h-1.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60 rounded-full"></div>
-                <Sparkles
-                  className="absolute -top-8 -right-8 w-8 h-8 text-primary animate-spin"
-                  style={{ animationDuration: "3s" }}
-                />
-              </span>
-            </h1>
+      <main id="main-content" tabIndex={-1} className="flex-1">
+        {/* Editorial Hero */}
+        <section className="pb-10 pt-2 sm:pb-14">
+          <div className="dt-container">
+            <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 lg:p-10">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-2xl">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
+                    <Users className="h-3.5 w-3.5" />
+                    <span>Our Team &amp; Specialists</span>
+                  </div>
 
-            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
-              Our experienced professionals are dedicated to delivering{" "}
-              <span className="text-foreground font-semibold">
-                irrigation systems that fit the farm
-              </span>{" "}
-              and exceptional service.
-            </p>
+                  <h1 className="mt-4 font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    Meet the Specialists{" "}
+                    <span className="text-primary">Behind DripTech</span>
+                  </h1>
 
-            {/* Stats or Additional Info */}
-            <div className="flex flex-wrap justify-center gap-8 text-center">
-              <div className="bg-background/60 backdrop-blur-sm border border-border/50 rounded-2xl px-6 py-4 shadow-lg">
-                <div className="text-2xl font-bold text-primary">
-                  {team.length}
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    Combining agricultural engineering leadership, sales &amp; parcel
+                    dispatch, and field installation crews to deliver irrigation systems
+                    built for Kenyan farms.
+                  </p>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Team Members
-                </div>
-              </div>
-              <div className="bg-background/60 backdrop-blur-sm border border-border/50 rounded-2xl px-6 py-4 shadow-lg">
-                <div className="text-2xl font-bold text-primary">
-                  {team.filter((m) => m.featured).length}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Lead Experts
+
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    to="/contact"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    Talk to Our Team
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    to="/technician-services"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                  >
+                    <Wrench className="h-4 w-4 text-primary" />
+                    Book Field Technician
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Team Grid */}
-        <section className="py-24 bg-gradient-to-b from-background to-muted/20">
-          <div className="container mx-auto px-4">
+        {/* Leadership & Team Members */}
+        <section className="border-t border-border bg-muted/20 py-10 sm:py-14">
+          <div className="dt-container">
+            <div className="mb-8 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+              <div>
+                <p className="dt-section-label mb-1">Leadership &amp; Staff</p>
+                <h2 className="dt-section-title">Leadership &amp; Specialists</h2>
+              </div>
+              {!loading && team.length > 0 && (
+                <p className="text-xs font-medium text-muted-foreground">
+                  {team.length} {team.length === 1 ? "profile" : "team members"} listed
+                </p>
+              )}
+            </div>
+
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <Card
-                    key={index}
-                    className="border-0 shadow-lg bg-card/80 backdrop-blur-sm overflow-hidden"
-                    style={{ animationDelay: `${index * 100} ms` }}
-                  >
-                    <CardContent className="p-8">
-                      <div className="animate-pulse space-y-6">
-                        {/* Profile Image Skeleton */}
-                        <div className="relative mx-auto w-28 h-28">
-                          <div className="w-full h-full bg-gradient-to-br from-muted via-muted/50 to-muted/30 rounded-full"></div>
-                          <div className="absolute -top-2 -right-2 w-8 h-6 bg-muted/70 rounded-full"></div>
+              <Card className="animate-pulse border-border bg-card">
+                <CardContent className="grid grid-cols-1 gap-6 p-6 md:grid-cols-12">
+                  <div className="aspect-[4/3] rounded-xl bg-muted md:col-span-4" />
+                  <div className="space-y-4 md:col-span-8">
+                    <div className="h-7 w-56 rounded bg-muted" />
+                    <div className="h-4 w-36 rounded bg-muted" />
+                    <div className="h-20 w-full rounded bg-muted" />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : isSingleLeadershipProfile ? (
+              /* Balanced Horizontal Spotlight Card when 1 leadership profile is listed */
+              (() => {
+                const member = team[0];
+                const cleanLinkedIn = isValidHttpUrl(member.linkedin_url)
+                  ? member.linkedin_url.trim()
+                  : null;
+
+                return (
+                  <Card className="overflow-hidden border-border bg-card shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-12">
+                      <div className="relative aspect-[4/3] max-h-[380px] overflow-hidden bg-muted md:col-span-5 md:aspect-auto md:max-h-none lg:col-span-4">
+                        {isValidHttpUrl(member.image_url) ? (
+                          <img
+                            src={member.image_url.trim()}
+                            alt={member.name.trim()}
+                            className="h-full w-full object-cover object-[50%_45%]"
+                          />
+                        ) : (
+                          <div className="flex h-full min-h-[260px] w-full items-center justify-center bg-primary/5">
+                            <Users className="h-16 w-16 text-primary/40" />
+                          </div>
+                        )}
+                        {member.featured && (
+                          <span className="absolute left-4 top-4 inline-flex items-center gap-1 rounded-md bg-accent px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-accent-foreground shadow-sm">
+                            <Crown className="h-3 w-3" />
+                            Leadership
+                          </span>
+                        )}
+                      </div>
+
+                      <CardContent className="flex flex-col justify-between p-6 sm:p-8 md:col-span-7 lg:col-span-8">
+                        <div>
+                          <span className="dt-badge-primary">
+                            {member.position.trim()}
+                          </span>
+                          <h3 className="mt-2.5 font-heading text-2xl font-bold text-foreground sm:text-3xl">
+                            {member.name.trim()}
+                          </h3>
+                          {member.bio?.trim() && (
+                            <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                              {member.bio.trim()}
+                            </p>
+                          )}
                         </div>
 
-                        {/* Content Skeleton */}
-                        <div className="space-y-3 text-center">
-                          <div className="h-6 bg-muted rounded-lg w-3/4 mx-auto"></div>
-                          <div className="h-4 bg-muted/70 rounded-md w-1/2 mx-auto"></div>
-                          <div className="h-16 bg-muted/50 rounded-lg"></div>
+                        <div className="mt-6 flex flex-wrap items-center gap-2.5 border-t border-border pt-5">
+                          {member.phone?.trim() && (
+                            <a
+                              href={`tel:${member.phone.trim()}`}
+                              className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 sm:text-sm"
+                            >
+                              <Phone className="h-4 w-4" />
+                              {member.phone.trim()}
+                            </a>
+                          )}
+
+                          {member.email?.trim() && (
+                            <a
+                              href={`mailto:${member.email.trim()}`}
+                              className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:bg-muted sm:text-sm"
+                            >
+                              <Mail className="h-4 w-4 text-primary" />
+                              {member.email.trim()}
+                            </a>
+                          )}
+
+                          {cleanLinkedIn && (
+                            <a
+                              href={cleanLinkedIn}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:bg-muted sm:text-sm"
+                            >
+                              <Linkedin className="h-4 w-4 text-primary" />
+                              LinkedIn
+                            </a>
+                          )}
+                        </div>
+                      </CardContent>
+                    </div>
+                  </Card>
+                );
+              })()
+            ) : team.length > 1 ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {team.map((member) => {
+                  const cleanLinkedIn = isValidHttpUrl(member.linkedin_url)
+                    ? member.linkedin_url.trim()
+                    : null;
+
+                  return (
+                    <Card
+                      key={member.id}
+                      className="flex flex-col overflow-hidden border-border bg-card transition-colors hover:border-primary/40"
+                    >
+                      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                        {isValidHttpUrl(member.image_url) ? (
+                          <img
+                            src={member.image_url.trim()}
+                            alt={member.name.trim()}
+                            className="h-full w-full object-cover object-center"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-primary/5">
+                            <Users className="h-14 w-14 text-primary/40" />
+                          </div>
+                        )}
+                        {member.featured && (
+                          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-accent px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-accent-foreground">
+                            <Crown className="h-3 w-3" />
+                            Lead
+                          </span>
+                        )}
+                      </div>
+
+                      <CardContent className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+                        <div>
+                          <span className="dt-badge-primary">
+                            {member.position.trim()}
+                          </span>
+                          <h3 className="mt-2 font-heading text-xl font-bold text-foreground">
+                            {member.name.trim()}
+                          </h3>
+                          {member.bio?.trim() && (
+                            <p className="mt-2 line-clamp-4 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                              {member.bio.trim()}
+                            </p>
+                          )}
                         </div>
 
-                        {/* Buttons Skeleton */}
-                        <div className="flex justify-center gap-3">
-                          <div className="w-10 h-10 bg-muted/70 rounded-full"></div>
-                          <div className="w-10 h-10 bg-muted/70 rounded-full"></div>
-                          <div className="w-10 h-10 bg-muted/70 rounded-full"></div>
+                        <div className="mt-5 flex flex-wrap gap-2 border-t border-border pt-4">
+                          {member.phone?.trim() && (
+                            <a
+                              href={`tel:${member.phone.trim()}`}
+                              aria-label={`Call ${member.name.trim()}`}
+                              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-xs font-semibold text-foreground hover:bg-muted"
+                            >
+                              <Phone className="h-3.5 w-3.5 text-primary" />
+                              Call
+                            </a>
+                          )}
+                          {member.email?.trim() && (
+                            <a
+                              href={`mailto:${member.email.trim()}`}
+                              aria-label={`Email ${member.name.trim()}`}
+                              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-xs font-semibold text-foreground hover:bg-muted"
+                            >
+                              <Mail className="h-3.5 w-3.5 text-primary" />
+                              Email
+                            </a>
+                          )}
+                          {cleanLinkedIn && (
+                            <a
+                              href={cleanLinkedIn}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`${member.name.trim()} LinkedIn`}
+                              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-xs font-semibold text-foreground hover:bg-muted"
+                            >
+                              <Linkedin className="h-3.5 w-3.5 text-primary" />
+                              LinkedIn
+                            </a>
+                          )}
                         </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            {/* Operational Desks Supporting Customers Across Kenya */}
+            <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+              {OPERATIONAL_DESKS.map((desk) => {
+                const Icon = desk.icon;
+                return (
+                  <Card key={desk.title} className="flex flex-col justify-between border-border bg-card">
+                    <CardContent className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+                      <div>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <Icon className="h-5 w-5" />
+                          </span>
+                          <span className="dt-badge-primary">{desk.badge}</span>
+                        </div>
+                        <h3 className="mt-4 font-heading text-lg font-bold text-foreground">
+                          {desk.title}
+                        </h3>
+                        <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                          {desk.description}
+                        </p>
+                      </div>
+
+                      <div className="mt-5 space-y-2 border-t border-border pt-4">
+                        {"href" in desk ? (
+                          <a
+                            href={desk.href}
+                            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                          >
+                            <Phone className="h-3.5 w-3.5" />
+                            {desk.ctaLabel} ({desk.contactLabel})
+                          </a>
+                        ) : (
+                          <Link
+                            to={desk.to}
+                            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                          >
+                            <Wrench className="h-3.5 w-3.5" />
+                            {desk.ctaLabel}
+                          </Link>
+                        )}
+                        <Link
+                          to={desk.secondaryTo}
+                          className="inline-flex h-9 w-full items-center justify-center gap-1 rounded-lg border border-border bg-background px-3 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
+                        >
+                          {desk.secondaryLabel}
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
                       </div>
                     </CardContent>
                   </Card>
-                ))}
-              </div>
-            ) : team.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {team.map((member, index) => (
-                  <Card
-                    key={member.id}
-                    className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border-0 shadow-lg overflow-hidden bg-card/90 backdrop-blur-sm relative"
-                    style={{ animationDelay: `${index * 100} ms` }}
-                  >
-                    {/* Hover Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-                    <CardContent className="p-8 text-center relative">
-                      {/* Enhanced Profile Image */}
-                      <div className="relative mb-8">
-                        <div className="relative mx-auto w-28 h-28">
-                          {member.image_url ? (
-                            <>
-                              <img
-                                src={member.image_url}
-                                alt={member.name}
-                                className="w-full h-full rounded-full object-cover border-4 border-background shadow-xl group-hover:scale-110 transition-transform duration-500"
-                              />
-                              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            </>
-                          ) : (
-                            <div className="w-full h-full rounded-full bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5 flex items-center justify-center border-4 border-background shadow-xl group-hover:scale-110 transition-transform duration-500">
-                              <Users className="h-12 w-12 text-primary/60 group-hover:text-primary transition-colors duration-300" />
-                            </div>
-                          )}
-
-                          {/* Floating Ring Effect */}
-                          <div className="absolute inset-0 rounded-full border-2 border-primary/20 scale-125 opacity-0 group-hover:opacity-100 group-hover:scale-150 transition-all duration-700"></div>
-                        </div>
-
-                        {/* Enhanced Featured Badge */}
-                        {member.featured && (
-                          <div className="absolute -top-3 -right-3 group-hover:scale-110 transition-transform duration-300">
-                            <Badge
-                              variant="secondary"
-                              className="px-3 py-1 text-xs font-bold bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 shadow-lg flex items-center gap-1"
-                            >
-                              <Crown className="w-3 h-3" />
-                              Lead
-                            </Badge>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Enhanced Content */}
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
-                            {member.name}
-                          </h3>
-                          <div className="relative">
-                            <p className="text-primary font-semibold text-sm uppercase tracking-wider mb-4">
-                              {member.position}
-                            </p>
-                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-20 transition-all duration-500"></div>
-                          </div>
-                        </div>
-
-                        {member.bio && (
-                          <div className="relative group/bio">
-                            <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors duration-300">
-                              <span className="group-hover/bio:hidden">
-                                {truncateText(member.bio)}
-                              </span>
-                              <span className="hidden group-hover/bio:inline">
-                                {member.bio}
-                              </span>
-                            </p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Enhanced Contact Links */}
-                      <div className="flex justify-center gap-3 pt-6">
-                        {member.linkedin_url && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-12 w-12 p-0 rounded-full hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/50 dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-blue-200 dark:hover:border-blue-800 group/btn"
-                            asChild
-                          >
-                            <a
-                              href={member.linkedin_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label={`${member.name} 's LinkedIn profile`}
-                            >
-                              <Linkedin className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
-                            </a >
-                          </Button >
-                        )}
-                        {
-                          member.email && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-12 w-12 p-0 rounded-full hover:bg-green-50 hover:text-green-600 dark:hover:bg-green-950/50 dark:hover:text-green-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-green-200 dark:hover:border-green-800 group/btn"
-                              asChild
-                            >
-                              <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
-                                <Mail className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
-                              </a>
-                            </Button>
-                          )
-                        }
-                        {
-                          member.phone && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-12 w-12 p-0 rounded-full hover:bg-purple-50 hover:text-purple-600 dark:hover:bg-purple-950/50 dark:hover:text-purple-400 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-xl border border-border/30 hover:border-purple-200 dark:hover:border-purple-800 group/btn"
-                              asChild
-                            >
-                              <a href={`tel:${member.phone}`} aria-label={`Call ${member.name}`}>
-                                <Phone className="h-5 w-5 group-hover/btn:scale-110 transition-transform duration-200" />
-                              </a>
-                            </Button>
-                          )
-                        }
-                      </div >
-                    </CardContent >
-                  </Card >
-                ))}
-              </div >
-            ) : (
-              <div className="text-center py-24">
-                <div className="max-w-md mx-auto">
-                  <div className="relative mb-8">
-                    <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-muted/50 to-muted/20 flex items-center justify-center shadow-xl">
-                      <Users className="w-16 h-16 text-muted-foreground" />
-                    </div>
-                    <div className="absolute inset-0 rounded-full border-2 border-muted/20 scale-110 animate-pulse"></div>
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-foreground mb-4">
-                    No Team Members Available
-                  </h3>
-                  <p className="text-lg text-muted-foreground mb-2">
-                    Team members will be displayed here once they are added.
+        {/* Video Showcase: See Our Team's Installations in Action */}
+        {videos.length > 0 && (
+          <section className="border-t border-border bg-background py-12 sm:py-16">
+            <div className="dt-container">
+              <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+                <div>
+                  <p className="dt-section-label mb-1 flex items-center gap-1.5">
+                    <Play className="h-3.5 w-3.5" />
+                    Field Demonstrations
                   </p>
-                  <p className="text-sm text-muted-foreground/80">
-                    Use the admin dashboard to add and manage team members.
+                  <h2 className="dt-section-title">
+                    See Our Team&apos;s Work in Action
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Real installation clips of our driplines, dam liners, and rainhose systems.
                   </p>
                 </div>
-              </div>
-            )}
-          </div >
-        </section >
-      </main >
-      <IrrigationKeywords />
 
+                <Link
+                  to="/videos"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+                >
+                  Open Full Video Library
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {videos.map((video) => (
+                  <VideoCard
+                    key={video.id}
+                    video={video}
+                    compact
+                    onWatch={handleWatchVideo}
+                    whatsappSource="team page video card"
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Bottom Direct Contact Bar */}
+        <section className="border-t border-border bg-muted/25 py-10 sm:py-12">
+          <div className="dt-container">
+            <Card className="border-border bg-card">
+              <CardContent className="flex flex-col items-start justify-between gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
+                <div>
+                  <h2 className="font-heading text-xl font-bold text-foreground sm:text-2xl">
+                    Ready to Speak With Our Team?
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Reach us Mon–Fri 8:00 AM–6:00 PM or Sat 9:00 AM–12:00 PM EAT on phone or WhatsApp.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openTrackedWhatsApp(
+                        `https://wa.me/${SITE_COMPANY.phonePrimary.replace(/\D/g, "")}?text=${encodeURIComponent(
+                          "Hi DripTech Eco Flow! I would like to speak with your irrigation team.",
+                        )}`,
+                        "team page footer WhatsApp",
+                      )
+                    }
+                    className="inline-flex h-11 items-center gap-2 rounded-lg bg-[hsl(var(--dt-whatsapp))] px-5 text-sm font-bold text-white transition-colors hover:bg-[hsl(var(--dt-whatsapp)/0.9)]"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp Team
+                  </button>
+                  <Link
+                    to="/contact"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-5 text-sm font-semibold text-foreground hover:bg-muted"
+                  >
+                    Send Inquiry Form
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      </main>
+
+      <IrrigationKeywords />
       <Footer />
-    </div >
+
+      <VideoPlayerModal
+        video={selectedVideo}
+        open={isVideoModalOpen}
+        onOpenChange={(open) => {
+          setIsVideoModalOpen(open);
+          if (!open) setSelectedVideo(null);
+        }}
+        relatedVideos={
+          selectedVideo
+            ? videos.filter((v) => v.id !== selectedVideo.id)
+            : []
+        }
+        onSelectVideo={handleWatchVideo}
+        whatsappSource="team page video modal"
+      />
+    </div>
   );
 };
 

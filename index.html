@@ -17,8 +17,28 @@
        refresh). It stops matching as soon as React renders. The 6s animation is a safety net
        that reveals the content if the JS bundle never loads. Static guide pages (marked
        data-seo-static-page) are intentionally shown as-is. */
-    html.js #root:not([data-seo-static-page]) > main[data-seo-shell] { visibility: hidden; animation: seo-shell-reveal 0s 6s forwards; }
-    @keyframes seo-shell-reveal { to { visibility: visible; } }
+    html.js #root:not([data-seo-static-page]) > main[data-seo-shell] {
+      display: none;
+    }
+    html.js.seo-shell-fallback #root:not([data-seo-static-page]) > main[data-seo-shell] {
+      display: block;
+    }
+    @font-face {
+      font-family: "IBM Plex Sans Fallback";
+      src: local("Arial"), local("Helvetica Neue"), local("Liberation Sans");
+      size-adjust: 100%;
+      ascent-override: 102%;
+      descent-override: 27%;
+      line-gap-override: 0%;
+    }
+    @font-face {
+      font-family: "Libre Baskerville Fallback";
+      src: local("Georgia"), local("Times New Roman");
+      size-adjust: 109%;
+      ascent-override: 88%;
+      descent-override: 24%;
+      line-gap-override: 0%;
+    }
     #root[data-seo-static-page] { min-height: 100vh; }
     #root[data-seo-static-page] > main[data-seo-shell] {
       box-sizing: border-box; width: min(100% - 2rem,  min(72rem, 100% - 2rem));
@@ -57,7 +77,39 @@
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://cnvtnxesywbzwsxwpejw.supabase.co" crossorigin />
+  <link rel="preconnect" href="https://dripstech-api.dripstech.workers.dev" crossorigin />
+  <link
+    rel="preload"
+    as="image"
+    href="/hero-bg-new-mobile.webp"
+    media="(max-width: 640px)"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="/hero-bg-new-tablet.webp"
+    media="(min-width: 641px) and (max-width: 1024px)"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="image"
+    href="/hero-bg-new-desktop.webp"
+    media="(min-width: 1025px)"
+    fetchpriority="high"
+  />
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet" />
+  </noscript>
+  <link rel="ard" href="/.well-known/ard.json" />
   <title>Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech Eco Flow</title>
   <meta name="title" content="Drip Irrigation, Sprinklers & Irrigation Kits in Kenya | DripTech Eco Flow" />
   <meta name="description" content="Buy drip irrigation systems, sprinklers, irrigation kits, pumps and filters in Kenya. DripTech Eco Flow supplies and installs irrigation equipment for farms nationwide." />
@@ -95,6 +147,11 @@
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : theme);
       } catch (_) { root.classList.add('light'); }
+      window.setTimeout(function () {
+        if (document.querySelector('#root:not([data-seo-static-page]) > main[data-seo-shell]')) {
+          root.classList.add('seo-shell-fallback');
+        }
+      }, 6000);
     })();
   </script>
 </head>

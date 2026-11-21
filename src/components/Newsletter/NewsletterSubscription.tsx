@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, CheckCircle, AlertCircle, Loader2, Sparkles } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/config";
 import { useToast } from "@/hooks/use-toast";
-import { emailService } from "@/services/emailService";
 
 interface NewsletterSubscriptionProps {
     variant?: "default" | "compact" | "inline";
@@ -42,6 +41,7 @@ const NewsletterSubscription: React.FC<NewsletterSubscriptionProps> = ({
         setError("");
 
         try {
+            const supabase = await getSupabase();
             // Call Edge Function to handle subscription and email
             const { data, error: functionError } = await supabase.functions.invoke('newsletter-subscribe', {
                 body: { email: email.toLowerCase() }

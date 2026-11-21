@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -30,74 +30,72 @@ import {
   Upload,
   Plus,
   Layers,
-  CheckCircle2,
-  XCircle,
-  Tag,
+  Loader2,
+  Star,
+  ImagePlus,
+  Link2,
   Palette,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import AIProductGenerator from "../AI/AIProductGenerator";
-
-interface ProductFormData {
-  name: string;
-  model_number: string;
-  category: string;
-  subcategory: string;
-  description: string;
-  price: string;
-  in_stock: boolean;
-  featured: boolean;
-  images: string[];
-  features: string[];
-  applications: string[];
-  specifications: { name: string; value: string; unit?: string }[];
-  variants: { name: string; price: string; in_stock: boolean }[];
-}
+import ImagePickerDialog from "./ImagePickerDialog";
+import {
+  Product,
+  ProductFormData,
+  PRODUCT_CATEGORIES,
+  getProductCategoryLabel,
+} from "@/types/Product";
 
 interface ProductFormProps {
   formData: ProductFormData;
   setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  onImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onRemoveImage?: (index: number) => void;
-  editingProduct: any;
+  onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveImage: (index: number) => void;
+  onImagesUpdated?: () => void;
+  editingProduct: Product | null;
   uploading: boolean;
+  saving?: boolean;
 }
-
-const categories = [
-  { value: "drip_irrigation", label: "Drip Irrigation" },
-  { value: "sprinkler_systems", label: "Sprinkler Systems" },
-  { value: "filtration_systems", label: "Filtration Systems" },
-  { value: "control_systems", label: "Control Systems" },
-  { value: "pumps_motors", label: "Pumps & Motors" },
-  { value: "pipes_fittings", label: "Pipes & Fittings" },
-  { value: "fertigation_systems", label: "Fertigation Systems" },
-  { value: "greenhouse_systems", label: "Greenhouse Systems" },
-  { value: "emitters_drippers", label: "Emitters & Drippers" },
-  { value: "valves_regulators", label: "Valves & Regulators" },
-  { value: "accessories", label: "Accessories" },
-  { value: "filters_strainers", label: "Filters & Strainers" },
-  { value: "controllers_timers", label: "Controllers & Timers" },
-  { value: "borehole_equipment", label: "Borehole Equipment" },
-];
 
 const ProductForm: React.FC<ProductFormProps> = ({
   formData,
   setFormData,
   onSubmit,
   onCancel,
+  onImageUpload,
+  onRemoveImage,
+  onImagesUpdated,
   editingProduct,
   uploading,
+  saving = false,
 }) => {
   const { toast } = useToast();
   const [newFeature, setNewFeature] = useState("");
   const [newApplication, setNewApplication] = useState("");
   const [newSpec, setNewSpec] = useState({ name: "", value: "", unit: "" });
+  const [imageUrlInput, setImageUrlInput] = useState("");
+  const [showImagePicker, setShowImagePicker] = useState(false);
 
   const [bulkPaste, setBulkPaste] = useState("");
   const [bulkContentPaste, setBulkContentPaste] = useState("");
+
+  const categoryOptions = useMemo(() => {
+    if (
+      formData.category &&
+      !PRODUCT_CATEGORIES.some((cat) => cat.value === formData.category)
+    ) {
+      return [
+        ...PRODUCT_CATEGORIES,
+        {
+          value: formData.category,
+          label: getProductCategoryLabel(formData.category),
+        },
+      ];
+    }
+    return PRODUCT_CATEGORIES;
+  }, [formData.category]);
 
   const parseBulkSpecifications = (raw: string) => {
     const lines = raw.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
@@ -207,68 +205,31 @@ const ProductForm: React.FC<ProductFormProps> = ({
     in_stock: true,
   });
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    const uploadedUrls: string[] = [];
-
-    try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        throw new Error("Authentication required");
-      }
-
-      for (const file of Array.from(files)) {
-        const fileExt = file.name.split(".").pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `products/${fileName}`;
-
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("images")
-          .upload(filePath, file, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from("images")
-          .getPublicUrl(filePath);
-
-        uploadedUrls.push(urlData.publicUrl);
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, ...uploadedUrls],
-      }));
-
+  const addImageByUrl = () => {
+    const trimmed = imageUrlInput.trim();
+    if (!/^https?:\/\//i.test(trimmed) && !trimmed.startsWith("/")) {
       toast({
-        title: "Success",
-        description: `${uploadedUrls.length} image(s) uploaded successfully`,
-      });
-    } catch (error: any) {
-      toast({
-        title: "Upload Error",
-        description: error.message || "Failed to upload images",
+        title: "Invalid image URL",
+        description: "Enter an https:// URL or site-relative / path.",
         variant: "destructive",
       });
+      return;
     }
+    if (formData.images.includes(trimmed)) {
+      setImageUrlInput("");
+      return;
+    }
+    setFormData((prev) => ({ ...prev, images: [...prev.images, trimmed] }));
+    setImageUrlInput("");
   };
 
-  const removeImage = (indexToRemove: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, index) => index !== indexToRemove),
-    }));
+  const makePrimaryImage = (index: number) => {
+    if (index <= 0 || index >= formData.images.length) return;
+    setFormData((prev) => {
+      const next = [...prev.images];
+      const [chosen] = next.splice(index, 1);
+      return { ...prev, images: [chosen, ...next] };
+    });
   };
 
   const addFeature = () => {
@@ -354,17 +315,29 @@ const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   return (
-    <Card className="border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-2xl">
-      <CardHeader className="p-4 sm:p-6 rounded-t-lg">
-        <div className="flex items-center justify-between">
+    <Card className="border border-border/80 bg-card shadow-2xl rounded-2xl overflow-hidden">
+      <CardHeader className="border-b border-border/70 bg-muted/20 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pr-8">
           <div>
-            <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-              {editingProduct ? "Edit Product" : "Add New Product"}
-            </CardTitle>
-            <CardDescription className="text-sm sm:text-base text-slate-600 dark:text-gray-400">
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle className="text-xl font-bold text-foreground">
+                {editingProduct ? "Edit Product" : "Add New Product"}
+              </CardTitle>
+              <Badge
+                variant={formData.in_stock ? "default" : "secondary"}
+                className={
+                  formData.in_stock
+                    ? "bg-emerald-600 text-white hover:bg-emerald-600"
+                    : "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+                }
+              >
+                {formData.in_stock ? "In Stock (Live)" : "Pending / Hidden"}
+              </Badge>
+            </div>
+            <CardDescription className="mt-1 text-xs sm:text-sm text-muted-foreground">
               {editingProduct
-                ? "Update product information"
-                : "Fill in the details to add a new product to your catalog"}
+                ? `Updating ${editingProduct.name}`
+                : "Fill in product details or pre-fill using the AI Product Generator"}
             </CardDescription>
           </div>
           <AIProductGenerator onGenerate={handleAIGenerated} />
@@ -373,16 +346,26 @@ const ProductForm: React.FC<ProductFormProps> = ({
       <CardContent className="p-4 sm:p-6">
         <form onSubmit={onSubmit} className="space-y-6">
           <Tabs defaultValue="basics" className="w-full">
-            <TabsList className="grid grid-cols-2 md:grid-cols-5 h-auto gap-2 bg-muted/50 p-2 rounded-xl mb-6">
-              <TabsTrigger value="basics" className="rounded-lg py-2 transition-all">General</TabsTrigger>
-              <TabsTrigger value="content" className="rounded-lg py-2 transition-all">Content</TabsTrigger>
-              <TabsTrigger value="details" className="rounded-lg py-2 transition-all">Details</TabsTrigger>
-              <TabsTrigger value="inventory" className="rounded-lg py-2 transition-all">Inventory</TabsTrigger>
-              <TabsTrigger value="media" className="rounded-lg py-2 transition-all">Media</TabsTrigger>
+            <TabsList className="grid grid-cols-2 sm:grid-cols-5 h-auto gap-1.5 bg-muted/50 p-1.5 rounded-xl mb-6">
+              <TabsTrigger value="basics" className="rounded-lg py-2 text-xs sm:text-sm">
+                General
+              </TabsTrigger>
+              <TabsTrigger value="content" className="rounded-lg py-2 text-xs sm:text-sm">
+                Content
+              </TabsTrigger>
+              <TabsTrigger value="details" className="rounded-lg py-2 text-xs sm:text-sm">
+                Specs ({formData.specifications.length})
+              </TabsTrigger>
+              <TabsTrigger value="inventory" className="rounded-lg py-2 text-xs sm:text-sm">
+                Variants ({formData.variants.length})
+              </TabsTrigger>
+              <TabsTrigger value="media" className="rounded-lg py-2 text-xs sm:text-sm">
+                Media ({formData.images.length})
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="basics" className="space-y-6 focus-visible:outline-none focus-visible:ring-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <Label htmlFor="name" className="text-sm font-medium">Product Name *</Label>
                   <Input
@@ -391,34 +374,34 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Enter product name"
                     required
-                    className="mt-2"
+                    className="mt-1.5"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="model" className="text-sm font-medium">Model Number</Label>
+                  <Label htmlFor="model" className="text-sm font-medium">Model Number / SKU</Label>
                   <Input
                     id="model"
                     value={formData.model_number}
                     onChange={(e) => setFormData({ ...formData, model_number: e.target.value })}
-                    placeholder="Enter model number"
-                    className="mt-2"
+                    placeholder="e.g., DT-16MM-300"
+                    className="mt-1.5 font-mono"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <Label htmlFor="category" className="text-sm font-medium">Category *</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(value) => setFormData({ ...formData, category: value })}
                   >
-                    <SelectTrigger className="mt-2 capitalize">
+                    <SelectTrigger className="mt-1.5">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.value} value={cat.value} className="capitalize">
+                    <SelectContent className="max-h-72">
+                      {categoryOptions.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
                           {cat.label}
                         </SelectItem>
                       ))}
@@ -431,15 +414,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     id="subcategory"
                     value={formData.subcategory}
                     onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-                    placeholder="Enter subcategory"
-                    className="mt-2"
+                    placeholder="e.g., Flat Drip Tape, Brass Valves"
+                    className="mt-1.5"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                 <div>
-                  <Label htmlFor="price" className="text-sm font-medium">Base Price (KSH)</Label>
+                  <Label htmlFor="price" className="text-sm font-medium">Base Price (KSh)</Label>
                   <Input
                     id="price"
                     type="number"
@@ -447,17 +430,22 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     placeholder="Enter base price"
-                    className="mt-2"
+                    className="mt-1.5"
                   />
+                  {formData.variants.length > 0 && (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      When variants exist, saving automatically sets base price to the lowest variant price.
+                    </p>
+                  )}
                 </div>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0 p-4 bg-muted/30 rounded-lg h-full">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-3 sm:space-y-0 p-4 bg-muted/30 border border-border/60 rounded-xl">
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="in_stock"
                       checked={formData.in_stock}
                       onCheckedChange={(checked) => setFormData({ ...formData, in_stock: checked })}
                     />
-                    <Label htmlFor="in_stock" className="text-sm font-medium">In Stock</Label>
+                    <Label htmlFor="in_stock" className="text-sm font-medium">In Stock (Public)</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -679,16 +667,23 @@ Pump Type | Single-stage centrifugal | —`}
                 {formData.variants.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {formData.variants.map((v, i) => (
-                      <div key={i} className="group relative bg-background rounded-xl border border-border p-4 hover:border-primary/50 transition-all">
-                        <div className="flex items-center justify-between">
+                      <div key={i} className="group relative bg-background rounded-xl border border-border p-4 hover:border-emerald-500/50 transition-all">
+                        <div className="flex items-center justify-between gap-2">
                           <div className="space-y-1">
-                            <h4 className="font-bold">{v.name}</h4>
-                            <p className="text-sm text-primary">KSH {parseFloat(v.price).toLocaleString()}</p>
-                            <Badge variant={v.in_stock ? "outline" : "destructive"} className="text-[10px] h-4">
+                            <h4 className="font-semibold text-sm">{v.name}</h4>
+                            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">KSh {parseFloat(v.price).toLocaleString()}</p>
+                            <Badge variant={v.in_stock ? "outline" : "destructive"} className="text-[10px] h-5">
                               {v.in_stock ? "In Stock" : "Out of Stock"}
                             </Badge>
                           </div>
-                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => removeVariant(i)}>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            onClick={() => removeVariant(i)}
+                            title="Remove variant"
+                          >
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
@@ -701,34 +696,100 @@ Pump Type | Single-stage centrifugal | —`}
 
             <TabsContent value="media" className="space-y-6 focus-visible:outline-none focus-visible:ring-0">
               <div className="space-y-4">
-                <Label className="text-sm font-medium">Product Images</Label>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <Label className="text-sm font-semibold">Product Images</Label>
+                    <p className="text-xs text-muted-foreground">
+                      The first image is used as the primary catalog cover photo.
+                    </p>
+                  </div>
+                  {editingProduct?.id && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setShowImagePicker(true)}
+                    >
+                      <ImagePlus className="mr-1.5 h-4 w-4 text-emerald-600" />
+                      Find real web photo
+                    </Button>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Link2 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={imageUrlInput}
+                      onChange={(e) => setImageUrlInput(e.target.value)}
+                      placeholder="Or paste an image URL (https://…)"
+                      className="pl-9"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addImageByUrl();
+                        }
+                      }}
+                    />
+                  </div>
+                  <Button type="button" variant="outline" onClick={addImageByUrl} disabled={!imageUrlInput.trim()}>
+                    Add URL
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
                   <div className="relative aspect-square">
                     <Input
                       type="file"
                       multiple
                       accept="image/*"
-                      onChange={handleImageUpload}
+                      onChange={onImageUpload}
+                      disabled={uploading}
                       className="hidden"
                       id="image-upload"
                     />
                     <Label
                       htmlFor="image-upload"
-                      className="flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-border rounded-2xl hover:border-primary hover:bg-primary/5 cursor-pointer transition-all gap-2"
+                      className={`flex flex-col items-center justify-center w-full h-full border-2 border-dashed border-border rounded-2xl transition-all gap-2 p-2 text-center ${
+                        uploading
+                          ? "cursor-wait opacity-70 bg-muted/40"
+                          : "cursor-pointer hover:border-emerald-500 hover:bg-emerald-500/5"
+                      }`}
                     >
-                      <Upload className="h-6 w-6 text-muted-foreground" />
-                      <span className="text-[10px] font-bold uppercase text-muted-foreground">Upload</span>
+                      {uploading ? (
+                        <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
+                      ) : (
+                        <Upload className="h-6 w-6 text-muted-foreground" />
+                      )}
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {uploading ? "Uploading…" : "Upload Photos"}
+                      </span>
                     </Label>
                   </div>
                   {formData.images.map((url, i) => (
-                    <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-border">
+                    <div key={`${url}-${i}`} className="group relative aspect-square rounded-2xl overflow-hidden border border-border bg-muted">
                       <img src={url} alt="" className="w-full h-full object-cover" />
+                      {i === 0 ? (
+                        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm">
+                          <Star className="h-2.5 w-2.5 fill-current" /> Cover
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => makePrimaryImage(i)}
+                          className="absolute left-2 top-2 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-medium text-foreground shadow-sm hover:bg-background"
+                          title="Make cover photo"
+                        >
+                          Set cover
+                        </button>
+                      )}
                       <Button
                         type="button"
                         variant="destructive"
                         size="icon"
-                        className="absolute top-2 right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => removeImage(i)}
+                        className="absolute top-2 right-2 h-6 w-6 rounded-full shadow-sm"
+                        onClick={() => onRemoveImage(i)}
+                        title="Remove image"
                       >
                         <X className="h-3 w-3" />
                       </Button>
@@ -739,16 +800,34 @@ Pump Type | Single-stage centrifugal | —`}
             </TabsContent>
           </Tabs>
 
-          <footer className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-border">
-            <Button type="button" variant="ghost" onClick={onCancel} className="font-bold border border-transparent hover:border-border">
+          <footer className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-4 border-t border-border">
+            <Button type="button" variant="outline" onClick={onCancel} disabled={saving}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-primary text-primary-foreground font-bold px-8 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
-              {editingProduct ? "Update Product" : "Add Product"}
+            <Button
+              type="submit"
+              disabled={saving || uploading}
+              className="bg-emerald-600 text-white hover:bg-emerald-700 px-6 font-semibold"
+            >
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {editingProduct ? "Save Product Changes" : "Create Product"}
             </Button>
           </footer>
         </form>
       </CardContent>
+
+      {editingProduct?.id && showImagePicker && (
+        <ImagePickerDialog
+          open={showImagePicker}
+          onOpenChange={setShowImagePicker}
+          productId={editingProduct.id}
+          productName={formData.name || editingProduct.name}
+          existingImages={formData.images}
+          onSaved={() => {
+            onImagesUpdated?.();
+          }}
+        />
+      )}
     </Card>
   );
 };

@@ -30,6 +30,7 @@ import { PageViews } from "./tables/page_views";
 import { ProductInteractions } from "./tables/product_interactions";
 import { Products } from "./tables/products";
 import { Projects } from "./tables/projects";
+import { PumpSolarReports } from "./tables/pump_solar_reports";
 import { QuoteItems } from "./tables/quote_items";
 import { QuoteSections } from "./tables/quote_sections";
 import { Quotes } from "./tables/quotes";
@@ -74,6 +75,7 @@ export type Database = {
       product_interactions: ProductInteractions;
       products: Products;
       projects: Projects;
+      pump_solar_reports: PumpSolarReports;
       quote_items: QuoteItems;
       quote_sections: QuoteSections;
       quotes: Quotes;
@@ -103,6 +105,25 @@ export type Database = {
       generate_invoice_number: {
         Args: Record<PropertyKey, never>;
         Returns: string;
+      };
+      get_pump_solar_report_by_code: {
+        Args: { p_report_code: string };
+        Returns: Json | null;
+      };
+      get_website_analytics_report: {
+        Args: { p_range?: string; p_include_bots?: boolean };
+        Returns: Json;
+      };
+      record_visitor_engagement: {
+        Args: {
+          p_session_id: string;
+          p_visitor_id: string;
+          p_page_view_id?: string | null;
+          p_page_duration?: number | null;
+          p_session_duration?: number | null;
+          p_mark_exit?: boolean;
+        };
+        Returns: undefined;
       };
       get_top_pages: {
         Args: { end_date?: string; limit_count?: number; start_date?: string };

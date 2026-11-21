@@ -1,17 +1,17 @@
 import { HelmetProvider } from 'react-helmet-async'; // Add this import
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/Layout/ThemeProvider";
 import { lazy, Suspense } from "react";
 import LoadingSpinner from "./components/common/LoadingSpinner";
-import useWebVitals from "./hooks/useWebVitals";
 import { GlobalStaffShortcutListener } from "./components/Admin/StealthAdminGate";
 
 // Homepage is eager-loaded for faster LCP; other routes stay lazy
 import Index from "./pages/Index";
+
+const AppFeedback = lazy(() => import("./components/common/AppFeedback"));
+const MobileActionBar = lazy(() => import("./components/Layout/MobileActionBar"));
 
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -44,6 +44,7 @@ const TechnicianServices = lazy(() => import("./pages/TechnicianServices"));
 const SEOContentPage = lazy(() => import("./pages/SEOContentPage"));
 const BlueDigitalSolutions = lazy(() => import("./pages/BlueDigitalSolutions"));
 const IrrigationCostCalculator = lazy(() => import("./pages/IrrigationCostCalculator"));
+const PumpSolarCalculator = lazy(() => import("./pages/PumpSolarCalculator"));
 
 const queryClient = new QueryClient();
 
@@ -64,8 +65,9 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
+            <Suspense fallback={null}>
+              <AppFeedback />
+            </Suspense>
             <BrowserRouter
               future={{
                 v7_startTransition: true,
@@ -73,8 +75,10 @@ const App = () => {
               }}
             >
               <GlobalStaffShortcutListener />
-              <VisitorTracker />
-              <WhatsAppClickTracker />
+              <Suspense fallback={null}>
+                <VisitorTracker />
+                <WhatsAppClickTracker />
+              </Suspense>
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>
                   {/* Main pages */}
@@ -89,6 +93,8 @@ const App = () => {
                   <Route path="/products/:category/:product" element={<Products />} />
                   <Route path="/catalog" element={<Products />} /> {/* Redirect to Products */}
                   <Route path="/irrigation-cost-calculator-kenya" element={<IrrigationCostCalculator />} />
+                  <Route path="/pump-solar-calculator-kenya" element={<PumpSolarCalculator />} />
+                  <Route path="/pump-solar-sizing" element={<Navigate to="/pump-solar-calculator-kenya" replace />} />
                   <Route path="/drip-irrigation-kenya" element={<SEOContentPage />} />
                   <Route path="/drip-irrigation-kit-price-kenya" element={<SEOContentPage />} />
                   <Route path="/driplines-for-sale-kenya" element={<SEOContentPage />} />
@@ -109,6 +115,9 @@ const App = () => {
                   <Route path="/one-acre-drip-irrigation-system-kenya" element={<SEOContentPage />} />
                   <Route path="/how-to-choose-dripline-spacing-kenya" element={<SEOContentPage />} />
                   <Route path="/irrigation-pump-sizing-kenya" element={<SEOContentPage />} />
+                  <Route path="/how-to-read-pump-curves-kenya" element={<SEOContentPage />} />
+                  <Route path="/pump-motor-installation-maintenance-kenya" element={<SEOContentPage />} />
+                  <Route path="/solar-panel-pump-battery-sizing-kenya" element={<SEOContentPage />} />
                   <Route path="/irrigation-system-maintenance-kenya" element={<SEOContentPage />} />
                   <Route path="/irrigation-troubleshooting-kenya" element={<SEOContentPage />} />
                   <Route path="/blocked-drippers-uneven-watering-kenya" element={<SEOContentPage />} />
@@ -185,7 +194,10 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
-              <ScrollToTop />
+              <Suspense fallback={null}>
+                <ScrollToTop />
+                <MobileActionBar />
+              </Suspense>
             </BrowserRouter>
           </TooltipProvider>
         </ThemeProvider>

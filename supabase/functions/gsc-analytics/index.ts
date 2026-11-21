@@ -4,12 +4,22 @@ import { hasAdminRole } from "../_shared/admin-auth.ts";
 const allowedOrigins = new Set([
   "https://www.dripstech.co.ke",
   "https://dripstech.co.ke",
+  "http://localhost:5000",
+  "http://localhost:5173",
+  "http://127.0.0.1:4173",
 ]);
+
+const isAllowedOrigin = (origin: string): boolean => {
+  if (!origin) return false;
+  if (allowedOrigins.has(origin)) return true;
+  return /^https:\/\/[a-z0-9-]*driptech[a-z0-9-]*\.vercel\.app$/i.test(origin) ||
+    /^https:\/\/[a-z0-9-]+\.driptech-eco-flow-web\.pages\.dev$/i.test(origin);
+};
 
 const corsFor = (req: Request) => {
   const origin = req.headers.get("origin") || "";
   return {
-    "Access-Control-Allow-Origin": allowedOrigins.has(origin)
+    "Access-Control-Allow-Origin": isAllowedOrigin(origin)
       ? origin
       : "https://www.dripstech.co.ke",
     "Vary": "Origin",
@@ -36,12 +46,34 @@ const shiftDate = (dateString: string, amount: number) => {
   return isoDate(date);
 };
 
+const buildCountryFilter = (countryCode?: string) => {
+  const normalized = (countryCode || "").trim().toLowerCase();
+  if (!normalized || normalized === "all" || !/^[a-z]{3}$/.test(normalized)) {
+    return {};
+  }
+  return {
+    dimensionFilterGroups: [
+      {
+        groupType: "and",
+        filters: [
+          {
+            dimension: "country",
+            operator: "equals",
+            expression: normalized,
+          },
+        ],
+      },
+    ],
+  };
+};
+
 const querySearchAnalytics = async (
   property: string,
   accessToken: string,
   period: Period,
   dimensions?: string[],
   rowLimit = 100,
+  countryFilter?: string,
 ) => {
   const response = await fetch(
     "https://www.googleapis.com/webmasters/v3/sites/" +
@@ -57,6 +89,7 @@ const querySearchAnalytics = async (
         startDate: period.startDate,
         endDate: period.endDate,
         ...(dimensions ? { dimensions } : {}),
+        ...buildCountryFilter(countryFilter),
         rowLimit,
         aggregationType: "auto",
       }),
@@ -70,6 +103,114 @@ const querySearchAnalytics = async (
     );
   }
   return result;
+};
+
+const fetchGscSitemaps = async (property: string, accessToken: string) => {
+  try {
+    const response = await fetch(
+      "https://www.googleapis.com/webmasters/v3/sites/" +
+        encodeURIComponent(property) +
+        "/sitemaps",
+      {
+        headers: { Authorization: "Bearer " + accessToken },
+      },
+    );
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data?.sitemap) ? data.sitemap : [];
+  } catch {
+    return [];
+  }
+};
+
+const fetchVerifiedSites = async (accessToken: string) => {
+  try {
+    const response = await fetch("https://www.googleapis.com/webmasters/v3/sites", {
+      headers: { Authorization: "Bearer " + accessToken },
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return Array.isArray(data?.siteEntry) ? data.siteEntry : [];
+  } catch {
+    return [];
+  }
+};
+
+const normalizeInspectionUrl = (rawUrl: string, property: string): string => {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) throw new Error("Enter a DripTech page URL or path to inspect.");
+  const propertyOrigin =
+    property.startsWith("http://") || property.startsWith("https://")
+      ? new URL(property).origin
+      : "https://www.dripstech.co.ke";
+
+  const parsed =
+    trimmed.startsWith("http://") || trimmed.startsWith("https://")
+      ? new URL(trimmed)
+      : new URL(trimmed.startsWith("/") ? trimmed : `/${trimmed}`, propertyOrigin);
+
+  const host = parsed.hostname.toLowerCase();
+  if (host !== "dripstech.co.ke" && host !== "www.dripstech.co.ke") {
+    throw new Error("URL inspection only supports dripstech.co.ke URLs.");
+  }
+
+  // URL-prefix properties require the exact property origin, whereas domain properties accept either host.
+  const targetOrigin =
+    property.startsWith("http://") || property.startsWith("https://")
+      ? propertyOrigin
+      : parsed.origin;
+  return `${targetOrigin}${parsed.pathname}${parsed.search}`;
+};
+
+const inspectSearchConsoleUrl = async (
+  property: string,
+  accessToken: string,
+  rawUrl: string,
+) => {
+  const inspectionUrl = normalizeInspectionUrl(rawUrl, property);
+  const response = await fetch(
+    "https://searchconsole.googleapis.com/v1/urlInspection/index:inspect",
+    {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + accessToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inspectionUrl,
+        siteUrl: property,
+        languageCode: "en",
+      }),
+    },
+  );
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(
+      result?.error?.message || "Google URL Inspection API request failed.",
+    );
+  }
+  const idx = result?.inspectionResult?.indexStatusResult || {};
+  const mobile = result?.inspectionResult?.mobileUsabilityResult || {};
+  const rich = result?.inspectionResult?.richResultsResult || {};
+  return {
+    inspectionUrl,
+    inspectionResultLink: result?.inspectionResult?.inspectionResultLink || null,
+    verdict: idx.verdict || "VERDICT_UNSPECIFIED",
+    coverageState: idx.coverageState || "Unknown",
+    indexingState: idx.indexingState || "Unknown",
+    robotsTxtState: idx.robotsTxtState || "Unknown",
+    pageFetchState: idx.pageFetchState || "Unknown",
+    lastCrawlTime: idx.lastCrawlTime || null,
+    crawledAs: idx.crawledAs || "Unknown",
+    googleCanonical: idx.googleCanonical || null,
+    userCanonical: idx.userCanonical || null,
+    referringUrls: Array.isArray(idx.referringUrls) ? idx.referringUrls.slice(0, 5) : [],
+    mobileVerdict: mobile.verdict || "VERDICT_UNSPECIFIED",
+    richResultsVerdict: rich.verdict || "VERDICT_UNSPECIFIED",
+    richResultTypes: Array.isArray(rich.detectedItems)
+      ? rich.detectedItems.map((item: any) => item?.richResultType).filter(Boolean)
+      : [],
+  };
 };
 
 Deno.serve(async (req) => {
@@ -116,7 +257,17 @@ Deno.serve(async (req) => {
     return json(req, { error: "Could not read the Search Console connection." }, 500);
   }
   if (!connection) {
-    return json(req, { connected: false, queries: [], pages: [], trend: [], devices: [] });
+    return json(req, {
+      connected: false,
+      queries: [],
+      pages: [],
+      queryPages: [],
+      trend: [],
+      devices: [],
+      countries: [],
+      searchAppearances: [],
+      sitemaps: [],
+    });
   }
 
   try {
@@ -137,18 +288,54 @@ Deno.serve(async (req) => {
         req,
         {
           connected: true,
-          error: "Google token refresh failed. Reconnect Search Console.",
           reconnectRequired: true,
+          error:
+            tokenData?.error_description ||
+            "Google Search Console authorization expired. Click Reconnect Google to refresh permissions.",
         },
         502,
       );
     }
 
     const body = await req.json().catch(() => ({}));
+    const action = typeof body?.action === "string" ? body.action : "report";
+
+    if (action === "inspect_url") {
+      const inspection = await inspectSearchConsoleUrl(
+        connection.property_url,
+        tokenData.access_token,
+        String(body?.url || ""),
+      );
+      return json(req, { connected: true, inspection });
+    }
+
+    if (action === "set_property") {
+      const nextProperty = String(body?.propertyUrl || "").trim();
+      const sites = await fetchVerifiedSites(tokenData.access_token);
+      const matched = sites.find((s: any) => s?.siteUrl === nextProperty);
+      if (!matched) {
+        return json(
+          req,
+          { error: "Selected property is not verified under this Google account." },
+          400,
+        );
+      }
+      const { error: updateError } = await admin
+        .from("gsc_oauth_tokens")
+        .update({ property_url: nextProperty, updated_at: new Date().toISOString() })
+        .eq("id", 1);
+      if (updateError) {
+        return json(req, { error: "Could not save Search Console property selection." }, 500);
+      }
+      return json(req, { connected: true, property: nextProperty });
+    }
+
     const requestedDays = Number(body?.days) || 28;
     const days = Math.min(Math.max(Math.floor(requestedDays), 7), 90);
+    const countryFilter =
+      typeof body?.country === "string" && body.country !== "all" ? body.country : "all";
 
-    // Search Console data is normally delayed. End the report three days ago.
+    // Search Console finalized data typically trails by 2-3 days.
     const end = new Date();
     end.setUTCHours(0, 0, 0, 0);
     end.setUTCDate(end.getUTCDate() - 3);
@@ -163,20 +350,100 @@ Deno.serve(async (req) => {
       endDate: previousEndDate,
     };
 
-    const [totals, previousTotals, trend, queries, pages, devices] =
-      await Promise.all([
-        querySearchAnalytics(connection.property_url, tokenData.access_token, currentPeriod, undefined, 1),
-        querySearchAnalytics(connection.property_url, tokenData.access_token, previousPeriod, undefined, 1),
-        querySearchAnalytics(connection.property_url, tokenData.access_token, currentPeriod, ["date"], 1000),
-        querySearchAnalytics(connection.property_url, tokenData.access_token, currentPeriod, ["query"], 100),
-        querySearchAnalytics(connection.property_url, tokenData.access_token, currentPeriod, ["page"], 100),
-        querySearchAnalytics(connection.property_url, tokenData.access_token, currentPeriod, ["device"], 10),
-      ]);
+    const [
+      totals,
+      previousTotals,
+      trend,
+      queries,
+      pages,
+      queryPages,
+      devices,
+      countries,
+      searchAppearances,
+      sitemaps,
+      verifiedSites,
+    ] = await Promise.all([
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        undefined,
+        1,
+        countryFilter,
+      ),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        previousPeriod,
+        undefined,
+        1,
+        countryFilter,
+      ),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        ["date"],
+        1000,
+        countryFilter,
+      ),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        ["query"],
+        1000,
+        countryFilter,
+      ),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        ["page"],
+        1000,
+        countryFilter,
+      ),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        ["query", "page"],
+        1000,
+        countryFilter,
+      ).catch(() => ({ rows: [] })),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        ["device"],
+        10,
+        countryFilter,
+      ),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        ["country"],
+        50,
+        "all",
+      ).catch(() => ({ rows: [] })),
+      querySearchAnalytics(
+        connection.property_url,
+        tokenData.access_token,
+        currentPeriod,
+        ["searchAppearance"],
+        25,
+        countryFilter,
+      ).catch(() => ({ rows: [] })),
+      fetchGscSitemaps(connection.property_url, tokenData.access_token),
+      fetchVerifiedSites(tokenData.access_token),
+    ]);
 
     return json(req, {
       connected: true,
       email: connection.connected_email,
       property: connection.property_url,
+      countryFilter,
       startDate,
       endDate,
       previousStartDate,
@@ -196,7 +463,15 @@ Deno.serve(async (req) => {
       trend: trend.rows || [],
       queries: queries.rows || [],
       pages: pages.rows || [],
+      queryPages: queryPages.rows || [],
       devices: devices.rows || [],
+      countries: countries.rows || [],
+      searchAppearances: searchAppearances.rows || [],
+      sitemaps,
+      verifiedProperties: verifiedSites.map((s: any) => ({
+        siteUrl: s?.siteUrl,
+        permissionLevel: s?.permissionLevel,
+      })).filter((s: any) => s.siteUrl),
       updatedAt: connection.updated_at,
     });
   } catch (error) {

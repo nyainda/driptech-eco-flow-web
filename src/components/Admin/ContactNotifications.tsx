@@ -1,86 +1,233 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Bell,
-  Check,
-  Trash2,
-  Mail,
-  Phone,
-  Building,
-  MapPin,
-  Calendar,
-  DollarSign,
-  Filter,
-  Search,
-  MoreVertical,
-  Archive,
-  Star,
-  Reply,
-  Clock,
-  User,
-  Eye,
-  EyeOff,
   ArrowUpDown,
+  Building,
+  Calendar,
+  Check,
+  CheckCheck,
   ChevronDown,
+  Compass,
+  DollarSign,
+  Grid3X3,
+  Inbox,
+  List,
+  Loader2,
+  Mail,
+  MapPin,
+  MessageCircle,
   MessageSquare,
-  Menu,
+  Phone,
+  RefreshCw,
+  Ruler,
+  Search,
+  Sparkles,
+  Trash2,
+  UserCheck,
   UserPlus,
-  AlertTriangle,
+  Users,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
+import {
+  buildWhatsAppChatUrl,
+  inferIrrigationSystemType,
+  parseAcreageFromText,
+} from "@/lib/adminContactHelpers";
+import type { EngineeringReportSeed } from "@/lib/engineeringReportEngine";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ContactSubmission {
   id: string;
   name: string;
   email: string;
-  phone?: string;
-  company?: string;
+  phone: string | null;
+  company: string | null;
+  project_type: string | null;
+  budget_range: string | null;
+  area_size: string | null;
   message: string;
   status: string;
-  created_at: string;
-  updated_at: string;
-  project_type?: string;
-  area_size?: string;
-  budget_range?: string;
   read: boolean;
-}
-
-interface Customer {
-  id: string;
-  contact_person: string;
-  email: string;
-  phone?: string;
-  company_name?: string;
-  user_role: string;
   created_at: string;
 }
 
-const ContactNotifications = () => {
+interface CustomerRef {
+  id: string;
+  email: string;
+  contact_person: string;
+}
+
+type StatusFilter = "all" | "unread" | "new" | "in_progress" | "resolved";
+type SortField = "created_at" | "name" | "status";
+
+interface ContactNotificationsProps {
+  onStartEngineeringReport?: (seed: EngineeringReportSeed) => void;
+}
+
+type ParsedMessageSegment =
+  | { type: "field"; field: string; value: string }
+  | { type: "text"; content: string };
+
+const parseMessageSegments = (message: string): ParsedMessageSegment[] => {
+  if (!message) return [];
+  const lines = message.split("\n");
+  const segments: ParsedMessageSegment[] = [];
+  const textBuffer: string[] = [];
+
+  const flushText = () => {
+    const joined = textBuffer.join("\n").trim();
+    if (joined) {
+      segments.push({ type: "text", content: joined });
+    }
+    textBuffer.length = 0;
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) {
+      flushText();
+      continue;
+    }
+    const colonIdx = line.indexOf(":");
+    if (colonIdx > 1 && colonIdx < 36 && !line.slice(0, colonIdx).includes("http")) {
+      flushText();
+      segments.push({
+        type: "field",
+        field: line.slice(0, colonIdx).trim(),
+        value: line.slice(colonIdx + 1).trim(),
+      });
+    } else {
+      textBuffer.push(line);
+    }
+  }
+  flushText();
+
+  if (segments.length === 0) {
+    return [{ type: "text", content: message }];
+  }
+  return segments;
+};
+
+const formatDateShort = (dateStr: string) => {
+  try {
+    return new Intl.DateTimeFormat("en-KE", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(dateStr));
+  } catch {
+    return dateStr;
+  }
+};
+
+const getStatusBadgeStyle = (status: string) => {
+  switch (status) {
+    case "new":
+      return {
+        label: "New",
+        className: "bg-primary/10 text-primary border-primary/25",
+      };
+    case "in_progress":
+    case "contacted":
+      return {
+        label: status === "contacted" ? "Contacted" : "In Progress",
+        className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25",
+      };
+    case "resolved":
+      return {
+        label: "Resolved",
+        className: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25",
+      };
+    case "read":
+      return {
+        label: "Reviewed",
+        className: "bg-muted text-muted-foreground border-border",
+      };
+    default:
+      return {
+        label: status || "New",
+        className: "bg-muted text-muted-foreground border-border",
+      };
+  }
+};
+
+const isPumpOrSizingLead = (sub: ContactSubmission) => {
+  const haystack = `${sub.project_type || ""} ${sub.message || ""}`.toLowerCase();
+  return (
+    haystack.includes("pump") ||
+    haystack.includes("solar") ||
+    haystack.includes("borehole") ||
+    haystack.includes("sizing") ||
+    haystack.includes("drip") ||
+    haystack.includes("dam")
+  );
+};
+
+const ContactNotifications: React.FC<ContactNotificationsProps> = ({
+  onStartEngineeringReport,
+}) => {
+  const [filter, setFilter] = useState<StatusFilter>("all");
+  const [projectTypeFilter, setProjectTypeFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortBy, setSortBy] = useState<SortField>("created_at");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
+  const [showBatchModal, setShowBatchModal] = useState<boolean>(false);
+  const [deleteTarget, setDeleteTarget] = useState<ContactSubmission | null>(null);
+  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<"created_at" | "name" | "status">(
-    "created_at",
-  );
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
-  const [showConvertBatchModal, setShowConvertBatchModal] = useState(false);
 
-  // Fetch contact submissions
-  const { data: submissions = [], isLoading } = useQuery({
+  useEffect(() => {
+    const checkViewport = () => {
+      if (window.innerWidth >= 1120) {
+        setViewMode("table");
+      } else {
+        setViewMode("cards");
+      }
+    };
+    checkViewport();
+    window.addEventListener("resize", checkViewport);
+    return () => window.removeEventListener("resize", checkViewport);
+  }, []);
+
+  const {
+    data: submissions = [],
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
     queryKey: ["contact-submissions"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -89,16 +236,13 @@ const ContactNotifications = () => {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching contact submissions:", error);
-        return [];
+        console.error("Error fetching submissions:", error);
+        throw error;
       }
-      return data as ContactSubmission[];
+      return (data || []) as ContactSubmission[];
     },
-    retry: 3,
-    retryDelay: 1000,
   });
 
-  // Fetch existing customers to check for duplicates
   const { data: existingCustomers = [] } = useQuery({
     queryKey: ["customers"],
     queryFn: async () => {
@@ -111,23 +255,25 @@ const ContactNotifications = () => {
         console.error("Error fetching customers:", error);
         return [];
       }
-      return data as Customer[];
+      return (data || []) as CustomerRef[];
     },
   });
 
-  // Convert to customer mutation
+  const existingEmailMap = useMemo(() => {
+    const map = new Map<string, CustomerRef>();
+    for (const c of existingCustomers) {
+      if (c.email) {
+        map.set(c.email.trim().toLowerCase(), c);
+      }
+    }
+    return map;
+  }, [existingCustomers]);
+
   const convertToCustomerMutation = useMutation({
     mutationFn: async (submission: ContactSubmission) => {
-      // Check if customer already exists with this email
-      const existingCustomer = existingCustomers.find(
-        (customer) =>
-          customer.email.toLowerCase() === submission.email.toLowerCase(),
-      );
-
-      if (existingCustomer) {
-        throw new Error(
-          `Customer with email ${submission.email} already exists`,
-        );
+      const normalizedEmail = submission.email.trim().toLowerCase();
+      if (existingEmailMap.has(normalizedEmail)) {
+        throw new Error(`Customer with email ${submission.email} already exists in CRM.`);
       }
 
       const customerData = {
@@ -135,9 +281,9 @@ const ContactNotifications = () => {
         email: submission.email,
         phone: submission.phone || "",
         company_name: submission.company || "",
-        address: "", // Not available in contact form
-        city: "", // Not available in contact form
-        country: "", // Not available in contact form
+        address: "",
+        city: "",
+        country: "Kenya",
         user_role: "customer" as const,
       };
 
@@ -149,120 +295,83 @@ const ContactNotifications = () => {
 
       if (error) throw error;
 
-      // Optionally, mark the contact submission as processed
       await supabase
         .from("contact_submissions")
-        .update({
-          status: "resolved",
-          read: true,
-        })
+        .update({ status: "resolved", read: true })
         .eq("id", submission.id);
 
       return data;
     },
-    onSuccess: (data, submission) => {
+    onSuccess: (_data, submission) => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
       toast({
-        title: "Success",
-        description: `Customer "${submission.name}" created successfully`,
+        title: "Converted to CRM Customer",
+        description: `${submission.name} has been added to Customers and marked resolved.`,
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
+        title: "Conversion Failed",
         description: error.message,
         variant: "destructive",
       });
     },
   });
 
-  // Batch convert to customers mutation
   const batchConvertMutation = useMutation({
-    mutationFn: async (submissions: ContactSubmission[]) => {
-      const results = {
-        created: 0,
-        skipped: 0,
-        errors: [] as string[],
-      };
+    mutationFn: async (selectedSubs: ContactSubmission[]) => {
+      const newCustomers = selectedSubs
+        .filter((sub) => !existingEmailMap.has(sub.email.trim().toLowerCase()))
+        .map((sub) => ({
+          contact_person: sub.name,
+          email: sub.email,
+          phone: sub.phone || "",
+          company_name: sub.company || "",
+          address: "",
+          city: "",
+          country: "Kenya",
+          user_role: "customer" as const,
+        }));
 
-      for (const submission of submissions) {
-        try {
-          // Check if customer already exists
-          const existingCustomer = existingCustomers.find(
-            (customer) =>
-              customer.email.toLowerCase() === submission.email.toLowerCase(),
-          );
-
-          if (existingCustomer) {
-            results.skipped++;
-            continue;
-          }
-
-          const customerData = {
-            contact_person: submission.name,
-            email: submission.email,
-            phone: submission.phone || "",
-            company_name: submission.company || "",
-            address: "",
-            city: "",
-            country: "",
-            user_role: "customer" as const,
-          };
-
-          const { error } = await supabase
-            .from("customers")
-            .insert([customerData]);
-
-          if (error) throw error;
-
-          // Mark submission as processed
-          await supabase
-            .from("contact_submissions")
-            .update({
-              status: "resolved",
-              read: true,
-            })
-            .eq("id", submission.id);
-
-          results.created++;
-        } catch (error: any) {
-          results.errors.push(`${submission.name}: ${error.message}`);
-        }
+      if (newCustomers.length === 0) {
+        throw new Error("All selected contacts already exist in Customers.");
       }
 
-      return results;
+      const { data, error } = await supabase
+        .from("customers")
+        .insert(newCustomers)
+        .select();
+
+      if (error) throw error;
+
+      const selectedIds = selectedSubs.map((sub) => sub.id);
+      await supabase
+        .from("contact_submissions")
+        .update({ status: "resolved", read: true })
+        .in("id", selectedIds);
+
+      return { created: data || [], skipped: selectedSubs.length - newCustomers.length };
     },
-    onSuccess: (results) => {
+    onSuccess: ({ created, skipped }) => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
-
-      let message = `Created ${results.created} customers`;
-      if (results.skipped > 0) {
-        message += `, skipped ${results.skipped} duplicates`;
-      }
-      if (results.errors.length > 0) {
-        message += `, ${results.errors.length} failed`;
-      }
-
-      toast({
-        title: "Batch Conversion Complete",
-        description: message,
-      });
-
       setSelectedSubmissions([]);
-      setShowConvertBatchModal(false);
+      setShowBatchModal(false);
+      toast({
+        title: "Batch CRM Conversion Complete",
+        description: `Created ${created.length} customer record(s)${skipped > 0 ? ` (${skipped} duplicates skipped)` : ""}.`,
+      });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
+        title: "Batch Conversion Failed",
         description: error.message,
         variant: "destructive",
       });
     },
   });
 
-  // Mark as read mutation
   const markAsReadMutation = useMutation({
     mutationFn: async (submissionId: string) => {
       const { error } = await supabase
@@ -274,10 +383,7 @@ const ContactNotifications = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
-      toast({
-        title: "Success",
-        description: "Message marked as read",
-      });
+      toast({ title: "Marked as Read" });
     },
     onError: (error: Error) => {
       toast({
@@ -288,7 +394,53 @@ const ContactNotifications = () => {
     },
   });
 
-  // Delete submission mutation
+  const batchMarkReadMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase
+        .from("contact_submissions")
+        .update({ read: true, status: "read" })
+        .in("id", ids);
+
+      if (error) throw error;
+    },
+    onSuccess: (_data, ids) => {
+      queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
+      setSelectedSubmissions([]);
+      toast({
+        title: "Marked Selected as Read",
+        description: `Updated ${ids.length} message(s).`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Bulk Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase
+        .from("contact_submissions")
+        .update({ status, read: status !== "new" })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
+      toast({ title: "Inquiry status updated" });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Status Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const deleteSubmissionMutation = useMutation({
     mutationFn: async (submissionId: string) => {
       const { error } = await supabase
@@ -300,48 +452,24 @@ const ContactNotifications = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
-      toast({
-        title: "Success",
-        description: "Message deleted successfully",
-      });
+      setDeleteTarget(null);
+      toast({ title: "Message deleted" });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
+        title: "Delete Failed",
         description: error.message,
         variant: "destructive",
       });
     },
   });
 
-  const handleMarkAsRead = (submissionId: string) => {
-    markAsReadMutation.mutate(submissionId);
-  };
-
-  const handleDelete = (submissionId: string) => {
-    if (confirm("Are you sure you want to delete this message?")) {
-      deleteSubmissionMutation.mutate(submissionId);
-    }
-  };
-
-  const handleConvertToCustomer = (submission: ContactSubmission) => {
-    convertToCustomerMutation.mutate(submission);
-  };
-
-  const handleBatchConvert = () => {
-    const selectedSubs = submissions.filter((sub) =>
-      selectedSubmissions.includes(sub.id),
+  const toggleRowExpansion = (submissionId: string) => {
+    setExpandedRows((prev) =>
+      prev.includes(submissionId)
+        ? prev.filter((id) => id !== submissionId)
+        : [...prev, submissionId],
     );
-    batchConvertMutation.mutate(selectedSubs);
-  };
-
-  const handleSort = (column: "created_at" | "name" | "status") => {
-    if (sortBy === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(column);
-      setSortOrder("desc");
-    }
   };
 
   const toggleSubmissionSelection = (submissionId: string) => {
@@ -352,821 +480,1061 @@ const ContactNotifications = () => {
     );
   };
 
-  const isCustomerExists = (email: string) => {
-    return existingCustomers.some(
-      (customer) => customer.email.toLowerCase() === email.toLowerCase(),
-    );
+  const handleSort = (column: SortField) => {
+    if (sortBy === column) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(column);
+      setSortOrder("desc");
+    }
   };
 
-  const sortedAndFilteredSubmissions = submissions
-    .filter((submission) => {
-      if (filter === "unread") return !submission.read;
-      if (filter === "read") return submission.read;
-      return true;
-    })
-    .filter(
-      (submission) =>
-        searchQuery === "" ||
-        submission.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        submission.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        submission.company?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        submission.message.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-    .sort((a, b) => {
-      let aVal, bVal;
-      switch (sortBy) {
-        case "name":
+  const handleReplyWhatsApp = (sub: ContactSubmission) => {
+    const firstName = sub.name.split(" ")[0] || "there";
+    const projectRef = sub.project_type ? ` regarding your ${sub.project_type} inquiry` : "";
+    const msg = `Hello ${firstName}, thank you for contacting DripTech Eco Flow${projectRef}. Our irrigation engineering team is reviewing your site details and can prepare a system sizing & BOQ proposal for you.`;
+    const waUrl = buildWhatsAppChatUrl(sub.phone, msg);
+    if (!waUrl) {
+      toast({
+        title: "No Valid Phone Number",
+        description: "This message does not include a valid phone/WhatsApp number.",
+        variant: "destructive",
+      });
+      return;
+    }
+    openTrackedWhatsApp(waUrl, "admin_contact_messages_reply");
+    if (!sub.read) {
+      markAsReadMutation.mutate(sub.id);
+    }
+  };
+
+  const handleLaunchEngineeringReport = (sub: ContactSubmission) => {
+    if (!onStartEngineeringReport) return;
+    const matchedCustomer = existingEmailMap.get(sub.email.trim().toLowerCase());
+    const parsedAcres =
+      parseAcreageFromText(sub.area_size) || parseAcreageFromText(sub.message);
+    const inferredSystem = inferIrrigationSystemType(sub.project_type, sub.message);
+    onStartEngineeringReport({
+      clientName: sub.name,
+      companyFarmName: sub.company || undefined,
+      clientPhone: sub.phone || undefined,
+      clientEmail: sub.email,
+      acres: parsedAcres,
+      systemType: inferredSystem,
+      customerId: matchedCustomer?.id,
+      projectTitle: `${sub.company || sub.name} — ${sub.project_type || "Irrigation & Solar"} Proposal`,
+      siteNotes: `Source: Contact Inquiry (${formatDateShort(sub.created_at)})\nBudget: ${sub.budget_range || "Unspecified"}\nArea: ${sub.area_size || "Unspecified"}\n\n${sub.message}`,
+      reportEdition: "client_proposal",
+      sourceModule: "Contact Messages",
+    });
+  };
+
+  const projectTypes = useMemo(() => {
+    const set = new Set<string>();
+    for (const s of submissions) {
+      if (s.project_type?.trim()) set.add(s.project_type.trim());
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [submissions]);
+
+  const stats = useMemo(() => {
+    const unread = submissions.filter((s) => !s.read).length;
+    const sizingLeads = submissions.filter(isPumpOrSizingLead).length;
+    const readyToConvert = submissions.filter(
+      (s) => s.email && !existingEmailMap.has(s.email.trim().toLowerCase()),
+    ).length;
+    const converted = submissions.filter(
+      (s) => s.email && existingEmailMap.has(s.email.trim().toLowerCase()),
+    ).length;
+    return {
+      total: submissions.length,
+      unread,
+      sizingLeads,
+      readyToConvert,
+      converted,
+    };
+  }, [submissions, existingEmailMap]);
+
+  const sortedAndFilteredSubmissions = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return submissions
+      .filter((sub) => {
+        if (filter === "unread") return !sub.read;
+        if (filter === "new") return sub.status === "new";
+        if (filter === "in_progress") {
+          return sub.status === "in_progress" || sub.status === "contacted";
+        }
+        if (filter === "resolved") return sub.status === "resolved";
+        return true;
+      })
+      .filter((sub) => {
+        if (projectTypeFilter === "all") return true;
+        return (sub.project_type || "").trim() === projectTypeFilter;
+      })
+      .filter((sub) => {
+        if (!q) return true;
+        return (
+          sub.name.toLowerCase().includes(q) ||
+          sub.email.toLowerCase().includes(q) ||
+          (sub.phone || "").toLowerCase().includes(q) ||
+          (sub.company || "").toLowerCase().includes(q) ||
+          (sub.project_type || "").toLowerCase().includes(q) ||
+          sub.message.toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => {
+        let aVal: string | number;
+        let bVal: string | number;
+        if (sortBy === "name") {
           aVal = a.name.toLowerCase();
           bVal = b.name.toLowerCase();
-          break;
-        case "status":
+        } else if (sortBy === "status") {
           aVal = a.status;
           bVal = b.status;
-          break;
-        default:
+        } else {
           aVal = new Date(a.created_at).getTime();
           bVal = new Date(b.created_at).getTime();
-      }
-
-      if (sortOrder === "asc") {
-        return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-      } else {
+        }
+        if (sortOrder === "asc") return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
         return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
-      }
-    });
+      });
+  }, [submissions, filter, projectTypeFilter, searchQuery, sortBy, sortOrder]);
 
-  const unreadCount = submissions.filter((s) => !s.read).length;
-  const eligibleForConversion = sortedAndFilteredSubmissions.filter(
-    (sub) => !isCustomerExists(sub.email),
-  ).length;
-
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case "new":
-        return {
-          color: "bg-blue-500",
-          textColor: "text-blue-700",
-          bgColor: "bg-blue-50",
-          label: "New",
-        };
-      case "read":
-        return {
-          color: "bg-emerald-500",
-          textColor: "text-emerald-700",
-          bgColor: "bg-emerald-50",
-          label: "Read",
-        };
-      case "pending":
-        return {
-          color: "bg-amber-500",
-          textColor: "text-amber-700",
-          bgColor: "bg-amber-50",
-          label: "Pending",
-        };
-      case "resolved":
-        return {
-          color: "bg-gray-500",
-          textColor: "text-gray-700",
-          bgColor: "bg-gray-50",
-          label: "Resolved",
-        };
-      default:
-        return {
-          color: "bg-slate-500",
-          textColor: "text-slate-700",
-          bgColor: "bg-slate-50",
-          label: status,
-        };
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60),
-    );
-
-    if (diffInHours < 1) return "Just now";
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 48) return "Yesterday";
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  const parseMessage = (message: string) => {
-    const lines = message.split(/\n/).filter((line) => line.trim());
-    const parsed = [];
-
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-      if (!trimmedLine) continue;
-
-      const fieldMatch = trimmedLine.match(/^([^:]+):\s*(.*)$/);
-      if (fieldMatch) {
-        const [, field, value] = fieldMatch;
-        parsed.push({
-          type: "field",
-          field: field.trim(),
-          value: value.trim() || "Not specified",
-        });
-      } else {
-        parsed.push({
-          type: "text",
-          content: trimmedLine,
-        });
-      }
-    }
-
-    return parsed.length > 0 ? parsed : [{ type: "text", content: message }];
-  };
-
-  const toggleRowExpansion = (submissionId: string) => {
-    setExpandedRow(expandedRow === submissionId ? null : submissionId);
-  };
-
-  // Auto-switch to card view on mobile
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setViewMode("cards");
-      } else {
-        setViewMode("table");
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Card View Component for Mobile
-  const CardView = () => (
-    <div className="space-y-4">
-      {sortedAndFilteredSubmissions.map((submission) => {
-        const statusConfig = getStatusConfig(submission.status);
-        const isExpanded = expandedRow === submission.id;
-        const customerExists = isCustomerExists(submission.email);
-
-        return (
-          <Card
-            key={submission.id}
-            className={`${
-              !submission.read
-                ? "border-l-4 border-l-blue-500 bg-blue-50/30 dark:bg-blue-950/20"
-                : ""
-            } transition-all duration-200 hover:shadow-md`}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 ${
-                      !submission.read ? "bg-blue-500" : "bg-slate-400"
-                    }`}
-                  >
-                    {submission.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <CardTitle className="text-base truncate">
-                        {submission.name}
-                      </CardTitle>
-                      {!submission.read && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                      )}
-                      {customerExists && (
-                        <Badge
-                          variant="secondary"
-                          className="text-xs bg-orange-100 text-orange-800"
-                        >
-                          Customer Exists
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-sm text-slate-600 dark:text-slate-400 truncate flex items-center gap-1">
-                        <Mail className="h-3 w-3 flex-shrink-0" />
-                        {submission.email}
-                      </span>
-                      {submission.phone && (
-                        <span className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-1">
-                          <Phone className="h-3 w-3 flex-shrink-0" />
-                          {submission.phone}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <Badge
-                  className={`${statusConfig.color} text-white px-2 py-1 flex-shrink-0`}
-                >
-                  {statusConfig.label}
-                </Badge>
-              </div>
-
-              {submission.company && (
-                <div className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mt-2">
-                  <Building className="h-3 w-3" />
-                  {submission.company}
-                </div>
-              )}
-
-              <div className="flex flex-wrap gap-2 mt-3">
-                {submission.project_type && (
-                  <div className="flex items-center gap-1 text-xs bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-full">
-                    <MapPin className="h-3 w-3" />
-                    {submission.project_type}
-                  </div>
-                )}
-                {submission.budget_range && (
-                  <div className="flex items-center gap-1 text-xs bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-full">
-                    <DollarSign className="h-3 w-3" />
-                    {submission.budget_range}
-                  </div>
-                )}
-                {submission.area_size && (
-                  <div className="text-xs bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded-full">
-                    {submission.area_size}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between mt-3">
-                <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                  <Calendar className="h-3 w-3" />
-                  {formatDate(submission.created_at)}
-                </div>
-                <div className="flex items-center gap-2">
-                  {!customerExists && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleConvertToCustomer(submission)}
-                      disabled={convertToCustomerMutation.isPending}
-                      className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                    >
-                      <UserPlus className="h-4 w-4" />
-                    </Button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => toggleRowExpansion(submission.id)}
-                    className="p-2"
-                  >
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                    />
-                  </Button>
-                  {!submission.read && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleMarkAsRead(submission.id)}
-                      disabled={markAsReadMutation.isPending}
-                      className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50"
-                    >
-                      <Check className="h-4 w-4" />
-                    </Button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleDelete(submission.id)}
-                    disabled={deleteSubmissionMutation.isPending}
-                    className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-
-            {isExpanded && (
-              <CardContent className="pt-0">
-                <div className="bg-slate-50 dark:bg-gray-800 p-4 rounded-lg">
-                  <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 text-sm mb-3">
-                    <MessageSquare className="h-4 w-4 text-blue-500" />
-                    Message Details
-                  </h4>
-                  <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-slate-200 dark:border-gray-600">
-                    {parseMessage(submission.message).map((item, index) => {
-                      if (item.type === "field") {
-                        return (
-                          <div
-                            key={index}
-                            className="flex flex-col gap-1 py-2 border-b border-slate-100 dark:border-gray-700 last:border-b-0"
-                          >
-                            <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                              {item.field}
-                            </span>
-                            <span className="text-sm text-slate-700 dark:text-gray-300">
-                              {item.value === "" ||
-                              item.value === "Not specified" ? (
-                                <span className="text-slate-400 dark:text-gray-500 italic">
-                                  Not specified
-                                </span>
-                              ) : (
-                                item.value
-                              )}
-                            </span>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div key={index} className="py-2">
-                            <p className="text-sm text-slate-700 dark:text-gray-300 leading-relaxed">
-                              {item.content}
-                            </p>
-                          </div>
-                        );
-                      }
-                    })}
-                  </div>
-                  <div className="flex justify-between items-center text-xs text-slate-500 dark:text-gray-400 pt-3 mt-3 border-t border-slate-200 dark:border-gray-700">
-                    <span>ID: {submission.id.slice(-8)}</span>
-                    <span>
-                      {new Date(submission.created_at).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            )}
-          </Card>
-        );
-      })}
-    </div>
+  const selectedSubs = useMemo(
+    () => submissions.filter((s) => selectedSubmissions.includes(s.id)),
+    [submissions, selectedSubmissions],
   );
 
+  const selectedEligibleToConvert = useMemo(
+    () =>
+      selectedSubs.filter(
+        (s) => s.email && !existingEmailMap.has(s.email.trim().toLowerCase()),
+      ),
+    [selectedSubs, existingEmailMap],
+  );
+
+  const allVisibleSelected =
+    sortedAndFilteredSubmissions.length > 0 &&
+    sortedAndFilteredSubmissions.every((s) => selectedSubmissions.includes(s.id));
+
+  const toggleSelectAllVisible = () => {
+    if (allVisibleSelected) {
+      setSelectedSubmissions([]);
+    } else {
+      setSelectedSubmissions(sortedAndFilteredSubmissions.map((s) => s.id));
+    }
+  };
+
   return (
-    <div className="min-h-screen p-3 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        {/* Header */}
-        <div className="rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-4 sm:p-6">
-          <div className="flex flex-col space-y-4">
-            {/* Title and Stats */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
-                    <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                  </div>
-                  {unreadCount > 0 && (
-                    <div className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 bg-red-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">
-                        {unreadCount}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-                    Contact Messages
-                  </h1>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {submissions.length} total • {unreadCount} unread •{" "}
-                    {eligibleForConversion} can convert to customers
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {/* Batch Convert Button */}
-                {eligibleForConversion > 0 && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setShowConvertBatchModal(true)}
-                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                  >
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Convert {eligibleForConversion}
-                  </Button>
-                )}
-
-                {/* View Toggle for Desktop */}
-                <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-gray-700 rounded-lg p-1">
-                  <Button
-                    size="sm"
-                    variant={viewMode === "table" ? "default" : "ghost"}
-                    onClick={() => setViewMode("table")}
-                    className="px-3 py-1 text-sm"
-                  >
-                    Table
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={viewMode === "cards" ? "default" : "ghost"}
-                    onClick={() => setViewMode("cards")}
-                    className="px-3 py-1 text-sm"
-                  >
-                    Cards
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Batch Convert Modal */}
-            {showConvertBatchModal && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <Card className="w-full max-w-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <UserPlus className="h-5 w-5" />
-                      Convert to Customers
-                    </CardTitle>
-                    <CardDescription>
-                      Convert {eligibleForConversion} contact submissions to
-                      customer records
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg">
-                        <div className="flex items-start gap-3">
-                          <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5" />
-                          <div>
-                            <p className="text-sm text-blue-800 dark:text-blue-200">
-                              This will create customer records for contacts
-                              that don't already exist as customers. Existing
-                              customers will be skipped.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowConvertBatchModal(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={handleBatchConvert}
-                          disabled={batchConvertMutation.isPending}
-                        >
-                          {batchConvertMutation.isPending
-                            ? "Converting..."
-                            : "Convert All"}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+    <div className="space-y-6">
+      {/* Command Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex items-start gap-3.5">
+          <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Inbox className="h-5 w-5" />
+            {stats.unread > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+                {stats.unread}
+              </span>
             )}
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search messages..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              />
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                Contact Messages & Leads
+              </h2>
+              <Badge variant="outline" className="border-primary/30 text-primary">
+                {stats.total} Total
+              </Badge>
             </div>
-
-            {/* Filter Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-              {[
-                { key: "all", label: "All", count: submissions.length },
-                { key: "unread", label: "Unread", count: unreadCount },
-                {
-                  key: "read",
-                  label: "Read",
-                  count: submissions.length - unreadCount,
-                },
-              ].map(({ key, label, count }) => (
-                <button
-                  key={key}
-                  onClick={() => setFilter(key as any)}
-                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
-                    filter === key
-                      ? "bg-blue-500 text-white"
-                      : "bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-700"
-                  }`}
-                >
-                  {label} ({count})
-                </button>
-              ))}
-            </div>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Respond on WhatsApp or email, convert qualified inquiries to Customers CRM, and launch Engineering Reports in one click.
+            </p>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-              <span className="ml-3 text-slate-600 dark:text-slate-400">
-                Loading...
-              </span>
-            </div>
-          ) : sortedAndFilteredSubmissions.length === 0 ? (
-            <div className="text-center py-12 px-4">
-              <MessageSquare className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">
-                No messages found
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                {searchQuery
-                  ? "Try adjusting your search terms"
-                  : "No messages match the selected filter"}
-              </p>
-            </div>
-          ) : (
+        <div className="flex flex-wrap items-center gap-2">
+          {selectedSubmissions.length > 0 && (
             <>
-              {/* Desktop Table View */}
-              <div className="hidden md:block overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-slate-50 dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700">
-                    <tr>
-                      <th className="px-6 py-4 text-left">
-                        <button
-                          onClick={() => handleSort("name")}
-                          className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
-                        >
-                          Contact
-                          <ArrowUpDown className="h-4 w-4" />
-                        </button>
-                      </th>
-                      <th className="px-6 py-4 text-left">
-                        <button
-                          onClick={() => handleSort("status")}
-                          className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
-                        >
-                          Status
-                          <ArrowUpDown className="h-4 w-4" />
-                        </button>
-                      </th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-slate-700 dark:text-gray-300">
-                        Project Details
-                      </th>
-                      <th className="px-6 py-4 text-left">
-                        <button
-                          onClick={() => handleSort("created_at")}
-                          className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
-                        >
-                          Date
-                          <ArrowUpDown className="h-4 w-4" />
-                        </button>
-                      </th>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-slate-700 dark:text-gray-300">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-gray-700">
-                    {sortedAndFilteredSubmissions.map((submission) => {
-                      const statusConfig = getStatusConfig(submission.status);
-                      const isExpanded = expandedRow === submission.id;
-                      const customerExists = isCustomerExists(submission.email);
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => batchMarkReadMutation.mutate(selectedSubmissions)}
+                disabled={batchMarkReadMutation.isPending}
+              >
+                <CheckCheck className="h-4 w-4 mr-1.5" />
+                Mark Read ({selectedSubmissions.length})
+              </Button>
+              {selectedEligibleToConvert.length > 0 && (
+                <Button
+                  size="sm"
+                  onClick={() => setShowBatchModal(true)}
+                >
+                  <UserPlus className="h-4 w-4 mr-1.5" />
+                  Convert to CRM ({selectedEligibleToConvert.length})
+                </Button>
+              )}
+            </>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            <RefreshCw className={`h-4 w-4 mr-1.5 ${isFetching ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
+      </div>
 
-                      return (
-                        <>
-                          <tr
-                            key={submission.id}
-                            className={`hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors ${
-                              !submission.read
-                                ? "bg-blue-50/50 dark:bg-blue-950/20 border-l-4 border-l-blue-500"
-                                : ""
-                            }`}
-                          >
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
-                                    !submission.read
-                                      ? "bg-blue-500"
-                                      : "bg-slate-400"
-                                  }`}
-                                >
-                                  {submission.name.charAt(0).toUpperCase()}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="border-border/70">
+          <CardHeader className="flex flex-row items-center justify-between pb-1.5 space-y-0">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Total Inquiries
+            </CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">{stats.total}</div>
+            <p className="text-xs text-muted-foreground mt-0.5">All contact form submissions</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/70">
+          <CardHeader className="flex flex-row items-center justify-between pb-1.5 space-y-0">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Unread Attention
+            </CardTitle>
+            <Inbox className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">{stats.unread}</div>
+            <p className="text-xs text-muted-foreground mt-0.5">Awaiting first team response</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/70">
+          <CardHeader className="flex flex-row items-center justify-between pb-1.5 space-y-0">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Sizing & System Leads
+            </CardTitle>
+            <Sparkles className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">{stats.sizingLeads}</div>
+            <p className="text-xs text-muted-foreground mt-0.5">Pump, solar, drip or dam scope</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/70">
+          <CardHeader className="flex flex-row items-center justify-between pb-1.5 space-y-0">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Synced to CRM
+            </CardTitle>
+            <UserCheck className="h-4 w-4 text-emerald-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">{stats.converted}</div>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {stats.readyToConvert} ready to convert
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters & Controls */}
+      <Card className="border-border/70">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex flex-col lg:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search name, email, phone, company, project type or message..."
+                className="pl-9"
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Select value={projectTypeFilter} onValueChange={setProjectTypeFilter}>
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="All Project Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Project Types</SelectItem>
+                  {projectTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={viewMode === "cards" ? "secondary" : "ghost"}
+                  className="h-8 px-2.5"
+                  onClick={() => setViewMode("cards")}
+                  title="Card view"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={viewMode === "table" ? "secondary" : "ghost"}
+                  className="h-8 px-2.5"
+                  onClick={() => setViewMode("table")}
+                  title="Table view"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div className="flex flex-wrap gap-1.5">
+              {(
+                [
+                  { key: "all", label: "All", count: submissions.length },
+                  { key: "unread", label: "Unread", count: stats.unread },
+                  {
+                    key: "new",
+                    label: "New",
+                    count: submissions.filter((s) => s.status === "new").length,
+                  },
+                  {
+                    key: "in_progress",
+                    label: "In Progress",
+                    count: submissions.filter(
+                      (s) => s.status === "in_progress" || s.status === "contacted",
+                    ).length,
+                  },
+                  {
+                    key: "resolved",
+                    label: "Resolved",
+                    count: submissions.filter((s) => s.status === "resolved").length,
+                  },
+                ] as Array<{ key: StatusFilter; label: string; count: number }>
+              ).map((tab) => (
+                <Button
+                  key={tab.key}
+                  type="button"
+                  size="sm"
+                  variant={filter === tab.key ? "default" : "outline"}
+                  onClick={() => setFilter(tab.key)}
+                  className="h-8 text-xs"
+                >
+                  {tab.label}
+                  <span
+                    className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                      filter === tab.key
+                        ? "bg-primary-foreground/20 text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                </Button>
+              ))}
+            </div>
+
+            {sortedAndFilteredSubmissions.length > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleSelectAllVisible}
+                className="text-xs text-muted-foreground"
+              >
+                {allVisibleSelected ? "Clear Selection" : `Select All (${sortedAndFilteredSubmissions.length})`}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Main Content */}
+      {isLoading ? (
+        <Card className="border-border/70">
+          <CardContent className="flex flex-col items-center justify-center py-16 gap-3">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Loading contact submissions...</p>
+          </CardContent>
+        </Card>
+      ) : sortedAndFilteredSubmissions.length === 0 ? (
+        <Card className="border-border/70">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-muted-foreground mb-3">
+              <MessageSquare className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-semibold text-foreground">No matching messages</h3>
+            <p className="text-sm text-muted-foreground mt-1 max-w-md">
+              {searchQuery || projectTypeFilter !== "all" || filter !== "all"
+                ? "Try clearing your search or status filters to see more inquiries."
+                : "New inquiries from your website Contact & Consultation forms will appear here."}
+            </p>
+          </CardContent>
+        </Card>
+      ) : viewMode === "cards" ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {sortedAndFilteredSubmissions.map((sub) => {
+            const isExpanded = expandedRows.includes(sub.id);
+            const isSelected = selectedSubmissions.includes(sub.id);
+            const existingCustomer = sub.email
+              ? existingEmailMap.get(sub.email.trim().toLowerCase())
+              : undefined;
+            const statusStyle = getStatusBadgeStyle(sub.status);
+            const hasPhone = Boolean(buildWhatsAppChatUrl(sub.phone));
+
+            return (
+              <Card
+                key={sub.id}
+                className={`border-border/80 transition-shadow hover:shadow-md ${
+                  !sub.read ? "border-l-4 border-l-primary" : ""
+                } ${isSelected ? "ring-2 ring-primary/40" : ""}`}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => toggleSubmissionSelection(sub.id)}
+                        className="mt-1"
+                        aria-label={`Select inquiry from ${sub.name}`}
+                      />
+                      <div
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold text-sm ${
+                          !sub.read
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        {sub.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <CardTitle className="text-base truncate">{sub.name}</CardTitle>
+                          {!sub.read && (
+                            <Badge variant="default" className="text-[10px] px-1.5 py-0">
+                              Unread
+                            </Badge>
+                          )}
+                          {existingCustomer && (
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                            >
+                              In CRM
+                            </Badge>
+                          )}
+                        </div>
+                        <CardDescription className="flex flex-col gap-0.5 mt-1 text-xs">
+                          <span className="flex items-center gap-1.5 truncate">
+                            <Mail className="h-3 w-3 shrink-0" />
+                            <span className="truncate">{sub.email}</span>
+                          </span>
+                          {sub.phone && (
+                            <span className="flex items-center gap-1.5">
+                              <Phone className="h-3 w-3 shrink-0" />
+                              {sub.phone}
+                            </span>
+                          )}
+                          {sub.company && (
+                            <span className="flex items-center gap-1.5">
+                              <Building className="h-3 w-3 shrink-0" />
+                              {sub.company}
+                            </span>
+                          )}
+                        </CardDescription>
+                      </div>
+                    </div>
+
+                    <Badge variant="outline" className={`shrink-0 ${statusStyle.className}`}>
+                      {statusStyle.label}
+                    </Badge>
+                  </div>
+
+                  {/* Metadata Chips */}
+                  <div className="flex flex-wrap gap-1.5 pt-2">
+                    {sub.project_type && (
+                      <Badge variant="secondary" className="text-xs font-normal gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {sub.project_type}
+                      </Badge>
+                    )}
+                    {sub.area_size && (
+                      <Badge variant="secondary" className="text-xs font-normal gap-1">
+                        <Ruler className="h-3 w-3" />
+                        {sub.area_size}
+                      </Badge>
+                    )}
+                    {sub.budget_range && (
+                      <Badge variant="secondary" className="text-xs font-normal gap-1">
+                        <DollarSign className="h-3 w-3" />
+                        {sub.budget_range}
+                      </Badge>
+                    )}
+                    <Badge variant="outline" className="text-xs font-normal gap-1 text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      {formatDateShort(sub.created_at)}
+                    </Badge>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="pt-0 space-y-3">
+                  {/* Compact preview */}
+                  <p className="text-sm text-muted-foreground line-clamp-2 bg-muted/40 rounded-lg px-3 py-2 border border-border/50">
+                    {sub.message}
+                  </p>
+
+                  {/* Action Toolbar */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {hasPhone && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-8 text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
+                          onClick={() => handleReplyWhatsApp(sub)}
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                          WhatsApp
+                        </Button>
+                      )}
+                      {onStartEngineeringReport && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-8 text-xs border-primary/30 text-primary hover:bg-primary/10"
+                          onClick={() => handleLaunchEngineeringReport(sub)}
+                        >
+                          <Compass className="h-3.5 w-3.5 mr-1" />
+                          Eng. Report
+                        </Button>
+                      )}
+                      {!existingCustomer && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-8 text-xs"
+                          onClick={() => convertToCustomerMutation.mutate(sub)}
+                          disabled={convertToCustomerMutation.isPending}
+                        >
+                          <UserPlus className="h-3.5 w-3.5 mr-1" />
+                          To CRM
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 px-2"
+                        asChild
+                        title="Email Reply"
+                      >
+                        <a
+                          href={`mailto:${sub.email}?subject=${encodeURIComponent(
+                            `Re: ${sub.project_type || "DripTech Irrigation Inquiry"}`,
+                          )}`}
+                        >
+                          <Mail className="h-4 w-4" />
+                        </a>
+                      </Button>
+                      {!sub.read && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 px-2 text-emerald-600 dark:text-emerald-400"
+                          onClick={() => markAsReadMutation.mutate(sub.id)}
+                          disabled={markAsReadMutation.isPending}
+                          title="Mark as read"
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 px-2"
+                        onClick={() => toggleRowExpansion(sub.id)}
+                        title={isExpanded ? "Collapse details" : "Inspect structured details"}
+                      >
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                        />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 px-2 text-destructive hover:text-destructive"
+                        onClick={() => setDeleteTarget(sub)}
+                        title="Delete inquiry"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Expanded Structured Inquiry Detail */}
+                  {isExpanded && (
+                    <div className="rounded-xl border border-border bg-muted/30 p-3.5 space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                          <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                          Parsed Inquiry Breakdown
+                        </span>
+                        <Select
+                          value={sub.status || "new"}
+                          onValueChange={(nextStatus) =>
+                            updateStatusMutation.mutate({ id: sub.id, status: nextStatus })
+                          }
+                        >
+                          <SelectTrigger className="h-7 w-36 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="new">New</SelectItem>
+                            <SelectItem value="read">Reviewed</SelectItem>
+                            <SelectItem value="in_progress">In Progress</SelectItem>
+                            <SelectItem value="resolved">Resolved</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="rounded-lg border border-border/70 bg-background p-3 space-y-2">
+                        {parseMessageSegments(sub.message).map((seg, idx) =>
+                          seg.type === "field" ? (
+                            <div
+                              key={idx}
+                              className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 border-b border-border/40 pb-1.5 last:border-b-0 last:pb-0"
+                            >
+                              <span className="text-xs font-medium text-primary">
+                                {seg.field}
+                              </span>
+                              <span className="text-sm text-foreground">
+                                {!seg.value || seg.value === "Not specified" ? (
+                                  <span className="italic text-muted-foreground">Not specified</span>
+                                ) : (
+                                  seg.value
+                                )}
+                              </span>
+                            </div>
+                          ) : (
+                            <p key={idx} className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                              {seg.content}
+                            </p>
+                          ),
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span>Ref #{sub.id.slice(-8)}</span>
+                        <span>Received {new Date(sub.created_at).toLocaleString("en-KE")}</span>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      ) : (
+        /* Desktop Table View */
+        <Card className="border-border/70 overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/40">
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={allVisibleSelected}
+                      onCheckedChange={toggleSelectAllVisible}
+                      aria-label="Select all visible inquiries"
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => handleSort("name")}
+                      className="flex items-center gap-1.5 font-semibold text-foreground hover:text-primary"
+                    >
+                      Contact
+                      <ArrowUpDown className="h-3.5 w-3.5" />
+                    </button>
+                  </TableHead>
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => handleSort("status")}
+                      className="flex items-center gap-1.5 font-semibold text-foreground hover:text-primary"
+                    >
+                      Status
+                      <ArrowUpDown className="h-3.5 w-3.5" />
+                    </button>
+                  </TableHead>
+                  <TableHead>Scope & Size</TableHead>
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => handleSort("created_at")}
+                      className="flex items-center gap-1.5 font-semibold text-foreground hover:text-primary"
+                    >
+                      Received
+                      <ArrowUpDown className="h-3.5 w-3.5" />
+                    </button>
+                  </TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedAndFilteredSubmissions.map((sub) => {
+                  const isExpanded = expandedRows.includes(sub.id);
+                  const isSelected = selectedSubmissions.includes(sub.id);
+                  const existingCustomer = sub.email
+                    ? existingEmailMap.get(sub.email.trim().toLowerCase())
+                    : undefined;
+                  const statusStyle = getStatusBadgeStyle(sub.status);
+                  const hasPhone = Boolean(buildWhatsAppChatUrl(sub.phone));
+
+                  return (
+                    <React.Fragment key={sub.id}>
+                      <TableRow className={!sub.read ? "bg-primary/[0.03]" : undefined}>
+                        <TableCell>
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => toggleSubmissionSelection(sub.id)}
+                            aria-label={`Select inquiry from ${sub.name}`}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2.5">
+                            <div
+                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                                !sub.read
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {sub.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-semibold text-foreground truncate max-w-[180px]">
+                                  {sub.name}
+                                </span>
+                                {existingCustomer && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                  >
+                                    CRM
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground truncate max-w-[220px]">
+                                {sub.email}
+                                {sub.phone ? ` · ${sub.phone}` : ""}
+                              </div>
+                              {sub.company && (
+                                <div className="text-[11px] text-muted-foreground truncate max-w-[220px]">
+                                  {sub.company}
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <p className="font-medium text-slate-900 dark:text-white truncate">
-                                      {submission.name}
-                                    </p>
-                                    {!submission.read && (
-                                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                    )}
-                                    {customerExists && (
-                                      <Badge
-                                        variant="secondary"
-                                        className="text-xs bg-orange-100 text-orange-800"
-                                      >
-                                        Customer Exists
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
-                                    <span className="flex items-center gap-1">
-                                      <Mail className="h-3 w-3" />
-                                      {submission.email}
-                                    </span>
-                                    {submission.phone && (
-                                      <span className="flex items-center gap-1">
-                                        <Phone className="h-3 w-3" />
-                                        {submission.phone}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {submission.company && (
-                                    <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-1">
-                                      <Building className="h-3 w-3" />
-                                      {submission.company}
-                                    </p>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={sub.status || "new"}
+                            onValueChange={(nextStatus) =>
+                              updateStatusMutation.mutate({ id: sub.id, status: nextStatus })
+                            }
+                          >
+                            <SelectTrigger className={`h-7 w-32 text-xs border ${statusStyle.className}`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="new">New</SelectItem>
+                              <SelectItem value="read">Reviewed</SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="resolved">Resolved</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1 max-w-[260px]">
+                            {sub.project_type && (
+                              <Badge variant="secondary" className="text-[11px] font-normal">
+                                {sub.project_type}
+                              </Badge>
+                            )}
+                            {sub.area_size && (
+                              <Badge variant="outline" className="text-[11px] font-normal">
+                                {sub.area_size}
+                              </Badge>
+                            )}
+                            {sub.budget_range && (
+                              <Badge variant="outline" className="text-[11px] font-normal">
+                                {sub.budget_range}
+                              </Badge>
+                            )}
+                            {!sub.project_type && !sub.area_size && !sub.budget_range && (
+                              <span className="text-xs text-muted-foreground line-clamp-1">
+                                {sub.message}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                          {formatDateShort(sub.created_at)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-end gap-1">
+                            {hasPhone && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 px-2 text-emerald-600 dark:text-emerald-400"
+                                onClick={() => handleReplyWhatsApp(sub)}
+                                title="Reply on WhatsApp"
+                              >
+                                <MessageCircle className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {onStartEngineeringReport && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 px-2 text-primary"
+                                onClick={() => handleLaunchEngineeringReport(sub)}
+                                title="Open in Engineering Report Studio"
+                              >
+                                <Compass className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {!existingCustomer && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 px-2"
+                                onClick={() => convertToCustomerMutation.mutate(sub)}
+                                disabled={convertToCustomerMutation.isPending}
+                                title="Convert to CRM Customer"
+                              >
+                                <UserPlus className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {!sub.read && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 px-2 text-emerald-600 dark:text-emerald-400"
+                                onClick={() => markAsReadMutation.mutate(sub.id)}
+                                disabled={markAsReadMutation.isPending}
+                                title="Mark as read"
+                              >
+                                <Check className="h-4 w-4" />
+                              </Button>
+                            )}
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 px-2"
+                              onClick={() => toggleRowExpansion(sub.id)}
+                              title="Toggle structured inquiry breakdown"
+                            >
+                              <ChevronDown
+                                className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                              />
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 px-2 text-destructive hover:text-destructive"
+                              onClick={() => setDeleteTarget(sub)}
+                              title="Delete message"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+
+                      {isExpanded && (
+                        <TableRow className="bg-muted/20 hover:bg-muted/20">
+                          <TableCell colSpan={6} className="p-4">
+                            <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                  <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                                  Full Submission Details
+                                </span>
+                                <div className="flex items-center gap-2">
+                                  <Button type="button" size="sm" variant="outline" className="h-7 text-xs" asChild>
+                                    <a
+                                      href={`mailto:${sub.email}?subject=${encodeURIComponent(
+                                        `Re: ${sub.project_type || "DripTech Irrigation Inquiry"}`,
+                                      )}`}
+                                    >
+                                      <Mail className="h-3.5 w-3.5 mr-1" />
+                                      Reply by Email
+                                    </a>
+                                  </Button>
+                                  {hasPhone && (
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-7 text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
+                                      onClick={() => handleReplyWhatsApp(sub)}
+                                    >
+                                      <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                                      Reply via WhatsApp
+                                    </Button>
+                                  )}
+                                  {onStartEngineeringReport && (
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      className="h-7 text-xs"
+                                      onClick={() => handleLaunchEngineeringReport(sub)}
+                                    >
+                                      <Compass className="h-3.5 w-3.5 mr-1" />
+                                      Draft Client Engineering Report
+                                    </Button>
                                   )}
                                 </div>
                               </div>
-                            </td>
 
-                            <td className="px-6 py-4">
-                              <Badge
-                                className={`${statusConfig.color} text-white px-2 py-1`}
-                              >
-                                {statusConfig.label}
-                              </Badge>
-                            </td>
-
-                            <td className="px-6 py-4">
-                              <div className="space-y-1 text-sm">
-                                {submission.project_type && (
-                                  <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
-                                    <MapPin className="h-3 w-3" />
-                                    {submission.project_type}
-                                  </div>
-                                )}
-                                {submission.budget_range && (
-                                  <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
-                                    <DollarSign className="h-3 w-3" />
-                                    {submission.budget_range}
-                                  </div>
-                                )}
-                                {submission.area_size && (
-                                  <div className="text-slate-500 dark:text-slate-500 text-xs">
-                                    Area: {submission.area_size}
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                                <Calendar className="h-3 w-3" />
-                                {formatDate(submission.created_at)}
-                              </div>
-                            </td>
-
-                            <td className="px-6 py-4 text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                {!customerExists && (
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() =>
-                                      handleConvertToCustomer(submission)
-                                    }
-                                    disabled={
-                                      convertToCustomerMutation.isPending
-                                    }
-                                    className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                  >
-                                    <UserPlus className="h-4 w-4" />
-                                  </Button>
-                                )}
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() =>
-                                    toggleRowExpansion(submission.id)
-                                  }
-                                  className="p-2"
-                                >
-                                  <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                                  />
-                                </Button>
-                                {!submission.read && (
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() =>
-                                      handleMarkAsRead(submission.id)
-                                    }
-                                    disabled={markAsReadMutation.isPending}
-                                    className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                  >
-                                    <Check className="h-4 w-4" />
-                                  </Button>
-                                )}
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleDelete(submission.id)}
-                                  disabled={deleteSubmissionMutation.isPending}
-                                  className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-
-                          {/* Expanded Row */}
-                          {isExpanded && (
-                            <tr>
-                              <td colSpan={5} className="px-6 py-0">
-                                <div className="bg-slate-50 dark:bg-gray-800 -mx-6 px-6 py-6 border-t border-slate-200 dark:border-gray-700">
-                                  <div className="space-y-4">
-                                    <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 text-lg">
-                                      <MessageSquare className="h-5 w-5 text-blue-500" />
-                                      Message Details
-                                    </h4>
-                                    <div className="bg-white dark:bg-gray-900 p-5 rounded-xl border border-slate-200 dark:border-gray-600 shadow-sm">
-                                      {parseMessage(submission.message).map(
-                                        (item, index) => {
-                                          if (item.type === "field") {
-                                            return (
-                                              <div
-                                                key={index}
-                                                className="flex flex-col sm:flex-row sm:items-start gap-2 py-2 border-b border-slate-100 dark:border-gray-700 last:border-b-0"
-                                              >
-                                                <div className="sm:w-1/3">
-                                                  <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium rounded-full">
-                                                    {item.field}
-                                                  </span>
-                                                </div>
-                                                <div className="sm:w-2/3">
-                                                  <span className="text-slate-700 dark:text-gray-300 text-sm leading-relaxed">
-                                                    {item.value === "" ||
-                                                    item.value ===
-                                                      "Not specified" ? (
-                                                      <span className="text-slate-400 dark:text-gray-500 italic">
-                                                        Not specified
-                                                      </span>
-                                                    ) : (
-                                                      item.value
-                                                    )}
-                                                  </span>
-                                                </div>
-                                              </div>
-                                            );
-                                          } else {
-                                            return (
-                                              <div key={index} className="py-2">
-                                                <p className="text-slate-700 dark:text-gray-300 text-sm leading-relaxed">
-                                                  {item.content}
-                                                </p>
-                                              </div>
-                                            );
-                                          }
-                                        },
-                                      )}
-                                    </div>
-                                    <div className="flex justify-between items-center text-xs text-slate-500 dark:text-gray-400 pt-3 border-t border-slate-200 dark:border-gray-700">
-                                      <span className="flex items-center gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                        Message ID:{" "}
-                                        <code className="bg-slate-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">
-                                          {submission.id.slice(-8)}
-                                        </code>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 rounded-lg border border-border/60 bg-background p-3">
+                                {parseMessageSegments(sub.message).map((seg, idx) =>
+                                  seg.type === "field" ? (
+                                    <div key={idx} className="space-y-0.5">
+                                      <span className="text-xs font-medium text-primary">
+                                        {seg.field}
                                       </span>
-                                      <span>
-                                        Received:{" "}
-                                        {new Date(
-                                          submission.created_at,
-                                        ).toLocaleString()}
-                                      </span>
+                                      <p className="text-sm text-foreground">
+                                        {seg.value || "Not specified"}
+                                      </p>
                                     </div>
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                                  ) : (
+                                    <div key={idx} className="md:col-span-2">
+                                      <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                                        {seg.content}
+                                      </p>
+                                    </div>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+      )}
 
-              {/* Mobile Card View */}
-              <div className="block md:hidden p-4">
-                <CardView />
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+      {/* Batch Convert Dialog */}
+      <Dialog open={showBatchModal} onOpenChange={setShowBatchModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary" />
+              Convert Inquiries to Customers CRM
+            </DialogTitle>
+            <DialogDescription>
+              Create CRM customer profiles for {selectedEligibleToConvert.length} selected contact(s). Duplicate emails already in Customers will be skipped cleanly.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="max-h-56 overflow-y-auto space-y-2 py-2">
+            {selectedSubs.map((sub) => {
+              const exists = Boolean(
+                sub.email && existingEmailMap.has(sub.email.trim().toLowerCase()),
+              );
+              return (
+                <div
+                  key={sub.id}
+                  className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs"
+                >
+                  <div className="min-w-0">
+                    <div className="font-medium text-foreground truncate">{sub.name}</div>
+                    <div className="text-muted-foreground truncate">{sub.email}</div>
+                  </div>
+                  <Badge variant={exists ? "secondary" : "default"} className="shrink-0">
+                    {exists ? "Already in CRM" : "New Customer"}
+                  </Badge>
+                </div>
+              );
+            })}
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setShowBatchModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => batchConvertMutation.mutate(selectedSubs)}
+              disabled={batchConvertMutation.isPending || selectedEligibleToConvert.length === 0}
+            >
+              {batchConvertMutation.isPending ? "Converting..." : "Confirm Conversion"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Contact Inquiry</DialogTitle>
+            <DialogDescription>
+              Remove the inquiry from <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => deleteTarget && deleteSubmissionMutation.mutate(deleteTarget.id)}
+              disabled={deleteSubmissionMutation.isPending}
+            >
+              {deleteSubmissionMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

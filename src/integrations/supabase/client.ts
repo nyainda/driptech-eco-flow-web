@@ -72,11 +72,16 @@ const createMockSupabaseClient = () => {
         getPublicUrl: () => ({ data: { publicUrl: '' } }),
       }),
     },
+    functions: {
+      invoke: async () => ({ data: null, error: new Error('Supabase not configured') }),
+    },
   };
   return mockClient;
 };
 
-export const supabase = (SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY)
+export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
+
+export const supabase = isSupabaseConfigured
   ? createClient<Database>(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY,

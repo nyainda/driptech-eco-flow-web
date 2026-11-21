@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from "react";
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from "react";
+import type { EngineeringReportSeed } from "@/lib/engineeringReportEngine";
 import useWebVitals from "@/hooks/useWebVitals";
 import {
   Loader2,
@@ -34,6 +35,9 @@ import {
   ChevronRight,
   PlusCircle,
   Command,
+  Compass,
+  Radar,
+  Linkedin,
 } from "lucide-react";
 import {
   AdminAuthProvider,
@@ -61,6 +65,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
+import type { SettingsTab } from "@/components/Admin/SystemSettings";
 
 // Lazy loaded admin components
 const AdminDashboard = lazy(() => import("@/components/Admin/AdminDashboard"));
@@ -88,6 +93,9 @@ const PaymentIntegrations = lazy(() => import("@/components/Admin/PaymentIntegra
 const WhatsAppManagement = lazy(() => import("@/components/Admin/WhatsAppManagement"));
 const TechnicianManagement = lazy(() => import("@/components/Admin/TechnicianManagement"));
 const ServiceBookingManagement = lazy(() => import("@/components/Admin/ServiceBookingManagement"));
+const GrokLeadOutreach = lazy(() => import("@/components/Admin/GrokLeadOutreach"));
+const SocialLinkedInAutopilot = lazy(() => import("@/components/Admin/SocialLinkedInAutopilot"));
+const EngineeringReportsManagement = lazy(() => import("@/components/Admin/EngineeringReportsManagement"));
 
 interface AdminSection {
   id: string;
@@ -164,6 +172,14 @@ const ADMIN_SECTIONS: AdminSection[] = [
     group: "sales",
   },
   {
+    id: "engineering-reports",
+    label: "Client Engineering Report",
+    icon: Compass,
+    description: "1-click Pump, Solar PV, Drip, Sprinkler & Dam Liner client reports + BOQ",
+    group: "sales",
+    badge: "1-Click",
+  },
+  {
     id: "invoices",
     label: "Invoices & Receipts",
     icon: Receipt,
@@ -186,6 +202,14 @@ const ADMIN_SECTIONS: AdminSection[] = [
   },
 
   // CRM & Field Operations
+  {
+    id: "grok-outreach",
+    label: "Grok Client Finder",
+    icon: Radar,
+    description: "Discover commercial farms, agrovets & tenders with Grok + send approved email & WhatsApp pitches",
+    group: "operations",
+    badge: "Grok",
+  },
   {
     id: "customers",
     label: "Customers (CRM)",
@@ -272,6 +296,14 @@ const ADMIN_SECTIONS: AdminSection[] = [
     description: "Subscriber list and agricultural email campaigns",
     group: "content",
   },
+  {
+    id: "social-linkedin",
+    label: "LinkedIn Autopilot",
+    icon: Linkedin,
+    description: "Grok-planned LinkedIn posts paired with your curated Image Database",
+    group: "content",
+    badge: "Auto",
+  },
 
   // System & Edge Sync
   {
@@ -311,12 +343,30 @@ const AdminLoading = () => (
 );
 
 const AdminContent = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState(() => {
+    const requested = new URLSearchParams(window.location.search).get("section");
+    return requested && ADMIN_SECTIONS.some((s) => s.id === requested) ? requested : "dashboard";
+  });
+  const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>("company");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [sidebarFilter, setSidebarFilter] = useState("");
   const [commandOpen, setCommandOpen] = useState(false);
   const [commandQuery, setCommandQuery] = useState("");
+  const [pendingEngSeed, setPendingEngSeed] = useState<EngineeringReportSeed | null>(null);
+
+  const handleStartEngineeringReport = useCallback((seed: EngineeringReportSeed) => {
+    setPendingEngSeed(seed);
+    setActiveTab("engineering-reports");
+    setMobileDrawerOpen(false);
+    setCommandOpen(false);
+    setCommandQuery("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const handleSeedConsumed = useCallback(() => {
+    setPendingEngSeed(null);
+  }, []);
 
   // Monitor Web Vitals in Admin
   useWebVitals((metric) => {
@@ -369,7 +419,10 @@ const AdminContent = () => {
     );
   }, [commandQuery]);
 
-  const selectModule = (id: string) => {
+  const selectModule = (id: string, settingsTab: SettingsTab = "company") => {
+    if (id === "settings") {
+      setSettingsInitialTab(settingsTab);
+    }
     setActiveTab(id);
     setMobileDrawerOpen(false);
     setCommandOpen(false);
@@ -446,7 +499,7 @@ const AdminContent = () => {
       case "products":
         return <ProductManagement />;
       case "kits":
-        return <IrrigationKitsManagement />;
+        return <IrrigationKitsManagement onStartEngineeringReport={handleStartEngineeringReport} />;
       case "blog":
         return <BlogManagement />;
       case "news":
@@ -455,20 +508,27 @@ const AdminContent = () => {
         return <VideoManagement />;
       case "quotes":
         return <QuoteManagement />;
+      case "engineering-reports":
+        return (
+          <EngineeringReportsManagement
+            initialSeed={pendingEngSeed}
+            onSeedConsumed={handleSeedConsumed}
+          />
+        );
       case "invoices":
         return <InvoiceManagementSystem />;
       case "analytics":
         return <VisitorTrackingDashboard />;
       case "customers":
-        return <CustomerManagement />;
+        return <CustomerManagement onStartEngineeringReport={handleStartEngineeringReport} />;
       case "contact-notifications":
-        return <ContactNotifications />;
+        return <ContactNotifications onStartEngineeringReport={handleStartEngineeringReport} />;
       case "projects":
         return <ProjectManagement />;
       case "team":
         return <TeamManagement />;
       case "success-stories":
-        return <SuccessStoriesManagement />;
+        return <SuccessStoriesManagement onStartEngineeringReport={handleStartEngineeringReport} />;
       case "documents":
         return <DocumentManagement />;
       case "discounts":
@@ -482,7 +542,7 @@ const AdminContent = () => {
       case "whatsapp":
         return <WhatsAppManagement />;
       case "settings":
-        return <SystemSettings />;
+        return <SystemSettings initialTab={settingsInitialTab} />;
       case "sync":
         return <SyncDashboard />;
       case "technicians":
@@ -491,6 +551,10 @@ const AdminContent = () => {
         return <ServiceBookingManagement />;
       case "ai-research":
         return <AIProductResearch />;
+      case "grok-outreach":
+        return <GrokLeadOutreach onOpenApiSettings={() => selectModule("settings", "api")} />;
+      case "social-linkedin":
+        return <SocialLinkedInAutopilot />;
       default:
         return <AdminDashboard onNavigate={selectModule} />;
     }
@@ -671,6 +735,17 @@ const AdminContent = () => {
                 </kbd>
               </button>
 
+              {/* Always-Accessible Client Engineering Report Shortcut (md+) */}
+              <Button
+                variant={activeTab === "engineering-reports" ? "default" : "outline"}
+                size="sm"
+                onClick={() => selectModule("engineering-reports")}
+                className="hidden md:inline-flex xl:hidden h-8 rounded-xl text-xs gap-1.5 border-primary/40 text-primary hover:bg-primary/10"
+              >
+                <Compass className="h-3.5 w-3.5" />
+                Client Engineering Report
+              </Button>
+
               {/* Quick Action Pills on Large Screens */}
               <div className="hidden xl:flex items-center gap-1.5">
                 <Button
@@ -690,6 +765,15 @@ const AdminContent = () => {
                 >
                   <Quote className="h-3.5 w-3.5" />
                   Quotes & BOQ
+                </Button>
+                <Button
+                  variant={activeTab === "engineering-reports" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => selectModule("engineering-reports")}
+                  className="h-8 rounded-xl text-xs gap-1.5"
+                >
+                  <Compass className="h-3.5 w-3.5 text-primary" />
+                  Client Engineering Report
                 </Button>
                 <Button
                   variant={activeTab === "sync" ? "default" : "outline"}

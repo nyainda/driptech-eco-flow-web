@@ -65,7 +65,7 @@
         "href": "/drip-irrigation-for-tomatoes-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "drip-irrigation-kit-price-kenya",
@@ -166,7 +166,7 @@
         "href": "/irrigation-system-cost-kenya"
       }
     ],
-    "image": "/seed-products/drip1.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "driplines-for-sale-kenya",
@@ -221,7 +221,7 @@
         "href": "/how-to-choose-dripline-spacing-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1761308001850-d8da829cdkb.webp"
   },
   {
     "slug": "sprinkler-systems-kenya",
@@ -297,7 +297,7 @@
         "href": "/drip-vs-sprinkler-irrigation-kenya"
       }
     ],
-    "image": "/seed-products/sprinkler.jpg"
+    "image": "https://www.dripstech.co.ke/category-images/sprinkler-system-kenya.jpg"
   },
   {
     "slug": "irrigation-companies-kenya",
@@ -358,7 +358,7 @@
         "href": "/irrigation-areas-kenya"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "solar-irrigation-pumps-kenya",
@@ -392,6 +392,10 @@
     ],
     "links": [
       {
+        "label": "Launch Interactive Pump & Solar Calculator",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
         "label": "Browse solar irrigation products",
         "href": "/products/solar"
       },
@@ -404,7 +408,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/solar_panel.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "borehole-water-pumps-kenya",
@@ -438,6 +442,10 @@
     ],
     "links": [
       {
+        "label": "Size borehole pump & solar array",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
         "label": "Browse irrigation pumps",
         "href": "/products/pumps"
       },
@@ -450,7 +458,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/water1.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "water-storage-tanks-kenya",
@@ -484,6 +492,10 @@
     ],
     "links": [
       {
+        "label": "Size tank buffer & pump capacity",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
         "label": "Compare complete irrigation kits",
         "href": "/irrigation-kits"
       },
@@ -496,7 +508,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/water_tank.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794297529000-xhbnbdy8tk.jpeg"
   },
   {
     "slug": "greenhouse-drip-irrigation-kenya",
@@ -542,7 +554,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/greenhouse.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794483385803-32352196f2o.webp"
   },
   {
     "slug": "fertigation-systems-kenya",
@@ -588,7 +600,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1764837014553-9krir9ltbw.jpeg"
   },
   {
     "slug": "drip-irrigation-for-tomatoes-kenya",
@@ -644,7 +656,7 @@
         "href": "/drip-irrigation-for-potatoes-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/pwwmoognjqq-1760190796903.jpg"
   },
   {
     "slug": "drip-irrigation-for-onions-kenya",
@@ -700,7 +712,7 @@
         "href": "/drip-irrigation-for-capsicum-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/pwwmoognjqq-1760190796903.jpg"
   },
   {
     "slug": "irrigation-water-filters-kenya",
@@ -748,7 +760,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/drip2.jpg"
+    "image": "https://www.sprinklerwarehouse.com/media/catalog/product/cache/f742c96e0167201df2f31f024ad7fbd7/p/3/p30-150d.jpg"
   },
   {
     "slug": "drip-irrigation-for-potatoes-kenya",
@@ -804,7 +816,7 @@
         "href": "/drip-irrigation-for-cabbage-kenya"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "https://www.dripstech.co.ke/category-images/sprinkler-system-kenya.jpg"
   },
   {
     "slug": "drip-irrigation-for-capsicum-kenya",
@@ -859,7 +871,7 @@
         "href": "/drip-irrigation-for-watermelon-kenya"
       }
     ],
-    "image": "/seed-products/greenhouse.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794483385803-32352196f2o.webp"
   },
   {
     "slug": "drip-irrigation-for-cabbage-kenya",
@@ -915,7 +927,7 @@
         "href": "/drip-irrigation-for-avocado-kenya"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/pwwmoognjqq-1760190796903.jpg"
   },
   {
     "slug": "drip-irrigation-for-watermelon-kenya",
@@ -971,7 +983,7 @@
         "href": "/drip-irrigation-for-coffee-kenya"
       }
     ],
-    "image": "/seed-products/field_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/pwwmoognjqq-1760190796903.jpg"
   },
   {
     "slug": "drip-irrigation-for-avocado-kenya",
@@ -1027,7 +1039,7 @@
         "href": "/drip-irrigation-for-maize-kenya"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/vpguiibqi4h-1762448690092.webp"
   },
   {
     "slug": "drip-vs-sprinkler-irrigation-kenya",
@@ -1081,7 +1093,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/sprinkler.jpg"
+    "image": "https://www.dripstech.co.ke/category-images/sprinkler-system-kenya.jpg"
   },
   {
     "slug": "drip-irrigation-for-coffee-kenya",
@@ -1089,7 +1101,7 @@
     "description": "Plan irrigation for coffee farms in Kenya with guidance on water source, tree layout, filtration, pumping and maintenance.",
     "h1": "Irrigation planning for coffee farms in Kenya",
     "intro": "Coffee irrigation needs depend on location, rainfall pattern, soil, tree age and farm management. A practical system starts with a reliable water source and a layout that can be maintained as the farm develops.",
-    "image": "/seed-products/plant_drip.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/vpguiibqi4h-1762448690092.webp",
     "sections": [
       {
         "heading": "Assess the coffee block first",
@@ -1145,7 +1157,7 @@
     "description": "Explore irrigation planning for maize farms in Kenya, including field layout, water supply, drip and sprinkler options, and system sizing.",
     "h1": "Irrigation options for maize farming in Kenya",
     "intro": "Maize irrigation decisions depend on rainfall, field size, soil, planting arrangement and available water. Compare the application method and total system capacity before investing in equipment.",
-    "image": "/seed-products/field_drip.jpg",
+    "image": "https://www.dripstech.co.ke/category-images/sprinkler-system-kenya.jpg",
     "sections": [
       {
         "heading": "Choose a method that suits the field",
@@ -1201,7 +1213,7 @@
     "description": "Plan greenhouse irrigation in Kenya with guidance on dripline layout, filtration, fertigation, pressure and system maintenance.",
     "h1": "Greenhouse irrigation systems for Kenyan growers",
     "intro": "Greenhouse irrigation should fit the crop rows, bed arrangement, water source and growing system. A well-planned setup makes it easier to manage delivery, inspect components and maintain consistent operation.",
-    "image": "/seed-products/greenhouse.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794483385803-32352196f2o.webp",
     "sections": [
       {
         "heading": "Design around the greenhouse layout",
@@ -1249,7 +1261,7 @@
     "description": "Understand what affects irrigation system cost in Kenya, from acreage and crop layout to pumps, filtration, pipes, installation and delivery.",
     "h1": "How much does an irrigation system cost in Kenya?",
     "intro": "Irrigation costs vary by field layout, crop, water source and equipment. A meaningful quote should list the components and installation scope instead of relying on acreage alone.",
-    "image": "/seed-products/dripline_roll.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg",
     "sections": [
       {
         "heading": "What determines the total cost?",
@@ -1304,7 +1316,7 @@
     "description": "Plan a one-acre drip irrigation system in Kenya with guidance on crop spacing, water supply, filters, pipes, zones and kit selection.",
     "h1": "Planning a drip irrigation system for one acre",
     "intro": "A one-acre system is not a single fixed kit. Crop spacing, number of rows, field shape, water source and available pressure determine the quantities and system layout.",
-    "image": "/seed-products/field_drip.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg",
     "sections": [
       {
         "heading": "Information needed before sizing",
@@ -1359,7 +1371,7 @@
     "description": "Learn what affects dripline emitter spacing and discharge in Kenya, including crop layout, soil, line length, pressure and filtration.",
     "h1": "How to choose dripline and emitter spacing",
     "intro": "Dripline selection is about more than roll length. Emitter spacing, discharge, operating pressure, line length and soil influence how water spreads along the crop row.",
-    "image": "/seed-products/dripline_roll.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1761308001850-d8da829cdkb.webp",
     "sections": [
       {
         "heading": "Match spacing to crop and soil",
@@ -1410,7 +1422,7 @@
     "description": "Learn the main inputs for irrigation pump sizing in Kenya, including required flow, total head, water source, pipe losses and power supply.",
     "h1": "How to size a pump for farm irrigation",
     "intro": "Pump selection should be based on the flow the irrigation system needs and the total head the pump must overcome. Choosing by horsepower alone can lead to a system that does not deliver the required flow or pressure.",
-    "image": "/seed-products/water1.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp",
     "sections": [
       {
         "heading": "Inputs needed for pump selection",
@@ -1438,6 +1450,18 @@
     ],
     "links": [
       {
+        "label": "Launch Interactive Pump & Solar Calculator",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
+        "label": "How to Read Pump Q-H Curves & BEP (Interactive Guide)",
+        "href": "/how-to-read-pump-curves-kenya"
+      },
+      {
+        "label": "Pump & Motor Installation, Maintenance & Troubleshooting",
+        "href": "/pump-motor-installation-maintenance-kenya"
+      },
+      {
         "label": "Browse irrigation pumps",
         "href": "/products/pumps"
       },
@@ -1457,7 +1481,7 @@
     "description": "Practical irrigation maintenance checks for farms in Kenya, including filters, leaks, blocked emitters, pressure, valves and seasonal inspection.",
     "h1": "Irrigation system maintenance checklist",
     "intro": "Routine maintenance helps farmers find leaks, blockages and pressure problems before they disrupt watering. Follow the manufacturer's instructions for each component and adapt checks to the water source and system design.",
-    "image": "/seed-products/drip2.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg",
     "sections": [
       {
         "heading": "Regular checks for drip systems",
@@ -1554,7 +1578,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "blocked-drippers-uneven-watering-kenya",
@@ -1607,7 +1631,7 @@
         "href": "/technician-services"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://www.sprinklerwarehouse.com/media/catalog/product/cache/f742c96e0167201df2f31f024ad7fbd7/p/3/p30-150d.jpg"
   },
   {
     "slug": "low-irrigation-pressure-sprinklers-kenya",
@@ -1662,7 +1686,7 @@
         "href": "/technician-services"
       }
     ],
-    "image": "/seed-products/sprinkler.jpg"
+    "image": "https://www.dripstech.co.ke/category-images/sprinkler-system-kenya.jpg"
   },
   {
     "slug": "irrigation-pipe-leaks-fittings-kenya",
@@ -1697,7 +1721,7 @@
         ]
       }
     ],
-    "image": "/seed-products/pipes_industrial.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1776095886973-anr31yorc3d.webp",
     "links": [
       {
         "label": "Browse irrigation pipes and fittings",
@@ -1723,7 +1747,7 @@
     "description": "Compare drip tape and dripline for Kenyan farms: wall thickness, emitter spacing, durability, filtration and pressure, and how to choose for your crop.",
     "h1": "Drip tape vs dripline: which is right for your farm?",
     "intro": "Drip tape and dripline both deliver water near crop roots, but they are not interchangeable in every field. The better choice depends on crop spacing, season length, pressure, filtration, installation method and how often the lines will be moved.",
-    "image": "/seed-products/drip2.jpg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1761308001850-d8da829cdkb.webp",
     "sections": [
       {
         "heading": "What is drip tape?",
@@ -1843,7 +1867,7 @@
         "href": "/technician-services"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "irrigation-design-consultation-kenya",
@@ -1958,7 +1982,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/engineering/drip-irrigation-layout.svg",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg",
     "schema": {
       "@context": "https://schema.org",
       "@type": "Service",
@@ -2050,7 +2074,7 @@
         "href": "/technical-support"
       }
     ],
-    "image": "/seed-products/filter.jpg"
+    "image": "https://www.sprinklerwarehouse.com/media/catalog/product/cache/f742c96e0167201df2f31f024ad7fbd7/p/3/p30-150d.jpg"
   },
   {
     "slug": "irrigation-pump-low-pressure-kenya",
@@ -2121,7 +2145,7 @@
         "href": "/technical-support"
       }
     ],
-    "image": "/seed-products/pump.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "irrigation-design-process-kenya",
@@ -2192,7 +2216,7 @@
         "href": "/products"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "pump-selection-for-irrigation-kenya",
@@ -2264,7 +2288,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "irrigation-dos-and-donts-kenya",
@@ -2334,7 +2358,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-consultation-checklist-kenya",
@@ -2407,7 +2431,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "solar-vs-electric-irrigation-pump-kenya",
@@ -2468,7 +2492,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "irrigation-system-startup-checklist-kenya",
@@ -2531,7 +2555,7 @@
         "href": "/services"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-site-assessment-kenya",
@@ -2596,7 +2620,7 @@
         "href": "/contact"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-bill-of-quantities-kenya",
@@ -2659,7 +2683,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-zone-design-kenya",
@@ -2721,7 +2745,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/dripline_roll.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-filtration-by-water-source-kenya",
@@ -2783,7 +2807,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://www.sprinklerwarehouse.com/media/catalog/product/cache/f742c96e0167201df2f31f024ad7fbd7/p/3/p30-150d.jpg"
   },
   {
     "slug": "gravity-fed-irrigation-vs-pumped-kenya",
@@ -2842,7 +2866,7 @@
         "href": "/irrigation-design-consultation-kenya"
       }
     ],
-    "image": "/seed-products/plant_drip.jpg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "irrigation-boq-kenya",
@@ -2919,7 +2943,8 @@
         "label": "Contact DripTech Eco-Flow",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-pump-selection-service-kenya",
@@ -2979,7 +3004,8 @@
         "label": "Contact DripTech",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp"
   },
   {
     "slug": "irrigation-filtration-service-kenya",
@@ -3035,7 +3061,8 @@
         "label": "Contact DripTech",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "https://www.sprinklerwarehouse.com/media/catalog/product/cache/f742c96e0167201df2f31f024ad7fbd7/p/3/p30-150d.jpg"
   },
   {
     "slug": "irrigation-installation-kenya",
@@ -3086,7 +3113,8 @@
         "label": "Contact DripTech Eco-Flow",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-maintenance-repair-kenya",
@@ -3140,7 +3168,8 @@
         "label": "Contact DripTech Eco-Flow",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-boq-preparation-checklist-kenya",
@@ -3198,7 +3227,8 @@
         "label": "Contact DripTech Eco-Flow",
         "href": "/contact"
       }
-    ]
+    ],
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
   },
   {
     "slug": "irrigation-commissioning-checklist-kenya",
@@ -3295,6 +3325,745 @@
         "href": "/contact"
       }
     ],
-    "image": "/engineering/drip-irrigation-layout.svg"
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg"
+  },
+  {
+    "slug": "dam-liners-kenya",
+    "title": "HDPE Dam Liners in Kenya: 0.5mm, 0.75mm & 1.0mm | DripTech",
+    "description": "Supply and hot-wedge welding of UV-stabilized 0.5mm, 0.75mm and 1.0mm HDPE dam liners in Kenya for farm water pans, reservoirs and irrigation storage.",
+    "h1": "HDPE dam liners and water pan lining in Kenya",
+    "intro": "Farm water pans and excavated reservoirs lose significant water to seepage when left unlined in porous or fractured soils. DripTech Eco Flow supplies UV-stabilized virgin HDPE geomembrane dam liners in 0.5 mm, 0.75 mm and 1.0 mm gauges, together with on-site thermal wedge welding and anchor-trench installation across Kenya.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794297529000-xhbnbdy8tk.jpeg",
+    "sections": [
+      {
+        "heading": "Choosing the right dam liner thickness (0.5mm, 0.75mm or 1.0mm)",
+        "paragraphs": [
+          "The right geomembrane thickness depends on the soil surface after excavation, water depth, bank slope and whether livestock or equipment could come near the reservoir edge.",
+          "Inspect the excavated floor and side slopes before ordering so stones, roots and sharp clay clods are cleared or cushioned with an appropriate geotextile underlay."
+        ],
+        "table": {
+          "caption": "HDPE dam liner gauge selection guide for Kenyan farms",
+          "headers": [
+            "Liner gauge",
+            "Typical soil & site condition",
+            "Common farm applications"
+          ],
+          "rows": [
+            [
+              "0.5 mm (500 microns)",
+              "Smooth, fine-textured soil or sand-bedded ponds",
+              "Small to medium kitchen-garden pans, lined tanks and fish ponds"
+            ],
+            [
+              "0.75 mm (750 microns)",
+              "Medium loamy/murram soils with properly dressed slopes",
+              "Commercial horticultural water pans and runoff harvesting reservoirs"
+            ],
+            [
+              "1.0 mm (1000 microns)",
+              "Rocky, coarse, stony or deep high-capacity reservoirs",
+              "Large commercial irrigation dams, steep-bank pans and heavy-duty storage"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "How to calculate dam liner area for your water pan",
+        "paragraphs": [
+          "Never order a dam liner using only the top length and width of the water pan. The liner must go down the side slopes, across the floor, up the opposite slope and into the perimeter anchor trench on all four sides."
+        ],
+        "bullets": [
+          "Measure top length (L), top width (W), maximum vertical depth (D) and slope allowance",
+          "Add at least 1.0 m to 1.5 m on every side for the perimeter anchor trench",
+          "Account for factory or on-site thermal welding overlaps between adjacent roll widths",
+          "Include an inlet silt trap and a safe overflow spillway to protect the liner during heavy rain"
+        ]
+      },
+      {
+        "heading": "Site preparation, thermal welding and installation",
+        "paragraphs": [
+          "DripTech technicians join HDPE dam liner rolls on site using automated hot-wedge and extrusion welding equipment, followed by seam inspection before water filling begins.",
+          "Share your excavated top dimensions, bottom dimensions, vertical depth and county location so our team can calculate the total square metres required and prepare an itemised quotation."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Check dam liner prices by gauge in Kenya",
+        "href": "/dam-liner-prices-kenya"
+      },
+      {
+        "label": "Water pan construction and lining guide",
+        "href": "/water-pan-construction-lining-kenya"
+      },
+      {
+        "label": "Fish pond liners in Kenya",
+        "href": "/fish-pond-liners-kenya"
+      },
+      {
+        "label": "Water storage tanks in Kenya",
+        "href": "/water-storage-tanks-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps for water pans",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Request a dam liner measurement & quote",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Which dam liner gauge is most common for farm irrigation pans in Kenya?",
+        "a": "0.5 mm suits smooth soils and smaller pans, 0.75 mm is widely used for general agricultural water pans, and 1.0 mm is recommended where soils are stony or the reservoir is deep."
+      },
+      {
+        "q": "How are dam liner rolls joined for wide reservoirs?",
+        "a": "Rolls are joined on site or in the workshop using thermal hot-wedge welding machines that fuse the HDPE sheets into a continuous watertight seam."
+      },
+      {
+        "q": "What details do I need to get a dam liner quotation?",
+        "a": "Send the top length, top width, bottom length, bottom width, vertical depth, soil type (smooth or stony) and farm location so the exact square meterage, welding and transport can be quoted."
+      }
+    ]
+  },
+  {
+    "slug": "dam-liner-prices-kenya",
+    "title": "Dam Liner Prices in Kenya per Sq Metre & Size | DripTech",
+    "description": "Compare 0.5mm, 0.75mm and 1.0mm HDPE dam liner prices in Kenya per square metre, plus sizing, welding, geotextile underlay and delivery checks.",
+    "h1": "HDPE dam liner prices and sizing guide in Kenya",
+    "intro": "Dam liner pricing in Kenya is calculated per square metre based on the geomembrane gauge (0.5 mm, 0.75 mm or 1.0 mm), total sheet area including slope and anchor allowances, on-site welding and delivery location. Use this guide to compare quotations accurately.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794297529000-xhbnbdy8tk.jpeg",
+    "sections": [
+      {
+        "heading": "What determines dam liner cost per square metre?",
+        "bullets": [
+          "Geomembrane thickness: 0.5 mm (500 microns), 0.75 mm (750 microns) or 1.0 mm (1000 microns)",
+          "Material grade: UV-stabilized virgin HDPE formulated for outdoor tropical exposure",
+          "Total liner area including slope length, welding overlaps and perimeter anchor trenches",
+          "Whether workshop pre-welding or on-site technician thermal welding is required",
+          "Geotextile underlay where stony subgrades need puncture protection",
+          "Transport to site and technician mobilisation across Kenya"
+        ]
+      },
+      {
+        "heading": "Comparing dam liner quotations line by line",
+        "paragraphs": [
+          "When comparing suppliers, check that every quotation uses the same calculated square meterage, gauge thickness and overlap allowance. A lower total price often comes from under-calculating the anchor trench allowance or quoting a thinner gauge than the soil requires."
+        ],
+        "table": {
+          "caption": "Checklist when comparing dam liner quotes in Kenya",
+          "headers": [
+            "Quotation item",
+            "What to verify",
+            "Why it matters"
+          ],
+          "rows": [
+            [
+              "Gauge / thickness",
+              "0.5 mm, 0.75 mm or 1.0 mm stated in writing",
+              "Determines puncture resistance on your soil"
+            ],
+            [
+              "Calculated area (m²)",
+              "Includes floor, side slopes, overlaps & anchor trench",
+              "Prevents the liner falling short of the top bank"
+            ],
+            [
+              "Welding method",
+              "Hot-wedge / extrusion thermal seam welding",
+              "Ensures watertight seams under hydrostatic pressure"
+            ],
+            [
+              "Site works",
+              "Anchor trench digging, backfilling & geotextile if stony",
+              "Clarifies responsibilities between farm labour and technicians"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Connecting your lined water pan to drip or sprinkler irrigation",
+        "paragraphs": [
+          "A lined water pan works best when paired with a floating suction intake, screen or disc filtration and a properly sized solar or electric irrigation pump. DripTech can quote both the dam liner and the downstream drip or sprinkler kit together."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "HDPE dam liners specification guide",
+        "href": "/dam-liners-kenya"
+      },
+      {
+        "label": "Water pan construction and lining",
+        "href": "/water-pan-construction-lining-kenya"
+      },
+      {
+        "label": "Compare drip irrigation kit prices",
+        "href": "/drip-irrigation-kit-price-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps in Kenya",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Use the irrigation cost calculator",
+        "href": "/irrigation-cost-calculator-kenya"
+      },
+      {
+        "label": "Request a custom dam liner BOQ",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Are dam liners sold per roll or per square metre in Kenya?",
+        "a": "Dam liners are typically priced per square metre based on the exact dimensions required for your water pan, or supplied in full rolls for large civil projects."
+      },
+      {
+        "q": "Does the dam liner price include excavation of the water pan?",
+        "a": "Liner supply and welding are usually quoted separately from excavation and anchor trench digging. Ask for an itemised quote showing material, welding, transport and any civil works."
+      },
+      {
+        "q": "Can I install a small dam liner myself?",
+        "a": "Small pre-welded liners for compact ponds can be laid by farm teams if the soil is smooth and anchor trenches are prepared properly, while larger multi-roll pans require on-site thermal welding."
+      }
+    ]
+  },
+  {
+    "slug": "water-pan-construction-lining-kenya",
+    "title": "Farm Water Pan Construction & Lining Guide Kenya | DripTech",
+    "description": "Plan farm water pan siting, slope ratios, silt traps, spillways, HDPE dam liner installation and irrigation pumping in Kenya with DripTech.",
+    "h1": "Farm water pan construction, sizing and lining in Kenya",
+    "intro": "Rainwater harvesting in lined farm water pans allows Kenyan growers to irrigate high-value crops through dry spells. Proper siting, stable bank slopes, silt traps and UV-stabilized HDPE lining keep the reservoir safe and watertight.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794297529000-xhbnbdy8tk.jpeg",
+    "sections": [
+      {
+        "heading": "Key engineering checks before excavating a water pan",
+        "bullets": [
+          "Size the reservoir storage volume (m³) against your crop area, daily water demand and dry-season days",
+          "Shape stable side slopes (commonly 1:1.5 to 1:2 depending on soil stability) so banks do not collapse",
+          "Construct a settling silt trap at the runoff inlet so sand and debris do not fill the lined pan",
+          "Build a reinforced overflow spillway to discharge excess storm runoff safely without washing out the embankment",
+          "Compact and dress the floor and walls to remove sharp stones, tree roots and protrusions before laying the liner"
+        ]
+      },
+      {
+        "heading": "Estimating storage capacity vs irrigated crop area",
+        "paragraphs": [
+          "A water pan must store enough cubic metres to cover both crop evapotranspiration and surface evaporation over the dry period. Pairing the pan with drip irrigation and mulch stretches stored water much further than overhead flood or high-loss watering."
+        ],
+        "table": {
+          "caption": "Water pan planning considerations for Kenyan farms",
+          "headers": [
+            "Component",
+            "Engineering purpose",
+            "What to check on site"
+          ],
+          "rows": [
+            [
+              "Inlet channel & silt trap",
+              "Traps heavy sediment before water enters the pan",
+              "Clean out silt after major rain events"
+            ],
+            [
+              "HDPE geomembrane liner",
+              "Stops seepage losses through porous soil",
+              "Select 0.5mm, 0.75mm or 1.0mm based on soil texture"
+            ],
+            [
+              "Perimeter anchor trench",
+              "Secures the liner around the top bank",
+              "Usually 40–50 cm deep and set back from the slope edge"
+            ],
+            [
+              "Floating pump intake & filter",
+              "Draws cleaner surface water into the irrigation pump",
+              "Pair with a disc or screen filter before drip lines"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Safety, fencing and routine maintenance",
+        "paragraphs": [
+          "Always fence lined water pans to keep people, livestock and wildlife safe and to prevent hooves from puncturing the HDPE liner. Install a safe draw-off pipe or solar pump intake so workers never need to walk on the wet liner slope."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "HDPE dam liners in Kenya",
+        "href": "/dam-liners-kenya"
+      },
+      {
+        "label": "Dam liner prices and sizing guide",
+        "href": "/dam-liner-prices-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps for water pans",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Irrigation filtration by water source",
+        "href": "/irrigation-filtration-by-water-source-kenya"
+      },
+      {
+        "label": "One-acre drip irrigation system guide",
+        "href": "/one-acre-drip-irrigation-system-kenya"
+      },
+      {
+        "label": "Talk to DripTech engineers",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why should a water pan have sloped walls instead of vertical walls?",
+        "a": "Sloped banks prevent soil collapse during rain or drawdown and allow the HDPE dam liner to rest evenly against the earth without excessive tension."
+      },
+      {
+        "q": "How do I filter water drawn from an open water pan for drip irrigation?",
+        "a": "Use a floating intake strainer to draw water below the surface scum layer and above bottom sediment, followed by an appropriately sized disc or screen filter."
+      }
+    ]
+  },
+  {
+    "slug": "fish-pond-liners-kenya",
+    "title": "Fish Pond Liners Kenya: Tilapia & Catfish Ponds | DripTech",
+    "description": "UV-stabilized HDPE fish pond liners in Kenya for earthen ponds, raised wooden/dam-liner tanks and integrated aquaculture-irrigation farms.",
+    "h1": "Fish pond liners and aquaculture water systems in Kenya",
+    "intro": "Commercial and smallholder tilapia and catfish farmers in Kenya use UV-stabilized HDPE pond liners to retain water in porous soils and raised tanks while integrating nutrient-rich pond water with vegetable drip irrigation.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1794297529000-xhbnbdy8tk.jpeg",
+    "sections": [
+      {
+        "heading": "Earthen fish ponds vs raised liner tanks",
+        "paragraphs": [
+          "Earthen lined ponds are excavated into the ground and lined with 0.5 mm or 0.75 mm UV-stabilized HDPE geomembrane. Raised wooden, steel-mesh or masonry-supported liner tanks use heavier pre-welded or custom-fitted HDPE liners where space is compact or excavation is impractical.",
+          "Ensure the liner material is fish-safe virgin HDPE and that drainage outlets, bottom drains and overflow standpipes are sealed with watertight flanges."
+        ]
+      },
+      {
+        "heading": "Integrating fish pond water with farm drip irrigation",
+        "bullets": [
+          "Pond water discharged during water exchange contains dissolved nutrients useful for vegetables and orchards",
+          "Always pass fish pond water through a multi-stage disc or screen filter before it enters drip emitters",
+          "Flush mainlines and drip laterals regularly to prevent organic biofilm buildup inside emitters",
+          "Size the replacement water supply (borehole, rainwater pan or tank) to maintain pond oxygen and water levels"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "HDPE dam liners in Kenya",
+        "href": "/dam-liners-kenya"
+      },
+      {
+        "label": "Dam liner price guide",
+        "href": "/dam-liner-prices-kenya"
+      },
+      {
+        "label": "Irrigation water filters in Kenya",
+        "href": "/irrigation-water-filters-kenya"
+      },
+      {
+        "label": "Browse filtration equipment",
+        "href": "/products/filtration"
+      },
+      {
+        "label": "Request a pond liner quotation",
+        "href": "/contact"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What thickness of liner is recommended for fish ponds in Kenya?",
+        "a": "0.5 mm HDPE liners are common for smooth earthen ponds, while 0.75 mm or 1.0 mm is preferred for stony ground or raised structural tanks."
+      },
+      {
+        "q": "Can I use fish pond water in a drip irrigation system?",
+        "a": "Yes, provided you install good disc filtration and clean the filter frequently, because fish pond water carries organic particles and algae that can block unfiltered emitters."
+      }
+    ]
+  },
+  {
+    "slug": "irrigation-guides-kenya",
+    "title": "Kenya Irrigation Guides: Crops & Prices | DripTech",
+    "description": "Explore 100+ Kenyan irrigation guides covering drip kits, HDPE dam liners, crop layouts, solar pumps, county hubs, prices and troubleshooting.",
+    "h1": "Complete Kenya irrigation engineering, crop and price guides",
+    "intro": "Welcome to DripTech Eco Flow's technical resource library for Kenyan farmers, agronomists, project engineers and procurement teams. Browse practical guides on crop spacing, drip and sprinkler kits, HDPE dam liners, solar pumping, county-specific planning and system troubleshooting.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/kit-images/irrigation-kits/597p0ax7o7e-1760190959008.jpg",
+    "sections": [
+      {
+        "heading": "1. Drip & Sprinkler Systems, Dam Liners and Water Storage",
+        "paragraphs": [
+          "Start here when comparing complete irrigation systems, 1/8 to 10+ acre drip kits, HDPE geomembrane dam liners (0.5 mm, 0.75 mm, 1.0 mm), water pans, solar borehole pumps and greenhouse irrigation packages."
+        ],
+        "bullets": [
+          "Drip irrigation systems, dripline spacing and 1-acre layout planning",
+          "HDPE dam liners, water pan construction, fish pond liners and storage tanks",
+          "Solar water pumps, borehole pumps, pump sizing and total dynamic head (TDH)",
+          "Sprinkler systems, rain guns, pop-up lawn sprinklers and rain hose comparisons"
+        ]
+      },
+      {
+        "heading": "2. Crop-Specific Irrigation Layout Guides for Kenya",
+        "paragraphs": [
+          "Each crop guide explains bed width, lines per bed, emitter spacing, filtration and zoning for Kenyan growing conditions—from tomatoes, onions, garlic, capsicum and cabbage to avocados, macadamia, coffee, citrus, bananas, herbs and dairy fodder."
+        ]
+      },
+      {
+        "heading": "3. Equipment Price References, BOQ Checklists & County Guides",
+        "paragraphs": [
+          "Compare reference pricing and specification checklists for driplines, HDPE/uPVC pipes, rain guns, shade nets, venturi injectors and solenoid valves, or explore local irrigation considerations across Kenya's agricultural counties."
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Drip irrigation systems in Kenya",
+        "href": "/drip-irrigation-kenya"
+      },
+      {
+        "label": "HDPE dam liners in Kenya",
+        "href": "/dam-liners-kenya"
+      },
+      {
+        "label": "Drip irrigation kit prices in Kenya",
+        "href": "/drip-irrigation-kit-price-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps in Kenya",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Irrigation areas we serve in Kenya",
+        "href": "/irrigation-areas-kenya"
+      },
+      {
+        "label": "Estimate costs with the calculator",
+        "href": "/irrigation-cost-calculator-kenya"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "How do I get a farm-specific BOQ and PDF quotation from DripTech?",
+        "a": "You can generate an instant product PDF quote on any product card in our catalogue, or message our engineering team on WhatsApp with your crop, acreage, water source and location for a custom project BOQ."
+      },
+      {
+        "q": "Can I download the complete DripTech product catalogue as a PDF?",
+        "a": "Yes. Click the Download Official PDF Catalogue button on the homepage, products page or any guide to generate a print-ready A4 PDF catalogue with photos, specs and KES prices."
+      }
+    ]
+  },
+  {
+    "slug": "how-to-read-pump-curves-kenya",
+    "title": "How to Read Irrigation Pump Curves Kenya | DripTech",
+    "description": "Learn how to read Q-H pump curves, BEP (70-120% POR), shutoff head, runout and system resistance curves to stop pump burnouts on Kenyan farms.",
+    "h1": "How to Read Irrigation Pump Performance Curves Accurately",
+    "intro": "Two 2 HP irrigation pumps can perform completely differently on the same borehole or river. Reading the Q-H performance curve against your farm's Total Dynamic Head (TDH) system resistance curve prevents dead-heading, impeller recirculation, suction cavitation, and premature motor burnout.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp",
+    "sections": [
+      {
+        "heading": "Why Accurate Pump Curve Reading Matters for Staff and Farmers",
+        "paragraphs": [
+          "Selecting an irrigation pump by horsepower or catalog maximum head/flow alone is the single most common sizing mistake on Kenyan farms. A datasheet headline such as 100 m max head and 8 m3/h max flow represents two opposite corners of the chart that never happen simultaneously: at 100 m head the flow is zero, and at 8 m3/h the head is zero.",
+          "Your real operating delivery happens exclusively at one point: where the pump's falling Q-H curve crosses your farm's rising System Resistance Curve. Verifying this intersection keeps electrical efficiency high, motor windings cool, and emitter or sprinkler pressure uniform across every zone."
+        ]
+      },
+      {
+        "heading": "The 5 Core Elements on Every Pump Performance Chart",
+        "paragraphs": [
+          "Manufacturer curves from Grundfos, Franklin Electric, Pedrollo, Dayliff, and Lorentz share the same layout: Flow Q (m3/h or L/min) runs along the horizontal X-axis and Total Dynamic Head H (meters) runs up the vertical Y-axis."
+        ],
+        "table": {
+          "caption": "Essential Q-H Pump Curve Coordinates and Engineering Meaning",
+          "headers": ["Curve Feature", "Where on Graph", "Engineering Meaning & Field Impact"],
+          "rows": [
+            ["Shutoff Head (Q = 0)", "Top-left Y-axis intercept", "Maximum vertical pressure when discharge valve is closed. Never run continuously here: hydraulic energy turns into heat inside the casing within minutes."],
+            ["Pump Q-H Curve", "Blue/primary downward slope", "Shows how flow increases as Total Dynamic Head drops. Multistage borehole pumps have steep curves; surface centrifugal transfer pumps have flatter curves."],
+            ["System Resistance Curve", "Amber/upward parabola from static head", "Starts on Y-axis at fixed Static Lift + Working Pressure, then curves up with Hazen-Williams pipe friction proportional to Q^1.852."],
+            ["Duty / Operating Point", "Exact intersection of Pump & System curves", "True field flow and head delivered when you open irrigation valves—often different from brochure headline ratings."],
+            ["BEP (Best Efficiency Point)", "Peak of efficiency contour on curve", "Flow where hydraulic efficiency peaks, radial shaft loads balance near zero, and thrust bearings last longest."]
+          ]
+        }
+      },
+      {
+        "heading": "70% to 120% BEP Preferred Operating Range (POR) vs Danger Zones",
+        "paragraphs": [
+          "Hydraulic engineering standards (ANSI/HI 9.6.3 and major submersible OEM manuals) define the Preferred Operating Range (POR) between 70% and 120% of Best Efficiency Point (BEP) flow. Operating far outside this window rapidly degrades seals, bearings, and windings even if the motor thermal overload never trips immediately."
+        ],
+        "table": {
+          "caption": "Diagnostic Impact of Operating Left or Right of Best Efficiency Point (BEP)",
+          "headers": ["Operating Zone", "Flow vs BEP", "Physical Symptoms & Component Risk"],
+          "rows": [
+            ["Recirculation Zone (Too Throttled / Oversized Pump)", "Below 70% of BEP", "Discharge and suction recirculation inside impeller eye causes heavy shaft deflection, mechanical seal weeping, bearing wear, and overheating."],
+            ["Preferred Operating Range (POR)", "70% to 120% of BEP", "Optimal Zone: Smooth laminar impeller exit, minimal vibration, lowest specific energy (kWh/m3), and longest motor/wet-end service life."],
+            ["Runout Zone (Low-Head Open Discharge)", "Above 120% of BEP", "Extreme velocity drops NPSH margin causing suction cavitation, heavy down-thrust bearing wear, and motor amp draw exceeding nameplate."]
+          ]
+        }
+      },
+      {
+        "heading": "How Solar VFD Speed (Hz) Shifts the Pump Curve",
+        "paragraphs": [
+          "Solar pumps driven by an MPPT variable-frequency drive slow down during clouds, early morning, and late afternoon. Under pump Affinity Laws, flow scales linearly with speed (Q2 = Q1 * N2/N1) while head scales with speed squared (H2 = H1 * (N2/N1)^2).",
+          "Dropping from 50 Hz to 40 Hz cuts maximum flow to 80%, but slashes shutoff head down to 64% (0.8 squared). If morning shutoff head falls below the farm's fixed Static Lift + Pressure threshold, the motor spins without lifting a single drop of water—making minimum cut-off frequency tuning critical for solar borehole longevity."
+        ],
+        "bullets": [
+          "Test full-sun 50 Hz AND cloudy 40–42 Hz intersections before buying a solar borehole pump",
+          "Program the VFD minimum frequency limit (typically 28–35 Hz depending on static lift) to prevent stagnant zero-flow water churning",
+          "Use an elevated storage tank with gravity-fed drip blocks whenever solar afternoon irradiance surges past direct block demand"
+        ]
+      },
+      {
+        "heading": "4-Step Staff Checklist Using the 3-Point Datasheet Mode",
+        "bullets": [
+          "Step 1: Read 3 points from the manufacturer curve — Shutoff Head at 0 m3/h, BEP flow/head, and far-right Runout point",
+          "Step 2: Calculate true farm TDH (Static + Drawdown + Elevation + Working Drip/Sprinkler Pressure + Hazen-Williams Pipe Loss)",
+          "Step 3: Plot both curves using DripTech's 3-Point Datasheet Calibration tool above and check that Duty Flow sits between 70% and 120% BEP",
+          "Step 4: Verify suction lift stays below Kenya's highland altitude cavitation ceiling (~5.5–6.0 m) on all surface centrifugal pumps"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "Open Interactive Pump & Solar Sizing Engine",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
+        "label": "Pump & Motor Installation, Maintenance & Troubleshooting Guide",
+        "href": "/pump-motor-installation-maintenance-kenya"
+      },
+      {
+        "label": "How to size a pump for farm irrigation",
+        "href": "/irrigation-pump-sizing-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps in Kenya",
+        "href": "/solar-irrigation-pumps-kenya"
+      },
+      {
+        "label": "Browse DripTech pumps & motors",
+        "href": "/products/pumps"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Why does my pump deliver much less water than the maximum m3/h printed on the nameplate?",
+        "a": "The nameplate Qmax applies only at zero vertical lift and zero pipe resistance. Actual flow on the farm is determined where the falling pump curve intersects your rising System Resistance Curve (static lift + drawdown + emitter pressure + pipe friction)."
+      },
+      {
+        "q": "What happens if I partially close a gate valve to reduce pump flow below 70% BEP?",
+        "a": "Throttling increases system resistance and slides the operating point left toward shutoff. Below 70% BEP, turbulent fluid recirculates inside the impeller vanes, increasing radial shaft deflection, vibration, and winding heat. Instead, match a smaller pump stage count or trim VFD speed."
+      },
+      {
+        "q": "How accurate is a 3-point curve fit compared to a 2-point Qmax/Hmax fit?",
+        "a": "A 2-point parabolic fit estimates typical submersible curvature when only Qmax and Hmax are available. Entering 3 coordinates from the manufacturer's curve (Shutoff Head, BEP Flow/Head, and Runout Point) reproduces the OEM curve shape accurately across the full working band."
+      }
+    ]
+  },
+  {
+    "slug": "pump-motor-installation-maintenance-kenya",
+    "title": "Pump & Motor Installation, Maintenance Kenya | DripTech",
+    "description": "Field guide for borehole pump installation, Megger insulation tests, NEMA voltage balance, check valves, grounding & solar pump troubleshooting in Kenya.",
+    "h1": "Pump & Motor Installation, Maintenance & Troubleshooting Guide",
+    "intro": "Proper mechanical installation, electrical insulation verification, and surge grounding double the service life of borehole submersible motors, solar VFDs, and surface centrifugal pumps across Kenyan farms. Use this engineering reference during commissioning and field fault diagnostics.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp",
+    "sections": [
+      {
+        "heading": "Mechanical Installation Standards (Check Valves, Depth & Cooling Shrouds)",
+        "paragraphs": [
+          "Most mechanical submersible failures trace back to backspin upthrust on shutdown, sand pumping near the borehole base, or inadequate water velocity past the motor shell. Following OEM installation clearances from Franklin Electric and Grundfos prevents immediate stage seizure and thrust bearing failure."
+        ],
+        "bullets": [
+          "First Check Valve Within 25 ft (7.6 m): If not built into the pump discharge, fit the first spring-loaded non-return valve within 25 ft above the pump and below the dynamic drawdown water level. Add extra inline check valves every 200 ft (~60 m) on deep borehole columns to stop water-hammer shock and backspin upthrust",
+          "Pump Setting Depth: Position the intake 5–10 m below dynamic pumping water level (PWL) so seasonal drawdown never uncovers the suction screen, and keep 3–5 m minimum clearance above the borehole bottom to prevent silt and sand ingestion",
+          "Mandatory Cooling Sleeve / Flow Inducer: Whenever borehole casing ID is wide enough that annular water velocity over the motor drops below OEM minimum cooling velocity, or in top-feeding aquifers, open dams, and storage tanks, fit a stainless or uPVC cooling shroud over the motor",
+          "Surface Suction Limits in Kenya Highlands: At 1,500–2,000 m elevation (Nairobi, Nakuru, Eldoret, Nanyuki), atmospheric pressure drops to ~80–84 kPa—meaning total suction lift plus strainer/elbow friction must stay below 5.5–6.0 m to prevent cavitation",
+          "Never Run Dry or Dead-Head: Fit low-water electrodes or dry-run protection relays and confirm at least one mainline/bypass relief path stays open before energizing"
+        ]
+      },
+      {
+        "heading": "Electrical Commissioning: 500V DC Megger Tests & NEMA Power Limits",
+        "paragraphs": [
+          "Before lowering any borehole pump—and after pulling a tripped unit—never rely on a simple continuity buzzer. Always disconnect the drop cable from the VFD/starter and perform a 500V DC Megohmmeter (Megger) insulation resistance test from each motor lead to earth/frame, plus phase balance diagnostics."
+        ],
+        "table": {
+          "caption": "500V DC Megger Insulation Resistance & 3-Phase Balance Acceptance Standards",
+          "headers": ["Diagnostic Measurement", "Standard Threshold", "Field Verdict & Required Action"],
+          "rows": [
+            ["New Motor Uninstalled (no drop cable)", ">= 200 MΩ", "Factory-mint stator winding insulation; clear for waterproof cable splice."],
+            ["Used Motor Out of Well", ">= 10 MΩ", "Good winding insulation; fit to re-install with clean resin/heat-shrink splice."],
+            ["New Motor + Drop Cable Submerged in Well", ">= 2.0 MΩ", "Acceptable commissioning reading; log baseline value in maintenance book."],
+            ["In-Well Operating Motor + Cable", "0.5 – 2.0 MΩ", "Aging insulation; monitor trend every 3 months and schedule proactive splice check."],
+            ["Faulted Submersible Winding / Wet Splice", "< 0.5 MΩ", "CRITICAL FAULT — Do not energize. Pull column to inspect pinched drop cable or submerged resin joint."],
+            ["3-Phase Supply Voltage Unbalance (NEMA MG-1)", "<= 1.0% ideal (never > 5%)", "Note: Just 5% voltage unbalance triggers 30%–50% phase current unbalance (6–10x multiplier), burning one stator phase rapidly."],
+            ["Earth Grounding Electrode Resistance", "< 25 Ω NEC (< 5–10 Ω lightning zones)", "Single-point bond control panel, steel casing, PV rack & surge MOV arresters to stop Ground Potential Rise flashover."]
+          ]
+        }
+      },
+      {
+        "heading": "Solar PV Pump & Motor Troubleshooting Matrix",
+        "paragraphs": [
+          "Modern MPPT solar pump controllers flash fault codes for electrical protection before destroying the motor. Isolate AC/DC breakers completely before opening junction boxes or hoisting drop cables."
+        ],
+        "table": {
+          "caption": "Common Solar & Electric Irrigation Pump Faults, Root Causes & Corrective Fixes",
+          "headers": ["Fault Symptom / Alert", "Primary Root Cause", "Systematic Diagnostic & Corrective Fix"],
+          "rows": [
+            ["Dry Run / Low-Water Trip", "Dynamic water level dropped below intake, clogged strainer, or faulty probe wiring", "Inspect borehole yield vs pump rate, check electrode continuity, lower pump only if casing clearance allows, or throttle valve slightly within 70–120% BEP."],
+            ["DC Overvoltage Shutdown (Cold Dawn)", "PV open-circuit Voc spikes in crisp cold mornings above controller Vdc max", "Re-calculate series panel count using Voc(cold) thermal factor (~+0.35%/degC below 25 degC) and re-string parallel strings."],
+            ["Low Irradiance / Frequent Cycling", "Cloud cover, panel dust/bird droppings, tree shade, or undersized PV Wp vs static lift", "Clean solar glass with plain water early morning, prune shade, confirm VFD minimum Hz setting, or add PV panels / buffer storage tank."],
+            ["Motor Blocked / Locked Rotor Overcurrent", "Borehole sand locking, iron-bacteria crust, jammed impeller stage, or frozen bearing", "Lock out all breakers, inspect phase-to-phase ohms, lift pump, flush jammed sand/scale safely, and check well gravel pack."],
+            ["Gravel/Popping Sound + Surging Flow", "Suction cavitation on surface pumps or air sucked through loose suction flange", "Reduce vertical suction lift below highland limit (<5.5 m), tighten foot-valve/union gaskets, upsize suction pipe diameter."],
+            ["Supply Balanced (<1% V) but Current >5% Off", "High-resistance waterproof splice, pinched drop cable, or winding turn fault", "Swap supply phase rotation to test whether unbalance stays on same cable leg (motor/cable fault) or moves with utility phase."]
+          ]
+        }
+      },
+      {
+        "heading": "Preventative Pump & Motor Maintenance Schedule for Kenyan Farms",
+        "bullets": [
+          "Weekly Checks: Listen for cavitation popping or bearing rumble, verify clean disc/screen filter differential pressure, inspect suction unions for weeping/air entry, and verify gland seal packing drips slightly (surface split-case units)",
+          "Monthly Checks: Wash solar PV arrays in cool morning light to recover 5–15% dust losses, verify lightning surge arrester status flags, check pressure tank pre-charge, and inspect valve chamber leaks",
+          "Seasonal / Quarterly Checks: Measure and log running amps per phase, check float/electrode dry-run response, confirm VFD cooling fan vents are clear of chaff/insects, and flush drip mainlines & sand separators",
+          "Annual Technical Audit: Log 500V DC Megger MΩ trend alongside static/dynamic water levels to catch cable insulation aging or aquifer drawdown months before harvest-season failure"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "label": "How to Read Pump Q-H Curves & BEP (Interactive Guide)",
+        "href": "/how-to-read-pump-curves-kenya"
+      },
+      {
+        "label": "Open Interactive Pump & Solar Sizing Engine",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
+        "label": "Book a DripTech Technician for Installation or Megger Audit",
+        "href": "/technician-services"
+      },
+      {
+        "label": "Filter & pump diagnostics guide",
+        "href": "/irrigation-filter-pump-problems-kenya"
+      },
+      {
+        "label": "Borehole water pumps in Kenya",
+        "href": "/borehole-water-pumps-kenya"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What is the minimum safe Megger insulation reading for a submersible borehole pump?",
+        "a": "Per Franklin Electric AIM standards, an uninstalled new motor should read >= 200 MΩ at 500V DC, and a brand-new motor plus drop cable suspended in the well should read >= 2.0 MΩ. Anything below 0.5 MΩ indicates water ingress or damaged insulation—do not run until pulled and repaired."
+      },
+      {
+        "q": "Why do I need a check valve within 25 ft of a submersible pump discharge?",
+        "a": "Without a nearby non-return valve, standing riser water drains backward when the pump stops, spinning impellers in reverse. If the pump restarts while backspinning or with zero backpressure, severe thrust-bearing upthrust can shear the shaft coupling."
+      },
+      {
+        "q": "When is a cooling shroud sleeve mandatory on a borehole or tank pump?",
+        "a": "Whenever the pump is set inside a large-diameter casing, open water pan/tank, or below the aquifer inflow perforations where upward water velocity past the motor housing is too slow to carry away stator heat."
+      },
+      {
+        "q": "Why does a 5% voltage imbalance trip or burn out a 3-phase irrigation motor?",
+        "a": "Under NEMA MG-1 motor physics, small phase voltage imbalances multiply 6x to 10x into phase current imbalance—a 5% voltage unbalance causes 30%–50% current unbalance and extreme winding temperature rise in the overloaded phase."
+      }
+    ]
+  },
+  {
+    "slug": "solar-panel-pump-battery-sizing-kenya",
+    "title": "Solar Panels & Batteries for Water Pumps Kenya | DripTech",
+    "description": "Find minimum vs required solar panels for 0.5-10 HP pumps, Mono PERC vs TOPCon vs Bifacial comparison, and battery vs water tank sizing in Kenya.",
+    "h1": "How Many Solar Panels & Batteries Does Your Irrigation Pump Need?",
+    "intro": "Buying too few solar panels starves the MPPT controller of start-up voltage; wiring too many in series can blow cold-morning Voc limits. Use this reference guide to match minimum vs cloudy-safe panel arrays, choose between Mono PERC, N-Type TOPCon or Bifacial modules, and decide between elevated water tanks vs LiFePO4 battery backup.",
+    "image": "https://cnvtnxesywbzwsxwpejw.supabase.co/storage/v1/object/public/images/products/1791361915478-9yq50tqgrk.webp",
+    "sections": [
+      {
+        "heading": "Minimum Viable Panels vs Required Design Array (Why They Differ)",
+        "paragraphs": [
+          "Two numbers govern every solar water pump array: electrical string voltage (Vmp hot >= controller minimum, Voc cold <= controller maximum) and daily solar Watt-hours after panel cell temperature and dust derating.",
+          "The minimum panel count clears controller startup voltage and pumps water briefly around bright clear-sky solar noon. The required design array sizes ~1.35x to 1.65x of motor Wattage using Kenya's worst cloudy month PSH so your farm delivers its target daily cubic meters reliably all year."
+        ],
+        "table": {
+          "caption": "Typical Solar Panel & Controller Sizing Reference Using 550W Mono PERC Modules",
+          "headers": ["Pump Power Class", "Minimum Noon Start (550W)", "Recommended Cloudy-Safe Array", "Controller / VFD Topology & Notes"],
+          "rows": [
+            ["0.5 HP (370W) Slim DC", "1–2 pcs (600–1,100 Wp)", "2 pcs in series (1,100 Wp)", "24V/48V BLDC MPPT (Voc <= 150V); check cold dawn Voc < limit."],
+            ["1.0 HP (750W) Solar DC", "2 pcs (1,100 Wp)", "3 pcs in series (1,650 Wp)", "72V/110V BLDC MPPT (Voc <= 220V); ideal for 1/2–1 acre drip."],
+            ["1.5 HP (1,100W) Solar Hybrid", "4 pcs (2,200 Wp)", "4–5 pcs (2,200–2,750 Wp)", "180V–450V HV BLDC MPPT; fits 1–1.5 acre borehole setups."],
+            ["2.0 HP (1,500W) Solar Hybrid", "5 pcs (2,750 Wp)", "6–7 pcs in series (3,300–3,850 Wp)", "300V–450V HV BLDC or 220V 1-Phase Solar VFD; 2-acre workhorse."],
+            ["3.0 HP (2,200W) Solar VFD", "6 pcs (3,300 Wp)", "8 pcs (4,400 Wp)", "300V–450V HV MPPT or 380V 3-Phase VFD (verify Vmp window)."],
+            ["5.5 HP (4,000W) 3-Phase VFD", "10–12 pcs (5,500–6,600 Wp)", "14–16 pcs (14S or 12S-2P ~7.7–8.8 kWp)", "380V–415V 3-Phase Solar VFD (850V Voc max) + Type-2 SPD."],
+            ["7.5 HP (5,500W) 3-Phase VFD", "14 pcs (7,700 Wp)", "20–24 pcs (12S x 2P = 11–13.2 kWp)", "6-inch estate borehole with >=6 m3/h driller yield verification."]
+          ]
+        }
+      },
+      {
+        "heading": "Which Type of Solar Panel Should You Buy in Kenya?",
+        "paragraphs": [
+          "Solar panel wattage is only half the story. Module cell chemistry determines how fast output drops at 55–65C cell heat in Turkana or Machakos, and how early your borehole starts pumping on cloudy mornings in Nyeri or Kericho."
+        ],
+        "table": {
+          "caption": "Comparison of PV Technologies for Irrigation Pumping Across Kenyan Climates",
+          "headers": ["PV Module Chemistry", "Typical Module Power", "Efficiency & Heat Loss", "Best Kenyan Farm Application"],
+          "rows": [
+            ["Mono PERC Half-Cut", "410W, 455W, 550W", "~21.2% eff | -0.34%/C", "Best all-round value and spares availability across Kenya; standard 550W borehole module."],
+            ["N-Type TOPCon", "585W, 605W", "~22.6% eff | -0.29%/C", "Superior overcast low-light harvest and lower thermal drop in arid ASAL counties."],
+            ["Bifacial Dual-Glass", "605W, 660W, 700W", "+7% to +12% rear gain", "Raises total harvest over light concrete pads/gravel and cuts rack pole count on 5–15 HP arrays."],
+            ["Polycrystalline (Legacy)", "330W–340W", "~17.5% eff | -0.40%/C", "Avoid for new builds unless replacing single matched modules; needs larger steel mounting frames."]
+          ]
+        }
+      },
+      {
+        "heading": "Battery Bank Sizing vs Water Tank Storage: Honest Cost Advice",
+        "paragraphs": [
+          "For almost all borehole and sprinkler farms >= 1.5 HP (1.1 kW), storing pumped water inside an elevated 10,000–50,000 L tank or HDPE-lined water pan is 3x to 5x cheaper than installing a large battery bank.",
+          "Batteries make strong technical sense for smaller 0.5–1.5 HP DC systems running dawn/night greenhouse misting, fertigation dosing pumps, or irrigation timer valves—provided Depth of Discharge (DoD) and inverter motor surge ratings are sized properly."
+        ],
+        "table": {
+          "caption": "Battery Storage Chemistry Options for Night / Cloudy Irrigation Support",
+          "headers": ["Battery Type", "Usable DoD & Cycles", "Maintenance & Limits", "When to Select"],
+          "rows": [
+            ["LiFePO4 Lithium (51.2V 100Ah / 200Ah)", "85% DoD | ~6,000 cycles", "Zero maintenance; integrated BMS handles high efficiency (96%).", "Best overall choice whenever batteries are truly needed (greenhouses, misting, frequent cycling)."],
+            ["OPzS / Tall Tubular Flooded (12V 220Ah / 2V)", "50% DoD | 1,400–2,500 cycles", "Needs vented rack & quarterly distilled water top-up.", "Lower initial budget for supervised rural stations needing rugged deep cycles."],
+            ["Sealed Gel / AGM VRLA (12V 100Ah / 200Ah)", "50% DoD | 600–800 cycles", "Degrades rapidly above 30C or deep daily pump discharge.", "Limit strictly to low-amp irrigation valve controllers, sensors & occasional emergency light backup."]
+          ]
+        }
+      }
+    ],
+    "links": [
+      {
+        "label": "Test Minimum vs Required Panels in Live Calculator",
+        "href": "/pump-solar-calculator-kenya"
+      },
+      {
+        "label": "How to Read Pump Q-H Curves & BEP",
+        "href": "/how-to-read-pump-curves-kenya"
+      },
+      {
+        "label": "Pump & Motor Installation, Megger & Maintenance Guide",
+        "href": "/pump-motor-installation-maintenance-kenya"
+      },
+      {
+        "label": "Solar irrigation pumps in Kenya",
+        "href": "/solar-irrigation-pumps-kenya"
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What is the minimum number of 550W panels needed for a 2 HP solar borehole pump?",
+        "a": "A 2 HP high-voltage solar controller (180V–450V MPPT) typically needs at least 5 × 550W panels in series (~209V Vmp) just to start at noon, and 6–7 × 550W panels (3,300–3,850 Wp) to sustain full daily delivery during Kenya's cloudy Jun–Jul season."
+      },
+      {
+        "q": "Should I buy batteries or a bigger water tank for solar farm irrigation?",
+        "a": "For pumps >= 1.5 HP (1.1 kW), pump into an elevated tank or HDPE-lined water pan during peak sunshine hours—storing water costs far less over 10 years than replacing deep-cycle batteries. Reserve LiFePO4 batteries for greenhouse night misting, automated dosing, or small DC nursery pumps."
+      },
+      {
+        "q": "Which lasts longer for solar pumping: LiFePO4 Lithium or Tubular/Gel batteries?",
+        "a": "LiFePO4 lithium packs safely cycle to 85% depth of discharge for ~6,000 cycles (10+ years of daily service), whereas sealed Gel batteries average 600–800 cycles at 50% discharge and suffer sharply in high-temperature sheds."
+      }
+    ]
   }
 ]

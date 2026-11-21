@@ -67,9 +67,9 @@ export default {
                                 }
                         },
                         fontFamily: {
-                                heading: ['"Playfair Display"', 'Georgia', 'serif'],
-                                body:    ['"DM Sans"', 'system-ui', 'sans-serif'],
-                                mono:    ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+                                heading: ['var(--font-heading)', '"Libre Baskerville Fallback"', 'Georgia', 'serif'],
+                                body:    ['var(--font-body)', '"IBM Plex Sans Fallback"', 'system-ui', 'sans-serif'],
+                                mono:    ['var(--font-mono)', '"JetBrains Mono"', '"Fira Code"', 'monospace'],
                         },
                         backgroundImage: {
                                 'gradient-primary': 'var(--gradient-primary)',

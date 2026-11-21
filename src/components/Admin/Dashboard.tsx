@@ -20,6 +20,11 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
+  classifyReferrerSource,
+  isAutomatedUserAgent,
+  normalizeDeviceType,
+} from "@/lib/analyticsHelpers";
+import {
   TrendingUp,
   Users,
   ShoppingBag,
@@ -53,6 +58,7 @@ import {
   Receipt,
   Sparkles,
   CloudUpload,
+  Compass,
   ChevronRight,
   Layers,
   Mail,
@@ -171,6 +177,13 @@ interface DashboardStats {
 }
 
 const QUICK_ACTIONS = [
+  {
+    id: "engineering-reports",
+    label: "Client Engineering Report",
+    sublabel: "Pump, Solar, Drip & BOQ",
+    icon: Compass,
+    accent: "text-primary bg-primary/15",
+  },
   {
     id: "products",
     label: "Product Catalog",
@@ -583,8 +596,24 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         revenue: Number(p.price) || 0,
       }));
 
-    const deviceStats = sessions.reduce((acc: any[], session) => {
-      const device = session.device_type || "Desktop";
+    const humanSessions = sessions.filter(
+      (s) => !s?.is_bot && !isAutomatedUserAgent(s?.user_agent),
+    );
+
+    const pvCountBySession = new Map<string, number>();
+    pageViews.forEach((pv) => {
+      if (pv?.session_id) {
+        pvCountBySession.set(
+          pv.session_id,
+          (pvCountBySession.get(pv.session_id) || 0) + 1,
+        );
+      }
+    });
+
+    const deviceStats = humanSessions.reduce((acc: any[], session) => {
+      const rawDevice = normalizeDeviceType(session.device_type);
+      const device =
+        rawDevice.charAt(0).toUpperCase() + rawDevice.slice(1);
       const existing = acc.find((d) => d.device === device);
       if (existing) {
         existing.sessions += 1;
@@ -605,20 +634,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           : 0;
     });
 
-    const trafficSources = sessions.reduce((acc: any[], session) => {
-      const referrer = session.referrer;
-      let source = "Direct";
-
-      if (referrer) {
-        if (referrer.includes("google")) source = "Google Search";
-        else if (
-          referrer.includes("facebook") ||
-          referrer.includes("twitter") ||
-          referrer.includes("linkedin")
-        )
-          source = "Social Media";
-        else source = "Referrals";
-      }
+    const trafficSources = humanSessions.reduce((acc: any[], session) => {
+      const source = classifyReferrerSource(session.referrer);
 
       const existing = acc.find((s) => s.source === source);
       if (existing) {
@@ -639,10 +656,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     });
 
     const conversionFunnel = [
-      { stage: "Visitor Sessions", count: sessions.length, conversion: 100 },
+      { stage: "Visitor Sessions", count: humanSessions.length, conversion: 100 },
       {
         stage: "Engaged Visitors",
-        count: sessions.filter((s) => (s.page_views || 0) > 1).length,
+        count: humanSessions.filter(
+          (s) =>
+            (pvCountBySession.get(s.id) ??
+              s.page_views_count ??
+              s.page_views ??
+              0) > 1,
+        ).length,
         conversion: 0,
       },
       { stage: "Customer Leads", count: customers.length, conversion: 0 },
@@ -997,14 +1020,25 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               {refreshing ? "Syncing..." : "Refresh Data"}
             </Button>
             {onNavigate && (
-              <Button
-                size="sm"
-                onClick={() => onNavigate("products")}
-                className="h-9 rounded-xl gap-1.5 text-xs font-medium shadow-sm"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add Product
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  onClick={() => onNavigate("engineering-reports")}
+                  className="h-9 rounded-xl gap-1.5 text-xs font-semibold shadow-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  <Compass className="h-3.5 w-3.5" />
+                  Client Engineering Report
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onNavigate("products")}
+                  className="h-9 rounded-xl gap-1.5 text-xs font-medium"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Product
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -1020,7 +1054,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 Click any module to jump directly
               </span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2.5">
               {QUICK_ACTIONS.map((action) => {
                 const Icon = action.icon;
                 return (

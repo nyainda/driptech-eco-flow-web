@@ -82,7 +82,13 @@ const validateRow = (row: any, index: number): ParsedRow => {
  * guarantee as the built-in reference catalog seeder. Duplicate names
  * (case-insensitive, against existing products) are skipped.
  */
-const ProductImporter = ({ onImported }: { onImported?: () => void }) => {
+const ProductImporter = ({
+  onImported,
+  embedded = false,
+}: {
+  onImported?: () => void;
+  embedded?: boolean;
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [parsed, setParsed] = useState<ParsedRow[]>([]);
@@ -219,10 +225,10 @@ const ProductImporter = ({ onImported }: { onImported?: () => void }) => {
   };
 
   return (
-    <Card className="mb-6 border-0 bg-card shadow-lg">
-      <CardHeader className="p-4 sm:p-6">
-        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl lg:text-2xl">
-          <UploadCloud className="h-4 w-4 sm:h-5 sm:w-5" />
+    <Card className={embedded ? "border-0 bg-transparent shadow-none" : "mb-6 border-border/80 bg-card shadow-sm"}>
+      <CardHeader className={embedded ? "px-0 pt-0 pb-4" : "p-4 sm:p-6"}>
+        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+          <UploadCloud className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" />
           Import products from file
         </CardTitle>
         <CardDescription className="text-xs sm:text-sm">
@@ -231,7 +237,7 @@ const ProductImporter = ({ onImported }: { onImported?: () => void }) => {
           are never changed.
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+      <CardContent className={embedded ? "px-0 pb-0 space-y-4 sm:space-y-6" : "p-4 sm:p-6 space-y-4 sm:space-y-6"}>
         <input
           ref={fileInputRef}
           type="file"

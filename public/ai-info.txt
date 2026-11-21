@@ -17,14 +17,18 @@ Website contact page: https://www.dripstech.co.ke/contact
 Product catalogue: https://www.dripstech.co.ke/products
 Irrigation kits: https://www.dripstech.co.ke/irrigation-kits
 Irrigation cost calculator: https://www.dripstech.co.ke/irrigation-cost-calculator-kenya
+Complete Kenya irrigation guides hub: https://www.dripstech.co.ke/irrigation-guides-kenya
+HDPE dam liners guide: https://www.dripstech.co.ke/dam-liners-kenya
+LLM index file: https://www.dripstech.co.ke/llms.txt
 Services: https://www.dripstech.co.ke/services
 
 ## Core Services
-- Irrigation system planning and design support
+- Irrigation system planning, hydraulic CAD layout and BOQ design support
 - Drip irrigation and sprinkler system supply and installation
+- UV-stabilized HDPE dam liners (0.5mm, 0.75mm, 1.0mm) supply, thermal hot-wedge welding and water pan lining
 - Irrigation equipment maintenance and troubleshooting
-- Greenhouse irrigation support
-- Filtration, pumping, pipework, controls and fertigation equipment
+- Greenhouse and shade house structures and irrigation support
+- Solar borehole and surface pumping, filtration, pipework, controls and fertigation equipment
 - Farm assessments and project-specific quotations
 
 Confirm on-site service availability, travel, delivery charges and scope for the customer's exact location before committing to a project.

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useLayoutEffect, useMemo, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -41,36 +41,38 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const isInitialMount = useRef(true);
 
-  // Apply the initial theme instantly; animate only deliberate theme switches.
-  const applyTheme = (newTheme: Theme) => {
+  // Apply the initial theme without redundant DOM writes when head script already synced it.
+  const applyTheme = (newTheme: Theme, isMount = false) => {
     const html = document.documentElement;
-    const shouldAnimate = !isInitialMount.current;
+    const shouldAnimate = !isMount;
 
     if (shouldAnimate) {
       html.classList.add("theme-transitioning");
       window.setTimeout(() => html.classList.remove("theme-transitioning"), 340);
     }
 
-    if (newTheme === 'dark') {
-      html.classList.add('dark');
-      html.classList.remove('light');
-    } else {
-      html.classList.add('light');
-      html.classList.remove('dark');
+    const opposite = newTheme === 'dark' ? 'light' : 'dark';
+    if (!html.classList.contains(newTheme)) {
+      html.classList.add(newTheme);
+    }
+    if (html.classList.contains(opposite)) {
+      html.classList.remove(opposite);
     }
 
-    // Debounced save to localStorage
-    debouncedSaveTheme(newTheme);
+    if (!isMount) {
+      // Debounced save to localStorage only after deliberate theme change
+      debouncedSaveTheme(newTheme);
+    }
   };
 
-  // Use layoutEffect to prevent flash of wrong theme
-  useLayoutEffect(() => {
-    applyTheme(theme);
+  useEffect(() => {
+    const mount = isInitialMount.current;
+    applyTheme(theme, mount);
     isInitialMount.current = false;
   }, [theme]);
 
   // Listen to system preference changes
-  useLayoutEffect(() => {
+  useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleChange = (e: MediaQueryListEvent) => {

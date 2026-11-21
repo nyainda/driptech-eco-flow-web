@@ -53,6 +53,7 @@ import {
   ChevronRight,
   Grid3x3,
   Scale,
+  Calculator,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
@@ -69,7 +70,8 @@ import IrrigationKeywords from "@/components/SEO/IrrigationKeywords";
 import { trackSearch } from "@/services/aiProductService";
 import { cn } from "@/lib/utils";
 import { openTrackedWhatsApp } from "@/lib/whatsappAnalytics";
-import { openInstantProductQuotePdf, openProductCataloguePdf } from "@/lib/catalogAndQuotePdf";
+import { openInstantProductQuotePdf } from "@/lib/catalogAndQuotePdf";
+import { CataloguePdfModal } from "@/components/Products/CataloguePdfModal";
 
 interface Variant {
   name: string;
@@ -849,51 +851,15 @@ const Products = () => {
             : `Irrigation products — ${SITE_COMPANY.name}`,
           description: productPageDescription,
           numberOfItems: Math.min(products.length, 50),
-          itemListElement: products.slice(0, 50).map((product, index) => {
-            const item: Record<string, unknown> = {
-              "@type": "Product",
-              name: product.name,
-              sku: product.id,
-              description:
-                product.description ||
-                `${product.name} — irrigation equipment for Kenyan farms from ${SITE_COMPANY.name}.`,
-              category: (product.category || "").replaceAll("_", " "),
-              brand: { "@type": "Brand", name: SITE_COMPANY.name },
-              url: `https://www.dripstech.co.ke${getProductPath(product)}`,
-            };
-
-            if (product.images?.[0]) item.image = product.images[0];
-            if (typeof product.price === "number" && product.price > 0) {
-              item.offers = {
-                "@type": "Offer",
-                price: product.price,
-                priceCurrency: "KES",
-                availability: product.in_stock
-                  ? "https://schema.org/InStock"
-                  : "https://schema.org/OutOfStock",
-                 url: `https://www.dripstech.co.ke${getProductPath(product)}`,
-                seller: {
-                  "@type": "Organization",
-                  name: SITE_COMPANY.name,
-                  telephone: SITE_COMPANY.phonePrimary,
-                },
-              };
-            }
-            if (product.video_url) {
-              item.subjectOf = {
-                "@type": "VideoObject",
-                name: product.name,
-                contentUrl: product.video_url,
-                thumbnailUrl: product.images?.[0],
-              };
-            }
-
-            return {
-              "@type": "ListItem",
-              position: index + 1,
-              item,
-            };
-          }),
+          // Reference each individual canonical Product URL via ListItem rather
+          // than embedding dozens of standalone Product + Offer blocks on
+          // category archives (matching build-time CollectionPage JSON-LD).
+          itemListElement: products.slice(0, 50).map((product, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            url: `https://www.dripstech.co.ke${getProductPath(product)}`,
+            name: product.name,
+          })),
         }
       : undefined;
 
@@ -970,6 +936,8 @@ const Products = () => {
                       availability: detailProduct.in_stock
                         ? "https://schema.org/InStock"
                         : "https://schema.org/OutOfStock",
+                      itemCondition: "https://schema.org/NewCondition",
+                      url: detailUrl,
                       seller: { "@type": "Organization", name: SITE_COMPANY.name },
                     },
                   }
@@ -1215,37 +1183,51 @@ const Products = () => {
                     : "Find drip, sprinkler, pumping, filtration, fertigation and greenhouse equipment in one practical catalogue."}
                 </p>
                 <div className="mt-5 flex flex-wrap items-center gap-2.5">
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() =>
-                      openProductCataloguePdf(
-                        filteredProducts.length > 0 ? filteredProducts : products,
-                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
-                        false,
-                      )
+                  <CataloguePdfModal
+                    products={filteredProducts.length > 0 ? filteredProducts : products}
+                    activeCategoryKey={
+                      category
+                        ? Object.entries(CATEGORY_PATHS).find(([, slug]) => slug === category)?.[0] || "all"
+                        : "all"
                     }
-                    className="rounded-xl bg-primary text-primary-foreground font-bold shadow-sm hover:bg-primary/90"
                   >
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Official PDF Catalogue
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      openProductCataloguePdf(
-                        filteredProducts.length > 0 ? filteredProducts : products,
-                        category ? `${getCategoryTitle(category)} Catalogue` : "Complete DripTech Equipment Catalogue",
-                        true,
-                      )
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="rounded-xl bg-primary text-primary-foreground font-bold shadow-sm hover:bg-primary/90"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Light PDF Catalogue
+                    </Button>
+                  </CataloguePdfModal>
+                  <CataloguePdfModal
+                    products={filteredProducts.length > 0 ? filteredProducts : products}
+                    activeCategoryKey={
+                      category
+                        ? Object.entries(CATEGORY_PATHS).find(([, slug]) => slug === category)?.[0] || "all"
+                        : "all"
                     }
-                    className="rounded-xl border-[hsl(var(--dt-whatsapp)/0.4)] bg-[hsl(var(--dt-whatsapp)/0.07)] text-[hsl(var(--dt-whatsapp))] font-bold hover:bg-[hsl(var(--dt-whatsapp)/0.15)]"
+                    defaultWhatsApp
                   >
-                    <FileText className="mr-2 h-4 w-4" />
-                    Get PDF Catalogue + WhatsApp
-                  </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="rounded-xl border-[hsl(var(--dt-whatsapp)/0.4)] bg-[hsl(var(--dt-whatsapp)/0.07)] text-[hsl(var(--dt-whatsapp))] font-bold hover:bg-[hsl(var(--dt-whatsapp)/0.15)]"
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Get PDF Catalogue + WhatsApp
+                    </Button>
+                  </CataloguePdfModal>
+                  {(category === "pumps" || category === "borehole" || category === "solar" || !category) && (
+                    <Link
+                      to="/pump-solar-calculator-kenya"
+                      className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-primary/35 bg-primary/5 px-3.5 text-xs font-bold text-primary transition-colors hover:bg-primary/10"
+                    >
+                      <Calculator className="h-3.5 w-3.5" />
+                      Pump &amp; Solar Calculator
+                    </Link>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-border bg-card/90 shadow-sm backdrop-blur">
@@ -1528,10 +1510,10 @@ const Products = () => {
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">See which crop, spacing, filtration and installation details affect a quote.</p>
                 <span className="mt-4 inline-flex text-sm font-semibold text-primary">Read price guide <span aria-hidden="true" className="ml-1">→</span></span>
               </Link>
-              <Link to="/irrigation-pump-sizing-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
-                <h3 className="font-semibold text-foreground group-hover:text-primary">Size the pump</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">Match flow and total head to the water source and field layout.</p>
-                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Read pump guide <span aria-hidden="true" className="ml-1">→</span></span>
+              <Link to="/pump-solar-calculator-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
+                <h3 className="font-semibold text-foreground group-hover:text-primary">Size the pump &amp; solar PV</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Calculate flow, TDH pipe friction, cable gauge, and cloudy-month solar strings.</p>
+                <span className="mt-4 inline-flex text-sm font-semibold text-primary">Open calculator <span aria-hidden="true" className="ml-1">→</span></span>
               </Link>
               <Link to="/drip-vs-sprinkler-irrigation-kenya" className="group rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50">
                 <h3 className="font-semibold text-foreground group-hover:text-primary">Drip vs sprinkler</h3>
